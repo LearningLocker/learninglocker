@@ -13,7 +13,7 @@ Learning Locker requires PHP 5.4+ with the MongoDB extension, MongoDB and Apache
 
 ## Official Documentation
 
-Check out the [wiki pages](https://github.com/davetosh/LearningLocker/wiki) to install and begin using Learning Locker.
+Check out the [wiki pages](https://github.com/learninglocker/learninglocker/wiki) to install and begin using Learning Locker.
 
 ### License
 
