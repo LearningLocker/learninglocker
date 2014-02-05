@@ -1,0 +1,269 @@
+<?php
+
+use Locker\Repository\Lrs\LrsRepository as Lrs;
+
+class LrsController extends BaseController {
+
+	/**
+	* Lrs
+	*/
+	protected $lrs;
+
+
+	/**
+	 * Construct
+	 *
+	 * @param Lrs $lrs
+	 */
+	public function __construct(Lrs $lrs){
+
+		$this->lrs = $lrs;
+
+		$this->beforeFilter('auth');
+		$this->beforeFilter('csrf', array('on' => array('store', 'update')));
+		$this->beforeFilter('auth.lrs', array('except' => array('index','create','store'))); //check user can access LRS.
+		$this->beforeFilter('create.lrs', array('only' => 'create')); //Allowed to create an LRS?
+
+	}
+
+	/**
+	 * Display a listing of LRSs available for user.
+	 *
+	 * @return View
+	 */
+	public function index(){
+		$lrs = $this->lrs->all();
+		return View::make('partials.lrs.list', array('lrs' => $lrs));
+	}
+
+	/**
+	 * Show the form for creating a new resource.
+	 *
+	 * @return View
+	 */
+	public function create(){
+		//has the user verified their email address?
+		$verified = Auth::user()->verified;
+		return View::make('partials.lrs.create', array('verified' => $verified));
+	}
+
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @return View
+	 */
+	public function store(){
+
+		// Store lrs
+		$s = $this->lrs->create( Input::all() );
+
+		if($s){
+			return Redirect::to('/lrs')->with('success', Lang::get('lrs.created'));
+		}
+
+		return Redirect::back()
+		  ->withInput()
+		  ->with('error', Lang::get('create_problem'));
+	}
+
+	/**
+	 * Show the form for editing the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return View
+	 */
+	public function edit( $id ){
+
+		$lrs      = $this->lrs->find( $id );
+		$lrs_list = $this->lrs->all();
+		return View::make('partials.lrs.edit', array('account_nav' => true, 
+													 'lrs' 		   => $lrs, 
+													 'list'        => $lrs_list));
+
+	}
+
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  int  $id
+	 * @return View
+	 */
+	public function update($id){
+
+		$l = $this->lrs->update( $id, Input::all() );
+
+		if($l){
+			return Redirect::back()->with('success', Lang::get('lrs.updated'));
+		}
+
+		return Redirect::back()
+		  ->withInput()
+		  ->withErrors($this->lrs->errors());
+
+	}
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return View
+	 */
+	public function show( $id ){
+		$lrs 	  = $this->lrs->find( $id );
+		$lrs_list = $this->lrs->all();
+		$stats    = new \app\locker\data\LrsDashboard( $id );
+		return View::make('partials.lrs.dashboard', array('stats'    => $stats->stats, 
+														  'lrs'      => $lrs, 
+														  'list'     => $lrs_list, 
+														  'dash_nav' => true));
+	}
+
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 * @return View
+	 */
+	public function destroy($id){
+
+		$this->lrs->delete($id);
+		return Redirect::back()->with('success', Lang::get('lrs.deleted'));
+
+	}
+
+	/**
+	 * Display statements for this LRS
+	 *
+	 * @return View
+	 */
+	public function statements( $id ){
+
+		$statements = $this->lrs->statements( $id );
+		$lrs        = $this->lrs->find( $id );
+		$lrs_list   = $this->lrs->all();
+		return View::make('partials.statements.list', 
+									array('statements'    => $statements,
+										  'lrs'           => $lrs,
+										  'list'          => $lrs_list,
+										  'statement_nav' => true));
+
+	}
+
+	/**
+	 * Display the analytics view.
+	 *
+	 * @return View
+	 */
+	public function analytics( $id, $segment='verbCloud' ){
+
+		$lrs 	  = $this->lrs->find( $id );
+		$lrs_list = $this->lrs->all();
+		$data     = new \app\locker\data\Analytics( $id, $segment, Input::all() );
+		return View::make('partials.lrs.analytics', array('lrs'           => $lrs,
+														  'data'		  => $data->results,
+														  'analytics_nav' => true,
+														  'list'          => $lrs_list));
+
+	}
+
+	/**
+	 * Display the reporting view.
+	 *
+	 * @return View
+	 */
+	public function reporting( $id ){
+
+		$lrs 	  = $this->lrs->find( $id );
+		$lrs_list = $this->lrs->all();
+		//$data     = new \app\locker\data\Reporting( $id, Input::all() );
+		return View::make('partials.lrs.reporting', array('lrs'           => $lrs, 
+														  'reporting_nav' => true,
+														  'list'          => $lrs_list));
+
+	}
+
+	/**
+	 * Display the endpoint view.
+	 *
+	 * @return View
+	 */
+	public function endpoint( $id ){
+
+		$lrs 	  = $this->lrs->find( $id );
+		$lrs_list = $this->lrs->all();
+		return View::make('partials.lrs.endpoint', array('lrs'          => $lrs, 
+														 'endpoint_nav' => true,
+														 'list'         => $lrs_list));
+
+	}
+
+	/**
+	 * Display the api view.
+	 *
+	 * @return View
+	 */
+	public function api( $id ){
+
+		$lrs      = $this->lrs->find( $id );
+		$lrs_list = $this->lrs->all();
+		return View::make('partials.lrs.api', array('lrs'     => $lrs, 
+													'api_nav' => true,
+													'list'    => $lrs_list));
+
+	}
+
+	/**
+	 * Generate a new key and secret for basic auth
+	 *
+	 **/
+	public function editCredentials( $id ){
+
+		$lrs = $this->lrs->find( $id );
+
+		$lrs->api  = array('basic_key'    => \app\locker\helpers\Helpers::getRandomValue(),
+						   'basic_secret' => \app\locker\helpers\Helpers::getRandomValue());
+
+		if( $lrs->save() ){
+			$message_type = 'success';
+			$message      = Lang::get('update_key');
+		}else{
+			$message_type = 'error';
+			$message      = Lang::get('update_key_error');
+		}
+		
+		return Redirect::back()->with($message_type, $message);
+		
+	}
+
+	/**
+	 * Display users with access to this lrs.
+	 *
+	 * @return View
+	 */
+	public function users( $id ){
+
+		$lrs      = $this->lrs->find( $id );
+		$lrs_list = $this->lrs->all();
+		return View::make('partials.users.list', array('lrs'      => $lrs, 
+													   'users'    => $lrs->users,
+													   'list'     => $lrs_list,
+													   'user_nav' => true));
+
+	}
+
+	public function inviteUsersForm( $id ){
+		$lrs      = $this->lrs->find( $id );
+		$lrs_list = $this->lrs->all();
+		return View::make('partials.lrs.invite', array('lrs'      => $lrs, 
+													   'users'    => $lrs->users,
+													   'list'     => $lrs_list,
+													   'user_nav' => true));
+
+	}
+
+	public function usersRemove( $id ){
+		$lrs = $this->lrs->removeUser( $id, Input::get('user') );
+		return Redirect::back()->with('success', Lang::get('lrs.remove_user'));
+	}
+
+}

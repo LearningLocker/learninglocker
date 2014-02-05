@@ -1,0 +1,1 @@
+{{ HTML::script('js/charts.min.js') }}

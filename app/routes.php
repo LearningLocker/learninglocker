@@ -1,0 +1,297 @@
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Application Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register all of the routes for an application.
+| It's a breeze. Simply tell Laravel the URIs it should respond to
+| and give it the Closure to execute when that URI is requested.
+|
+*/
+
+Route::get('/', function(){
+	if( Auth::check() ){
+		//if super admin, show site dashboard, otherwise show list of LRSs can access
+		if( Auth::user()->role == 'super' ){
+			$stats = new \app\locker\data\AdminDashboard();
+			return View::make('partials.site.dashboard', 
+									array('stats' 	   => $stats->stats, 
+										  'dash_nav'   => true,
+										  'admin_dash' => true));
+		}else{
+			$lrs = Lrs::where('users._id', \Auth::user()->_id)->get();
+			return View::make('partials.lrs.list', array('lrs' => $lrs));
+		}
+	}else{
+		return View::make('system.forms.login');
+	}
+});
+
+/*
+|------------------------------------------------------------------
+| Login
+|------------------------------------------------------------------
+*/
+Route::get('login', array(
+	'before' => 'guest',
+	'uses'   => 'LoginController@create',
+	'as'     => 'login.create'
+));
+Route::post('login', array(
+	'before' => 'guest',
+	'uses'   => 'LoginController@login',
+	'as'     => 'login.store'
+));
+Route::get('logout', array(
+	'uses' => 'LoginController@destroy',
+	'as'   => 'logout'
+));
+
+/*
+|------------------------------------------------------------------
+| Register
+|------------------------------------------------------------------
+*/
+Route::get('register', array(
+	'before' => 'guest',
+	'uses'   => 'RegisterController@index',
+	'as'     => 'register.index'
+));
+Route::post('register', array(
+	'before' => 'guest',
+	'uses'   => 'RegisterController@store',
+	'as'     => 'register.store'
+));
+
+/*
+|------------------------------------------------------------------
+| Password reset
+|------------------------------------------------------------------
+*/
+Route::get('password/reset', array(
+	'uses' => 'PasswordController@remind',
+	'as'   => 'password.remind'
+));
+Route::post('password/reset', array(
+	'uses' => 'PasswordController@request',
+	'as'   => 'password.request'
+));
+Route::get('password/reset/{token}', array(
+	'uses' => 'PasswordController@reset',
+	'as'   => 'password.reset'
+));
+Route::post('password/reset/{token}', array(
+	'uses' => 'PasswordController@postReset',
+	'as'   => 'password.update'
+));
+
+/*
+|------------------------------------------------------------------
+| Email verification
+|------------------------------------------------------------------
+*/
+Route::post('email/resend', function(){
+   Event::fire('user.email_resend', array(Auth::user()));
+   return Redirect::back()->with('success', Lang::get('users.verify_request') );
+});
+Route::get('email/verify/{token}', array(
+	'uses' => 'EmailController@verifyEmail',
+	'as'   => 'email.verify'
+));
+Route::get('email/invite/{token}', array(
+	'uses' => 'EmailController@inviteEmail',
+	'as'   => 'email.invite'
+));
+
+/*
+|------------------------------------------------------------------
+| Site (this is for super admin users only)
+|------------------------------------------------------------------
+*/
+Route::get('site', array(
+	'uses' => 'SiteController@index',
+));
+Route::get('site/settings', array(
+	'uses' => 'SiteController@settings',
+));
+Route::get('site/lrs', array(
+	'uses' => 'SiteController@lrs',
+));
+Route::get('site/users', array(
+	'uses' => 'SiteController@users',
+));
+Route::get('site/invite', array(
+	'uses' => 'SiteController@inviteUsersForm',
+	'as'   => 'site.invite'
+));
+Route::post('site/invite', array(
+	'uses' => 'SiteController@inviteUsers',
+));
+Route::get('site/plugins', array(
+	'uses' => 'PluginController@index',
+));
+Route::resource('site', 'SiteController');
+Route::put('site/users/verify/{id}', array(
+	'uses' => 'SiteController@verifyUser',
+	'as'   => 'user.verify'
+));
+
+/*
+|------------------------------------------------------------------
+| Lrs
+|------------------------------------------------------------------
+*/
+Route::get('lrs/{id}/statements', array(
+	'uses' => 'LrsController@statements',
+));
+Route::get('lrs/{id}/analytics/{segment?}', array(
+	'uses' => 'LrsController@analytics',
+));
+Route::get('lrs/{id}/reporting', array(
+	'uses' => 'LrsController@reporting',
+));
+Route::get('lrs/{id}/endpoint', array(
+	'uses' => 'LrsController@endpoint',
+));
+Route::get('lrs/{id}/users', array(
+	'uses' => 'LrsController@users',
+));
+Route::put('lrs/{id}/users/remove', array(
+	'uses' => 'LrsController@usersRemove',
+	'as'   => 'lrs.remove'
+));
+Route::get('lrs/{id}/users/invite', array(
+	'uses' => 'LrsController@inviteUsersForm',
+));
+Route::get('lrs/{id}/api', array(
+	'uses' => 'LrsController@api',
+));
+Route::post('lrs/{id}/apikey', array( 
+	'before' => 'csrf', 
+	'uses'   => 'LrsController@editCredentials'
+));
+
+Route::resource('lrs', 'LrsController');
+
+/*
+|------------------------------------------------------------------
+| Users
+|------------------------------------------------------------------
+*/
+Route::resource('users', 'UserController');
+Route::put('users/update/password/{id}', array(
+	'as'     => 'users.password',
+	'before' => 'csrf', 
+	'uses'   => 'PasswordController@updatePassword'
+));
+Route::put('users/update/role/{id}', array(
+	'as'     => 'users.role',
+	'before' => 'csrf', 
+	'uses'   => 'UserController@updateRole'
+));
+Route::get('users/{id}/add/password', array(
+	'as'     => 'users.addpassword',
+	'uses'   => 'PasswordController@addPasswordForm'
+));
+Route::put('users/{id}/add/password', array(
+	'as'     => 'users.addPassword',
+	'before' => 'csrf', 
+	'uses'   => 'PasswordController@addPassword'
+));
+
+/*
+|------------------------------------------------------------------
+| Statements
+|------------------------------------------------------------------
+*/
+Route::get('lrs/{id}/statements/generator', 'StatementController@create');
+Route::get('lrs/{id}/statements/explorer/{extra?}', 'StatementController@explore')
+->where(array('extra' => '.*'));
+Route::get('lrs/{id}/statements/{extra}', 'StatementController@filter')
+->where(array('extra' => '.*'));
+Route::resource('statements', 'StatementController');
+
+/*
+|------------------------------------------------------------------
+| Reporting
+|------------------------------------------------------------------
+*/
+Route::get('reporting', function(){
+	return View::make('partials.reporting.index')->with('reporting_nav', true);
+});
+
+
+/*
+|------------------------------------------------------------------
+| Information pages e.g. terms, privacy
+|------------------------------------------------------------------
+*/
+
+Route::get('terms', function(){
+	return View::make('partials.pages.terms');
+});
+//tools
+Route::get('tools', array(function(){
+	return View::make('partials.pages.tools', array('tools' => true));
+}));
+Route::get('help', array(function(){
+	return View::make('partials.pages.help', array('help' => true));
+}));
+Route::get('about', array(function(){
+	return View::make('partials.pages.about');
+}));
+
+/*
+|------------------------------------------------------------------
+| Statement API
+|------------------------------------------------------------------
+*/
+
+Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), function(){
+
+	//incoming xAPI statements
+	Route::post('statements', array( 
+		'uses'   => 'Controllers\API\StatementsController@store'
+	));
+
+});
+
+/*
+|------------------------------------------------------------------
+| RESTful API
+|------------------------------------------------------------------
+*/
+
+Route::group( array('prefix' => 'api/v1', 'before'=>'auth.api'), function(){
+
+	Config::set('api.using_version', 'v1');
+
+	Route::get('/', function() {
+		return Response::json( array('version' => Config::get('api.using_version')));
+	});
+
+});
+
+
+/*
+|------------------------------------------------------------------
+| For routes that don't exist
+|------------------------------------------------------------------
+*/
+App::missing(function($exception){
+
+	if ( Request::segment(1) == "data" || Request::segment(1) == "api" ) {
+		$error = array(
+			'error'     =>  true,
+			'message'   =>  $exception->getMessage(),
+			'code'      =>  $exception->getStatusCode(),
+			'trace'     =>  $exception->getTrace()
+		);
+
+		return Response::json( $error, $exception->getStatusCode());
+	} else {
+		return Response::view( 'errors.missing', array( 'message'=>$exception->getMessage() ), 404);
+	}
+});
