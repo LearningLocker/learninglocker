@@ -111,8 +111,7 @@ return array(
 		'Locker\Graphing\GraphServiceProvider',
 		'Jenssegers\Mongodb\Auth\ReminderServiceProvider',
 		'Jenssegers\Mongodb\MongodbServiceProvider',
-		'DaveJamesMiller\Breadcrumbs\ServiceProvider',
-		'Barryvdh\Debugbar\ServiceProvider'
+		'DaveJamesMiller\Breadcrumbs\ServiceProvider'
 
 	),
 
