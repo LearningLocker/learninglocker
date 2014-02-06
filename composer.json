@@ -6,8 +6,7 @@
 	"require": {
 		"laravel/framework": "4.1.*",
 		"jenssegers/mongodb": "*",
-		"davejamesmiller/laravel-breadcrumbs": "~2.1.0",
-		"barryvdh/laravel-debugbar": "dev-master"
+		"davejamesmiller/laravel-breadcrumbs": "~2.1.0"
 	},
 	"autoload": {
 		"classmap": [
