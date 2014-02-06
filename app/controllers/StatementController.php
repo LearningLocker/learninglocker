@@ -1,6 +1,7 @@
 <?php
 
 use Locker\Repository\Statement\StatementRepository as Statement;
+use Locker\Repository\Lrs\LrsRepository as Lrs;
 
 class StatementController extends BaseController {
 
@@ -9,28 +10,26 @@ class StatementController extends BaseController {
 	*/
 	protected $statement;
 
+	/**
+	* Lrs 
+	*/
+	protected $lrs;
 
 	/**
 	 * Construct
 	 *
 	 * @param Statement $statement
 	 */
-	public function __construct(Statement $statement){
+	public function __construct( Statement $statement, Lrs $lrs ){
 
 		$this->statement = $statement;
+		$this->lrs 	     = $lrs;
 
-		$this->beforeFilter('auth', array('except'));
-		$this->beforeFilter('csrf', array('on' => 'post'));
+		$this->beforeFilter('auth');
+		$this->beforeFilter('csrf', array('on' => 'store'));
 		$this->beforeFilter('@checkCanSubmit', array('only' => 'store'));
 
 	}
-
-	/**
-	 * Display a listing of statements for a user.
-	 *
-	 * @return Response
-	 */
-	public function index(){}
 
 	/**
 	 * Show the form for creating a new resource.
@@ -38,7 +37,7 @@ class StatementController extends BaseController {
 	 * @return View
 	 */
 	public function create( $id ){
-		$lrs = Lrs::find( $id );
+		$lrs = $this->lrs->find( $id );
 		return View::make('partials.statements.create', array('lrs'           => $lrs,
 															  'statement_nav' => true));
 	}
@@ -46,16 +45,16 @@ class StatementController extends BaseController {
 	/**
 	 * Store a newly created resource in storage.
 	 *
+	 * This is ony used via the manual statement generator on the 
+	 * site. Look in /api/statements for incoming statements.
+	 *
 	 * @return Response
 	 */
 	public function store(){
 
 		$input = Input::all();
 
-		//get lrs
-		$lrs = Lrs::where( '_id', $input['lrs'] )
-			   ->select('_id', 'title')
-			   ->first();
+		$lrs = $this->lrs->find( $input['lrs'] );
 
 		//remove lrs and _token from Input
 		unset( $input['lrs'] );
@@ -78,75 +77,12 @@ class StatementController extends BaseController {
 	}
 
 	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show( $id ){}
-
-	public function explore( $id ){
-
-		$vars = explode( '/', Request::path() );
-
-		//remove lrs and statement which is always passed
-		unset( $vars[0] ); //remove lrs
-		unset( $vars[1] ); //remove lrs id
-		unset( $vars[2] ); //remove statements
-		unset( $vars[3] ); //remove explorer
-
-		$lrs      = Lrs::find( $id );
-		$lrs_list = \Lrs::all();
-		$statements = $this->statement->filter( $id, $vars, 'comments' );
-		$graph_it   = new \app\locker\data\Filter( $statements['data'] );
-
-		return View::make('partials.statements.explore', array('lrs'           => $lrs,
-															   'list'          => $lrs_list,
-															   'statements'    => $statements['statements'],
-															   'total'		   => count( $statements['data'] ),
-															   'filter'		   => $statements['filter'],
-															   'single_bar_data' => $graph_it->timeline_data,
-															   'statement_nav' => true));
-	}
-
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function filter( $id, $extra ){
-
-		$vars = explode( '/', Request::path() );
-
-		//remove lrs and statement which is always passed
-		unset( $vars[0] );
-		unset( $vars[1] );
-		unset( $vars[2] );
-
-		$statements = $this->statement->filter( $id, $vars );
-		$graph_it   = new \app\locker\data\Filter( $statements['data'] );
-		$lrs        = \Lrs::find( $id );
-		$lrs_list   = \Lrs::all();
-
-		return View::make('partials.statements.filter', 
-									array('statements'      => $statements['statements'],
-										  'lrs'             => $lrs,
-										  'single_bar_data' => $graph_it->timeline_data,
-										  'total'		    => count( $statements['data'] ),
-										  'list'            => $lrs_list,
-										  'filter'		    => $statements['filter'],
-										  'statement_nav'   => true));
-
-	}
-
-	/**
 	 * Can current user submit statements to this LRS?
 	 **/
 	public function checkCanSubmit( $route, $request ){
 
 		$user      = \Auth::user();
-		$lrs       = Lrs::find( Input::get('lrs') );
+		$lrs       = $this->lrs->find( Input::get('lrs') );
 		$get_users = array();
 
 		if( $lrs ){

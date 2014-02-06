@@ -7,5 +7,11 @@ $(function() {
         size:30,
         lineWidth:5
     });
+    $('.explorerChart').easyPieChart({
+        animate: 2000,
+        barColor:'#36d0ff',
+        size:90,
+        lineWidth:5
+    });
 });
 </script>

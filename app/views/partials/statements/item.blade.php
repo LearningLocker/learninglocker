@@ -17,7 +17,7 @@
 				
 			{{ $statement['actor']['name'] }}
 				
-			<span onclick="$('.rstate-{{ $statement['_id'] }}').toggle();" class="toggle label label-primary verb"><b>{{ $verb }}</b></span>
+			<span onclick="$('.rstate-{{ $statement['_id'] }}').toggle();" class="toggle label label-verb verb"><b>{{ $verb }}</b></span>
 
 			<a href="{{ $statement['object']['id'] }}">{{{ $object }}}</a>
 

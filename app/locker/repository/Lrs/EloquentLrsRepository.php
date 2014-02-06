@@ -23,9 +23,8 @@ class EloquentLrsRepository implements LrsRepository {
 		if( \Auth::user()->role == 'super' ){
 			return $this->lrs->all();
 		}else{
-			return $this->lrs->where('users._id', \Auth::user()->_id)->get();
+			return $this->lrs->where('users._id', \Auth::user()->_id)->remember(10)->get();
 		}
-
 	}
 
 	public function find($id){
@@ -82,14 +81,6 @@ class EloquentLrsRepository implements LrsRepository {
 
 		//now delete the lrs
 		return $lrs->delete();
-	}
-
-	public function statements( $id ){
-
-		return \Statement::where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id)
-		->orderBy('created_at', 'desc')
-		->paginate(15);
-
 	}
 
 	public function removeUser( $id, $user ){

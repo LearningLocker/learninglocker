@@ -1,17 +1,54 @@
 <?php namespace app\locker\data;
 
 /**
- * Data to display when filtering statements
+ * Data to display when filtering statements.
+ * This class is only here as a hack for a demo - all this 
+ * code will be replaced / redone.
  **/
 
 class Filter extends BaseData {
 
 	protected $data;
-	public $timeline_data;
+	public $timeline_data, $results;
 
 	public function __construct( $data ){
 		$this->data = $data;
 		$this->timeline();
+		$this->courses();
+	}
+
+	public function courses(){
+
+		$courses = array();
+		$return_results = array();
+
+		foreach( $this->data as $d ){
+
+			if( isset($d['context']['contextActivities']['grouping']) &&
+				$d['context']['contextActivities']['grouping']['type'] == 'http://adlnet.gov/expapi/activities/course' ){
+
+				$courses[] = $d['context']['contextActivities']['grouping']['id'];
+			}
+
+		}
+
+		$array = array_count_values( $courses );
+		arsort( $array );
+		$results = array_slice($array, 0, 4);
+
+		foreach( $results as $key => $value ){
+			$get_name = \Statement::where('context.contextActivities.grouping.id', $key)->first();
+			if( isset( $get_name['context']['contextActivities']['grouping']['definition']['name']['en-gb'] ) ){
+				$return_results[] = array('name' => $get_name['context']['contextActivities']['grouping']['definition']['name']['en-gb'],
+										  'count' => $value);
+			}else{
+				$return_results[] = array('name' => $get_name['context']['contextActivities']['grouping']['definition']['name']['en-GB'],
+										  'count' => $value);
+			}
+		}
+
+		$this->results = $return_results;
+
 	}
 
 	public function timeline(){

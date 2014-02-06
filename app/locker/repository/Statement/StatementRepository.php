@@ -10,4 +10,6 @@ interface StatementRepository {
 
 	public function filter($id, $vars, $restrict);
 
+	public function statements($id);
+
 }

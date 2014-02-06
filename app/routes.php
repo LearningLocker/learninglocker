@@ -15,7 +15,7 @@ Route::get('/', function(){
 	if( Auth::check() ){
 		//if super admin, show site dashboard, otherwise show list of LRSs can access
 		if( Auth::user()->role == 'super' ){
-			$stats = new \app\locker\data\AdminDashboard();
+			$stats = new \app\locker\data\dashboards\AdminDashboard();
 			return View::make('partials.site.dashboard', 
 									array('stats' 	   => $stats->stats, 
 										  'dash_nav'   => true,
@@ -147,7 +147,7 @@ Route::get('lrs/{id}/statements', array(
 	'uses' => 'LrsController@statements',
 ));
 Route::get('lrs/{id}/analytics/{segment?}', array(
-	'uses' => 'LrsController@analytics',
+	'uses' => 'AnalyticsController@index',
 ));
 Route::get('lrs/{id}/reporting', array(
 	'uses' => 'LrsController@reporting',
@@ -207,9 +207,9 @@ Route::put('users/{id}/add/password', array(
 |------------------------------------------------------------------
 */
 Route::get('lrs/{id}/statements/generator', 'StatementController@create');
-Route::get('lrs/{id}/statements/explorer/{extra?}', 'StatementController@explore')
+Route::get('lrs/{id}/statements/explorer/{extra?}', 'ExplorerController@explore')
 ->where(array('extra' => '.*'));
-Route::get('lrs/{id}/statements/{extra}', 'StatementController@filter')
+Route::get('lrs/{id}/statements/{extra}', 'ExplorerController@filter')
 ->where(array('extra' => '.*'));
 Route::resource('statements', 'StatementController');
 

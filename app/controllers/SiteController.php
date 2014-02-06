@@ -32,7 +32,7 @@ class SiteController extends BaseController {
 	 */
 	public function index(){
 
-		$stats = new \app\locker\data\AdminDashboard();
+		$stats = new \app\locker\data\dashboards\AdminDashboard();
 		$site  = $this->site->all();
 		return View::make('partials.site.dashboard', 
 									array('stats' 	   => $stats->stats,

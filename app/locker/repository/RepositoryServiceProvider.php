@@ -22,6 +22,10 @@ class RepositoryServiceProvider extends ServiceProvider {
 		  'Locker\Repository\Site\SiteRepository',
 		  'Locker\Repository\Site\EloquentSiteRepository'
 		);
+		$this->app->bind(
+		  'Locker\Repository\Query\QueryRepository',
+		  'Locker\Repository\Query\EloquentQueryRepository'
+		);
 	}
 
 

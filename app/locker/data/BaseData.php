@@ -11,6 +11,7 @@ class BaseData {
 	/**
 	 * getMatch is used to match mongo aggregation searches to a specific LRS.
 	 *
+	 * @param  lrs     int    The LRS id
 	 * @return array
 	 *
 	 **/
@@ -19,4 +20,3 @@ class BaseData {
 	}
 
 }
-

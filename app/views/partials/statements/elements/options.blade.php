@@ -19,12 +19,6 @@
 	</div>
 	<div class="col-xs-6 col-sm-2">
 		<div class="explore-option">
-			<span class="blue-icon"><i class="icon icon-puzzle-piece"></i></span>
-			Activities
-		</div>
-	</div>
-	<div class="col-xs-6 col-sm-2">
-		<div class="explore-option">
 			<span class="blue-icon"><i class="icon icon-group"></i></span>
 			Learners
 		</div>
@@ -35,8 +29,14 @@
 			Courses
 		</div>
 	</div>
+	<div class="col-xs-6 col-sm-2">
+		<div class="explore-option active">
+			<span class="blue-icon"><i class="icon icon-puzzle-piece"></i></span>
+			Activities
+		</div>
+	</div>
 </div>
-
+<!-- 
 <div class="selector">
 	<div class="row">
 		<div class="col-xs-12 col-sm-3">
@@ -77,4 +77,5 @@
 		</div>
 	</div>
 </div>
+-->
 <hr>

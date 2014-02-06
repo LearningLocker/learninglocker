@@ -36,18 +36,33 @@
 			</div>
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					Result total
-				</div>
-				<div class="panel-body">
-					{{ $total }}
-				</div>
-			</div>
-			<div class="panel panel-default">
-				<div class="panel-heading">
 					Timeline
 				</div>
 				<div class="panel-body">
 					@include('partials.graphs.view.single_bar')
+				</div>
+			</div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<span class="pull-right badge badge-default">{{ $total }}</span>
+					Result total
+				</div>
+				<div class="panel-body">
+					@if( isset($results) )
+						<p>The top four courses (if available) represented in this result set.</p>
+						<hr>
+						@foreach( $results as $k => $v )
+							<?php 
+								$percentage = round(($v['count'] / $total)*100, 1);
+							?>
+							<div class="clearfix" style="margin-bottom:10px;">
+								<span class="explorerChart easyPieChart pull-left" data-percent="{{ $percentage }}"></span>
+								<div style="margin-left:96px;padding-top:20px">
+									<span class="label label-default">{{ $percentage }}%</span> {{ $v['name'] }}
+								</div>
+							</div>
+						@endforeach
+					@endif
 				</div>
 			</div>
 		</div>
@@ -65,4 +80,5 @@
 	@parent
 	@include('partials.graphs.js.morris')
 	@include('partials.graphs.data.single_bar')
+	@include('partials.graphs.js.easypiechart')
 @stop

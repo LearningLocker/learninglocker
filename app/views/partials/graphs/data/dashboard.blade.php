@@ -17,7 +17,7 @@
 		$.each(details , function(i, val) {
 			category_data.push(jQuery.parseJSON( val ));
 		});
-
+		
 		Morris.Line({
 			element: 'dashboard',
 			data: category_data,

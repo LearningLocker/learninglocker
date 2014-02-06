@@ -45,8 +45,7 @@ class EloquentSiteRepository implements SiteRepository {
 		$site->description = $data['description'];
 		$site->email       = $data['email'];
 		$site->lang        = $data['lang'];
-		if( isset($data['create_lrs']) )
-			$site->create_lrs  = array_merge(array('super'), $data['create_lrs']);
+		$site->create_lrs  = $data['create_lrs'];
 		$site->api         = $data['api'];
 		$site->registration = $data['registration'];
 		$site->claim       = $data['claim']; //can learners claim statements?

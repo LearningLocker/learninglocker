@@ -12,8 +12,6 @@ interface LrsRepository {
 
 	public function delete($id);
 
-	public function statements($id);
-
 	public function removeUser($id, $user);
 
 }

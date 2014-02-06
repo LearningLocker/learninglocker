@@ -165,6 +165,19 @@ class EloquentStatementRepository implements StatementRepository {
 	}
 
 	/*
+	|-----------------------------------------------------------------------
+	| Return statement with no filter
+	|------------------------------------------------------------------------
+	*/
+	public function statements( $id ){
+
+		return \Statement::where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id)
+		->orderBy('created_at', 'desc')
+		->paginate(15);
+
+	}
+
+	/*
 	|----------------------------------------------------------------------
 	| Filter statements via our filtering options. 
 	|
@@ -175,7 +188,7 @@ class EloquentStatementRepository implements StatementRepository {
 	| for the graph.
 	|----------------------------------------------------------------------
 	*/
-	public function filter( $id, $vars, $restrict='' ){
+	public function filter( $id, $vars='', $restrict='' ){
 
 		$filter = array();
 		$data   = '';
@@ -197,7 +210,7 @@ class EloquentStatementRepository implements StatementRepository {
 		//$query->remember(5);
 		$statements = $query->paginate(18);
 
-		
+		//@todo replace this using Mongo aggregation - no need to grab everything and loop through it.
 		$query = \Statement::where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id);
 		$this->setRestriction( $restrict, $query );
 		if( !empty($filter) ){

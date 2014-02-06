@@ -1,23 +1,40 @@
 <?php
 
 use Locker\Repository\Lrs\LrsRepository as Lrs;
+use Locker\Repository\Statement\StatementRepository as Statement;
+use Locker\Data\Analytics\AnalyticsInterface;
 
 class LrsController extends BaseController {
 
 	/**
-	* Lrs
+	* Lrs 
 	*/
 	protected $lrs;
+
+	/**
+	* Analytics
+	*/
+	protected $analytics;
+
+	/**
+	 * Statements
+	 **/
+	protected $statements;
 
 
 	/**
 	 * Construct
 	 *
-	 * @param Lrs $lrs
+	 * @param Locker\Repository\Lrs\LrsRepository
+	 * @param Locker\Data\AnalyticsInterface
+	 * @param Locker\Repository\StatementRepository
+	 *
 	 */
-	public function __construct(Lrs $lrs){
+	public function __construct(Lrs $lrs, AnalyticsInterface $analytics, Statement $statement){
 
-		$this->lrs = $lrs;
+		$this->lrs       = $lrs;
+		$this->analytics = $analytics;
+		$this->statement = $statement;
 
 		$this->beforeFilter('auth');
 		$this->beforeFilter('csrf', array('on' => array('store', 'update')));
@@ -109,9 +126,10 @@ class LrsController extends BaseController {
 	 * @return View
 	 */
 	public function show( $id ){
+
 		$lrs 	  = $this->lrs->find( $id );
 		$lrs_list = $this->lrs->all();
-		$stats    = new \app\locker\data\LrsDashboard( $id );
+		$stats    = new \app\locker\data\dashboards\LrsDashboard( $id );
 		return View::make('partials.lrs.dashboard', array('stats'    => $stats->stats, 
 														  'lrs'      => $lrs, 
 														  'list'     => $lrs_list, 
@@ -138,7 +156,7 @@ class LrsController extends BaseController {
 	 */
 	public function statements( $id ){
 
-		$statements = $this->lrs->statements( $id );
+		$statements = $this->statement->statements($id);
 		$lrs        = $this->lrs->find( $id );
 		$lrs_list   = $this->lrs->all();
 		return View::make('partials.statements.list', 
@@ -146,23 +164,6 @@ class LrsController extends BaseController {
 										  'lrs'           => $lrs,
 										  'list'          => $lrs_list,
 										  'statement_nav' => true));
-
-	}
-
-	/**
-	 * Display the analytics view.
-	 *
-	 * @return View
-	 */
-	public function analytics( $id, $segment='verbCloud' ){
-
-		$lrs 	  = $this->lrs->find( $id );
-		$lrs_list = $this->lrs->all();
-		$data     = new \app\locker\data\Analytics( $id, $segment, Input::all() );
-		return View::make('partials.lrs.analytics', array('lrs'           => $lrs,
-														  'data'		  => $data->results,
-														  'analytics_nav' => true,
-														  'list'          => $lrs_list));
 
 	}
 
@@ -175,8 +176,7 @@ class LrsController extends BaseController {
 
 		$lrs 	  = $this->lrs->find( $id );
 		$lrs_list = $this->lrs->all();
-		//$data     = new \app\locker\data\Reporting( $id, Input::all() );
-		return View::make('partials.lrs.reporting', array('lrs'           => $lrs, 
+		return View::make('partials.reporting.index', array('lrs'           => $lrs, 
 														  'reporting_nav' => true,
 														  'list'          => $lrs_list));
 
