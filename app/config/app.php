@@ -107,6 +107,8 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'Locker\Repository\RepositoryServiceProvider',
+		'Locker\Data\DataServiceProvider',
+		'Locker\Graphing\GraphServiceProvider',
 		'Jenssegers\Mongodb\Auth\ReminderServiceProvider',
 		'Jenssegers\Mongodb\MongodbServiceProvider',
 		'DaveJamesMiller\Breadcrumbs\ServiceProvider',
