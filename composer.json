@@ -17,7 +17,7 @@
 			"app/database/seeds",
 			"app/tests/TestCase.php",
 			"app/locker",
-			""app/locker/helpers",
+			"app/locker/helpers",
 			"app/locker/data",
 			"app/locker/graphing",
 			"app/locker/explorer",
