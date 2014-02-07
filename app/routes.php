@@ -251,7 +251,18 @@ Route::get('about', array(function(){
 
 Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), function(){
 
+	Config::set('api.using_version', '1.0.1');
+
+	Route::get('/', function() {
+        return Response::json( array('version'=>Config::get('api.using_version')));
+    });
+
 	//statement resource (post, put, get, delete) route
+	Route::get('statements/actor/{json}', 'Controllers\API\StatementsController@index');
+	Route::get('statements/verb/{iri}', 'Controllers\API\StatementsController@index')
+	->where(array('iri' => '.*'));
+	Route::get('statements/activity/{iri}', 'Controllers\API\StatementsController@index')
+	->where(array('iri' => '.*'));
 	Route::resource('statements', 'Controllers\API\StatementsController');
 
 });

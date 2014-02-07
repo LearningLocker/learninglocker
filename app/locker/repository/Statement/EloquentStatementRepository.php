@@ -4,9 +4,54 @@ use Statement;
 
 class EloquentStatementRepository implements StatementRepository {
 
-	public function all(){ }
+	/**
+	 * Return a list of statements ordered by stored desc
+	 *
+	 * Don't return voided statements, these are requested 
+	 * in a different call.
+	 *
+	 **/
+	public function all( $id, $parameters ){ 
 
-	public function find( $id ){ }
+		$statements = \Statement::where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id);
+		$statements->where( 'verb.id', '<>', 'http://adlnet.gov/expapi/verbs/voided');
+		
+		if( $parameters['verb'] != '' ){
+			$statements->where( 'verb.id', $parameters['verb'] );
+		}
+
+		if( $parameters['activity'] != '' ){
+			$statements->where( 'object.id', $parameters['activity']);
+		}
+
+		if( $parameters['limit'] != '' ){
+			$statements->take( $parameters['limit'] );
+		}else{
+			$statements->take(2);
+		}
+			   
+		if( $parameters['offset'] != 0 ){
+			$statements->skip( $parameters['offset'] );
+		}
+
+		if( $parameters['ascending'] ){
+			$statements->orderBy('stored', 'asc');
+		}else{
+			$statements->orderBy('stored', 'desc');
+		}
+
+		return $statements->get();
+
+	}
+
+	/**
+	 * Find a statement based on statementID
+	 * 
+	 * @return response
+	 **/
+	public function find( $id ){ 
+		return \Statement::where('id', $id)->first();
+	}
 
 	/*
 	|-----------------------------------------------------------------------
@@ -113,16 +158,6 @@ class EloquentStatementRepository implements StatementRepository {
 		return array( 'success' => false, 
 					  'message' => $new_statement->errors );
 
-	}
-
-
-	/*
-	|-------------------------------------------------------------------------------
-	| Each verb has a category in Learning Locker. Grab the category.
-	|-------------------------------------------------------------------------------
-	*/
-	private function getCategory( $verb ){
-		return \app\locker\helpers\Helpers::getVerbCategory( $verb );
 	}
 
 
@@ -258,11 +293,11 @@ class EloquentStatementRepository implements StatementRepository {
 				case 'comments':
 					return $query->where( 'object.definition.type', 'http://activitystrea.ms/schema/1.0/comment' );
 				case 'badges':
-					return $query->where( 'object.definition.type', 'http://activitystrea.ms/schema/1.0/comment' );
+					return $query->where( 'object.definition.type', 'http://activitystrea.ms/schema/1.0/badge' );
 				case 'results':
-					return $query->where( 'object.definition.type', 'http://activitystrea.ms/schema/1.0/comment' );
+					return $query->where( '', '' );
 				case 'courses':
-					return $query->where( 'object.definition.type', 'http://activitystrea.ms/schema/1.0/comment' );
+					return $query->where( 'object.definition.type', 'http://activitystrea.ms/schema/1.0/course' );
 				default:
 					return $query->where( 'object.definition.type', 'http://activitystrea.ms/schema/1.0/comment' );
 			}

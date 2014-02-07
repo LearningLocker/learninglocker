@@ -56,6 +56,10 @@ class ExplorerController extends BaseController {
 	/**
 	 * Display the specified resource.
 	 *
+	 * @todo figure out how to use \Route::getCurrentRoute()->parameters() 
+	 * instead of the hack below. The problem is exploding extra - it
+	 * also explodes any urls passed.
+	 * 
 	 * @param  int  $id
 	 * @return Response
 	 */

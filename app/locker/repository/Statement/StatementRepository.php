@@ -2,7 +2,7 @@
 
 interface StatementRepository {
 
-	public function all();
+	public function all($id,$parameters);
 
 	public function find($id);
 

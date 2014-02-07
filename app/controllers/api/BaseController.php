@@ -13,7 +13,7 @@ class BaseController extends Controller {
         );
 
 
-        $json['url_params'] = \Route::getCurrentRoute()->getParameters();
+        $json['url_params'] = \Route::getCurrentRoute()->parameters();
 
         $params = \Input::all();
 
@@ -39,8 +39,7 @@ class BaseController extends Controller {
 
 
         return \Response::json( $json );
-        //
-        return json_encode($json);
+        
     }
 
 	/**
@@ -60,6 +59,12 @@ class BaseController extends Controller {
 
 	protected function returnModel($model){
 		return $this->returnJSON( $model->toArray() );
+	}
+
+	protected function returnSuccessError( $success, $message, $code ){
+		return \Response::json( array( 'success'  => $success, 
+									   'message'  => $message), 
+										$code );
 	}
 
 }
