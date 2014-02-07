@@ -251,10 +251,8 @@ Route::get('about', array(function(){
 
 Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), function(){
 
-	//incoming xAPI statements
-	Route::post('statements', array( 
-		'uses'   => 'Controllers\API\StatementsController@store'
-	));
+	//statement resource (post, put, get, delete) route
+	Route::resource('statements', 'Controllers\API\StatementsController');
 
 });
 
