@@ -54,7 +54,6 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
 		switch( $segment ){
 			case 'verbs':
 				$this->verbCloud();
-				$this->verbChart();
 				break;
 			case 'badges':
 				$this->results['badges'] = $this->getObjectType( 'http://activitystrea.ms/schema/1.0/badge' );
@@ -78,7 +77,6 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
 				break;
 			default:
 				$this->verbCloud();
-				$this->verbChart();
 		}			
 
 	}
@@ -124,32 +122,6 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
     	$this->results['verbs']['total'] = \Statement::where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $this->lrs)
     									   ->remember(5)
     									   ->count();
-
-    }
-
-    /**
-	 * A simple verb cloud
-	 *
-	 * @todo move this query to the query class
-	 *
-	 **/
-	public function verbChart(){
-    	
-    	$statements = $this->db->statements->aggregate(
-							array('$group' => array('_id'   => array('$dayOfYear' => '$created_at'),
-													'count' => array('$sum' => 1),
-													'date'  => array('$addToSet' => '$stored'),
-													'actor' => array('$addToSet' => '$actor'))),
-							array('$sort'    => array('_id' => 1)),
-							array('$project' => array('count' => 1, 'date' => 1, 'actor' => 1))
-						);
-    	
-		//set statements for graphing
-		if( $this->graph_it ){
-			$this->data = $this->graphs->morrisLineGraph( $statements['result'] );
-		}else{
-			$this->data = $statements['result'];
-		}
 
     }
 
