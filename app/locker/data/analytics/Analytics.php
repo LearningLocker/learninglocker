@@ -143,9 +143,7 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
 							array('$sort'    => array('_id' => 1)),
 							array('$project' => array('count' => 1, 'date' => 1, 'actor' => 1))
 						);
-
-    	var_dump( $statements['result'] );exit;
-
+    	
 		//set statements for graphing
 		if( $this->graph_it ){
 			$this->data = $this->graphs->morrisLineGraph( $statements['result'] );

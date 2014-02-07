@@ -6,31 +6,31 @@
 		</div>
 	</div>
 	<div class="col-xs-6 col-sm-2">
-		<div class="explore-option">
+		<div class="explore-option disable">
 			<span class="blue-icon"><i class="icon icon-bar-chart"></i></span>
 			Results
 		</div>
 	</div>
 	<div class="col-xs-6 col-sm-2">
-		<div class="explore-option">
+		<div class="explore-option disable">
 			<span class="blue-icon"><i class="icon icon-shield"></i></span>
 			Badges
 		</div>
 	</div>
 	<div class="col-xs-6 col-sm-2">
-		<div class="explore-option">
+		<div class="explore-option disable">
 			<span class="blue-icon"><i class="icon icon-group"></i></span>
 			Learners
 		</div>
 	</div>
 	<div class="col-xs-6 col-sm-2">
-		<div class="explore-option">
+		<div class="explore-option disable">
 			<span class="blue-icon"><i class="icon icon-book"></i></span>
 			Courses
 		</div>
 	</div>
 	<div class="col-xs-6 col-sm-2">
-		<div class="explore-option active">
+		<div class="explore-option disable">
 			<span class="blue-icon"><i class="icon icon-puzzle-piece"></i></span>
 			Activities
 		</div>
