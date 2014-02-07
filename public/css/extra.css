@@ -175,6 +175,11 @@ background-color: #354b59;
 border-color: #354b59;
 }
 
+.label-verb {
+	background-color:#90BEE4;
+	color:#222;
+}
+
 /* Page Wrap 
 ----------------------------------------------------------*/
 
@@ -375,7 +380,14 @@ border-color: #354b59;
 
 .explore-option:hover, .explore-option.active {
 	background:#f1f1f1;
-	cursor:pointer;
+}
+
+.explore-option.disable {
+	background:#fff;
+}
+
+.explore-option.disable:hover {
+	background:#f9f9f9;
 }
 
 .explore-option span {
@@ -406,6 +418,36 @@ border-color: #354b59;
 }
 .explore-option .blue-icon {
 	color:#36d0ff;
+}
+
+/* Badges
+--------------------------------------------------------------*/
+
+.badge-assertion{
+	display: none;
+}
+
+.badge-container{
+	border: 1px solid #F1f1f1;
+	width: 400px;
+	margin: 5px;
+	padding: 10px;
+	float: left;
+	min-height:140px;
+}
+
+.badge-container img{
+	float: left;
+	width: 90px;
+}
+
+
+.badge-container .badge-info{
+	margin: 0 0 0 110px;
+}
+
+.badge-container .badge-title{
+	margin-top: 5px;
 }
 
 /* Bordered box - could replace with Bootstrap panels 
@@ -538,6 +580,7 @@ border-color: #354b59;
 
 .easyPieChart {
     position: relative;
+    text-align:center;
 }
 .verb-graph {
 	padding:5px 0 15px 0;
