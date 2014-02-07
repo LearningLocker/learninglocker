@@ -109,8 +109,8 @@ return array(
 		'Locker\Repository\RepositoryServiceProvider',
 		'Locker\Data\DataServiceProvider',
 		'Locker\Graphing\GraphServiceProvider',
-		'Jenssegers\Mongodb\Auth\ReminderServiceProvider',
 		'Jenssegers\Mongodb\MongodbServiceProvider',
+		'Jenssegers\Mongodb\Auth\ReminderServiceProvider',
 		'DaveJamesMiller\Breadcrumbs\ServiceProvider'
 
 	),
