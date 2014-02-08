@@ -253,7 +253,7 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
 
 	Config::set('xapi.using_version', '1.0.1');
 
-	Route::get('/', function() {
+	Route::get('/about', function() {
         return Response::json( array('X-Experience-API-Version'=>Config::get('xapi.using_version')));
     });
 
