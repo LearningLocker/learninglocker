@@ -44,7 +44,7 @@ return array(
     'statement_total'  => 'Statement total',
     'learner_number'   => 'Learner number',
     'activity_sources' => 'Activity sources',
-    'api_calls'  	   => 'API calls',
+    'xapi_calls'  	   => 'xAPI calls (retrival)',
 
     'create_lrs'   => 'Who can create new LRSs?',
     'api_status'   => 'API Status',

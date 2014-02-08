@@ -40,7 +40,7 @@
 		<div class="col-xs-12 col-sm-4 col-lg-4">
 			<div class="bordered stats-box">
 				<span>0</span>
-				{{ Lang::get('site.api_calls') }}
+				{{ Lang::get('site.xapi_calls') }}
 			</div>
 		</div>
 	</div>
