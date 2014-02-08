@@ -5,40 +5,38 @@ use Statement;
 class EloquentStatementRepository implements StatementRepository {
 
 	/**
+	* Statement
+	*/
+	protected $statement;
+
+	/**
+	 * Construct
+	 *
+	 * @param Statement $statement
+	 */
+	public function __construct( Statement $statement ){
+
+		$this->statement = $statement;
+
+	}
+
+	/**
 	 * Return a list of statements ordered by stored desc
 	 *
 	 * Don't return voided statements, these are requested 
 	 * in a different call.
 	 *
+	 * @param $id int The LRS in question.
+	 * @param $parameters array Any parameters for filtering
+	 *
+	 * @return statement objects
+	 *
 	 **/
 	public function all( $id, $parameters ){ 
 
-		$statements = \Statement::where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id);
-		$statements->where( 'verb.id', '<>', 'http://adlnet.gov/expapi/verbs/voided');
-		
-		if( $parameters['verb'] != '' ){
-			$statements->where( 'verb.id', $parameters['verb'] );
-		}
+		$statements = $this->statement->where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id);
 
-		if( $parameters['activity'] != '' ){
-			$statements->where( 'object.id', $parameters['activity']);
-		}
-
-		if( $parameters['limit'] != '' ){
-			$statements->take( $parameters['limit'] );
-		}else{
-			$statements->take(2);
-		}
-			   
-		if( $parameters['offset'] != 0 ){
-			$statements->skip( $parameters['offset'] );
-		}
-
-		if( $parameters['ascending'] ){
-			$statements->orderBy('stored', 'asc');
-		}else{
-			$statements->orderBy('stored', 'desc');
-		}
+		$this->addParameters( $statements, $parameters );
 
 		return $statements->get();
 
@@ -49,8 +47,10 @@ class EloquentStatementRepository implements StatementRepository {
 	 * 
 	 * @return response
 	 **/
-	public function find( $id ){ 
+	public function find( $id ){
+
 		return \Statement::where('id', $id)->first();
+
 	}
 
 	/*
@@ -147,7 +147,7 @@ class EloquentStatementRepository implements StatementRepository {
 		| Create a new statement object
 		|-------------------------------------------------------------------------------
 		*/
-		$new_statement = new Statement;
+		$new_statement = $this->statement;
 		$new_statement->fill( $vs );
 
 		if( $new_statement->save() ){
@@ -163,7 +163,7 @@ class EloquentStatementRepository implements StatementRepository {
 
 	/*
 	|-------------------------------------------------------------------------------
-	| Save object type activity for reference. 
+	| Save object type activity for reference. If exists, return saved version.
 	|-------------------------------------------------------------------------------
 	*/
 	private function saveActivity( $activity_id, $activity_def ){
@@ -206,7 +206,7 @@ class EloquentStatementRepository implements StatementRepository {
 	*/
 	public function statements( $id ){
 
-		return \Statement::where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id)
+		return $this->statement->where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id)
 		->orderBy('created_at', 'desc')
 		->paginate(15);
 
@@ -231,12 +231,12 @@ class EloquentStatementRepository implements StatementRepository {
 		//create key / value array for wheres from $vars sent over
 		if( isset($vars) && !empty($vars) ){
 			while (count($vars)) {
-	    		list($key,$value) = array_splice($vars, 0, 2);
-	    		$filter[$key] = $value;
+				list($key,$value) = array_splice($vars, 0, 2);
+				$filter[$key] = $value;
 			}
 		}
 
-		$query = \Statement::where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id);
+		$query = $this->statement->where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id);
 		$this->setRestriction( $restrict, $query );
 		if( !empty($filter) ){
 			$this->setWhere( $filter, $query );
@@ -246,7 +246,7 @@ class EloquentStatementRepository implements StatementRepository {
 		$statements = $query->paginate(18);
 
 		//@todo replace this using Mongo aggregation - no need to grab everything and loop through it.
-		$query = \Statement::where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id);
+		$query = $this->statement->where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id);
 		$this->setRestriction( $restrict, $query );
 		if( !empty($filter) ){
 			$this->setWhere( $filter, $query );
@@ -263,7 +263,8 @@ class EloquentStatementRepository implements StatementRepository {
 	/*
 	|----------------------------------------------------------------------
 	|
-	| Loop through passed parameters and add to DB query.
+	| Loop through passed parameters and add to DB query. Used when 
+	| filtering statements on the site.
 	|
 	| @todo only decode on urls not everything
 	|
@@ -305,6 +306,13 @@ class EloquentStatementRepository implements StatementRepository {
 
 	}
 
+	/*
+	|----------------------------------------------------------------------
+	|
+	| A look up service to grab xAPI key based on url key.
+	|
+	|----------------------------------------------------------------------
+	*/
 	private function filterKeyLookUp( $key ){
 		switch( $key ){
 			case 'actor':
@@ -318,6 +326,86 @@ class EloquentStatementRepository implements StatementRepository {
 			case 'activity':
 				return 'object.id';
 		}
+	}
+
+	/*
+	|----------------------------------------------------------------------
+	|
+	| Add parameters to statements query. This is used via xAPI GET 
+	| statements.
+	| 
+	| These allowed parameters are detemined by the xAPI spec see
+	| https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#stmtapi
+	|
+	| @param $statement The statement query
+	| @parameters The parameters to add
+	|
+	|----------------------------------------------------------------------
+	*/
+
+	private function addParameters( $statements, $parameters ){
+
+		if( isset($parameters['actor']) ){
+			$statements->where( 'actor.mbox', $parameters['actor'] );
+		}
+		
+		//set verb, if none passed ust make sure no voided statements are sent
+		if( isset($parameters['verb']) ){
+			$statements->Where( 'verb.id', $parameters['verb'] );
+		}else{
+			$statements->where( 'verb.id', '<>', 'http://adlnet.gov/expapi/verbs/voided');
+		}
+
+		if( isset($parameters['registration']) ){
+			$statements->where( 'context.registration', $parameters['registration'] );
+		}
+
+		if( isset($parameters['activity']) ){
+			$statements->where( 'object.id', $parameters['activity']);
+		}
+
+		//since, until or between
+		if( isset($parameters['until']) && isset($parameter['since']) ){
+
+			$statements->whereBetween('timestamp', array($parameter['since'], $parameters['until']));
+
+		}elseif( isset($parameter['since']) ){
+
+			$statements->where( 'timestamp', '>', $parameter['since'] );
+
+		}elseif( isset($parameter['since']) ){
+
+			$statements->where( 'timestamp', '<', $parameter['until'] );
+
+		}
+
+		//@todo related_activities
+
+		//@todo related_agents
+
+		//@todo format
+
+		//@todo attachments
+
+
+		if( isset( $parameters['limit'] ) ){
+			$statements->take( $parameters['limit'] );
+		}else{
+			$statements->take(10);
+		}
+			   
+		if( isset( $parameters['offset'] ) ){
+			$statements->skip( $parameters['offset'] );
+		}
+
+		if( isset( $parameters['ascending'] ) ){
+			$statements->orderBy('stored', 'asc');
+		}else{
+			$statements->orderBy('stored', 'desc');
+		}
+
+		return $statements;
+
 	}
 
 }

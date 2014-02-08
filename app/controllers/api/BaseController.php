@@ -1,4 +1,4 @@
-<?php namespace Controllers\API;
+<?php namespace Controllers\xAPI;
 
 use Illuminate\Routing\Controller;
 

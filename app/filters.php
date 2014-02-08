@@ -49,7 +49,7 @@ Route::filter('auth.basic', function()
 | Submit statement via basic http authentication
 |--------------------------------------------------------------------------
 |
-| Login in once using key / secret to allow saving a statement.
+| Login in once using key / secret to store statements or retrieve statements.
 |
 */
 

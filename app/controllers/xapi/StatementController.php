@@ -1,4 +1,4 @@
-<?php namespace Controllers\API;
+<?php namespace Controllers\xAPI;
 
 use \Locker\Repository\Statement\StatementRepository as Statement;
 
@@ -17,13 +17,13 @@ class StatementsController extends BaseController {
 	/**
 	 * Filter parameters
 	 **/
-	protected $parameters;
+	protected $params;
 
 
 	/**
 	 * Construct
 	 *
-	 * @param Statement $statement
+	 * @param StatementRepository $statement
 	 */
 	public function __construct(Statement $statement){
 
@@ -74,7 +74,8 @@ class StatementsController extends BaseController {
      */
 	public function index(){
 
-		return $this->returnJSON( $this->statement->all( $this->lrs->_id, $this->parameters )->toArray() );
+		$statements = $this->statement->all( $this->lrs->_id, $this->params );
+		return $this->returnArray( $statements->toArray(), $this->params );
 
 	}
 
@@ -89,7 +90,7 @@ class StatementsController extends BaseController {
 		$statement = $this->statement->find($id);
 		
 		if( $this->checkAccess( $statement ) ){
-        	return $this->returnJSON( $statement->toArray() );
+        	return $this->returnArray( $statement->toArray() );
         }else{
         	return $this->returnSuccessError( false, 'You are not authorized to access this statement.', 403 );
         }
@@ -105,7 +106,7 @@ class StatementsController extends BaseController {
 		$version = \Request::header('X-Experience-API-Version');
 
 		if( !isset($version) || ( $version < '1.0.0' || $version > '1.0.9' ) && $version != '1.0' ){
-			return $this->returnSuccessError( true, 'This statement is not the correct version of xAPI.', '400' );
+			return $this->returnSuccessError( true, 'This is not an accepted version of xAPI.', '400' );
 		}
 
 	}
@@ -146,33 +147,7 @@ class StatementsController extends BaseController {
 
 	public function setParameters(){
 
-		$actor				= \Input::get('actor') ? \Input::get('actor') : '';
-		$verb				= \Input::get('verb') ? \Input::get('verb') : '';
-		$activity			= \Input::get('activity') ? \Input::get('activity') : '';
-		$limit              = \Input::get('limit') ? \Input::get('limit') : '';
-		$offset             = \Input::get('offset') ? \Input::get('offset') : 0;
-		$registration       = \Input::get('registration') ? \Input::get('registration') : '';
-		$related_activities = \Input::get('related_activities') ? \Input::get('related_activities') : false;
-		$related_agents     = \Input::get('related_agents') ? \Input::get('related_agents') : false;
-		$since              = \Input::get('since') ? \Input::get('since') : '';
-		$until              = \Input::get('until') ? \Input::get('until') : '';
-		$format             = \Input::get('format') ? \Input::get('format') : '';
-		$attachments        = \Input::get('attachments') ? \Input::get('attachments') : false;
-		$ascending          = \Input::get('ascending') ? \Input::get('ascending') : false;
-
-		$this->parameters = array('limit'            => $limit,
-								'offset'             => $offset,
-								'registration'       => $registration,
-								'related_activities' => $related_activities,
-								'related_agents'     => $related_agents,
-								'since'              => $since,
-								'until'              => $until,
-								'format'             => $format,
-								'attachments'        => $attachments,
-								'ascending'          => $ascending,
-								'verb'				 => $verb,
-								'activity'			 => $activity,
-								'actor'				 => $actor);
+		$this->params = \Request::all();
 
 	}
 

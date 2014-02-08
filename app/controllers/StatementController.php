@@ -18,7 +18,7 @@ class StatementController extends BaseController {
 	/**
 	 * Construct
 	 *
-	 * @param Statement $statement
+	 * @param StatementRepository $statement
 	 */
 	public function __construct( Statement $statement, Lrs $lrs ){
 
