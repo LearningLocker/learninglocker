@@ -254,17 +254,29 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
 	Config::set('xapi.using_version', '1.0.1');
 
 	Route::get('/', function() {
-        return Response::json( array('version'=>Config::get('api.using_version')));
+        return Response::json( array('X-Experience-API-Version'=>Config::get('xapi.using_version')));
     });
 
 	//statement resource (post, put, get, delete) route
 	Route::resource('statements', 'Controllers\xAPI\StatementsController');
 
+	//Agent API profile resource
+	Route::resource('agents/profile', 'Controllers\xAPI\AgentController');
+	Route::get('agents', 'Controllers\xAPI\AgentController@index');
+
+	//Activiy API profile resource
+	Route::resource('activities/profile', 'Controllers\xAPI\ActivityController');
+	Route::get('activities', 'Controllers\xAPI\ActivityController@index');
+
+	//State API
+	Route::resource('activities/state', 'Controllers\xAPI\StateController');
+	
+
 });
 
 /*
 |------------------------------------------------------------------
-| RESTful API
+| Learning Locker RESTful API
 |------------------------------------------------------------------
 */
 
