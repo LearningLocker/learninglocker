@@ -258,11 +258,6 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
     });
 
 	//statement resource (post, put, get, delete) route
-	Route::get('statements/actor/{json}', 'Controllers\xAPI\StatementsController@index');
-	Route::get('statements/verb/{iri}', 'Controllers\xAPI\StatementsController@index')
-	->where(array('iri' => '.*'));
-	Route::get('statements/activity/{iri}', 'Controllers\xAPI\StatementsController@index')
-	->where(array('iri' => '.*'));
 	Route::resource('statements', 'Controllers\xAPI\StatementsController');
 
 });
