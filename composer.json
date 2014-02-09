@@ -1,19 +1,8 @@
 {
-	"authors": [
-    {
-      "name": "Dave Tosh",
-      "email": "davidgtosh@gmail.com",
-      "role": "Developer"
-    },
-    {
-      "name": "HT2",
-      "email": "hello@ht2.co.uk",
-      "role": "sponsor"
-    }
-    ],
-    "name": "learninglocker/learninglocker",
-    "description": "The open source learning record store.",
-    "keywords": ["lrs", "laravel"],
+	"name": "laravel/laravel",
+	"description": "The Laravel Framework.",
+	"keywords": ["framework", "laravel"],
+	"license": "MIT",
 	"require": {
 		"laravel/framework": "4.1.*",
 		"jenssegers/mongodb": "*",
