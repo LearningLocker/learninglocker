@@ -1,6 +1,25 @@
 <?php namespace Controllers\xAPI;
 
+use \Locker\Repository\Document\DocumentRepository as Document;
+
 class AgentController extends BaseController {
+
+	/**
+	* Document Repository
+	*/
+	protected $document;
+
+	/**
+	 * Construct
+	 *
+	 * @param DocumentRepository $document
+	 */
+	public function __construct(Document $document){
+
+		$this->document = $document;
+		$this->beforeFilter('@getLrs');
+
+	}
 
 	/**
 	 * Display a listing of the resource.

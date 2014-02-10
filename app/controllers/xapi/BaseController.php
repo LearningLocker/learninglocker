@@ -4,6 +4,16 @@ use Illuminate\Routing\Controller;
 
 class BaseController extends Controller {
 
+	/**
+	 * Current LRS based on Auth credentials
+	 **/
+	protected $lrs;
+
+	/**
+	 * Filter parameters
+	 **/
+	protected $params;
+
     /**
      * Check request header for correct xAPI version
      **/
@@ -38,9 +48,7 @@ class BaseController extends Controller {
      *
      */
     public function setParameters(){
-
         $this->params = \Request::all();
-
     }
 
     /**
@@ -54,6 +62,40 @@ class BaseController extends Controller {
 		return \Response::json( array( 'success'  => $success, 
 									   'message'  => $message), 
 										$code );
+	}
+
+	/**
+	 * Validate top level document API keys
+	 *
+	 * @param $data Array
+	 *
+	 * @todo rework this once we 100% confirm approach and 
+	 * add in updated - validate as timestamp
+	 *
+	 **/
+	public function validate( $data ){
+
+		//required keys
+		$required = array('id', 'contents');
+
+		//check top level keys
+		if( !array_key_exists('id', $data) 
+			|| !array_key_exists('contents', $data)){
+			return false;
+		}
+
+		//check document id is string
+		if( !is_string( $data['id'] ) ){
+			return false;
+		}
+
+		//check contents is array
+		if( !is_array( $data['contents'] ) ){
+			return false;
+		}
+
+		return true;
+
 	}
 
 }

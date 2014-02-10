@@ -1,6 +1,25 @@
 <?php namespace Controllers\xAPI;
 
+use \Locker\Repository\Document\DocumentRepository as Document;
+
 class ActivityController extends BaseController {
+
+	/**
+	* Document Repository
+	*/
+	protected $document;
+
+	/**
+	 * Construct
+	 *
+	 * @param DocumentRepository $document
+	 */
+	public function __construct(Document $document){
+
+		$this->document = $document;
+		$this->beforeFilter('@getLrs');
+
+	}
 
 	/**
 	 * Display a listing of the resource.
@@ -13,23 +32,31 @@ class ActivityController extends BaseController {
 	}
 
 	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		//
-	}
-
-	/**
 	 * Store a newly created resource in storage.
 	 *
 	 * @return Response
 	 */
-	public function store()
-	{
-		//
+	public function store(){
+		
+		$request       = \Request::instance();
+		$incoming_data = $request->getContent();
+
+		//convert to array
+		$profile = json_decode($incoming_data, TRUE);
+
+		//validate
+		if( $this->validate( $profile ) && $this->validateActivity( $profile['contents'] ) ){
+
+			$store = $this->document->store( $this->lrs->_id, $profile['id'], $profile['contents'], 'activityProfile' );
+
+			if( $store ){
+				return \Response::json( array( 'ok', 204 ) );
+			}
+
+		}
+
+		return \Response::json( array( 'error', 400 ) );
+
 	}
 
 	/**
@@ -38,20 +65,11 @@ class ActivityController extends BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show($id)
-	{
-		//
-	}
+	public function show( $activityId ){
 
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		//
+		$document = $this->document->find( $this->lrs->_id, $activityId );
+
+        return \Response::json( $document->toArray() );
 	}
 
 	/**
@@ -75,5 +93,33 @@ class ActivityController extends BaseController {
 	{
 		//
 	}
+
+	/**
+	 * 
+	 * @param $data Array Data Specific Activity data to store.
+	 *
+	 **/
+	public function validateActivity( $data ){
+
+		//now check required keys exist
+		if( !array_key_exists('activityId', $data) 
+			|| !array_key_exists('profileId', $data) ){
+			return false;
+		}
+
+		//check activityId is string
+		if( !is_string( $data['activityId'] ) ){
+			return false;
+		}
+
+		//check profileId is string
+		if( !is_string( $data['profileId'] ) ){
+			return false;
+		}
+
+		return true;
+
+	}
+
 
 }
