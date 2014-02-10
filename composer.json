@@ -8,6 +8,9 @@
 		"jenssegers/mongodb": "*",
 		"davejamesmiller/laravel-breadcrumbs": "~2.1.0"
 	},
+	"require-dev": {
+		"way/generators": "dev-master"
+	},
 	"autoload": {
 		"classmap": [
 			"app/commands",
