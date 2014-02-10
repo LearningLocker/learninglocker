@@ -17,7 +17,8 @@
 	"require": {
 		"laravel/framework": "4.1.*",
 		"jenssegers/mongodb": "*",
-		"davejamesmiller/laravel-breadcrumbs": "~2.1.0"
+		"davejamesmiller/laravel-breadcrumbs": "~2.1.0",
+		"way/generators": "dev-master"
 	},
 	"autoload": {
 		"classmap": [

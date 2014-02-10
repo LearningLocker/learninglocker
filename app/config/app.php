@@ -110,7 +110,8 @@ return array(
 		'Locker\Data\DataServiceProvider',
 		'Locker\Graphing\GraphServiceProvider',
 		'Jenssegers\Mongodb\MongodbServiceProvider',
-		'DaveJamesMiller\Breadcrumbs\ServiceProvider'
+		'DaveJamesMiller\Breadcrumbs\ServiceProvider',
+		'Way\Generators\GeneratorsServiceProvider'
 
 	),
 
