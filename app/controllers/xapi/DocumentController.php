@@ -41,19 +41,23 @@ class DocumentController extends BaseController {
 			}
 
 			if( !empty($expected_types) ){
-				$this->checkTypes( $name, $data[$name], $expected_types );
-			}
+				$value = $this->checkTypes( $name, $data[$name], $expected_types );
+			} else {
+        $value = $data[$name];
+      }
 
-			$return_data[$name] = $data[$name];
+			$return_data[$name] = $value;
 		}
 
-    foreach( $optional as $name=>$expected_types ){
+    foreach( $optional as $name=>&$expected_types ){
       if( isset($data[$name]) ){
         if( !empty($expected_types) ){
-          $this->checkTypes( $name, $data[$name], $expected_types );
+          $value = $this->checkTypes( $name, $data[$name], $expected_types );
+        } else {
+          $value = $data[$name];
         }
         
-        $return_data[$name] = $data[$name];
+        $return_data[$name] = $value;
       }
     }
 
@@ -61,23 +65,27 @@ class DocumentController extends BaseController {
 	}
 
   public function checkTypes($name, $value, $expected_types ){
+
     //convert expected type string into array
-      if( is_string($expected_types) ) $expected_types = array($expected_types);
+    $expected_types = ( is_string($expected_types) ) ? array($expected_types) : $expected_types;
 
-      //get the paramter type
-      $type = gettype($value);
+    //get the paramter type
+    $type = gettype($value);
 
-      //error on any unexpected parameter types
-      if( !in_array( $type, $expected_types ) ){
-        \App::abort(400, sprintf( "`%s` is not an accepted type - expected %s - received %s", $name, implode(',', $expected_types), $type ) );
+    //error on any unexpected parameter types
+    if( !in_array( $type, $expected_types ) ){
+      \App::abort(400, sprintf( "`%s` is not an accepted type - expected %s - received %s", $name, implode(',', $expected_types), $type ) );
+    }
+
+    //Check if we haev requested a JSON parameter
+    if( in_array('json', $expected_types ) ){
+      $value = json_decode($value);
+      if( !is_object( $value ) ){
+        \App::abort(400, sprintf( "`%s` is not an accepted type - expected a JSON formatted string", $name ) );
       }
+    }
 
-      //Check if we haev requested a JSON parameter
-      if( in_array('json', $expected_types ) ){
-        if( !is_object( json_decode($value) ) ){
-          \App::abort(400, sprintf( "`%s` is not an accepted type - expected a JSON formatted string", $name ) );
-        }
-      }
+    return $value;
   }
 
 
