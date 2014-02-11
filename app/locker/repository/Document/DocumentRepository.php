@@ -2,10 +2,10 @@
 
 interface DocumentRepository {
 
-	public function store( $lrs, $data, $apitype );
+	public function store( $lrs, $data, $documentType );
 
 	public function find( $lrs, $stateId );
 
-	public function all( $lrs, $activityId, $actor );
+	public function all( $lrs, $documentType, $activityId, $actor );
 
 }
