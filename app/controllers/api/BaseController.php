@@ -5,7 +5,7 @@ use Illuminate\Routing\Controller;
 class BaseController extends Controller {
 
 
-	public function returnJSON( $results=array(), $additional_params=array(), $extra=array(), $debug=array() ){
+  public function returnJSON( $results=array(), $additional_params=array(), $extra=array(), $debug=array() ){
 
     $json = array(
         'version'   =>  \Config::get('api.using_version'),
@@ -41,28 +41,27 @@ class BaseController extends Controller {
   }
 
   /**
-	* GENERIC MODEL HANDLING
-	**/
+  * GENERIC MODEL HANDLING
+  **/
 
   protected function findModel( $modelType, $id, $with=array() ){
 
     $model = $modelType::with( $with )->find($id);
 
-		if( is_null($model)){
-			\App::abort(404, 'Model not found');
-		} else {
-			return $model;
-		}
+    if( is_null($model)){
+      \App::abort(404, 'Model not found');
+    } else {
+      return $model;
+    }
 
-	}
+  }
 
-	protected function returnModel($model){
-		return $this->returnJSON( $model->toArray() );
-	}
+  protected function returnModel($model){
+    return $this->returnJSON( $model->toArray() );
+  }
 
-	protected function returnSuccessError( $success, $message, $code ){
-		return \Response::json( array( 'success'  => $success, 
-									                 'message'  => $message), $code );
-	}
+  protected function returnSuccessError( $success, $message, $code ){
+    return \Response::json( array( 'success'  => $success, 'message'  => $message), $code );
+  }
 
 }
