@@ -20,8 +20,9 @@ class EloquentDocumentRepository implements DocumentRepository {
 
 	}
 
-	public function all( $lrs, $activityId, $actor ){
+	public function all( $lrs, $documentType, $activityId, $actor ){
 		return $this->documentapi->where('lrs', $lrs)
+                 ->where('documentType', $documentType)
 								 ->where('activityId', $activityId)
 								 ->where('actor', json_decode($actor))
 								 ->select('stateId')
@@ -34,13 +35,13 @@ class EloquentDocumentRepository implements DocumentRepository {
 								 ->first();
 	}
 
-	public function store( $lrs, $data, $apitype ){
+	public function store( $lrs, $data, $documentType ){
 
 		$new_document = $this->documentapi;
 		$new_document->lrs      = $lrs; //LL specific 
-		$new_document->apitype  = $apitype; //LL specific
+		$new_document->documentType  = $documentType; //LL specific
 
-		switch( $new_document->apitype ){
+		switch( $new_document->documentType ){
 			case DocumentType::STATE:
 				$new_document->activityId   = $data['activityId'];
 				$new_document->actor        = json_decode($data['actor']);

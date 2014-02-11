@@ -9,6 +9,11 @@
       "name": "HT2",
       "email": "hello@ht2.co.uk",
       "role": "sponsor"
+    },
+    {
+      "name": "James Mullaney",
+      "email": "james@ht2.co.uk",
+      "role": "Developer"
     }
     ],
     "name": "learninglocker/learninglocker",

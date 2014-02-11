@@ -32,7 +32,7 @@ class StateController extends DocumentController {
 			'actor'      => array('string', 'json'),
 		), $this->params );
 
-		$documents = $this->document->all( $this->lrs->_id, $data['activityId'], $data['actor'] );
+		$documents = $this->document->all( $this->lrs->_id, $this->document_type, $data['activityId'], $data['actor'] );
 		return \Response::json( $documents->toArray() );
 	}
 
