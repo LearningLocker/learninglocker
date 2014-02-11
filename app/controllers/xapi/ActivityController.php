@@ -3,12 +3,7 @@
 use \Locker\Repository\Document\DocumentRepository as Document;
 use Locker\Repository\Document\DocumentType as DocumentType;
 
-class ActivityController extends BaseController {
-
-	/**
-	* Document Repository
-	*/
-	protected $document, $type;
+class ActivityController extends DocumentController {
 
 	/**
 	 * Construct
@@ -16,12 +11,8 @@ class ActivityController extends BaseController {
 	 * @param DocumentRepository $document
 	 */
 	public function __construct(Document $document){
-
-		$this->document = $document;
-		$this->beforeFilter('@getLrs');
-
-		$this->document_type = DocumentType::STATE;
-
+		parent::__construct($document);
+		$this->document_type = DocumentType::ACTIVITY;
 	}
 
 	/**
