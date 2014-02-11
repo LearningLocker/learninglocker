@@ -1,13 +1,9 @@
 <?php namespace Controllers\xAPI;
 
 use \Locker\Repository\Document\DocumentRepository as Document;
+use Locker\Repository\Document\DocumentType as DocumentType;
 
-class ActivityController extends BaseController {
-
-	/**
-	* Document Repository
-	*/
-	protected $document;
+class ActivityController extends DocumentController {
 
 	/**
 	 * Construct
@@ -15,10 +11,8 @@ class ActivityController extends BaseController {
 	 * @param DocumentRepository $document
 	 */
 	public function __construct(Document $document){
-
-		$this->document = $document;
-		$this->beforeFilter('@getLrs');
-
+		parent::__construct($document);
+		$this->document_type = DocumentType::ACTIVITY;
 	}
 
 	/**
@@ -47,7 +41,7 @@ class ActivityController extends BaseController {
 		//validate
 		if( $this->validate( $profile ) && $this->validateActivity( $profile['contents'] ) ){
 
-			$store = $this->document->store( $this->lrs->_id, $profile['id'], $profile['contents'], 'activityProfile' );
+			$store = $this->document->store( $this->lrs->_id, $profile['id'], $profile['contents'], $this->document_type );
 
 			if( $store ){
 				return \Response::json( array( 'ok', 204 ) );

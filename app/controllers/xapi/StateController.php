@@ -1,13 +1,9 @@
 <?php namespace Controllers\xAPI;
 
 use \Locker\Repository\Document\DocumentRepository as Document;
+use Locker\Repository\Document\DocumentType as DocumentType;
 
-class StateController extends BaseController {
-
-	/**
-	* Document Repository
-	*/
-	protected $document;
+class StateController extends DocumentController {
 
 	/**
 	 * Construct
@@ -16,8 +12,9 @@ class StateController extends BaseController {
 	 */
 	public function __construct(Document $document){
 
-		$this->document = $document;
-		$this->beforeFilter('@getLrs');
+		parent::__construct($document);
+
+		$this->document_type = DocumentType::STATE;
 
 	}
 
@@ -30,11 +27,13 @@ class StateController extends BaseController {
 	 * @return Response
 	 */
 	public function index(){
+		$data = $this->checkParams(array(
+			'activityId' => 'string',
+			'actor'      => array('string', 'json'),
+		), $this->params );
 
-		$documents = $this->document->all();
-
+		$documents = $this->document->all( $this->lrs->_id, $this->document_type, $data['activityId'], $data['actor'] );
 		return \Response::json( $documents->toArray() );
-
 	}
 
 	/**
@@ -44,24 +43,25 @@ class StateController extends BaseController {
 	 */
 	public function store(){
 
-		$request       = \Request::instance();
-		$incoming_data = $request->getContent();
+		$state = $this->checkParams( 
+			array(
+				'activityId' => 'string',
+				'actor'      => array('string', 'json'),
+				'stateId'    => 'string',
+				'content'    => ''
+			),
+			array(
+				'registration' => 'string'
+			),
+			$this->params
+		);
 
-		//convert to array
-		$state = json_decode($incoming_data, TRUE);
 
-		//validate
-		if( $this->validate( $state ) && $this->validateState( $state['contents'] ) ){
+		$store = $this->document->store( $this->lrs->_id, $state, $this->document_type );
 
-			$store = $this->document->store( $this->lrs->_id, $state['id'], $state['contents'], 'state' );
-
-			if( $store ){
-				return \Response::json( array( 'ok', 204 ) );
-			}
-
+		if( $store ){
+			return \Response::json( array( 'ok', 204 ) );
 		}
-
-		return \Response::json( array( 'error', 400 ) );
 
 	}
 
@@ -75,7 +75,7 @@ class StateController extends BaseController {
 
 		$document = $this->document->find( $this->lrs->_id, $stateId );
 
-        return \Response::json( $document->toArray() );
+    return \Response::json( $document->toArray() );
 
 	}
 
@@ -109,29 +109,8 @@ class StateController extends BaseController {
 	 **/
 	public function validateState( $data ){
 
-		//now check required keys exist
-		if( !array_key_exists('activityId', $data) 
-			|| !array_key_exists('actor', $data) 
-				|| !array_key_exists('stateId', $data)){
-			return false;
-		}
 
-		//check activityId is string
-		if( !is_string( $data['activityId'] ) ){
-			return false;
-		}
-
-		//check actor is array
-		if( !is_array( $data['actor'] ) ){
-			return false;
-		}
-
-		//check stateId is string
-		if( !is_string( $data['stateId'] ) ){
-			return false;
-		}
-
-		return true;
+		
 
 	}
 

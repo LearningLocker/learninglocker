@@ -27,6 +27,7 @@ There are several ways you can get involved with Learning Locker. Visit our site
 
 * HT2 (http://ht2.co.uk)
 * Dave Tosh (http://davetosh.com)
+* James Mullaney [mailto:james@ht2.co.uk](james@ht2.co.uk)
 
 #### Copyright
 
