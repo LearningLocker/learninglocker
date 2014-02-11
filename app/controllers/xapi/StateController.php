@@ -29,10 +29,11 @@ class StateController extends DocumentController {
 	public function index(){
 		$data = $this->checkParams(array(
 			'activityId' => 'string',
-			'actor'      => array('string', 'json'),
-		), $this->params );
+			'actor'      => array('string', 'json')
+		), array(), $this->params );
 
-		$documents = $this->document->all( $this->lrs->_id, $this->document_type, $data['activityId'], $data['actor'] );
+		$documents = $this->document->all( $this->lrs->_id, $this->document_type, $data['activityId'], json_decode($data['actor']) );
+
 		return \Response::json( $documents->toArray() );
 	}
 

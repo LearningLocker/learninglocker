@@ -20,13 +20,38 @@ class EloquentDocumentRepository implements DocumentRepository {
 
 	}
 
+
 	public function all( $lrs, $documentType, $activityId, $actor ){
-		return $this->documentapi->where('lrs', $lrs)
+		$query = $this->documentapi->where('lrs', $lrs)
                  ->where('documentType', $documentType)
-								 ->where('activityId', $activityId)
-								 ->where('actor', json_decode($actor))
-								 ->select('stateId')
-								 ->get();
+								 ->where('activityId', $activityId);
+
+    
+    //Do some checking on what actor field we are filtering with
+    if( isset($actor->mbox) ){ //check for mbox
+      $actor_query = array('field' => 'actor.mbox', 'value'=>$actor->mbox);
+    } else if( isset($actor->mbox_sha1sum) ) {//check for mbox_sha1sum
+      $actor_query = array('field' => 'actor.mbox_sha1sum', 'value'=>$actor->mbox_sha1sum);
+    } else if( isset($actor->openid) ){ //check for open id
+      $actor_query = array('field' => 'actor.openid', 'value'=>$actor->openid);
+    }
+
+    if( isset($actor_query) ){ //if we have actor query params lined up...
+      $query = $query->where( $actor_query['field'], $actor_query['value'] );
+
+    } else if( isset($actor->account) ){ //else if there is an account
+      if( isset($actor->account->homePage) && isset($actor->account->name ) ){
+        $query = $query->where('actor.account.homePage', $actor->account->homePage)
+                       ->where('actor.account.name', $actor->account->name );
+      } else {
+        \App::abort(400, 'Missing required paramaters in the actor.account');  
+      }
+
+    } else {
+      \App::abort(400, 'Missing required paramaters in the actor');
+    }
+
+    return $query->select('stateId')->get();
 	}
 
 	public function find( $lrs, $stateId ){
