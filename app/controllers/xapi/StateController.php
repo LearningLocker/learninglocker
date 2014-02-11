@@ -7,7 +7,7 @@ class StateController extends BaseController {
 	/**
 	* Document Repository
 	*/
-	protected $document;
+	protected $document, $document_type;
 
 	/**
 	 * Construct
@@ -18,6 +18,8 @@ class StateController extends BaseController {
 
 		$this->document = $document;
 		$this->beforeFilter('@getLrs');
+
+		$this->document_type = DocumentType::STATE;
 
 	}
 
@@ -53,7 +55,7 @@ class StateController extends BaseController {
 		//validate
 		if( $this->validate( $state ) && $this->validateState( $state['contents'] ) ){
 
-			$store = $this->document->store( $this->lrs->_id, $state['id'], $state['contents'], 'state' );
+			$store = $this->document->store( $this->lrs->_id, $state['id'], $state['contents'], $this->document_type );
 
 			if( $store ){
 				return \Response::json( array( 'ok', 204 ) );

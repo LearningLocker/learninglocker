@@ -7,7 +7,7 @@ class ActivityController extends BaseController {
 	/**
 	* Document Repository
 	*/
-	protected $document;
+	protected $document, $type;
 
 	/**
 	 * Construct
@@ -18,6 +18,8 @@ class ActivityController extends BaseController {
 
 		$this->document = $document;
 		$this->beforeFilter('@getLrs');
+
+		$this->document_type = DocumentType::STATE;
 
 	}
 
@@ -47,7 +49,7 @@ class ActivityController extends BaseController {
 		//validate
 		if( $this->validate( $profile ) && $this->validateActivity( $profile['contents'] ) ){
 
-			$store = $this->document->store( $this->lrs->_id, $profile['id'], $profile['contents'], 'activityProfile' );
+			$store = $this->document->store( $this->lrs->_id, $profile['id'], $profile['contents'], $this->document_type );
 
 			if( $store ){
 				return \Response::json( array( 'ok', 204 ) );
