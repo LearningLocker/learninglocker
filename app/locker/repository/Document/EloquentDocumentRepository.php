@@ -63,13 +63,13 @@ class EloquentDocumentRepository implements DocumentRepository {
 	public function store( $lrs, $data, $documentType ){
 
 		$new_document = $this->documentapi;
-		$new_document->lrs      = $lrs; //LL specific 
+		$new_document->lrs           = $lrs; //LL specific 
 		$new_document->documentType  = $documentType; //LL specific
 
 		switch( $new_document->documentType ){
 			case DocumentType::STATE:
 				$new_document->activityId   = $data['activityId'];
-				$new_document->actor        = json_decode($data['actor']);
+				$new_document->actor        = $data['actor'];
 				$new_document->stateId      = $data['stateId'];
 				$new_document->registration = isset($data['registration']) ? $data['registration'] : null;
 			break;
@@ -84,10 +84,17 @@ class EloquentDocumentRepository implements DocumentRepository {
 
 
 		//@todo add update as per spec https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#miscdocument
-		if( is_object( json_decode($data['content'] ) ) ){
+		if( is_object( json_decode($data['content'] ) ) ){ //save json as an object
+      $new_document->contentType = 'application/json';
 			$new_document->content = json_decode($data['content']);
-		} else {
-			$new_document->content = "..path/to/file/to.do";
+		} else if( is_string($data['content']) ){ //save text as raw text
+      $new_document->contentType = 'text/plain';
+      $new_document->content = $data['content'];
+    } else {
+      //TODO - save file content and reference through file path     
+      //Need to actually check this is a binary file still 
+      $new_document->contentType = 'file/mimetype'; //use this value to return an actual file when requesting the document - may want to use mimetype here?
+			$new_document->content = "..path/to/file/to.do"; 
 		}
 		
 

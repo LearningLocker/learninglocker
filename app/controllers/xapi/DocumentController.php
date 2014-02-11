@@ -41,19 +41,23 @@ class DocumentController extends BaseController {
 			}
 
 			if( !empty($expected_types) ){
-				$this->checkTypes( $name, $data[$name], $expected_types );
-			}
+				$value = $this->checkTypes( $name, $data[$name], $expected_types );
+			} else {
+        $value = $data[$name];
+      }
 
-			$return_data[$name] = $data[$name];
+			$return_data[$name] = $value;
 		}
 
     foreach( $optional as $name=>&$expected_types ){
       if( isset($data[$name]) ){
         if( !empty($expected_types) ){
-          $this->checkTypes( $name, $data[$name], $expected_types );
+          $value = $this->checkTypes( $name, $data[$name], $expected_types );
+        } else {
+          $value = $data[$name];
         }
         
-        $return_data[$name] = $data[$name];
+        $return_data[$name] = $value;
       }
     }
 
@@ -75,10 +79,13 @@ class DocumentController extends BaseController {
 
     //Check if we haev requested a JSON parameter
     if( in_array('json', $expected_types ) ){
-      if( !is_object( json_decode($value) ) ){
+      $value = json_decode($value);
+      if( !is_object( $value ) ){
         \App::abort(400, sprintf( "`%s` is not an accepted type - expected a JSON formatted string", $name ) );
       }
     }
+
+    return $value;
   }
 
 
