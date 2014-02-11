@@ -1,6 +1,7 @@
 <?php namespace Controllers\xAPI;
 
 use \Locker\Repository\Document\DocumentRepository as Document;
+use Locker\Repository\Document\DocumentType as DocumentType;
 
 class StateController extends BaseController {
 
