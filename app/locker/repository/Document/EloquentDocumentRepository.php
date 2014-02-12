@@ -61,7 +61,7 @@ class EloquentDocumentRepository implements DocumentRepository {
 
     switch( $documentType ){
       case DocumentType::STATE:
-        return $this->findState( $lrs, $data['activityId'], $data['agent'], $data['registration'] );
+        return $this->findState( $lrs, $data['stateId'], $data['activityId'], $data['agent'], $data['registration'] );
       break;
       case DocumentType::ACTIVITY:
         //return $this->findActivity( $lrs, $data );
@@ -81,14 +81,15 @@ class EloquentDocumentRepository implements DocumentRepository {
    * @param  String $documentType   The type of document
    * @param  Array $data
    * @param  String $updated        ISO 8601 Timestamp
+   * @param  String $method     HTTP Method used to send store request
    * 
    * @return DocumentAPI  Returns the updated/created document
    */
-  public function store( $lrs, $documentType, $data, $updated ){
+  public function store( $lrs, $documentType, $data, $updated, $method ){
 
     switch( $documentType ){
       case DocumentType::STATE:
-        return $this->storeState( $lrs, $data, $updated );
+        return $this->storeState( $lrs, $data, $updated, $method );
       break;
       case DocumentType::ACTIVITY:
         //return $this->storeActivity( $lrs, $data, $updated );
@@ -163,10 +164,11 @@ class EloquentDocumentRepository implements DocumentRepository {
    * @param  Lrs $lrs
    * @param  Array $data        The required data for the state
    * @param  String $updated    ISO 8601 Timestamp
+   * @param  String $method     HTTP Method used to send store request
    * 
    * @return DocumentAPI        The document being created/updated
    */
-  public function storeState( $lrs, $data, $updated ){
+  public function storeState( $lrs, $data, $updated, $method ){
 
     $existing_document = $this->findState( $lrs, $data['stateId'], $data['activityId'], $data['agent'], $data['registration'] );
     if( !$existing_document ){
@@ -187,7 +189,7 @@ class EloquentDocumentRepository implements DocumentRepository {
     }
 
     $document->updated_at = new Carbon($updated);
-    $document->setContent( $data['content'], \Request::server('REQUEST_METHOD') ); //set the content for the document
+    $document->setContent( $data['content'], $data['contentType'], $method ); //set the content for the document
 
     if( $document->save() ){
       return $document;
