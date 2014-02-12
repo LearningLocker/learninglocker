@@ -36,9 +36,9 @@ class SiteController extends BaseController {
     $site  = $this->site->all();
     return View::make('partials.site.dashboard', 
                   array('stats'      => $stats->stats,
-                      'site'     => $site,
-                      'dash_nav'   => true,
-                      'admin_dash' => true));
+                        'site'       => $site,
+                        'dash_nav'   => true,
+                        'admin_dash' => true));
 
   }
 
@@ -52,7 +52,7 @@ class SiteController extends BaseController {
 
     $site = $this->site->find( $id );
     return View::make('partials.site.edit', array('site'         => $site, 
-                            'settings_nav' => true));
+                                                  'settings_nav' => true));
 
   }
 
@@ -85,9 +85,11 @@ class SiteController extends BaseController {
   public function settings(){
 
     $site = $this->site->all();
-    return View::make('partials.site.settings', array('site'         => $site,
-                              'settings_nav' => true, 
-                              'admin_dash'   => true));
+    return View::make('partials.site.settings', array(
+                                                'site'         => $site,
+                                                'settings_nav' => true, 
+                                                'admin_dash'   => true
+                                              ));
 
   }
 
@@ -106,8 +108,8 @@ class SiteController extends BaseController {
       }
     }
     return View::make('partials.lrs.list', array('lrs'        => $lrs, 
-                           'lrs_nav'    => true, 
-                           'admin_dash' => true));
+                                                 'lrs_nav'    => true, 
+                                                 'admin_dash' => true));
 
   }
 
@@ -134,7 +136,7 @@ class SiteController extends BaseController {
    */
   public function inviteUsersForm(){
     return View::make('partials.site.invite', array('users_nav'  => true, 
-                            'admin_dash' => true));
+                                                    'admin_dash' => true));
   }
 
   /**

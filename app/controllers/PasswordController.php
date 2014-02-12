@@ -93,8 +93,8 @@ class PasswordController extends BaseController {
     }
 
     return Redirect::back()
-      ->withInput()
-      ->withErrors( array( Lang::get('users.password_problem') ) );
+           ->withInput()
+           ->withErrors( array( Lang::get('users.password_problem') ) );
 
   }
 

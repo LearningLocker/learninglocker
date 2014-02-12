@@ -47,15 +47,15 @@ class AnalyticsController extends BaseController {
    */
   public function index( $id, $segment='verbs' ){
 
-    $lrs    = $this->lrs->find( $id );
+    $lrs      = $this->lrs->find( $id );
     $lrs_list = $this->lrs->all();
     $this->analytics->getAnalytics( $id, $segment );
-    return View::make('partials.analytics.index', array('lrs'           => $lrs,
-                                'data'        => $this->analytics->results,
-                                'line_graph_data' => $this->analytics->data,
-                                'selected'      => $segment,
-                                'analytics_nav' => true,
-                                'list'          => $lrs_list));
+    return View::make('partials.analytics.index', array('lrs'             => $lrs,
+                                                        'data'            => $this->analytics->results,
+                                                        'line_graph_data' => $this->analytics->data,
+                                                        'selected'        => $segment,
+                                                        'analytics_nav'   => true,
+                                                        'list'            => $lrs_list));
 
   }
 

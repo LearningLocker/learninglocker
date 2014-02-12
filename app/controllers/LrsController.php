@@ -94,8 +94,8 @@ class LrsController extends BaseController {
     $lrs      = $this->lrs->find( $id );
     $lrs_list = $this->lrs->all();
     return View::make('partials.lrs.edit', array('account_nav' => true, 
-                           'lrs'       => $lrs, 
-                           'list'        => $lrs_list));
+                                                 'lrs'         => $lrs, 
+                                                 'list'        => $lrs_list));
 
   }
 
@@ -114,8 +114,8 @@ class LrsController extends BaseController {
     }
 
     return Redirect::back()
-      ->withInput()
-      ->withErrors($this->lrs->errors());
+          ->withInput()
+          ->withErrors($this->lrs->errors());
 
   }
 
@@ -161,9 +161,9 @@ class LrsController extends BaseController {
     $lrs_list   = $this->lrs->all();
     return View::make('partials.statements.list', 
                   array('statements'    => $statements,
-                      'lrs'           => $lrs,
-                      'list'          => $lrs_list,
-                      'statement_nav' => true));
+                        'lrs'           => $lrs,
+                        'list'          => $lrs_list,
+                        'statement_nav' => true));
 
   }
 
@@ -177,8 +177,8 @@ class LrsController extends BaseController {
     $lrs    = $this->lrs->find( $id );
     $lrs_list = $this->lrs->all();
     return View::make('partials.reporting.index', array('lrs'           => $lrs, 
-                              'reporting_nav' => true,
-                              'list'          => $lrs_list));
+                                                        'reporting_nav' => true,
+                                                        'list'          => $lrs_list));
 
   }
 
@@ -192,8 +192,8 @@ class LrsController extends BaseController {
     $lrs    = $this->lrs->find( $id );
     $lrs_list = $this->lrs->all();
     return View::make('partials.lrs.endpoint', array('lrs'          => $lrs, 
-                             'endpoint_nav' => true,
-                             'list'         => $lrs_list));
+                                                     'endpoint_nav' => true,
+                                                     'list'         => $lrs_list));
 
   }
 
@@ -207,8 +207,8 @@ class LrsController extends BaseController {
     $lrs      = $this->lrs->find( $id );
     $lrs_list = $this->lrs->all();
     return View::make('partials.lrs.api', array('lrs'     => $lrs, 
-                          'api_nav' => true,
-                          'list'    => $lrs_list));
+                                                'api_nav' => true,
+                                                'list'    => $lrs_list));
 
   }
 
@@ -221,7 +221,7 @@ class LrsController extends BaseController {
     $lrs = $this->lrs->find( $id );
 
     $lrs->api  = array('basic_key'    => \app\locker\helpers\Helpers::getRandomValue(),
-               'basic_secret' => \app\locker\helpers\Helpers::getRandomValue());
+                       'basic_secret' => \app\locker\helpers\Helpers::getRandomValue());
 
     if( $lrs->save() ){
       $message_type = 'success';
@@ -245,9 +245,9 @@ class LrsController extends BaseController {
     $lrs      = $this->lrs->find( $id );
     $lrs_list = $this->lrs->all();
     return View::make('partials.users.list', array('lrs'      => $lrs, 
-                             'users'    => $lrs->users,
-                             'list'     => $lrs_list,
-                             'user_nav' => true));
+                                                   'users'    => $lrs->users,
+                                                   'list'     => $lrs_list,
+                                                   'user_nav' => true));
 
   }
 
@@ -255,9 +255,9 @@ class LrsController extends BaseController {
     $lrs      = $this->lrs->find( $id );
     $lrs_list = $this->lrs->all();
     return View::make('partials.lrs.invite', array('lrs'      => $lrs, 
-                             'users'    => $lrs->users,
-                             'list'     => $lrs_list,
-                             'user_nav' => true));
+                                                   'users'    => $lrs->users,
+                                                   'list'     => $lrs_list,
+                                                   'user_nav' => true));
 
   }
 

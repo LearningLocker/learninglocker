@@ -43,14 +43,14 @@ class ExplorerController extends BaseController {
     $lrs_list = $this->lrs->all();
     $statements = $this->statement->filter( $id, $vars, 'comments' );
     $graph_it   = new \app\locker\data\Filter( $statements['data'] );
-    return View::make('partials.statements.explore', array('lrs'           => $lrs,
-                                 'list'          => $lrs_list,
-                                 'statements'    => $statements['statements'],
-                                 'total'       => count( $statements['data'] ),
-                                 'filter'      => $statements['filter'],
-                                 'results'     => $graph_it->results,
-                                 'single_bar_data' => $graph_it->timeline_data,
-                                 'statement_nav' => true));
+    return View::make('partials.statements.explore', array('lrs'             => $lrs,
+                                                           'list'            => $lrs_list,
+                                                           'statements'      => $statements['statements'],
+                                                           'total'           => count( $statements['data'] ),
+                                                           'filter'          => $statements['filter'],
+                                                           'results'         => $graph_it->results,
+                                                           'single_bar_data' => $graph_it->timeline_data,
+                                                           'statement_nav'   => true));
   }
 
   /**
@@ -79,13 +79,13 @@ class ExplorerController extends BaseController {
 
     return View::make('partials.statements.filter', 
                   array('statements'      => $statements['statements'],
-                      'lrs'             => $lrs,
-                      'single_bar_data' => $graph_it->timeline_data,
-                      'results'       => $graph_it->results,
-                      'total'       => count( $statements['data'] ),
-                      'list'            => $lrs_list,
-                      'filter'        => $statements['filter'],
-                      'statement_nav'   => true));
+                        'lrs'             => $lrs,
+                        'single_bar_data' => $graph_it->timeline_data,
+                        'results'         => $graph_it->results,
+                        'total'           => count( $statements['data'] ),
+                        'list'            => $lrs_list,
+                        'filter'          => $statements['filter'],
+                        'statement_nav'   => true));
 
   }
 

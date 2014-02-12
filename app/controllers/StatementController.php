@@ -39,7 +39,7 @@ class StatementController extends BaseController {
   public function create( $id ){
     $lrs = $this->lrs->find( $id );
     return View::make('partials.statements.create', array('lrs'           => $lrs,
-                                'statement_nav' => true));
+                                                          'statement_nav' => true));
   }
 
   /**

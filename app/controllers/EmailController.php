@@ -39,9 +39,9 @@ class EmailController extends BaseController {
   public function resendEmail(){
     
     $exists = DB::table('users')
-          ->where('_id', Auth::user()->_id)
-          ->where('email', Input::get('email'))
-          ->pluck('username');
+              ->where('_id', Auth::user()->_id)
+              ->where('email', Input::get('email'))
+              ->pluck('username');
     if( !$exists ){
       return Redirect::back()->with('error', 'There was a problem resending.');
     }
@@ -70,8 +70,8 @@ class EmailController extends BaseController {
     $message = $this->user->verifyEmail( $token );
     //now login and direct to password reset form
     $email = \DB::table('user_tokens')
-         ->where('token', $token)
-         ->pluck('email');
+              ->where('token', $token)
+              ->pluck('email');
     $user = \User::where('email', $email)->first();
     Auth::loginUsingId($user->_id);
     return Redirect::to('/users/'. $user->_id . '/add/password');
