@@ -177,7 +177,7 @@ border-color: #354b59;
 
 .label-verb {
 	background-color:#90BEE4;
-	color:#222;
+	color:#000;
 }
 
 /* Page Wrap 
@@ -307,7 +307,7 @@ border-color: #354b59;
 	margin-bottom:10px;
 	border:1px solid #f9f9f9;
 	background:#f9f9f9;
-	min-height:150px;
+	min-height:160px;
 }
 .user-avatar {
 	width:50px;
