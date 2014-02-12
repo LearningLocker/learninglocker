@@ -2,18 +2,18 @@
 
 interface SiteRepository {
 
-	public function all();
+  public function all();
 
-	public function find($id);
+  public function find($id);
 
-	public function create($input);
+  public function create($input);
 
-	public function update($id,$data);
+  public function update($id,$data);
 
-	public function delete($id);
+  public function delete($id);
 
-	public function verifyUser($user_id);
+  public function verifyUser($user_id);
 
-	public function inviteUsers($data);
+  public function inviteUsers($data);
 
 }
