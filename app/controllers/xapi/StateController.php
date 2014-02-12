@@ -27,12 +27,16 @@ class StateController extends DocumentController {
 	 * @return Response
 	 */
 	public function index(){
+
 		$data = $this->checkParams(array(
 			'activityId' => 'string',
-			'actor'      => array('string', 'json')
-		), array(), $this->params );
+			'agent'      => array('string', 'json')
+		), array(
+			'registration' => 'string',
+			'since'        => 'timestamp'
+		), $this->params );
 
-		$documents = $this->document->all( $this->lrs->_id, $this->document_type, $data['activityId'], $data['actor'] );
+		$documents = $this->document->all( $this->lrs->_id, $this->document_type, $data['activityId'], $data['agent'] );
 
 		return \Response::json( $documents->toArray() );
 	}
@@ -47,7 +51,7 @@ class StateController extends DocumentController {
 		$state = $this->checkParams( 
 			array(
 				'activityId' => 'string',
-				'actor'      => array('string', 'json'),
+				'agent'      => array('string', 'json'),
 				'stateId'    => 'string',
 				'content'    => ''
 			),
@@ -64,19 +68,29 @@ class StateController extends DocumentController {
 			return \Response::json( array( 'ok', 204 ) );
 		}
 
+		return \Response::json( array( 'error', 400 ) );
+
 	}
 
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  int  $stateId
+	 * @param  string     $activityId
+	 * @param  json       $agent
+	 * @param  string     $stateId
 	 * @return Response
 	 */
-	public function show( $stateId ){
+	public function show( $activityId, $agent, $stateId ){
 
-		$document = $this->document->find( $this->lrs->_id, $stateId );
+		$data = $this->checkParams(array(
+			'activityId' => 'string',
+			'stateId'	 => 'string',
+			'agent'      => array('string', 'json')
+		), array(), $this->params );
 
-    return \Response::json( $document->toArray() );
+		$documents = $this->document->all( $this->lrs->_id, $this->document_type, $data['activityId'], $data['agent'], $data['stateId'] );
+
+		return \Response::json( $document->toArray() );
 
 	}
 
@@ -100,19 +114,6 @@ class StateController extends DocumentController {
 	public function destroy($id)
 	{
 		//
-	}
-
-	/**
-	 * Simple validation for the specific State API keys
-	 *
-	 * @param $data Array Data Specific State data to store.
-	 *
-	 **/
-	public function validateState( $data ){
-
-
-		
-
 	}
 
 }

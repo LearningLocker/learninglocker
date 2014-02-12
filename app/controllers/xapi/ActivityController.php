@@ -20,9 +20,15 @@ class ActivityController extends DocumentController {
 	 *
 	 * @return Response
 	 */
-	public function index()
-	{
-		//
+	public function index(){
+		$data = $this->checkParams(array(
+			'activityId' => 'string',
+			'profileId'	 => 'string'
+		), array('since' => 'timestamp'), $this->params );
+
+		$documents = $this->document->all( $this->lrs->_id, $data, $this->document_type );
+
+		return \Response::json( $documents->toArray() );
 	}
 
 	/**
@@ -32,21 +38,21 @@ class ActivityController extends DocumentController {
 	 */
 	public function store(){
 		
-		$request       = \Request::instance();
-		$incoming_data = $request->getContent();
+		$activity = $this->checkParams( 
+			array(
+				'activityId' => 'string',
+				'profileId'  => 'string',
+				'content'    => ''
+			),
+			array(),
+			$this->params
+		);
 
-		//convert to array
-		$profile = json_decode($incoming_data, TRUE);
 
-		//validate
-		if( $this->validate( $profile ) && $this->validateActivity( $profile['contents'] ) ){
+		$store = $this->document->store( $this->lrs->_id, $activity, $this->document_type );
 
-			$store = $this->document->store( $this->lrs->_id, $profile['id'], $profile['contents'], $this->document_type );
-
-			if( $store ){
-				return \Response::json( array( 'ok', 204 ) );
-			}
-
+		if( $store ){
+			return \Response::json( array( 'ok', 204 ) );
 		}
 
 		return \Response::json( array( 'error', 400 ) );
@@ -59,11 +65,11 @@ class ActivityController extends DocumentController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show( $activityId ){
+	public function show( $activityId, $profileId ){
 
-		$document = $this->document->find( $this->lrs->_id, $activityId );
+		$document = $this->document->find( $this->lrs->_id, $activityId, $profileId );
 
-        return \Response::json( $document->toArray() );
+		return \Response::json( $document->toArray() );
 	}
 
 	/**
@@ -89,29 +95,13 @@ class ActivityController extends DocumentController {
 	}
 
 	/**
-	 * 
-	 * @param $data Array Data Specific Activity data to store.
+	 * Return the full activity object
+	 *
+	 * @param int $activityId
+	 * @return Response
 	 *
 	 **/
-	public function validateActivity( $data ){
-
-		//now check required keys exist
-		if( !array_key_exists('activityId', $data) 
-			|| !array_key_exists('profileId', $data) ){
-			return false;
-		}
-
-		//check activityId is string
-		if( !is_string( $data['activityId'] ) ){
-			return false;
-		}
-
-		//check profileId is string
-		if( !is_string( $data['profileId'] ) ){
-			return false;
-		}
-
-		return true;
+	public function full( $activityId ){
 
 	}
 
