@@ -1,0 +1,15 @@
+# EditorConfig helps developers define and maintain consistent coding styles between different editors and IDEs.
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines, 2 spaced tabs, UTF-8 with a newline ending
+# across every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
+indent_size = 2
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
