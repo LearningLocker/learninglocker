@@ -1,17 +1,17 @@
 body {
-  	background:#222; /* #7897AC; */
+    background:#222; /* #7897AC; */
 }
 
 li {
-	list-style:none;
+  list-style:none;
 }
 .system-message {
-	background:#fff;
+  background:#fff;
 }
 
 .logo {
-	margin-top:60px;
-	text-align:center;
+  margin-top:60px;
+  text-align:center;
 }
 
 .wrapper {
@@ -39,36 +39,36 @@ li {
 }
     
 .links {
-	padding:5px 0 5px 0;
-	font-size:13px;
-	margin-top:20px;
-	text-align:center;
-	color:#f1f1f1;
+  padding:5px 0 5px 0;
+  font-size:13px;
+  margin-top:20px;
+  text-align:center;
+  color:#f1f1f1;
 }
 
 .footer {
-	margin-top:40px;
+  margin-top:40px;
 }
 
 .footer p {
-	margin-top:20px;
+  margin-top:20px;
 }
 
 .footer-links {
-	background:rgba(0,0,0,0.2);
-	padding:4px;
-	border-radius:6px;
-	font-size:13px;
-	margin:20px 0 10px 0;
+  background:rgba(0,0,0,0.2);
+  padding:4px;
+  border-radius:6px;
+  font-size:13px;
+  margin:20px 0 10px 0;
 }
 
 .footer-links a {
-	color:#7897AC;
-	margin-right:10px;
+  color:#7897AC;
+  margin-right:10px;
 }
 
 .btn-locker {
-	background:#944e1f;
-	border:#d47833;
-	color:#fff;
+  background:#944e1f;
+  border:#d47833;
+  color:#fff;
 }
