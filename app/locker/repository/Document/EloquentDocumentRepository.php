@@ -91,10 +91,10 @@ class EloquentDocumentRepository implements DocumentRepository {
         return $this->storeState( $lrs, $data, $updated );
       break;
       case DocumentType::ACTIVITY:
-        return $this->storeActivity( $lrs, $data, $updated );
+        //return $this->storeActivity( $lrs, $data, $updated );
       break;
       case DocumentType::AGENT:
-        return $this->storeActivity( $lrs, $data, $updated );
+        //return $this->storeActivity( $lrs, $data, $updated );
       break;
     }
 
