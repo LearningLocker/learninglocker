@@ -13,13 +13,13 @@
 
 App::before(function($request)
 {
-	//
+  //
 });
 
 
 App::after(function($request, $response)
 {
-	$response->headers->set('X-Experience-API-Version', '1.0.1');
+  $response->headers->set('X-Experience-API-Version', '1.0.1');
 });
 
 /*
@@ -35,12 +35,12 @@ App::after(function($request, $response)
 
 Route::filter('auth', function()
 {
-	if (Auth::guest()) return Redirect::guest('/');
+  if (Auth::guest()) return Redirect::guest('/');
 });
 
 Route::filter('auth.basic', function()
 {
-	return Auth::basic();
+  return Auth::basic();
 });
 
 
@@ -55,32 +55,32 @@ Route::filter('auth.basic', function()
 
 Route::filter('auth.statement', function(){
 
-	//set passed credentials
-	$key  	= Request::getUser();
-	$secret = Request::getPassword();
+  //set passed credentials
+  $key    = Request::getUser();
+  $secret = Request::getPassword();
 
-	//see if the lrs exists based on key and secret
-	$lrs = \Lrs::where('api.basic_key', $key)
-			->where('api.basic_secret', $secret)
-			->select('owner._id')->first();
+  //see if the lrs exists based on key and secret
+  $lrs = \Lrs::where('api.basic_key', $key)
+      ->where('api.basic_secret', $secret)
+      ->select('owner._id')->first();
 
-	//if no id found, return error
-	if ( $lrs == NULL ) {
-		return Response::json(array(
-			'error' => true,
-			'message' => 'Unauthorized request.'),
-			401
-		); 
-	}
+  //if no id found, return error
+  if ( $lrs == NULL ) {
+    return Response::json(array(
+      'error' => true,
+      'message' => 'Unauthorized request.'),
+      401
+    ); 
+  }
 
-	//attempt login once
-	if ( ! Auth::onceUsingId($lrs->owner['_id']) ) {
-		return Response::json(array(
-			'error' => true,
-			'message' => 'Unauthorized Request'),
-			401
-		); 
-	}
+  //attempt login once
+  if ( ! Auth::onceUsingId($lrs->owner['_id']) ) {
+    return Response::json(array(
+      'error' => true,
+      'message' => 'Unauthorized Request'),
+      401
+    ); 
+  }
 
 });
 
@@ -95,9 +95,9 @@ Route::filter('auth.statement', function(){
 */
 
 Route::filter('auth.super', function( $route, $request ){
-	if( Auth::user()->role != 'super' ){
-		return Redirect::to('/');
-	}
+  if( Auth::user()->role != 'super' ){
+    return Redirect::to('/');
+  }
 });
 
 /*
@@ -111,19 +111,19 @@ Route::filter('auth.super', function( $route, $request ){
 */
 
 Route::filter('auth.admin', function( $route, $request ){
-	
-	$lrs      = Lrs::find( $route->parameter('lrs') );
-	$user     = Auth::user()->_id;
-	$is_admin = false;
-	foreach( $lrs->users as $u ){
-		//is the user on the LRS user list with role admin?
-		if($u['user'] == $user && $u['role'] == 'admin'){
-			$is_admin = true;
-		}
-	}
-	if( !$is_admin ){
-		return Redirect::to('/');
-	}
+  
+  $lrs      = Lrs::find( $route->parameter('lrs') );
+  $user     = Auth::user()->_id;
+  $is_admin = false;
+  foreach( $lrs->users as $u ){
+    //is the user on the LRS user list with role admin?
+    if($u['user'] == $user && $u['role'] == 'admin'){
+      $is_admin = true;
+    }
+  }
+  if( !$is_admin ){
+    return Redirect::to('/');
+  }
 
 });
 
@@ -138,27 +138,27 @@ Route::filter('auth.admin', function( $route, $request ){
 */
 
 Route::filter('auth.lrs', function( $route, $request ){
-	//check to see if lrs id exists?
-	$lrs  = Lrs::find( $route->parameter('id') );
-	//if not, let's try the lrs parameter
-	if( !$lrs ){
-		$lrs  = Lrs::find( $route->parameter('lrs') );
-	}
-	$user = \Auth::user();
+  //check to see if lrs id exists?
+  $lrs  = Lrs::find( $route->parameter('id') );
+  //if not, let's try the lrs parameter
+  if( !$lrs ){
+    $lrs  = Lrs::find( $route->parameter('lrs') );
+  }
+  $user = \Auth::user();
 
-	if( $lrs ){
-		//get all users will access to the lrs
-		foreach( $lrs->users as $u ){
-			$get_users[] = $u['_id'];
-		}
-		//check current user is in the list of allowed users, or is super admin
-		if( !in_array($user->_id, $get_users) && $user->role != 'super' ){
-			return Redirect::to('/');
-		}
+  if( $lrs ){
+    //get all users will access to the lrs
+    foreach( $lrs->users as $u ){
+      $get_users[] = $u['_id'];
+    }
+    //check current user is in the list of allowed users, or is super admin
+    if( !in_array($user->_id, $get_users) && $user->role != 'super' ){
+      return Redirect::to('/');
+    }
 
-	}else{
-		return Redirect::to('/');
-	}
+  }else{
+    return Redirect::to('/');
+  }
 
 });
 
@@ -173,14 +173,14 @@ Route::filter('auth.lrs', function( $route, $request ){
 */
 
 Route::filter('create.lrs', function( $route, $request ){
-	
-	$site 	    = Site::first();
-	$allowed    = $site->create_lrs;
-	$user_role  = \Auth::user()->role;
-	
-	if( !in_array($user_role, $allowed) ){
-		return Redirect::to('/');
-	}
+  
+  $site       = Site::first();
+  $allowed    = $site->create_lrs;
+  $user_role  = \Auth::user()->role;
+  
+  if( !in_array($user_role, $allowed) ){
+    return Redirect::to('/');
+  }
 
 });
 
@@ -191,10 +191,10 @@ Route::filter('create.lrs', function( $route, $request ){
 */
 
 Route::filter('registation.status', function( $route, $request ){
-	$site = \Site::first();
-	if( $site ){
-		if( $site->registration != 'Open' ) return Redirect::to('/');
-	}
+  $site = \Site::first();
+  if( $site ){
+    if( $site->registration != 'Open' ) return Redirect::to('/');
+  }
 });
 
 /*
@@ -206,10 +206,10 @@ Route::filter('registation.status', function( $route, $request ){
 */
 
 Route::filter('user.delete', function( $route, $request ){
-	$user = $route->parameter('users');
-	if( \Auth::user()->_id != $user && !\app\locker\helpers\Access::isRole('super') ){
-		return Redirect::to('/');
-	}
+  $user = $route->parameter('users');
+  if( \Auth::user()->_id != $user && !\app\locker\helpers\Access::isRole('super') ){
+    return Redirect::to('/');
+  }
 });
 
 
@@ -226,7 +226,7 @@ Route::filter('user.delete', function( $route, $request ){
 
 Route::filter('guest', function()
 {
-	if (Auth::check()) return Redirect::to('/');
+  if (Auth::check()) return Redirect::to('/');
 });
 
 /*
@@ -242,8 +242,8 @@ Route::filter('guest', function()
 
 Route::filter('csrf', function()
 {
-	if (Session::token() != Input::get('_token'))
-	{
-		throw new Illuminate\Session\TokenMismatchException;
-	}
+  if (Session::token() != Input::get('_token'))
+  {
+    throw new Illuminate\Session\TokenMismatchException;
+  }
 });
