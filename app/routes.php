@@ -12,21 +12,21 @@
 */
 
 Route::get('/', function(){
-	if( Auth::check() ){
-		//if super admin, show site dashboard, otherwise show list of LRSs can access
-		if( Auth::user()->role == 'super' ){
-			$stats = new \app\locker\data\dashboards\AdminDashboard();
-			return View::make('partials.site.dashboard', 
-									array('stats' 	   => $stats->stats, 
-										  'dash_nav'   => true,
-										  'admin_dash' => true));
-		}else{
-			$lrs = Lrs::where('users._id', \Auth::user()->_id)->get();
-			return View::make('partials.lrs.list', array('lrs' => $lrs));
-		}
-	}else{
-		return View::make('system.forms.login');
-	}
+  if( Auth::check() ){
+    //if super admin, show site dashboard, otherwise show list of LRSs can access
+    if( Auth::user()->role == 'super' ){
+      $stats = new \app\locker\data\dashboards\AdminDashboard();
+      return View::make('partials.site.dashboard', 
+                  array('stats'      => $stats->stats, 
+                      'dash_nav'   => true,
+                      'admin_dash' => true));
+    }else{
+      $lrs = Lrs::where('users._id', \Auth::user()->_id)->get();
+      return View::make('partials.lrs.list', array('lrs' => $lrs));
+    }
+  }else{
+    return View::make('system.forms.login');
+  }
 });
 
 /*
@@ -35,18 +35,18 @@ Route::get('/', function(){
 |------------------------------------------------------------------
 */
 Route::get('login', array(
-	'before' => 'guest',
-	'uses'   => 'LoginController@create',
-	'as'     => 'login.create'
+  'before' => 'guest',
+  'uses'   => 'LoginController@create',
+  'as'     => 'login.create'
 ));
 Route::post('login', array(
-	'before' => 'guest',
-	'uses'   => 'LoginController@login',
-	'as'     => 'login.store'
+  'before' => 'guest',
+  'uses'   => 'LoginController@login',
+  'as'     => 'login.store'
 ));
 Route::get('logout', array(
-	'uses' => 'LoginController@destroy',
-	'as'   => 'logout'
+  'uses' => 'LoginController@destroy',
+  'as'   => 'logout'
 ));
 
 /*
@@ -55,14 +55,14 @@ Route::get('logout', array(
 |------------------------------------------------------------------
 */
 Route::get('register', array(
-	'before' => 'guest',
-	'uses'   => 'RegisterController@index',
-	'as'     => 'register.index'
+  'before' => 'guest',
+  'uses'   => 'RegisterController@index',
+  'as'     => 'register.index'
 ));
 Route::post('register', array(
-	'before' => 'guest',
-	'uses'   => 'RegisterController@store',
-	'as'     => 'register.store'
+  'before' => 'guest',
+  'uses'   => 'RegisterController@store',
+  'as'     => 'register.store'
 ));
 
 /*
@@ -71,20 +71,20 @@ Route::post('register', array(
 |------------------------------------------------------------------
 */
 Route::get('password/reset', array(
-	'uses' => 'PasswordController@remind',
-	'as'   => 'password.remind'
+  'uses' => 'PasswordController@remind',
+  'as'   => 'password.remind'
 ));
 Route::post('password/reset', array(
-	'uses' => 'PasswordController@request',
-	'as'   => 'password.request'
+  'uses' => 'PasswordController@request',
+  'as'   => 'password.request'
 ));
 Route::get('password/reset/{token}', array(
-	'uses' => 'PasswordController@reset',
-	'as'   => 'password.reset'
+  'uses' => 'PasswordController@reset',
+  'as'   => 'password.reset'
 ));
 Route::post('password/reset/{token}', array(
-	'uses' => 'PasswordController@postReset',
-	'as'   => 'password.update'
+  'uses' => 'PasswordController@postReset',
+  'as'   => 'password.update'
 ));
 
 /*
@@ -97,12 +97,12 @@ Route::post('email/resend', function(){
    return Redirect::back()->with('success', Lang::get('users.verify_request') );
 });
 Route::get('email/verify/{token}', array(
-	'uses' => 'EmailController@verifyEmail',
-	'as'   => 'email.verify'
+  'uses' => 'EmailController@verifyEmail',
+  'as'   => 'email.verify'
 ));
 Route::get('email/invite/{token}', array(
-	'uses' => 'EmailController@inviteEmail',
-	'as'   => 'email.invite'
+  'uses' => 'EmailController@inviteEmail',
+  'as'   => 'email.invite'
 ));
 
 /*
@@ -111,31 +111,31 @@ Route::get('email/invite/{token}', array(
 |------------------------------------------------------------------
 */
 Route::get('site', array(
-	'uses' => 'SiteController@index',
+  'uses' => 'SiteController@index',
 ));
 Route::get('site/settings', array(
-	'uses' => 'SiteController@settings',
+  'uses' => 'SiteController@settings',
 ));
 Route::get('site/lrs', array(
-	'uses' => 'SiteController@lrs',
+  'uses' => 'SiteController@lrs',
 ));
 Route::get('site/users', array(
-	'uses' => 'SiteController@users',
+  'uses' => 'SiteController@users',
 ));
 Route::get('site/invite', array(
-	'uses' => 'SiteController@inviteUsersForm',
-	'as'   => 'site.invite'
+  'uses' => 'SiteController@inviteUsersForm',
+  'as'   => 'site.invite'
 ));
 Route::post('site/invite', array(
-	'uses' => 'SiteController@inviteUsers',
+  'uses' => 'SiteController@inviteUsers',
 ));
 Route::get('site/plugins', array(
-	'uses' => 'PluginController@index',
+  'uses' => 'PluginController@index',
 ));
 Route::resource('site', 'SiteController');
 Route::put('site/users/verify/{id}', array(
-	'uses' => 'SiteController@verifyUser',
-	'as'   => 'user.verify'
+  'uses' => 'SiteController@verifyUser',
+  'as'   => 'user.verify'
 ));
 
 /*
@@ -144,33 +144,33 @@ Route::put('site/users/verify/{id}', array(
 |------------------------------------------------------------------
 */
 Route::get('lrs/{id}/statements', array(
-	'uses' => 'LrsController@statements',
+  'uses' => 'LrsController@statements',
 ));
 Route::get('lrs/{id}/analytics/{segment?}', array(
-	'uses' => 'AnalyticsController@index',
+  'uses' => 'AnalyticsController@index',
 ));
 Route::get('lrs/{id}/reporting', array(
-	'uses' => 'LrsController@reporting',
+  'uses' => 'LrsController@reporting',
 ));
 Route::get('lrs/{id}/endpoint', array(
-	'uses' => 'LrsController@endpoint',
+  'uses' => 'LrsController@endpoint',
 ));
 Route::get('lrs/{id}/users', array(
-	'uses' => 'LrsController@users',
+  'uses' => 'LrsController@users',
 ));
 Route::put('lrs/{id}/users/remove', array(
-	'uses' => 'LrsController@usersRemove',
-	'as'   => 'lrs.remove'
+  'uses' => 'LrsController@usersRemove',
+  'as'   => 'lrs.remove'
 ));
 Route::get('lrs/{id}/users/invite', array(
-	'uses' => 'LrsController@inviteUsersForm',
+  'uses' => 'LrsController@inviteUsersForm',
 ));
 Route::get('lrs/{id}/api', array(
-	'uses' => 'LrsController@api',
+  'uses' => 'LrsController@api',
 ));
 Route::post('lrs/{id}/apikey', array( 
-	'before' => 'csrf', 
-	'uses'   => 'LrsController@editCredentials'
+  'before' => 'csrf', 
+  'uses'   => 'LrsController@editCredentials'
 ));
 
 Route::resource('lrs', 'LrsController');
@@ -182,23 +182,23 @@ Route::resource('lrs', 'LrsController');
 */
 Route::resource('users', 'UserController');
 Route::put('users/update/password/{id}', array(
-	'as'     => 'users.password',
-	'before' => 'csrf', 
-	'uses'   => 'PasswordController@updatePassword'
+  'as'     => 'users.password',
+  'before' => 'csrf', 
+  'uses'   => 'PasswordController@updatePassword'
 ));
 Route::put('users/update/role/{id}', array(
-	'as'     => 'users.role',
-	'before' => 'csrf', 
-	'uses'   => 'UserController@updateRole'
+  'as'     => 'users.role',
+  'before' => 'csrf', 
+  'uses'   => 'UserController@updateRole'
 ));
 Route::get('users/{id}/add/password', array(
-	'as'     => 'users.addpassword',
-	'uses'   => 'PasswordController@addPasswordForm'
+  'as'     => 'users.addpassword',
+  'uses'   => 'PasswordController@addPasswordForm'
 ));
 Route::put('users/{id}/add/password', array(
-	'as'     => 'users.addPassword',
-	'before' => 'csrf', 
-	'uses'   => 'PasswordController@addPassword'
+  'as'     => 'users.addPassword',
+  'before' => 'csrf', 
+  'uses'   => 'PasswordController@addPassword'
 ));
 
 /*
@@ -219,7 +219,7 @@ Route::resource('statements', 'StatementController');
 |------------------------------------------------------------------
 */
 Route::get('reporting', function(){
-	return View::make('partials.reporting.index')->with('reporting_nav', true);
+  return View::make('partials.reporting.index')->with('reporting_nav', true);
 });
 
 
@@ -230,17 +230,17 @@ Route::get('reporting', function(){
 */
 
 Route::get('terms', function(){
-	return View::make('partials.pages.terms');
+  return View::make('partials.pages.terms');
 });
 //tools
 Route::get('tools', array(function(){
-	return View::make('partials.pages.tools', array('tools' => true));
+  return View::make('partials.pages.tools', array('tools' => true));
 }));
 Route::get('help', array(function(){
-	return View::make('partials.pages.help', array('help' => true));
+  return View::make('partials.pages.help', array('help' => true));
 }));
 Route::get('about', array(function(){
-	return View::make('partials.pages.about');
+  return View::make('partials.pages.about');
 }));
 
 /*
@@ -251,26 +251,28 @@ Route::get('about', array(function(){
 
 Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), function(){
 
-	Config::set('xapi.using_version', '1.0.1');
+  Config::set('xapi.using_version', '1.0.1');
 
-	Route::get('/about', function() {
+  Route::get('/about', function() {
         return Response::json( array('X-Experience-API-Version'=>Config::get('xapi.using_version')));
     });
 
-	//statement resource (post, put, get, delete) route
-	Route::resource('statements', 'Controllers\xAPI\StatementsController');
+  //statement resource (post, put, get, delete) route
+  Route::resource('statements', 'Controllers\xAPI\StatementsController');
 
-	//Agent API
-	Route::resource('agents/profile', 'Controllers\xAPI\AgentController');
-	Route::get('agents', 'Controllers\xAPI\AgentController@index');
+  //Agent API
+  Route::get('agents', 'Controllers\xAPI\AgentController@index');
+  Route::put('agents', 'Controllers\xAPI\AgentController@store');
+  Route::post('agents', 'Controllers\xAPI\AgentController@store');
+  Route::delete('agents', 'Controllers\xAPI\AgentController@delete');
 
-	//Activiy API
-	Route::resource('activities/profile', 'Controllers\xAPI\ActivityController');
-	Route::get('activities', 'Controllers\xAPI\ActivityController@index');
+  //Activiy API
+  Route::resource('activities/profile', 'Controllers\xAPI\ActivityController');
+  Route::get('activities', 'Controllers\xAPI\ActivityController@index');
 
-	//State API
-	Route::resource('activities/state', 'Controllers\xAPI\StateController');
-	
+  //State API
+  Route::resource('activities/state', 'Controllers\xAPI\StateController');
+  
 
 });
 
@@ -282,11 +284,11 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
 
 Route::group( array('prefix' => 'api/v1', 'before'=>'auth.api'), function(){
 
-	Config::set('api.using_version', 'v1');
+  Config::set('api.using_version', 'v1');
 
-	Route::get('/', function() {
-		return Response::json( array('version' => Config::get('api.using_version')));
-	});
+  Route::get('/', function() {
+    return Response::json( array('version' => Config::get('api.using_version')));
+  });
 
 });
 
@@ -298,16 +300,16 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.api'), function(){
 */
 App::missing(function($exception){
 
-	if ( Request::segment(1) == "data" || Request::segment(1) == "api" ) {
-		$error = array(
-			'error'     =>  true,
-			'message'   =>  $exception->getMessage(),
-			'code'      =>  $exception->getStatusCode(),
-			'trace'     =>  $exception->getTrace()
-		);
+  if ( Request::segment(1) == "data" || Request::segment(1) == "api" ) {
+    $error = array(
+      'error'     =>  true,
+      'message'   =>  $exception->getMessage(),
+      'code'      =>  $exception->getStatusCode(),
+      'trace'     =>  $exception->getTrace()
+    );
 
-		return Response::json( $error, $exception->getStatusCode());
-	} else {
-		return Response::view( 'errors.missing', array( 'message'=>$exception->getMessage() ), 404);
-	}
+    return Response::json( $error, $exception->getStatusCode());
+  } else {
+    return Response::view( 'errors.missing', array( 'message'=>$exception->getMessage() ), 404);
+  }
 });

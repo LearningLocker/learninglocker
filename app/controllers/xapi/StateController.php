@@ -2,6 +2,7 @@
 
 use \Locker\Repository\Document\DocumentRepository as Document;
 use Locker\Repository\Document\DocumentType as DocumentType;
+use Carbon\Carbon;
 
 class StateController extends DocumentController {
 
@@ -20,37 +21,83 @@ class StateController extends DocumentController {
 
 
   /**
+   * Handle Single and Multiple GETs
    * Return a list of stateId's based on activityId and actor match.
-   *
-   * @todo add in actor details
    *
    * @return Response
    */
   public function index(){
+
+    //If a stateId is passed then redirect to show method
+    if( isset($this->params['stateId']) ){
+      return $this->show();
+    }
 
     $data = $this->checkParams(array(
       'activityId' => 'string',
       'agent'      => array('string', 'json')
     ), array(
       'registration' => 'string',
-      'since'        => 'timestamp'
+      'since'        => array('string', 'timestamp')
     ), $this->params );
 
-    $documents = $this->document->all( $this->lrs->_id, $this->document_type, $data['activityId'], $data['agent'] );
+    $documents = $this->document->all( $this->lrs->_id, $this->document_type, $data );
     
     //return array of only the stateId values for each document
     $stateIds = array_column($documents->toArray(), 'stateId');
     return \Response::json( $stateIds );
   }
 
+
   /**
-   * Store a newly created resource in storage.
+   * Single Document GET
+   *
+   * @return Response
+   */
+  public function show(){
+
+    $data = $this->checkParams(
+      array(
+        'activityId' => 'string',
+        'stateId'  => 'string',
+        'agent'      => array('string', 'json')
+      ),
+      array(
+        'registration' => 'string'
+      ), 
+      $this->params
+    );
+
+    $document = $this->document->find( $this->lrs->_id, $this->document_type, $data );
+
+    if( !$document ){
+      \App::abort(204);
+    }
+
+    switch( $document->contentType ){
+      case "application/json":
+        $response = \Response::json($document->content, 200);
+      break;
+      case "text/plain":
+        $response = \Response::make($document->content, 200);
+        $response->header('Content-Type', "text/plain");
+      break;
+      default:
+        $response = \Response::make($document->content, 200);
+      break;
+    }
+
+    return $response;
+  }
+
+  /**
+   * Handle PUT and POST methods
    *
    * @return Response
    */
   public function store(){
 
-    $state = $this->checkParams( 
+    $data = $this->checkParams( 
       array(
         'activityId' => 'string',
         'agent'      => array('string', 'json'),
@@ -63,8 +110,16 @@ class StateController extends DocumentController {
       $this->params
     );
 
+    $updated = \Request::header('Updated');
+    if( !empty($updated) ){
+      if( !$this->validateTimestamp($updated) ){
+        \App::abort(400, sprintf( "`%s` is not an valid ISO 8601 formatted timestamp", $updated ) );
+      }
+    } else {
+      $updated = Carbon::now()->toISO8601String();
+    }
 
-    $store = $this->document->store( $this->lrs->_id, $state, $this->document_type );
+    $store = $this->document->store( $this->lrs->_id, $this->document_type, $data, $updated );
 
     if( $store ){
       return \Response::json( array( 'ok', 204 ) );
@@ -75,45 +130,12 @@ class StateController extends DocumentController {
   }
 
   /**
-   * Display the specified resource.
-   *
-   * @param  string     $activityId
-   * @param  json       $agent
-   * @param  string     $stateId
-   * @return Response
-   */
-  public function show( $activityId, $agent, $stateId ){
-
-    $data = $this->checkParams(array(
-      'activityId' => 'string',
-      'stateId'  => 'string',
-      'agent'      => array('string', 'json')
-    ), array(), $this->params );
-
-    $documents = $this->document->all( $this->lrs->_id, $this->document_type, $data['activityId'], $data['agent'], $data['stateId'] );
-
-    return \Response::json( $document->toArray() );
-
-  }
-
-  /**
-   * Update the specified resource in storage.
+   * Handle single and multiple document delete
    *
    * @param  int  $id
    * @return Response
    */
-  public function update($id)
-  {
-    //
-  }
-
-  /**
-   * Remove the specified resource from storage.
-   *
-   * @param  int  $id
-   * @return Response
-   */
-  public function destroy($id)
+  public function delete()
   {
     //
   }
