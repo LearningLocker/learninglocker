@@ -21,17 +21,39 @@ class StateController extends DocumentController {
 
 
   /**
-   * Handle Single and Multiple GETs
+   * Handle Single and Multiple GETs and CORS PUT/POST/DELETE requests
    * Return a list of stateId's based on activityId and actor match.
    *
    * @return Response
    */
   public function index(){
-
-    //If a stateId is passed then redirect to show method
-    if( isset($this->params['stateId']) ){
-      return $this->show();
+    switch( $method ){
+      case "GET":
+        if( isset($this->params['stateId']) ){ //If a stateId is passed then redirect to get method
+          return $this->get();
+        } else {
+          return $this->all();
+        }
+      break;
+      case "PUT":
+      case "POST":
+        return $this->store();
+      break;
+      case "DELETE":
+        return $this->delete();
+      break;
     }
+  }
+
+
+    
+  /**
+   * Handle Single and Multiple GETs and CORS PUT/POST/DELETE requests
+   * Return a list of stateId's based on activityId and actor match.
+   *
+   * @return Response
+   */
+  public function all(){
 
     $data = $this->checkParams(array(
       'activityId' => 'string',
@@ -54,7 +76,7 @@ class StateController extends DocumentController {
    *
    * @return Response
    */
-  public function show(){
+  public function get(){
 
     $data = $this->checkParams(
       array(
@@ -68,26 +90,7 @@ class StateController extends DocumentController {
       $this->params
     );
 
-    $document = $this->document->find( $this->lrs->_id, $this->document_type, $data );
-
-    if( !$document ){
-      \App::abort(204);
-    }
-
-    switch( $document->contentType ){
-      case "application/json":
-        $response = \Response::json($document->content, 200);
-      break;
-      case "text/plain":
-        $response = \Response::make($document->content, 200);
-        $response->header('Content-Type', "text/plain");
-      break;
-      default:
-        $response = \Response::make($document->content, 200);
-      break;
-    }
-
-    return $response;
+    return $this->documentResponse( $data ); // use the DocumentController to handle document response
   }
 
   /**
@@ -101,8 +104,7 @@ class StateController extends DocumentController {
       array(
         'activityId' => 'string',
         'agent'      => array('string', 'json'),
-        'stateId'    => 'string',
-        'content'    => ''
+        'stateId'    => 'string'
       ),
       array(
         'registration' => 'string'
@@ -110,6 +112,24 @@ class StateController extends DocumentController {
       $this->params
     );
 
+    /*
+    //Retrieve the content type headers
+    $header = \Request::header('Content-Type');
+    dd( $header );
+    if( !is_null($header) ){
+      $data['contentType'] = $header;
+    } else {
+      \App::abort(400, 'A Content-Type must be included');
+    }
+    */
+    $data['contentType'] = "application/json";
+
+    //Get the content from the request
+    $data['content'] = $this->getAttachedContent('content');
+
+
+
+    //Get the updated parameter from the header and check formatting
     $updated = \Request::header('Updated');
     if( !empty($updated) ){
       if( !$this->validateTimestamp($updated) ){
@@ -119,7 +139,8 @@ class StateController extends DocumentController {
       $updated = Carbon::now()->toISO8601String();
     }
 
-    $store = $this->document->store( $this->lrs->_id, $this->document_type, $data, $updated );
+    //Store the document
+    $store = $this->document->store( $this->lrs->_id, $this->document_type, $data, $updated, $this->method );
 
     if( $store ){
       return \Response::json( array( 'ok', 204 ) );

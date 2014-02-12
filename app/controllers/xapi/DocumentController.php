@@ -21,6 +21,72 @@ class DocumentController extends BaseController {
   }
 
   /**
+   * Retrieve attached file content
+   * 
+   * @param  string $name Field name
+   * 
+   * @return mixed       Attached content
+   */
+  public function getAttachedContent($name='content'){
+    switch( $this->method ){
+      case "PUT":
+        if( $this->CORS ){
+          if( isset($this->params[$name]) ){
+            $content = $this->params[$name];
+          } else {
+            \App::abort( 400, 'No content was sent in this request');
+          }
+        } else {
+          $request        = \Request::instance();
+          $incoming_data  = $request->getContent();
+          $content        = $incoming_data;
+        }
+      break;
+
+      case "POST":
+        if( isset($this->params[$name]) ){
+          $content = $this->params[$name];
+        } else {
+          \App::abort( 400, sprintf('%s was sent in this request', $name ) );
+        }
+      break;
+    }
+
+    return $content;
+  }
+
+  /**
+   * Generate content response
+   * 
+   * @param  array $data Mixed data var to select Document with
+   * 
+   * @return Response
+   */
+  public function documentResponse($data){
+
+    $document = $this->document->find( $this->lrs->_id, $this->document_type, $data ); //find the correct document
+    if( !$document ){
+      \App::abort(204);
+    }
+
+    switch( $document->contentType ){
+      case "application/json":
+        $response = \Response::json($document->content, 200);
+      break;
+      case "text/plain":
+        $response = \Response::make($document->content, 200);
+        $response->header('Content-Type', "text/plain");
+      break;
+      default:
+        $response = Response::download($document->getFilePath());
+        $response->header('Content-Type', $document->contentType);
+      break;
+    }
+
+    return $response;
+  }
+
+  /**
    * Used to filter required paramters on an incoming request
    * @param  array  $required a list of expected parameters and allows types
    * @param  array  $optional a list of optional parameters in required
