@@ -1,154 +1,310 @@
 <?php namespace Locker\Repository\Document;
 
 use DocumentAPI;
+use Carbon\Carbon;
 
 class EloquentDocumentRepository implements DocumentRepository {
 
-	/**
-	* DocumentAPI
-	*/
-	protected $documentapi;
+  /**
+  * DocumentAPI
+  */
+  protected $documentapi;
 
-	/**
-	 * Construct
-	 *
-	 * @param Statement $statement
-	 */
-	public function __construct( DocumentAPI $documentapi ){
+  /**
+   * Construct
+   *
+   * @param Statement $statement
+   */
+  public function __construct( DocumentAPI $documentapi ){
 
-		$this->documentapi = $documentapi;
+    $this->documentapi = $documentapi;
 
-	}
+  }
+
+  ///////////////////////////////////
+  // DOCUMENT TYPE ROUTING METHODS //
+  ///////////////////////////////////
+
+  /**
+   * Find multiple documents
+   * @param  Lrs $lrs
+   * @param  String $documentType   The type of document
+   * @param  Array $data
+   * @return Collection             A collection of DocumentAPIs
+   */
+  public function all( $lrs, $documentType, $data ){
+
+    switch( $documentType ){
+      case DocumentType::STATE:
+        return $this->allState( $lrs, $data['activityId'], $data['agent'], $data['registration'], $data['since'] );
+      break;
+      case DocumentType::ACTIVITY:
+        //return $this->allActivity( $lrs, $data );
+      break;
+      case DocumentType::AGENT:
+        //return $this->allActivity( $lrs, $data );
+      break;
+    }
+
+  }
+
+  /**
+   * Find single document
+   * 
+   * @param  Lrs $lrs
+   * @param  String $documentType   The type of document
+   * @param  Array $data
+   * 
+   * @return DocumentAPI
+   */
+  public function find( $lrs, $documentType, $data ){
+
+    switch( $documentType ){
+      case DocumentType::STATE:
+        return $this->findState( $lrs, $data['activityId'], $data['agent'], $data['registration'] );
+      break;
+      case DocumentType::ACTIVITY:
+        //return $this->findActivity( $lrs, $data );
+      break;
+      case DocumentType::AGENT:
+        //return $this->findActivity( $lrs, $data );
+      break;
+    }
+
+  }
 
 
-	public function all( $lrs, $documentType, $activityId, $agent ){
+  /**
+   * Store document
+   * 
+   * @param  Lrs $lrs
+   * @param  String $documentType   The type of document
+   * @param  Array $data
+   * @param  String $updated        ISO 8601 Timestamp
+   * 
+   * @return DocumentAPI  Returns the updated/created document
+   */
+  public function store( $lrs, $documentType, $data, $updated ){
 
-		$query = $this->documentapi->where('lrs', $lrs)
-				 ->where('documentType', $documentType)
-				 ->where('activityId', $activityId);
+    switch( $documentType ){
+      case DocumentType::STATE:
+        return $this->storeState( $lrs, $data, $updated );
+      break;
+      case DocumentType::ACTIVITY:
+        //return $this->storeActivity( $lrs, $data, $updated );
+      break;
+      case DocumentType::AGENT:
+        //return $this->storeActivity( $lrs, $data, $updated );
+      break;
+    }
 
-		$query = $this->setAgent( $query, $agent );
-
-		return $query->select('stateId')->get();
-
-	}
-
-	public function find( $lrs, $documentType, $activityId, $actor, $stateId ){
-
-		$query = $this->documentapi->where('lrs', $lrs)
-				 ->where('documentType', $documentType)
-				 ->where('activityId', $activityId)
-				 ->where('stateId', $stateId);
-
-		$query = $this->setAgent( $query, $agent );
-
-		return $query->first();
-
-	}
-
-	public function store( $lrs, $data, $documentType ){
-
-		$new_document = $this->documentapi;
-		$new_document->lrs           = $lrs; //LL specific 
-		$new_document->documentType  = $documentType; //LL specific
-
-		switch( $new_document->documentType ){
-			case DocumentType::STATE:
-				$new_document->activityId   = $data['activityId'];
-				$new_document->agent        = $data['agent'];
-				$new_document->stateId      = $data['stateId'];
-				$new_document->registration = isset($data['registration']) ? $data['registration'] : null;
-			break;
-			case DocumentType::ACTIVITY:
-				$new_document->activityId = $data['activityId'];
-				$new_document->profileId  = $data['profileId'];
-			break;
-			case DocumentType::AGENT:
-
-			break;
-		}
+  }
 
 
-		//@todo add update as per spec https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#miscdocument
-		if( is_object( json_decode($data['content'] ) ) ){ //save json as an object
 
-	  		$new_document->contentType = 'application/json';
-			$new_document->content = json_decode($data['content']);
+  ///////////////////
+  // STATE METHODS //
+  ///////////////////
 
-		} else if( is_string($data['content']) ){ //save text as raw text
+  /**
+   * Find States
+   * 
+   * @param  Lrs $lrs          
+   * @param  String $activityId      IRI
+   * @param  Object $agent        
+   * @param  String $registration 
+   * @param  Timestamp $since        ISO 8601
+   * 
+   * @return Collection              A collection of DocumentAPIs
+   */
+  public function allState( $lrs,  $activityId, $agent, $registration, $since ){
 
-	  		$new_document->contentType = 'text/plain';
-			$new_document->content = $data['content'];
+    $query = $this->documentapi->where('lrs', $lrs)
+         ->where('documentType', DocumentType::STATE)
+         ->where('activityId', $activityId);
 
-		} else {
+    $query = $this->setAgent( $query, $agent );
+    $query = $this->setRegistration( $query, $registration );
+    $query = $this->setSince( $query, $since );
 
-			//TODO - save file content and reference through file path     
-			//Need to actually check this is a binary file still 
-			$new_document->contentType = 'file/mimetype'; //use this value to return an actual file when requesting the document - may want to use mimetype here?
-			$new_document->content = "..path/to/file/to.do"; 
+    return $query->select('stateId')->get();
 
-		}
-		
-		if( $new_document->save() ){
-			return true;
-		}
+  }
 
-		return false;
+  /**
+   * Find single stateId
+   * 
+   * @param  Lrs $lrs          
+   * @param  string $stateId      
+   * @param  String $activityId      IRI
+   * @param  Object $agent        
+   * @param  String $registration 
+   * 
+   * @return DocumentAPI
+   */
+  public function findState( $lrs, $stateId, $activityId, $agent, $registration ){
 
-	}
+    $query = $this->documentapi->where('lrs', $lrs)
+         ->where('documentType', DocumentType::STATE)
+         ->where('activityId', $activityId)
+         ->where('stateId', $stateId);
 
-	/**
-	 * When agent json is passed, get correct identifier
-	 *
-	 * @param @query  The query in question - called from all and find.
-	 * @param @agent  The agent json object
-	 *
-	 * @return $query
-	 * 
-	 */
-	public function setAgent( $query, $agent ){
+    $query = $this->setAgent( $query, $agent );
+    $query = $this->setRegistration( $query, $registration );
 
-		$agent_query = '';
+    return $query->first();
 
-		//Do some checking on what actor field we are filtering with
-		if( isset($agent->mbox) ){ //check for mbox
+  }
 
-	  		$agent_query = array('field' => 'agent.mbox', 'value'=>$agent->mbox);
 
-		} else if( isset($agent->mbox_sha1sum) ) {//check for mbox_sha1sum
+  /**
+   * Handle storing State documents
+   * 
+   * @param  Lrs $lrs
+   * @param  Array $data        The required data for the state
+   * @param  String $updated    ISO 8601 Timestamp
+   * 
+   * @return DocumentAPI        The document being created/updated
+   */
+  public function storeState( $lrs, $data, $updated ){
 
-			$agent_query = array('field' => 'agent.mbox_sha1sum', 'value'=>$agent->mbox_sha1sum);
+    $existing_document = $this->findState( $lrs, $data['stateId'], $data['activityId'], $data['agent'], $data['registration'] );
+    if( !$existing_document ){
+      $document                 = $this->documentapi;
 
-		} else if( isset($agent->openid) ){ //check for open id
+      //LL vars
+      $document->lrs            = $lrs; //LL specific 
+      $document->documentType   = DocumentType::STATE; //LL specific
 
-			$agent_query = array('field' => 'agent.openid', 'value'=>$agent->openid);
+      //AP vars
+      $document->stateId        = $data['stateId'];
+      $document->activityId     = $data['activityId'];
+      $document->agent          = $data['agent'];
+      $document->registration   = isset($data['registration']) ? $data['registration'] : null;
 
-		}
+    } else {
+      $document = $existing_document;
+    }
 
-		if( isset($agent_query) ){ //if we have agent query params lined up...
+    $document->updated_at = new Carbon($updated);
+    $document->setContent( $data['content'], \Request::server('REQUEST_METHOD') ); //set the content for the document
 
-			$query->where( $agent_query['field'], $agent_query['value'] );
+    if( $document->save() ){
+      return $document;
+    }
 
-		} else if( isset($agent->account) ){ //else if there is an account
+    return false;
+  }
 
-			if( isset($agent->account->homePage) && isset($agent->account->name ) ){
 
-				$query->where('agent.account.homePage', $agent->account->homePage)
-					   	 ->where('agent.account.name', $agent->account->name );
+  //////////////////////
+  // ACTIVITY METHODS //
+  //////////////////////
 
-			} else {
 
-				\App::abort(400, 'Missing required paramaters in the agent.account');
 
-			}
 
-		} else {
+  ///////////////////
+  // AGENT METHODS //
+  ///////////////////
 
-			\App::abort(400, 'Missing required paramaters in the agent');
 
-		}
 
-		return $query;
-	}
+
+  ///////////////////
+  // QUERY METHODS //
+  ///////////////////
+
+
+  /**
+   * When agent json is passed, get correct identifier
+   *
+   * @param @query  The query in question - called from all and find.
+   * @param @agent  The agent json object
+   *
+   * @return $query
+   * 
+   */
+  public function setAgent( $query, $agent ){
+
+    $agent_query = '';
+
+    //Do some checking on what actor field we are filtering with
+    if( isset($agent->mbox) ){ //check for mbox
+
+        $agent_query = array('field' => 'agent.mbox', 'value'=>$agent->mbox);
+
+    } else if( isset($agent->mbox_sha1sum) ) {//check for mbox_sha1sum
+
+      $agent_query = array('field' => 'agent.mbox_sha1sum', 'value'=>$agent->mbox_sha1sum);
+
+    } else if( isset($agent->openid) ){ //check for open id
+
+      $agent_query = array('field' => 'agent.openid', 'value'=>$agent->openid);
+
+    }
+
+    if( isset($agent_query) ){ //if we have agent query params lined up...
+
+      $query->where( $agent_query['field'], $agent_query['value'] );
+
+    } else if( isset($agent->account) ){ //else if there is an account
+
+      if( isset($agent->account->homePage) && isset($agent->account->name ) ){
+
+        $query->where('agent.account.homePage', $agent->account->homePage)
+               ->where('agent.account.name', $agent->account->name );
+
+      } else {
+
+        \App::abort(400, 'Missing required paramaters in the agent.account');
+
+      }
+
+    } else {
+
+      \App::abort(400, 'Missing required paramaters in the agent');
+
+    }
+
+    return $query;
+  }
+
+  /**
+   * Unified method for filtering by registration, if provided
+   * 
+   * @param Eloquent $query The query being filtered
+   * @param string $registration The UUID associated with this state
+   * 
+   * @return $query
+   */
+  public function setRegistration( $query, $registration ){
+
+    if( !empty($registration) ){
+      $query = $query->where('registration', $registration);
+    }
+
+    return $query;
+
+  }
+
+  /**
+   * Unified method for filtering by stored date (since), if provided
+   * 
+   * @param Eloquent $query The query being filtered
+   * @param string $since The UUID associated with this state
+   * 
+   * @return $query
+   */
+  public function setSince($query, $since ){
+
+    if( !empty($since) ){
+      $since_carbon = new Carbon($since);
+      $query = $query->where('updated_at', '>', $since_carbon);
+    }
+
+    return $query;
+
+  }
 
 }
