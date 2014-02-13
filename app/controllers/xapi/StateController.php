@@ -27,7 +27,7 @@ class StateController extends DocumentController {
    * @return Response
    */
   public function index(){
-    switch( $method ){
+    switch( $this->method ){
       case "GET":
         if( isset($this->params['stateId']) ){ //If a stateId is passed then redirect to get method
           return $this->get();
@@ -122,10 +122,10 @@ class StateController extends DocumentController {
       \App::abort(400, 'A Content-Type must be included');
     }
     */
-    $data['contentType'] = "application/json";
+   
 
     //Get the content from the request
-    $data['content'] = $this->getAttachedContent('content');
+    $data['content_info'] = $this->getAttachedContent('content');
 
 
 

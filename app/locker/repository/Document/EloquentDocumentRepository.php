@@ -171,6 +171,7 @@ class EloquentDocumentRepository implements DocumentRepository {
   public function storeState( $lrs, $data, $updated, $method ){
 
     $existing_document = $this->findState( $lrs, $data['stateId'], $data['activityId'], $data['agent'], $data['registration'] );
+
     if( !$existing_document ){
       $document                 = $this->documentapi;
 
@@ -189,7 +190,7 @@ class EloquentDocumentRepository implements DocumentRepository {
     }
 
     $document->updated_at = new Carbon($updated);
-    $document->setContent( $data['content'], $data['contentType'], $method ); //set the content for the document
+    $document->setContent( $data['content_info'], $method ); //set the content for the document
 
     if( $document->save() ){
       return $document;
@@ -234,15 +235,15 @@ class EloquentDocumentRepository implements DocumentRepository {
     //Do some checking on what actor field we are filtering with
     if( isset($agent->mbox) ){ //check for mbox
 
-        $agent_query = array('field' => 'actor.mbox', 'value'=>$agent->mbox);
+        $agent_query = array('field' => 'agent.mbox', 'value'=>$agent->mbox);
 
     } else if( isset($agent->mbox_sha1sum) ) {//check for mbox_sha1sum
 
-      $agent_query = array('field' => 'actor.mbox_sha1sum', 'value'=>$agent->mbox_sha1sum);
+      $agent_query = array('field' => 'agent.mbox_sha1sum', 'value'=>$agent->mbox_sha1sum);
 
     } else if( isset($agent->openid) ){ //check for open id
 
-      $agent_query = array('field' => 'actor.openid', 'value'=>$agent->openid);
+      $agent_query = array('field' => 'agent.openid', 'value'=>$agent->openid);
 
     }
 
@@ -254,8 +255,8 @@ class EloquentDocumentRepository implements DocumentRepository {
 
       if( isset($agent->account->homePage) && isset($agent->account->name ) ){
 
-        $query->where('actor.account.homePage', $agent->account->homePage)
-               ->where('actor.account.name', $agent->account->name );
+        $query->where('agent.account.homePage', $agent->account->homePage)
+               ->where('agent.account.name', $agent->account->name );
 
       } else {
 
