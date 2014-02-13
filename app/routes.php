@@ -258,11 +258,12 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
     });
 
   //statement resource (post, put, get, delete) route
+  Route::put('statements',      'Controllers\xAPI\StatementsController@storePut');
   Route::resource('statements', 'Controllers\xAPI\StatementsController');
 
   //Agent API
   Route::resource('agents/profile', 'Controllers\xAPI\ActivityController');
-  Route::get('agents', 'Controllers\xAPI\AgentController@index');
+  Route::get('agents',              'Controllers\xAPI\AgentController@index');
 
   //Activiy API
   Route::get('activities/profile',    'Controllers\xAPI\ActivityController@index');

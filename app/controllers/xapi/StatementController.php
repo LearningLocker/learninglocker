@@ -31,8 +31,8 @@ class StatementsController extends BaseController {
 
     $this->beforeFilter('@checkVersion');
     $this->beforeFilter('@getLrs');
-    $this->beforeFilter('@setParameters', array('except' => 'store'));
-    $this->beforeFilter('@reject', array('except' => 'store'));
+    $this->beforeFilter('@setParameters', array('except' => 'store', 'put'));
+    $this->beforeFilter('@reject', array('except' => 'store', 'put'));
 
   }
 
@@ -48,28 +48,52 @@ class StatementsController extends BaseController {
     //grab incoming statement
     $request            = \Request::instance();
     $incoming_statement = $request->getContent();
-  
-    //convert to array
-    $statement = json_decode($incoming_statement, TRUE);
+    $statement          = json_decode($incoming_statement, TRUE);
 
-    // Save the statement
-    $save = $this->statement->create( $statement, $this->lrs );
-
-    if( $save['success'] ){
-      return $this->returnSuccessError( true, $save['id'], '200' );
-    }else{
-      return $this->returnSuccessError( false, implode($save['message']), '400' );
-    }
+    //@todo if incoming is an array of statements, loop through
+    $save = $this->saveStatement( $statement );
+    return $this->sendResponse( $save );
 
   }
 
   /**
-   * Update the specified resource in storage.
+   * Save a single statement in the DB
+   *
+   * @param json $incoming_statement
+   * @return response
+   */
+  public function saveStatement( $statement ){
+  
+    $save = $this->statement->create( $statement, $this->lrs );
+    return $save;
+
+  }
+
+  /**
+   * Stores Statement with the given id.
    *
    * @param  int  $id
    * @return Response
    */
-  public function update(){}
+  public function storePut(){
+
+    $request            = \Request::instance();
+    $incoming_statement = $request->getContent();
+    $statement          = json_decode($incoming_statement, TRUE);
+    
+
+    //if no id submitted, reject
+    if( !isset($statement['id']) ) return $this->sendResponse( array('success' => 'noId') );
+
+    $save = $this->saveStatement( $statement );
+
+    if( $save['success'] == 'true' ){
+      return $this->sendResponse( array('success' => 'put') );
+    }
+
+    return $this->sendResponse( $save );
+
+  }
 
   /**
    * Display a listing of the resource.
@@ -108,7 +132,9 @@ class StatementsController extends BaseController {
     if( $this->checkAccess( $statement ) ){
       return $this->returnArray( $statement->toArray() );
     }else{
-      return $this->returnSuccessError( false, 'You are not authorized to access this statement.', 403 );
+      return \Response::json( array( 'error'    => true, 
+                                     'message'  => 'You are not authorized to access this statement.'), 
+                                     403 );
     }
     
   }
@@ -171,6 +197,42 @@ class StatementsController extends BaseController {
   }
 
   /**
+   * Set and send back approriate response.
+   *
+   * @param array $outcome 
+   * @return response
+   **/
+  public function sendResponse( $outcome ){
+
+    switch( $outcome['success'] ){
+      case 'true': 
+        return \Response::json( array( 'success'  => true, 
+                                       'message'  => $outcome['id']), 
+                                        200 );
+        break;
+      case 'conflict-nomatch':
+        return \Response::json( array('success'  => false), 409 );
+        break;
+      case 'conflict-matches':
+        return \Response::json( array(), 204 );
+        break;
+      case 'put':
+        return \Response::json( array('success'  => true), 204 );
+        break;
+      case 'noId':
+        return \Response::json( array('success'  => false, 'message' => 'A statement ID is required to PUT.'), 400 );
+        break;
+      case 'false':
+        return \Response::json( array( 'success'  => false, 
+                                       'message'  => implode($outcome['message'])), 
+                                       400 );
+        break;
+
+    }
+   
+  }
+
+  /**
    * Run a check to make sure critria are being met, if not, reject
    * with a 400.
    *
@@ -179,24 +241,30 @@ class StatementsController extends BaseController {
 
     //first check that statementId and voidedStatementId
     //have not been requested.
-    if (array_key_exists("statementId", $this->params) AND array_key_exists("voidedStatementId", $this->params)) {
+    if (array_key_exists("statementId", $this->params) 
+      AND array_key_exists("voidedStatementId", $this->params)) {
 
-      return $this->returnSuccessError( false, 'You can\'t request based on both statementId and voidedStatementId', 400 );
-
+      return \Response::json( array( 'error'    => true, 
+                                     'message'  => 'You can\'t request based on both 
+                                                    statementId and voidedStatementId'), 
+                                     400 );
     }
 
     //The LRS MUST reject with an HTTP 400 error any requests to this resource 
     //which contain statementId or voidedStatementId parameters, and also contain any other 
     //parameter besides "attachments" or "format".
 
-    if (array_key_exists("statementId", $this->params) OR array_key_exists("voidedStatementId", $this->params)) {
+    if (array_key_exists("statementId", $this->params) 
+      OR array_key_exists("voidedStatementId", $this->params)) {
 
       $allowed_params = array('attachments', 'format');
 
       foreach( $this->params as $k => $v ){
         if( $k != 'statementId' && $k != 'voidedStatementId' && !in_array( $k, $allowed_params) ){
-          return $this->returnSuccessError( false, 'When using statementId or voidedStatementId, the only other 
-            parameters allowed are attachments and/or format.', 400 );
+          return \Response::json( array( 'error'    => true, 
+                                         'message'  => 'When using statementId or voidedStatementId, the only other 
+                                                        parameters allowed are attachments and/or format.'), 
+                                         400 );
         }
       }
 

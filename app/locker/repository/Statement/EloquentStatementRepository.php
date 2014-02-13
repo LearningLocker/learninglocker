@@ -1,6 +1,7 @@
 <?php namespace Locker\Repository\Statement;
 
 use Statement;
+use Locker\Repository\Activity\ActivityRepository as Activity;
 
 class EloquentStatementRepository implements StatementRepository {
 
@@ -13,10 +14,13 @@ class EloquentStatementRepository implements StatementRepository {
    * Construct
    *
    * @param Statement $statement
+   * @param Activity  $activity
+   *
    */
-  public function __construct( Statement $statement ){
+  public function __construct( Statement $statement, Activity $activity ){
 
     $this->statement = $statement;
+    $this->activity  = $activity;
 
   }
 
@@ -45,6 +49,7 @@ class EloquentStatementRepository implements StatementRepository {
   /**
    * Find a statement based on statementID
    * 
+   * @param string $id A statement id (uuid)
    * @return response
    **/
   public function find( $id ){
@@ -98,13 +103,17 @@ class EloquentStatementRepository implements StatementRepository {
 
     //if the statement does not validate, return with errors
     if( $return['status'] == 'failed' ){
-      return array( 'success' => false, 
-              'message' => $return['errors']);
+      return array( 'success' => 'false', 
+                    'message' => $return['errors']);
     }
 
     //statement has validated, so continue with verified statement. 
     $vs = $return['statement'];
 
+    //check to see if the statementId already has a statement in the LRS
+    if( $result = $this->doesStatementIdExist( $lrs->_id, $vs['id'], $statement ) ){
+      return array( 'success' => $result ); 
+    }
 
     /*
     |------------------------------------------------------------------------------
@@ -112,7 +121,7 @@ class EloquentStatementRepository implements StatementRepository {
     |------------------------------------------------------------------------------
     */
     $vs['context']['extensions']['http://learninglocker&46;net/extensions/lrs'] = array( '_id'  => $lrs->_id, 
-                                               'name' => $lrs->title );
+                                                                                         'name' => $lrs->title );
 
 
     /*
@@ -130,7 +139,7 @@ class EloquentStatementRepository implements StatementRepository {
     | If not, store it.
     |------------------------------------------------------------------------------
     */
-    $vs['object']['definition'] = $this->saveActivity( $vs['object']['id'], $vs['object']['definition'] );
+    $vs['object']['definition'] = $this->activity->saveActivity( $vs['object']['id'], $vs['object']['definition'] );
 
 
     /*
@@ -151,47 +160,27 @@ class EloquentStatementRepository implements StatementRepository {
     $new_statement->fill( $vs );
 
     if( $new_statement->save() ){
-      return array( 'success' => true, 
-              'id'      => $new_statement->_id );
+      return array( 'success' => 'true', 
+                    'id'      => $new_statement->_id );
     }
 
-    return array( 'success' => false, 
-            'message' => $new_statement->errors );
+    return array( 'success' => 'false', 
+                  'message' => $new_statement->errors );
 
   }
 
 
-  /*
-  |-------------------------------------------------------------------------------
-  | Save object type activity for reference. If exists, return saved version.
-  |-------------------------------------------------------------------------------
-  */
-  private function saveActivity( $activity_id, $activity_def ){
-
-    $exists = \DB::table('activities')->find( $activity_id );
-
-    //if the object activity exists, return details on record.
-    if( $exists ){
-      return $exists['definition'];
-    }else{
-      //save it
-      \DB::table('activities')->insert(
-        array('_id'        => $activity_id, 
-              'definition' => $activity_def)
-      );
-      return $activity_def;
-    }
-
-  }
-
-
-  /*
-  |-------------------------------------------------------------------------------
-  | Mongo doesn't allow full stops (.) in keys as it is reserved, so, 
-  | we replace with &46; where required. This will most likely only
-  | happen in extensions.
-  |-------------------------------------------------------------------------------
-  */
+  /**
+   *
+   * Mongo doesn't allow full stops (.) in keys as it is reserved, so, 
+   * we replace with &46; where required. This will most likely only
+   * happen in extensions.
+   *
+   * @param array $statement A full statement array
+   *
+   * @return array $statement
+   *
+   */
   private function replaceFullStop( $statement ){
 
     $statement = \app\locker\helpers\Helpers::replaceFullStop( $statement );
@@ -199,11 +188,15 @@ class EloquentStatementRepository implements StatementRepository {
     
   }
 
-  /*
-  |-----------------------------------------------------------------------
-  | Return statement with no filter
-  |------------------------------------------------------------------------
-  */
+  /**
+   * 
+   * Return statements with no filter for a particular LRS
+   *
+   * @param int $id The LRS _id.
+   *
+   * @return array of statements.
+   * 
+   */
   public function statements( $id ){
 
     return $this->statement->where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id)
@@ -212,17 +205,18 @@ class EloquentStatementRepository implements StatementRepository {
 
   }
 
-  /*
-  |----------------------------------------------------------------------
-  | Filter statements via our filtering options. 
-  |
-  | @param $id The LRS unique id.
-  | @param $vars array An array or parameters grabbed from the url. 
-  |
-  | @return array - an array containing statements for display and data 
-  | for the graph.
-  |----------------------------------------------------------------------
-  */
+  /**
+   *
+   * Filter statements via our filtering options. 
+   *
+   * @param int   $id        The LRS unique id.
+   * @param array $vars      An array or parameters grabbed from the url
+   * @param string $restrict Value to restrict query 
+   *
+   * @return array An array containing statements for display and data 
+   * for the graph.
+   *
+   */
   public function filter( $id, $vars='', $restrict='' ){
 
     $filter = array();
@@ -242,7 +236,6 @@ class EloquentStatementRepository implements StatementRepository {
       $this->setWhere( $filter, $query );
     }
     $query->orderBy('created_at', 'desc');
-    //$query->remember(5);
     $statements = $query->paginate(18);
 
     //@todo replace this using Mongo aggregation - no need to grab everything and loop through it.
@@ -260,16 +253,19 @@ class EloquentStatementRepository implements StatementRepository {
 
   }
 
-  /*
-  |----------------------------------------------------------------------
-  |
-  | Loop through passed parameters and add to DB query. Used when 
-  | filtering statements on the site.
-  |
-  | @todo only decode on urls not everything
-  |
-  |----------------------------------------------------------------------
-  */
+  /**
+   *
+   * Loop through passed parameters and add to DB query. Used when 
+   * filtering statements on the site.
+   * 
+   * @todo only decode on urls not everything
+   *
+   * @param string $filter
+   * @param object $query
+   * 
+   * @return object $query
+   *
+   */
   private function setWhere( $filter, $query ){
 
     foreach( $filter as $k => $v ){
@@ -280,13 +276,16 @@ class EloquentStatementRepository implements StatementRepository {
 
   }
 
-  /*
-  |----------------------------------------------------------------------
-  |
-  | Set a restriction for the query if one was passed
-  |
-  |----------------------------------------------------------------------
-  */
+  /**
+   *
+   * Set a restriction for the query if one was passed
+   *
+   * @param $restriction
+   * @param $query
+   *
+   * @return
+   *
+   */
   private function setRestriction( $restriction, $query ){
 
     if( $restriction != '' ){
@@ -306,13 +305,14 @@ class EloquentStatementRepository implements StatementRepository {
 
   }
 
-  /*
-  |----------------------------------------------------------------------
-  |
-  | A look up service to grab xAPI key based on url key.
-  |
-  |----------------------------------------------------------------------
-  */
+  /**
+   *
+   * A look up service to grab xAPI key based on url key.
+   *
+   * @param  string $key
+   * @return string 
+   *
+   */
   private function filterKeyLookUp( $key ){
     switch( $key ){
       case 'actor':
@@ -328,21 +328,18 @@ class EloquentStatementRepository implements StatementRepository {
     }
   }
 
-  /*
-  |----------------------------------------------------------------------
-  |
-  | Add parameters to statements query. This is used via xAPI GET 
-  | statements.
-  | 
-  | These allowed parameters are detemined by the xAPI spec see
-  | https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#stmtapi
-  |
-  | @param $statement The statement query
-  | @parameters The parameters to add
-  |
-  |----------------------------------------------------------------------
-  */
-
+  /**
+   *
+   * Add parameters to statements query. This is used via xAPI GET 
+   * statements.
+   * 
+   * These allowed parameters are detemined by the xAPI spec see
+   * https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#stmtapi
+   * 
+   * @param object $statement  The statement query
+   * @param array  $parameters The parameters to add
+   *
+   */
   private function addParameters( $statements, $parameters ){
 
     if( isset($parameters['agent']) ){
@@ -464,6 +461,32 @@ class EloquentStatementRepository implements StatementRepository {
     } 
 
     return $query;
+  }
+
+  /**
+   * Check to see if a submitted statementId already exist and if so
+   * are the two statements idntical? If not, return true.
+   *
+   * @param uuid   $id
+   * @param string $lrs
+   * @return boolean
+   *
+   **/
+  private function doesStatementIdExist( $lrs, $id, $statement ){
+
+    $exists = $this->statement->where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $lrs)
+              ->where('id', $id)
+              ->first();
+    
+    if( $exists ){
+      if( array_multisort( $exists->toArray() ) === array_multisort( $statement ) ){
+        return 'conflict-matches';
+      }
+      return 'conflict-nomatch';
+    }
+
+    return false;
+
   }
 
 }

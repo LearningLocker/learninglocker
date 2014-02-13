@@ -53,19 +53,4 @@ class BaseController extends Controller {
     $this->method = $this->CORS ? $this->params['method'] : \Request::server('REQUEST_METHOD');
   }
 
-  /**
-   * Return JSON with success boolean, message and HTTP status code
-   * 
-   * @param  $success
-   * @param  $message
-   * @param  $code    HTTP Status code
-   * 
-   * @return Response
-   */
-  protected function returnSuccessError( $success, $message, $code ){
-    return \Response::json( array( 'success'  => $success, 
-                     'message'  => $message), 
-                    $code );
-  }
-
 }

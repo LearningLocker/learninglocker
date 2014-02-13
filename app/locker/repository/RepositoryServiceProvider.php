@@ -30,6 +30,10 @@ class RepositoryServiceProvider extends ServiceProvider {
       'Locker\Repository\Document\DocumentRepository',
       'Locker\Repository\Document\EloquentDocumentRepository'
     );
+    $this->app->bind(
+      'Locker\Repository\Activity\ActivityRepository',
+      'Locker\Repository\Activity\EloquentActivityRepository'
+    );
   }
 
 
