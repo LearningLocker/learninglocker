@@ -55,9 +55,11 @@ class BaseController extends Controller {
 
   /**
    * Return JSON with success boolean, message and HTTP status code
+   * 
    * @param  $success
    * @param  $message
    * @param  $code    HTTP Status code
+   * 
    * @return Response
    */
   protected function returnSuccessError( $success, $message, $code ){

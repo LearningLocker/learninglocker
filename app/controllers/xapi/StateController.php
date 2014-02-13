@@ -29,13 +29,16 @@ class StateController extends DocumentController {
    */
   public function all(){
 
-    $data = $this->checkParams(array(
-      'activityId' => 'string',
-      'agent'      => array('string', 'json')
-    ), array(
-      'registration' => 'string',
-      'since'        => array('string', 'timestamp')
-    ), $this->params );
+    $data = $this->checkParams( 
+      array(
+        'activityId' => 'string',
+        'agent'      => array('string', 'json')
+      ), 
+      array(
+        'registration' => 'string',
+        'since'        => array('string', 'timestamp')
+      ), $this->params 
+    );
 
     $documents = $this->document->all( $this->lrs->_id, $this->document_type, $data );
     
@@ -55,13 +58,12 @@ class StateController extends DocumentController {
     $data = $this->checkParams(
       array(
         'activityId' => 'string',
-        'stateId'  => 'string',
+        'stateId'    => 'string',
         'agent'      => array('string', 'json')
       ),
       array(
         'registration' => 'string'
-      ), 
-      $this->params
+      ), $this->params
     );
 
     return $this->documentResponse( $data ); // use the DocumentController to handle document response
@@ -82,8 +84,7 @@ class StateController extends DocumentController {
       ),
       array(
         'registration' => 'string'
-      ),
-      $this->params
+      ), $this->params
     );
 
     /*
@@ -125,13 +126,46 @@ class StateController extends DocumentController {
   }
 
   /**
-   * Handle single and multiple document delete
+   * Handles routing to single and multiple document delete requests
    *
    * @param  int  $id
    * @return Response
    */
   public function delete(){
+
+    $single_delete = isset($this->params[$this->document_ident]);
+
+    if( $single_delete ){ //single document delete
+      $data = $this->checkParams(
+        array(
+          'activityId' => 'string',
+          'stateId'    => 'string',
+          'agent'      => array('string', 'json')
+        ),
+        array(
+          'registration' => 'string'
+        ), $this->params
+      );
+    } else {
+      $data = $this->checkParams(
+        array(
+          'activityId' => 'string',
+          'agent'      => array('string', 'json')
+        ), 
+        array(
+          'registration' => 'string'
+        ), $this->params 
+      );
+    }
+
+
+    $success = $this->document->delete( $this->lrs->_id, $this->document_type, $data, $single_delete );
     
+    if( $success ){
+      return \Response::json( array( 'ok', 204 ) );
+    }
+
+    return \Response::json( array( 'error', 400 ) );
   }
 
 }
