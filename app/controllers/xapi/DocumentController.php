@@ -1,6 +1,7 @@
 <?php namespace Controllers\xAPI;
 
 use \Locker\Repository\Document\DocumentRepository as Document;
+use Carbon\Carbon;
 
 class DocumentController extends BaseController {
 
@@ -190,6 +191,25 @@ class DocumentController extends BaseController {
     }
 
     return $return_data;
+  }
+
+  /**
+   * Get the updated parameter from the header and check formatting
+   * 
+   * @return String The updated timestamp ISO 8601 formatted
+   */
+  public function getUpdatedValue(){
+    //Get the updated parameter from the header and check formatting
+    $updated = \Request::header('Updated');
+    if( !empty($updated) ){
+      if( !$this->validateTimestamp($updated) ){
+        \App::abort(400, sprintf( "`%s` is not an valid ISO 8601 formatted timestamp", $updated ) );
+      }
+    } else {
+      $updated = Carbon::now()->toISO8601String();
+    }
+
+    return $updated;
   }
 
   /**
