@@ -32,11 +32,11 @@ class EloquentDocumentRepository implements DocumentRepository {
    * @param  Array $data
    * @return Collection             A collection of DocumentAPIs
    */
-  public function all( $lrs, $documentType, $data ){
+  public function all( $lrs, $documentType, $data, $get = true ){
 
     switch( $documentType ){
       case DocumentType::STATE:
-        return $this->allState( $lrs, $data['activityId'], $data['agent'], $data['registration'], $data['since'] );
+        return $this->allState( $lrs, $data['activityId'], $data['agent'], $data['registration'], $data['since'], $get );
       break;
       case DocumentType::ACTIVITY:
         //return $this->allActivity( $lrs, $data );
@@ -57,11 +57,11 @@ class EloquentDocumentRepository implements DocumentRepository {
    * 
    * @return DocumentAPI
    */
-  public function find( $lrs, $documentType, $data ){
+  public function find( $lrs, $documentType, $data, $get = true ){
 
     switch( $documentType ){
       case DocumentType::STATE:
-        return $this->findState( $lrs, $data['stateId'], $data['activityId'], $data['agent'], $data['registration'] );
+        return $this->findState( $lrs, $data['stateId'], $data['activityId'], $data['agent'], $data['registration'], $get );
       break;
       case DocumentType::ACTIVITY:
         //return $this->findActivity( $lrs, $data );
@@ -101,6 +101,29 @@ class EloquentDocumentRepository implements DocumentRepository {
 
   }
 
+  /**
+   * Delete document(s)
+   * 
+   * @param  Lrs $lrs
+   * @param  String $documentType   The type of document
+   * @param  Array $data
+   * 
+   * @return DocumentAPI
+   */
+  public function delete( $lrs, $documentType, $data, $single_document ){
+
+    $data['since'] = null;
+
+    if( $single_document ){
+      $result = $this->find( $lrs, $documentType, $data, false );
+    } else {
+      $result = $this->all( $lrs, $documentType, $data, false );
+    }
+    
+    $result->delete();
+    return true;
+  }
+
 
 
   ///////////////////
@@ -118,7 +141,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    * 
    * @return Collection              A collection of DocumentAPIs
    */
-  public function allState( $lrs,  $activityId, $agent, $registration, $since ){
+  public function allState( $lrs,  $activityId, $agent, $registration, $since, $get ){
 
     $query = $this->documentapi->where('lrs', $lrs)
          ->where('documentType', DocumentType::STATE)
@@ -126,9 +149,16 @@ class EloquentDocumentRepository implements DocumentRepository {
 
     $query = $this->setAgent( $query, $agent );
     $query = $this->setRegistration( $query, $registration );
-    $query = $this->setSince( $query, $since );
 
-    return $query->select('stateId')->get();
+    if( isset($since) ){
+      $query = $this->setSince( $query, $since );
+    }
+
+    if( $get ){
+      return $query->select('stateId')->get();
+    } else {
+      return $query->select('stateId');
+    }
 
   }
 
@@ -143,7 +173,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    * 
    * @return DocumentAPI
    */
-  public function findState( $lrs, $stateId, $activityId, $agent, $registration ){
+  public function findState( $lrs, $stateId, $activityId, $agent, $registration, $get ){
 
     $query = $this->documentapi->where('lrs', $lrs)
          ->where('documentType', DocumentType::STATE)
@@ -153,7 +183,11 @@ class EloquentDocumentRepository implements DocumentRepository {
     $query = $this->setAgent( $query, $agent );
     $query = $this->setRegistration( $query, $registration );
 
-    return $query->first();
+    if( $get ){
+      return $query->first();
+    } else {
+      return $query;
+    }
 
   }
 
@@ -170,7 +204,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    */
   public function storeState( $lrs, $data, $updated, $method ){
 
-    $existing_document = $this->findState( $lrs, $data['stateId'], $data['activityId'], $data['agent'], $data['registration'] );
+    $existing_document = $this->findState( $lrs, $data['stateId'], $data['activityId'], $data['agent'], $data['registration'], true );
 
     if( !$existing_document ){
       $document                 = $this->documentapi;

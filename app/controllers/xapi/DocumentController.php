@@ -7,7 +7,7 @@ class DocumentController extends BaseController {
   /**
   * Document Repository
   */
-  protected $document, $document_type;
+  protected $document, $document_type, $document_ident;
 
   /**
    * Construct
@@ -20,6 +20,33 @@ class DocumentController extends BaseController {
     $this->beforeFilter('@setParameters');
   }
 
+
+
+  /**
+   * Handle Single and Multiple GETs and CORS PUT/POST/DELETE requests
+   * Return a list of stateId's based on activityId and actor match.
+   *
+   * @return Response
+   */
+  public function index(){
+    switch( $this->method ){
+      case "GET":
+        if( isset($this->params[$this->document_ident]) ){ //If a stateId is passed then redirect to get method
+          return $this->get();
+        } else {
+          return $this->all();
+        }
+      break;
+      case "PUT":
+      case "POST":
+        return $this->store();
+      break;
+      case "DELETE":
+        return $this->delete();
+      break;
+    }
+  }
+  
   /**
    * Retrieve attached file content
    * 
