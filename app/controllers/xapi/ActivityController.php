@@ -11,8 +11,12 @@ class ActivityController extends DocumentController {
    * @param DocumentRepository $document
    */
   public function __construct(Document $document){
+
     parent::__construct($document);
+
     $this->document_type = DocumentType::ACTIVITY;
+    $this->document_ident = "profileId";
+
   }
 
   /**
