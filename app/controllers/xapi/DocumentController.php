@@ -25,34 +25,65 @@ class DocumentController extends BaseController {
    * 
    * @param  string $name Field name
    * 
-   * @return mixed       Attached content
+   * @return Array
    */
   public function getAttachedContent($name='content'){
     switch( $this->method ){
       case "PUT":
-        if( $this->CORS ){
-          if( isset($this->params[$name]) ){
-            $content = $this->params[$name];
-          } else {
-            \App::abort( 400, 'No content was sent in this request');
-          }
+        if( $this->CORS ){ //Cross browser PUT implementation, using POST
+          //Retrieve POST content
+          return $this->getPostContent($name);
         } else {
+          $contentType    = \Request::header('Content-Type');
+          if( !isset($contentType) ){
+            \App::abort(400, 'PUT requests must include a Content-Type header');
+          }
+          //Get body content and check content type sent
           $request        = \Request::instance();
           $incoming_data  = $request->getContent();
           $content        = $incoming_data;
+
+          return array(
+            'content'     => $content,
+            'contentType' => $contentType
+          );
         }
       break;
 
       case "POST":
-        if( isset($this->params[$name]) ){
-          $content = $this->params[$name];
-        } else {
-          \App::abort( 400, sprintf('%s was sent in this request', $name ) );
-        }
+          //Retrieve POST content
+          return $this->getPostContent($name);
       break;
     }
+  }
 
-    return $content;
+  /**
+   * Checks for files, then retrieves the stored param
+   * 
+   * @param  String $name Field name
+   * 
+   * @return Array       
+   */
+  public function getPostContent($name){
+
+    if( \Input::hasFile($name) ){ //If a file has been sent, retrieve it with the correct file type
+
+      $content  = \Input::file($name);
+      $type     = $content->getClientMimeType();
+
+    } else if( isset($this->params[$name] ) ){
+
+      $content = $this->params['content'];
+      $type = is_object( json_decode($content) ) ? "application/json" : "text/plain";
+
+    } else {
+      \App::abort( 400, sprintf('`%s` was not sent in this request', $name ) );
+    }
+
+    return array(
+      'content'     => $content,
+      'contentType' => $type
+    );
   }
 
   /**
@@ -78,8 +109,9 @@ class DocumentController extends BaseController {
         $response->header('Content-Type', "text/plain");
       break;
       default:
-        $response = Response::download($document->getFilePath());
-        $response->header('Content-Type', $document->contentType);
+        $response = \Response::download($document->getFilePath(), $document->content, array(
+          'Content-Type' => $document->contentType
+        ));
       break;
     }
 

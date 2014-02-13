@@ -6,6 +6,7 @@
 
 use Jenssegers\Mongodb\Model as Eloquent;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Locker\Repository\Document\FileTypes;
 
 class DocumentAPI extends Eloquent {
 
@@ -29,7 +30,9 @@ class DocumentAPI extends Eloquent {
    * Handle content storage
    * @param Mixed $content          The content passed in the request
    */
-  public function setContent( $content, $contentType, $method){
+  public function setContent( $content_info, $method){
+    $content      = $content_info['content'];
+    $contentType  = $content_info['contentType'];
 
     switch( $contentType ){
       case "application/json":
@@ -69,6 +72,34 @@ class DocumentAPI extends Eloquent {
       default:
         if( !$this->exists ){ // check we are adding a new document
           //HANDLE FILE SAVES???
+          $dir = $this->getContentDir();
+
+          if( $content instanceof UploadedFile ){
+
+            $origname = $content->getClientOriginalName();
+            $parts = pathinfo($origname);
+            $filename = $parts['filename'].'_'.time().'.'.$parts['extension'];
+            $content->move($dir, $filename);
+
+          } else {
+            $ext = array_search( $contentType, FileTypes::getMap() );
+            if( $ext === false ){
+              \App::abort(400, 'This file type cannot be supported');
+            }
+
+            // @todo check for allowed filetypes?
+            
+            $filename = time() . "." . $ext;
+            $size = file_put_contents( $dir.$filename, $content );
+
+            if( $size === false ){
+              \App::abort( 400, 'There was an issue saving the content');
+            }
+
+          } 
+
+          $this->content = $filename;
+
         } else {
           \App::abort(400, sprintf('Cannot amend existing %s document with a file', $this->contentType) );
         }
@@ -84,7 +115,7 @@ class DocumentAPI extends Eloquent {
   }
 
   public function getFilePath(){
-    return $this->getContentDir() + $this->content;
+    return $this->getContentDir() . $this->content;
   }
 
 }
