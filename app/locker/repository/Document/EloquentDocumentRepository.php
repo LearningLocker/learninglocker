@@ -120,6 +120,18 @@ class EloquentDocumentRepository implements DocumentRepository {
       $result = $this->all( $lrs, $documentType, $data, false );
     }
     
+    //Find all documents in this query that have files and delete them
+    $file_documents = $result->where('contentType', '<>', 'application/json')
+                             ->orWhere('contentType', '<>', 'text/plain')
+                             ->get();
+
+    foreach( $file_documents as $doc ){ 
+      $path = $doc->getFilePath();
+      if( file_exists($path) ){
+        unlink($path); //loop and remove (if file exists)
+      }
+    }
+
     $result->delete();
     return true;
   }
@@ -155,9 +167,9 @@ class EloquentDocumentRepository implements DocumentRepository {
     }
 
     if( $get ){
-      return $query->select('stateId')->get();
+      return $query->get();
     } else {
-      return $query->select('stateId');
+      return $query;
     }
 
   }
@@ -337,7 +349,7 @@ class EloquentDocumentRepository implements DocumentRepository {
 
     if( !empty($since) ){
       $since_carbon = new Carbon($since);
-      $query = $query->where('updated_at', '>', $since_carbon);
+      $query = $query->where('created_at', '>', $since_carbon);
     }
 
     return $query;
