@@ -16,35 +16,9 @@ class StateController extends DocumentController {
     parent::__construct($document);
 
     $this->document_type = DocumentType::STATE;
+    $this->document_ident = "stateId";
 
   }
-
-
-  /**
-   * Handle Single and Multiple GETs and CORS PUT/POST/DELETE requests
-   * Return a list of stateId's based on activityId and actor match.
-   *
-   * @return Response
-   */
-  public function index(){
-    switch( $this->method ){
-      case "GET":
-        if( isset($this->params['stateId']) ){ //If a stateId is passed then redirect to get method
-          return $this->get();
-        } else {
-          return $this->all();
-        }
-      break;
-      case "PUT":
-      case "POST":
-        return $this->store();
-      break;
-      case "DELETE":
-        return $this->delete();
-      break;
-    }
-  }
-
 
     
   /**
@@ -156,9 +130,8 @@ class StateController extends DocumentController {
    * @param  int  $id
    * @return Response
    */
-  public function delete()
-  {
-    //
+  public function delete(){
+    
   }
 
 }
