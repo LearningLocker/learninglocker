@@ -78,7 +78,7 @@ class DocumentAPI extends Eloquent {
 
             $origname = $content->getClientOriginalName();
             $parts = pathinfo($origname);
-            $filename = $parts['filename'].'_'.time().'.'.$parts['extension'];
+            $filename = Str::slug(Str::lower($parts['filename'])).'-'.time().'.'.$parts['extension'];
             $content->move($dir, $filename);
 
           } else {
