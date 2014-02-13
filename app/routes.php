@@ -265,11 +265,11 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
   Route::get('agents', 'Controllers\xAPI\AgentController@index');
 
   //Activiy API
-  Route::get('activities',          'Controllers\xAPI\ActivityController@index');
   Route::get('activities/state',    'Controllers\xAPI\ActivityController@index');
-  Route::put('activities/state',    'Controllers\xAPI\StateController@store');
-  Route::post('activities/state',   'Controllers\xAPI\StateController@store');
-  Route::delete('activities/state', 'Controllers\xAPI\StateController@delete');
+  Route::put('activities/state',    'Controllers\xAPI\ActivityController@store');
+  Route::post('activities/state',   'Controllers\xAPI\ActivityController@store');
+  Route::delete('activities/state', 'Controllers\xAPI\ActivityController@delete');
+  Route::get('activities',          'Controllers\xAPI\ActivityController@getActivity');
 
   //State API
   Route::get('activities/state',    'Controllers\xAPI\StateController@index');
