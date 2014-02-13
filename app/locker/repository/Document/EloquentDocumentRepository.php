@@ -120,8 +120,6 @@ class EloquentDocumentRepository implements DocumentRepository {
       $result = $this->all( $lrs, $documentType, $data, false );
     }
     
-    // @todo remove file content from filesystem
-
     //Find all documents in this query that have files and delete them
     $file_documents = $result->where('contentType', '<>', 'application/json')
                              ->orWhere('contentType', '<>', 'text/plain')
