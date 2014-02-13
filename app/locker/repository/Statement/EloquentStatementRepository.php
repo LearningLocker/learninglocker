@@ -89,13 +89,15 @@ class EloquentStatementRepository implements StatementRepository {
   |
   |------------------------------------------------------------------------
    */
+  
+  /**
+   * @param array $statement
+   * @param array $lrs
+   *
+   **/
   public function create( $statement, $lrs ){
 
-    /*
-    |------------------------------------------------------------------------------
-    | Full tincan statement validation to make sure the statement conforms
-    |------------------------------------------------------------------------------
-    */
+    //Full tincan statement validation to make sure the statement conforms
     $verify = new \app\locker\statements\xAPIValidation( $statement, \Site::first() );
 
     //run full validation
@@ -115,20 +117,12 @@ class EloquentStatementRepository implements StatementRepository {
       return array( 'success' => $result ); 
     }
 
-    /*
-    |------------------------------------------------------------------------------
-    | Add the correct learning locker LRS. 
-    |------------------------------------------------------------------------------
-    */
+    //Add the correct learning locker LRS. 
     $vs['context']['extensions']['http://learninglocker&46;net/extensions/lrs'] = array( '_id'  => $lrs->_id, 
                                                                                          'name' => $lrs->title );
 
 
-    /*
-    |------------------------------------------------------------------------------
-    | The date stored in LRS in ISO 8601 format
-    |------------------------------------------------------------------------------
-    */
+    //The date stored in LRS in ISO 8601 format
     $vs['stored'] = date('c');
 
      
@@ -151,11 +145,7 @@ class EloquentStatementRepository implements StatementRepository {
     $vs = $this->replaceFullStop( $vs );
     
 
-    /*
-    |-------------------------------------------------------------------------------
-    | Create a new statement object
-    |-------------------------------------------------------------------------------
-    */
+    //Create a new statement object
     $new_statement = $this->statement;
     $new_statement->fill( $vs );
 
