@@ -263,6 +263,11 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
   //Agent API
   Route::resource('agents/profile', 'Controllers\xAPI\ActivityController');
   Route::get('agents', 'Controllers\xAPI\AgentController@index');
+  
+  Route::get('agents/profile', 'Controllers\xAPI\StateController@index');
+  Route::put('agents/profile', 'Controllers\xAPI\StateController@store');
+  Route::post('agents/profile', 'Controllers\xAPI\StateController@store');
+  Route::delete('agents/profile', 'Controllers\xAPI\StateController@delete');
 
   //Activiy API
   Route::resource('activities/profile', 'Controllers\xAPI\ActivityController');
