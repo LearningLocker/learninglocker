@@ -20,40 +20,72 @@ class ActivityController extends DocumentController {
   }
 
   /**
-   * Display a listing of the resource.
+   * Handle Single and Multiple GETs and CORS PUT/POST/DELETE requests
+   * Return a list of stateId's based on activityId and actor match.
    *
    * @return Response
    */
-  public function index(){
-    $data = $this->checkParams(array(
-      'activityId' => 'string',
-      'profileId'  => 'string'
-    ), array('since' => 'timestamp'), $this->params );
+  public function all(){
 
-    $documents = $this->document->all( $this->lrs->_id, $data, $this->document_type );
+    $data = $this->checkParams( 
+      array(
+        'activityId' => 'string'
+      ), 
+      array(
+        'since'        => array('string', 'timestamp')
+      ), $this->params 
+    );
 
-    return \Response::json( $documents->toArray() );
+    $documents = $this->document->all( $this->lrs->_id, $this->document_type, $data );
+    
+    //return array of only the stateId values for each document
+    $ids = array_column($documents->toArray(), 'profileId');
+    return \Response::json( $ids );
   }
 
+
   /**
-   * Store a newly created resource in storage.
+   * Single Document GET
    *
    * @return Response
    */
-  public function store(){
+  public function get(){
     
-    $activity = $this->checkParams( 
+    $data = $this->checkParams( 
       array(
         'activityId' => 'string',
-        'profileId'  => 'string',
-        'content'    => ''
+        'profileId'  => 'string'
       ),
       array(),
       $this->params
     );
 
+    return $this->documentResponse( $data ); // use the DocumentController to handle document response
+  }
 
-    $store = $this->document->store( $this->lrs->_id, $activity, $this->document_type );
+  /**
+   * Handle PUT and POST methods
+   *
+   * @return Response
+   */
+  public function store(){
+
+    $data = $this->checkParams( 
+      array(
+        'activityId' => 'string',
+        'profileId'    => 'string'
+      ),
+      array(), $this->params
+    );
+
+    //Get the content from the request
+    $data['content_info'] = $this->getAttachedContent('content');
+
+    //Get the updated timestamp
+    $updated = $this->getUpdatedValue();
+
+    //Store the document
+    $store = $this->document->store( $this->lrs->_id, $this->document_type, $data, $updated, $this->method );
 
     if( $store ){
       return \Response::json( array( 'ok', 204 ) );
@@ -64,38 +96,35 @@ class ActivityController extends DocumentController {
   }
 
   /**
-   * Display the specified resource.
+   * Handles routing to single document delete requests
+   * Multiple document deletes are not permitted on activities
    *
    * @param  int  $id
    * @return Response
    */
-  public function show( $activityId, $profileId ){
+  public function delete(){
 
-    $document = $this->document->find( $this->lrs->_id, $activityId, $profileId );
+    $single_delete = isset($this->params[$this->document_ident]);
 
-    return \Response::json( $document->toArray() );
-  }
+    if( $single_delete ){ //single document delete
+      $data = $this->checkParams( 
+        array(
+          'activityId' => 'string',
+          'profileId'    => 'string'
+        ),
+        array(), $this->params
+      );
+    } else {
+      \App::abort(400, 'Multiple document DELETE not permitted');
+    }
 
-  /**
-   * Update the specified resource in storage.
-   *
-   * @param  int  $id
-   * @return Response
-   */
-  public function update($id)
-  {
-    //
-  }
+    $success = $this->document->delete( $this->lrs->_id, $this->document_type, $data, $single_delete );
+    
+    if( $success ){
+      return \Response::json( array( 'ok', 204 ) );
+    }
 
-  /**
-   * Remove the specified resource from storage.
-   *
-   * @param  int  $id
-   * @return Response
-   */
-  public function destroy($id)
-  {
-    //
+    return \Response::json( array( 'error', 400 ) );
   }
 
   /**
@@ -105,8 +134,15 @@ class ActivityController extends DocumentController {
    * @return Response
    *
    **/
-  public function full( $activityId ){
+  public function full(){
+    $data = $this->checkParams( 
+      array(
+        'activityId' => 'string'
+      ), 
+      array(), $this->params 
+    );
 
+    // @todo - find complete activity
   }
 
 

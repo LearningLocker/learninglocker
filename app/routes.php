@@ -269,7 +269,7 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
   Route::put('activities/profile',    'Controllers\xAPI\ActivityController@store');
   Route::post('activities/profile',   'Controllers\xAPI\ActivityController@store');
   Route::delete('activities/profile', 'Controllers\xAPI\ActivityController@delete');
-  Route::get('activities',            'Controllers\xAPI\ActivityController@getActivity');
+  Route::get('activities',            'Controllers\xAPI\ActivityController@full');
 
   //State API
   Route::get('activities/state',    'Controllers\xAPI\StateController@index');

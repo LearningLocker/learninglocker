@@ -39,10 +39,10 @@ class EloquentDocumentRepository implements DocumentRepository {
         return $this->allState( $lrs, $data['activityId'], $data['agent'], $data['registration'], $data['since'], $get );
       break;
       case DocumentType::ACTIVITY:
-        //return $this->allActivity( $lrs, $data );
+        return $this->allActivity( $lrs, $data['activityId'], $data['since'], $get );
       break;
       case DocumentType::AGENT:
-        //return $this->allActivity( $lrs, $data );
+        //return $this->allAgent( $lrs, $data );
       break;
     }
 
@@ -64,10 +64,10 @@ class EloquentDocumentRepository implements DocumentRepository {
         return $this->findState( $lrs, $data['stateId'], $data['activityId'], $data['agent'], $data['registration'], $get );
       break;
       case DocumentType::ACTIVITY:
-        //return $this->findActivity( $lrs, $data );
+        return $this->findActivity( $lrs, $data['profileId'], $data['activityId'], $get );
       break;
       case DocumentType::AGENT:
-        //return $this->findActivity( $lrs, $data );
+        //return $this->findAgent( $lrs, $data, $get );
       break;
     }
 
@@ -92,10 +92,10 @@ class EloquentDocumentRepository implements DocumentRepository {
         return $this->storeState( $lrs, $data, $updated, $method );
       break;
       case DocumentType::ACTIVITY:
-        //return $this->storeActivity( $lrs, $data, $updated );
+        return $this->storeActivity( $lrs, $data, $updated, $method );
       break;
       case DocumentType::AGENT:
-        //return $this->storeActivity( $lrs, $data, $updated );
+        //return $this->storeAgent( $lrs, $data, $updated );
       break;
     }
 
@@ -150,6 +150,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    * @param  Object $agent        
    * @param  String $registration 
    * @param  Timestamp $since        ISO 8601
+   * @param  Boolean $get            Used to check if we return a collection or just the eloquent object
    * 
    * @return Collection              A collection of DocumentAPIs
    */
@@ -182,6 +183,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    * @param  String $activityId      IRI
    * @param  Object $agent        
    * @param  String $registration 
+   * @param  Boolean $get            Used to check if we return a collection or just the eloquent object
    * 
    * @return DocumentAPI
    */
@@ -250,6 +252,100 @@ class EloquentDocumentRepository implements DocumentRepository {
   // ACTIVITY METHODS //
   //////////////////////
 
+  /**
+   * Find Activity documents
+   * 
+   * @param  Lrs $lrs          
+   * @param  String $activityId      IRI
+   * @param  Timestamp $since        ISO 8601
+   * @param  Boolean $get            Used to check if we return a collection or just the eloquent object
+   * 
+   * @return Collection              A collection of DocumentAPIs
+   */
+  public function allActivity( $lrs, $activityId, $since, $get ){
+
+    $query = $this->documentapi->where('lrs', $lrs)
+         ->where('documentType', DocumentType::ACTIVITY)
+         ->where('activityId', $activityId);
+
+    if( isset($since) ){
+      $query = $this->setSince( $query, $since );
+    }
+
+    if( $get ){
+      return $query->get();
+    } else {
+      return $query;
+    }
+
+  }
+
+  /**
+   * Find single stateId
+   * 
+   * @param  Lrs $lrs          
+   * @param  string $stateId      
+   * @param  String $activityId      IRI
+   * @param  Object $agent        
+   * @param  String $registration 
+   * @param  Boolean $get            Used to check if we return a collection or just the eloquent object
+   * 
+   * @return DocumentAPI
+   */
+  public function findActivity( $lrs, $profileId, $activityId, $get ){
+
+    $query = $this->documentapi->where('lrs', $lrs)
+         ->where('documentType', DocumentType::ACTIVITY)
+         ->where('activityId', $activityId)
+         ->where('profileId', $profileId);
+
+    if( $get ){
+      return $query->first();
+    } else {
+      return $query;
+    }
+
+  }
+
+
+  /**
+   * Handle storing State documents
+   * 
+   * @param  Lrs $lrs
+   * @param  Array $data        The required data for the state
+   * @param  String $updated    ISO 8601 Timestamp
+   * @param  String $method     HTTP Method used to send store request
+   * 
+   * @return DocumentAPI        The document being created/updated
+   */
+  public function storeActivity( $lrs, $data, $updated, $method ){
+
+    $existing_document = $this->findActivity( $lrs, $data['profileId'], $data['activityId'], true );
+
+    if( !$existing_document ){
+      $document                 = $this->documentapi;
+
+      //LL vars
+      $document->lrs            = $lrs; //LL specific 
+      $document->documentType   = DocumentType::ACTIVITY; //LL specific
+
+      //AP vars
+      $document->profileId      = $data['profileId'];
+      $document->activityId     = $data['activityId'];
+
+    } else {
+      $document = $existing_document;
+    }
+
+    $document->updated_at = new Carbon($updated);
+    $document->setContent( $data['content_info'], $method ); //set the content for the document
+
+    if( $document->save() ){
+      return $document;
+    }
+
+    return false;
+  }
 
 
 
@@ -257,6 +353,7 @@ class EloquentDocumentRepository implements DocumentRepository {
   // AGENT METHODS //
   ///////////////////
 
+  // @todo create agent find (single+multiple) and store methods
 
 
 
