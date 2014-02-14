@@ -42,7 +42,7 @@ class StateController extends DocumentController {
     $documents = $this->document->all( $this->lrs->_id, $this->document_type, $data );
     
     //return array of only the stateId values for each document
-    $ids = array_column($documents->toArray(), 'stateId');
+    $ids = array_column($documents->toArray(), 'identId');
     return \Response::json( $ids );
   }
 

@@ -1,18 +1,26 @@
 <?php namespace Controllers\xAPI;
 
 use \Locker\Repository\Document\DocumentRepository as Document;
+use \Locker\Repository\Activity\ActivityRepository as Activity;
 use Locker\Repository\Document\DocumentType as DocumentType;
 
 class ActivityController extends DocumentController {
+
+  /**
+  * Activity Repository
+  */
+  protected $activity;
 
   /**
    * Construct
    *
    * @param DocumentRepository $document
    */
-  public function __construct(Document $document){
+  public function __construct(Document $document, Activity $activity){
 
     parent::__construct($document);
+
+    $this->activity = $activity;
 
     $this->document_type = DocumentType::ACTIVITY;
     $this->document_ident = "profileId";
@@ -39,7 +47,7 @@ class ActivityController extends DocumentController {
     $documents = $this->document->all( $this->lrs->_id, $this->document_type, $data );
     
     //return array of only the stateId values for each document
-    $ids = array_column($documents->toArray(), 'profileId');
+    $ids = array_column($documents->toArray(), 'identId');
     return \Response::json( $ids );
   }
 
@@ -100,6 +108,7 @@ class ActivityController extends DocumentController {
    * Multiple document deletes are not permitted on activities
    *
    * @param  int  $id
+   * 
    * @return Response
    */
   public function delete(){
@@ -131,10 +140,11 @@ class ActivityController extends DocumentController {
    * Return the full activity object
    *
    * @param int $activityId
+   * 
    * @return Response
-   *
    **/
   public function full(){
+
     $data = $this->checkParams( 
       array(
         'activityId' => 'string'
@@ -142,7 +152,9 @@ class ActivityController extends DocumentController {
       array(), $this->params 
     );
 
-    // @todo - find complete activity
+    $activity = $this->activity->getActivity($data['activityId']);
+    return \Response::json($activity);
+
   }
 
 

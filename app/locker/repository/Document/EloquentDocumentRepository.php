@@ -121,14 +121,14 @@ class EloquentDocumentRepository implements DocumentRepository {
     }
     
     //Find all documents in this query that have files and delete them
-    $file_documents = $result->where('contentType', '<>', 'application/json')
-                             ->orWhere('contentType', '<>', 'text/plain')
-                             ->get();
+    $documents = $result->get();
 
-    foreach( $file_documents as $doc ){ 
-      $path = $doc->getFilePath();
-      if( file_exists($path) ){
-        unlink($path); //loop and remove (if file exists)
+    foreach( $documents as $doc ){ 
+      if( $doc->contentType !== 'application/json' && $doc->contentType !== "text/plain" ){
+        $path = $doc->getFilePath();
+        if( file_exists($path) ){
+          unlink($path); //loop and remove (if file exists)
+        }
       }
     }
 
@@ -192,7 +192,7 @@ class EloquentDocumentRepository implements DocumentRepository {
     $query = $this->documentapi->where('lrs', $lrs)
          ->where('documentType', DocumentType::STATE)
          ->where('activityId', $activityId)
-         ->where('stateId', $stateId);
+         ->where('identId', $stateId);
 
     $query = $this->setAgent( $query, $agent );
     $query = $this->setRegistration( $query, $registration );
@@ -228,7 +228,7 @@ class EloquentDocumentRepository implements DocumentRepository {
       $document->documentType   = DocumentType::STATE; //LL specific
 
       //AP vars
-      $document->stateId        = $data['stateId'];
+      $document->identId        = $data['stateId'];
       $document->activityId     = $data['activityId'];
       $document->agent          = $data['agent'];
       $document->registration   = isset($data['registration']) ? $data['registration'] : null;
@@ -297,7 +297,7 @@ class EloquentDocumentRepository implements DocumentRepository {
     $query = $this->documentapi->where('lrs', $lrs)
          ->where('documentType', DocumentType::ACTIVITY)
          ->where('activityId', $activityId)
-         ->where('profileId', $profileId);
+         ->where('identId', $profileId);
 
     if( $get ){
       return $query->first();
@@ -330,7 +330,7 @@ class EloquentDocumentRepository implements DocumentRepository {
       $document->documentType   = DocumentType::ACTIVITY; //LL specific
 
       //AP vars
-      $document->profileId      = $data['profileId'];
+      $document->identId      = $data['profileId'];
       $document->activityId     = $data['activityId'];
 
     } else {
