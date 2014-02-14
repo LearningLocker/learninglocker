@@ -112,7 +112,6 @@ class ActivityController extends DocumentController {
    * @return Response
    */
   public function delete(){
-
     $single_delete = isset($this->params[$this->document_ident]);
 
     if( $single_delete ){ //single document delete
@@ -138,8 +137,6 @@ class ActivityController extends DocumentController {
 
   /**
    * Return the full activity object
-   *
-   * @param int $activityId
    * 
    * @return Response
    **/

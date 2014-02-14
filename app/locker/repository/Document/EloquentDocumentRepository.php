@@ -36,13 +36,13 @@ class EloquentDocumentRepository implements DocumentRepository {
 
     switch( $documentType ){
       case DocumentType::STATE:
-        return $this->allState( $lrs, $data['activityId'], $data['agent'], $data['registration'], $data['since'], $get );
+        return $this->allStateDocs( $lrs, $data['activityId'], $data['agent'], $data['registration'], $data['since'], $get );
       break;
       case DocumentType::ACTIVITY:
-        return $this->allActivity( $lrs, $data['activityId'], $data['since'], $get );
+        return $this->allActivityDocs( $lrs, $data['activityId'], $data['since'], $get );
       break;
       case DocumentType::AGENT:
-        //return $this->allAgent( $lrs, $data );
+        return $this->allAgentDocs( $lrs, $data['agent'], $data['since'], $get );
       break;
     }
 
@@ -61,13 +61,13 @@ class EloquentDocumentRepository implements DocumentRepository {
 
     switch( $documentType ){
       case DocumentType::STATE:
-        return $this->findState( $lrs, $data['stateId'], $data['activityId'], $data['agent'], $data['registration'], $get );
+        return $this->findStateDoc( $lrs, $data['stateId'], $data['activityId'], $data['agent'], $data['registration'], $get );
       break;
       case DocumentType::ACTIVITY:
-        return $this->findActivity( $lrs, $data['profileId'], $data['activityId'], $get );
+        return $this->findActivityDoc( $lrs, $data['profileId'], $data['activityId'], $get );
       break;
       case DocumentType::AGENT:
-        //return $this->findAgent( $lrs, $data, $get );
+        return $this->findAgentDoc( $lrs, $data['profileId'], $data['agent'], $get );
       break;
     }
 
@@ -89,13 +89,13 @@ class EloquentDocumentRepository implements DocumentRepository {
 
     switch( $documentType ){
       case DocumentType::STATE:
-        return $this->storeState( $lrs, $data, $updated, $method );
+        return $this->storeStateDoc( $lrs, $data, $updated, $method );
       break;
       case DocumentType::ACTIVITY:
-        return $this->storeActivity( $lrs, $data, $updated, $method );
+        return $this->storeActivityDoc( $lrs, $data, $updated, $method );
       break;
       case DocumentType::AGENT:
-        //return $this->storeAgent( $lrs, $data, $updated );
+        return $this->storeAgentDoc( $lrs, $data, $updated, $method );
       break;
     }
 
@@ -154,17 +154,17 @@ class EloquentDocumentRepository implements DocumentRepository {
    * 
    * @return Collection              A collection of DocumentAPIs
    */
-  public function allState( $lrs,  $activityId, $agent, $registration, $since, $get ){
+  public function allStateDocs( $lrs,  $activityId, $agent, $registration, $since, $get ){
 
     $query = $this->documentapi->where('lrs', $lrs)
          ->where('documentType', DocumentType::STATE)
          ->where('activityId', $activityId);
 
-    $query = $this->setAgent( $query, $agent );
-    $query = $this->setRegistration( $query, $registration );
+    $query = $this->setQueryAgent( $query, $agent );
+    $query = $this->setQueryRegistration( $query, $registration );
 
     if( isset($since) ){
-      $query = $this->setSince( $query, $since );
+      $query = $this->setQuerySince( $query, $since );
     }
 
     if( $get ){
@@ -187,15 +187,15 @@ class EloquentDocumentRepository implements DocumentRepository {
    * 
    * @return DocumentAPI
    */
-  public function findState( $lrs, $stateId, $activityId, $agent, $registration, $get ){
+  public function findStateDoc( $lrs, $stateId, $activityId, $agent, $registration, $get ){
 
     $query = $this->documentapi->where('lrs', $lrs)
          ->where('documentType', DocumentType::STATE)
          ->where('activityId', $activityId)
          ->where('identId', $stateId);
 
-    $query = $this->setAgent( $query, $agent );
-    $query = $this->setRegistration( $query, $registration );
+    $query = $this->setQueryAgent( $query, $agent );
+    $query = $this->setQueryRegistration( $query, $registration );
 
     if( $get ){
       return $query->first();
@@ -216,9 +216,9 @@ class EloquentDocumentRepository implements DocumentRepository {
    * 
    * @return DocumentAPI        The document being created/updated
    */
-  public function storeState( $lrs, $data, $updated, $method ){
+  public function storeStateDoc( $lrs, $data, $updated, $method ){
 
-    $existing_document = $this->findState( $lrs, $data['stateId'], $data['activityId'], $data['agent'], $data['registration'], true );
+    $existing_document = $this->findStateDoc( $lrs, $data['stateId'], $data['activityId'], $data['agent'], $data['registration'], true );
 
     if( !$existing_document ){
       $document                 = $this->documentapi;
@@ -262,14 +262,14 @@ class EloquentDocumentRepository implements DocumentRepository {
    * 
    * @return Collection              A collection of DocumentAPIs
    */
-  public function allActivity( $lrs, $activityId, $since, $get ){
+  public function allActivityDocs( $lrs, $activityId, $since, $get ){
 
     $query = $this->documentapi->where('lrs', $lrs)
          ->where('documentType', DocumentType::ACTIVITY)
          ->where('activityId', $activityId);
 
     if( isset($since) ){
-      $query = $this->setSince( $query, $since );
+      $query = $this->setQuerySince( $query, $since );
     }
 
     if( $get ){
@@ -286,13 +286,11 @@ class EloquentDocumentRepository implements DocumentRepository {
    * @param  Lrs $lrs          
    * @param  string $stateId      
    * @param  String $activityId      IRI
-   * @param  Object $agent        
-   * @param  String $registration 
    * @param  Boolean $get            Used to check if we return a collection or just the eloquent object
    * 
    * @return DocumentAPI
    */
-  public function findActivity( $lrs, $profileId, $activityId, $get ){
+  public function findActivityDoc( $lrs, $profileId, $activityId, $get ){
 
     $query = $this->documentapi->where('lrs', $lrs)
          ->where('documentType', DocumentType::ACTIVITY)
@@ -318,9 +316,9 @@ class EloquentDocumentRepository implements DocumentRepository {
    * 
    * @return DocumentAPI        The document being created/updated
    */
-  public function storeActivity( $lrs, $data, $updated, $method ){
+  public function storeActivityDoc( $lrs, $data, $updated, $method ){
 
-    $existing_document = $this->findActivity( $lrs, $data['profileId'], $data['activityId'], true );
+    $existing_document = $this->findActivityDoc( $lrs, $data['profileId'], $data['activityId'], true );
 
     if( !$existing_document ){
       $document                 = $this->documentapi;
@@ -353,8 +351,101 @@ class EloquentDocumentRepository implements DocumentRepository {
   // AGENT METHODS //
   ///////////////////
 
-  // @todo create agent find (single+multiple) and store methods
+  /**
+   * Find Agent documents
+   * 
+   * @param  Lrs $lrs          
+   * @param  Array $agent
+   * @param  Timestamp $since        ISO 8601
+   * @param  Boolean $get            Used to check if we return a collection or just the eloquent object
+   * 
+   * @return Collection              A collection of DocumentAPIs
+   */
+  public function allAgentDocs( $lrs, $agent, $since, $get ){
 
+    $query = $this->documentapi->where('lrs', $lrs)
+         ->where('documentType', DocumentType::AGENT);
+
+    $query = $this->setQueryAgent( $query, $agent );
+
+    if( isset($since) ){
+      $query = $this->setQuerySince( $query, $since );
+    }
+
+    if( $get ){
+      return $query->get();
+    } else {
+      return $query;
+    }
+
+  }
+
+
+  /**
+   * Find single profileId
+   * 
+   * @param  Lrs $lrs          
+   * @param  string $stateId      
+   * @param  Object $agent        
+   * @param  Boolean $get            Used to check if we return a collection or just the eloquent object
+   * 
+   * @return DocumentAPI
+   */
+  public function findAgentDoc( $lrs, $profileId, $agent, $get ){
+
+    $query = $this->documentapi->where('lrs', $lrs)
+         ->where('documentType', DocumentType::AGENT)
+         ->where('identId', $profileId);
+
+    $query = $this->setQueryAgent( $query, $agent );
+
+    if( $get ){
+      return $query->first();
+    } else {
+      return $query;
+    }
+
+  }
+
+
+  /**
+   * Handle storing State documents
+   * 
+   * @param  Lrs $lrs
+   * @param  Array $data        The required data for the state
+   * @param  String $updated    ISO 8601 Timestamp
+   * @param  String $method     HTTP Method used to send store request
+   * 
+   * @return DocumentAPI        The document being created/updated
+   */
+  public function storeAgentDoc( $lrs, $data, $updated, $method ){
+
+    $existing_document = $this->findAgentDoc( $lrs, $data['profileId'], $data['agent'], true );
+
+    if( !$existing_document ){
+      $document                 = $this->documentapi;
+
+      //LL vars
+      $document->lrs            = $lrs; //LL specific 
+      $document->documentType   = DocumentType::AGENT; //LL specific
+
+      //AP vars
+      $document->identId      = $data['profileId'];
+      $document->agent        = $data['agent'];
+
+    } else {
+      $document = $existing_document;
+    }
+
+    $document->updated_at = new Carbon($updated);
+    $document->setContent( $data['content_info'], $method ); //set the content for the document
+
+    if( $document->save() ){
+      return $document;
+    }
+
+    return false;
+  }
 
 
   ///////////////////
@@ -371,7 +462,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    * @return $query
    * 
    */
-  public function setAgent( $query, $agent ){
+  public function setQueryAgent( $query, $agent ){
 
     $agent_query = '';
 
@@ -424,7 +515,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    * 
    * @return $query
    */
-  public function setRegistration( $query, $registration ){
+  public function setQueryRegistration( $query, $registration ){
 
     if( !empty($registration) ){
       $query = $query->where('registration', $registration);
@@ -442,7 +533,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    * 
    * @return $query
    */
-  public function setSince($query, $since ){
+  public function setQuerySince($query, $since ){
 
     if( !empty($since) ){
       $since_carbon = new Carbon($since);
