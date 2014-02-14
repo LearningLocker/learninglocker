@@ -2,20 +2,20 @@
 
 interface UserRepository {
 
-	public function all();
+  public function all();
 
-	public function find($id);
+  public function find($id);
 
-	public function create();
+  public function create();
 
-	public function update($id, $data);
+  public function update($id, $data);
 
-	public function delete($id);
+  public function delete($id);
 
-	public function validate($data);
+  public function validate($data);
 
-	public function updateRole($user, $role);
+  public function updateRole($user, $role);
 
-	public function updatePassword($id, $password);
+  public function updatePassword($id, $password);
 
 }

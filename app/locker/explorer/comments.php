@@ -2,30 +2,30 @@
 
 class Comments {
 
-	private $comments;
+  private $comments;
 
-	public function __construct( $comments ){
+  public function __construct( $comments ){
 
-		$this->comments = $comments;
+    $this->comments = $comments;
 
-	}
+  }
 
-	public function stats(){
+  public function stats(){
 
-		$count    = $this->count( $this->comments );
-		$learners = $this->learners( $this->comments );
+    $count    = $this->count( $this->comments );
+    $learners = $this->learners( $this->comments );
 
-		return array( 'count'    => $count, 
-					  'learners' => $learners );
+    return array( 'count'    => $count, 
+            'learners' => $learners );
 
-	}
+  }
 
-	private function count( $statements ){
-		return count( $statements );
-	}
+  private function count( $statements ){
+    return count( $statements );
+  }
 
-	private function learners( $statements ){
-		return 0;
-	}
+  private function learners( $statements ){
+    return 0;
+  }
 
 }

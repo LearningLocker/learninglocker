@@ -1,8 +1,8 @@
 $(document).ready(function() {
 
-    $('.verb-status').tooltip();
+  $('.verb-status').tooltip();
 
-    //placeholder for IE
-    $('input, textarea').placeholder();
+  //placeholder for IE
+  $('input, textarea').placeholder();
 
 });

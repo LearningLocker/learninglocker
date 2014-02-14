@@ -2,6 +2,6 @@
 
 interface GraphingInterface {
 
-	public function morrisLineGraph( $data );
+  public function morrisLineGraph( $data );
 
 }
