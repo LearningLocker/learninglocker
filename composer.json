@@ -57,7 +57,8 @@
     ]
   },
   "config": {
-    "preferred-install": "dist"
+    "preferred-install": "dist",
+    "prefer-stable": true
   },
   "minimum-stability": "dev"
 }
