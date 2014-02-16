@@ -1,8 +1,24 @@
 {
-  "name": "laravel/laravel",
-  "description": "The Laravel Framework.",
-  "keywords": ["framework", "laravel"],
-  "license": "MIT",
+  "authors": [
+    {
+      "name": "Dave Tosh",
+      "email": "davidgtosh@gmail.com",
+      "role": "Developer"
+    },
+    {
+      "name": "HT2",
+      "email": "hello@ht2.co.uk",
+      "role": "sponsor"
+    },
+    {
+      "name": "James Mullaney",
+      "email": "james@ht2.co.uk",
+      "role": "Developer"
+    }
+    ],
+    "name": "learninglocker/learninglocker",
+    "description": "The open source learning record store.",
+    "keywords": ["lrs", "laravel"],
   "require": {
     "laravel/framework": "4.1.*",
     "jenssegers/mongodb": "*",
