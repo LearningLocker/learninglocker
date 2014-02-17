@@ -6,11 +6,6 @@ use Locker\Repository\Document\DocumentType as DocumentType;
 class AgentController extends DocumentController {
 
   /**
-  * Activity Repository
-  */
-  protected $activity;
-
-  /**
    * Construct
    *
    * @param DocumentRepository $document
@@ -148,7 +143,33 @@ class AgentController extends DocumentController {
     );
 
 
-    return \Response::json($data['agent']);
+    // @todo - Multiple Agent profiling into person
+    // While the LRS doesn't have the ability to link agents (as an agent can only be defined by one identifier) we will simply return the queryied agent as a Person
+    $agent = $data['agent'];
+
+    $person = array(
+      'objectType'  =>  'Person'
+    );
+
+    if( isset($agent->name) ){
+      $person['name'] = array($agent->name);
+    }
+
+    if( isset($agent->mbox) ){
+      $person['mbox'] = array($agent->mbox);
+    }
+    if( isset($agent->mbox_sha1sum) ){
+      $person['mbox_sha1sum'] = array($agent->mbox_sha1sum);
+    }
+    if( isset($agent->openid) ){
+      $person['openid'] = array($agent->openid);
+    }
+    if( isset($agent->account) ){
+      $person['account'] = array($agent->account);
+    }
+
+
+    return \Response::json($person);
 
   }
 

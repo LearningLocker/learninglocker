@@ -31,6 +31,7 @@ class DocumentController extends BaseController {
    */
   public function index(){
     switch( $this->method ){
+      case "HEAD":
       case "GET":
         if( isset($this->params[$this->document_ident]) ){ //If a stateId is passed then redirect to get method
           return $this->get();
@@ -128,19 +129,27 @@ class DocumentController extends BaseController {
       \App::abort(204);
     }
 
-    switch( $document->contentType ){
-      case "application/json":
-        $response = \Response::json($document->content, 200);
-      break;
-      case "text/plain":
-        $response = \Response::make($document->content, 200);
-        $response->header('Content-Type', "text/plain");
-      break;
-      default:
-        $response = \Response::download($document->getFilePath(), $document->content, array(
-          'Content-Type' => $document->contentType
-        ));
-      break;
+    $headers = array(
+      'Updated'       =>  $document->updated_at->toISO8601String(),
+      'Content-Type'  => $document->contentType
+    );
+
+    if( $this->method === 'HEAD' ){ //Only return headers
+        $response = \Response::make(null, 200, $headers);
+    } else {
+
+      switch( $document->contentType ){
+        case "application/json":
+          $response = \Response::json($document->content, 200, $headers);
+        break;
+        case "text/plain":
+          $response = \Response::make($document->content, 200, $headers);
+        break;
+        default:
+          $response = \Response::download($document->getFilePath(), $document->content, $headers);
+        break;
+      }
+
     }
 
     return $response;
