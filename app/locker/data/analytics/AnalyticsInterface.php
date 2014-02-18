@@ -2,6 +2,6 @@
 
 interface AnalyticsInterface {
 
-  public function getAnalytics( $lrs, $segment );
+  public function getAnalytics( $lrs );
 
 }

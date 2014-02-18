@@ -1,15 +1,14 @@
 <?php namespace Locker\Data\Analytics;
 
-use Locker\Repository\Query\QueryRepository;
-use Locker\Graphing\GraphingInterface as Graph;
+/**
+* This is all temp and will be replaced by our API driven single
+* page analytics app. This will be available in time for v1.0 stable.
+*
+**/
 
 class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface {
 
-  protected $query;
-
-  protected $graphs;
-
-  public $results, $data;
+  public $results;
   private $lrs;
 
   /**
@@ -18,28 +17,22 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
    * @param Locker\Repository\Data\QueryRepository $query
    *
    */
-  public function __construct( QueryRepository $query, Graph $graphs ){
+  public function __construct(){
 
-    $this->query  = $query;
-    $this->graphs = $graphs;
     $this->setDb();
     
-
   }
 
   /**
    * The main method to grab appropriate anayltics
    *
-   * @param $lrs         id        The LRS in question
-   * @param $segment     string    The analytics segment required. e.g. badges, verbs etc
-   * @param $graph_it    boolean   Is a graph ready display required? 
+   * @param $lrs id The LRS in question
    *
    **/
-  public function getAnalytics( $lrs, $segment, $graph_it = true ){
+  public function getAnalytics( $lrs ){
 
-    $this->lrs      = $lrs;
-    $this->graph_it = $graph_it;
-    $this->selectAnalytics( $segment );
+    $this->lrs = $lrs;
+    $this->selectAnalytics();
 
   }
 
@@ -49,55 +42,12 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
    * @param $segment   string    The analytics segment required. e.g. badges, verbs etc
    *
    **/
-  public function selectAnalytics( $segment ){
+  public function selectAnalytics(){
 
-    switch( $segment ){
-      case 'verbs':
-        $this->verbCloud();
-        break;
-      case 'badges':
-        $this->results['badges'] = $this->getObjectType( 'http://activitystrea.ms/schema/1.0/badge' );
-        break;
-      case 'questions':
-        $this->results['questions'] = $this->getObjectType( 'http://activitystrea.ms/schema/1.0/question' );
-        break;
-      case 'courses':
-        $this->results['courses'] = $this->getObjectType( 'http://adlnet.gov/expapi/activities/course',
-                                      'context.contextActivities.grouping.type',
-                                      'context.contextActivities.grouping.definition');
-        break;
-      case 'articles':
-        $this->results['articles'] = $this->getObjectType( 'http://activitystrea.ms/schema/1.0/article' );
-        break;
-      case 'participation':
-        $this->results['participation'] = array();
-        break;
-      case 'scores':
-        $this->results['scores'] = array();
-        break;
-      default:
-        $this->verbCloud();
-    }     
-
-  }
-
-
-  /**
-   * Query to grab the required data based on type
-   *
-   * @param $value     string   The value of the field to search for
-   * @param $field     string   The field we are searching against
-   * @param $select    string   The field we want returned
-   *
-   * @return array results
-   *
-   **/
-  public function getObjectType( $value = '', $field = 'object.definition.type', $select = 'object.id' ){
-
-    $lrs   = $this->lrs;
-    $table = 'statements';
-
-    return $this->query->selectDistinctField( $lrs, $table, $field, $value, $select );
+    $this->results['badges']     = $this->getTopBadges();
+    $this->results['activities'] = $this->getTopActivities();
+    $this->results['courses']    = $this->getTopCourses();
+    $this->verbCloud(); 
 
   }
 
@@ -124,5 +74,67 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
                          ->count();
 
     }
+
+  /**
+   * Get the top 6 activities
+   *
+   * @todo move this query to the query class
+   *
+   **/
+  public function getTopActivities(){
+
+      $match = $this->getMatch( $this->lrs ); 
+      return $this->db->statements->aggregate(
+                  array('$match' => $match),
+                  array('$group' => array('_id'   => '$object.id',
+                        'name'  => array('$addToSet' => '$object.definition.name'), 
+                        'count' => array('$sum' => 1))),
+                  array('$sort'  => array('count' => -1)),
+                  array('$limit' => 7)
+                );
+
+    }
+
+  /**
+   * Get the top 6 activities
+   *
+   * @todo move this query to the query class
+   *
+   **/
+  public function getTopCourses(){
+
+      return $this->db->statements->aggregate(
+                 // array('$match' => $match),
+                  array('$match' => array('context.extensions.http://learninglocker&46;net/extensions/lrs._id' => $this->lrs,
+                                          'context.contextActivities.grouping.type' => 'http://adlnet.gov/expapi/activities/course')),
+                  array('$group' => array('_id' => '$context.contextActivities.grouping.id',
+                        'name'  => array('$addToSet' => '$context.contextActivities.grouping.definition.name'), 
+                        'count' => array('$sum' => 1))),
+                  array('$sort'  => array('count' => -1)),
+                  array('$limit' => 8)
+                );
+
+    }
+
+    /**
+   * Get the top 6 activities
+   *
+   * @todo move this query to the query class
+   *
+   **/
+  public function getTopBadges(){
+
+      return $this->db->statements->aggregate(
+                 // array('$match' => $match),
+                  array('$match' => array('context.extensions.http://learninglocker&46;net/extensions/lrs._id' => $this->lrs,
+                                          'object.definition.type' => 'http://activitystrea.ms/schema/1.0/badge')),
+                  array('$group' => array('_id' => '$object.id',
+                        'name'  => array('$addToSet' => '$object.definition.name'), 
+                        'count' => array('$sum' => 1))),
+                  array('$sort'  => array('count' => -1)),
+                  array('$limit' => 9)
+                );
+
+  }
 
 }

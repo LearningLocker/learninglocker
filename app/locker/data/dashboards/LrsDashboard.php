@@ -24,8 +24,6 @@ class LrsDashboard extends \app\locker\data\BaseData {
                          'statement_avg'   => $this->statementAvgCount(),
                          'learner_avg'     => $this->learnerAvgCount(),
                          'statement_graph' => $this->getStatementNumbersByDate(),
-                         'actor_count'     => $this->actorCount(),
-                         'source_count'    => $this->sourceCount(),
                         );      
   }
 
