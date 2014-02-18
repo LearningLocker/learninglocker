@@ -70,7 +70,7 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
                 );
 
       $this->results['verbs']['total'] = \Statement::where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $this->lrs)
-                         ->remember(5)
+                         //->remember(5)
                          ->count();
 
     }
