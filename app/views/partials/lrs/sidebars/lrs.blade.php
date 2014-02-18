@@ -20,17 +20,12 @@
   <ul class="nav nav-stacked sidebar-nav">
     <li class="link  @if ( isset($dash_nav) ) active @endif">
       <a href="{{ URL() }}/lrs/{{ $lrs->_id }}">
-        <span class="menu-icon"><i class="icon icon-dashboard"></i></span> {{ Lang::get('lrs.sidebar.dash') }}
+        <span class="menu-icon"><i class="icon icon-bar-chart"></i></span> {{ Lang::get('lrs.sidebar.dash') }}
       </a> 
     </li>
     <li class="link @if ( isset($statement_nav) ) active @endif">
       <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/statements">
         <span class="menu-icon"><i class="icon icon-exchange"></i></span> {{ Lang::get('statements.statements') }}
-      </a>
-    </li>
-    <li class="link @if ( isset($analytics_nav) ) active @endif">
-      <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/analytics">
-        <span class="menu-icon"><i class="icon icon-bar-chart"></i></span>  {{ Lang::get('lrs.sidebar.analytics') }}
       </a>
     </li>
     <li class="link @if ( isset($reporting_nav) ) active @endif">

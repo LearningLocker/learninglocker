@@ -122,18 +122,23 @@ class LrsController extends BaseController {
   /**
    * Display the specified resource.
    *
+   * This is a temp hack until the single page app for 
+   * analytics is ready. v1.0 stable.
+   *
    * @param  int  $id
    * @return View
    */
   public function show( $id ){
 
-    $lrs    = $this->lrs->find( $id );
+    $lrs      = $this->lrs->find( $id );
     $lrs_list = $this->lrs->all();
     $stats    = new \app\locker\data\dashboards\LrsDashboard( $id );
-    return View::make('partials.lrs.dashboard', array('stats'    => $stats->stats, 
-                              'lrs'      => $lrs, 
-                              'list'     => $lrs_list, 
-                              'dash_nav' => true));
+    $this->analytics->getAnalytics( $lrs->_id );
+    return View::make('partials.lrs.dashboard', array('stats'    => $stats->stats,
+                                                      'data'     => $this->analytics->results,
+                                                      'lrs'      => $lrs, 
+                                                      'list'     => $lrs_list, 
+                                                      'dash_nav' => true));
   }
 
   /**

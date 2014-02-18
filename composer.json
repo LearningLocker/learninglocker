@@ -15,11 +15,11 @@
       "email": "james@ht2.co.uk",
       "role": "Developer"
     }
-    ],
-    "name": "learninglocker/learninglocker",
-    "description": "The open source learning record store.",
-    "license": "GPL v3",
-    "keywords": ["lrs", "laravel"],
+  ],
+  "name": "learninglocker/learninglocker",
+  "description": "The open source learning record store.",
+  "license": "GPL v3",
+  "keywords": ["lrs", "laravel"],
   "require": {
     "laravel/framework": "4.1.*",
     "jenssegers/mongodb": "*",

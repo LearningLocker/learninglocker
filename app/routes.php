@@ -146,9 +146,6 @@ Route::put('site/users/verify/{id}', array(
 Route::get('lrs/{id}/statements', array(
   'uses' => 'LrsController@statements',
 ));
-Route::get('lrs/{id}/analytics/{segment?}', array(
-  'uses' => 'AnalyticsController@index',
-));
 Route::get('lrs/{id}/reporting', array(
   'uses' => 'LrsController@reporting',
 ));

@@ -13,7 +13,6 @@
       <th class="col-xs-2">Verb</th>
       <th class="col-xs-2">% pop</th>
       <th class="col-xs-2">% all</th>
-      <th class="col-xs-2">Info</th>
     </tr>
   </thead>
 @foreach( $verbs as $v )
@@ -37,12 +36,6 @@
     </td>
     <td>
       <span class="label label-default">{{ $percent_overall }}%</span>
-    </td>
-    <td>
-      <span class="label label-success pull-right">
-        <i class="icon icon-chevron-up verb-status" data-toggle="tooltip" 
-        data-placement="left" title="Up on average for your LRSs"></i>
-      </span>
     </td>
   </tr>
   

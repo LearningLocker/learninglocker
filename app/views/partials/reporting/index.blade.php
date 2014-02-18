@@ -20,6 +20,7 @@
   <div class="row">
     <div class="col-xs-12 col-sm-12">
       @include('partials.reporting.selector')
+      <p>Report tool will be coming soon.</p>
     </div>
   </div>
   
