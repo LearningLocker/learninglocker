@@ -1,11 +1,10 @@
-<?php namespace Controllers\xAPI;
+<?php namespace Controllers\API;
 
 use Illuminate\Routing\Controller;
 
 class BaseController extends Controller {
 
-
-  public function returnJSON( $results=array(), $additional_params=array(), $extra=array(), $debug=array() ){
+public function returnJSON( $results=array(), $additional_params=array(), $extra=array(), $debug=array() ){
 
     $json = array(
         'version'   =>  \Config::get('api.using_version'),
@@ -63,5 +62,6 @@ class BaseController extends Controller {
   protected function returnSuccessError( $success, $message, $code ){
     return \Response::json( array( 'success'  => $success, 'message'  => $message), $code );
   }
+  
 
 }

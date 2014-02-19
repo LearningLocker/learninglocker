@@ -2,7 +2,7 @@
 
 use Illuminate\Routing\Controller;
 
-class BaseController extends Controller {
+class BaseController extends \Controllers\API\BaseController {
 
   /**
    * Current LRS based on Auth credentials
