@@ -27,7 +27,7 @@ class StatementController extends BaseController {
 
     $this->beforeFilter('auth');
     $this->beforeFilter('csrf', array('on' => 'store'));
-    $this->beforeFilter('checkCanSubmit', array('only' => 'store'));
+    $this->beforeFilter('@checkCanSubmit', array('only' => 'store'));
 
   }
 
