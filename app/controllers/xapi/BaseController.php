@@ -1,8 +1,9 @@
 <?php namespace Controllers\xAPI;
 
 use Illuminate\Routing\Controller;
+use Controllers\API\BaseController as APIBaseController;
 
-class BaseController extends \Controllers\API\BaseController {
+class BaseController extends APIBaseController {
 
   /**
    * Current LRS based on Auth credentials
