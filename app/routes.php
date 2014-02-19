@@ -246,8 +246,8 @@ Route::get('about', array(function(){
 |------------------------------------------------------------------
 */
 
-  Route::options('data/xAPI/{extra}',  'Controllers\API\BaseController@CORSOptions')->where('extra', '(.*)');
-  
+Route::options('data/xAPI/{extra}',  'Controllers\API\BaseController@CORSOptions')->where('extra', '(.*)');
+
 Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), function(){
 
   Config::set('xapi.using_version', '1.0.1');

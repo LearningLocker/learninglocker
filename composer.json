@@ -25,7 +25,8 @@
     "jenssegers/mongodb": "*",
     "davejamesmiller/laravel-breadcrumbs": "~2.1.0",
     "way/generators": "dev-master",
-    "rhumsaa/array_column": "~1.1"
+    "rhumsaa/array_column": "~1.1",
+    "barryvdh/laravel-cors": "dev-master"
   },
   "autoload": {
     "classmap": [
