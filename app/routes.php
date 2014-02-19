@@ -246,6 +246,8 @@ Route::get('about', array(function(){
 |------------------------------------------------------------------
 */
 
+  Route::options('data/xAPI/{extra}',  'Controllers\API\BaseController@CORSOptions')->where('extra', '(.*)');
+  
 Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), function(){
 
   Config::set('xapi.using_version', '1.0.1');
@@ -255,7 +257,6 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
     });
 
   //statement resource (post, put, get, delete) route
-  Route::options('{extra}',  'Controllers\API\BaseController@CORSOptions')->where('extra', '(.*)');
   Route::put('statements',      'Controllers\xAPI\StatementsController@storePut');
   Route::resource('statements', 'Controllers\xAPI\StatementsController');
 
