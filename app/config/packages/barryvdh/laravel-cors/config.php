@@ -19,8 +19,8 @@ return array(
   */
   'defaults' =>  array(
       'allow_credentials' => false,
-      'allow_origin'=> array(),
-      'allow_headers'=> array(),
+      'allow_origin'=> array('*'),
+      'allow_headers'=> array('authorization,x-requested-with'),
       'allow_methods'=> array('POST', 'PUT', 'GET', 'DELETE', 'OPTIONS'),
       'expose_headers'=> array(),
       'max_age' => 0
