@@ -26,8 +26,9 @@ $app = new Illuminate\Foundation\Application;
 
 $env = $app->detectEnvironment(array(
 
-  'local' => array('your-machine-name'),
-  'ht2' => array('HT2-007')
+  'local'       => array('your-machine-name'),
+  'ht2'         => array('HT2-007'),
+  'production'  =>  array('ht2-livecloud')
 
 ));
 
