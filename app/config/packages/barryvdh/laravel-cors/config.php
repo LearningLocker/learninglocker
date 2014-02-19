@@ -30,7 +30,7 @@ return array(
       '^/data/xAPI/' => array(
           'allow_origin'=> array('*'),
           'allow_headers'=> array('Origin, Content-Type, Accept, Authorization, X-Requested-With, X-Experience-API-Version, X-Experience-API-Consistent-Through, Updated'),
-          'allow_methods'=> array('POST', 'PUT', 'GET', 'DELETE'),
+          'allow_methods'=> array('POST', 'PUT', 'GET', 'DELETE', 'OPTIONS'),
           'max_age' => 3600
       )
   ),
