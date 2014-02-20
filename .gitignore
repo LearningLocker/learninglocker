@@ -4,6 +4,5 @@ composer.phar
 .DS_Store
 Thumbs.db
 
-/uploads
 /app/config/ht2
 /app/config/production
