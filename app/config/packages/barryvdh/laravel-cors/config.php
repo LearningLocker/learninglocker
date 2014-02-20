@@ -29,7 +29,7 @@ return array(
   'paths' => array(
       '^/' => array(
           'allow_origin'=> array('*'),
-          'allow_headers'=> array('Origin, Content-Type, Accept, Authorization, X-Requested-With, X-Experience-API-Version, X-Experience-API-Consistent-Through, Updated'),
+          'allow_headers'=> array('*'),
           'allow_methods'=> array('POST', 'PUT', 'GET', 'DELETE', 'OPTIONS'),
           'max_age' => 3600
       )
