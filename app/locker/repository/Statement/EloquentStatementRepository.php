@@ -347,8 +347,8 @@ class EloquentStatementRepository implements StatementRepository {
       $statements->where( 'context.registration', $parameters['registration'] );
     }
 
-    if( isset($parameters['activityId']) ){
-      $statements->where( 'object.id', $parameters['activityId']);
+    if( isset($parameters['activity']) ){
+      $statements->where( 'object.id', $parameters['activity']);
     }
 
     //since, until or between
