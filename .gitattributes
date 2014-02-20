@@ -1,5 +1,4 @@
-* text=auto
-text eol=lf
+* text eol=lf
 *.php text
 *.js text
 *.jpg binary

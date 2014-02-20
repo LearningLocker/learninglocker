@@ -4,6 +4,19 @@ use Illuminate\Routing\Controller;
 
 class BaseController extends Controller {
 
+
+public function CORSOptions(){
+  $statusCode = 204;
+  $headers = [
+      'Access-Control-Allow-Origin'      => 'http://mydomain.com',
+      'Access-Control-Allow-Methods'     => 'GET, PUT, POST, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers'     => 'Origin, Content-Type, Accept, Authorization, X-Requested-With, X-Experience-API-Version, X-Experience-API-Consistent-Through, Updated',
+      'Access-Control-Allow-Credentials' => 'true'
+  ];
+
+  return \Response::make(null, $statusCode, $headers);
+}
+
 public function returnJSON( $results=array(), $additional_params=array(), $extra=array(), $debug=array() ){
 
     $json = array(

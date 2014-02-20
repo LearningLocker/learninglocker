@@ -59,27 +59,33 @@ Route::filter('auth.statement', function(){
   $key    = Request::getUser();
   $secret = Request::getPassword();
 
-  //see if the lrs exists based on key and secret
-  $lrs = \Lrs::where('api.basic_key', $key)
-      ->where('api.basic_secret', $secret)
-      ->select('owner._id')->first();
+  $method = Request::server('REQUEST_METHOD');
 
-  //if no id found, return error
-  if ( $lrs == NULL ) {
-    return Response::json(array(
-      'error' => true,
-      'message' => 'Unauthorized request.'),
-      401
-    ); 
-  }
+  if( $method !== "OPTIONS" ){
 
-  //attempt login once
-  if ( ! Auth::onceUsingId($lrs->owner['_id']) ) {
-    return Response::json(array(
-      'error' => true,
-      'message' => 'Unauthorized Request'),
-      401
-    ); 
+    //see if the lrs exists based on key and secret
+    $lrs = \Lrs::where('api.basic_key', $key)
+        ->where('api.basic_secret', $secret)
+        ->select('owner._id')->first();
+
+    //if no id found, return error
+    if ( $lrs == NULL ) {
+      return Response::json(array(
+        'error' => true,
+        'message' => 'Unauthorized request.'),
+        401
+      ); 
+    }
+
+    //attempt login once
+    if ( ! Auth::onceUsingId($lrs->owner['_id']) ) {
+      return Response::json(array(
+        'error' => true,
+        'message' => 'Unauthorized Request'),
+        401
+      ); 
+    }
+    
   }
 
 });
