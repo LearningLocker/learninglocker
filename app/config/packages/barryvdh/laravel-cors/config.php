@@ -20,14 +20,14 @@ return array(
   'defaults' =>  array(
       'allow_credentials' => false,
       'allow_origin'=> array('*'),
-      'allow_headers'=> array('authorization,x-requested-with'),
-      'allow_methods'=> array('POST', 'PUT', 'GET', 'DELETE', 'OPTIONS'),
+      'allow_headers'=> array('*'),
+      'allow_methods'=> array(),
       'expose_headers'=> array(),
       'max_age' => 0
   ),
 
   'paths' => array(
-      '^/data/xAPI/' => array(
+      '^/' => array(
           'allow_origin'=> array('*'),
           'allow_headers'=> array('Origin, Content-Type, Accept, Authorization, X-Requested-With, X-Experience-API-Version, X-Experience-API-Consistent-Through, Updated'),
           'allow_methods'=> array('POST', 'PUT', 'GET', 'DELETE', 'OPTIONS'),
