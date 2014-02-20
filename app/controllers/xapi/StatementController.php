@@ -239,32 +239,35 @@ class StatementsController extends BaseController {
    **/
   public function reject(){
 
-    //first check that statementId and voidedStatementId
-    //have not been requested.
-    if (array_key_exists("statementId", $this->params) 
-      AND array_key_exists("voidedStatementId", $this->params)) {
+    if( $this->method !== "PUT" && $this->method !== "POST" ){
 
-      return \Response::json( array( 'error'    => true, 
-                                     'message'  => 'You can\'t request based on both 
-                                                    statementId and voidedStatementId'), 
-                                     400 );
-    }
+      //first check that statementId and voidedStatementId
+      //have not been requested.
+      if (array_key_exists("statementId", $this->params) 
+        AND array_key_exists("voidedStatementId", $this->params)) {
 
-    //The LRS MUST reject with an HTTP 400 error any requests to this resource 
-    //which contain statementId or voidedStatementId parameters, and also contain any other 
-    //parameter besides "attachments" or "format".
+        return \Response::json( array( 'error'    => true, 
+                                       'message'  => 'You can\'t request based on both 
+                                                      statementId and voidedStatementId'), 
+                                       400 );
+      }
 
-    if (array_key_exists("statementId", $this->params) 
-      OR array_key_exists("voidedStatementId", $this->params)) {
+      //The LRS MUST reject with an HTTP 400 error any requests to this resource 
+      //which contain statementId or voidedStatementId parameters, and also contain any other 
+      //parameter besides "attachments" or "format".
 
-      $allowed_params = array('attachments', 'format');
+      if (array_key_exists("statementId", $this->params) 
+        OR array_key_exists("voidedStatementId", $this->params)) {
 
-      foreach( $this->params as $k => $v ){
-        if( $k != 'statementId' && $k != 'voidedStatementId' && !in_array( $k, $allowed_params) ){
-          return \Response::json( array( 'error'    => true, 
-                                         'message'  => 'When using statementId or voidedStatementId, the only other 
-                                                        parameters allowed are attachments and/or format.'), 
-                                         400 );
+        $allowed_params = array('attachments', 'format');
+
+        foreach( $this->params as $k => $v ){
+          if( $k != 'statementId' && $k != 'voidedStatementId' && !in_array( $k, $allowed_params) ){
+            return \Response::json( array( 'error'    => true, 
+                                           'message'  => 'When using statementId or voidedStatementId, the only other 
+                                                          parameters allowed are attachments and/or format.'), 
+                                           400 );
+          }
         }
       }
 
