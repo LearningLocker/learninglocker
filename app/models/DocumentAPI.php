@@ -34,7 +34,14 @@ class DocumentAPI extends Eloquent {
     $content      = $content_info['content'];
     $contentType  = $content_info['contentType'];
 
-    switch( $contentType ){
+    $contentTypeArr = explode(";", $contentType);
+    if( sizeof($contentTypeArr) >= 1 ){
+      $mimeType = $contentTypeArr[0];
+    } else {
+      $mimeType = $contentType;
+    }
+
+    switch( $mimeType ){
       case "application/json":
 
         $request_content = json_decode($content, TRUE);
@@ -44,7 +51,7 @@ class DocumentAPI extends Eloquent {
 
         if( !$this->exists ){ //if we are adding a new piece of content...
           $this->content      = $request_content;
-        } else if( $this->contentType === $contentType ){ //if existing content, check that it is also JSON
+        } else if( $this->contentType === $mimeType ){ //if existing content, check that it is also JSON
           switch( $method ){
             case 'PUT': //overwrite content
               $this->content = $request_content;
@@ -82,7 +89,7 @@ class DocumentAPI extends Eloquent {
             $content->move($dir, $filename);
 
           } else {
-            $ext = array_search( $contentType, FileTypes::getMap() );
+            $ext = array_search( $mimeType, FileTypes::getMap() );
             if( $ext === false ){
               \App::abort(400, 'This file type cannot be supported');
             }
@@ -106,7 +113,7 @@ class DocumentAPI extends Eloquent {
       break;
     }
     
-    $this->contentType  = $contentType;
+    $this->contentType  = $mimeType;
 
   }
 

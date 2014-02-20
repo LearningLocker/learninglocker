@@ -48,10 +48,17 @@ class StatementsController extends BaseController {
     //grab incoming statement
     $request            = \Request::instance();
     $incoming_statement = $request->getContent();
-    $statement          = json_decode($incoming_statement, TRUE);
+    $statements_assoc = json_decode($incoming_statement, TRUE);
+
+    if( is_array(json_decode($incoming_statement)) ){
+      $statements = $statements_assoc;
+    } else {
+      $statements = array( $statements_assoc );
+    }
+    
 
     //@todo if incoming is an array of statements, loop through
-    $save = $this->saveStatement( $statement );
+    $save = $this->saveStatement( $statements );
     return $this->sendResponse( $save );
 
   }
@@ -62,9 +69,9 @@ class StatementsController extends BaseController {
    * @param json $incoming_statement
    * @return response
    */
-  public function saveStatement( $statement ){
+  public function saveStatement( $statements ){
   
-    $save = $this->statement->create( $statement, $this->lrs );
+    $save = $this->statement->create( $statements, $this->lrs );
     return $save;
 
   }
@@ -79,13 +86,13 @@ class StatementsController extends BaseController {
 
     $request            = \Request::instance();
     $incoming_statement = $request->getContent();
-    $statement          = json_decode($incoming_statement, TRUE);
+    $statement         = json_decode($incoming_statement, TRUE);
     
 
     //if no id submitted, reject
     if( !isset($statement['id']) ) return $this->sendResponse( array('success' => 'noId') );
 
-    $save = $this->saveStatement( $statement );
+    $save = $this->saveStatement( array($statement) );
 
     if( $save['success'] == 'true' ){
       return $this->sendResponse( array('success' => 'put') );
@@ -206,9 +213,7 @@ class StatementsController extends BaseController {
 
     switch( $outcome['success'] ){
       case 'true': 
-        return \Response::json( array( 'success'  => true, 
-                                       'message'  => $outcome['id']), 
-                                        200 );
+        return \Response::json( $outcome['ids'], 200 );
         break;
       case 'conflict-nomatch':
         return \Response::json( array('success'  => false), 409 );
@@ -239,32 +244,35 @@ class StatementsController extends BaseController {
    **/
   public function reject(){
 
-    //first check that statementId and voidedStatementId
-    //have not been requested.
-    if (array_key_exists("statementId", $this->params) 
-      AND array_key_exists("voidedStatementId", $this->params)) {
+    if( $this->method !== "PUT" && $this->method !== "POST" ){
 
-      return \Response::json( array( 'error'    => true, 
-                                     'message'  => 'You can\'t request based on both 
-                                                    statementId and voidedStatementId'), 
-                                     400 );
-    }
+      //first check that statementId and voidedStatementId
+      //have not been requested.
+      if (array_key_exists("statementId", $this->params) 
+        AND array_key_exists("voidedStatementId", $this->params)) {
 
-    //The LRS MUST reject with an HTTP 400 error any requests to this resource 
-    //which contain statementId or voidedStatementId parameters, and also contain any other 
-    //parameter besides "attachments" or "format".
+        return \Response::json( array( 'error'    => true, 
+                                       'message'  => 'You can\'t request based on both 
+                                                      statementId and voidedStatementId'), 
+                                       400 );
+      }
 
-    if (array_key_exists("statementId", $this->params) 
-      OR array_key_exists("voidedStatementId", $this->params)) {
+      //The LRS MUST reject with an HTTP 400 error any requests to this resource 
+      //which contain statementId or voidedStatementId parameters, and also contain any other 
+      //parameter besides "attachments" or "format".
 
-      $allowed_params = array('attachments', 'format');
+      if (array_key_exists("statementId", $this->params) 
+        OR array_key_exists("voidedStatementId", $this->params)) {
 
-      foreach( $this->params as $k => $v ){
-        if( $k != 'statementId' && $k != 'voidedStatementId' && !in_array( $k, $allowed_params) ){
-          return \Response::json( array( 'error'    => true, 
-                                         'message'  => 'When using statementId or voidedStatementId, the only other 
-                                                        parameters allowed are attachments and/or format.'), 
-                                         400 );
+        $allowed_params = array('attachments', 'format');
+
+        foreach( $this->params as $k => $v ){
+          if( $k != 'statementId' && $k != 'voidedStatementId' && !in_array( $k, $allowed_params) ){
+            return \Response::json( array( 'error'    => true, 
+                                           'message'  => 'When using statementId or voidedStatementId, the only other 
+                                                          parameters allowed are attachments and/or format.'), 
+                                           400 );
+          }
         }
       }
 

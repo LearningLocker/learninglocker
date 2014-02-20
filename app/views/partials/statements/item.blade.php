@@ -1,9 +1,15 @@
 <?php 
   $avatar = \app\locker\helpers\Helpers::getGravatar( substr($statement['actor']['mbox'], 7), '20');
   $verb   = $statement['verb']['display'];
-  $object = $statement['object']['definition']['name'];
+  if( isset( $statement['object']['definition']['name'] )){
+    $object = $statement['object']['definition']['name'];
+    $object = reset( $object );
+  } else {
+    $object = "Unknown object";
+  }
   $verb   = reset( $verb );
-  $object = reset( $object );
+
+  $stored = new Carbon\Carbon($statement['stored']);
 ?>
 <div class="row">
   <div class="col-xs-12 col-sm-12 col-lg-12">
@@ -21,7 +27,7 @@
 
       <a href="{{ $statement['object']['id'] }}">{{{ $object }}}</a>
 
-      <small>| {{ $statement['stored'] }}</small>
+      <small>| {{ $stored->diffForHumans() }} ({{ $stored->toDayDateTimeString() }})</small>
 
       <div class="readable-statement rstate-{{ $statement['_id'] }}" style="display:none;">
         @include('partials.statements.elements.readable', array( 'statement' => $statement, 'lrs' => $lrs->_id ))

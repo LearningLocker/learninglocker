@@ -477,10 +477,10 @@ class xAPIValidation {
 
       //check definition, if set, is an object
       if( isset($object['definition']) ){
+        //\App::abort(400, $object['definition']);
         if( !is_array($object['definition']) ){
           $this->setError( 'Object: definition needs to be an object.' );
         }
-      }else{
 
         $definition = $object['definition'];
         $definition_keys = array_keys( $definition );
@@ -889,8 +889,10 @@ class xAPIValidation {
             if( !is_numeric($result['score']['min']) ){
               $this->setError( 'Result: score: min must be a numeric value.' );
             }
-            if( $result['score']['min'] > $result['score']['max'] ){
-              $this->setError( 'Result: score: min must be less than max.' );
+            if( isset($result['score']['max'])){
+              if( $result['score']['min'] > $result['score']['max'] ){
+                $this->setError( 'Result: score: min must be less than max.' );
+              }
             }
           }
           if( isset($result['score']['raw']) ){
