@@ -476,9 +476,7 @@ class xAPIValidation {
       //}
 
       //check definition, if set, is an object
-      if( !isset($object['definition']) ){
-        $this->statement['object']['definition'] = array();
-      }else{
+      if( isset($object['definition']) ){
         //\App::abort(400, $object['definition']);
         if( !is_array($object['definition']) ){
           $this->setError( 'Object: definition needs to be an object.' );

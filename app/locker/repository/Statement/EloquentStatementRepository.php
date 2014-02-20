@@ -138,10 +138,9 @@ class EloquentStatementRepository implements StatementRepository {
       | If not, store it.
       |------------------------------------------------------------------------------
       */
-     if( !isset($vs['object']['definition'])){
-      \App::abort(400, json_encode($vs['object']) );
-     }
-      $vs['object']['definition'] = $this->activity->saveActivity( $vs['object']['id'], $vs['object']['definition'] );
+      if( isset($vs['object']['definition'])){
+        $vs['object']['definition'] = $this->activity->saveActivity( $vs['object']['id'], $vs['object']['definition'] );
+      }
 
 
       /*
