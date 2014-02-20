@@ -91,71 +91,83 @@ class EloquentStatementRepository implements StatementRepository {
    */
   
   /**
-   * @param array $statement
+   * @param array $statements An array of statements to create
    * @param array $lrs
    *
    **/
-  public function create( $statement, $lrs ){
+  public function create( $statements, $lrs ){
 
     //Full tincan statement validation to make sure the statement conforms
-    $verify = new \app\locker\statements\xAPIValidation( $statement, \Site::first() );
-
-    //run full validation
-    $return = $verify->runValidation();
-
-    //if the statement does not validate, return with errors
-    if( $return['status'] == 'failed' ){
-      return array( 'success' => 'false', 
-                    'message' => $return['errors']);
-    }
-
-    //statement has validated, so continue with verified statement. 
-    $vs = $return['statement'];
-
-    //check to see if the statementId already has a statement in the LRS
-    if( $result = $this->doesStatementIdExist( $lrs->_id, $vs['id'], $statement ) ){
-      return array( 'success' => $result ); 
-    }
-
-    //Add the correct learning locker LRS. 
-    $vs['context']['extensions']['http://learninglocker&46;net/extensions/lrs'] = array( '_id'  => $lrs->_id, 
-                                                                                         'name' => $lrs->title );
-
-
-    //The date stored in LRS in ISO 8601 format
-    $vs['stored'] = date('c');
-
-     
-    /*
-    |------------------------------------------------------------------------------
-    | Check to see if the object is an activity, if so, check to see if that 
-    | activity is already in the DB. if it is, use the stored version. 
-    | If not, store it.
-    |------------------------------------------------------------------------------
-    */
-    $vs['object']['definition'] = $this->activity->saveActivity( $vs['object']['id'], $vs['object']['definition'] );
-
-
-    /*
-    |------------------------------------------------------------------------------
-    | Run through keys to make sure there are no full stops. If so, replace with
-    | html entity &46; - this will probably only occur in extensions.
-    |------------------------------------------------------------------------------
-    */
-    $vs = $this->replaceFullStop( $vs );
     
+    $saved_ids = array();
+    foreach( $statements as &$statement ){ //loop and amend - return on fail
 
-    //Create a new statement object
-    $new_statement = $this->statement;
-    $new_statement->fill( $vs );
+      $verify = new \app\locker\statements\xAPIValidation( $statement, \Site::first() );
 
-    if( $new_statement->save() ){
-      return array( 'success' => 'true', 
-                    'id'      => $new_statement->_id );
+      //run full validation
+      $return = $verify->runValidation();
+
+      if( $return['status'] == 'failed' ){
+        return array( 'success' => 'false',  'message' => $return['errors'] );
+      } else {
+        $statement = $return['statement'];
+      }
     }
 
-    return array( 'success' => 'false', 
-                  'message' => $new_statement->errors );
+    //now we are sure that statements are valid - loop back through and actually add them
+    foreach( $statements as $vs ){
+
+      //check to see if the statementId already has a statement in the LRS
+      if( $result = $this->doesStatementIdExist( $lrs->_id, $vs['id'], $statement ) ){
+        return array( 'success' => $result ); 
+      }
+
+      //Add the correct learning locker LRS. 
+      $vs['context']['extensions']['http://learninglocker&46;net/extensions/lrs'] = array( '_id'  => $lrs->_id, 
+                                                                                           'name' => $lrs->title );
+
+
+      //The date stored in LRS in ISO 8601 format
+      $vs['stored'] = date('c');
+
+       
+      /*
+      |------------------------------------------------------------------------------
+      | Check to see if the object is an activity, if so, check to see if that 
+      | activity is already in the DB. if it is, use the stored version. 
+      | If not, store it.
+      |------------------------------------------------------------------------------
+      */
+     if( !isset($vs['object']['definition'])){
+      \App::abort(400, json_encode($vs['object']) );
+     }
+      $vs['object']['definition'] = $this->activity->saveActivity( $vs['object']['id'], $vs['object']['definition'] );
+
+
+      /*
+      |------------------------------------------------------------------------------
+      | Run through keys to make sure there are no full stops. If so, replace with
+      | html entity &46; - this will probably only occur in extensions.
+      |------------------------------------------------------------------------------
+      */
+      $vs = $this->replaceFullStop( $vs );
+      
+
+      //Create a new statement object
+      $new_statement = $this->statement;
+      $new_statement->fill( $vs );
+
+      if( $new_statement->save() ){
+        $saved_ids[] = $new_statement->id;
+      } else {
+        return array( 'success' => 'false', 
+                    'message' => $new_statement->errors );
+      }
+
+      
+    }
+
+    return array('success'=>true, 'ids'=>$saved_ids );
 
   }
 

@@ -48,10 +48,17 @@ class StatementsController extends BaseController {
     //grab incoming statement
     $request            = \Request::instance();
     $incoming_statement = $request->getContent();
-    $statement          = json_decode($incoming_statement, TRUE);
+    $statements_assoc = json_decode($incoming_statement, TRUE);
+
+    if( is_array(json_decode($incoming_statement)) ){
+      $statements = $statements_assoc;
+    } else {
+      $statements = array( $statements_assoc );
+    }
+    
 
     //@todo if incoming is an array of statements, loop through
-    $save = $this->saveStatement( $statement );
+    $save = $this->saveStatement( $statements );
     return $this->sendResponse( $save );
 
   }
@@ -62,9 +69,9 @@ class StatementsController extends BaseController {
    * @param json $incoming_statement
    * @return response
    */
-  public function saveStatement( $statement ){
+  public function saveStatement( $statements ){
   
-    $save = $this->statement->create( $statement, $this->lrs );
+    $save = $this->statement->create( $statements, $this->lrs );
     return $save;
 
   }
@@ -79,13 +86,13 @@ class StatementsController extends BaseController {
 
     $request            = \Request::instance();
     $incoming_statement = $request->getContent();
-    $statement          = json_decode($incoming_statement, TRUE);
+    $statement         = json_decode($incoming_statement, TRUE);
     
 
     //if no id submitted, reject
     if( !isset($statement['id']) ) return $this->sendResponse( array('success' => 'noId') );
 
-    $save = $this->saveStatement( $statement );
+    $save = $this->saveStatement( array($statement) );
 
     if( $save['success'] == 'true' ){
       return $this->sendResponse( array('success' => 'put') );
@@ -206,9 +213,7 @@ class StatementsController extends BaseController {
 
     switch( $outcome['success'] ){
       case 'true': 
-        return \Response::json( array( 'success'  => true, 
-                                       'message'  => $outcome['id']), 
-                                        200 );
+        return \Response::json( $outcome['ids'], 200 );
         break;
       case 'conflict-nomatch':
         return \Response::json( array('success'  => false), 409 );
