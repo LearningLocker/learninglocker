@@ -104,7 +104,7 @@ class StatementDisplay {
 
   private function setActivity( $activity, $return_type='table' ){
 
-    $name = isset($activity['definition']['name']) ? reset( $activity['definition']['name'] ) : "Unknown object";
+    $name = isset($activity['definition']['name']) ? reset( $activity['definition']['name'] ) : $activity['id'];
     $display = array('title'   => 'Activity',
                      'display' => $name,
                      'url'     => \URL::current() . '/activity/' . rawurlencode( $activity['id'] ));
