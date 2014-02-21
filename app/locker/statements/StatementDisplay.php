@@ -129,9 +129,10 @@ class StatementDisplay {
   private function setScore( $result, $return_type='table' ){
 
     if( isset($result['score']['scaled']) ){
+      $percentage = round( $result['score']['scaled'] * 100 );
 
       $display = array('title'   => 'Score',
-                       'display' => substr($result['score']['scaled'], 1) . '%');
+                       'display' => $percentage . '%');
 
       return $this->setDisplayRow( $display, $return_type );
       
