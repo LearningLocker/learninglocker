@@ -728,11 +728,12 @@ class xAPIValidation {
           }
 
           //now check all property keys contain an array
+          //While the contextActivity may be an object on input, it must be stored as an array - so on each type we will check if an associative array has been passed and insert it into an array if needed
           if( isset($context['contextActivities']['parent']) ){
             if( !is_array($context['contextActivities']['parent']) ){
               $this->setError( 'Context: contextActivities: parent must be an object or array of objects.' );
             } else { 
-              if( $this->isAssoc( $this->$context['contextActivities']['parent'] ) ){ //While the contextActivity may be an object on input, it must be stored as an array
+              if( $this->isAssoc( $this->$context['contextActivities']['parent'] ) ){ 
                 $this->statement['context']['contextActivities']['parent'] = array( $this->$context['contextActivities']['parent'] );
               }
             }
