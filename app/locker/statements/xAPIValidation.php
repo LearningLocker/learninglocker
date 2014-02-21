@@ -731,24 +731,40 @@ class xAPIValidation {
           if( isset($context['contextActivities']['parent']) ){
             if( !is_array($context['contextActivities']['parent']) ){
               $this->setError( 'Context: contextActivities: parent must be an object or array of objects.' );
+            } else { 
+              if( $this->isAssoc( $this->$context['contextActivities']['parent'] ) ){ //While the contextActivity may be an object on input, it must be stored as an array
+                $this->statement['context']['contextActivities']['parent'] = array( $this->$context['contextActivities']['parent'] );
+              }
             }
           }
 
           if( isset($context['contextActivities']['grouping']) ){
             if( !is_array($context['contextActivities']['grouping']) ){
               $this->setError( 'Context: contextActivities: grouping must be an object or array of objects.' );
+            } else {
+              if( $this->isAssoc( $this->$context['contextActivities']['grouping'] ) ){
+                $this->statement['context']['contextActivities']['grouping'] = array( $this->$context['contextActivities']['grouping'] );
+              }
             }
           }
 
           if( isset($context['contextActivities']['category']) ){
             if( !is_array($context['contextActivities']['category']) ){
               $this->setError( 'Context: contextActivities: category must be an object or array of objects.' );
+            } else {
+              if( $this->isAssoc( $this->$context['contextActivities']['category'] ) ){
+                $this->statement['context']['contextActivities']['category'] = array( $this->$context['contextActivities']['category'] );
+              }
             }
           }
 
           if( isset($context['contextActivities']['other']) ){
             if( !is_array($context['contextActivities']['other']) ){
               $this->setError( 'Context: contextActivities: other must be an object or array of objects.' );
+            } else {
+              if( $this->isAssoc( $this->$context['contextActivities']['other'] ) ){
+                $this->statement['context']['contextActivities']['other'] = array( $this->$context['contextActivities']['other'] );
+              }
             }
           }
         }
@@ -1265,6 +1281,17 @@ class xAPIValidation {
   */
   private function validateLanguageMap(){
     
+  }
+
+
+  /**
+   * Returns true if an array is associative 
+   * @param  Array  $arr 
+   * @return boolean      
+   */
+  private function isAssoc($arr)
+  {
+    return array_keys($arr) !== range(0, count($arr) - 1);
   }
 
 }
