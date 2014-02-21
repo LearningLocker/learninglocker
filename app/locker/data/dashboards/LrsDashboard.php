@@ -147,14 +147,18 @@ class LrsDashboard extends \app\locker\data\BaseData {
   public function getStatementNumbersByDate(){
 
     $statements = $this->db->statements->aggregate(
-              array('$match' => $this->getMatch( $this->lrs )),
-              array('$group' => array('_id'   => array('$dayOfYear' => '$created_at'),
-                          'count' => array('$sum' => 1),
-                          'date'  => array('$addToSet' => '$stored'),
-                          'actor' => array('$addToSet' => '$actor'))),
-              array('$sort'    => array('_id' => 1)),
-              array('$project' => array('count' => 1, 'date' => 1, 'actor' => 1))
-            );
+      array('$match' => $this->getMatch( $this->lrs )),
+      array(
+        '$group' => array(
+          '_id'   => array('$dayOfYear' => '$created_at'),
+          'count' => array('$sum' => 1),
+          'date'  => array('$addToSet' => '$stored'),
+          'actor' => array('$addToSet' => '$actor')
+        )
+      ),
+      array('$sort'    => array('_id' => 1)),
+      array('$project' => array('count' => 1, 'date' => 1, 'actor' => 1))
+    );
     
     //set statements for graphing
     $data = '';

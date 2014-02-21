@@ -208,6 +208,7 @@ Route::get('lrs/{id}/statements/explorer/{extra?}', 'ExplorerController@explore'
 ->where(array('extra' => '.*'));
 Route::get('lrs/{id}/statements/{extra}', 'ExplorerController@filter')
 ->where(array('extra' => '.*'));
+
 Route::resource('statements', 'StatementController');
 
 /*
@@ -258,17 +259,18 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
     });
 
   //statement resource (post, put, get, delete) route
-  Route::put('statements',      'Controllers\xAPI\StatementsController@storePut');
-  Route::resource('statements', 'Controllers\xAPI\StatementsController');
+  Route::get('statements/grouped',    'Controllers\xAPI\StatementsController@grouped');
+  Route::put('statements',            'Controllers\xAPI\StatementsController@storePut');
+  Route::resource('statements',       'Controllers\xAPI\StatementsController');
 
   //Agent API
-  Route::get('agents/profile',    'Controllers\xAPI\AgentController@index');
-  Route::put('agents/profile',    'Controllers\xAPI\AgentController@store');
-  Route::post('agents/profile',   'Controllers\xAPI\AgentController@store');
-  Route::delete('agents/profile', 'Controllers\xAPI\AgentController@delete');
-  Route::any('agents/profile',    'Controllers\xAPI\AgentController@index');
+  Route::get('agents/profile',        'Controllers\xAPI\AgentController@index');
+  Route::put('agents/profile',        'Controllers\xAPI\AgentController@store');
+  Route::post('agents/profile',       'Controllers\xAPI\AgentController@store');
+  Route::delete('agents/profile',     'Controllers\xAPI\AgentController@delete');
+  Route::any('agents/profile',        'Controllers\xAPI\AgentController@index');
 
-  Route::get('agents',            'Controllers\xAPI\AgentController@search');
+  Route::get('agents',                'Controllers\xAPI\AgentController@search');
 
   //Activiy API
   Route::get('activities/profile',    'Controllers\xAPI\ActivityController@index');
@@ -280,11 +282,11 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
   Route::get('activities',            'Controllers\xAPI\ActivityController@full');
 
   //State API
-  Route::get('activities/state',    'Controllers\xAPI\StateController@index');
-  Route::put('activities/state',    'Controllers\xAPI\StateController@store');
-  Route::post('activities/state',   'Controllers\xAPI\StateController@store');
-  Route::delete('activities/state', 'Controllers\xAPI\StateController@delete');
-  Route::any('activities/state',    'Controllers\xAPI\StateController@index');
+  Route::get('activities/state',      'Controllers\xAPI\StateController@index');
+  Route::put('activities/state',      'Controllers\xAPI\StateController@store');
+  Route::post('activities/state',     'Controllers\xAPI\StateController@store');
+  Route::delete('activities/state',   'Controllers\xAPI\StateController@delete');
+  Route::any('activities/state',      'Controllers\xAPI\StateController@index');
   
 
 });

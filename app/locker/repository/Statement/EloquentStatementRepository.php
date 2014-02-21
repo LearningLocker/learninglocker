@@ -2,13 +2,14 @@
 
 use Statement;
 use Locker\Repository\Activity\ActivityRepository as Activity;
+use Locker\Repository\Query\QueryRepository as Query;
 
 class EloquentStatementRepository implements StatementRepository {
 
   /**
   * Statement
   */
-  protected $statement;
+  protected $statement, $activity, $query;
 
   /**
    * Construct
@@ -17,10 +18,11 @@ class EloquentStatementRepository implements StatementRepository {
    * @param Activity  $activity
    *
    */
-  public function __construct( Statement $statement, Activity $activity ){
+  public function __construct( Statement $statement, Activity $activity, Query $query ){
 
     $this->statement = $statement;
     $this->activity  = $activity;
+    $this->query = $query;
 
   }
 
@@ -43,6 +45,36 @@ class EloquentStatementRepository implements StatementRepository {
     $this->addParameters( $statements, $parameters );
 
     return $statements->get();
+
+  }
+
+  public function grouped($id, $parameters){
+
+    $type = isset($parameters['grouping']) ? strtolower($parameters['grouping']) : '';
+    
+    switch( $type ){
+      default:
+      case "time":
+        $interval = isset($parameters['interval']) ? $parameters['interval'] : "day";
+        $filters = isset($parameters['filters']) ? json_decode($parameters['filters'], true) : array();
+
+        //overwrite the LRS filter
+        $filters['context.extensions.http://learninglocker&46;net/extensions/lrs._id'] = $id;
+
+        $results = $this->query->timedGrouping( $filters, $interval );
+      break;
+      case "actor":
+
+      break;
+      case "activity":
+
+      break;
+      case "verb":
+
+      break;
+    }
+
+    return $results;
 
   }
 
@@ -343,13 +375,31 @@ class EloquentStatementRepository implements StatementRepository {
    */
   private function addParameters( $statements, $parameters ){
 
+
+    //Check if agent has been passed
     if( isset($parameters['agent']) ){
-      $statements = $this->setAgent( $statements, $parameters['agent'] );
+
+      $agent_param = !is_object($parameters['agent']) ? json_decode($parameters['agent']) : $parameters['agent']; //convert to object if not already
+
+      if( is_array($agent_param) ){ //if array, apply OR filtering to agents
+
+        $statements = $statements->where( function($query) use ($agent_param){ //only apply ORs within agents
+          foreach( $agent_param as $agent ){ //for each agent
+            $query = $this->setAgent($query, $agent, true); //set agent with orWhere
+          }
+        });
+
+      } else if( is_object($agent_param) ){
+
+        $statements = $this->setAgent( $statements, $agent_param ); //do query on single agent
+
+      }
+
     }
     
     //set verb, if none passed ust make sure no voided statements are sent
     if( isset($parameters['verb']) ){
-      $statements->Where( 'verb.id', $parameters['verb'] );
+      $statements->where( 'verb.id', $parameters['verb'] );
     }else{
       $statements->where( 'verb.id', '<>', 'http://adlnet.gov/expapi/verbs/voided');
     }
@@ -396,10 +446,18 @@ class EloquentStatementRepository implements StatementRepository {
     //@todo attachments
 
 
+
+    $server_statement_limit = 100;
+
     if( isset( $parameters['limit'] ) ){
-      $statements->take( $parameters['limit'] );
-    }else{
-      $statements->take(10);
+      $limit = intval($parameters['limit']);
+      if( $limit === 0 ){
+        $statements->take( $server_statement_limit ); //server set limit
+      } else {
+        $statements->take( $limit );
+      }
+    } else {
+      $statements->take( $server_statement_limit );
     }
          
     if( isset( $parameters['offset'] ) ){
@@ -416,6 +474,27 @@ class EloquentStatementRepository implements StatementRepository {
 
   }
 
+  public function timeGrouping($query, $interval ){
+
+    return $query;
+  }
+
+  public function actorGrouping($query){
+    
+    $query->aggregate(
+      array('$match' => array()),
+      array(
+        '$group' => array(
+          '_id' => 'actor.mbox'
+        )
+      )
+    );
+
+    dd( $query );
+
+    return $query;
+  }
+
   /**
    * When agent json is passed, get correct identifier
    *
@@ -425,11 +504,15 @@ class EloquentStatementRepository implements StatementRepository {
    * @return $query
    * 
    */
-  public function setAgent( $query, $agent ){
+  public function setAgent( $query, $agent, $or = false ){
 
     $agent_query = '';
 
-    $agent = json_decode($agent);
+    $where_type = $or ? 'orWhere' : 'where';
+
+    if( is_string($agent) ){
+      $agent = json_decode($agent);
+    }
 
     //Do some checking on what actor field we are filtering with
     if( isset($agent->mbox) ){ //check for mbox
@@ -448,14 +531,16 @@ class EloquentStatementRepository implements StatementRepository {
 
     if( isset($agent_query) && $agent_query != '' ){ //if we have agent query params lined up...
 
-      $query->where( $agent_query['field'], $agent_query['value'] );
+      $query->$where_type( $agent_query['field'], $agent_query['value'] );
 
     } else if( isset($agent->account) ){ //else if there is an account
 
       if( isset($agent->account->homePage) && isset($agent->account->name ) ){
 
-        $query->where('actor.account.homePage', $agent->account->homePage)
-               ->where('actor.account.name', $agent->account->name );
+        $query->$where_type( function($query){
+          $query->where('actor.account.homePage', $agent->account->homePage)
+                ->where('actor.account.name', $agent->account->name );
+        });
 
       } 
 
