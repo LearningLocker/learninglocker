@@ -22,9 +22,10 @@
       </span> 
         
       {{ $statement['actor']['name'] }}
-        
-      <span onclick="$('.rstate-{{ $statement['_id'] }}').toggle();" class="toggle label label-verb verb"><b>{{ $verb }}</b></span>
 
+      <span onclick="$('.rstate-{{ $statement['_id'] }}').toggle();" class="toggle label label-verb verb">
+        <i class="icon icon-sort"></i> {{ $verb }}</span>
+        
       <a href="{{ $statement['object']['id'] }}">{{{ $object }}}</a>
 
       <small>| {{ $stored->diffForHumans() }} ({{ $stored->toDayDateTimeString() }})</small>
