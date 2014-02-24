@@ -71,3 +71,20 @@ Breadcrumbs::register('reporting', function($breadcrumbs, $lrs) {
   $breadcrumbs->parent('statement', $lrs);
   $breadcrumbs->push(Lang::get('statements.reporting'), url('/lrs/$lrs->_id/statements/generator'));
 });
+
+/*
+|-------------------------------------------------------------------
+| OAuth app breadcrumbs
+|-------------------------------------------------------------------
+*/
+Breadcrumbs::register('apps', function($breadcrumbs) {
+  $breadcrumbs->push(Lang::get('apps.list'), url('/oauth/apps'));
+});
+Breadcrumbs::register('apps.create', function($breadcrumbs) {
+  $breadcrumbs->parent('apps');
+  $breadcrumbs->push(Lang::get('apps.create'), url('/oauth/apps'));
+});
+Breadcrumbs::register('apps.show', function($breadcrumbs) {
+  $breadcrumbs->parent('apps');
+  $breadcrumbs->push(Lang::get('apps.show'), url('/oauth/apps'));
+});

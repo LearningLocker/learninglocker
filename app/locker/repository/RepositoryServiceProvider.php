@@ -34,6 +34,10 @@ class RepositoryServiceProvider extends ServiceProvider {
       'Locker\Repository\Activity\ActivityRepository',
       'Locker\Repository\Activity\EloquentActivityRepository'
     );
+    $this->app->bind(
+      'Locker\Repository\OAuthApp\OAuthAppRepository',
+      'Locker\Repository\OAuthApp\EloquentOAuthAppRepository'
+    );
   }
 
 

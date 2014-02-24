@@ -305,6 +305,51 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.api'), function(){
 
 });
 
+/*
+|----------------------------------------------------------------------
+| oAuth handling
+|----------------------------------------------------------------------
+*/
+
+Route::resource('oauth/apps','OAuthAppController');
+
+Route::post('oauth/access_token', function(){
+    return AuthorizationServer::performAccessTokenFlow();
+});
+
+Route::get('oauth/authorize', array('before' => 'check-authorization-params|auth', function(){
+   
+  $params = Session::get('authorize-params');
+  $params['user_id'] = Auth::user()->id;
+  $app_details = \OAuthApp::where('client_id', $params['client_id'] )->first();
+  return View::make('oauth.forms.authorization-form', array('params'      => $params, 
+                                                            'app_details' => $app_details));
+
+}));
+
+Route::post('oauth/authorize', array('before' => 'check-authorization-params|auth|csrf', function(){
+  
+  $params = Session::get('authorize-params');
+  $params['user_id'] = Auth::user()->id;
+
+  if (Input::get('approve') !== null) {
+    $code = AuthorizationServer::newAuthorizeRequest('user', $params['user_id'], $params);
+    Session::forget('authorize-params');
+    return Redirect::to(AuthorizationServer::makeRedirectWithCode($code, $params));
+  }
+
+  if (Input::get('deny') !== null) {
+    Session::forget('authorize-params');
+    return Redirect::to(AuthorizationServer::makeRedirectWithError($params));
+  }
+
+}));
+
+Route::get('secure-route', array('before' => 'oauth:basic', function(){
+    return "oauth secured route ";
+}));
+
+
 
 /*
 |------------------------------------------------------------------

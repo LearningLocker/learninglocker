@@ -19,14 +19,18 @@
   "name": "learninglocker/learninglocker",
   "description": "The open source learning record store.",
   "license": "GPL v3",
-  "keywords": ["lrs", "laravel"],
+  "keywords": ["lrs", "learninglocker"],
+  "repositories": [
+    { "type": "vcs", "url": "git@github.com:LearningLocker/oauth2-server-laravel" }
+  ],
   "require": {
     "laravel/framework": "4.1.*",
     "jenssegers/mongodb": "*",
     "davejamesmiller/laravel-breadcrumbs": "~2.1.0",
     "way/generators": "dev-master",
     "rhumsaa/array_column": "~1.1",
-    "barryvdh/laravel-cors": "dev-master"
+    "barryvdh/laravel-cors": "dev-master",
+    "lucadegasperi/oauth2-server-laravel": "dev-fork"
   },
   "autoload": {
     "classmap": [
