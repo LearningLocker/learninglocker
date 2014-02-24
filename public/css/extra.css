@@ -176,8 +176,13 @@ border-color: #354b59;
 }
 
 .label-verb {
-  background-color:#90BEE4;
-  color:#000;
+  background:#f9f9f9;
+  border-radius:6px;
+  border:1px solid #f1f1f1;
+  padding:5px;
+  color:#222;
+  font-size:14px;
+  font-weight:normal;
 }
 
 /* Page Wrap 

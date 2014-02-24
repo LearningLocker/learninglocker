@@ -64,10 +64,22 @@
           <div class="list-group">
           @foreach( $data['courses']['result'] as $c )
             @if( !is_null( $c['_id'] ) )
-              <a href="{{ URL() }}/lrs/{{$lrs->_id}}/statements/course/{{ rawurlencode($c['_id']) }}" class="list-group-item">
-                <span class="badge" title="Number of statements">{{ $c['count'] }}</span>
-                {{ reset($c['name'][0]) }}<br />
-              </a>
+              @if( is_array($c['_id']) )
+                @foreach( $c['_id'] as $key=>$id )
+
+
+                <a href="{{ URL() }}/lrs/{{$lrs->_id}}/statements/course/{{ rawurlencode($id) }}" class="list-group-item">
+                  <span class="badge" title="Number of statements">{{ $c['count'] }}</span>
+                  {{ reset($c['name'][0][$key]) }}<br />
+                </a>
+
+                @endforeach
+              @else 
+                <a href="{{ URL() }}/lrs/{{$lrs->_id}}/statements/course/{{ rawurlencode($c['_id']) }}" class="list-group-item">
+                  <span class="badge" title="Number of statements">{{ $c['count'] }}</span>
+                  {{ reset($c['name'][0]) }}<br />
+                </a>
+              @endif
             @endif
           @endforeach
           </div>

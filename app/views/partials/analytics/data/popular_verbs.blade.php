@@ -17,9 +17,12 @@
   </thead>
 @foreach( $verbs as $v )
 
-<?php $percent       = round((($v['count'] / $subtotal) * 100), 1); ?>
-<?php $percent_overall = round((($v['count'] / $total) * 100), 1); ?>
-<?php $verb_url        = URL() . '/lrs/'. $lrs->_id . '/statements/verb/' . $v['verb']['0']; ?>
+<?php 
+  $verb            = isset($v['verb']['0']) ? $v['verb']['0'] : 'undefined';
+  $percent         = round((($v['count'] / $subtotal) * 100), 1);
+  $percent_overall = round((($v['count'] / $total) * 100), 1);
+  $verb_url        = URL() . '/lrs/'. $lrs->_id . '/statements/verb/' . $verb; 
+?>
   
   <tr>
     <td class="hidden-xs">
@@ -29,7 +32,7 @@
       <span class="label label-default">{{ $v['count'] }}</span>
     </td>
     <td>
-      <a href="{{ $verb_url }}">{{ $v['verb']['0'] }}</a>
+      <a href="{{ $verb_url }}">{{ $verb }}</a>
     </td>
     <td>
       <span class="label label-default">{{ $percent }}%</span>

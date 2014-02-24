@@ -104,7 +104,7 @@ class StatementDisplay {
 
   private function setActivity( $activity, $return_type='table' ){
 
-    $name = isset($activity['definition']['name']) ? reset( $activity['definition']['name'] ) : "Unknown object";
+    $name = isset($activity['definition']['name']) ? reset( $activity['definition']['name'] ) : $activity['id'];
     $display = array('title'   => 'Activity',
                      'display' => $name,
                      'url'     => \URL::current() . '/activity/' . rawurlencode( $activity['id'] ));
@@ -129,9 +129,10 @@ class StatementDisplay {
   private function setScore( $result, $return_type='table' ){
 
     if( isset($result['score']['scaled']) ){
+      $percentage = round( $result['score']['scaled'] * 100 );
 
       $display = array('title'   => 'Score',
-                       'display' => substr($result['score']['scaled'], 1) . '%');
+                       'display' => $percentage . '%');
 
       return $this->setDisplayRow( $display, $return_type );
       
