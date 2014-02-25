@@ -59,12 +59,13 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
    **/
   public function verbCloud(){
       
+      //$verb = reset($verb.display)
       $match = $this->getMatch( $this->lrs ); 
       $this->results['verbs']  = $this->db->statements->aggregate(
                   array('$match' => $match),
                   array('$group' => array('_id'   => '$verb.id', 
                                   'count' => array('$sum' => 1),
-                                  'verb'  => array('$addToSet' => '$verb.display.en-US'),)),
+                                  'verb'  => array('$addToSet' => '$verb.display'),)),
                   array('$sort'    => array('count' => -1)),
                   array('$limit'   => 6)
                 );
