@@ -23,13 +23,13 @@ class Filter extends BaseData {
     $return_results = array();
 
     foreach( $this->data as $d ){
-
-      if( isset($d['context']['contextActivities']['grouping']) &&
-        $d['context']['contextActivities']['grouping']['type'] == 'http://adlnet.gov/expapi/activities/course' ){
-
-        $courses[] = $d['context']['contextActivities']['grouping']['id'];
+      if( isset($d['context']['contextActivities']) ){
+        foreach( $d['context']['contextActivities']['grouping'] as $key => $value ){
+          if( $key === 'type' && $value == 'http://adlnet.gov/expapi/activities/course' ){
+            $courses[] = $d['context']['contextActivities']['grouping']['id'];
+          }
+        }
       }
-
     }
 
     $array = array_count_values( $courses );
