@@ -5,7 +5,7 @@
     $object = $statement['object']['definition']['name'];
     $object = reset( $object );
   } else {
-    $object = "Unknown object";
+    $object = $statement['object']['id'];
   }
   $verb   = reset( $verb );
 
