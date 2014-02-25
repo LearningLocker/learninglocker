@@ -15,6 +15,9 @@
     <li class="link @if ( isset($users_nav) ) active @endif">
       <a href="{{ URL() }}/site/users"><span class="menu-icon"><i class="icon icon-group"></i></span>  Users</a>
     </li>
+    <li class="link @if ( isset($app_nav) ) active @endif">
+      <a href="{{ URL() }}/oauth/apps"><span class="menu-icon"><i class="icon icon-code"></i></span>  Apps</a>
+    </li>
   </ul>
   
   @include('layouts.sidebars.sidebar_footer')

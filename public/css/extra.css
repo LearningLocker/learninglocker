@@ -595,6 +595,15 @@ border-color: #354b59;
   margin-left:65px;
 }
 
+/* App styles
+------------------------------------------------------*/
+
+ul.app-listing li {
+  padding:6px 0 6px 0;
+  border-bottom:1px solid #f1f1f1;
+  margin:3px 0 3px 0;
+}
+
 
 @media (max-width: 770px) {
   .navbar, .logo {
