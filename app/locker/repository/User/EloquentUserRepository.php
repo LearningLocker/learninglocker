@@ -89,9 +89,30 @@ class EloquentUserRepository implements UserRepository {
     
     $user = $this->find($id);
 
-    //@todo transfer all LRSs they own to the system admin
+    //get a super admin user
+    $super   = \User::where('role', 'super')->first();
 
-    //remove users from any LRSs
+    //get all LRSs owned by user being deleted
+    $get_lrs = \Lrs::where('owner._id', $id)->get();
+    
+    //do LRS exists?
+    if( $get_lrs ){
+      foreach( $get_lrs as &$lrs ){
+        //grab existing users
+        $existing  = $lrs->users;
+        //add super admin as the admin user 
+        array_push($existing, array('_id'   => $super->_id,
+                                    'email' => $super->email,
+                                    'role'  => 'admin' ));
+        //add merged users
+        $lrs->users = $existing;
+        //set owner to super admin
+        $lrs->owner = array('_id' => $super->_id);
+        $lrs->save();
+      }
+    }
+    
+    //remove users from any LRSs they are a member off 
     \DB::table('lrs')->pull('users', array('_id' => $user->_id));
 
     //delete user document
