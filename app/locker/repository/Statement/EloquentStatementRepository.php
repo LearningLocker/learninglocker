@@ -153,7 +153,7 @@ class EloquentStatementRepository implements StatementRepository {
       
 
       //Create a new statement object
-      $new_statement = $this->statement;
+      $new_statement = new Statement;
       $new_statement->fill( $vs );
 
       if( $new_statement->save() ){
