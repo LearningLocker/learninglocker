@@ -31,9 +31,12 @@ $grav_url = \app\locker\helpers\Helpers::getGravatar( $user->email, '50');
     </div>
     <div class="user-details-item">
       @if ( Auth::user()->_id != $user['_id'] )
-        <button class="btn btn-link btn-lg edit-role" data-toggle="modal" data-target="#myModal"><i class="icon icon-expand-alt"></i></button>
+        <button class="btn btn-link btn-lg edit-role"><i class="icon icon-expand-alt"></i></button>
       @endif
       <b>{{ Lang::get('users.role') }}:</b> {{ $user->role }}
+      @if ( Auth::user()->_id != $user['_id'] )
+        @include('partials.users.forms.changeRole', array('listed_user' => $user))
+      @endif
     </div>
     <div class="user-details-item">
       @if(isset($user->lrs_owned) && !empty($user->lrs_owned))
@@ -45,6 +48,3 @@ $grav_url = \app\locker\helpers\Helpers::getGravatar( $user->email, '50');
     </div>
   </div>
 </div>
-@if ( Auth::user()->_id != $user['_id'] )
-  @include('partials.users.forms.changeRole', array('listed_user' => $user))
-@endif
