@@ -324,8 +324,8 @@ Route::get('oauth/authorize', array('before' => 'check-authorization-params|auth
   $params = Session::get('authorize-params');
   $params['user_id'] = Auth::user()->id;
   $app_details = \OAuthApp::where('client_id', $params['client_id'] )->first();
-  return View::make('oauth.forms.authorization-form', array('params'      => $params, 
-                                                            'app_details' => $app_details));
+  return View::make('partials.oauth.forms.authorization-form', array('params'      => $params, 
+                                                                     'app_details' => $app_details));
 
 }));
 
