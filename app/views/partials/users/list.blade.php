@@ -28,7 +28,7 @@
       @foreach( $users as $u )
         <div class="col-xs-12 col-sm-4 col-lg-4">
           @if( isset($admin_dash) )
-            @include('partials.users.item', array('user' => $u))
+            @include('partials.users.item-site', array('user' => $u))
           @else
             @include('partials.users.item-lrs', array('user' => $u))
           @endif

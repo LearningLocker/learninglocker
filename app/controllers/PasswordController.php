@@ -117,16 +117,15 @@ class PasswordController extends BaseController {
     if ($validator->fails()) return Redirect::back()->withErrors($validator);
   
     // Update the user
-    $user = \User::find($id);
-    $user->password = Input::get('password');
+    $s = $this->user->updatePassword($id, Input::get('password'));
 
-    if( $user->save() ){
-      return Redirect::to('/')->with('success', Lang::get('users.success'));
+    if($s){
+      return Redirect::back()->with('success', Lang::get('users.success'));
     }
 
     return Redirect::back()
-      ->withInput()
-      ->withErrors( array( Lang::get('users.password_problem') ) );
+           ->withInput()
+           ->withErrors( array( Lang::get('users.password_problem') ) );
 
   }
 
