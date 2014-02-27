@@ -50,10 +50,6 @@
               <td><b>{{ Lang::get('site.restrict') }}</b></td>
               <td>@if( $site->domain ) @ {{ $site->domain }} @else Not set @endif</td>
             </tr>
-            <tr>
-              <td><b>{{Lang::get('site.claim')}}</b></td>
-              <td><span class="label @if($site->claim == 'Yes') label-success @else label-danger @endif">{{ $site->claim }}</span></td>
-            </tr>
           </tbody>
         </table>
       </div>
