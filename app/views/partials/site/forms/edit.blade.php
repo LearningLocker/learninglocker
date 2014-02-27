@@ -53,14 +53,6 @@
     </div>
   </div>
   <div class="form-group">
-    {{ Form::label('claim', Lang::get('site.claim'), array('class' => 'col-sm-4 control-label' )) }}
-    <div class="col-sm-8">
-      {{ Form::radio('claim', 'Yes') }} {{ Lang::get('site.yes') }}
-      {{ Form::radio('claim', 'No') }} {{ Lang::get('site.no') }}
-      <span class="help-block">{{ Lang::get('site.help.claim') }}</span>
-    </div>
-  </div>
-  <div class="form-group">
     {{ Form::label('lang', Lang::get('site.language'), array('class' => 'col-sm-4 control-label' )) }}
     <div class="col-sm-8">
       {{ Form::text('lang', $site->lang, array('class' => 'form-control', 'placeholder' => 'en-US')) }}

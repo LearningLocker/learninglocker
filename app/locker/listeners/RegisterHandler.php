@@ -14,7 +14,6 @@ class RegisterHandler {
       $site->create_lrs  = array('super');
       $site->api         = 'Closed';
       $site->registration = 'Closed';
-      $site->claim       = 'No'; //can learners claim statements?
       $site->restrict    = 'None'; //restrict registration to a specific email domain
       $site->super       = array( array('user' => $user->_id ) );
       $site->save();
