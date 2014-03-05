@@ -64,7 +64,7 @@ class StatementController extends BaseController {
     $input['actor']['mbox'] = 'mailto:' . $input['actor']['mbox'];
 
     // Save the statement
-    $s = $this->statement->create( $input, $lrs );
+    $s = $this->statement->create( array($input), $lrs );
 
     if($s){
       return Redirect::back()->with('success', Lang::get('statement.added'));
