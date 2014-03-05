@@ -406,7 +406,7 @@ class EloquentStatementRepository implements StatementRepository {
       $statements->skip( $parameters['offset'] );
     }
 
-    if( isset( $parameters['ascending'] ) ){
+    if( isset( $parameters['ascending'] ) && $parameters['ascending'] == 'true' ){
       $statements->orderBy('stored', 'asc');
     }else{
       $statements->orderBy('stored', 'desc');
