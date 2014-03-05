@@ -24,13 +24,41 @@ $app = new Illuminate\Foundation\Application;
 |
 */
 
-$env = $app->detectEnvironment(array(
 
+$env = $app->detectEnvironment( function() {
+  // local development environments are set with machine host names
+  $environments = array(
   'local'       => array('your-machine-name'),
-  'ht2'         => array('HT2-007'),
-  'production'  =>  array('ht2-livecloud')
+  'ht2'         => array('HT2-007')
+);
 
-));
+  // loop through environments and check for local development hostnames
+  foreach( $environments as $environment => $hosts ) {
+    foreach( (array) $hosts as $host ) {
+      $isThisMachine = str_is($host, gethostname());
+      if ($isThisMachine) return $environment;
+    }
+  }
+
+  $hosts = array(
+    '127.0.0.1'                   => 'local',
+    'staging.learninglocker.net'  => 'staging'
+  );
+
+  if( isset($_SERVER['SERVER_NAME']) ){
+    if( isset( $hosts[$_SERVER['SERVER_NAME']]) ) {
+      return $hosts[$_SERVER['SERVER_NAME']];
+    }
+  }
+
+  // if no local hostname is found, look for
+  // other environments are set using the LARAVEL_ENV server variable
+  if( array_key_exists('LARAVEL_ENV', $_SERVER) ) {
+    return $_SERVER['LARAVEL_ENV'];
+  } else { // and we fall back to production
+    return 'production';
+  }
+});
 
 /*
 |--------------------------------------------------------------------------
