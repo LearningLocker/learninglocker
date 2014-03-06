@@ -22,7 +22,7 @@ class EloquentStatementRepository implements StatementRepository {
 
     $this->statement = $statement;
     $this->activity  = $activity;
-    $this->query = $query;
+    $this->query     = $query;
 
   }
 
@@ -40,7 +40,7 @@ class EloquentStatementRepository implements StatementRepository {
    **/
   public function all( $id, $parameters ){ 
 
-    $statements = $this->statement->where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id);
+    $statements = $this->statement->where(SPECIFIC_LRS, $id);
 
     $this->addParameters( $statements, $parameters );
 
@@ -59,7 +59,7 @@ class EloquentStatementRepository implements StatementRepository {
         $filters = isset($parameters['filters']) ? json_decode($parameters['filters'], true) : array();
 
         //overwrite the LRS filter
-        $filters['context.extensions.http://learninglocker&46;net/extensions/lrs._id'] = $id;
+        $filters[SPECIFIC_LRS] = $id;
 
         $results = $this->query->timedGrouping( $filters, $interval );
       break;
@@ -232,7 +232,7 @@ class EloquentStatementRepository implements StatementRepository {
    */
   public function statements( $id ){
 
-    return $this->statement->where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id)
+    return $this->statement->where(SPECIFIC_LRS, $id)
     ->orderBy('created_at', 'desc')
     ->paginate(15);
 
@@ -263,7 +263,7 @@ class EloquentStatementRepository implements StatementRepository {
       }
     }
 
-    $query = $this->statement->where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id);
+    $query = $this->statement->where(SPECIFIC_LRS, $id);
     $this->setRestriction( $restrict, $query );
     if( !empty($filter) ){
       $this->setWhere( $filter, $query );
@@ -272,7 +272,7 @@ class EloquentStatementRepository implements StatementRepository {
     $statements = $query->paginate(18);
 
     //@todo replace this using Mongo aggregation - no need to grab everything and loop through it.
-    $query = $this->statement->where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id);
+    $query = $this->statement->where(SPECIFIC_LRS, $id);
     $this->setRestriction( $restrict, $query );
     if( !empty($filter) ){
       $this->setWhere( $filter, $query );
@@ -560,7 +560,7 @@ class EloquentStatementRepository implements StatementRepository {
    **/
   private function doesStatementIdExist( $lrs, $id, $statement ){
 
-    $exists = $this->statement->where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $lrs)
+    $exists = $this->statement->where(SPECIFIC_LRS, $lrs)
               ->where('id', $id)
               ->first();
     
