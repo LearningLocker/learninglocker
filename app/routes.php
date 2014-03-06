@@ -255,39 +255,75 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
   Route::options('/{extra}',  'Controllers\API\BaseController@CORSOptions')->where('extra', '(.*)');
 
   Route::get('/about', function() {
-        return Response::json( array('X-Experience-API-Version'=>Config::get('xapi.using_version')));
-    });
+    return Response::json( array('X-Experience-API-Version'=>Config::get('xapi.using_version')));
+  });
 
   //statement resource (post, put, get, delete) route
-  Route::get('statements/grouped',    'Controllers\xAPI\StatementsController@grouped');
-  Route::put('statements',            'Controllers\xAPI\StatementsController@storePut');
-  Route::resource('statements',       'Controllers\xAPI\StatementsController');
+  Route::get('statements/grouped', array(
+    'uses' => 'Controllers\xAPI\StatementsController@grouped',
+  ));
+  Route::put('statements', array(
+    'uses' => 'Controllers\xAPI\StatementsController@storePut',
+  ));
+  Route::resource('statements', 'Controllers\xAPI\StatementsController');
 
   //Agent API
-  Route::get('agents/profile',        'Controllers\xAPI\AgentController@index');
-  Route::put('agents/profile',        'Controllers\xAPI\AgentController@store');
-  Route::post('agents/profile',       'Controllers\xAPI\AgentController@store');
-  Route::delete('agents/profile',     'Controllers\xAPI\AgentController@delete');
-  Route::any('agents/profile',        'Controllers\xAPI\AgentController@index');
-
-  Route::get('agents',                'Controllers\xAPI\AgentController@search');
+  Route::get('agents/profile', array(
+    'uses' => 'Controllers\xAPI\AgentController@index',
+  ));
+  Route::put('agents/profile', array(
+    'uses' => 'Controllers\xAPI\AgentController@store',
+  ));
+  Route::post('agents/profile', array(
+    'uses' => 'Controllers\xAPI\AgentController@store',
+  ));
+  Route::delete('agents/profile', array(
+    'uses' => 'Controllers\xAPI\AgentController@delete',
+  ));
+  Route::any('agents/profile', array(
+    'uses' => 'Controllers\xAPI\AgentController@index',
+  ));
+  Route::get('agents', array(
+    'uses' => 'Controllers\xAPI\AgentController@search',
+  ));
 
   //Activiy API
-  Route::get('activities/profile',    'Controllers\xAPI\ActivityController@index');
-  Route::put('activities/profile',    'Controllers\xAPI\ActivityController@store');
-  Route::post('activities/profile',   'Controllers\xAPI\ActivityController@store');
-  Route::delete('activities/profile', 'Controllers\xAPI\ActivityController@delete');
-  Route::any('activities/profile',    'Controllers\xAPI\ActivityController@index');
+  Route::get('activities/profile', array(
+    'uses' => 'Controllers\xAPI\ActivityController@index',
+  ));
+  Route::put('activities/profile', array(
+    'uses' => 'Controllers\xAPI\ActivityController@store',
+  ));
+  Route::post('activities/profile', array(
+    'uses' => 'Controllers\xAPI\ActivityController@store',
+  ));
+  Route::delete('activities/profile', array(
+    'uses' => 'Controllers\xAPI\ActivityController@delete',
+  ));
+  Route::any('activities/profile', array(
+    'uses' => 'Controllers\xAPI\ActivityController@index',
+  ));
 
-  Route::get('activities',            'Controllers\xAPI\ActivityController@full');
+  Route::get('activities', array(
+    'uses' => 'Controllers\xAPI\ActivityController@full',
+  ));
 
   //State API
-  Route::get('activities/state',      'Controllers\xAPI\StateController@index');
-  Route::put('activities/state',      'Controllers\xAPI\StateController@store');
-  Route::post('activities/state',     'Controllers\xAPI\StateController@store');
-  Route::delete('activities/state',   'Controllers\xAPI\StateController@delete');
-  Route::any('activities/state',      'Controllers\xAPI\StateController@index');
-  
+  Route::get('activities/state', array(
+    'uses' => 'Controllers\xAPI\StateController@index',
+  ));
+  Route::put('activities/state', array(
+    'uses' => 'Controllers\xAPI\StateController@store',
+  ));
+  Route::post('activities/state', array(
+    'uses' => 'Controllers\xAPI\StateController@store',
+  ));
+  Route::delete('activities/state', array(
+    'uses' => 'Controllers\xAPI\StateController@delete',
+  ));
+  Route::any('activities/state', array(
+    'uses' => 'Controllers\xAPI\StateController@index',
+  ));  
 
 });
 
@@ -297,13 +333,22 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
 |------------------------------------------------------------------
 */
 
-Route::group( array('prefix' => 'api/v1', 'before'=>'auth.api'), function(){
+Route::group( array('prefix' => 'api/v1', 'before'=>''), function(){
 
   Config::set('api.using_version', 'v1');
 
   Route::get('/', function() {
     return Response::json( array('version' => Config::get('api.using_version')));
   });
+  Route::get('query/analytics', array(
+    'uses' => 'Controllers\api\AnalyticsController@index'
+  ));
+  Route::get('query/{section}/{filter?}', array(
+    'uses' => 'Controllers\api\AnalyticsController@getSection'
+  ));
+
+  Route::resource('reports', 'Controllers\api\ReportController');
+  Route::resource('site', 'Controllers\api\SiteController');
 
 });
 
@@ -320,7 +365,7 @@ Route::post('oauth/access_token', function(){
 });
 
 Route::get('oauth/authorize', array('before' => 'check-authorization-params|auth', function(){
-   
+
   $params = Session::get('authorize-params');
   $params['user_id'] = Auth::user()->id;
   $app_details = \OAuthApp::where('client_id', $params['client_id'] )->first();

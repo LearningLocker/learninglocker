@@ -1,4 +1,4 @@
-<?php namespace Controllers\API;
+<?php namespace Controllers\api;
 
 use Illuminate\Routing\Controller;
 
@@ -17,7 +17,7 @@ public function CORSOptions(){
   return \Response::make(null, $statusCode, $headers);
 }
 
-public function returnJSON( $results=array(), $additional_params=array(), $extra=array(), $debug=array() ){
+public function returnJSON( $data=array(), $additional_params=array(), $extra=array(), $debug=array() ){
 
     $json = array(
         'version'   =>  \Config::get('api.using_version'),
@@ -26,8 +26,11 @@ public function returnJSON( $results=array(), $additional_params=array(), $extra
 
     $json['url_params'] = \Route::getCurrentRoute()->parameters();
 
-    $params = \Input::all();
-
+    $params = $this->params;
+    if( isset($this->params['filter']) ){
+      $params['filter'] = json_decode( $this->params['filter'] );
+    }
+  
     if( sizeof($additional_params) > 0 ){
       $params = array_merge( $params, $additional_params);
     }
@@ -38,7 +41,7 @@ public function returnJSON( $results=array(), $additional_params=array(), $extra
       $json = array_merge( $json, $extra );
     }
         
-    $json['results'] = $results;
+    $json['data'] = $data;
 
     if( \Config::get('app.debug') ){
       $json['debug'] = array(
@@ -74,6 +77,14 @@ public function returnJSON( $results=array(), $additional_params=array(), $extra
 
   protected function returnSuccessError( $success, $message, $code ){
     return \Response::json( array( 'success'  => $success, 'message'  => $message), $code );
+  }
+
+  /**
+   * Get all of the input and files for the request and store them in params.
+   *
+   */
+  public function setParameters(){
+    $this->params = \Request::all();
   }
   
 

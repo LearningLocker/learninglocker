@@ -1,15 +1,13 @@
 <?php namespace Locker\Data\Analytics;
 
-/**
-* This is all temp and will be replaced by our API driven single
-* page analytics app. This will be available in time for v1.0 stable.
-*
-**/
+use \Locker\Repository\Query\QueryRepository as Query;
 
 class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface {
 
-  public $results;
-  private $lrs;
+  /**
+   * Query Repository Interface
+   **/
+  protected $query;
 
   /**
    * Construct
@@ -17,125 +15,229 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
    * @param Locker\Repository\Data\QueryRepository $query
    *
    */
-  public function __construct(){
+  public function __construct( Query $query ){
 
-    $this->setDb();
-    
-  }
-
-  /**
-   * The main method to grab appropriate anayltics
-   *
-   * @param $lrs id The LRS in question
-   *
-   **/
-  public function getAnalytics( $lrs ){
-
-    $this->lrs = $lrs;
-    $this->selectAnalytics();
+    //get the LRS connected to this query
+    $this->lrs   = '52f174d5e837a05c11000029';
+    $this->query = $query;
 
   }
 
-  /**
-   * Get the appropriate object that matches the required segment
-   *
-   * @param $segment   string    The analytics segment required. e.g. badges, verbs etc
-   *
-   **/
-  public function selectAnalytics(){
+  public function filter( $options ){
 
-    $this->results['badges']     = $this->getTopBadges();
-    $this->results['activities'] = $this->getTopActivities();
-    $this->results['courses']    = $this->getTopCourses();
-    $this->verbCloud(); 
+    $since = $until = '';
+
+    //grab the filter object and decode
+    if( isset($options['filter']) ){
+      $filter = json_decode( $options['filter'], true );
+    }else{
+      $filter = array();
+    }
+
+    //parse over the filter and check for conditions
+    $filter = $this->setFilter( $filter );
+
+    //set type if passed
+    if( isset( $options['type'] ) ){
+      $type = $this->setType( $options['type'] );
+    }else{
+      $type = $this->setType();
+    }
+
+    //set interval if passed
+    if( isset( $options['interval'] ) ){
+      $interval = $this->setInterval( $options['interval'] );
+    }else{
+      $interval = $this->setInterval();
+    }
+
+    //set since
+    if( isset( $options['since'] ) ){
+      $since = $this->setMongoDate( $options['since'] );
+    }
+
+    //set until
+    if( isset( $options['until'] ) ){
+      $until = $this->setMongoDate( $options['until'] );
+    }
+
+    //build MongoDate if since and / or until submitted
+    $dates = $this->buildDates($since, $until);
+
+    //set filters
+    if( !empty($dates) ){
+      $filters = array_merge( $dates, $filter );
+    }else{
+      $filters = $filter;
+    }
+
+    //get the data
+    $data = $this->query->timedGrouping( $this->lrs, $filters, $interval, $type );
+
+    if( !$data || isset($data['errmsg']) ){
+      return array('success' => false, 'message' => $data['errmsg'] );
+    }
+
+    return array('success' => true, 'data' => $data);
+
+  }
+
+  public function section( $section, $filter='' ){
+
+    if( !$this->verifySection( $section ) || !$this->verifyFilter( $filter ) ){
+      return array('success' => false);
+    }
+
+    //$data = $this->query->selectSection( '52f174d5e837a05c11000029', 'verbs' );
+    $data = $this->query->timedGrouping( array(), 'day' );
+
+    return array('success' => true, 'data' => $data);
 
   }
 
   /**
-   * Get the top 6 verbs being used in statements
+   * Verify route section to make sure we support it.
    *
-   * @todo move this query to the query class
+   * @param string $section The route section
+   * @return boolean
    *
    **/
-  public function verbCloud(){
-      
-      //$verb = reset($verb.display)
-      $match = $this->getMatch( $this->lrs ); 
-      $this->results['verbs']  = $this->db->statements->aggregate(
-                  array('$match' => $match),
-                  array('$group' => array('_id'   => '$verb.id', 
-                                  'count' => array('$sum' => 1),
-                                  'verb'  => array('$addToSet' => '$verb.display'),)),
-                  array('$sort'    => array('count' => -1)),
-                  array('$limit'   => 6)
-                );
-
-      $this->results['verbs']['total'] = \Statement::where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $this->lrs)
-                         //->remember(5)
-                         ->count();
-
+  private function verifySection( $section ){
+    switch( $section ){
+      case 'agents'    : return true; break;
+      case 'verbs'     : return true; break;
+      case 'activities': return true; break;
+      case 'courses'   : return true; break;
+      case 'badges'    : return true; break;
     }
+    return false;
+  }
 
   /**
-   * Get the top 6 activities
+   * Check the filters passed to see if it contains any where criteria.
    *
-   * @todo move this query to the query class
+   * Formats include: 
+   * key => value - where key equals value 
+   * key => array(foo, bar) - where key equals foo AND bar
+   * key => array(array(foo,bar)) - where key equals foo OR bar
+   * key => array(array(foo,bar), hello) - where key equals foo OR bar AND hello
+   *
+   * If there are no $in criteria (we can tell based on whether values = array)
+   * then we only need to pass to mongo query as a single array as $and is implied. 
+   * However, if multiple criteria, we need to include $and hence the dual
+   * approach here.
+   *
+   * @param  array $options
+   * @return array $filter 
    *
    **/
-  public function getTopActivities(){
+  private function setFilter( $options ){
 
-      $match = $this->getMatch( $this->lrs ); 
-      return $this->db->statements->aggregate(
-                  array('$match' => $match),
-                  array('$group' => array('_id'   => '$object.id',
-                        'name'  => array('$addToSet' => '$object.definition.name'), 
-                        'count' => array('$sum' => 1))),
-                  array('$sort'  => array('count' => -1)),
-                  array('$limit' => 7)
-                );
+    $use_and = false;
+    $filter  = array();
 
+    if( $options ){
+      //loop through submitted filters
+      foreach( $options as $key => $value ){
+        //if any value is an array, it containes multiple elements so requires $and
+        if( is_array($value) ){
+          $use_and = true;
+        }
+
+      }
+
+      if( !$use_and ){
+        foreach( $options as $key => $value ){
+          $filter[$key] = $value;
+        }
+      }else{
+        foreach( $options as $key => $value ){
+          //loop through this value to check for nested array
+          if( is_array($value) ){
+            foreach( $value as $v ){
+              $in_statement[] = $v;
+            }
+            $set_in[] = array($key => array('$in' => $in_statement));
+          }else{
+            $set_in[] = array( $key => $value );
+          }
+        }
+        //we need to use Mongo $and for this type of statement.
+        $filter = array('$and' => $set_in );
+      }
     }
+
+    return $filter;
+  }
 
   /**
-   * Get the top 6 activities
+   * Turn submitted date into MongoDate object
    *
-   * @todo move this query to the query class
+   * @return MongoDate object
    *
    **/
-  public function getTopCourses(){
+  private function setMongoDate( $date ){
+    return new \MongoDate(strtotime($date));
+  }
 
-      return $this->db->statements->aggregate(
-                 // array('$match' => $match),
-                  array('$match' => array('context.extensions.http://learninglocker&46;net/extensions/lrs._id' => $this->lrs,
-                                          'context.contextActivities.grouping.type' => 'http://adlnet.gov/expapi/activities/course')),
-                  array('$group' => array('_id' => '$context.contextActivities.grouping.id',
-                        'name'  => array('$addToSet' => '$context.contextActivities.grouping.definition.name'), 
-                        'count' => array('$sum' => 1))),
-                  array('$sort'  => array('count' => -1)),
-                  array('$limit' => 8)
-                );
-
+  /**
+   * Build $match dates for Mongo aggregation
+   *
+   * @param string $since
+   * @param string $until
+   *
+   * @return array $dates
+   *
+   **/
+  private function buildDates($since='', $until=''){
+    if( $since != '' && $until != ''){
+      $dates = array( 'created_at' => array( '$gte' => $since, '$lte' => $until));
+    }elseif( $since != '' ){
+      $dates = array( 'created_at' => array( '$gte' => $since ));
+    }elseif( $until != '' ){
+      $dates = array( 'created_at' => array( '$lte' => $until));
+    }else{
+      $dates = array();
     }
+    return $dates;
+  }
 
-    /**
-   * Get the top 6 activities
+  /**
+   * Based on the submitted interval - return Mongo specific
+   * identifier.
    *
-   * @todo move this query to the query class
+   * @param string $interval
+   * @return string $identifier
    *
    **/
-  public function getTopBadges(){
+  private function setInterval( $interval='' ){    
+    switch( $interval ){
+      case 'day'        : return 'dayOfYear';  break;
+      case 'dayOfMonth' : return 'dayOfMonth'; break;
+      case 'dayOfWeek'  : return 'dayOfWeek';  break;
+      case 'week'       : return 'week';       break;
+      case 'hour'       : return 'hour';       break;
+      case 'month'      : return 'month';      break;
+      case 'year'       : return 'year';       break;
+      default: return 'dayOfYear';
+    }
+  }
 
-      return $this->db->statements->aggregate(
-                 // array('$match' => $match),
-                  array('$match' => array('context.extensions.http://learninglocker&46;net/extensions/lrs._id' => $this->lrs,
-                                          'object.definition.type' => 'http://activitystrea.ms/schema/1.0/badge')),
-                  array('$group' => array('_id' => '$object.id',
-                        'name'  => array('$addToSet' => '$object.definition.name'), 
-                        'count' => array('$sum' => 1))),
-                  array('$sort'  => array('count' => -1)),
-                  array('$limit' => 9)
-                );
-
+  /**
+   * Based on the submitted type - verify it is valid
+   *
+   * @param string $type
+   * @return $type - default is time
+   *
+   **/
+  private function setType( $type ){
+    switch( $type ){
+      case 'time'     : return $type; break;
+      case 'user'     : return $type; break;
+      case 'verb'     : return $type; break;
+      case 'activity' : return $type; break;
+    }
+    return 'time';
   }
 
 }
