@@ -15,11 +15,11 @@ Route::get('/', function(){
   if( Auth::check() ){
     //if super admin, show site dashboard, otherwise show list of LRSs can access
     if( Auth::user()->role == 'super' ){
-      $stats = new \app\locker\data\dashboards\AdminDashboard();
+      $stats = '';//new \app\locker\data\dashboards\AdminDashboard();
       return View::make('partials.site.dashboard', 
-                  array('stats'      => $stats->stats, 
-                      'dash_nav'   => true,
-                      'admin_dash' => true));
+                  array('stats'      => $stats, 
+                        'dash_nav'   => true,
+                        'admin_dash' => true));
     }else{
       $lrs = Lrs::where('users._id', \Auth::user()->_id)->get();
       return View::make('partials.lrs.list', array('lrs' => $lrs));
@@ -343,7 +343,7 @@ Route::group( array('prefix' => 'api/v1', 'before'=>''), function(){
   Route::get('query/analytics', array(
     'uses' => 'Controllers\api\AnalyticsController@index'
   ));
-  Route::get('query/{section}/{filter?}', array(
+  Route::get('query/{section}', array(
     'uses' => 'Controllers\api\AnalyticsController@getSection'
   ));
 

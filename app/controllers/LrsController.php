@@ -132,10 +132,10 @@ class LrsController extends BaseController {
 
     $lrs      = $this->lrs->find( $id );
     $lrs_list = $this->lrs->all();
-    $stats    = new \app\locker\data\dashboards\LrsDashboard( $id );
-    $this->analytics->getAnalytics( $lrs->_id );
-    return View::make('partials.lrs.dashboard', array('stats'    => $stats->stats,
-                                                      'data'     => $this->analytics->results,
+    $stats    = '';//new \app\locker\data\dashboards\LrsDashboard( $id );
+    //$this->analytics->getAnalytics( $lrs->_id );
+    return View::make('partials.lrs.dashboard', array('stats'    => $stats,
+                                                      'data'     => '',
                                                       'lrs'      => $lrs, 
                                                       'list'     => $lrs_list, 
                                                       'dash_nav' => true));

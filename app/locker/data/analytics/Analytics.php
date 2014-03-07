@@ -23,7 +23,15 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
 
   }
 
-  public function filter( $options ){
+  /**
+   * Get analytic data.
+   *
+   * @param object $options
+   *
+   * @return array
+   *
+   **/
+  public function analytics( $options ){
 
     $since = $until = '';
 
@@ -82,33 +90,81 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
 
   }
 
-  public function section( $section, $filter='' ){
+  /**
+   * Named routes that focus on specific sections e.g agents, verbs,
+   * activites, results, courses, badges
+   *
+   * @param string $section
+   * @param object $filter
+   * @param object $filter
+   *
+   * @return array
+   *
+   **/
+  public function section( $section, $filter, $returnFields='' ){
 
-    if( !$this->verifySection( $section ) || !$this->verifyFilter( $filter ) ){
+    if( !$section = $this->setSection( $section ) ){
       return array('success' => false);
     }
 
-    //$data = $this->query->selectSection( '52f174d5e837a05c11000029', 'verbs' );
-    $data = $this->query->timedGrouping( array(), 'day' );
+    //grab the filter object and decode
+    if( isset($filter) && !empty($filter) ){
+      $filter = json_decode( $filter, true );
+    }else{
+      $filter=array();
+    }
+
+    //if section is courses or badges, add appropriate filter for the $match pipe
+    switch( $section ){
+      case 'courses': 
+        $filter = array_merge( $filter, array('context.contextActivities.grouping.type' => 'http://adlnet.gov/expapi/activities/course'));
+        break;
+      case 'badges': 
+        $filter = array_merge( $filter, array('object.definition.type' => 'http://activitystrea.ms/schema/1.0/badge'));
+        break;
+    }
+
+    //grab returnFields and decode
+    if( $returnFields != '' ){
+      $returnFields = json_decode( $returnFields, true );
+    }
+
+    //parse over the filter and check for conditions
+    $filter = $this->setFilter( $filter );
+
+    $data = $this->query->objectGrouping( $this->lrs, $section, $filter, $returnFields );
 
     return array('success' => true, 'data' => $data);
 
   }
 
   /**
-   * Verify route section to make sure we support it.
+   * Set section.
    *
    * @param string $section The route section
    * @return boolean
    *
    **/
-  private function verifySection( $section ){
+  private function setSection( $section ){
     switch( $section ){
-      case 'agents'    : return true; break;
-      case 'verbs'     : return true; break;
-      case 'activities': return true; break;
-      case 'courses'   : return true; break;
-      case 'badges'    : return true; break;
+      case 'agents': 
+        return '$actor'; 
+        break;
+      case 'verbs': 
+        return '$verb'; 
+        break;
+      case 'activities': 
+        return '$object'; 
+        break;
+      case 'results': 
+        return '$result'; 
+        break;
+      case 'courses': 
+        return true; 
+        break;
+      case 'badges': 
+        return true; 
+        break;
     }
     return false;
   }

@@ -105,20 +105,17 @@ class EloquentQueryRepository implements QueryRepository {
   }
 
   /**
-   * Return a grouping of object ordered by count. Useful to get the top 6 courses.
-   * Or bottom three badges used.
+   * Return grouped object based on criteria passed.
    *
    * @param $lrs
-   * @param $filters
-   * @param $grou_key 
-   * @param $include
-   * @param $limit 
-   * @param $sort
+   * @param $section 
+   * @param $filters 
+   * @param $returnFields
    *
    * @return $results
    *
    **/
-  public function objectGrouping( $lrs, $filters, $group_key, $include, $limit = 10, $sort = '-1' ){
+  public function objectGrouping( $lrs, $section='', $filters='', $returnFields ){
 
     //set filters
     $lrs_filter = array(SPECIFIC_LRS => $lrs);
@@ -126,26 +123,28 @@ class EloquentQueryRepository implements QueryRepository {
     //if further filters passed, add them
     $match = array_merge( $lrs_filter, $filters );
 
-    //set group key 
-    $group_key = '$context.contextActivities.grouping.id';
-
-    //set items to add to result set
-    $add_to_set = '$context.contextActivities.grouping.definition.name';
-
-    //set sort -1 for desc and 1 for asc
+    //set returnFields if set
+    if( $returnFields == '' ){
+      $project = array('$project' => array('_id' => 0, 'data' => 1, 'count' => 1));
+    }else{
+      $display = array('_id' => 0, 'count' => 1);
+      foreach($returnFields as $field){
+        $display['data.'.$field] = 1;
+      }
+      $project = array('$project' => $display);
+    }
 
     //construct mongo aggregation query
     $results = $this->db->statements->aggregate(
       array('$match' => $match),
       array(
         '$group'  => array(
-          '_id'   => $group_key,
-          'name'  => array('$addToSet' => $add_to_set), 
-          'count' => array('$sum' => 1)
+          '_id'   => $section,
+          'data'  => array('$addToSet' => $section),
+          'count' => array('$sum' => 1),
         )
       ),
-      array('$sort'  => array('count' => $sort)),
-      array('$limit' => $limit)
+      $project
     );
 
     return $results;

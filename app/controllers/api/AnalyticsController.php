@@ -29,19 +29,26 @@ class AnalyticsController extends BaseController {
 
   /**
    * Our pre-defined segment routes. These allow for easy querying of one of 
-   * the main xAPI sections e.g. verb, agents, activities, results, courses, badges.
+   * the following: verb, agents, activities, results, courses, badges.
    *
    * @param $param
    *
    * @return jSON response 
    *
    **/
-  public function getSection( $section, $filter='' ){
-    $data = $this->analytics->section( $section, $filter );
+  public function getSection( $section ){
+
+    $filter       = isset($this->params['filter'])       ? $this->params['filter']       : '';
+    $returnFields = isset($this->params['returnFields']) ? $this->params['returnFields'] : '';
+
+    $data = $this->analytics->section( $section, $filter, $returnFields );
+
     if( $data['success'] == false ){
       return $this->returnSuccessError( false, \Lang::get('apps.api.invalid_route'), 400 );
     }
+
     return $this->returnJson( $data['data']['result'] );
+
   }
 
   /**
@@ -52,11 +59,15 @@ class AnalyticsController extends BaseController {
    *
    **/
   public function index(){
-    $data = $this->analytics->filter( $this->params );
+
+    $data = $this->analytics->analytics( $this->params );
+
     if( $data['success'] == false ){
       return $this->returnSuccessError( false, \Lang::get('apps.no_data'), 400 );
     }
+
     return $this->returnJson( $data['data']['result'] );
+
   }
 
 }

@@ -2,8 +2,8 @@
 
 interface AnalyticsInterface {
 
-  public function filter( $options );
+  public function analytics( $options );
 
-  public function section( $section, $filter );
+  public function section( $section, $filter, $returnFields );
 
 }

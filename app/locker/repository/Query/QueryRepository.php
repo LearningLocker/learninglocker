@@ -6,4 +6,6 @@ interface QueryRepository {
 
   public function timedGrouping( $lrs, $filters, $interval, $type );
 
+  public function objectGrouping( $lrs, $section, $filters, $returnFields );
+
 }
