@@ -49,7 +49,7 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
     if( isset( $options['type'] ) ){
       $type = $this->setType( $options['type'] );
     }else{
-      $type = $this->setType();
+      $type = $this->setType( 'time' ); //time is default
     }
 
     //set interval if passed
