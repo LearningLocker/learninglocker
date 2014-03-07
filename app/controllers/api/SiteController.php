@@ -1,4 +1,4 @@
-<?php namespace Controllers\api;
+<?php namespace Controllers\API;
 
 use \Locker\Repository\Statement\StatementRepository as Statement;
 

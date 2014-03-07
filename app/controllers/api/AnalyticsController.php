@@ -1,4 +1,4 @@
-<?php namespace Controllers\api;
+<?php namespace Controllers\API;
 
 use \Locker\Data\Analytics\AnalyticsInterface as Analytics;
 
