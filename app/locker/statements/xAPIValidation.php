@@ -654,11 +654,11 @@ class xAPIValidation {
   */
   public function validateContext(){
     
-    if( isset($this->statement['context']) ){
+    if( isset($this->statement['context']) && !empty($this->statement['context']) ){
 
       $context_check = $this->assertionCheck(
-          ( is_array($this->statement['context']) && !empty($this->statement['context']) ),
-          'Context must be an array and can\'t be empty.');
+          ( is_array($this->statement['context']) ),
+          'Context must be an object.');
     
       if( !$context_check ) return false;
 
@@ -843,11 +843,11 @@ class xAPIValidation {
   */
   public function validateResult(){
 
-    if( isset($this->statement['result']) ){
+    if( isset($this->statement['result']) && !empty($this->statement['result'])){
 
       $result_check = $this->assertionCheck(
-          ( is_array($this->statement['result']) && !empty($this->statement['result']) ),
-          'Result must be an array and can\'t be empty.');
+          ( is_array($this->statement['result']) ),
+          'Result must be an object.');
     
       if( !$result_check ) return false;
 
