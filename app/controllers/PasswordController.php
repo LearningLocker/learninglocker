@@ -103,7 +103,7 @@ class PasswordController extends BaseController {
    *
    **/
   public function addPasswordForm(){
-    $lrs_list = LRS::all();
+    $lrs_list = Lrs::all();
     return View::make('partials.users.addPassword', array( 'user'     => Auth::user(), 
                                                            'lrs_list' => $lrs_list));
   }
