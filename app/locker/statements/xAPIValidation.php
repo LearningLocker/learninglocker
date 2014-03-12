@@ -193,7 +193,7 @@ class xAPIValidation {
     //Check that one functional identifier exists and is permitted
     $identifier_valid = $this->validIdentifier( $actor_keys );
 
-    if( $actor['objectType'] == 'Group' ){
+    if( isset($actor['objectType']) && $actor['objectType'] == 'Group' ){
 
       //if objectType Group and no functional identifier: unidentified group
       if( $identifier_valid === false ){
