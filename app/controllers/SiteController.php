@@ -32,10 +32,10 @@ class SiteController extends BaseController {
    */
   public function index(){
 
-    $stats = '';//new \app\locker\data\dashboards\AdminDashboard();
+    $stats = new \app\locker\data\dashboards\AdminDashboard();
     $site  = $this->site->all();
     return View::make('partials.site.dashboard', 
-                  array('stats'      => $stats,
+                  array('stats'      => $stats->stats,
                         'site'       => $site,
                         'dash_nav'   => true,
                         'admin_dash' => true));
@@ -107,7 +107,6 @@ class SiteController extends BaseController {
         $l->statement_total = 0;
       }
     }
-    return Response::json( $lrs );
     return View::make('partials.lrs.list', array('lrs'        => $lrs, 
                                                  'lrs_nav'    => true, 
                                                  'admin_dash' => true));
@@ -130,7 +129,6 @@ class SiteController extends BaseController {
       $u->lrs_owned  = Lrs::where('owner._id', $u->_id)->select('title')->get()->toArray();
       $u->lrs_member = Lrs::where('users.user', $u->_id)->select('title')->get()->toArray();
     }
-    //return Response::json( $users );
     return View::make('partials.users.list', array('users' => $users, 'users_nav' => true, 'admin_dash' => true));
 
   }
