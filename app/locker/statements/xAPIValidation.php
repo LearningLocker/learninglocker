@@ -188,38 +188,38 @@ class xAPIValidation {
 
       if( !$member_check ) return false;
 
-      //Check that one functional identifier exists and is permitted
-      $identifier_valid = $this->validIdentifier( $actor_keys );
+    }
 
-      if( $actor['objectType'] == 'Group' ){
+    //Check that one functional identifier exists and is permitted
+    $identifier_valid = $this->validIdentifier( $actor_keys );
 
-        //if objectType Group and no functional identifier: unidentified group
-        if( $identifier_valid === false ){
-          //Unidentified group so it must have an array containing at least one member
-          $member_check = $this->assertionCheck(
-              ( isset($actor['member']) && is_array($actor['member']) ),
-              'As Actor objectType is Group, it must contain a members array.');
+    if( isset($actor['objectType']) && $actor['objectType'] == 'Group' ){
 
-          if( !$member_check ) return false;
-        }else{
-          //identified group
-          //check that the identifier given is in the correct format
-          $validate_identifiers = $this->validateIdentifiers( $actor );
-        }
+      //if objectType Group and no functional identifier: unidentified group
+      if( $identifier_valid === false ){
+        //Unidentified group so it must have an array containing at least one member
+        $member_check = $this->assertionCheck(
+            ( isset($actor['member']) && is_array($actor['member']) ),
+            'As Actor objectType is Group, it must contain a members array.');
 
+        if( !$member_check ) return false;
       }else{
-
-        //if not a group, then it is an Agent, or not set so needs a valid
-        //functional identifier
-        if( $identifier_valid === false ){
-          $this->setError( 'The functional identifier is not valid.' );
-          return false;
-        }
-
+        //identified group
         //check that the identifier given is in the correct format
         $validate_identifiers = $this->validateIdentifiers( $actor );
-
       }
+
+    }else{
+
+      //if not a group, then it is an Agent, or not set so needs a valid
+      //functional identifier
+      if( $identifier_valid === false ){
+        $this->setError( 'The functional identifier is not valid.' );
+        return false;
+      }
+
+      //check that the identifier given is in the correct format
+      $validate_identifiers = $this->validateIdentifiers( $actor );
 
     }
 
