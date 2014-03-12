@@ -47,7 +47,7 @@
           @foreach( $data['activities']['result'] as $a )
             <a href="{{ URL() }}/lrs/{{$lrs->_id}}/statements/activity/{{ rawurlencode($a['_id']) }}" class="list-group-item">
               <span class="badge" title="Number of statements">{{ $a['count'] }}</span>
-              {{ reset($a['name'][0]) }}<br />
+              {{ isset($a['name'][0]) ? reset($a['name'][0]) : $a['_id'] }}<br />
             </a>
           @endforeach
           </div>

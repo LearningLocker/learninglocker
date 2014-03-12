@@ -113,6 +113,10 @@ class SiteController extends BaseController {
 
   }
 
+  public function apps(){
+    return OAuthApp::all();
+  }
+
   /**
    * Display the super admin user list view.
    *
@@ -144,9 +148,10 @@ class SiteController extends BaseController {
    *
    **/
   public function inviteUsers(){
-    $this->site->inviteusers( Input::all() );
+    $invite = \app\locker\helpers\User::inviteUser( Input::all() );
     return Redirect::back()
-         ->with('success', Lang::get('users.invite.invited'));
+      ->with('success', Lang::get('users.invite.invited'));
+  
   }
 
   /**

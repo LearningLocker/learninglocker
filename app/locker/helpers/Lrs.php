@@ -79,5 +79,22 @@ class Lrs {
     }
   }
 
+  /**
+   * Is a user, a member of an LRS?
+   *
+   * @param $string $lrs
+   * @param $string $user
+   *
+   * @return boolean
+   *
+   **/
+  public static function isMember($lrs, $user){
+    $isMember = \Lrs::where('users._id', $user)->where('_id', $lrs)->first();
+    if( $isMember ){
+      return true;
+    }
+    return false;
+  }
+
 
 }

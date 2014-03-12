@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('sidebar')
-  @include('layouts.sidebars.blank')
+  @include('partials.lrs.sidebars.home')
 @stop
 
 @section('content')
@@ -13,6 +13,11 @@
 
   <div class="row">
     <div class="col-xs-12 col-sm-8 col-lg-8">
+      @if($errors->any())
+        <ul class="alert alert-danger">
+          {{ implode('', $errors->all('<li>:message</li>'))}}
+        </ul>
+      @endif
       @include('partials.users.forms.addPassword')
     </div>
   </div>

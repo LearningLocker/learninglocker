@@ -68,12 +68,4 @@ class EloquentSiteRepository implements SiteRepository {
     return $user;
   }
 
-  public function inviteUsers( $data ){
-
-    if( $data ){
-      \app\locker\helpers\User::inviteUser( $data );
-    }
-  
-  }
-
 }

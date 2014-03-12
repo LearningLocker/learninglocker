@@ -14,6 +14,4 @@ interface SiteRepository {
 
   public function verifyUser($user_id);
 
-  public function inviteUsers($data);
-
 }
