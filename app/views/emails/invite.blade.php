@@ -4,7 +4,7 @@
     <meta charset="utf-8">
   </head>
   <body>
-    <h2>{{ $sender->name }} has invited you to join the {{ \Site::first()->name }} LRS</h2>
+    <h2>{{ $sender->name }} has invited you to join {{ $title }}</h2>
     <div>
       {{ $custom_message }}
     </div>
