@@ -85,11 +85,12 @@ class SiteController extends BaseController {
   public function settings(){
 
     $site = $this->site->all();
-    return View::make('partials.site.settings', array(
-                                                'site'         => $site,
-                                                'settings_nav' => true, 
-                                                'admin_dash'   => true
-                                              ));
+    return $site;
+    // return View::make('partials.site.settings', array(
+    //                                             'site'         => $site,
+    //                                             'settings_nav' => true, 
+    //                                             'admin_dash'   => true
+    //                                           ));
 
   }
 
@@ -107,10 +108,15 @@ class SiteController extends BaseController {
         $l->statement_total = 0;
       }
     }
+    return Response::json( $lrs );
     return View::make('partials.lrs.list', array('lrs'        => $lrs, 
                                                  'lrs_nav'    => true, 
                                                  'admin_dash' => true));
 
+  }
+
+  public function apps(){
+    return OAuthApp::all();
   }
 
   /**
@@ -125,6 +131,7 @@ class SiteController extends BaseController {
       $u->lrs_owned  = Lrs::where('owner._id', $u->_id)->select('title')->get()->toArray();
       $u->lrs_member = Lrs::where('users.user', $u->_id)->select('title')->get()->toArray();
     }
+    return Response::json( $users );
     return View::make('partials.users.list', array('users' => $users, 'users_nav' => true, 'admin_dash' => true));
 
   }
@@ -144,9 +151,10 @@ class SiteController extends BaseController {
    *
    **/
   public function inviteUsers(){
-    $this->site->inviteusers( Input::all() );
+    $invite = \app\locker\helpers\User::inviteUser( Input::all() );
     return Redirect::back()
-         ->with('success', Lang::get('users.invite.invited'));
+      ->with('success', Lang::get('users.invite.invited'));
+  
   }
 
   /**

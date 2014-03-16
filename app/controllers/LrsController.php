@@ -150,6 +150,7 @@ class LrsController extends BaseController {
   public function destroy($id){
 
     $this->lrs->delete($id);
+    return Response::json(array('success'=>200, 'message'=>'deleted'));
     return Redirect::back()->with('success', Lang::get('lrs.deleted'));
 
   }
