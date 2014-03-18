@@ -116,6 +116,12 @@ Route::get('site', array(
 Route::get('site/settings', array(
   'uses' => 'SiteController@settings',
 ));
+Route::get('site/apps', array(
+  'uses' => 'SiteController@apps',
+));
+Route::get('site/stats', array(
+  'uses' => 'SiteController@getStats',
+));
 Route::get('site/lrs', array(
   'uses' => 'SiteController@lrs',
 ));

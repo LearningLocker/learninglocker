@@ -103,7 +103,9 @@ class PasswordController extends BaseController {
    *
    **/
   public function addPasswordForm(){
-    return View::make('partials.users.addPassword', array( 'user' => Auth::user() ));
+    $lrs_list = Lrs::all();
+    return View::make('partials.users.addPassword', array( 'user'     => Auth::user(), 
+                                                           'lrs_list' => $lrs_list));
   }
 
   /**
@@ -120,7 +122,7 @@ class PasswordController extends BaseController {
     $s = $this->user->updatePassword($id, Input::get('password'));
 
     if($s){
-      return Redirect::back()->with('success', Lang::get('users.success'));
+      return Redirect::to('/lrs')->with('success', Lang::get('users.success'));
     }
 
     return Redirect::back()
