@@ -32,13 +32,8 @@ class SiteController extends BaseController {
    */
   public function index(){
 
-    $stats = '';//new \app\locker\data\dashboards\AdminDashboard();
     $site  = $this->site->all();
-    return View::make('partials.site.dashboard', 
-                  array('stats'      => $stats,
-                        'site'       => $site,
-                        'dash_nav'   => true,
-                        'admin_dash' => true));
+    return View::make('partials.site.dashboard');
 
   }
 
@@ -83,15 +78,17 @@ class SiteController extends BaseController {
    * @return Response
    */
   public function settings(){
+    return Response::json( $this->site->all() );
+  }
 
-    $site = $this->site->all();
-    return $site;
-    // return View::make('partials.site.settings', array(
-    //                                             'site'         => $site,
-    //                                             'settings_nav' => true, 
-    //                                             'admin_dash'   => true
-    //                                           ));
-
+  /**
+   * Grab site stats
+   *
+   * @return Response
+   **/
+  public function getStats(){
+    $stats = new \app\locker\data\dashboards\AdminDashboard();
+    return Response::json( $stats );
   }
 
   /**
@@ -104,15 +101,11 @@ class SiteController extends BaseController {
     $lrs = Lrs::all();
     if( $lrs ){
       foreach( $lrs as $l ){
-        $l->user_total = 0;
-        $l->statement_total = 0;
+        $l->statement_total = \Statement::where(SPECIFIC_LRS, $l->_id)->remember(5)->count();
       }
     }
     return Response::json( $lrs );
-    return View::make('partials.lrs.list', array('lrs'        => $lrs, 
-                                                 'lrs_nav'    => true, 
-                                                 'admin_dash' => true));
-
+   
   }
 
   public function apps(){
@@ -132,7 +125,6 @@ class SiteController extends BaseController {
       $u->lrs_member = Lrs::where('users.user', $u->_id)->select('title')->get()->toArray();
     }
     return Response::json( $users );
-    return View::make('partials.users.list', array('users' => $users, 'users_nav' => true, 'admin_dash' => true));
 
   }
 

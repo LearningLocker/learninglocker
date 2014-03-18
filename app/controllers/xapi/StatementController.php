@@ -48,7 +48,7 @@ class StatementsController extends BaseController {
     //grab incoming statement
     $request            = \Request::instance();
     $incoming_statement = $request->getContent();
-    $statements_assoc = json_decode($incoming_statement, TRUE);
+    $statements_assoc   = json_decode($incoming_statement, TRUE);
 
     if( is_array(json_decode($incoming_statement)) ){
       $statements = $statements_assoc;
