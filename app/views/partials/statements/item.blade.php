@@ -18,7 +18,7 @@
       <span onclick="$('.state-{{ $statement['_id'] }}').toggle();"><i class="icon icon-cog lightgrey pull-left"></i></span>
 
       <span class="pull-left statement-avatar">
-          <img src="{{ $avatar }}" alt='avatar' />
+          <img src="{{ $avatar }}" alt='avatar' class="img-circle" />
       </span> 
         
       {{ $statement['actor']['name'] }}

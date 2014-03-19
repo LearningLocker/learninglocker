@@ -19,7 +19,6 @@
 
   <!-- footer -->
   <div id="footer">
-      <p class="footer-links"><a href="{{ URL() }}/about">About</a> | <a href="{{ URL() }}/help">Help</a></p>
       <p class="powered-by"><small>Powered by <a href="http://learninglocker.net" target='_blank'>Learning Locker</a></small></p>
   </div>
 

@@ -15,9 +15,10 @@ define([
   'models/site/StatsModel',
   'views/stats/stats',
   'views/stats/header',
-  'views/stats/linegraph'
+  'views/stats/linegraph',
+  'views/site/loadingView'
 ], function($, _, Backbone, Marionette, App, LrsCollection, LrsView, UsersCollection, UsersView,
-  OAuthAppsCollection, OAuthAppsView, SiteModel, Settings, StatsModel, Stats, Header, LineGraph){
+  OAuthAppsCollection, OAuthAppsView, SiteModel, Settings, StatsModel, Stats, Header, LineGraph, LoadingView){
 
   var Controller = Backbone.Marionette.Controller.extend({
 
@@ -26,6 +27,10 @@ define([
 
     //gets mapped to in AppRouter's appRoutes
     index:function () {
+
+      //find a better way to show loader
+      App.layouts.main.mainRegion.show( new LoadingView );
+
       var stats = new StatsModel;
       stats.fetch().then(function() {
 
@@ -64,7 +69,8 @@ define([
     },
 
     lrs:function () {
-
+      //find a better way to show loader
+      App.layouts.main.mainRegion.show( new LoadingView );
       var lrsCol = new LrsCollection;
       lrsCol.fetch().then(function() {
         var lrsView = new LrsView({ collection: lrsCol });

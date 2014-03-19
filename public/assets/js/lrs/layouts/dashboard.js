@@ -1,13 +1,23 @@
 define([
+  'jquery',
+  'underscore',
   'marionette',
-], function(Marionette){
-  
-  var DashboardLayout = Backbone.Marionette.Layout.extend({
-    template: "#dashboardTemplate",
+  'vent',
+], function($, _, Marionette, Vent){
+
+  var Dashboard = Backbone.Marionette.Layout.extend({
+    
+    template:'#dashboard',
+
     regions: {
-      mainRegion: "#contents"
+      headerArea: '#header',
+      graphArea: "#graph",
+      contentOneArea: '#contents-one',
+      contentTwoArea: '#contents-two',
+      contentThreeArea: '#contents-three'
     }
+    
   });
 
-  return DashboardLayout;
+  return Dashboard;
 });

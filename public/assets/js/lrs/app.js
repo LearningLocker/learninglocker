@@ -3,9 +3,9 @@ define([
   'underscore',
   'backbone',
   'marionette',
-  'layouts/dashboard',
-  'views/index'
-], function($,_, Backbone, Marionette, DashboardLayout, IndexView){
+  'layouts/main',
+  'layouts/dashboard'
+], function($,_, Backbone, Marionette, MainLayout, DashboardView){
 
   var App = new Backbone.Marionette.Application();
   
@@ -20,12 +20,12 @@ define([
 
   App.addInitializer(function (options) {
     // init layouts
-    App.layouts.dashboard = new DashboardLayout();
+    App.layouts.main = new MainLayout();
 
-    App.views.index = new IndexView();
+    App.layouts.dashboard = new DashboardView();
 
     // set the master layout
-    App.pageRegion.show(App.layouts.dashboard);
+    App.pageRegion.show(App.layouts.main);
 
     if (Backbone.history){
       Backbone.history.start();

@@ -2,7 +2,7 @@
 
 class BaseData {
 
-  protected $db;
+  // protected $db;
 
   protected function setDB(){
     $this->db = \DB::getMongoDB();
@@ -16,7 +16,7 @@ class BaseData {
    *
    **/
   protected function getMatch( $lrs ){
-    return array('context.extensions.http://learninglocker&46;net/extensions/lrs._id' => $lrs);
+    return array(SPECIFIC_LRS => $lrs);
   }
 
 }

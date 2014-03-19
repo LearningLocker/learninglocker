@@ -161,6 +161,9 @@ Route::get('lrs/{id}/endpoint', array(
 Route::get('lrs/{id}/users', array(
   'uses' => 'LrsController@users',
 ));
+Route::get('lrs/{id}/stats', array(
+  'uses' => 'LrsController@getStats',
+));
 Route::put('lrs/{id}/users/remove', array(
   'uses' => 'LrsController@usersRemove',
   'as'   => 'lrs.remove'

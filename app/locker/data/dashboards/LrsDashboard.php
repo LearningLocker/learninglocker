@@ -24,6 +24,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
                          'statement_avg'   => $this->statementAvgCount(),
                          'learner_avg'     => $this->learnerAvgCount(),
                          'statement_graph' => $this->getStatementNumbersByDate(),
+                         'top_activities'  => $this->getTopActivities()
                         );      
   }
 
@@ -35,7 +36,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
    **/
   public function statementCount(){
     return \DB::collection('statements')
-    ->where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $this->lrs)
+    ->where(SPECIFIC_LRS, $this->lrs)
     ->remember(5)
     ->count();
   }
@@ -69,21 +70,21 @@ class LrsDashboard extends \app\locker\data\BaseData {
    * @return count.
    *
    **/
-  public function sourceCount(){
+  // public function sourceCount(){
 
-    $count = $this->db->statements->aggregate(
-              array('$match' => $this->getMatch( $this->lrs )),
-              array('$group' => array('_id' => '$object.id')),
-              array('$group' => array('_id' => 1, 'count' => array('$sum' => 1)))             
-              );
+  //   $count = $this->db->statements->aggregate(
+  //             array('$match' => $this->getMatch( $this->lrs )),
+  //             array('$group' => array('_id' => '$object.id')),
+  //             array('$group' => array('_id' => 1, 'count' => array('$sum' => 1)))             
+  //             );
           
-    if( isset($count['result'][0]) ){
-      return $count['result'][0]['count'];
-    }else{
-      return 0;
-    }
+  //   if( isset($count['result'][0]) ){
+  //     return $count['result'][0]['count'];
+  //   }else{
+  //     return 0;
+  //   }
 
-  }
+  // }
 
   /**
    * Get a count of all the days from the first day a statement was submitted to Lrs.
@@ -119,6 +120,26 @@ class LrsDashboard extends \app\locker\data\BaseData {
       $avg = round( $count / $days );
     }
     return $avg;
+  }
+
+  /**
+   * Get the top 6 activities
+   *
+   * @todo move this query to the query class
+   *
+   **/
+  public function getTopActivities(){
+
+    $match = $this->getMatch( $this->lrs ); 
+    return $this->db->statements->aggregate(
+                array('$match' => $match),
+                array('$group' => array('_id'   => '$object.id',
+                      'name'  => array('$addToSet' => '$object.definition.name'), 
+                      'count' => array('$sum' => 1))),
+                array('$sort'  => array('count' => -1)),
+                array('$limit' => 7)
+              );
+
   }
 
   /**

@@ -12,7 +12,7 @@
           <span class="icon-bar"></span>
       </button>
       <div class="logo">
-              <a href="{{ URL() }}" ><img src="{{ URL() }}/img/logo-small.png" alt="Logo" class="pull-left" /></a>
+              <a href="{{ URL() }}" ><img src="{{ URL() }}/assets/img/logo-small.png" alt="Logo" class="pull-left" /></a>
           </div>
       </div>
   </div>
@@ -23,8 +23,7 @@
     <div id="sidebar">
       <div class="navbar-collapse collapse sidebar-nav">
         @section('sidebar')
-                
-            @show
+        @show
       </div>
       </div>
 

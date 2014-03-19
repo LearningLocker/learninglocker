@@ -7,11 +7,18 @@ require.config({
     backbone: "../libs/backbone/backbone.min",
     marionette: "../libs/backbone/backbone.marionette",
     'backbone.wreqr': '../libs/backbone/backbone.wreqr',
-    'backbone.babysitter' : '../libs/backbone/backbone.babysitter'
+    'backbone.babysitter' : '../libs/backbone/backbone.babysitter',
+    'bootstrap': '../libs/bootstrap/bootstrap.min',
+    'raphael': '../libs/morrisjs/raphael.min',
+    'morris': '../libs/morrisjs/morris.min'
   },
   shim : {
     jquery : {
       exports : 'jQuery'
+    },
+    morris : {
+      deps : ['raphael'],
+      exports : 'Morris'
     },
     underscore : {
       exports : '_'
@@ -23,7 +30,11 @@ require.config({
     marionette : {
       deps : ['jquery', 'underscore', 'backbone'],
       exports : 'Marionette'
-    }
+    },
+    bootstrap: {
+      deps: ["jquery"],
+      exports: "Bootstrap"
+    },
   },
 });
 

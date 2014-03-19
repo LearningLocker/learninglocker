@@ -4,7 +4,7 @@ define([
   'backbone',
   'marionette',
   'app',
-  'models/site/StatsModel',
+  'models/stats/StatsModel',
   'morris'
 
 ], function($, _, Backbone, Marionette, App, StatsModel, Morris){

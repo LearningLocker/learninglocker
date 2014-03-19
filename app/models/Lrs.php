@@ -12,12 +12,6 @@ class Lrs extends Eloquent {
   protected $collection = 'lrs';
 
   /**
-   * The attributes excluded from the model's JSON form.
-   *
-   * @var array
-   */
-  protected $hidden = array('created_at','updated_at');
-  /**
    * Validation rules for statement input
    **/
   protected $rules = array('title' => 'required');

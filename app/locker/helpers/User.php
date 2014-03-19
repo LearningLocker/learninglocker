@@ -39,6 +39,11 @@ class User {
 
     foreach( $emails as $e ){
 
+      $isMember = false;
+
+      //make sure lower case
+      $e = strtolower($e);
+
       //check it is a valid email address
       if ( filter_var($e, FILTER_VALIDATE_EMAIL) ){
 
@@ -57,26 +62,20 @@ class User {
           $user->password = \Hash::make(base_convert(uniqid('pass', true), 10, 36));
           $user->save(); 
 
-          //set data to use in email
-          $set_data = array('token'          => User::setEmailToken( $user, $user->email ), 
-                    'custom_message' => $data['message'],
-                    'sender'         => \Auth::user());
-
-          //send out message to user
-          \Mail::send('emails.invite', $set_data, function($message) use ($user){
-            $message->to($user->email, $user->name)->subject('You have been invited to join our LRS.');
-          });
-
         }else{
           $user_exists = true;
         }
 
-        //was an LRS id passed? If so, add user to that LRS as an observe
+        //was an LRS id passed? If so, add user to that LRS as an observer
         if( isset($data['lrs']) ){
 
           $lrs = \Lrs::find( $data['lrs'] );
 
-          if( $lrs ){
+          //is the user already a member of the LRS?
+          $isMember = \app\locker\helpers\Lrs::isMember($lrs->_id, $user->_id);
+
+          //if lrs exists and user is not a member, add them
+          if( $lrs && !$isMember){
             $existing  = $lrs->users;
             array_push($existing, array('_id'   => $user->_id,
                           'email' => $user->email,
@@ -85,14 +84,36 @@ class User {
             $lrs->save();
           }
 
-          if( $user_exists ){
-            //set data to use in email
-            $set_data = array('sender' => \Auth::user(), 'lrs' => $lrs);
-            //send out message to user
-            \Mail::send('emails.lrsInvite', $set_data, function($message) use ($user){
-              $message->to($user->email, $user->name)->subject('You have been added to an LRS.');
-            });
-          }
+        }
+
+        //if user is already a member, exit here
+        if( $isMember ){
+          continue;
+        }
+
+        //determine which message to send to the user
+        if( $user_exists && isset($lrs) ){
+          //set data to use in email
+          $set_data = array('sender' => \Auth::user(), 'lrs' => $lrs);
+          //send out message to user
+          \Mail::send('emails.lrsInvite', $set_data, function($message) use ($user){
+            $message->to($user->email, $user->name)->subject('You have been added to an LRS.');
+          });
+        }elseif( $user_exists){
+          //do nothing as they are already in the system
+        }else{
+          //if adding to lrs, get lrs title, otherwise use the site name
+          isset($lrs) ? $title = 'the ' . $lrs->title . ' LRS' : $title = \Site::first()->name . '\'s Learning Locker';
+          //set data to use in email
+          $set_data = array('token'          => User::setEmailToken( $user, $user->email ), 
+                            'custom_message' => $data['message'],
+                            'title'          => $title,
+                            'sender'         => \Auth::user());
+
+          //send out message to user
+          \Mail::send('emails.invite', $set_data, function($message) use ($user){
+            $message->to($user->email, $user->name)->subject('You have been invited to join our LRS.');
+          });
 
         }
 
