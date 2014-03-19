@@ -23,14 +23,14 @@
         <span class="menu-icon"><i class="icon icon-bar-chart"></i></span> {{ Lang::get('lrs.sidebar.dash') }}
       </a> 
     </li>
-    <li class="link @if ( isset($statement_nav) ) active @endif">
-      <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/statements">
-        <span class="menu-icon"><i class="icon icon-exchange"></i></span> {{ Lang::get('statements.statements') }}
-      </a>
-    </li>
     <li class="link @if ( isset($reporting_nav) ) active @endif">
       <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/reporting">
         <span class="menu-icon"><i class="icon icon-pencil"></i></span>  {{ Lang::get('lrs.sidebar.reporting') }}
+      </a>
+    </li>
+    <li class="link @if ( isset($statement_nav) ) active @endif">
+      <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/statements">
+        <span class="menu-icon"><i class="icon icon-exchange"></i></span> {{ Lang::get('statements.statements') }}
       </a>
     </li>
   </ul>
