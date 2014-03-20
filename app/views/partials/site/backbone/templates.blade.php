@@ -108,6 +108,9 @@
     <%= description %>
   </td>
   <td>
+    @todo
+  </td>
+  <td>
     <%= owner.name %>
   </td>
   <td>
@@ -126,6 +129,7 @@
     <tr>
       <th>Title</th>
       <th>Description</th>
+      <th>Grant</th>
       <th>Owner</th>
       <th>Organisation</th>
       <th>Created</th>

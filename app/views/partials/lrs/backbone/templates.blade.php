@@ -48,7 +48,7 @@
 <div class="col-xs-12 col-sm-4">
   <div class="panel panel-default">
     <div class="panel-heading">
-      Options
+      Reporting
     </div>
     <div class="panel-body">
       <button class="btn btn-block btn-primary">Reporting tool</button>
