@@ -11,7 +11,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
 
     $this->lrs = $lrs;
 
-    $this->setFullStats();
+   // $this->setFullStats();
 
   }
 
@@ -19,13 +19,12 @@ class LrsDashboard extends \app\locker\data\BaseData {
    * Set all stats array.
    *
    **/
-  public function setFullStats(){
-    $this->stats = array('statement_count' => $this->statementCount(),
-                         'statement_avg'   => $this->statementAvgCount(),
-                         'learner_avg'     => $this->learnerAvgCount(),
-                         'statement_graph' => $this->getStatementNumbersByDate(),
-                         'top_activities'  => $this->getTopActivities()
-                        );      
+  public function setTimelineGraph(){
+    return array('statement_count' => $this->statementCount(),
+                 'statement_avg'   => $this->statementAvgCount(),
+                 'learner_avg'     => $this->learnerAvgCount(),
+                 'statement_graph' => $this->getStatementNumbersByDate()
+                 );      
   }
 
   /**
@@ -125,8 +124,6 @@ class LrsDashboard extends \app\locker\data\BaseData {
   /**
    * Get the top 6 activities
    *
-   * @todo move this query to the query class
-   *
    **/
   public function getTopActivities(){
 
@@ -134,10 +131,29 @@ class LrsDashboard extends \app\locker\data\BaseData {
     return $this->db->statements->aggregate(
                 array('$match' => $match),
                 array('$group' => array('_id'   => '$object.id',
-                      'name'  => array('$addToSet' => '$object.definition.name'), 
+                      'name'  => array('$addToSet' => '$object.definition.name.en-US'), 
                       'count' => array('$sum' => 1))),
                 array('$sort'  => array('count' => -1)),
-                array('$limit' => 7)
+                array('$limit' => 6)
+              );
+
+  }
+
+  /**
+   * Get the top 7 most active users
+   *
+   **/
+  public function getActiveUsers(){
+
+    $match = $this->getMatch( $this->lrs ); 
+    return $this->db->statements->aggregate(
+                array('$match' => $match),
+                array('$group' => array('_id'   => '$actor.mbox',
+                      'name'   => array('$addToSet' => '$actor.name'),
+                      'mbox'   => array('$addToSet' => '$actor.mbox'),
+                      'count'  => array('$sum' => 1))),
+                array('$sort'  => array('count' => -1)),
+                array('$limit' => 5)
               );
 
   }

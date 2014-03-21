@@ -3,11 +3,11 @@ define([
   'underscore',
   'backbone',
   'marionette',
-  'models/stats/StatsModel',
+  'models/stats/TimelineModel',
   'morris',
   'app'
 
-], function($, _, Backbone, Marionette, StatsModel, Morris, App){
+], function($, _, Backbone, Marionette, TimelineModel, Morris, App){
 
   var LineGraphView = Backbone.Marionette.ItemView.extend({
 
@@ -18,25 +18,16 @@ define([
     },
 
     events: {
-      'change #date-range': 'updateView',
     },
 
     modelEvents: {
-      'change': 'render'
-    },
-
-    updateView: function(){
-      //App.trigger('refresh', this.model);
-      //this.model.fetch();
-      //this.template = '#lineGraph';
-      //this.render();
     },
 
     drawGraph: function(chartId, lineData) {
 
-      var avg   = lineData.stats.statement_avg;
-      var l_avg = lineData.stats.learner_avg;
-      var data  = lineData.stats.statement_graph;
+      var avg   = lineData.statement_avg;
+      var l_avg = lineData.learner_avg;
+      var data  = lineData.statement_graph;
 
       var totals   = 'Statement total';
       var learners = 'Learner total';

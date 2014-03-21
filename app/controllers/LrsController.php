@@ -132,18 +132,29 @@ class LrsController extends BaseController {
 
     $lrs      = $this->lrs->find( $id );
     $lrs_list = $this->lrs->all();
-    //$stats    = '';//new \app\locker\data\dashboards\LrsDashboard( $id );
-    //return Response::json($stats->stats);
-    //$this->analytics->getAnalytics( $lrs->_id );
     return View::make('partials.lrs.dashboard', array('lrs'      => $lrs, 
                                                       'list'     => $lrs_list, 
                                                       'dash_nav' => true));
   }
 
-  public function getStats( $id ){
-    //$stats = $this->analytics->analytics( $this->params );
+  public function getStats( $id, $segment = '' ){
+
     $stats = new \app\locker\data\dashboards\LrsDashboard( $id );
-    return Response::json($stats);
+
+    switch( $segment ){
+      case 'topActivities':
+        $get_stats = $stats->getTopActivities( $id );
+        $get_stats = $get_stats['result'];
+        break;
+      case 'activeUsers':
+        $get_stats = $stats->getActiveUsers( $id );
+        $get_stats = $get_stats['result'];
+        break;
+      default:
+        $get_stats = $stats->setTimelineGraph();
+        break;
+    }
+    return Response::json($get_stats);
   }
 
   /**

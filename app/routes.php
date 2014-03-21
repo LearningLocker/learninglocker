@@ -161,7 +161,7 @@ Route::get('lrs/{id}/endpoint', array(
 Route::get('lrs/{id}/users', array(
   'uses' => 'LrsController@users',
 ));
-Route::get('lrs/{id}/stats', array(
+Route::get('lrs/{id}/stats/{segment?}', array(
   'uses' => 'LrsController@getStats',
 ));
 Route::put('lrs/{id}/users/remove', array(
@@ -180,6 +180,14 @@ Route::post('lrs/{id}/apikey', array(
 ));
 
 Route::resource('lrs', 'LrsController');
+
+/*
+|------------------------------------------------------------------
+| Reporting
+|------------------------------------------------------------------
+*/
+
+Route::resource('reporting', 'ReportingController');
 
 /*
 |------------------------------------------------------------------

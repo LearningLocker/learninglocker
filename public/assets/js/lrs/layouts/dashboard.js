@@ -12,8 +12,8 @@ define([
     regions: {
       headerArea: '#header',
       graphArea: "#graph",
-      contentOneArea: '#contents-one',
-      contentTwoArea: '#contents-two',
+      contentOneArea: '#active-users',
+      contentTwoArea: '#popular-activities',
       contentThreeArea: '#contents-three'
     }
     

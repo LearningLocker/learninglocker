@@ -4,10 +4,10 @@ define([
   'backbone',
   'marionette',
   'app',
-  'models/stats/StatsModel',
+  'models/stats/TimelineModel',
   'morris'
 
-], function($, _, Backbone, Marionette, App, StatsModel, Morris){
+], function($, _, Backbone, Marionette, App, TimelineModel, Morris){
 
   var StatsView = Backbone.Marionette.ItemView.extend({
 

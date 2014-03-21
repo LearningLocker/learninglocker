@@ -13,6 +13,7 @@ define([
   App.collections = {};
   App.views = {};
   App.models = {};
+  App.lrs_id = '';
 
   App.addRegions({
     pageRegion: '#appContainer'
