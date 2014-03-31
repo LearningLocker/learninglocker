@@ -48,28 +48,28 @@ class ReportingController extends \BaseController {
     $this->beforeFilter('@setParameters');
   }
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index($id){
+  /**
+   * Display a listing of the resource.
+   *
+   * @return Response
+   */
+  public function index($id){
     $lrs      = $this->lrs->find( $id );
     $lrs_list = $this->lrs->all();
     $reports  = $this->report->all();
     return View::make('partials.reporting.index', array('lrs' => $lrs, 
       'list' => $lrs_list, 'reporting_nav' => true, 'reports' => $reports));
-	}
+  }
 
-	/**
-	 * Show the form for creating a new report.
-	 *
+  /**
+   * Show the form for creating a new report.
+   *
    * @param string $id Lrs ID
-	 * @return Response
-	 */
-	public function create($id){
+   * @return Response
+   */
+  public function create($id){
 
-		$lrs      = $this->lrs->find( $id );
+    $lrs      = $this->lrs->find( $id );
     $lrs_list = $this->lrs->all();
     $verbs    = new \app\locker\data\reporting\getVerbs();
     $activities = new \app\locker\data\reporting\getActivities();
@@ -83,70 +83,70 @@ class ReportingController extends \BaseController {
                                                          'activity_type' => $activities,
                                                          'reporting_nav' => true,
                                                          'list'          => $lrs_list));
-	}
+  }
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function store(){
+  /**
+   * Store a newly created resource in storage.
+   *
+   * @return Response
+   */
+  public function store(){
 
     $request  = \Request::instance();
     $incoming = $request->getContent();
     $data     = json_decode($incoming, true);
-		$save     = $this->report->create( $data );
+    $save     = $this->report->create( $data );
 
     if( $save ){
       return \Response::json( 'success' );
     }
 
     return \Response::json( 'error' );
-	}
+  }
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-		//
-	}
+  /**
+   * Display the specified resource.
+   *
+   * @param  int  $id
+   * @return Response
+   */
+  public function show($id)
+  {
+    //
+  }
 
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		//
-	}
+  /**
+   * Show the form for editing the specified resource.
+   *
+   * @param  int  $id
+   * @return Response
+   */
+  public function edit($id)
+  {
+    //
+  }
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		//
-	}
+  /**
+   * Update the specified resource in storage.
+   *
+   * @param  int  $id
+   * @return Response
+   */
+  public function update($id)
+  {
+    //
+  }
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
-		//
-	}
+  /**
+   * Remove the specified resource from storage.
+   *
+   * @param  int  $id
+   * @return Response
+   */
+  public function destroy($id)
+  {
+    //
+  }
 
   /** 
    * Get data based on query created.
