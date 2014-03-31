@@ -681,8 +681,13 @@ define([
     var statement = '';
     var arr = $.makeArray( json );
     $.each(arr, function(index, value) {
-      var verb   = value.verb.display[Object.keys(value.verb.display)[0]];
-      var object = value.object.definition.name[Object.keys(value.object.definition.name)[0]];
+      var object = '';var verb = '';
+      if( typeof value.verb.display !== 'undefined' ){
+        verb = value.verb.display[Object.keys(value.verb.display)[0]];
+      }
+      if( typeof value.object.definition !== 'undefined' ){
+        object = value.object.definition.name[Object.keys(value.object.definition.name)[0]];
+      }
       statement += '<p>' + value.actor.name + ' ' + verb + ' ' + object + '</p>';
     });
     //console.log( statement );
