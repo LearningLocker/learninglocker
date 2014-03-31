@@ -686,7 +686,9 @@ define([
         verb = value.verb.display[Object.keys(value.verb.display)[0]];
       }
       if( typeof value.object.definition !== 'undefined' ){
-        object = value.object.definition.name[Object.keys(value.object.definition.name)[0]];
+        if( typeof value.object.definition.name !== 'undefined' ){
+          object = value.object.definition.name[Object.keys(value.object.definition.name)[0]];
+        }
       }
       statement += '<p>' + value.actor.name + ' ' + verb + ' ' + object + '</p>';
     });
