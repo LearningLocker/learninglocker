@@ -190,21 +190,6 @@ class LrsController extends BaseController {
   }
 
   /**
-   * Display the reporting view.
-   *
-   * @return View
-   */
-  public function reporting( $id ){
-
-    $lrs    = $this->lrs->find( $id );
-    $lrs_list = $this->lrs->all();
-    return View::make('partials.reporting.index', array('lrs'           => $lrs, 
-                                                        'reporting_nav' => true,
-                                                        'list'          => $lrs_list));
-
-  }
-
-  /**
    * Display the endpoint view.
    *
    * @return View

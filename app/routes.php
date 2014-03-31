@@ -152,9 +152,6 @@ Route::put('site/users/verify/{id}', array(
 Route::get('lrs/{id}/statements', array(
   'uses' => 'LrsController@statements',
 ));
-Route::get('lrs/{id}/reporting', array(
-  'uses' => 'LrsController@reporting',
-));
 Route::get('lrs/{id}/endpoint', array(
   'uses' => 'LrsController@endpoint',
 ));
@@ -186,8 +183,39 @@ Route::resource('lrs', 'LrsController');
 | Reporting
 |------------------------------------------------------------------
 */
-
+Route::get('lrs/{id}/reporting', array(
+  'uses' => 'ReportingController@index',
+));
+Route::get('lrs/{id}/reporting/create', array(
+  'uses' => 'ReportingController@create',
+));
+Route::get('lrs/{id}/reporting/data', array(
+  'uses' => 'ReportingController@getData',
+));
+Route::get('lrs/{id}/reporting/statements', array(
+  'uses' => 'ReportingController@getStatements',
+));
 Route::resource('reporting', 'ReportingController');
+
+//routes to query actors and activities
+Route::get('lrs/{id}/reporting/actors/{query}', array(
+  'uses' => 'ReportingController@getActors',
+));
+Route::get('lrs/{id}/reporting/activities/{query}', array(
+  'uses' => 'ReportingController@getActivities',
+));
+Route::get('lrs/{id}/reporting/parents/{query}', array(
+  'uses' => 'ReportingController@getParents',
+));
+Route::get('lrs/{id}/reporting/grouping/{query}', array(
+  'uses' => 'ReportingController@getGrouping',
+));
+
+//save,edit,delete reports
+Route::post('lrs/{id}/reporting/save', array(
+  'uses' => 'ReportingController@store',
+));
+
 
 /*
 |------------------------------------------------------------------
@@ -227,16 +255,6 @@ Route::get('lrs/{id}/statements/{extra}', 'ExplorerController@filter')
 ->where(array('extra' => '.*'));
 
 Route::resource('statements', 'StatementController');
-
-/*
-|------------------------------------------------------------------
-| Reporting
-|------------------------------------------------------------------
-*/
-Route::get('reporting', function(){
-  return View::make('partials.reporting.index')->with('reporting_nav', true);
-});
-
 
 /*
 |------------------------------------------------------------------
@@ -350,7 +368,7 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
 |------------------------------------------------------------------
 */
 
-Route::group( array('prefix' => 'api/v1', 'before'=>''), function(){
+Route::group( array('prefix' => 'api/v1', 'before'=>'check-authorization-params|auth'), function(){
 
   Config::set('api.using_version', 'v1');
 
@@ -358,14 +376,14 @@ Route::group( array('prefix' => 'api/v1', 'before'=>''), function(){
     return Response::json( array('version' => Config::get('api.using_version')));
   });
   Route::get('query/analytics', array(
-    'uses' => 'Controllers\api\AnalyticsController@index'
+    'uses' => 'Controllers\API\AnalyticsController@index'
   ));
   Route::get('query/{section}', array(
-    'uses' => 'Controllers\api\AnalyticsController@getSection'
+    'uses' => 'Controllers\API\AnalyticsController@getSection'
   ));
 
-  Route::resource('reports', 'Controllers\api\ReportController');
-  Route::resource('site', 'Controllers\api\SiteController');
+  Route::resource('reports', 'Controllers\API\ReportController');
+  Route::resource('site', 'Controllers\API\SiteController');
 
 });
 

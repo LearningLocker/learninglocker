@@ -63,6 +63,10 @@ define([
       
     },
 
+    reporting: function(id){
+      console.log( id );
+    }
+
 
   });
 

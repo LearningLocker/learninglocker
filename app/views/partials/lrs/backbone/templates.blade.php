@@ -60,14 +60,12 @@
       <div class="col-xs-12 col-sm-4">
         <div class="panel panel-default" style="min-height:400px;">
           <div class="panel-heading">
-            <button class="btn btn-primary btn-xs pull-right">Visit reporting tool</button>
+            <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/reporting" class="btn btn-primary btn-xs pull-right">Visit reporting tool</a>
             Latest reports
           </div>
-          <ul class="list-group">
-            <li class="list-group-item"><a href="">This is a report</a></li>
-            <li class="list-group-item"><a href="">This is a report</a></li>
-            <li class="list-group-item"><a href="">This is a report</a></li>
-          </ul>
+          <div id="latest-reports">
+
+          </div>
         </div>
       </div>
     </div>

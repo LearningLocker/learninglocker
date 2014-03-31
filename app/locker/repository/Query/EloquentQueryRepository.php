@@ -31,6 +31,27 @@ class EloquentQueryRepository implements QueryRepository {
   }
 
   /**
+   * Query to grab statement based on a filter
+   *
+   * @param $lrs       id      The Lrs to search in (required)
+   * @param $filter    array   The filter array
+   * 
+   * @return array results
+   *
+   **/
+  public function selectStatements( $lrs='', $filter ){
+    $statements = \Statement::where(SPECIFIC_LRS, $lrs);
+    if( !empty($filter) ){
+      foreach($filter as $key => $value ){
+        $statements->whereIn($key, $value);
+      }
+    }
+    $statements->remember(5);
+    $getStatements = $statements->get();
+    return $getStatements;
+  }
+
+  /**
    * Return data based on dates
    *
    * @todo if timestamp becomes required in the spec, we could use that to 
@@ -51,6 +72,7 @@ class EloquentQueryRepository implements QueryRepository {
     $match = array_merge( $lrs_filter, $filters );
 
     if( $type == 'time' ){
+      if( !$interval ) $interval = '$dayOfYear';
       $set_id = array( $interval => '$created_at' );
     }else{
       switch($type){
@@ -75,13 +97,13 @@ class EloquentQueryRepository implements QueryRepository {
         array('$match' => $match),
         array(
             '$group' => array(
-              '_id'    => $set_id,
-              'count'  => array('$sum' => 1),
-              'date'   => array('$addToSet' => '$stored')
+              '_id'   => $set_id,
+              'count' => array('$sum' => 1),
+              'date'  => array('$addToSet' => '$stored')
             )
         ),
         array('$sort'  => array('count' => -1)),
-        array('$project' => array('_id' => 0, 'count' => 1, 'date' => 1))
+        array('$project' => array('_id'   => 0, 'count' => 1, 'date'  => 1 ))
       );
     }else{
       $results = $this->db->statements->aggregate(

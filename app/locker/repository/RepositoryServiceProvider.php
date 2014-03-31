@@ -38,6 +38,10 @@ class RepositoryServiceProvider extends ServiceProvider {
       'Locker\Repository\OAuthApp\OAuthAppRepository',
       'Locker\Repository\OAuthApp\EloquentOAuthAppRepository'
     );
+    $this->app->bind(
+      'Locker\Repository\Report\ReportRepository',
+      'Locker\Repository\Report\EloquentReportRepository'
+    );
   }
 
 

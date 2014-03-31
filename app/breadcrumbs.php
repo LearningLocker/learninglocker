@@ -67,9 +67,18 @@ Breadcrumbs::register('analytics', function($breadcrumbs, $lrs) {
   $breadcrumbs->parent('statement', $lrs);
   $breadcrumbs->push(Lang::get('statements.analytics'), url('/lrs/$lrs->_id/statements/generator'));
 });
+
+/*
+|------------------------------------------------------------------
+| Reporting
+|------------------------------------------------------------------
+*/
 Breadcrumbs::register('reporting', function($breadcrumbs, $lrs) {
-  $breadcrumbs->parent('statement', $lrs);
-  $breadcrumbs->push(Lang::get('statements.reporting'), url('/lrs/$lrs->_id/statements/generator'));
+  $breadcrumbs->push(Lang::get('statements.reporting'), url('/lrs/'.$lrs->_id.'/reporting'));
+});
+Breadcrumbs::register('reporting.create', function($breadcrumbs, $lrs) {
+  $breadcrumbs->parent('reporting', $lrs);
+  $breadcrumbs->push(Lang::get('reporting.create'), url('/lrs/'.$lrs->_id.'/reporting/create'));
 });
 
 /*

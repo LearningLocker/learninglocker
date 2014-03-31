@@ -18,7 +18,6 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
   public function __construct( Query $query ){
 
     //get the LRS connected to this query
-    $this->lrs   = '52f174d5e837a05c11000029';
     $this->query = $query;
 
   }
@@ -31,7 +30,9 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
    * @return array
    *
    **/
-  public function analytics( $options ){
+  public function analytics( $lrs, $options ){
+
+    $this->lrs = $lrs;
 
     $since = $until = '';
 
@@ -44,6 +45,8 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
 
     //parse over the filter and check for conditions
     $filter = $this->setFilter( $filter );
+
+    //var_dump( $filter );exit;
 
     //set type if passed
     if( isset( $options['type'] ) ){
@@ -101,7 +104,7 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
    * @return array
    *
    **/
-  public function section( $section, $filter, $returnFields='' ){
+  public function section( $lrs, $section, $filter, $returnFields='' ){
 
     if( !$section = $this->setSection( $section ) ){
       return array('success' => false);
@@ -208,6 +211,7 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
         }
       }else{
         foreach( $options as $key => $value ){
+          $in_statement = array();
           //loop through this value to check for nested array
           if( is_array($value) ){
             foreach( $value as $v ){
@@ -268,14 +272,14 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
    **/
   private function setInterval( $interval='' ){    
     switch( $interval ){
-      case 'day'        : return 'dayOfYear';  break;
-      case 'dayOfMonth' : return 'dayOfMonth'; break;
-      case 'dayOfWeek'  : return 'dayOfWeek';  break;
-      case 'week'       : return 'week';       break;
-      case 'hour'       : return 'hour';       break;
-      case 'month'      : return 'month';      break;
-      case 'year'       : return 'year';       break;
-      default: return 'dayOfYear';
+      case 'day'        : return '$dayOfYear';  break;
+      case 'dayOfMonth' : return '$dayOfMonth'; break;
+      case 'dayOfWeek'  : return '$dayOfWeek';  break;
+      case 'week'       : return '$week';       break;
+      case 'hour'       : return '$hour';       break;
+      case 'month'      : return '$month';      break;
+      case 'year'       : return '$year';       break;
+      default: return '$dayOfYear';
     }
   }
 

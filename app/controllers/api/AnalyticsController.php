@@ -60,7 +60,7 @@ class AnalyticsController extends BaseController {
    **/
   public function index(){
 
-    $data = $this->analytics->analytics( $this->params );
+    $data = $this->analytics->analytics(  $lrs, $this->params );
 
     if( $data['success'] == false ){
       return $this->returnSuccessError( false, \Lang::get('apps.no_data'), 400 );
