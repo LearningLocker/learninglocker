@@ -6,8 +6,8 @@
           Query
         </div>
         <div class="panel-body">
-          <button class="btn btn-danger btn-xs pull-right" id="clear">Clear</button>
-          <button class="btn btn-success btn-xs" id="save">Save</button>
+          <button class="btn btn-danger btn-xs pull-right" id="clear" style="display:none;">Clear</button>
+          <button class="btn btn-success btn-xs" id="save" style="display:none;">Save</button>
           <div style="margin:10px 0 10px 0;display:none;" class="create-report">
             <form id="createReport">
               <input type="text" name="name" class="form-control" placeholder="Report name" /><br />

@@ -399,7 +399,10 @@ define([
 
     $('#run').click( function(e){
       e.preventDefault();
-      console.log( query );
+      //show save and clear query as well as get statements
+      $('#save').show();
+      $('#clear').show();
+      $('#getStatements').show();
       jQuery.ajax({
         url: 'data',
         type: 'GET',
