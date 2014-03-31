@@ -48,6 +48,10 @@
   font-size:12px;
 }
 
+#footer a {
+  display:block;
+}
+
 /* Statement explorer
 --------------------------------------------------------------*/
 
