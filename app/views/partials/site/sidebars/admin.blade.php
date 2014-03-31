@@ -1,6 +1,6 @@
 @if( Auth::check() )
 
-  <h3>Admin Options</h3>
+  <h4>Admin Options</h4>
   
   <ul class="nav nav-sidebar">
     <li class="@if ( isset($dash_nav) ) active @endif">
