@@ -19,7 +19,6 @@
 @stop
 
 @section('footer')
-  @parent
   <!-- HTML templates for use with backbone -->
   @include('partials.lrs.backbone.templates')
 @stop

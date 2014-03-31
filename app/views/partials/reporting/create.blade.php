@@ -63,8 +63,6 @@
 @stop
 
 @section('scripts')
-  @parent
-  <!-- {{ HTML::script('assets/js/libs/typeahead/typeahead.min.js') }} -->
   @include('partials.reporting.backbone.templates')
 @stop
 

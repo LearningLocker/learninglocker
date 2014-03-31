@@ -22,8 +22,7 @@
 @stop
 
 @section('footer')
-  @parent
-
+ 
   @include('partials.site.backbone.templates')
   
 @stop
