@@ -10,7 +10,7 @@ define([
   'collections/ActivityCollection',
   'collections/UserCollection',
   'views/stats/stats',
-  'views/stats/linegraph',
+  'views/stats/lineGraph',
   'views/loadingView',
   'views/stats/header',
   'views/activity/ActivityList',
