@@ -8,6 +8,7 @@ require.config({
     marionette: "../libs/backbone/backbone.marionette",
     'backbone.wreqr': '../libs/backbone/backbone.wreqr',
     'backbone.babysitter' : '../libs/backbone/backbone.babysitter',
+    'bootstrap': '../libs/bootstrap/bootstrap.min',
     'raphael': '../libs/morrisjs/raphael.min',
     'morris': '../libs/morrisjs/morris.min'
   },
@@ -16,8 +17,12 @@ require.config({
       exports : 'jQuery'
     },
     morris : {
-      deps : ['raphael'],
+      deps : ['jquery','raphael'],
       exports : 'Morris'
+    },
+    bootstrap: {
+      deps: ["jquery"],
+      exports: "Bootstrap"
     },
     underscore : {
       exports : '_'

@@ -17,8 +17,12 @@ require.config({
       exports : 'jQuery'
     },
     morris : {
-      deps : ['raphael'],
+      deps : ['jquery','raphael'],
       exports : 'Morris'
+    },
+    bootstrap: {
+      deps: ["jquery"],
+      exports: "Bootstrap"
     },
     underscore : {
       exports : '_'
