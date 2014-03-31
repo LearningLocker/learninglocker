@@ -4,8 +4,8 @@ use Report;
 
 class EloquentReportRepository implements ReportRepository {
 
-  public function all(){
-    return Report::all();
+  public function all($lrs){
+    return Report::where('lrs', $lrs)->get();
   }
 
   public function find($id){

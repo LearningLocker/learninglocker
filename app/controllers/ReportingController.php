@@ -56,7 +56,7 @@ class ReportingController extends \BaseController {
   public function index($id){
     $lrs      = $this->lrs->find( $id );
     $lrs_list = $this->lrs->all();
-    $reports  = $this->report->all();
+    $reports  = $this->report->all($id);
     return View::make('partials.reporting.index', array('lrs' => $lrs, 
       'list' => $lrs_list, 'reporting_nav' => true, 'reports' => $reports));
   }

@@ -2,7 +2,7 @@
 
 interface ReportRepository {
 
-  public function all();
+  public function all($lrs);
 
   public function create( $input );
 
