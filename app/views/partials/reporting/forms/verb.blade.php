@@ -13,7 +13,7 @@
           $display = substr( $display, strrpos( $display, '/' )+1 );
         }
       ?>
-      <div class="col-xs-6 col-sm-2">
+      <div class="col-xs-6 col-sm-4 col-md-4 col-lg-3">
         <div class="checkbox">
           <label>
             <input type="checkbox" value='{{ $v['id'] }}' data-type="verb" data-display="{{ $display }}"> {{ $display }}

@@ -1,8 +1,8 @@
 @if( Auth::check() )
 
-  <ul style="margin-bottom:30px;">
+  <ul class="nav nav-sidebar">
     <li class="link">
-      <select class="form-control" style="width:220px;" onchange="javascript:location.href = this.value;">
+      <select class="form-control sidebar-select" onchange="javascript:location.href = this.value;">
           <option></option>
         <optgroup label="List">
           <option value="{{ URL() }}/lrs">{{ Lang::get('lrs.home') }}</option>
@@ -17,52 +17,44 @@
       </select>
     </li>
   </ul>
-  <ul class="nav nav-stacked sidebar-nav">
-    <li class="link  @if ( isset($dash_nav) ) active @endif">
+  <ul class="nav nav-sidebar">
+    <li class="@if ( isset($dash_nav) ) active @endif">
       <a href="{{ URL() }}/lrs/{{ $lrs->_id }}">
         <span class="menu-icon"><i class="icon icon-bar-chart"></i></span> {{ Lang::get('lrs.sidebar.dash') }}
       </a> 
     </li>
-    <li class="link @if ( isset($reporting_nav) ) active @endif">
+    <li class="@if ( isset($reporting_nav) ) active @endif">
       <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/reporting">
         <span class="menu-icon"><i class="icon icon-pencil"></i></span>  {{ Lang::get('lrs.sidebar.reporting') }}
       </a>
     </li>
-    <li class="link @if ( isset($statement_nav) ) active @endif">
+    <li class="@if ( isset($statement_nav) ) active @endif">
       <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/statements">
         <span class="menu-icon"><i class="icon icon-exchange"></i></span> {{ Lang::get('statements.statements') }}
       </a>
     </li>
   </ul>
   @if ( app\locker\helpers\Lrs::lrsOwner($lrs->_id) )
-    <h3>{{ Lang::get('site.settings') }}</h3>
-    <ul class="nav nav-stacked sidebar-nav">
-      <li class="link @if ( isset($account_nav) ) active @endif">
+    <h4>{{ Lang::get('site.settings') }}</h4>
+    <ul class="nav nav-sidebar">
+      <li class="@if ( isset($account_nav) ) active @endif">
         <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/edit" >
           <span class="menu-icon"><i class="icon icon-cog"></i></span> {{ Lang::get('lrs.sidebar.edit') }}
         </a>
       </li>
-      <li class="link @if ( isset($endpoint_nav) ) active @endif">
+      <li class="@if ( isset($endpoint_nav) ) active @endif">
         <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/endpoint" >
           <span class="menu-icon"><i class="icon icon-cogs"></i></span> {{ Lang::get('lrs.sidebar.endpoint') }}
         </a>
       </li>
-      <!--
-      <li class="link @if ( isset($api_nav) ) active @endif">
-        <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/api">
-          <span class="menu-icon"><i class="icon icon-code"></i></span>  {{ Lang::get('lrs.sidebar.api') }}
-        </a>
-      </li>
-      -->
-      <li class="link @if ( isset($user_nav) ) active @endif">
+      <li class="@if ( isset($user_nav) ) active @endif">
         <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/users">
           <span class="menu-icon"><i class="icon icon-group"></i></span> {{ Lang::get('lrs.sidebar.users') }}
         </a>
       </li>
     </ul>
   @endif
-  <div class="clearfix"></div>
-  
+
   @include('layouts.sidebars.sidebar_footer')
 
 @endif

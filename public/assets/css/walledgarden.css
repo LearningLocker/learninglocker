@@ -1,5 +1,5 @@
 body {
-    background:#222; /* #7897AC; */
+    background:#7897AC;
 }
 
 li {
@@ -16,7 +16,7 @@ li {
 
 .wrapper {
     border-radius: 5px;
-    background:#333; 
+    background:rgba(0, 0, 0, 0.6); /*#333;*/ 
     margin-top:20px;
     padding:20px 20px 30px 20px;
     color:#fff;

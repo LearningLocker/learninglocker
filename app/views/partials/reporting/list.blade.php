@@ -15,7 +15,7 @@
               <input type="submit" class="btn btn-primary" id="saveQuery" value="Create" />
             </form>
           </div>
-          <div id="create-message" class="alert alert-success" style="display:none;"></div>
+          <div id="create-message" class="alert alert-success" style="margin:10px 0 10px 0;display:none;"></div>
         </div>
         <!-- List group -->
         <ul class="list-group">

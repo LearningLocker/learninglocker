@@ -22,7 +22,7 @@
 
     <div class="form-group">
       <div class="col-sm-10 col-lg-offset-2">
-        {{ Form::submit('Submit',array('class' => 'btn btn-locker')) }}
+        {{ Form::submit('Submit',array('class' => 'btn btn-primary')) }}
       </div>
     </div>
   
