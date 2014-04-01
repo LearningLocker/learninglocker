@@ -410,7 +410,6 @@ define([
         contentType: 'application/json',
         dataType: 'json',
         success: function (json) {
-          console.log(json);
           $('#line-example').empty();
           if( jQuery.isEmptyObject(json) ){
             $('#line-example').html('<p class="alert alert-danger">There are no results for that query.</p>');
@@ -710,6 +709,7 @@ define([
     $.each(json, function() {
       var setDate = this.date[0].substring(0,10);
       var setData = { y: setDate, a: this.count, b: 2 };
+      console.log( setData );
       morrisData.push(setData);
     });
     return morrisData;

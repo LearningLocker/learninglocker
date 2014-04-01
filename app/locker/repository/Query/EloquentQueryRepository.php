@@ -102,7 +102,7 @@ class EloquentQueryRepository implements QueryRepository {
               'date'  => array('$addToSet' => '$stored')
             )
         ),
-        array('$sort'  => array('count' => -1)),
+        array('$sort'  => array('date' => 1)),
         array('$project' => array('_id'   => 0, 'count' => 1, 'date'  => 1 ))
       );
     }else{
