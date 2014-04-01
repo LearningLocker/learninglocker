@@ -7,16 +7,19 @@ define([
   'models/stats/TimelineModel',
   'models/stats/ActivityModel',
   'models/stats/UserModel',
+  'models/ReportModel',
   'collections/ActivityCollection',
   'collections/UserCollection',
+  'collections/ReportCollection',
   'views/stats/stats',
   'views/stats/lineGraph',
   'views/loadingView',
   'views/stats/header',
   'views/activity/ActivityList',
-  'views/actor/UserList'
-], function($, _, Backbone, Marionette, App, TimelineModel, ActivityModel, UserModel, ActivityCollection, UserCollection, 
-    Stats, LineGraph, LoadingView, Header, ActivityList, UserList){
+  'views/actor/UserList',
+  'views/report/ReportList'
+], function($, _, Backbone, Marionette, App, TimelineModel, ActivityModel, UserModel, ReportModel, ActivityCollection, UserCollection, 
+    ReportCollection, Stats, LineGraph, LoadingView, Header, ActivityList, UserList, ReportList){
 
   var Controller = Backbone.Marionette.Controller.extend({
 
@@ -58,6 +61,14 @@ define([
 
         var userCol  = new UserList({ collection: users });
         App.layouts.dashboard.contentOneArea.show( userCol );
+
+      });
+
+      var reports = new ReportCollection;
+      reports.fetch().then(function() {
+
+        var reportCol  = new ReportList({ collection: reports });
+        App.layouts.dashboard.contentThreeArea.show( reportCol );
 
       });
       

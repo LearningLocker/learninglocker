@@ -62,6 +62,16 @@ class ReportingController extends \BaseController {
   }
 
   /**
+   * Return json feed of reports
+   *
+   * @return response
+   **/
+  public function getReports($id, $limit=5){
+    $reports = $this->report->all($id);
+    return Response::json( $reports );
+  }
+
+  /**
    * Show the form for creating a new report.
    *
    * @param string $id Lrs ID

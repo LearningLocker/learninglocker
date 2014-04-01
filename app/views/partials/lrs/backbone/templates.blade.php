@@ -73,6 +73,15 @@
   </div>
 </script>
 
+<script id="reportList" type="text/template">
+  <div id="recent">
+  </div>
+</script>
+
+<script id="reportListView" type="text/template">
+  <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/reporting/show/<%= _id %>"><%= name %></a>
+</script>
+
 <script id="activityList" type="text/template">
   <div id="popular-activities">
   </div>
@@ -95,7 +104,7 @@
   <% }else{ %>
   <%= name  %>
   <% } %>
-  <br />Email: <a href=""><%= _id.substr(7) %></a>
+  <br />Email: <%= _id.substr(7) %>
 </script>
 
 <script id="userList" type="text/template">

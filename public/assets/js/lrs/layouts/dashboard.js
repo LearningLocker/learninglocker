@@ -14,7 +14,7 @@ define([
       graphArea: "#graph",
       contentOneArea: '#active-users',
       contentTwoArea: '#popular-activities',
-      contentThreeArea: '#contents-three'
+      contentThreeArea: '#latest-reports'
     }
     
   });

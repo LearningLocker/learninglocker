@@ -213,7 +213,7 @@ Route::get('lrs/{id}/reporting/grouping/{query}', array(
   'uses' => 'ReportingController@getGrouping',
 ));
 
-Route::resource('reporting', 'ReportingController');
+//Route::resource('reporting', 'ReportingController');
 
 //save,view,edit,delete reports
 Route::post('lrs/{id}/reporting/save', array(
@@ -224,6 +224,9 @@ Route::get('lrs/{id}/reporting/show/{report}', array(
 ));
 Route::get('lrs/{id}/reporting/delete/{report}', array(
   'uses' => 'ReportingController@destroy',
+));
+Route::get('lrs/{id}/reporting/getReports/{limt?}', array(
+  'uses' => 'ReportingController@getReports',
 ));
 
 
