@@ -16,14 +16,15 @@
             </form>
           </div>
           <div id="create-message" class="alert alert-success" style="margin:10px 0 10px 0;display:none;"></div>
-        </div>
-        <!-- List group -->
-        <ul class="list-group">
-          <li class="list-group-item clearfix">
-            <div id="display-query">
+          <!-- List group -->
+          <div id="display-query"></div>
+          <a href="" id="run" data-toggle="tab">
+            <div class="btn btn-primary btn-lg btn-block">
+              <span><i class="icon-chevron-sign-right" style="color:white;"></i></span>
+              Run Query
             </div>
-          </li>
-        </ul>
+          </a>
+        </div>
       </div>
     </div>
   </div>

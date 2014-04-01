@@ -82,6 +82,8 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
       $filters = $filter;
     }
 
+    //var_dump( $filters );exit;
+
     //get the data
     $data = $this->query->timedGrouping( $this->lrs, $filters, $interval, $type );
 
@@ -194,6 +196,8 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
 
     $use_and = false;
     $filter  = array();
+    $set_in  = array();
+    $set_inbetween = array();
 
     if( $options ){
       //loop through submitted filters
@@ -214,16 +218,33 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
           $in_statement = array();
           //loop through this value to check for nested array
           if( is_array($value) ){
-            foreach( $value as $v ){
-              $in_statement[] = $v;
+            //is it an in request, or a between two values request?
+            if( $value[0] == '<>' ){
+              $set_inbetween[$key] = array('$gte' => (int) $value[1], '$lte' => (int) $value[2]);
+            }else{
+              foreach( $value as $v ){
+                $in_statement[] = $v;
+              }
+              $set_in[] = array($key => array('$in' => $in_statement));
             }
-            $set_in[] = array($key => array('$in' => $in_statement));
           }else{
             $set_in[] = array( $key => $value );
           }
+        
         }
         //we need to use Mongo $and for this type of statement.
-        $filter = array('$and' => $set_in );
+        if( !empty($set_in) ){
+          $filter = array('$and' => $set_in );
+        }
+
+        //now merge and and between if available
+        if( !empty($filter) && !empty($set_inbetween) ){
+          $filter = array_merge($filter, $set_inbetween);
+        }elseif( !empty($set_inbetween) ){
+          $filter = $set_inbetween; //just use in_between
+        }else{
+          //do nothing
+        }
       }
     }
 

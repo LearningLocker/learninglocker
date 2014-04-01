@@ -40,20 +40,11 @@
     </a>
   </div>
   <div class="col-xs-6 col-sm-2">
-    <a href="" id="run" data-toggle="tab">
-      <div class="explore-option" style="background:#3276b1;color:white;">
-        <span><i class="icon-chevron-sign-right" style="color:white;"></i></span>
-        Run Query
+    <a href="#dates" data-toggle="tab">
+      <div class="explore-option">
+        <span><i class="icon icon-calendar"></i></span>
+        Dates
       </div>
     </a>
   </div>
 </div>
-
-<!-- Nav tabs -->
-   <!--      <ul class="nav nav-pills">
-          <li class="active"><a href="#actor" data-toggle="tab">Actor</a></li>
-          <li><a href="#verb" data-toggle="tab">Verb</a></li>
-          <li><a href="#activity" data-toggle="tab">Activity</a></li>
-          <li><a href="#context" data-toggle="tab">Context</a></li>
-          <li><a href="#result" data-toggle="tab">Result</a></li>
-        </ul> -->
