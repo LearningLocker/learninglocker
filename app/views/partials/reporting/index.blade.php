@@ -15,28 +15,46 @@
   {{ Breadcrumbs::render('reporting', $lrs) }}
 
   @if( $reports )
-    @foreach( $reports as $r )
-      <?php
-        $stored = new Carbon\Carbon($r->created_at);
-        if( strlen($r->description) > 150 ){
-          $desc = substr($r->description, 0, 150) . '...';
-        }else{
-          $desc = $r->description;
-        }
-      ?>
-      <div class="col-sm-6 col-md-4">
-        <div class="bordered report-box">
-          <h4>{{ $r->name }}</h4>
-          <p><span class="label label-default">Created: {{$stored->toDayDateTimeString()}}</span></p>
-          <p>{{ $desc }}</p>
-          <div class="report-box-footer">
-            <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/reporting/delete/{{ $r->_id }}" 
-              class="btn btn-danger btn-sm pull-right" onClick="return confirm('Are you sure you want to delete');"><i class="icon-trash"></i></button>
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Created</th>
+          <th>Run</th>
+          <th></th>
+        </tr>
+      </thead>
+
+      @foreach( $reports as $r )
+        <?php
+          $stored = new Carbon\Carbon($r->created_at);
+          if( strlen($r->description) > 150 ){
+            $desc = substr($r->description, 0, 150) . '...';
+          }else{
+            $desc = $r->description;
+          }
+        ?>
+        <tr>
+          <td>
+            {{ $r->name }}
+          </td>
+          <td>
+            {{ $r->description }}
+          </td>
+          <td>
+            {{$stored->toDayDateTimeString()}}
+          </td>
+          <td>
             <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/reporting/show/{{ $r->_id }}" class="btn btn-success btn-sm"><i class="icon-play-circle"></i> Run</a>
-          </div>
-        </div>
-      </div>
-    @endforeach
+          </td>
+          <td>
+            <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/reporting/delete/{{ $r->_id }}" 
+                    class="btn btn-danger btn-sm pull-right" onClick="return confirm('Are you sure you want to delete');"><i class="icon-trash"></i></a>
+          </td>
+        </tr>
+      @endforeach
+    </table>
   @else
     <p>No reports have been saved.</p>
   @endif

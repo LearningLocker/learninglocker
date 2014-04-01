@@ -410,8 +410,13 @@ define([
         contentType: 'application/json',
         dataType: 'json',
         success: function (json) {
+          console.log(json);
           $('#line-example').empty();
-          displayGraph(json);
+          if( jQuery.isEmptyObject(json) ){
+            $('#line-example').html('<p class="alert alert-danger">There are no results for that query.</p>');
+          }else{
+            displayGraph(json);
+          }
         },
         error: function( error ) {
           
@@ -711,7 +716,7 @@ define([
   }
 
   function displayGraph(json) {
-      Morris.Line({
+      Morris.Bar({
         element: 'line-example',
         data: buildGraph(json),
         xkey: 'y',
