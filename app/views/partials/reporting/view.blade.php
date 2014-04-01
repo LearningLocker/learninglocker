@@ -73,7 +73,7 @@
     }
 
     function displayGraph(json) {
-      Morris.Line({
+      Morris.Bar({
         element: 'line-example',
         data: buildGraph(json),
         xkey: 'y',
