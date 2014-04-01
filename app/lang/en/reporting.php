@@ -7,5 +7,6 @@
 */
 
 return array(
-    'create' => 'Create report'
+    'create' => 'Create report',
+    'view'   => 'View report'
 );

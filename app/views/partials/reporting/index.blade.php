@@ -16,12 +16,17 @@
 
   @if( $reports )
     @foreach( $reports as $r )
-      <div class="col-sm-4">
+      <?php
+        $stored = new Carbon\Carbon($r->created_at);
+      ?>
+      <div class="col-sm-6 col-md-4">
         <div class="bordered">
           <h4>{{ $r->name }}</h4>
           <p>{{ $r->description }}</p>
-          <button class="btn btn-danger btn-sm pull-right">Delete</button>
-          <button class="btn btn-default btn-sm">Run</button>
+          <p><span class="label label-info">Created: {{$stored->toDayDateTimeString()}}</span></p>
+          <hr>
+          <button class="btn btn-danger btn-xs pull-right">Delete</button>
+          <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/reporting/show/{{ $r->_id }}" class="btn btn-default btn-xs">Run</a>
         </div>
       </div>
     @endforeach

@@ -183,21 +183,23 @@ Route::resource('lrs', 'LrsController');
 | Reporting
 |------------------------------------------------------------------
 */
+
+//index and create pages
 Route::get('lrs/{id}/reporting', array(
   'uses' => 'ReportingController@index',
 ));
 Route::get('lrs/{id}/reporting/create', array(
   'uses' => 'ReportingController@create',
 ));
+
+//get data and statements, returns json
 Route::get('lrs/{id}/reporting/data', array(
   'uses' => 'ReportingController@getData',
 ));
 Route::get('lrs/{id}/reporting/statements', array(
   'uses' => 'ReportingController@getStatements',
 ));
-Route::resource('reporting', 'ReportingController');
-
-//routes to query actors and activities
+//routes to query actors and activities, returns json
 Route::get('lrs/{id}/reporting/actors/{query}', array(
   'uses' => 'ReportingController@getActors',
 ));
@@ -211,9 +213,14 @@ Route::get('lrs/{id}/reporting/grouping/{query}', array(
   'uses' => 'ReportingController@getGrouping',
 ));
 
-//save,edit,delete reports
+Route::resource('reporting', 'ReportingController');
+
+//save,view,edit,delete reports
 Route::post('lrs/{id}/reporting/save', array(
   'uses' => 'ReportingController@store',
+));
+Route::get('lrs/{id}/reporting/show/{report}', array(
+  'uses' => 'ReportingController@show',
 ));
 
 

@@ -80,6 +80,10 @@ Breadcrumbs::register('reporting.create', function($breadcrumbs, $lrs) {
   $breadcrumbs->parent('reporting', $lrs);
   $breadcrumbs->push(Lang::get('reporting.create'), url('/lrs/'.$lrs->_id.'/reporting/create'));
 });
+Breadcrumbs::register('reporting.view', function($breadcrumbs, $lrs) {
+  $breadcrumbs->parent('reporting', $lrs);
+  $breadcrumbs->push(Lang::get('reporting.view'), url('/lrs/'.$lrs->_id.'/reporting/show'));
+});
 
 /*
 |-------------------------------------------------------------------
