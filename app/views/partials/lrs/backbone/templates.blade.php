@@ -63,8 +63,10 @@
             <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/reporting" class="btn btn-primary btn-xs pull-right">Visit reporting tool</a>
             Latest reports
           </div>
-          <div id="latest-reports">
+          <div class="panel-body">
+            <div id="latest-reports">
 
+            </div>
           </div>
         </div>
       </div>
