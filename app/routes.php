@@ -222,6 +222,9 @@ Route::post('lrs/{id}/reporting/save', array(
 Route::get('lrs/{id}/reporting/show/{report}', array(
   'uses' => 'ReportingController@show',
 ));
+Route::get('lrs/{id}/reporting/delete/{report}', array(
+  'uses' => 'ReportingController@destroy',
+));
 
 
 /*

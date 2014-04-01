@@ -148,9 +148,9 @@ class ReportingController extends \BaseController {
    * @param  int  $id
    * @return Response
    */
-  public function destroy($id)
-  {
-    //
+  public function destroy($id, $report){
+    $report = $this->report->delete($report);
+    return Redirect::back()->with('success', Lang::get('reporting.deleted')); 
   }
 
   /** 

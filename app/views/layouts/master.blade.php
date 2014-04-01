@@ -50,7 +50,10 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="{{ URL() }}"><i class="icon icon-dashboard"></i> Admin dashboard</a></li>
+            @if ( \app\locker\helpers\Access::isRole('super') )
+              <li><a href="{{ URL() }}"><i class="icon icon-dashboard"></i> Admin dashboard</a></li>
+              <li><a href="{{ URL() }}/site#settings"><i class="icon icon-cog"></i> Settings</a></li>
+            @endif
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon icon-list"></i> LRS List <b class="caret"></b></a>
               <ul class="dropdown-menu">
@@ -62,11 +65,13 @@
                   <li><a href="#">No LRSs available</a></li>
                 @endif
                 <li class="divider"></li>
-                <li class="dropdown-header">Admin</li>
-                <li><a href="#">Create a new LRS</a></li>
+                <li class="dropdown-header">Other</li>
+                <li><a href="{{ URL() }}/lrs">LRS home</a></li>
+                @if( app\locker\helpers\Lrs::lrsCanCreate() )
+                  <li><a href="#">Create a new LRS</a></li>
+                @endif
               </ul>
             </li>
-            <li><a href="{{ URL() }}/site#settings"><i class="icon icon-cog"></i> Settings</a></li>
             <li><a href="{{ URL() }}/logout">Logout</a></li>
           </ul>
         </div>

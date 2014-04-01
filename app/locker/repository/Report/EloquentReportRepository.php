@@ -35,8 +35,8 @@ class EloquentReportRepository implements ReportRepository {
   }
 
   public function delete($id){
-    
-   
+    $report = $this->find($id);
+    return $report->delete();
   }
 
 }

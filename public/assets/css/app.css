@@ -40,6 +40,18 @@
   font-size:160%;
 }
 
+.report-box {
+  height:200px;
+  position:relative;
+}
+
+.report-box-footer {
+  height:40px;
+  position:absolute;
+  bottom:0;
+  width:95%;
+}
+
 #footer {
   border-top:1px solid #ccc;
   border-bottom:1px solid #ccc;

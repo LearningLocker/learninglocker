@@ -14,6 +14,8 @@
   <p>{{ $report->description }}</p>
   <div id="line-example"></div>
   <hr>
+  <h4>Related statements <span id="statementCount"></span></h4>
+  <hr>
   <div id="statements"></div>
 @stop
 
@@ -93,7 +95,7 @@
             object = value.object.definition.name[Object.keys(value.object.definition.name)[0]];
           }
         }
-        statement += '<p>' + value.actor.name + ' ' + verb + ' ' + object + '</p>';
+        statement += '<div class="statement-row"><p>' + value.actor.name + ' ' + verb + ' <a href="">' + object + '</a></p></div>';
       });
       return statement;
     }
