@@ -1,260 +1,323 @@
 
 define([
+  'jquery',
   'underscore',
   'backbone',
   'marionette',
   'typeahead',
   'app',
   'morris'
-], function(_, Backbone, Marionette, Typeahead, App, Morris) {
+], function($, _, Backbone, Marionette, Typeahead, App, Morris) {
 
   var query = {};
   var query_display = {};
 
   $(document).ready(function() {
 
-  var substringMatcher = function(strs) {
-    return function findMatches(q, cb) {
-      var matches, substringRegex;
-   
-      // an array that will be populated with substring matches
-      matches = [];
-   
-      // regex used to determine if a string contains the substring `q`
-      substrRegex = new RegExp(q, 'i');
-   
-      $.each(strs, function(i, str) {
-        if (substrRegex.test(str)) {
-          matches.push(item.label);
-        }
-      });
-   
-      cb(matches);
+    //show uri when hovered over
+    $('.form-tooltip').tooltip();
+
+    var substringMatcher = function(strs) {
+      return function findMatches(q, cb) {
+        var matches, substringRegex;
+     
+        // an array that will be populated with substring matches
+        matches = [];
+     
+        // regex used to determine if a string contains the substring `q`
+        substrRegex = new RegExp(q, 'i');
+     
+        $.each(strs, function(i, str) {
+          if (substrRegex.test(str)) {
+            matches.push(item.label);
+          }
+        });
+     
+        cb(matches);
+      };
     };
-  };
 
-  var grouping = '';//<?php echo $grouping ?>;
+    var grouping = '';//<?php echo $grouping ?>;
 
-  // constructs the suggestion engine
-  var setGrouping = new Bloodhound({
-    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('id'),
-    queryTokenizer: Bloodhound.tokenizers.whitespace,
-    limit: 6,
-    remote: {
-        url: 'grouping/%QUERY',
-        filter: function (grouping) {
-            return $.map(grouping, function(group) {
-              return { 
-                id: group.context.contextActivities.grouping.id
-              };
-            });
-        }
+    // constructs the suggestion engine
+    var setGrouping = new Bloodhound({
+      datumTokenizer: Bloodhound.tokenizers.obj.whitespace('id'),
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      limit: 6,
+      remote: {
+          url: 'grouping/%QUERY',
+          filter: function (grouping) {
+              return $.map(grouping, function(group) {
+                return { 
+                  id: group.context.contextActivities.grouping.id
+                };
+              });
+          }
+      }
+    });
+     
+    // kicks off the loading/processing of `local` and `prefetch`
+    setGrouping.initialize();
+     
+    $('#grouping-list .typeahead').typeahead({
+        hint: true,
+        highlight: true,
+        minLength: 2
+      },
+      {
+        name: 'grouping',
+        displayKey: 'id',
+        source: setGrouping.ttAdapter()
+      }
+    ).on('typeahead:selected', onGroupingSelected).on('typeahead:autocompleted', onGroupingSelected);
+
+    function onGroupingSelected($e, datum) {
+     
+      checkbox = buildCheckboxes('grouping', datum.id, datum.id);
+
+      $('#grouping-selected').append(checkbox);
+
+      buildQueryArray('context.contextActivities.grouping.id', datum.id);
+
+      buildQueryDisplay('context', datum.id)
+
+      displayQuery();
+
     }
-  });
-   
-  // kicks off the loading/processing of `local` and `prefetch`
-  setGrouping.initialize();
-   
-  $('#grouping-list .typeahead').typeahead({
-      hint: true,
-      highlight: true,
-      minLength: 2
-    },
-    {
-      name: 'grouping',
-      displayKey: 'id',
-      source: setGrouping.ttAdapter()
+
+    var parents = '';//{{ $parents }};
+
+    // constructs the suggestion engine
+    var setParents = new Bloodhound({
+      datumTokenizer: Bloodhound.tokenizers.obj.whitespace('id'),
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      limit: 6,
+      remote: {
+          url: 'parents/%QUERY',
+          filter: function (parents) {
+              return $.map(parents, function(parent) {
+                return { 
+                  id: parent.context.contextActivities.parent.id
+                };
+              });
+          }
+      }
+    });
+     
+    // kicks off the loading/processing of `local` and `prefetch`
+    setParents.initialize();
+     
+    $('#parents-list .typeahead').typeahead({
+        hint: true,
+        highlight: true,
+        minLength: 2
+      },
+      {
+        name: 'parents',
+        displayKey: 'id',
+        source: setParents.ttAdapter()
+      }
+    ).on('typeahead:selected', onContextSelected).on('typeahead:autocompleted', onContextSelected);
+
+    function onContextSelected($e, datum) {
+      
+      checkbox = buildCheckboxes('parents', datum.id, datum.id);
+
+      $('#parents-selected').append(checkbox);
+     
+      buildQueryArray('context.contextActivities.parent.id', datum.id);
+
+      buildQueryDisplay('context', datum.id)
+      displayQuery();
+
     }
-  ).on('typeahead:selected', onGroupingSelected).on('typeahead:autocompleted', onGroupingSelected);
+     
+    //var activities = '';//{{ $activities }};
 
-  function onGroupingSelected($e, datum) {
-   
-    checkbox = buildCheckboxes('grouping', datum.id, datum.id);
+    // constructs the suggestion engine
+    var setActivities = new Bloodhound({
+      datumTokenizer: Bloodhound.tokenizers.obj.whitespace('id'),
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      limit: 6,
+      remote: {
+          url: 'activities/%QUERY',
+          filter: function (activities) {
+              return $.map(activities, function(activity) {
+                //get first value of name object, if not available, use id
+                var setName = activity.object.definition.name[Object.keys(activity.object.definition.name)[0]];
+                if( setName == 'undefined' ){
+                  setName = activity.object.id;
+                }
+                return { 
+                  id: activity.object.id,
+                  name: setName
+                };
+              });
+          }
+      }
+    });
 
-    $('#grouping-selected').append(checkbox);
 
-    buildQueryArray('context.contextActivities.grouping.id', datum.id);
+    // kicks off the loading/processing of `local` and `prefetch`
+    setActivities.initialize();
+     
+    $('#activity-list .typeahead').typeahead({
+        hint: true,
+        highlight: true,
+        minLength: 2
+      },
+      {
+        name: 'activities',
+        displayKey: 'id',
+        source: setActivities.ttAdapter()
+      }
+    ).on('typeahead:selected', onActivitySelected).on('typeahead:autocompleted', onActivitySelected);
 
-    buildQueryDisplay('context', datum.id)
-
-    displayQuery();
-
-  }
-
-  var parents = '';//{{ $parents }};
-
-  // constructs the suggestion engine
-  var setParents = new Bloodhound({
-    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('id'),
-    queryTokenizer: Bloodhound.tokenizers.whitespace,
-    limit: 6,
-    remote: {
-        url: 'parents/%QUERY',
-        filter: function (parents) {
-            return $.map(parents, function(parent) {
-              return { 
-                id: parent.context.contextActivities.parent.id
-              };
-            });
-        }
-    }
-  });
-   
-  // kicks off the loading/processing of `local` and `prefetch`
-  setParents.initialize();
-   
-  $('#parents-list .typeahead').typeahead({
-      hint: true,
-      highlight: true,
-      minLength: 2
-    },
-    {
-      name: 'parents',
-      displayKey: 'id',
-      source: setParents.ttAdapter()
-    }
-  ).on('typeahead:selected', onContextSelected).on('typeahead:autocompleted', onContextSelected);
-
-  function onContextSelected($e, datum) {
+    function onActivitySelected($e, datum) {
+      
+      checkbox = buildCheckboxes('activities', datum.id, datum.name);
     
-    checkbox = buildCheckboxes('parents', datum.id, datum.id);
+      $('#activities-selected').append(checkbox);
+      
+      buildQueryArray('object.id', datum.id);
 
-    $('#parents-selected').append(checkbox);
-   
-    buildQueryArray('context.contextActivities.parent.id', datum.id);
+      buildQueryDisplay('activity', datum.name)
 
-    buildQueryDisplay('context', datum.id)
-    displayQuery();
+      displayQuery();
 
-  }
-   
-  //var activities = '';//{{ $activities }};
+    }
 
-  // constructs the suggestion engine
-  var setActivities = new Bloodhound({
-    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('id'),
-    queryTokenizer: Bloodhound.tokenizers.whitespace,
-    limit: 6,
-    remote: {
-        url: 'activities/%QUERY',
-        filter: function (activities) {
-            return $.map(activities, function(activity) {
-              //get first value of name object, if not available, use id
-              var setName = activity.object.definition.name[Object.keys(activity.object.definition.name)[0]];
-              if( setName == 'undefined' ){
-                setName = activity.object.id;
-              }
-              return { 
-                id: activity.object.id,
-                name: setName
-              };
-            });
+    // constructs the suggestion engine
+    var setActors = new Bloodhound({
+      datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      limit: 6,
+      //local: $.map(actors, function(actor) { return { name: actor }; })
+      remote: {
+          url: 'actors/%QUERY',
+          filter: function (actors) {
+              return $.map(actors, function(actor) {
+                return { 
+                  name: actor.name, mbox:actor.mbox
+                };
+              });
+          }
+      }
+    });
+     
+    // kicks off the loading/processing of `local` and `prefetch`
+    setActors.initialize();
+     
+    $('#actor-list .typeahead').typeahead({
+        hint: true,
+        highlight: true,
+        minLength: 2
+      },
+      {
+        name: 'actors',
+        displayKey: 'name',
+        source: setActors.ttAdapter()
+      }
+    ).on('typeahead:selected', onActorSelected).on('typeahead:autocompleted', onActorSelected);
+
+    function onActorSelected($e, datum) {
+    
+      checkbox = buildCheckboxes('actor', datum.mbox, datum.name);
+
+      $('#actors-selected').append(checkbox);
+      
+      //build query which will be sent to API
+      buildQueryArray('actor.mbox', datum.mbox);
+
+      buildQueryDisplay('actor', datum.name);
+      displayQuery();
+
+    }
+
+    //handle checkboxes
+    $(document).on( 'change', ':checkbox', function() {
+
+      if(this.checked) {
+
+        //result.score handle query creation differently so don't do this
+        if( this.value != 'result.score' ){
+
+          buildQueryDisplay( $(this).data('type'), $(this).data('display') );
+
+          //if actor everyone selected, don't add to query as it is not needed.
+          if( this.value != 'everyone' ){
+            buildQuery($(this).data('type'), this.value);
+          }
+
         }
-    }
-  });
 
+      }else{
 
-  // kicks off the loading/processing of `local` and `prefetch`
-  setActivities.initialize();
-   
-  $('#activity-list .typeahead').typeahead({
-      hint: true,
-      highlight: true,
-      minLength: 2
-    },
-    {
-      name: 'activities',
-      displayKey: 'id',
-      source: setActivities.ttAdapter()
-    }
-  ).on('typeahead:selected', onActivitySelected).on('typeahead:autocompleted', onActivitySelected);
+        //removing result scores needs a different process
+        if( this.value == 'result.score' ){
 
-  function onActivitySelected($e, datum) {
-    
-    checkbox = buildCheckboxes('activities', datum.id, datum.name);
-  
-    $('#activities-selected').append(checkbox);
-    
-    buildQueryArray('object.id', datum.id);
+          //remove result score from query
+          removeQueryResultScore( $(this).data('type') );
 
-    buildQueryDisplay('activity', datum.name)
+          //now remove from query display
+          delete query_display[$(this).data('type')];
 
-    displayQuery();
+          //empty fields and close inputs
+          removeScoreInputs( $(this).attr("id") );
 
-  }
+        }else{
 
-  // constructs the suggestion engine
-  var setActors = new Bloodhound({
-    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-    queryTokenizer: Bloodhound.tokenizers.whitespace,
-    limit: 6,
-    //local: $.map(actors, function(actor) { return { name: actor }; })
-    remote: {
-        url: 'actors/%QUERY',
-        filter: function (actors) {
-            return $.map(actors, function(actor) {
-              return { 
-                name: actor.name, mbox:actor.mbox
-              };
-            });
+          //remove from query object
+          removeFromQuery( $(this).data('type'), this.value );
+        
+          //remove from display object
+          removeDisplayString( $(this).data('type'), $(this).data('display') );
+
         }
-    }
-  });
-   
-  // kicks off the loading/processing of `local` and `prefetch`
-  setActors.initialize();
-   
-  $('#actor-list .typeahead').typeahead({
-      hint: true,
-      highlight: true,
-      minLength: 2
-    },
-    {
-      name: 'actors',
-      displayKey: 'name',
-      source: setActors.ttAdapter()
-    }
-  ).on('typeahead:selected', onActorSelected).on('typeahead:autocompleted', onActorSelected);
 
-  function onActorSelected($e, datum) {
-  
-    checkbox = buildCheckboxes('actor', datum.mbox, datum.name);
-
-    $('#actors-selected').append(checkbox);
-    
-    //build query which will be sent to API
-    buildQueryArray('actor.mbox', datum.mbox);
-
-    buildQueryDisplay('actor', datum.name);
-    displayQuery();
-
-  }
-
-  $(document).on( 'change', ':checkbox', function() {
-
-    if(this.checked) {
-
-      buildQueryDisplay( $(this).data('type'), $(this).data('display') );
-
-      //if actor everyone selected, don't add to query as it is not needed.
-      if( this.value != 'everyone' ){
-        buildQuery($(this).data('type'), this.value);
       }
 
-    }else{
+      //redraw display
+      displayQuery();
 
-      //remove from query object
-      removeFromQuery( $(this).data('type'), this.value );
-    
-      //remove from display object
-      removeDisplayString( $(this).data('type'), $(this).data('display') );
+    });
 
-    }
+    //handle radio inputs for success and completion
+    $(document).on( 'change', ':radio', function() {
+      radioName = $(this).attr('name');
+      if( $(this).val() == 'true' ){
+        getValue = true;
+      }else{
+        getValue = false;
+      }
+      if( radioName == 'success' ){
+        query_display['result.success'] = 'With success as ' + getValue;
+        query['result.success'] = getValue;
+      }
+      if( radioName == 'completion' ){
+        query_display['result.completion'] = 'With completion as ' + getValue;
+        query['result.completion'] = getValue;
+      }
+      displayQuery();
+    });
 
-    //redraw display
-    displayQuery();
+    //clear the result success section
+    $('#success-clear').click(function(e){
+      e.preventDefault();
+      $('input[name=success]').attr('checked',false);
+      delete query['result.success'];
+      delete query_display['result.success'];
+      displayQuery();
+    });
 
-  });
+    //clear the result completion section
+    $('#completion-clear').click(function(e){
+      e.preventDefault();
+      $('input[name=completion]').attr('checked',false);
+      delete query['result.completion'];
+      delete query_display['result.completion'];
+      displayQuery();
+    });
 
     //result scaled, raw, min and max
 
@@ -262,32 +325,16 @@ define([
       displayScoreInputs( this, 'scaled' );
     });
 
-    $("#scaled_values").click(function(){
-      displayScoreInputValues( this, 'scaled'  );
-    });
-
     $('#raw').change(function(){
       displayScoreInputs( this, 'raw' );
-    });
-
-    $("#raw_values").click(function(){
-      displayScoreInputValues( this, 'raw'  );
     });
 
     $('#min').change(function(){
       displayScoreInputs( this, 'min' );
     });
 
-    $("#min_values").click(function(){
-      displayScoreInputValues( this, 'min'  );
-    });
-
     $('#max').change(function(){
       displayScoreInputs( this, 'max' );
-    });
-
-    $("#max_values").click(function(){
-      displayScoreInputValues( this, 'max'  );
     });
 
     function displayScoreInputs( item, inputType ){
@@ -297,17 +344,13 @@ define([
       $(values['value']).show();
     };
 
-    function displayScoreInputValues( item, inputType  ){
-      var values = setScoreInput( inputType );
-      var value_from = $(values['form']).val();
-      var value_to   = $(values['to']).val();
-      var setDisplay = inputType + ' from ' + value_from + ' to ' + value_to;
-
-      //build / add to query string
-      buildQueryDisplay( $(item).data('type'), setDisplay );
-
-      //redraw query string
-      displayQuery();
+    function removeScoreInputs( scoreType ){
+      from  = '#' + scoreType + '_from';
+      to    = '#' + scoreType + '_to';
+      values = '#' + scoreType + '_values';
+      $(from).val('');
+      $(to).val('');
+      $(values).hide();
     }
 
     function setScoreInput( inputType ){
@@ -370,9 +413,7 @@ define([
           $('.create-report').hide();
           $('#create-message').toggle().html('That report has now saved');
         },
-        error: function( error ) {
-          
-        }
+        error: function( error ) {}
       });
     });
 
@@ -383,7 +424,7 @@ define([
         url: 'statements',
         type: 'GET',
         data: 'filter=' + JSON.stringify( query ),
-        contentType: 'application/json',
+       contentType: 'application/json',
         dataType: 'json',
         success: function (json) {
           statements = statementDisplay(json);
@@ -391,9 +432,7 @@ define([
           $('#statementCount').html('(' + count + ')');
           $('#statements').html(statements);
         },
-        error: function( error ) {
-          
-        }
+        error: function( error ) {}
       });
     });
 
@@ -403,6 +442,10 @@ define([
       $('#save').show();
       $('#clear').show();
       $('#getStatements').show();
+      $('#statements').html('');
+      $('#statementCount').html('');
+      $('.showStatements').hide();
+      console.log( query );
       jQuery.ajax({
         url: 'data',
         type: 'GET',
@@ -417,10 +460,37 @@ define([
             displayGraph(json);
           }
         },
-        error: function( error ) {
-          
-        }
+        error: function( error ) {}
       });
+    });
+
+    $('#scaled_values').click( function(e){
+      scaled_from = $('#scaled_from').val();
+      scaled_to   = $('#scaled_to').val();
+      buildQueryResultScore('result.score.scaled', ['<>', scaled_from, scaled_to]);
+      buildActualDisplay('result.score.scaled', 'Scaled from ' + scaled_from + ' to ' + scaled_to);
+      displayQuery();
+    });
+    $('#raw_values').click( function(e){
+      raw_from = $('#raw_from').val();
+      raw_to   = $('#raw_to').val();
+      buildQueryResultScore('result.score.raw', ['<>', raw_from, raw_to]);
+      buildActualDisplay('result.score.raw', 'Raw from ' + raw_from + ' to ' + raw_to);
+      displayQuery();
+    });
+    $('#min_values').click( function(e){
+      min_from = $('#min_from').val();
+      min_to   = $('#min_to').val();
+      buildQueryResultScore('result.score.min', ['<>', min_from, min_to]);
+      buildActualDisplay('result.score.min', 'Min from ' + min_from + ' to ' + min_to);
+      displayQuery();
+    });
+    $('#max_values').click( function(e){
+      max_from = $('#max_from').val();
+      max_to   = $('#max_to').val();
+      buildQueryResultScore('result.score.max', ['<>', max_from, max_to]);
+      buildActualDisplay('result.score.max', 'Max from ' + max_from + ' to ' + max_to);
+      displayQuery();
     });
 
   });
@@ -467,8 +537,17 @@ define([
     if( query_display['context.language'] ){
       displayString += query_display['context.language'] + ' ';
     }
-    if( query_display['result'] ){
-      displayString += query_display['result'] + ' ';
+    if( query_display['result.score.scaled'] ){
+      displayString += query_display['result.score.scaled'] + ' ';
+    }
+    if( query_display['result.score.max'] ){
+      displayString += query_display['result.score.max'] + ' ';
+    }
+    if( query_display['result.score.min'] ){
+      displayString += query_display['result.score.min'] + ' ';
+    }
+    if( query_display['result.score.raw'] ){
+      displayString += query_display['result.score.raw'] + ' ';
     }
     if( query_display['result.response'] ){
       displayString += query_display['result.response'] + ' ';
@@ -522,9 +601,18 @@ define([
       case 'context.instructor':
         buildActualDisplay( 'context.instructor', data_display );
         break;
-      case 'result':
-        buildActualDisplay( 'result', data_display );
-        break
+      case 'result.score.scaled':
+        buildActualDisplay( 'result.score.scaled', data_display );
+        break;
+      case 'result.score.max':
+        buildActualDisplay( 'result.score.max', data_display );
+        break;
+      case 'result.score.min':
+        buildActualDisplay( 'result.score.min', data_display );
+        break;
+      case 'result.score.raw':
+        buildActualDisplay( 'result.score.raw', data_display );
+        break;
       case 'result.completion':
         buildActualDisplay( 'result.completion', data_display );
         break;
@@ -550,14 +638,14 @@ define([
     }
   }
 
-  function buildQueryArrayScore(array_key, data){
-    if ( query[array_key] ) {
-      var existing = query[array_key];
-      existing.push( data );
-      query[array_key] = existing;
-    }else{
-      query[array_key] = [data];
-    }
+  //add result scores to the query array
+  function buildQueryResultScore(array_key, data){
+    query[array_key] = data;
+  }
+
+  //remove result scores from from query array
+  function removeQueryResultScore( dataType ){
+    delete query[dataType];
   }
 
   function buildQuery(data_type, data){
@@ -590,28 +678,22 @@ define([
         buildQueryArray('context.contextActivities.grouping.id', data);
         break;
       case 'result.completion':
-        buildQueryArray( 'result.completion', data );
+        if( data == 'true' ){
+          query['result.completion'] = true;
+        }else{
+          query['result.completion'] = false;
+        }
         break;
       case 'result.attachments':
-        buildQueryArray( 'result.attachments', data );
         break;
       case 'result.response':
-        buildQueryArray( 'result.response', data );
         break;
       case 'result.success':
-        buildQueryArray( 'result.success', data );
-        break;
-      case 'result.max':
-        buildQueryArrayScore( 'result.max', data );
-        break;
-      case 'result.min':
-        buildQueryArrayScore( 'result.min', data );
-        break;
-      case 'result.raw':
-        buildQueryArrayScore( 'result.raw', data );
-        break;
-      case 'result.scaled':
-        buildQueryArrayScore( 'result.scaled', data );
+        if( data == 'true' ){
+          query['result.success'] = true;
+        }else{
+          query['result.success'] = false;
+        }
         break;
     }
   }
@@ -709,7 +791,6 @@ define([
     $.each(json, function() {
       var setDate = this.date[0].substring(0,10);
       var setData = { y: setDate, a: this.count, b: 2 };
-      console.log( setData );
       morrisData.push(setData);
     });
     return morrisData;

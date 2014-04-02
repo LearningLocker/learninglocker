@@ -42,9 +42,20 @@ class EloquentQueryRepository implements QueryRepository {
   public function selectStatements( $lrs='', $filter ){
     $statements = \Statement::where(SPECIFIC_LRS, $lrs);
     if( !empty($filter) ){
+      
       foreach($filter as $key => $value ){
-        $statements->whereIn($key, $value);
+        if( is_array($value) ){
+          //does the array contain between values? e.g. <> 3, 6
+          if( $value[0] === '<>' ){
+            $statements->whereBetween($key, array((int)$value[1], (int)$value[2]));
+          }else{
+            $statements->whereIn($key, $value); //where key is in array
+          }
+        }else{
+          $statements->where($key, $value);
+        }
       }
+
     }
     $statements->remember(5);
     $getStatements = $statements->get();

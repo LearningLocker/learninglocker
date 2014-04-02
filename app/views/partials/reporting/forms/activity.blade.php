@@ -30,7 +30,7 @@
                 @foreach( $value as $v )
                   <div class="col-xs-12 col-sm-6">
                     <div class="checkbox">
-                      <label>
+                      <label class="form-tooltip" data-toggle="tooltip" data-placement="top" title="{{ $v }}">
                         <?php
                           $id = $v;
                           if(filter_var($v, FILTER_VALIDATE_URL)){

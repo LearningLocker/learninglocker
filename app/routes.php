@@ -13,20 +13,22 @@
 
 Route::get('/', function(){
   if( Auth::check() ){
+    $site = \Site::first();
     //if super admin, show site dashboard, otherwise show list of LRSs can access
     if( Auth::user()->role == 'super' ){
-      $stats = '';//new \app\locker\data\dashboards\AdminDashboard();
       return View::make('partials.site.dashboard', 
-                  array('stats'      => $stats, 
-                        'dash_nav'   => true,
-                        'admin_dash' => true));
+                  array('site' => $site, 'dash_nav' => true));
     }else{
       $lrs = Lrs::where('users._id', \Auth::user()->_id)->get();
-      return View::make('partials.lrs.list', array('lrs' => $lrs));
+      return View::make('partials.lrs.list', array('lrs' => $lrs, 'site' => $site));
     }
   }else{
     $site = \Site::first();
-    return View::make('system.forms.login', array( 'site' => $site ));
+    if( isset($site) ){
+      return View::make('system.forms.login', array( 'site' => $site ));
+    }else{
+      return View::make('system.forms.regsiter');
+    }
   }
 });
 

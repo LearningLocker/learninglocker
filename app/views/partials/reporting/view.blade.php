@@ -14,9 +14,18 @@
   <p>{{ $report->description }}</p>
   <div id="line-example"></div>
   <hr>
-  <h4>Related statements <span id="statementCount"></span></h4>
-  <hr>
-  <div id="statements"></div>
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          Related statements <span id="statementCount"></span>
+        </div>
+        <div class="panel-body">
+          <div id="statements"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 @stop
 
 @section('scripts')
@@ -36,7 +45,11 @@
         dataType: 'json',
         success: function (json) {
           $('#line-example').empty();
-          displayGraph(json);
+          if( jQuery.isEmptyObject(json) ){
+            $('#line-example').html('<p class="alert alert-danger">There are no results for that query.</p>');
+          }else{
+            displayGraph(json);
+          }
         },
         error: function( error ) {
           
@@ -95,7 +108,7 @@
             object = value.object.definition.name[Object.keys(value.object.definition.name)[0]];
           }
         }
-        statement += '<div class="statement-row"><p>' + value.actor.name + ' ' + verb + ' <a href="">' + object + '</a></p></div>';
+        statement += '<div class="statement-row"><p>' + value.actor.name + '(' + value.actor.mbox + ') ' + verb + ' <a href="">' + object + '</a></p></div>';
       });
       return statement;
     }
