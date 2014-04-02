@@ -45,7 +45,12 @@ class EloquentQueryRepository implements QueryRepository {
       
       foreach($filter as $key => $value ){
         if( is_array($value) ){
-          $statements->whereIn($key, $value);
+          //does the array contain between values? e.g. <> 3, 6
+          if( $value[0] === '<>' ){
+            $statements->whereBetween($key, array((int)$value[1], (int)$value[2]));
+          }else{
+            $statements->whereIn($key, $value); //where key is in array
+          }
         }else{
           $statements->where($key, $value);
         }
