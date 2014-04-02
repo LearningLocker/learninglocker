@@ -1,17 +1,21 @@
 
 define([
+  'jquery',
   'underscore',
   'backbone',
   'marionette',
   'typeahead',
   'app',
   'morris'
-], function(_, Backbone, Marionette, Typeahead, App, Morris) {
+], function($, _, Backbone, Marionette, Typeahead, App, Morris) {
 
   var query = {};
   var query_display = {};
 
   $(document).ready(function() {
+
+    //show verb uri when hovered over
+    $('.verb').tooltip();
 
     var substringMatcher = function(strs) {
       return function findMatches(q, cb) {

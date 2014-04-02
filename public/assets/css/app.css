@@ -184,6 +184,13 @@
   margin:2px 0 2px 0;
 }
 
+/* Misc
+--------------------------------------------------------------*/
+
+div.tooltip-inner {
+    max-width: 350px;
+}
+
 .scaled {
   border-bottom:1px solid #f1f1f1;
   padding-bottom:5px;
