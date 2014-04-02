@@ -99,6 +99,10 @@
   color:#222;
 }
 
+#display-query {
+  margin:10px 0 20px 0;
+}
+
 .selector {
   background:#f1f1f1;
   margin:20px 0 20px 0;

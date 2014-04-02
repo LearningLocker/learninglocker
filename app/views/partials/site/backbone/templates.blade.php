@@ -213,6 +213,7 @@
 </script>
 
 <script id="settingsTemplate" type="text/template">
+  <a href="{{ URL() }}/site/<%= _id %>/edit" class="btn btn-default pull-right">Edit</a>
   <div class="table-responsive">
     <table class="table table-bordered table-striped">
       <tbody>

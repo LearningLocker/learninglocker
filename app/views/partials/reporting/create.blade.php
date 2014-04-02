@@ -43,6 +43,9 @@
           <div class="tab-pane" id="result">
             @include('partials.reporting.forms.result')
           </div>
+          <div class="tab-pane" id="dates">
+            @include('partials.reporting.forms.dates')
+          </div>
         </div>
       
         @include('partials.reporting.display')
