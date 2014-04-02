@@ -42,9 +42,15 @@ class EloquentQueryRepository implements QueryRepository {
   public function selectStatements( $lrs='', $filter ){
     $statements = \Statement::where(SPECIFIC_LRS, $lrs);
     if( !empty($filter) ){
+      
       foreach($filter as $key => $value ){
-        $statements->whereIn($key, $value);
+        if( is_array($value) ){
+          $statements->whereIn($key, $value);
+        }else{
+          $statements->where($key, $value);
+        }
       }
+
     }
     $statements->remember(5);
     $getStatements = $statements->get();
