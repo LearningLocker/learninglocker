@@ -68,8 +68,8 @@ class xAPIValidation {
     }
 
     return array( 'status'    => $this->status, 
-            'errors'    => $this->errors,
-            'statement' => $this->statement );
+                  'errors'    => $this->errors,
+                  'statement' => $this->statement );
 
   }
 
@@ -180,7 +180,7 @@ class xAPIValidation {
     $actor_keys = array_keys($actor);
 
     //check, if objectType is set, that it is either Group or Agent
-    if( isset($actor['objectType'] ) ){
+    if( isset( $actor['objectType'] ) ){
 
       $member_check = $this->assertionCheck(
           ( $actor['objectType'] == 'Agent' || $actor['objectType'] == 'Group' ),
@@ -193,7 +193,7 @@ class xAPIValidation {
     //Check that one functional identifier exists and is permitted
     $identifier_valid = $this->validIdentifier( $actor_keys );
 
-    if( $actor['objectType'] == 'Group' ){
+    if( isset( $actor['objectType'] ) && $actor['objectType'] == 'Group' ){
 
       //if objectType Group and no functional identifier: unidentified group
       if( $identifier_valid === false ){
@@ -753,7 +753,7 @@ class xAPIValidation {
             if( !is_array($context['contextActivities']['category']) ){
               $this->setError( 'Context: contextActivities: category must be an object or array of objects.' );
             } else {
-              if( $this->isAssoc( $$context['contextActivities']['category'] ) ){
+              if( $this->isAssoc( $context['contextActivities']['category'] ) ){
                 $this->statement['context']['contextActivities']['category'] = array( $context['contextActivities']['category'] );
               }
             }
@@ -763,7 +763,7 @@ class xAPIValidation {
             if( !is_array($context['contextActivities']['other']) ){
               $this->setError( 'Context: contextActivities: other must be an object or array of objects.' );
             } else {
-              if( $this->isAssoc( $$context['contextActivities']['other'] ) ){
+              if( $this->isAssoc( $context['contextActivities']['other'] ) ){
                 $this->statement['context']['contextActivities']['other'] = array( $context['contextActivities']['other'] );
               }
             }
@@ -854,11 +854,11 @@ class xAPIValidation {
       $result     = $this->statement['result'];
       $result_keys  = array_keys($result);//if result set, grab keys
       $valid_keys   = array('score', 
-                  'success', 
-                  'completion', 
-                  'response', 
-                  'duration', 
-                  'extensions');
+                            'success', 
+                            'completion', 
+                            'response', 
+                            'duration', 
+                            'extensions');
 
       //check all keys submitted are valid
       $result_valid = $this->checkKeys($result_keys, $valid_keys);
