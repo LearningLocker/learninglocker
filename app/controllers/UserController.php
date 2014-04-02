@@ -70,15 +70,18 @@ class UserController extends BaseController {
    */
   public function update( $id ){
 
-    $rules['email'] = 'required|email|unique:users';
-    $rules['name']  = 'required';
-             
-    $validator = Validator::make(Input::all(), $rules);
+    $data = Input::all();
 
+    //if email being changed, verify new one, otherwise ignore
+    if( $data['email'] != Auth::user()->email ){
+      $rules['email'] = 'required|email|unique:users';
+    }
+    $rules['name']  = 'required';       
+    $validator = Validator::make($data, $rules);
     if ($validator->fails()) return Redirect::back()->withErrors($validator);
   
     // Update the user
-    $s = $this->user->update($id, Input::all());
+    $s = $this->user->update($id, $data);
 
     if($s){
       return Redirect::back()->with('success', Lang::get('users.updated'));
