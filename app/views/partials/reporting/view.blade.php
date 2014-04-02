@@ -108,7 +108,7 @@
             object = value.object.definition.name[Object.keys(value.object.definition.name)[0]];
           }
         }
-        statement += '<div class="statement-row"><p>' + value.actor.name + ' ' + verb + ' <a href="">' + object + '</a></p></div>';
+        statement += '<div class="statement-row"><p>' + value.actor.name + '(' + value.actor.mbox + ') ' + verb + ' <a href="">' + object + '</a></p></div>';
       });
       return statement;
     }
