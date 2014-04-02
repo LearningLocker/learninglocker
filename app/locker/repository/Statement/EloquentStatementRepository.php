@@ -160,8 +160,13 @@ class EloquentStatementRepository implements StatementRepository {
 
 
       //The date stored in LRS in ISO 8601 format
-      $vs['stored'] = date('c');
+      $current_date = date('c');
+      $vs['stored'] = $current_date;
 
+      //if no timestamp, make it the same as stored
+      if( !isset($vs['timestamp']) ){
+        $vs['timestamp'] = $current_date;
+      }
        
       /*
       |------------------------------------------------------------------------------
