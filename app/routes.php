@@ -26,7 +26,11 @@ Route::get('/', function(){
     }
   }else{
     $site = \Site::first();
-    return View::make('system.forms.login', array( 'site' => $site ));
+    if( isset($site) ){
+      return View::make('system.forms.login', array( 'site' => $site ));
+    }else{
+      return View::make('system.forms.regsiter');
+    }
   }
 });
 
