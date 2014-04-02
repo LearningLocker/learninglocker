@@ -123,8 +123,10 @@ class ReportingController extends \BaseController {
   public function show($id, $report){
 
     $lrs    = $this->lrs->find($id);
+    $lrs_list = $this->lrs->all();
     $report = $this->report->find($report);
-    return View::make('partials.reporting.view', array('lrs' => $lrs, 
+    return View::make('partials.reporting.view', array('lrs' => $lrs,
+                                                       'list' => $lrs_list, 
                                                        'report' => $report, 
                                                        'reporting_nav' => true));
 
