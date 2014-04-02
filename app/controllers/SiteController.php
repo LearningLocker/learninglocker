@@ -33,7 +33,7 @@ class SiteController extends BaseController {
   public function index(){
 
     $site  = $this->site->all();
-    return View::make('partials.site.dashboard');
+    return View::make('partials.site.dashboard', array('site' => $site));
 
   }
 

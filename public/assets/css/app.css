@@ -183,3 +183,8 @@
   width:50px;
   margin:2px 0 2px 0;
 }
+
+.scaled {
+  border-bottom:1px solid #f1f1f1;
+  padding-bottom:5px;
+}

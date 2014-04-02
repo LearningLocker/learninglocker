@@ -1,6 +1,6 @@
 <div class="reporting-segment">
   <div class="row">
-    <div class="col-xs-12 col-sm-4">
+    <div class="col-xs-12 col-sm-6">
       <div class="panel panel-default">
         <div class="panel-heading">
           Scaled
@@ -16,7 +16,7 @@
             </div>
             <div class="checkbox">
               <label>
-                <input type="checkbox" id="scaled" value="true" data-type="result.scaled" data-display="Include Scaled"> Scaled
+                <input type="checkbox" id="scaled" value="result.score" data-type="result.score.scaled" data-display="Include Scaled"> Scaled
               </label>
             </div>
           </div>
@@ -30,7 +30,7 @@
             </div>
             <div class="checkbox">
               <label>
-                <input type="checkbox" id="raw" value="true" data-type="result.raw" data-display="Include Raw"> Raw
+                <input type="checkbox" id="raw" value="result.score" data-type="result.score.raw" data-display="Include Raw"> Raw
               </label>
             </div>
           </div>
@@ -44,7 +44,7 @@
             </div>
             <div class="checkbox">
               <label>
-                <input type="checkbox" id="min" value="true" data-type="result.min" data-display="Include Min"> Min
+                <input type="checkbox" id="min" value="result.score" data-type="result.score.min" data-display="Include Min"> Min
               </label>
             </div>
           </div>
@@ -58,7 +58,7 @@
             </div>
             <div class="checkbox">
               <label>
-                <input type="checkbox" id="max" value="true" data-type="result.max" data-display="Include Max"> Max
+                <input type="checkbox" id="max" value="result.score" data-type="result.score.max" data-display="Include Max"> Max
               </label>
             </div>
           </div>
@@ -66,7 +66,7 @@
         </div>
       </div>
     </div>
-    <div class="col-xs-12 col-sm-4">
+    <div class="col-xs-12 col-sm-6">
 
       <div class="panel panel-default">
         <div class="panel-heading">
@@ -75,33 +75,42 @@
         <div class="panel-body">
 
           <div class="form-group scaled">
-            <div class="checkbox">
+            <button class="btn btn-xs btn-default pull-right" id="success-clear">Clear</button>
+            <b>Success</b>
+            <div class="radio">
               <label>
-                <input type="checkbox" name="success" value="true" data-type="result.success" data-display="result: success is true"> Success - true
+                <input type="radio" name="success" id="success" value="true">
+                true
               </label>
             </div>
-            <div class="checkbox">
+            <div class="radio">
               <label>
-                <input type="checkbox" name="success" value="false" data-type="result.success" data-display="result: success is false"> Success - false
+                <input type="radio" name="success" id="success" value="false">
+                false
               </label>
             </div>
           </div>
 
           <div class="form-group scaled">
-            <div class="checkbox">
+            <button class="btn btn-xs btn-default pull-right" id="completion-clear">Clear</button>
+            <b>Completion</b>
+            <div class="radio">
               <label>
-                <input type="checkbox" name="completion" value="true" data-type="result.completion" data-display="result: completed"> Completion - true
+                <input type="radio" name="completion" id="completion" value="true">
+                true
               </label>
             </div>
-            <div class="checkbox">
+            <div class="radio">
               <label>
-                <input type="checkbox" name="completion" value="false" data-type="result.completion" data-display="result: not completed"> Completion - false
+                <input type="radio" name="completion" id="completion" value="false">
+                false
               </label>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <!--
     <div class="col-xs-12 col-sm-4">
 
       <div class="panel panel-default">
@@ -113,7 +122,7 @@
           <div class="form-group scaled">
             <div class="checkbox">
               <label>
-                <input type="checkbox" name="response" value="result.response: true" data-type="result.response" data-display="Include written response"> Has written response
+                <input type="checkbox" name="response" data-type="result.response" data-display="Include written response"> Has written response
               </label>
             </div>
           </div>
@@ -121,7 +130,7 @@
           <div class="form-group scaled">
             <div class="checkbox">
               <label>
-                <input type="checkbox" name="attachment" value="result.attachments: true" data-type="result.attachments" data-display="Include attachments"> Has attachments
+                <input type="checkbox" name="attachment" data-type="result.attachments" data-display="Include attachments"> Has attachments
               </label>
             </div>
           </div>
@@ -130,11 +139,12 @@
             <label>Signed by</label>
             <select class="form-control pull-right" id="signed" data-type="result.signed" data-display="Include attachments" name="signed_by">
               <option></option>
-              <option>Your mum</option>
             </select>
           </div>
         </div>
       </div>
     </div>
+    -->
+
   </div>
 </div>
