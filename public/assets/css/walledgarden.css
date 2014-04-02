@@ -12,10 +12,11 @@ li {
 .logo {
   margin-top:60px;
   text-align:center;
+  font-size:30px;
+  color:#fff;
 }
 
 .wrapper {
-    border-radius: 5px;
     background:rgba(0, 0, 0, 0.6); /*#333;*/ 
     margin-top:20px;
     padding:20px 20px 30px 20px;

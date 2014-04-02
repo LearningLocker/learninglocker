@@ -25,7 +25,6 @@ class EloquentSiteRepository implements SiteRepository {
     $site->name        = $data['name'];
     $site->description = $data['description'];
     $site->email       = $data['email'];
-    $site->lang        = $data['lang'];
     $site->create_lrs  = array('super');
     $site->api         = $data['api'];
     $site->registration = $data['registration'];
@@ -43,7 +42,6 @@ class EloquentSiteRepository implements SiteRepository {
     $site->name        = $data['name'];
     $site->description = $data['description'];
     $site->email       = $data['email'];
-    $site->lang        = $data['lang'];
     $site->create_lrs  = $data['create_lrs'];
     $site->api         = $data['api'];
     $site->registration = $data['registration'];

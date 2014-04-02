@@ -25,7 +25,8 @@ Route::get('/', function(){
       return View::make('partials.lrs.list', array('lrs' => $lrs));
     }
   }else{
-    return View::make('system.forms.login');
+    $site = \Site::first();
+    return View::make('system.forms.login', array( 'site' => $site ));
   }
 });
 
