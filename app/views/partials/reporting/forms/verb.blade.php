@@ -14,8 +14,8 @@
         }
       ?>
       <div class="col-xs-6 col-sm-4 col-md-4 col-lg-3">
-        <div class="checkbox verb" data-toggle="tooltip" data-placement="top" title="{{ $v['id'] }}">
-          <label>
+        <div class="checkbox">
+          <label class='form-tooltip' data-toggle="tooltip" data-placement="top" title="{{ $v['id'] }}">
             <input type="checkbox" value='{{ $v['id'] }}' data-type="verb" data-display="{{ $display }}"> {{ $display }}
           </label>
         </div>

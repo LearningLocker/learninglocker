@@ -14,8 +14,8 @@ define([
 
   $(document).ready(function() {
 
-    //show verb uri when hovered over
-    $('.verb').tooltip();
+    //show uri when hovered over
+    $('.form-tooltip').tooltip();
 
     var substringMatcher = function(strs) {
       return function findMatches(q, cb) {
