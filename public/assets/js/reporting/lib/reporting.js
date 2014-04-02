@@ -438,6 +438,9 @@ define([
       $('#save').show();
       $('#clear').show();
       $('#getStatements').show();
+      $('#statements').html('');
+      $('#statementCount').html('');
+      $('.showStatements').hide();
       console.log( query );
       jQuery.ajax({
         url: 'data',
