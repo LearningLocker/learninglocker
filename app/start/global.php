@@ -97,3 +97,11 @@ require app_path(). '/listeners.php';
 */
 
 const SPECIFIC_LRS =  'context.extensions.http://learninglocker&46;net/extensions/lrs._id';
+
+/*
+|---------------------------------------------------------------------------
+| Learning Locker specific validation
+|---------------------------------------------------------------------------
+*/
+
+require app_path().'/validators.php';

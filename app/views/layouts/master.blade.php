@@ -52,7 +52,6 @@
           <ul class="nav navbar-nav navbar-right">
             @if ( \app\locker\helpers\Access::isRole('super') )
               <li><a href="{{ URL() }}"><i class="icon icon-dashboard"></i> Admin dashboard</a></li>
-              <li><a href="{{ URL() }}/site#settings"><i class="icon icon-cog"></i> Settings</a></li>
             @endif
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon icon-list"></i> LRS List <b class="caret"></b></a>
@@ -72,6 +71,7 @@
                 @endif
               </ul>
             </li>
+            <li><a href="{{ URL() }}/users/{{ Auth::user()->_id }}/edit"><i class="icon icon-cog"></i> Settings</a></li>
             <li><a href="{{ URL() }}/logout">Logout</a></li>
           </ul>
         </div>

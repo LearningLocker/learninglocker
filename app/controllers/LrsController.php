@@ -71,8 +71,16 @@ class LrsController extends BaseController {
    */
   public function store(){
 
+    $data = Input::all();
+
+    //lrs input validation
+    $rules['title']        = 'required|alpha_spaces';
+    $rules['description']  = 'alpha_spaces';       
+    $validator = Validator::make($data, $rules);
+    if ($validator->fails()) return Redirect::back()->withErrors($validator);
+
     // Store lrs
-    $s = $this->lrs->create( Input::all() );
+    $s = $this->lrs->create( $data );
 
     if($s){
       return Redirect::to('/lrs')->with('success', Lang::get('lrs.created'));
@@ -106,6 +114,12 @@ class LrsController extends BaseController {
    * @return View
    */
   public function update($id){
+
+    //lrs input validation
+    $rules['title']        = 'required|alpha_spaces';
+    $rules['description']  = 'alpha_spaces';       
+    $validator = Validator::make($data, $rules);
+    if ($validator->fails()) return Redirect::back()->withErrors($validator);
 
     $l = $this->lrs->update( $id, Input::all() );
 

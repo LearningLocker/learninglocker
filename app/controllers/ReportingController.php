@@ -105,6 +105,14 @@ class ReportingController extends \BaseController {
     $request  = \Request::instance();
     $incoming = $request->getContent();
     $data     = json_decode($incoming, true);
+
+    //lrs input validation
+    $rules['name']         = 'required|alpha_spaces';
+    $rules['description']  = 'alpha_spaces';       
+    $validator = Validator::make($data, $rules);
+    if ($validator->fails())  return \Response::json( $validator );
+
+
     $save     = $this->report->create( $data );
 
     if( $save ){
