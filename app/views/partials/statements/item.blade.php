@@ -1,13 +1,21 @@
 <?php 
   $avatar = \app\locker\helpers\Helpers::getGravatar( substr($statement['actor']['mbox'], 7), '20');
-  $verb   = $statement['verb']['display'];
-  if( isset( $statement['object']['definition']['name'] )){
-    $object = $statement['object']['definition']['name'];
-    $object = reset( $object );
-  } else {
+  if( isset($statement['verb']['display']) ){
+    $verb = $statement['verb']['display'];
+    $verb = reset( $verb );
+  }else{
+    $verb = $statement['verb']['id'];
+  }
+  if( isset( $statement['object']['definition'] )){
+    if( isset( $statement['object']['definition']['name'] )){
+      $object = $statement['object']['definition']['name'];
+      $object = reset( $object );
+    }else {
+      $object = $statement['object']['id'];
+    }
+  }else {
     $object = $statement['object']['id'];
   }
-  $verb   = reset( $verb );
 
   $stored = new Carbon\Carbon($statement['stored']);
 ?>

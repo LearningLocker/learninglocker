@@ -134,10 +134,10 @@ class EloquentStatementRepository implements StatementRepository {
     $saved_ids = array();
     foreach( $statements as &$statement ){ //loop and amend - return on fail
 
-      $verify = new \app\locker\statements\xAPIValidation( $statement, \Site::first() );
+      $verify = new \app\locker\statements\xAPIValidation();
 
       //run full validation
-      $return = $verify->runValidation();
+      $return = $verify->runValidation( $statement, \Site::first() );
 
       if( $return['status'] == 'failed' ){
         return array( 'success' => 'false',  'message' => $return['errors'] );
@@ -238,7 +238,7 @@ class EloquentStatementRepository implements StatementRepository {
   public function statements( $id ){
 
     return $this->statement->where(SPECIFIC_LRS, $id)
-    ->orderBy('created_at', 'desc')
+    ->orderBy('stored', 'desc')
     ->paginate(15);
 
   }

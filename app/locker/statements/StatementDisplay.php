@@ -92,7 +92,11 @@ class StatementDisplay {
 
   private function setVerb( $verb, $lrs, $return_type='table' ){
 
-    $set_verb = reset( $verb['display'] );
+    if( isset($verb['display']) ){
+      $set_verb = reset( $verb['display'] );
+    }else{
+      $set_verb = $verb['id'];
+    }
 
     $display  = array('title'   => 'Verb',
                       'url'     => \URL::current() . '/verb/' . $set_verb, 

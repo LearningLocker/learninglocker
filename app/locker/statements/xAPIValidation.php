@@ -19,598 +19,377 @@ namespace app\locker\statements;
 
 class xAPIValidation {
 
-  private $status     = 'passed'; //status of the submitted statement. passed or failed.
-  private $errors     = array();  //error messages if validation fails
-  private $statement  = '';     //the statement submitted
-  private $authority  = '';     //the authority submitting the statement
+  private $status    = 'passed'; //status of the submitted statement. passed or failed.
+  private $errors    = array();  //error messages if validation fails
+  private $statement = array();  //the statement submitted
+  private $subStatement = array();
 
-  /*
-  |----------------------------------------------------------------------------
-  | Constructor
-  |
-  | @param  array   $statement    The statement.
-  | @param  array   $authority      The authority storing statement. 
-  |-----------------------------------------------------------------------------
-  */
-  public function __construct( $statement, $authority ){
+  /**
+   * Constructor
+   */
+  public function __construct(){}
+
+  /**
+   * Validator
+   *
+   * Run a full validation on submitted statement.
+   * @param  array   $statement    The statement.
+   * @param  array   $authority      The authority storing statement.
+   *
+   * @return array An array containing status, errors (if any) and the statement
+   * 
+   */
+  public function runValidation( $statement='', $authority='' ) {
 
     $this->statement = $statement;
-    $this->authority = $authority;
-    
-  }
 
-  /*
-  |----------------------------------------------------------------------------
-  | Validator
-  |
-  | Run a full validation on submitted statement.
-  |
-  | @return array An array containing status, errors (if any) and the statement
-  |----------------------------------------------------------------------------
-  */
-  public function runValidation() {
+    $this->getStarted( $statement );
 
-    //if getting started fails, don't continue with validation
-    if( $this->getStarted() ){
+    foreach( $statement as $k => $v ){
 
-      $this->validateId();
-      $this->validateActor();
-      $this->validateAuthority();
-      $this->validateVerb();
-      $this->validateObject();
-      $this->validateContext();
-      $this->validateTimestamp();
-      $this->validateStored();
-      $this->validateResult();
-      $this->validateVersion();
-      $this->validateAttachments();
-
+      switch( $k ){
+        case 'actor':       $this->validateActor( $v );       break;
+        case 'verb':        $this->validateVerb( $v );        break;
+        case 'object':      $this->validateObject( $v );      break;
+        case 'context':     $this->validateContext( $v );     break;
+        case 'timestamp':   $this->validateTimestamp( $v );   break;
+        case 'result':      $this->validateResult( $v );      break;
+        case 'version':     $this->validateVersion( $v );     break;
+        case 'attachments': $this->validateAttachments( $v ); break;
+      }
+      
     }
 
+    $this->validateAuthority( $authority );
+    $this->validateId();
+    $this->validateStored();
+
+    //now validate a sub statement if one exists
+    if( !empty($this->subStatement) ){
+      $this->runValidation($this->subStatement);
+    }
+      
     return array( 'status'    => $this->status, 
                   'errors'    => $this->errors,
                   'statement' => $this->statement );
 
   }
 
-  /*
-  |----------------------------------------------------------------------------
-  | Assertion Checker
-  |
-  | Checks if an assertion is true
-  | Sets a status (default 'failed') and pushed an error on failure/false
-  |
-  | @param  boolean $assertion    The boolean we are testing
-  | @param  string  $fail_error   The string to push into the errors array
-  | @param  string  $fail_status  The string to set the status to
-  | @return boolean           Whether we the assertion passed the test
-  |----------------------------------------------------------------------------
-  */
+  /**
+   *
+   * General validation of the core properties.
+   * @requirements https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#dataconstraints
+   *
+   * @param array $statement The full statement.
+   *
+   */
+  public function getStarted( $statement ){
+
+    //check statement is set, is an array and not empty
+    if( !$this->assertionCheck(
+          (isset($statement) && !empty($statement) && is_array($statement)),
+          'The statement doesn\'t exist or is not in the correct format.')) return false;
+
+    $data = $this->checkParams( 
+      array('id'         => array('uuid', false), 
+            'actor'      => array('array', true),
+            'verb'       => array('array', true), 
+            'object'     => array('array', true), 
+            'result'     => array('emptyArray', false), 
+            'context'    => array('emptyArray', false),
+            'timestamp'  => array('timestamp', false),
+            'authority'  => array('emptyArray', false),
+            'version'    => array('string', false), 
+            'attachments' => array('emptyArray', false)
+      ), $statement, 'core statement'
+    );
+
+  }
+
+  /**
+   * Assertion Checker
+   * Checks if an assertion is true
+   * Sets a status (default 'failed') and pushed an error on failure/false
+   *
+   * @param  boolean $assertion    The boolean we are testing
+   * @param  string  $fail_error   The string to push into the errors array
+   * @param  string  $fail_status  The string to set the status to
+   * @return boolean               Whether we the assertion passed the test
+   *
+   **/
   public function assertionCheck( $assertion, $fail_error='There was an error', $fail_status='failed' ){
 
     if( !$assertion ){
-      $this->setError( $fail_error, $fail_status );
+      $this->setError( $fail_error . ' ', $fail_status );
       return false;
     }
 
     return true;
   }
 
-  /*
-  |----------------------------------------------------------------------------
-  | Set errors and status
-  |
-  | Used to set the statement status and any errors.
-  |
-  | @param  string  $fail_error   The string to push into the errors array
-  | @param  string  $fail_status  The string to set the status to
-  |----------------------------------------------------------------------------
-  */
+  /**
+   * Set errors and status
+   *
+   * Used to set the statement status and any errors.
+   * 
+   * @param  string  $fail_error   The string to push into the errors array
+   * @param  string  $fail_status  The string to set the status to
+   *
+   **/
   private function setError( $fail_error='There was an error', $fail_status='failed' ){
     $this->status   = $fail_status;
     $this->errors[] = $fail_error;
   }
 
-  /*
-  |----------------------------------------------------------------------------
-  | Validate the ID.
-  |
-  | Must be generated by the LRS if statement is received without one. 
-  | Id's should be provided by the Activity provider.
-  |----------------------------------------------------------------------------
+  /**
+  * Validate statement ID.
+  * @requirements https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#stmtid
+  *
+  * @param UUID $id The statement ID.
+  *
   */
   public function validateId(){
-    if( empty( $this->statement['id'] ) ){
-      $this->statement['id'] = $this->makeUUID();
+    
+    //no id? Generate one.
+    if( !isset($this->statement['id']) ){
+      $id = $this->makeUUID();
+      $this->statement['id'] = $id;
     }
+
+    $data = $this->checkParams( 
+      array(
+        'statementId' => array('uuid', true),
+      ), array( 'statementId' => $this->statement['id'] ), 'statementId'
+    );
+
   }
 
-  /*
-  |----------------------------------------------------------------------------
-  | Validate actor.
-  | 
-  | This is mandatory.
-  |
-  | Actor ObjectType can be a 'group' or 'agent' - check and verify for both.
-  |
-  | ObjectType and Name are not required. Functional identifier is required.
-  |
-  | Functional identiers can be one of four things:
-  | 1) mbox       (mailto IRI)  mailto:email_address
-  | 2) mbox_sha1sum (string)    sha1 hash of mailto IRI
-  | 3) OpenID     (url)
-  | 4) account    (object)    homePage and name (URL and String). The name can be account number or text 
-  |
-  | Requirements
-  |
-  | If OpenID is used, use that and not an account (if an account is submitted).
-  | Each group must be treated unique, even if it contains identical list of members.
-  | Group members can only be agents. Form: Functional identifier: the value.
-  | 
-  | • An Agent MUST be identified by one (1) of the four types of Inverse Functional Identifiers (see 
-  | 4.1.2.3 Inverse Functional Identifier). 
-  | • An Agent MUST NOT include more than one (1) Inverse Functional Identifier. 
-  | • An Agent SHOULD NOT use inverse functional identifiers that are also used as a Group identifier. 
-  |
-  | Group requirements
-  |
-  | • An anonymous Group MUST include a 'member' property listing constituent Agents. 
-  | • An anonymous Group MUST NOT contain Group Objects in the 'member' property. 
-  | • An anonymous Group MUST NOT include any Inverse Functional Identifiers. 
-  |
-  | • An identified Group MUST include exactly one (1) Inverse Functional Identifier. 
-  | • An identified Group MUST NOT contain Group Objects in the 'member' property. 
-  | • An identified Group SHOULD NOT use Inverse Functional Identifiers that are also used as Agent 
-  | identifiers. 
-  | 
-  |----------------------------------------------------------------------------
-  */
-  public function validateActor(){
+  /**
+   * Validate actor. Mandatory.
+   * @requirements https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#actor
+   * 
+   * @param array $actor
+   *
+   * @todo check only one functional identifier is passed
+   *
+   */
+  public function validateActor( $actor ){
 
-    //first check actor is set as it is required
-    $actor_check = $this->assertionCheck(
-          ( isset($this->statement['actor']) && 
-            !empty($this->statement['actor']) && 
-            is_array($this->statement['actor']) ),
-          'The statement does not have actor set, which is required.');
-    
-    if( !$actor_check ) return false;
+    $actor_valid = $this->checkParams( 
+                                  array(
+                                    'mbox'         => array('mailto'),
+                                    'name'         => array('string'),
+                                    'objectType'   => array('string'),
+                                    'mbox_sha1sum' => array('string'),
+                                    'openID'       => array('irl'),
+                                    'account'      => array('object')
+                                  ), $actor, 'actor'
+                                );
 
-    $actor    = $this->statement['actor'];
-    $actor_keys = array_keys($actor);
+    if( $actor_valid !== true ) return false; //end here if not true
+
+    //Check that only one functional identifier exists and is permitted
+    $identifier_valid = $this->validActorIdentifier( array_keys($actor) );
+
+    if( $identifier_valid != true ) return false; //end here if not true
 
     //check, if objectType is set, that it is either Group or Agent
-    if( isset( $actor['objectType'] ) ){
+    if( isset($actor['objectType']) ){
+      if( !$this->assertionCheck( ($actor['objectType'] == 'Agent' || 
+                                   $actor['objectType'] == 'Group' ), 
+        'The Actor objectType must be Agent or Group.') ) return false;
 
-      $member_check = $this->assertionCheck(
-          ( $actor['objectType'] == 'Agent' || $actor['objectType'] == 'Group' ),
-          'The objectType is invalid. It must be a string Agent or Group.');
+      if( $actor['objectType'] == 'Group' ){
 
-      if( !$member_check ) return false;
+        //if objectType Group and no functional identifier: unidentified group
+        if( $identifier_valid === false ){
+          //Unidentified group so it must have an array containing at least one member
+          if( !$this->assertionCheck( (isset($actor['member']) && is_array($actor['member'])),
+              'As Actor objectType is Group, it must contain a members array.') ) return false;
+        }
 
-    }
-
-    //Check that one functional identifier exists and is permitted
-    $identifier_valid = $this->validIdentifier( $actor_keys );
-
-    if( isset( $actor['objectType'] ) && $actor['objectType'] == 'Group' ){
-
-      //if objectType Group and no functional identifier: unidentified group
-      if( $identifier_valid === false ){
-        //Unidentified group so it must have an array containing at least one member
-        $member_check = $this->assertionCheck(
-            ( isset($actor['member']) && is_array($actor['member']) ),
-            'As Actor objectType is Group, it must contain a members array.');
-
-        if( !$member_check ) return false;
-      }else{
-        //identified group
-        //check that the identifier given is in the correct format
-        $validate_identifiers = $this->validateIdentifiers( $actor );
       }
-
-    }else{
-
-      //if not a group, then it is an Agent, or not set so needs a valid
-      //functional identifier
-      if( $identifier_valid === false ){
-        $this->setError( 'The functional identifier is not valid.' );
-        return false;
-      }
-
-      //check that the identifier given is in the correct format
-      $validate_identifiers = $this->validateIdentifiers( $actor );
-
     }
 
   }
 
   /**
-   * Check to make sure an valid identifier has been included in the statement.
+   * Validate authority. Mandatory.
+   * Overwrite / Add. This assume basic http authentication for now. See @todo
    *
-   * @param $actor_keys (array) The array of actor keys to validate
-   * @return boolean 
+   * @Requirements https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#authority
+   * @todo rework to handle 3-legged OAuth.
    *
-   **/
-  public function validIdentifier( $actor_keys ){
-
-    $identifier_valid     = false;
-    $count          = 0;
-    $functional_identifiers = array('mbox', 'mbox_sha1sum', 'openID', 'account');
-
-    //check functional identifier exists and is valid
-    foreach( $actor_keys as $k ){
-      if( in_array($k, $functional_identifiers) ){
-        $identifier_valid = true;
-        $count++; //increment counter so we can check only one identifier is present
-      }
-    }
-
-    //only allow one identifier
-    if( $count > 1 ){
-      $identifier_valid = false;
-      $this->setError( 'A statement can only set one functional identifier.' ); 
-    }
-    
-    return $identifier_valid;
-  }
-
-  /**
-   * Validate the 4 allowed functional identifiers for an actor.
+   * @param array $authority
    *
-   * @param $actor (array) An array containing the actor.
-   * @return boolean 
-   *
-   **/
-  public function validateIdentifiers( $actor ){
-    
-    if( isset($actor['mbox']) ){
-      $mbox_format = substr($actor['mbox'], 0, 7);
-      if( $mbox_format != 'mailto:'){
-        $this->setError( 'The functional identifier - mbox - is not in a valid format.' );  
-        return false;
-      }
-      return true;
-    }
-
-    if( isset($actor['openID']) ){
-      //for now we just check it is a url / @todo check it is really an openID?
-      if(!filter_var($actor['openID'], FILTER_VALIDATE_URL)){
-        $this->setError( 'The functional identifier - openID - is not in a valid format.' );  
-        return false;
-      }
-      return true;
-    }
-
-    if( isset($actor['mbox_sha1sum']) ){
-      //for now just check it is a string
-      if( !is_string( $actor['mbox_sha1sum'] ) ){
-        $this->setError( 'The functional identifier - mbox_sha1sum - is not in a valid format.' );  
-        return false;
-      }
-      return true;
-    }
-
-    if( isset($actor['account']) ){
-      //for now just check it is actually an object
-      if( !is_object( $actor['account'] ) ){
-        $this->setError( 'The functional identifier - account - is not in a valid format.' ); 
-        return false;
-      }
-      return true;
-    }
-
-  }
-
-  /*
-  |----------------------------------------------------------------------------
-  | Validate authority.
-  |
-  | Mandatory.
-  |
-  | Requirements
-  |
-  | • Authority MUST be an Agent, except in 3-legged OAuth, where it must be a Group with two 
-  | Agents. The two Agents represent an application and user together.
-  | • The LRS MUST include the user as an Agent as the entire authority if the user connects directly 
-  | (using HTTP Basic Authentication) or is included as part of a Group. 
-  | • The LRS MUST ensure that all Statements stored have an authority. 
-  | • The LRS SHOULD overwrite the authority on all stored received Statements, based on the 
-  | credentials used to send those Statements.
-  | • The LRS MAY identify the user with any of the legal identifying properties if a user connects 
-  | directly (using HTTP Basic Authentication) or a part of a 3-legged OAuth.
-  |
-  | @todo rework to handle 3-legged OAuth.
-  | 
-  | 
-  |----------------------------------------------------------------------------
-  */
-  public function validateAuthority(){
-    //Overwrite / Add. This assume basic http authentication for now. See @todo.
+   */
+  public function validateAuthority( $authority ){
     $this->statement['authority'] = array(
-      'name'         =>  $this->authority['name'],
-      'mbox'         =>  'mailto:' . $this->authority['email'],
+      'name'         =>  $authority['name'],
+      'mbox'         =>  'mailto:' . $authority['email'],
       'objectType'   =>  'Agent'
     );
   }
 
-  /*
-  |----------------------------------------------------------------------------
-  | Validate verb.
-  | 
-  | Mandatory.
-  | 
-  | Contains: iD ( IRI ), display ( Language map )
-  |
-  | @todo check IRI is valid
-  | 
-  |----------------------------------------------------------------------------
-  */
-  public function validateVerb(){
+  /**
+   *
+   * Validate verb. Mandatory.
+   * @requirements https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#verb
+   *
+   * @param array $verb
+   * 
+   */
+  public function validateVerb( $verb ){
 
-    $verb  = $this->statement['verb'];
-    $count = count($verb);
-
-    //first check there are only two keys
-    if( $count != 2 ){
-      $this->setError( 'failed', 'A verb can only contain two keys: Id and display.' );   
-      return false;
-    }else{
-      //now check the keys are id and display
-      if ( !array_key_exists('id', $verb) || !array_key_exists('display', $verb)){
-        $this->setError( 'A verb can only contain two keys: Id and display.' );
-        return false;
-      }
-    }
-
-    return true;
+    $this->checkParams( 
+      array(
+        'id'      => array('iri',   true),
+        'display' => array('lang_map', false)
+      ), $verb, 'verb'
+    );
 
   }
 
-  /*
-  |----------------------------------------------------------------------------
-  | Validate object.
-  |
-  | Mandtory
-  | 
-  | The Object of a Statement can be an Activity, Agent/Group, Sub-Statement, or 
-  | Statement Reference. 
-  |
-  | If no objectType set - assume Activity
-  | 
-  | When objectType = Activity
-  |
-  | Contains id (IRI - required) and definition ( object )
-  | Definition can contain: name, description, type (uri e.g. type: http://....), moreInfo, extensions
-  | 
-  | Requirements
-  | 
-  | • An LRS MUST ignore any information which indicates two authors or organizations may have 
-  | used the same Activity id. 
-  | • An LRS MUST NOT treat references to the same id as references to different Activities. 
-  | • Upon receiving a Statement with an Activity Definition that differs from the one stored, an LRS 
-  | SHOULD decide whether it considers the Activity Provider to have the authority to change the 
-  | definition and SHOULD update the stored Activity Definition accordingly if that decision is positive. 
-  | • An LRS MAY accept small corrections to the Activity‟s definition. For example, it would be okay 
-  | for an LRS to accept spelling fixes, but it may not accept changes to correct responses.
-  |
-  | When objectType = Statement
-  |
-  | Contains id (UUID of a statement)
-  | • A Statement Reference MUST specify an "objectType" property with the value "StatementRef". 
-  | • A Statement Reference MUST set the "id" property to the UUID of a Statement. 
-  |
-  | Sub-statements
-  |
-  | • A Sub-Statement MUST specify an "objectType" property with the value "SubStatement". 
-  | • A Sub-Statement MUST be validated as a Statement in addition to other Sub-Statement 
-  | requirements. 
-  | • A Sub-Statement MUST NOT have the "id", "stored", "version" or "authority" properties. 
-  | • A Sub-Statement MUST NOT contain a Sub-Statement of their own, i.e., cannot be nested. 
-  | 
-  |----------------------------------------------------------------------------
-  */
-  public function validateObject(){
+  // 
 
-    $object_check = $this->assertionCheck(
-          ( isset($this->statement['object']) && is_array($this->statement['object']) ),
-          'The statement object is not correctly formatted.');
-    
-    if( !$object_check ) return false;
-
-    $object = $this->statement['object'];
-
-    $object_type_valid_keys = array('Activity', 
-                    'Group', 
-                    'Agent', 
-                    'SubStatement', 
-                    'StatementRef');
+  /**
+   * Validate object. Mandtory.
+   *
+   * @requirements https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#object
+   *
+   */
+  public function validateObject( $object ){
 
     //find out what type of object it is as that will inform next steps
     if( isset($object['objectType']) ){
 
       $object_type = $object['objectType'];
 
-      //check objectType is valid.
-      $object_type_valid = $this->checkKeys( array($object_type), $object_type_valid_keys );
-
-      //if there is an invalid key, exit here
-      if( $object_type_valid === false ){
-        $this->setError( 'The objectType is not valid.' );
-        return false;
-      }
+      $object_type_valid = $this->checkKeys( array(
+                                                'Activity', 
+                                                'Group', 
+                                                'Agent', 
+                                                'SubStatement', 
+                                                'StatementRef'
+                                              ), array($object_type), 'object'
+                                            );
 
     }else{
       $object_type = 'Activity'; //this is the default if nothing defined.
     }
 
     //depending on the objectType, validate accordingly.
-    $object_keys   = array_keys( $object );
+    $object_keys = array_keys( $object );
 
-    if( $object_type == 'Activity' || $object_type == 'Agent' || $object_type == 'Group' ){
+    if( in_array($object_type, array( 'Activity', 'Agent', 'Group' )) ){
 
-      $activity_valid_keys = array('objectType', 
-                     'id', 
-                     'definition');
+      $object_valid = $this->checkParams( 
+                                  array(
+                                    'objectType' => array('string'), 
+                                    'id'         => array('iri', true), 
+                                    'definition' => array('emptyArray')
+                                    ), $object, 'object'
+                                );
 
-      //check activity object only has valid keys.
-      $object_valid = $this->checkKeys($object_keys, $activity_valid_keys);
+      if( $object_valid !== true ) return false; //end here if not true
 
-      if( $object_valid === false ){
-        $this->setError( 'The object has an invalid property.' );
-        return false;
-      }
-
-      //check if key exists as it is required.
-      if( !isset($object['id']) ){
-        $this->setError( 'The object\'s id has not been set and is required.' );
-        return false;
-      }
-
-      //now check object keys are the correct format
-
-      //@todo check id is an IRI
-      //if( !is_array($object['id']) ){
-      //  $this->status   = 'failed';
-      //  $this->errors[] = 'Object: id need to be an IRI.';
-      //}
-
-      //check definition, if set, is an object
       if( isset($object['definition']) ){
-        //\App::abort(400, $object['definition']);
-        if( !is_array($object['definition']) ){
-          $this->setError( 'Object: definition needs to be an object.' );
-        }
 
         $definition = $object['definition'];
-        $definition_keys = array_keys( $definition );
 
-        $definition_valid_keys = array('name', 
-                         'description', 
-                         'type', 
-                         'moreInfo', 
-                         'extensions', 
-                         'interactionType',
-                         'correctResponsesPattern',
-                         'choices',
-                         'scale',
-                         'source',
-                         'target',
-                         'steps');
+        $definition_valid = $this->checkParams( 
+                                  array(
+                                    'name'          => array('lang_map'), 
+                                    'description'   => array('lang_map'), 
+                                    'type'          => array('iri'), 
+                                    'moreInfo'      => array('irl'), 
+                                    'extensions'    => array('array'), 
+                                    'interactionType' => array('string'),
+                                    'correctResponsesPattern' => array('array'),
+                                    'choices'       => array('array'),
+                                    'scale'         => array('array'),
+                                    'source'        => array('array'),
+                                    'target'        => array('array'),
+                                    'steps'         => array('array')
+                                    ), $definition, 'Object Definition'
+                                  );
 
-        //check activity object definition only has valid keys.
-        $definition_valid = $this->checkKeys($definition_keys, $definition_valid_keys);
-
-        if( $definition_valid === false ){
-          $this->setError( 'The object\'s definition has an invalid property.' );
-          return false;
-        }
-
-        //now check definition keys are formated correctly
-        if( isset($definition['name']) ){
-          if( !is_array($definition['name']) ){
-            $this->setError( 'Object: definition: name needs to be a language map.' );
-          }
-        }
-
-        if( isset($definition['description']) ){
-          if( !is_array($object['definition']['description']) ){
-            $this->setError( 'Object: definition: description needs to be a language map.' );
-          }
-        }
-
-        if( isset($definition['type']) ){
-          if( !filter_var($object['definition']['type'], FILTER_VALIDATE_URL) ){
-            $this->setError( 'Object: definition: type needs to be a IRL.' );
-          }
-        }
-
-        if( isset($definition['moreInfo']) ){
-          //@todo - not sure what an IL is
-        }
+        if( $definition_valid !== true ) return false; //end here if not true
 
         if( isset($definition['interactionType']) ){
           //check to see it type is set, if not, set to http://adlnet.gov/expapi/activities/cmi.interaction
           $allowed_interaction_types = array('choice',
-                             'sequencing',
-                             'Likert',
-                             'Matching',
-                             'Performance',
-                             'true-false',
-                             'fill-in',
-                             'numeric',
-                             'other');
+                                             'sequencing',
+                                             'Likert',
+                                             'Matching',
+                                             'Performance',
+                                             'true-false',
+                                             'fill-in',
+                                             'numeric',
+                                             'other');
 
-          if( !in_array($definition['interactionType'], $allowed_interaction_types) ){
-            $this->setError( 'Object: definition: interactionType is not valid.' );
-          } 
-        }
-
-        if( isset($definition['correctResponsesPattern']) ){
-          //check to see it type is set, if not, set to http://adlnet.gov/expapi/activities/cmi.interaction
-          if( !is_array($definition['correctResponsesPattern']) ){
-            $this->setError( 'Object: definition: correctResponsesPattern needs to be an array.' );
-          }
+          $this->assertionCheck(
+            (in_array($definition['interactionType'], $allowed_interaction_types)),
+            'Object: definition: interactionType is not valid.');
         }
 
         if( isset($definition['choices'], $definition['scale'], $definition['source'], $definition['target'],$definition['steps']) ){
 
           $check_valid_keys = array('id', 'description');
-
-          $loop = array('choices','scale','source','target','steps');
+          $loop             = array('choices','scale','source','target','steps');
 
           foreach( $loop as $l ){
 
             //check activity object definition only has valid keys.
-            $is_valid = $this->checkKeys($definition[$l], $check_valid_keys);
+            $is_valid = $this->checkKeys($check_valid_keys, $definition[$l], 'Object Definition' );
 
-            if( $definition_valid === false ){
-              $this->setError( 'Object: definition: It has an invalid property.' );
-              return false;
-            }
+            if( !$this->assertionCheck(($definition_valid === true),
+              'Object: definition: It has an invalid property.') ) return false;
 
-            //these components all contain an id and description
-            if ( !array_key_exists('id', $definition[$l]) || !array_key_exists('description', $definition[$l])){
-              $this->setError( 'Object: definition: It needs to be an array with keys id and description.' );
-            }
-
+            $this->assertionCheck(
+              (array_key_exists('id', $definition[$l]) || array_key_exists('description', $definition[$l])),
+              'Object: definition: It needs to be an array with keys id and description.');
           }
+
         }
 
-        if( isset($definition['extensions']) ){
-          if( !is_array($definition['extensions']) ){
-            $this->setError( 'Object: definition: extensions need to be an object.' );
-          }
-        }
+        $this->assertionCheck(
+          (!isset($definition['extensions']) || is_array($definition['extensions'])),
+          'Object: definition: extensions need to be an object.');
+
       }
+
+    }
           
-    }elseif( $object_type == 'StatementRef' ){
+    if( $object_type == 'StatementRef' ){
       //Will only have objectType and id where id is a statement UUID.
       $id = $object['id'];
       if( isset($id) ){
         //check it is in a valid UUID format
-        if( !preg_match('/^\{?[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}\}?$/i', $id) ){
-          $this->setError( 'Object of type StatementRef needs an id with a valid UUID.' );
-        }
+        $this->assertionCheck((!$this->validateUUID( $id )),
+          'Object of type StatementRef needs an id with a valid UUID.');
+
       }else{
         $this->setError( 'Object of type StatementRef needs to contain the UUID of a statement.' );
         return false;
       }
 
     }elseif( $object_type == 'SubStatement' ){
-      //@todo validate sub-statement
         
       //remove "id", "stored", "version" or "authority" if exist
       unset($object['id']);
       unset($object['stored']);
       unset($object['version']);
       unset($object['authority']);
+      unset($object['objectType']);
 
       //check object type is not SubStatement as nesting is not permitted
-      if( $object['objectType'] == 'SubStatement' ){
+      if( $object['object']['objectType'] == 'SubStatement' ){
         $this->setError( 'A SubStatement cannot contain a nested statement.' );
         return false;
       }
+
+      $this->subStatement = $object;
 
     }else{
       //finished.
@@ -618,357 +397,135 @@ class xAPIValidation {
 
   }
 
-  /*
-  |----------------------------------------------------------------------------
-  | Validate context.
-  |
-  | Optional.
-  | 
-  | Context provides extra information about the statement. It can have the 
-  | following elements:
-  |
-  | 1) Registration: UUID
-  | 2) Instructor: Agent (of group) - if not set as the Actor of statement.
-  | 3) Team: (group) - if not set as the actor of the statement.
-  | 4) contextActivities: must be a valid type - parent, grouping, category, other.
-  | 5) revision: (string)
-  | 6) platform: (string)
-  | 7) language: (string (as defined in RFC 5646)
-  | 8) statement: Statement reference
-  | 9) extensions
-  |
-  | Requirements
-  |
-  | • The revision property MUST NOT be used if the Statement's Object is an Agent or Group. 
-  | • The platform property MUST NOT be used if the Statement's Object is an Agent or Group. 
-  | • The language property MUST NOT be used if not applicable or unknown. 
-  |
-  | contextActivies requirements
-  |
-  | • Every key in the contextActivities Object MUST be one of parent, grouping, category, or other. 
-  | • Every value in the contextActivities Object MUST be either a single Activity object or an array of 
-  | Activity objects. 
-  |
-  | 
-  |----------------------------------------------------------------------------
-  */
-  public function validateContext(){
-    
-    if( isset($this->statement['context']) && !empty($this->statement['context']) ){
+  /**
+   * Validate context. Optional.
+   * @requirements https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#context
+   * 
+   * @param array $content
+   */
+  public function validateContext( $context ){
 
-      $context_check = $this->assertionCheck(
-          ( is_array($this->statement['context']) ),
-          'Context must be an object.');
-    
-      if( !$context_check ) return false;
+    $valid_context_keys = array('registration'      => array('uuid',   false), 
+                                'instructor'        => array('emptyArray',  false), 
+                                'team'              => array('emptyArray',  false), 
+                                'contextActivities' => array('emptyArray', false), 
+                                'revision'          => array('string', false), 
+                                'platform'          => array('string', false),
+                                'language'          => array('string', false),
+                                'statement'         => array('uuid',   false),
+                                'extensions'        => array('array',  false));
 
+    //check all keys submitted are valid
+    $this->checkParams($valid_context_keys, $context, 'context');
+
+    //check properties in contextActivies
+    if( isset($context['contextActivities']) ){
+
+      $valid_context_keys = array('parent'   => array('array'), 
+                                  'grouping' => array('array'), 
+                                  'category' => array('array'), 
+                                  'other'    => array('array'));
+
+      //check all keys submitted are valid
+      $this->checkParams($valid_context_keys, 
+                         $context['contextActivities'],
+                         'contextActivities');
+
+      //now check all property keys contain an array
+      //While the contextActivity may be an object on input, it must be stored as an array - so 
+      //on each type we will check if an associative array has been passed and insert it into an array if needed
+      if( isset($context['contextActivities']['parent']) ){
+        if( $this->isAssoc( $context['contextActivities']['parent'] ) ){ 
+          $this->statement['context']['contextActivities']['parent'] = array( $context['contextActivities']['parent'] );
+        }
+      }
+
+      if( isset($context['contextActivities']['grouping']) ){
+        if( $this->isAssoc( $context['contextActivities']['grouping'] ) ){
+          $this->statement['context']['contextActivities']['grouping'] = array( $context['contextActivities']['grouping'] );
+        }
+      }
+
+      if( isset($context['contextActivities']['category']) ){
+        if( $this->isAssoc( $context['contextActivities']['category'] ) ){
+            $this->statement['context']['contextActivities']['category'] = array( $context['contextActivities']['category'] );
+        }
+      }
+
+      if( isset($context['contextActivities']['other']) ){
+        if( $this->isAssoc( $context['contextActivities']['other'] ) ){
+          $this->statement['context']['contextActivities']['other'] = array( $context['contextActivities']['other'] );
+        }
+      }
+    }
+
+  }
+
+  /**
+   *
+   * Validate result. Optional.
+   * @requirements https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#result
+   *
+   * @param array $result
+   * 
+   */
+  public function validateResult( $result ){
+    
+    $valid_keys   = array('score'       => array('emptyArray',   false), 
+                          'success'     => array('boolean', false), 
+                          'completion'  => array('boolean', false), 
+                          'response'    => array('string',  false),
+                          'duration'    => array('iso8601Duration', false), 
+                          'extensions'  => array('array',   false));
+
+    //check all keys submitted are valid
+    $this->checkParams($valid_keys, $result, 'result');
+
+    //now check each part of score if it exists
+    if( isset($result['score']) ){
+
+      $valid_score_keys = array('scaled' => array('score'), 
+                                'raw'    => array('score'), 
+                                'min'    => array('score'), 
+                                'max'    => array('score'));
+
+      //check all keys submitted are valid
+      $this->checkParams($valid_score_keys, $result['score'], 'result score');
       
-      $context        = $this->statement['context'];
-      $context_keys       = array_keys($context);
-      $valid_context_keys = array('registration', 
-                    'instructor', 
-                    'team', 
-                    'contextActivities', 
-                    'revision', 
-                    'platform',
-                    'language',
-                    'statement',
-                    'extensions');
-
-      //check all keys submitted are valid
-      $context_valid = $this->checkKeys($context_keys, $valid_context_keys);
-
-      //if there is an invalid key, exit here
-      if( $context_valid === false ){
-        $this->setError( 'There is an invalid property in context.' );
-        return false;
-      }
-
-      //now check all main properties
-      if( isset($context['registration']) ){
-        if( !preg_match('/^\{?[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}\}?$/i', $context['registration']) ){
-          $this->setError( 'Context: registration must be a UUID.' );
+      //now check format of each score key
+      if( isset($result['score']['scaled']) ){
+        if( $result['score']['scaled'] > 1 || $result['score']['scaled'] < -1){
+          $this->setError( 'Result: score: scaled must be between 1 and -1.' );
         }
       }
-
-      if( isset($context['instructor']) ){
-        if( !is_array($context['instructor']) ){
-          $this->setError( 'Context: instructor must be an Agent object.' );
+      if( isset($result['score']['max']) ){
+        if( $result['score']['max'] < $result['score']['min'] ){
+          $this->setError( 'Result: score: max must be greater than min.' );
         }
       }
-
-      if( isset($context['team']) ){
-        if( !is_array($context['team']) ){
-          $this->setError( 'Context: team must be an Group object.' );
+      if( isset($result['score']['min']) ){
+        if( isset($result['score']['max'])){
+          if( $result['score']['min'] > $result['score']['max'] ){
+            $this->setError( 'Result: score: min must be less than max.' );
+          }
         }
       }
-
-      if( isset($context['contextActivities']) ){
-        if( !is_array($context['contextActivities']) ){
-          $this->setError( 'Context: contextActivities must be an object.' );
-        }else{
-          //check properties in contextActivies
-          $contextActivies_valid        = true;
-          $contextActivities_keys     = array_keys($context['contextActivities']);
-          $valid_contextActivities_keys = array('parent', 
-                              'grouping', 
-                              'category', 
-                              'other');
-            //check all keys submitted are valid
-          foreach( $contextActivities_keys as $k ){
-            if( !in_array($k, $valid_contextActivities_keys) ){
-              $contextActivies_valid = false;
-            }
-          }
-
-          //if there is an invalid key, exit here
-          if( $contextActivies_valid === false ){
-            $this->setError( 'There is an invalid property in contextActivities.' );
-            return false;
-          }
-
-          //now check all property keys contain an array
-          //While the contextActivity may be an object on input, it must be stored as an array - so on each type we will check if an associative array has been passed and insert it into an array if needed
-          if( isset($context['contextActivities']['parent']) ){
-            if( !is_array($context['contextActivities']['parent']) ){
-              $this->setError( 'Context: contextActivities: parent must be an object or array of objects.' );
-            } else { 
-              if( $this->isAssoc( $context['contextActivities']['parent'] ) ){ 
-                $this->statement['context']['contextActivities']['parent'] = array( $context['contextActivities']['parent'] );
-              }
-            }
-          }
-
-          if( isset($context['contextActivities']['grouping']) ){
-            if( !is_array($context['contextActivities']['grouping']) ){
-              $this->setError( 'Context: contextActivities: grouping must be an object or array of objects.' );
-            } else {
-              if( $this->isAssoc( $context['contextActivities']['grouping'] ) ){
-                $this->statement['context']['contextActivities']['grouping'] = array( $context['contextActivities']['grouping'] );
-              }
-            }
-          }
-
-          if( isset($context['contextActivities']['category']) ){
-            if( !is_array($context['contextActivities']['category']) ){
-              $this->setError( 'Context: contextActivities: category must be an object or array of objects.' );
-            } else {
-              if( $this->isAssoc( $context['contextActivities']['category'] ) ){
-                $this->statement['context']['contextActivities']['category'] = array( $context['contextActivities']['category'] );
-              }
-            }
-          }
-
-          if( isset($context['contextActivities']['other']) ){
-            if( !is_array($context['contextActivities']['other']) ){
-              $this->setError( 'Context: contextActivities: other must be an object or array of objects.' );
-            } else {
-              if( $this->isAssoc( $context['contextActivities']['other'] ) ){
-                $this->statement['context']['contextActivities']['other'] = array( $context['contextActivities']['other'] );
-              }
-            }
+      if( isset($result['score']['raw']) ){
+        if( isset($result['score']['max']) && isset($result['score']['min']) ){
+          if( ($result['score']['raw'] > $result['score']['max']) || ($result['score']['raw'] < $result['score']['min']) ){
+            $this->setError( 'Result: score: raw must be between max and min.' );
           }
         }
       }
 
-      if( isset($context['revision']) ){
-        //If Statement's Object is an Agent or Group, don't save
-        $object_type = array('Agent', 'Group');
-        if( !in_array($this->statement['object']['objectType'], $object_type) ){
-          if( !is_string($context['revision']) ){
-            $this->setError( 'Context: revision must be a string.' );
-          }
-        }
-      }
-
-      if( isset($context['platform']) ){
-        //If Statement's Object is an Agent or Group, don't save
-        $object_type = array('Agent', 'Group');
-        if( !in_array($this->statement['object']['objectType'], $object_type) ){
-          if( !is_string($context['platform']) ){
-            $this->setError( 'Context: platform must be a string.' );
-          }
-        }
-      }
-
-      if( isset($context['language']) ){
-        //@todo need to check language is valid rfc 5646 code, if not, reject it.
-        if( !is_string($context['language']) ){
-          $this->setError( 'Context: language must be a string.' );
-        }
-      }
-
-      if( isset($context['statement']) ){
-        if( !preg_match('/^\{?[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}\}?$/i', $context['statement']) ){
-          $this->setError( 'Context: statement must be a UUID of the connected statement.' );
-        }
-      }
-
-      if( isset($context['extensions']) ){
-        if( !is_array($context['extensions']) ){
-          $this->setError( 'Result: extensions must be an object.' );
-        }
-      }
-
-    
     }
-
-
+    
   }
 
-  /*
-  |----------------------------------------------------------------------------
-  | Validate result.
-  |
-  | Optional.
-  | 
-  | There are 6 parts available for result: score, success, completion, response,
-  | duration, extensions.
-  | 
-  | Score: object
-  | Success: boolean
-  | Completion: boolean
-  | Response: string
-  | Duration: ISO 8601 
-  | Extension: object
-  |
-  | Requirements:
-  |
-  | Score
-  | • The Score Object SHOULD include 'scaled' if a logical percent based score is known. 
-  | • The Score Object SHOULD NOT be used for scores relating to progress or completion. Consider 
-  | using an extension from an extension profile instead.
-  | 
-  |----------------------------------------------------------------------------
-  */
-  public function validateResult(){
-
-    if( isset($this->statement['result']) && !empty($this->statement['result'])){
-
-      $result_check = $this->assertionCheck(
-          ( is_array($this->statement['result']) ),
-          'Result must be an object.');
-    
-      if( !$result_check ) return false;
-
-      $result     = $this->statement['result'];
-      $result_keys  = array_keys($result);//if result set, grab keys
-      $valid_keys   = array('score', 
-                            'success', 
-                            'completion', 
-                            'response', 
-                            'duration', 
-                            'extensions');
-
-      //check all keys submitted are valid
-      $result_valid = $this->checkKeys($result_keys, $valid_keys);
-
-      //if there is an invalid key, exit here
-      if( $result_valid === false ){
-        $this->setError( 'There is an invalid key in result.' );
-        return false;
-      }
-
-      //now check format of each key section
-      if( isset($result['score']) ){
-        if( !is_array($result['score']) ){
-          $this->setError( 'Result: score must be an object.' );
-        }else{
-          //check contents of score
-          $score_valid    = true;
-          $valid_score_keys = array('scaled', 'raw', 'min', 'max');
-          $score_keys     = array_keys($result['score']);
-          //check all keys submitted are valid
-          foreach( $score_keys as $k ){
-            if( !in_array($k, $valid_score_keys) ){
-              $score_valid = false;
-            }
-          }
-          if( $score_valid === false ){
-            $this->setError( 'There is an invalid key in the score object.' );
-            return false;
-          }
-          //now check format of each score key
-          if( isset($result['score']['scaled']) ){
-            if( $result['score']['scaled'] > 1 || $result['score']['scaled'] < -1){
-              $this->setError( 'Result: score: scaled must be between 1 and -1.' );
-            }
-          }
-          if( isset($result['score']['max']) ){
-            if( !is_numeric($result['score']['max']) ){
-              $this->setError( 'Result: score: max must be a numeric value.' );
-            }
-            if( $result['score']['max'] < $result['score']['min'] ){
-              $this->setError( 'Result: score: max must be greater than min.' );
-            }
-          }
-          if( isset($result['score']['min']) ){
-            if( !is_numeric($result['score']['min']) ){
-              $this->setError( 'Result: score: min must be a numeric value.' );
-            }
-            if( isset($result['score']['max'])){
-              if( $result['score']['min'] > $result['score']['max'] ){
-                $this->setError( 'Result: score: min must be less than max.' );
-              }
-            }
-          }
-          if( isset($result['score']['raw']) ){
-            if( !is_numeric($result['score']['raw']) ){
-              $this->setError( 'Result: score: raw must be a numeric value.' );
-            }
-            if( isset($result['score']['max']) && isset($result['score']['min']) ){
-              if( ($result['score']['raw'] > $result['score']['max']) || ($result['score']['raw'] < $result['score']['min']) ){
-                $this->setError( 'Result: score: raw must be between max and min.' );
-              }
-            }
-          }
-        }
-      }
-
-      if( isset($result['completion']) ){
-        if( !is_bool($result['completion']) ){
-          $this->setError( 'Result: completion must be a boolean.' );
-        }
-      }
-
-      if( isset($result['success']) ){
-        if( !is_bool($result['success']) ){
-          $this->setError( 'Result: success must be a boolean.' );
-        }
-      }
-
-      if( isset($result['duration']) ){
-        if( !is_numeric($result['duration']) ){
-          $this->setError( 'Result: duration must be an integer.' );
-        }
-      }
-
-      if( isset($result['response']) ){
-        if( !is_string($result['response']) ){
-          $this->setError( 'Result: response must be a string.' );
-        }
-      }
-
-      if( isset($result['extensions']) ){
-        if( !is_array($result['extensions']) ){
-          $this->setError( 'Result: extensions must be an object.' );
-        }
-      }
-    }
-  }
-
-  /*
-  |----------------------------------------------------------------------------
-  | Validate timestamp.
-  |
-  | Optional.
-  | 
-  | Must be in ISO 8601 format
-  | It can be in the future as long as it is in a sub-statement.
-  | Sent by the provider
-  | 
-  |----------------------------------------------------------------------------
-  */
+  /**
+   * Validate timestamp.
+   *
+   **/
   public function validateTimestamp(){
     
     //does timestamp exist?
@@ -984,20 +541,14 @@ class xAPIValidation {
       return false;
     } 
 
-    //@todo is the timestamp in the future? If so, make sure it is include in a sub-statement only
-
     return true;
 
   }
 
-  /*
-  |----------------------------------------------------------------------------
-  | Validate stored.
-  | 
-  | The LRS adds stored, so make sure it is not set in the statement received.
-  | 
-  |----------------------------------------------------------------------------
-  */
+  /**
+   * Validate stored.
+   *
+   **/
   public function validateStored(){
   
     if( isset( $this->statement['stored'] ) ){
@@ -1006,16 +557,9 @@ class xAPIValidation {
 
   }
 
-  /*
-  |----------------------------------------------------------------------------
-  | Validate version.
-  | 
-  | LRS MUST reject all Statements with a version specified that does not start
-  | with "1.0.".
-  | If no version available, add the version 1.0.0
-  | 
-  |----------------------------------------------------------------------------
-  */
+  /**
+   * Validate version.
+   **/
   public function validateVersion(){
   
     if( isset( $this->statement['version'] ) ){
@@ -1032,210 +576,85 @@ class xAPIValidation {
 
   }
 
-  /*
-  |----------------------------------------------------------------------------
-  | Validate attachments.
-  | 
-  | Optional.
-  |
-  | Available properties: usageType (IRI, required), display (Language map, required), 
-  | description (language map), contentType (Internet Media Type, required), length (Int, required), 
-  | sha2 (base64, required), fileUrl (IRL)
-  |
-  | Requirements
-  |
-  | o When receiving a PUT or POST with a document type of "application/json" 
-  | o An LRS MUST accept batches of Statements which contain either no attachment Objects, 
-  | or only attachment Objects with a populated fileUrl; 
-  | • Otherwise: 
-  | o An LRS MUST accept batches of Statements via the Statements resource PUT or POST 
-  | that contain attachments in the Transmission Format described above. 
-  | o An LRS MUST reject batches of Statements having attachments that neither contain a 
-  | fileUrl nor match a received attachment part based on their hash. 
-  | o An LRS SHOULD assume a Content-Transfer-Encoding of binary for attachment parts
-  | 
-  |----------------------------------------------------------------------------
-  */
-  public function validateAttachments(){
+  /**
+   * Validate attachments. Optional.
+   * @requirements https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#attachments
+   *
+   * @param array $attachements
+   *
+   */
+  public function validateAttachments( $attachments ){
   
-    if( isset($this->statement['attachment']) ){
-
-      if( is_array($this->statement['attachment']) ){
-
-        //check attachment properties
-        $attachment        = $this->statement['attachment'];
-        $attachment_keys       = array_keys($attachment);
-        $valid_attachment_keys = array('usageType', 
-                         'display', 
-                         'description', 
-                         'contentType', 
-                         'length', 
-                         'sha2',
-                         'fileUrl');
-
-        //check all keys are valid
-        $attachment_valid = $this->checkKeys($attachment_keys, $valid_attachment_keys);
-
-        //if there is an invalid key, exit here
-        if( $attachment_valid === false ){
-          $this->setError( 'There is an invalid property in the attachment.' );
-          return false;
-        }
-
-        //now we know that the keys are valid, let's check the required keys are present
-        if (isset($attachment['usageType'], $attachment['display'], 
-                    $attachment['contentType'], $attachment['length'], $attachment['sha2'])) {
-
-          foreach( $attachment as $key => $value ){
-            switch( $key ){
-              case 'usageType':
-              //@todo need to properly validate a IRI
-              if( !is_string($value) ){
-                $this->setError( 'Attachment: usageType is not a valid IRI.' );
-              }
-              break;
-              case 'display':
-              //@todo need to properly detect valid language map
-              if( !is_array($value) ){
-                $this->setError( 'Attachment: display is not a valid language map.' );
-              }
-              break;
-              case 'contentType':
-              //@todo need to properly detect valid Internet Media Type
-              //if( !is_array($attachment['contentType']) ){
-              // $this->setError( 'Attachment: contentType is not a valid Internet Media Type.' );
-              //}
-              break;
-              case 'length':
-              if( !is_integer($value) ){
-                $this->setError( 'Attachment: length is not a valid integer.' );
-              }
-              break;
-              case 'sha2':
-              if( base64_encode(base64_decode($value)) !== $value ){
-                $this->setError( 'Attachment: sha2 is not valid base64 encoded.' );
-              }
-              break;
-              case 'fileUrl':
-              //@todo need to properly validate a IRL
-              if( !filter_var($value, FILTER_VALIDATE_URL) ){
-                $this->setError( 'Attachment: usageType is not a valid IRI.' );
-              }
-              break;
-              case 'description':
-              //@todo need to properly detect valid language map
-              if( !is_array($value) ){
-                $this->setError( 'Attachment: description is not a valid language map.' );
-              }
-              break;
-            }
-          }
-      
-        }else{
-
-          //check the fileUrl is not available, if not, reject statement
-          if( !isset($attachment['fileUrl']) ){
-            $this->setError( 'Attachment needs to have usageType, display, contentType, length and sha2 define. Or, fileUrl.' );
-            return false;
-          }else{
-            //validate fileUrl
-            //@todo need to properly validate a IRL
-            if( !filter_var($attachment['fileUrl'], FILTER_VALIDATE_URL) ){
-              $this->setError( 'Attachment: fileUrl is not a valid IRL.' );
-            }
-          }
-        }
-
-      }else{
-        //Do we reject the statement or just remove the ill-formatted attachment property?
-
-        //$this->status   = 'failed';
-        //$this->errors[] = 'Statement attachment must be an array.';
-        
-        unset( $this->statement['attachement'] );
-        return false;
-      }
-
-    }
-
-  }
-
-  /*
-  |----------------------------------------------------------------------------
-  | General validation.
-  | 
-  | • The LRS MUST reject Statements 
-  |   o with any null values (except inside extensions). 
-  |   o with strings where numbers are required, even if those strings contain numbers. 
-  |   o with strings where booleans are required, even if those strings contain Booleans. 
-  |   o with any non-format-following key or value, including the empty string, where a. string with 
-  |   a particular format (such as mailto IRI, UUID, or IRI) is required. 
-  |   o where the case of a key does not match the case specified in the standard. 
-  |   o where the case of a value restricted to enumerated values does not match an 
-  |   enumerated value given in the standard exactly.
-  | • The LRS MUST reject Statements containing IRL, IRI, or IRI values without a scheme. 
-  | 
-  |----------------------------------------------------------------------------
-  */
-  public function getStarted(){
-
-    //check statement is an array and not empty
-    $statement_check = $this->assertionCheck(
-          ( isset($this->statement) && !empty($this->statement) && is_array($this->statement) ),
-          'The statement doesn\'t exist or is not in the correct format.');
-    
-    if( !$statement_check ) return false;
-  
-    //check statement only contains allowed properties
-    $statement_keys     = array_keys( $this->statement );
-    $valid_statement_keys = array('id', 
-                    'actor', 
-                    'verb', 
-                    'object', 
-                    'result', 
-                    'context',
-                    'timestamp',
-                    'stored',
-                    'authority',
-                    'version',
-                    'attachment');
+    $valid_attachment_keys = array('usageType'   => array('iri', true), 
+                                   'display'     => array('lang_map', true), 
+                                   'description' => array('lang_map', false), 
+                                   'contentType' => array('contentType', false), 
+                                   'length'      => array('int', true), 
+                                   'sha2'        => array('base64', true),
+                                   'fileUrl'     => array('iri', false));
 
     //check all keys are valid
-    $statement_valid = $this->checkKeys($statement_keys, $valid_statement_keys);
-  
-    //if there is an invalid key, exit here
-    if( $statement_valid === false ){
-      $this->setError( 'There is an invalid core property in this statement.' );
-      return false;
-    }
-
-    return true;
+    $this->checkParams($valid_attachment_keys, $attachments, 'attachment');
 
   }
 
   /**
-   * Check submitted keys vs allowed keys.
+   * Check to make sure an valid identifier has been included in the statement.
    *
-   * @param $keys (array) The array of keys to validate
-   * @param $valid_keys (array) The array of valid keys to check against.
+   * @param $actor_keys (array) The array of actor keys to validate
    * @return boolean 
    *
    **/
-  public function checkKeys($keys, $valid_keys){
-    $valid = true;
-    foreach( $keys as $k ){
-      if( !in_array($k, $valid_keys) ){
-        $valid = false;
+  public function validActorIdentifier( $actor_keys ){
+
+    $identifier_valid = false;
+    $count = 0;
+    $functional_identifiers = array('mbox', 'mbox_sha1sum', 'openID', 'account');
+
+    //check functional identifier exists and is valid
+    foreach( $actor_keys as $k ){
+      if( in_array($k, $functional_identifiers) ){
+        $identifier_valid = true;
+        $count++; //increment counter so we can check only one identifier is present
       }
+    }
+
+    //only allow one identifier
+    if( $count > 1 ){
+      $identifier_valid = false;
+      $this->setError( 'A statement can only set one actor functional identifier.' ); 
+    }
+
+    if( !$identifier_valid ){
+      $this->setError( 'A statement must have a valid actor functional identifier.' ); 
+    }
+    
+    return $identifier_valid;
+  }
+
+  /**
+   * Validate submitted keys vs allowed keys. 
+   *
+   * @param $submitted_keys (array) The array of keys to validate
+   * @param $valid_keys     (array) The array of valid keys to check against.
+   * @return boolean 
+   *
+   **/
+  public function checkKeys($valid_keys, $submitted_keys, $section=''){
+    $valid = true;
+    foreach( $submitted_keys as $k ){
+      if( !$this->assertionCheck(in_array($k, $valid_keys),
+          sprintf( "`%s` is not a permitted key in %s", $k, $section ))) $valid=false;
     }
     return $valid;
   }
 
-  /*
-  |----------------------------------------------------------------------------
-  | Generate unique UUID
-  |----------------------------------------------------------------------------
-  */
+  /**
+   * Generate unique UUID
+   *
+   * @return UUID
+   *
+   **/
   public function makeUUID(){
     return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
       // 32 bits for "time_low"
@@ -1258,34 +677,240 @@ class xAPIValidation {
     );
   }
 
-  /*
-  |-------------------------------------------------------------------------------
-  | Regex to validate an IRI
-  | Regex found here http://stackoverflow.com/questions/161738/what-is-the-best-regular-expression-to-check-if-a-string-is-a-valid-url
-  |-------------------------------------------------------------------------------
-  */
-  private function validateIRI(){
-    $regex = "/^[a-z](?:[-a-z0-9\+\.])*:(?:\/\/(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!\$&'\(\)\*\+,;=:])*@)?(?:\[(?:(?:(?:[0-9a-f]{1,4}:){6}(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|::(?:[0-9a-f]{1,4}:){5}(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){4}(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:[0-9a-f]{1,4}:[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){3}(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:(?:[0-9a-f]{1,4}:){0,2}[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){2}(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:(?:[0-9a-f]{1,4}:){0,3}[0-9a-f]{1,4})?::[0-9a-f]{1,4}:(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:(?:[0-9a-f]{1,4}:){0,4}[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:(?:[0-9a-f]{1,4}:){0,5}[0-9a-f]{1,4})?::[0-9a-f]{1,4}|(?:(?:[0-9a-f]{1,4}:){0,6}[0-9a-f]{1,4})?::)|v[0-9a-f]+[-a-z0-9\._~!\$&'\(\)\*\+,;=:]+)\]|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}|(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!\$&'\(\)\*\+,;=@])*)(?::[0-9]*)?(?:\/(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!\$&'\(\)\*\+,;=:@]))*)*|\/(?:(?:(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!\$&'\(\)\*\+,;=:@]))+)(?:\/(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!\$&'\(\)\*\+,;=:@]))*)*)?|(?:(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!\$&'\(\)\*\+,;=:@]))+)(?:\/(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!\$&'\(\)\*\+,;=:@]))*)*|(?!(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!\$&'\(\)\*\+,;=:@])))(?:\?(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!\$&'\(\)\*\+,;=:@])|[\x{E000}-\x{F8FF}\x{F0000}-\x{FFFFD}|\x{100000}-\x{10FFFD}\/\?])*)?(?:\#(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!\$&'\(\)\*\+,;=:@])|[\/\?])*)?$/i";
+  
+
+  /**
+   * Used to validate keys and values
+   * @param  array  $requirements  A list of allowed parameters with type, required and allowed values, if applicable.
+   *                               format: string, boolean, array
+   * @param  array  $data          The data being submitted.
+   * @param  string $section       The current section of the statement.
+   *
+   * @return array
+   * 
+   */
+  public function checkParams( $requirements = array(), $data = array(), $section=''){
+
+    $valid = true;
+    
+    if( empty($data) ){
+      return false;
+    }
+
+    //first check to see if the data contains invalid keys
+    $check_keys = array_diff_key($data, $requirements);
+
+    //if there are foriegn keys, set required error message
+    if( !empty($check_keys) ){
+      foreach( $check_keys as $k => $v ){
+        $this->setError( sprintf( "`%s` is not a permitted property in %s", $k, $section ), $fail_status='failed', $value='' );
+      }
+      $valid = false;
+    }
+
+    //loop through all permitted keys and check type, required and values
+    foreach( $requirements as $key => $value ){
+
+      $data_type      = $value[0];
+      $required       = isset($value[1]) ? $value[1] : false;
+      $allowed_values = isset($value[2]) ? $value[2] : false;
+
+      //does key exist in data
+      if( array_key_exists($key, $data) ){
+
+        //check data value is not null apart from in extensions
+        if( $key != 'extensions' ){
+          if( !$this->assertionCheck(!is_null($data[$key]),
+              sprintf( "`%s` in '%s' contains a NULL value which is not permitted.", $key, $section ))){
+            $valid = false;
+          }
+        }
+
+        $this->checkTypes($key, $data[$key], $data_type, $section );
+
+        //@todo if allowed values set, check value is in allowed values
+        if( $allowed_values ){
+          //in_array( $value, $allowed_values )
+        }
+
+      }else{
+        //check to see if the key was required. If yes, set valid to false and set error.
+        if( !$this->assertionCheck( !$required,
+            sprintf( "`%s` is a required key and is not present in %s", $key, $section ))){
+          $valid = false;
+        }
+      }
+
+
+    }
+
+    return $valid;
+
+  }
+
+  /**
+   * Check types submitted to ensure allowed
+   *
+   * @param mixed   $data   The data to check
+   * @param string    $expected_type The type to check for e.g. array, object,
+   * @param string $section The current section being validated. Used in error messages.
+   * 
+   */
+  public function checkTypes($key, $value, $expected_type, $section ){
+
+    switch($expected_type){
+      case 'string':
+        $this->assertionCheck(is_String($value),
+        sprintf( "`%s` is not a valid string in " . $section, $key ));
+      break;
+      case 'array':
+        //used when an array is required 
+        $this->assertionCheck((is_array($value) && !empty($value)),
+        sprintf( "`%s` is not a valid array in " . $section, $key ));
+      break;
+      case 'emptyArray':
+        //used if value can be empty but if available needs to be an array
+        if( $value != '' ){
+          $this->assertionCheck((is_array($value) && !empty($value)),
+            sprintf( "`%s` is not a valid array in " . $section, $key ));
+        }
+      break;
+      case 'object':
+        $this->assertionCheck(is_object( $value ),
+        sprintf( "`%s` is not a valid object in " . $section, $key ));
+      break;
+      case 'iri':
+        $this->assertionCheck($this->validateIRI($value),
+        sprintf( "`%s` is not a valid IRI in " . $section, $key ));
+      break;
+      case 'iso8601Duration':
+        $this->assertionCheck($this->validateISO8601($value),
+        sprintf( "`%s` is not a valid iso8601 Duration format in " . $section, $key ));
+      break;
+      case 'timestamp':
+        $this->assertionCheck($this->validateTimestamp($value),
+        sprintf( "`%s` is not a valid timestamp in " . $section, $key ));
+      break;
+      case 'uuid':
+        $this->assertionCheck($this->validateUUID($value),
+        sprintf( "`%s` is not a valid UUID in " . $section, $key ));
+      break;
+      case 'irl':
+        $this->assertionCheck((!filter_var($value, FILTER_VALIDATE_URL)),
+        sprintf( "`%s` is not a valid UUID in " . $section, $key ));
+      break;
+      case 'lang_map':
+        $this->assertionCheck($this->validateLanguageMap($value),
+        sprintf( "`%s` is not a valid language map in " . $section, $key ));
+      break;
+      case 'base64':
+        $this->assertionCheck(base64_encode(base64_decode($value)) === $value,
+        sprintf( "`%s` is not a valid language map in " . $section, $key ));
+      break;
+      case 'boolean':
+        $this->assertionCheck(is_bool($value),
+        sprintf( "`%s` is not a valid boolean " . $section, $key ));
+      break;
+      case 'score':
+        $this->assertionCheck(!is_string($value) && (is_int($value) || is_float($value)),
+        sprintf( " `%s` needs to be a number in " . $section, $key ));
+      break;
+      case 'numeric':
+        $this->assertionCheck(is_numeric($value),
+        sprintf( "`%s` is not numeric in " . $section, $key ));
+      break;
+      case 'int':
+        $this->assertionCheck(is_int($value),
+        sprintf( "`%s` is not a valid number in " . $section, $key ));
+      break;
+      case 'integer':
+        $this->assertionCheck(is_integer($value),
+        sprintf( "`%s` is not a valid integer in " . $section, $key ));
+      break;
+      case 'contentType':
+        $this->assertionCheck($this->validateInternetMediaTyp($value),
+        sprintf( "`%s` is not a valid Internet Media Type in " . $section, $key ));
+      break;
+      case 'mailto':
+        $mbox_format = substr($value, 0, 7);
+        $this->assertionCheck($mbox_format == 'mailto:' && is_string($value),
+          sprintf( "`%s` is not in the correct format in " . $section, $key ));
+      break;
+    }
+
   }
 
   /*
-  |-------------------------------------------------------------------------------
-  | Regex to validate Internet media type
-  |-------------------------------------------------------------------------------
+  |---------------------------------------------------------------------------------
+  | Various validation functions
+  |---------------------------------------------------------------------------------
+  |
   */
+
+  /**
+   *
+   * Regex to validate an IRI
+   * Regex found here http://stackoverflow.com/questions/161738/what-is-the-best-regular-expression-to-check-if-a-string-is-a-valid-url
+   *
+   */
+  public function validateIRI( $value ){
+    if (preg_match('/^[a-z](?:[-a-z0-9\+\.])*:(?:\/\/(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!\$&\'\(\)\*\+,;=:])*@)?(?:\[(?:(?:(?:[0-9a-f]{1,4}:){6}(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|::(?:[0-9a-f]{1,4}:){5}(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){4}(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:[0-9a-f]{1,4}:[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){3}(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:(?:[0-9a-f]{1,4}:){0,2}[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){2}(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:(?:[0-9a-f]{1,4}:){0,3}[0-9a-f]{1,4})?::[0-9a-f]{1,4}:(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:(?:[0-9a-f]{1,4}:){0,4}[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:(?:[0-9a-f]{1,4}:){0,5}[0-9a-f]{1,4})?::[0-9a-f]{1,4}|(?:(?:[0-9a-f]{1,4}:){0,6}[0-9a-f]{1,4})?::)|v[0-9a-f]+[-a-z0-9\._~!\$&\'\(\)\*\+,;=:]+)\]|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}|(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!\$&\'\(\)\*\+,;=@])*)(?::[0-9]*)?(?:\/(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!\$&\'\(\)\*\+,;=:@]))*)*|\/(?:(?:(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!\$&\'\(\)\*\+,;=:@]))+)(?:\/(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!\$&\'\(\)\*\+,;=:@]))*)*)?|(?:(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!\$&\'\(\)\*\+,;=:@]))+)(?:\/(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!\$&\'\(\)\*\+,;=:@]))*)*|(?!(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!\$&\'\(\)\*\+,;=:@])))(?:\?(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!\$&\'\(\)\*\+,;=:@])|[\x{E000}-\x{F8FF}\x{F0000}-\x{FFFFD}|\x{100000}-\x{10FFFD}\/\?])*)?(?:\#(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!\$&\'\(\)\*\+,;=:@])|[\/\?])*)?$/iu',$value)){
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * 
+   * Regex to validate Internet media type
+   *
+   */
   private function validateInternetMediaType(){
-    
+    return true;
   }
 
-  /*
-  |-------------------------------------------------------------------------------
-  | Regex to validate language map
-  |-------------------------------------------------------------------------------
+  /**
+  * Regex to validate language map.
+  * Regex from https://github.com/fugu13/tincanschema/blob/master/tincan.schema.json
+  *
+  * @param string $item
+  * @return boolean
+  *
   */
-  private function validateLanguageMap(){
-    
+  public function validateLanguageMap( $item ){
+    foreach( $item as $k => $v ){
+      if( preg_match('/^(([a-zA-Z]{2,8}((-[a-zA-Z]{3}){0,3})(-[a-zA-Z]{4})?((-[a-zA-Z]{2})|(-\d{3}))?(-[a-zA-Z\d]{4,8})*(-[a-zA-Z\d](-[a-zA-Z\d]{1,8})+)*)|x(-[a-zA-Z\d]{1,8})+|en-GB-oed|i-ami|i-bnn|i-default|i-enochian|i-hak|i-klingon|i-lux|i-mingo|i-navajo|i-pwn|i-tao|i-tsu|i-tay|sgn-BE-FR|sgn-BE-NL|sgn-CH-DE)$/iu', $k)){
+        return true;
+      }
+    }
+    return false;
   }
 
+  /**
+   * Validate if a passed item is a valid UUID
+   *
+   * @param string $item
+   * @return boolean
+   */
+  public function validateUUID( $item ){
+    if( preg_match('/^\{?[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}\}?$/i', $item) ){
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Validate duration conforms to iso8601
+   *
+   * @param string $item
+   * @return boolean
+   */
+  public function validateISO8601( $item ){
+    if( preg_match('/^P((\d+([\.,]\d+)?Y)?(\d+([\.,]\d+)?M)?(\d+([\.,]\d+)?W)?(\d+([\.,]\d+)?D)?)?(T(\d+([\.,]\d+)?H)?(\d+([\.,]\d+)?M)?(\d+([\.,]\d+)?S)?)?$/i', $item) ){
+      return true;
+    }
+    return false;
+  }
 
   /**
    * Returns true if an array is associative 
