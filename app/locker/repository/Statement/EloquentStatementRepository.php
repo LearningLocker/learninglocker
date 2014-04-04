@@ -154,6 +154,11 @@ class EloquentStatementRepository implements StatementRepository {
         return array( 'success' => $result ); 
       }
 
+      //Add the correct learning locker LRS. 
+      $vs['context']['extensions']['http://learninglocker&46;net/extensions/lrs'] = array( '_id'  => $lrs->_id, 
+                                                                                           'name' => $lrs->title );
+
+
       //The date stored in LRS in ISO 8601 format
       $current_date = date('c');
       $vs['stored'] = $current_date;
@@ -186,8 +191,9 @@ class EloquentStatementRepository implements StatementRepository {
 
       //Create a new statement object
       $new_statement = new Statement;
-      $new_statement->lrs = array( '_id'  => $lrs->_id, 'name' => $lrs->title );
-      $new_statement->statement = $vs;
+      //$new_statement->lrs = array( '_id'  => $lrs->_id, 'name' => $lrs->title );
+      //$new_statement->statement = $vs;
+      $new_statement->fill( $vs );
 
       if( $new_statement->save() ){
         $saved_ids[] = $new_statement->id;
@@ -234,7 +240,7 @@ class EloquentStatementRepository implements StatementRepository {
   public function statements( $id ){
 
     return $this->statement->where('lrs._id', $id)->orWhere(SPECIFIC_LRS, $id)
-          ->orderBy('created_at', 'desc')
+          ->orderBy('stored', 'desc')
           ->paginate(15);
 
   }
