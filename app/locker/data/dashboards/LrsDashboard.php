@@ -64,28 +64,6 @@ class LrsDashboard extends \app\locker\data\BaseData {
   }
 
   /**
-   * Count the number of distinct activity ids.
-   *
-   * @return count.
-   *
-   **/
-  // public function sourceCount(){
-
-  //   $count = $this->db->statements->aggregate(
-  //             array('$match' => $this->getMatch( $this->lrs )),
-  //             array('$group' => array('_id' => '$object.id')),
-  //             array('$group' => array('_id' => 1, 'count' => array('$sum' => 1)))             
-  //             );
-          
-  //   if( isset($count['result'][0]) ){
-  //     return $count['result'][0]['count'];
-  //   }else{
-  //     return 0;
-  //   }
-
-  // }
-
-  /**
    * Get a count of all the days from the first day a statement was submitted to Lrs.
    *
    * @return $days number
@@ -114,6 +92,10 @@ class LrsDashboard extends \app\locker\data\BaseData {
   public function statementAvgCount(){
     $count = $this->statementCount();
     $days  = $this->statementDays();
+    if( $days == 0 ){
+      //this will be the first day, so increment to 1
+      $days = 1;
+    }
     $avg   = 0;
     if( $count && $days ){
       $avg = round( $count / $days );
@@ -168,6 +150,10 @@ class LrsDashboard extends \app\locker\data\BaseData {
   public function learnerAvgCount(){
     $count = $this->actorCount();
     $days  = $this->statementDays();
+    if( $days == 0 ){
+      //this will be the first day, so increment to 1
+      $days = 1;
+    }
     $avg   = 0;
     if( $count && $days ){
       $avg = round( $count / $days );
@@ -200,7 +186,6 @@ class LrsDashboard extends \app\locker\data\BaseData {
     //set statements for graphing
     $data = '';
     foreach( $statements['result'] as $s ){
-      //@todo check we are only counting Actor objectType 'Agent' and it is distinct
       $data .= json_encode( array( "y" => substr($s['date'][0],0,10), "a" => $s['count'], 'b' => count($s['actor'])) ) . ' ';
     }
 

@@ -99,6 +99,10 @@ class AdminDashboard extends \app\locker\data\BaseData {
   public function statementAvgCount(){
     $count = $this->statementCount();
     $days  = $this->statementDays();
+    if( $days == 0 ){
+      //this will be the first day, so increment to 1
+      $days = 1;
+    }
     $avg   = 0;
     if( $count && $days ){
       $avg = round( $count / $days );
@@ -116,6 +120,10 @@ class AdminDashboard extends \app\locker\data\BaseData {
   public function learnerAvgCount(){
     $count = $this->actorCount();
     $days  = $this->statementDays();
+    if( $days == 0 ){
+      //this will be the first day, so increment to 1
+      $days = 1;
+    }
     $avg   = 0;
     if( $count && $days ){
       $avg = round( $count / $days );
