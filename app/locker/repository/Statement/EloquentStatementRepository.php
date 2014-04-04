@@ -239,8 +239,8 @@ class EloquentStatementRepository implements StatementRepository {
    */
   public function statements( $id ){
 
-    return $this->statement->where('lrs._id', $id)->orWhere(SPECIFIC_LRS, $id)
-          ->orderBy('stored', 'desc')
+    return $this->statement->where('lrs._id', $id)
+          ->orderBy('created_at', 'desc')
           ->paginate(15);
 
   }
