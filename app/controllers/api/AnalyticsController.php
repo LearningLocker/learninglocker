@@ -24,6 +24,7 @@ class AnalyticsController extends BaseController {
 
     $this->analytics = $analytics;
     $this->beforeFilter('@setParameters');
+    $this->beforeFilter('@getLrs');
 
   }
 
@@ -41,7 +42,7 @@ class AnalyticsController extends BaseController {
     $filter       = isset($this->params['filter'])       ? $this->params['filter']       : '';
     $returnFields = isset($this->params['returnFields']) ? $this->params['returnFields'] : '';
 
-    $data = $this->analytics->section( $section, $filter, $returnFields );
+    $data = $this->analytics->section( $this->lrs->_id, $section, $filter, $returnFields );
 
     if( $data['success'] == false ){
       return $this->returnSuccessError( false, \Lang::get('apps.api.invalid_route'), 400 );
@@ -60,7 +61,7 @@ class AnalyticsController extends BaseController {
    **/
   public function index(){
 
-    $data = $this->analytics->analytics(  $lrs, $this->params );
+    $data = $this->analytics->analytics( $this->lrs->_id, $this->params );
 
     if( $data['success'] == false ){
       return $this->returnSuccessError( false, \Lang::get('apps.no_data'), 400 );

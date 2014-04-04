@@ -87,5 +87,19 @@ public function returnJSON( $data=array(), $additional_params=array(), $extra=ar
     $this->params = \Request::all();
   }
   
+  /**
+   * Get the LRS details based on Auth credentials
+   *
+   **/
+  public function getLrs(){
+    //get the lrs
+    $key    = \Request::getUser();
+    $secret = \Request::getPassword();
+    $lrs    = \Lrs::where('api.basic_key', $key)
+           ->where('api.basic_secret', $secret)
+           ->first();
+    $this->lrs = $lrs;
+  }
+
 
 }

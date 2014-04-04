@@ -384,7 +384,7 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
 |------------------------------------------------------------------
 */
 
-Route::group( array('prefix' => 'api/v1', 'before'=>'check-authorization-params|auth'), function(){
+Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(){
 
   Config::set('api.using_version', 'v1');
 

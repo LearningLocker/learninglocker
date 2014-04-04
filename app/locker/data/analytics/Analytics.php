@@ -32,8 +32,6 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
    **/
   public function analytics( $lrs, $options ){
 
-    $this->lrs = $lrs;
-
     $since = $until = '';
 
     //grab the filter object and decode
@@ -85,7 +83,7 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
     //var_dump( $filters );exit;
 
     //get the data
-    $data = $this->query->timedGrouping( $this->lrs, $filters, $interval, $type );
+    $data = $this->query->timedGrouping( $lrs, $filters, $interval, $type );
 
     if( !$data || isset($data['errmsg']) ){
       return array('success' => false, 'message' => $data['errmsg'] );
@@ -137,7 +135,7 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
     //parse over the filter and check for conditions
     $filter = $this->setFilter( $filter );
 
-    $data = $this->query->objectGrouping( $this->lrs, $section, $filter, $returnFields );
+    $data = $this->query->objectGrouping( $lrs, $section, $filter, $returnFields );
 
     return array('success' => true, 'data' => $data);
 

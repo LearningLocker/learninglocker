@@ -30,21 +30,6 @@ class BaseController extends APIBaseController {
   }
 
   /**
-   * Get the LRS details based on Auth credentials
-   *
-   **/
-  public function getLrs(){
-    //get the lrs
-    $key    = \Request::getUser();
-    $secret = \Request::getPassword();
-    $lrs    = \Lrs::where('api.basic_key', $key)
-           ->where('api.basic_secret', $secret)
-           ->first();
-    $this->lrs = $lrs;
-  }
-
-
-  /**
    * Get all of the input and files for the request and store them in params.
    *
    */
