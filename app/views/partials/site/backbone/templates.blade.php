@@ -16,6 +16,8 @@
   </td>
   <td>
     <a href="{{ URL() }}/lrs/<%= _id %>/edit" class="btn btn-xs btn-success btn-space" title="{{ Lang::get('site.edit') }}"><i class="icon-pencil"></i></a>
+  </td>
+  <td>
     <button class="btn btn-danger btn-xs delete" title="{{ Lang::get('site.delete') }}"><i class="icon-trash"></i></button>
   </td>
 </script>
@@ -28,7 +30,8 @@
       <th>Statement #</th>
       <th>User #</th>
       <th>Created</th>
-      <th>Functions</th>
+      <th>Edit</th>
+      <th></th>
     </tr>
   </thead>
   <tbody></tbody>
@@ -141,6 +144,10 @@
 
 <script id="noItemsView_template" type="text/template">
   <p>Nothing exists.</p>
+</script>
+
+<script id="addNew" type="text/template">
+  <a href="{{ URL() }}/lrs/create" class="btn btn-default pull-right">{{ Lang::get('lrs.create') }}
 </script>
 
 <script id="mainTemplate" type="text/template">

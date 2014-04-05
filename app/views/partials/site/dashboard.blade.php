@@ -13,6 +13,8 @@
 
 @section('content')
 
+  <div id="actionContainer"></div>
+
   @include('partials.site.elements.page_title', array('page' => 'Admin Dashboard'))
 
   <div id="appContainer">

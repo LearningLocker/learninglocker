@@ -28,8 +28,10 @@ define([
     },
 
     deleteUser: function() {
-      this.model.destroy();
-      return false;
+      confirm = confirm('Are you sure?');
+      if( confirm == true ){
+        this.model.destroy({});
+      }
     },
 
     verifyUser: function(element){

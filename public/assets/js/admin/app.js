@@ -15,7 +15,8 @@ define([
   App.models = {};
 
   App.addRegions({
-    pageRegion: '#appContainer'
+    pageRegion: '#appContainer',
+    actionRegion: '#actionContainer'
   });
 
   App.addInitializer(function (options) {

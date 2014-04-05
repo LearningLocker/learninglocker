@@ -23,12 +23,10 @@ define([
     },
 
     deleteLrs: function() {
-      this.model.destroy({
-        success:function () {
-          //prompt('LRS deleted successfully');
-        }
-      });
-     // return false;
+      confirm = confirm('Are you sure?');
+      if( confirm == true ){
+        this.model.destroy({});
+      }
     },
 
     unrender: function() {

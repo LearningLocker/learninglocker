@@ -16,9 +16,10 @@ define([
   'views/stats/stats',
   'views/stats/header',
   'views/stats/linegraph',
-  'views/site/loadingView'
+  'views/site/loadingView',
+  'views/lrs/addNew'
 ], function($, _, Backbone, Marionette, App, LrsCollection, LrsView, UsersCollection, UsersView,
-  OAuthAppsCollection, OAuthAppsView, SiteModel, Settings, StatsModel, Stats, Header, LineGraph, LoadingView){
+  OAuthAppsCollection, OAuthAppsView, SiteModel, Settings, StatsModel, Stats, Header, LineGraph, LoadingView, AddNew){
 
   var Controller = Backbone.Marionette.Controller.extend({
 
@@ -71,9 +72,11 @@ define([
     lrs:function () {
       //find a better way to show loader
       App.layouts.main.mainRegion.show( new LoadingView );
+      var addNew = new AddNew;
       var lrsCol = new LrsCollection;
       lrsCol.fetch().then(function() {
         var lrsView = new LrsView({ collection: lrsCol });
+        App.actionRegion.show( addNew );
         App.layouts.main.mainRegion.show( lrsView );
       });
 
