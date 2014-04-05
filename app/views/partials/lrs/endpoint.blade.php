@@ -13,7 +13,7 @@
     <p>{{ Lang::get('lrs.endpoint.instructions') }}</p>
     <div class="alert alert-success clearfix">
       <div class="col-sm-10">
-        <b>{{ URL() }}/data/xAPI</b>
+        <b>{{ URL() }}/data/xAPI/</b>
       </div>
     </div>
     <div class="bordered clearfix">
