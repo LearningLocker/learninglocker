@@ -20,7 +20,8 @@ define([
 
     events: {
       'click div.verify': 'verifyUser',
-      'click button.delete': 'deleteUser'
+      'click button.delete': 'deleteUser',
+      'change select.role-select': 'changeRole',
     },
 
     unrender: function() {
@@ -34,7 +35,41 @@ define([
       }
     },
 
+    changeRole: function(element) {
+      var user = $(element.target).attr('id');
+      var role = $(element.target).val();
+      var token = $('meta[name="token"]').attr('content');
+      jQuery.ajax({
+        url: 'users/update/role/' + user + '/' + role,
+        type: 'PUT',
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function (json) {
+          $(element.target).blur();
+          alert('Role successfully changed');
+        },
+        error: function( error ) {
+          console.log(error);
+        }
+      });
+    },
+
     verifyUser: function(element){
+
+      var user = $(element.target).data('id');
+
+      jQuery.ajax({
+        url: 'site/users/verify/' + user,
+        type: 'PUT',
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function (json) {
+          console.log('success');
+        },
+        error: function( error ) {
+          console.log('error');
+        }
+      });
 
       if($(element.target).hasClass("label-default")) {
         $(element.target).removeClass("label-default");

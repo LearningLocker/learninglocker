@@ -98,7 +98,7 @@
 
 <script id="userListView" type="text/template">
   <span class="badge"><%= count %></span>
-  Name:
+  <b>Name</b>:
   <% if( name.length > 1 ){ %>
   <% _.each(name, function(n) { %>  
         <%= n %>, 
@@ -106,7 +106,7 @@
   <% }else{ %>
   <%= name  %>
   <% } %>
-  <br />Email: <%= _id.substr(7) %>
+  <br /><b>Email</b>: <%= _id.substr(7) %>
 </script>
 
 <script id="userList" type="text/template">

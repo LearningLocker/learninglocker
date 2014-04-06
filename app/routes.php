@@ -244,9 +244,8 @@ Route::put('users/update/password/{id}', array(
   'before' => 'csrf', 
   'uses'   => 'PasswordController@updatePassword'
 ));
-Route::put('users/update/role/{id}', array(
+Route::put('users/update/role/{id}/{role}', array(
   'as'     => 'users.role',
-  'before' => 'csrf', 
   'uses'   => 'UserController@updateRole'
 ));
 Route::get('users/{id}/add/password', array(

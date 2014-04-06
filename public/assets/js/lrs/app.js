@@ -20,6 +20,18 @@ define([
   });
 
   App.addInitializer(function (options) {
+
+    //add our csrf token to every ajax request
+    $.ajaxPrefilter(function(options, originalOptions, jqXHR){
+      var token;
+      if( !options.crossDomain ){
+        token = $('meta[name="token"]').attr('content');
+        if( token ){
+          return jqXHR.setRequestHeader('X-CSRF-Token', token);
+        }
+      }
+    });
+
     // init layouts
     App.layouts.main = new MainLayout();
 

@@ -20,7 +20,7 @@ class OAuthAppController extends BaseController {
     $this->app = $app;
 
     $this->beforeFilter('auth');
-    $this->beforeFilter('csrf', array('only' => 'store', 'update'));
+    $this->beforeFilter('csrf', array('only' => array('store', 'update')));
   
   }
 

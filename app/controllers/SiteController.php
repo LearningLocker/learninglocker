@@ -20,7 +20,7 @@ class SiteController extends BaseController {
     $this->site = $site;
 
     $this->beforeFilter('auth');
-    $this->beforeFilter('csrf', array('on' => 'update', 'verifyUser'));
+    $this->beforeFilter('csrf', array('only' => array('update', 'verifyUser', 'inviteUsers')));
     $this->beforeFilter('auth.super');
 
   }
@@ -154,8 +154,7 @@ class SiteController extends BaseController {
    **/
   public function verifyUser($id){
     $verify = $this->site->verifyUser($id);
-    return Redirect::back()
-         ->with('success', Lang::get('users.verify_success'));
+    return Response::json($verify);
   }
 
 }

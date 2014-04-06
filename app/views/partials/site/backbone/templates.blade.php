@@ -49,7 +49,7 @@
       }
     %>
 
-    <div <%= setClass %> data-toggle="tooltip" data-placement="right" title="Click to manually verify user.">
+    <div <%= setClass %> data-id="<%= _id %>" data-toggle="tooltip" data-placement="right" title="Click to manually verify user.">
       {{ Lang::get('users.verified') }} 
       <%= setIcon %>
     </div>
@@ -77,8 +77,11 @@
     <% } %>
   </td>
   <td class="col-sm-2">
-    <button class="pull-right btn btn-warning btn-xs"><i class="icon-pencil"></i></button>
-    <%= role %>
+    <select class="form-control role-select" id="<%= _id %>">
+      <option value="super" <% if (role == 'super'){ %> selected <% } %>>Super</option>
+      <option value="admin" <% if (role == 'admin'){ %> selected <% } %>>Admin</option>
+      <option value="observer" <% if (role == 'observer'){ %> selected <% } %>>Observer</option>
+    </select>
   </td>
   <td class="col-sm-2">
     <%= created_at %>

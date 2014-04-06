@@ -16,7 +16,7 @@ require.config({
   },
   shim : {
     jquery : {
-      exports : 'jQuery'
+      exports : 'jquery'
     },
     morris : {
       deps : ['jquery', 'raphael'],

@@ -45,6 +45,7 @@ class ReportingController extends \BaseController {
     
     $this->beforeFilter('auth');
     $this->beforeFilter('auth.lrs'); //check user can access LRS.
+    $this->beforeFilter('csrf', array('only' => array('update', 'store', 'destroy')));
     $this->beforeFilter('@setParameters');
   }
 

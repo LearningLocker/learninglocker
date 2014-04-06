@@ -37,7 +37,7 @@ class LrsController extends BaseController {
     $this->statement = $statement;
 
     $this->beforeFilter('auth');
-    $this->beforeFilter('csrf', array('on' => array('store', 'update')));
+    $this->beforeFilter('csrf', array('only' => array('store', 'update', 'destroy', 'editCredentials', 'usersRemove')));
     $this->beforeFilter('auth.lrs', array('except' => array('index','create','store'))); //check user can access LRS.
     $this->beforeFilter('create.lrs', array('only' => 'create')); //Allowed to create an LRS?
 
@@ -183,7 +183,6 @@ class LrsController extends BaseController {
 
     $this->lrs->delete($id);
     return Response::json(array('success'=>200, 'message'=>'deleted'));
-    //return Redirect::back()->with('success', Lang::get('lrs.deleted'));
 
   }
 

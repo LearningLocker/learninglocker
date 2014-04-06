@@ -17,7 +17,7 @@ define([
   path = window.location.pathname.split( '/' );
   for ( i = 0; i < path.length; i++ ) {
     if( path[i] == 'lrs' ){
-      //find at which point 'lrs' is as we know the next one is the id
+      //find at which point 'lrs' is as we know the next path item is the id
       var array_num = i;
     }
   }
@@ -25,10 +25,21 @@ define([
   App.lrs_id = path[array_position];
 
   App.addRegions({
-    pageRegion: '#appContainer'
+    pageRegion: '#statements'
   });
 
   App.addInitializer(function (options) {
+
+    //add our csrf token to every ajax request
+    $.ajaxPrefilter(function(options, originalOptions, jqXHR){
+      var token;
+      if( !options.crossDomain ){
+        token = $('meta[name="token"]').attr('content');
+        if( token ){
+          return jqXHR.setRequestHeader('X-CSRF-Token', token);
+        }
+      }
+    });
   
     if (Backbone.history){
       Backbone.history.start();
