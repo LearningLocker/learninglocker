@@ -49,8 +49,7 @@
             <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/reporting/show/{{ $r->_id }}" class="btn btn-success btn-sm"><i class="icon-play-circle"></i> Run</a>
           </td>
           <td>
-            <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/reporting/delete/{{ $r->_id }}" 
-                    class="btn btn-danger btn-sm pull-right" onClick="return confirm('Are you sure you want to delete');"><i class="icon-trash"></i></a>
+            @include('partials.reporting.forms.delete', array('lrs' => $lrs->_id, 'report' => $r->_id))
           </td>
         </tr>
       @endforeach

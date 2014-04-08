@@ -8,6 +8,6 @@ interface QueryRepository {
 
   public function objectGrouping( $lrs, $section, $filters, $returnFields );
 
-  public function selectStatements( $lrs, $filter );
+  public function selectStatements( $lrs, $filter, $limit, $offset );
 
 }

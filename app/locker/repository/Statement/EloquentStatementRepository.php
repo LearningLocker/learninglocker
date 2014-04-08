@@ -27,6 +27,17 @@ class EloquentStatementRepository implements StatementRepository {
   }
 
   /**
+   * Count statements for any give lrs
+   *
+   * @param string Lrs
+   * @return count
+   *
+   **/
+  public function count( $lrs ){
+    return $this->statement->where('lrs._id', $lrs)->remember(5)->count();
+  }
+
+  /**
    * Return a list of statements ordered by stored desc
    *
    * Don't return voided statements, these are requested 
@@ -40,19 +51,19 @@ class EloquentStatementRepository implements StatementRepository {
    **/
   public function all( $lrs, $parameters ){ 
 
-    $statements = $this->statement->where(SPECIFIC_LRS, $lrs);
+    $statements = $this->statement->where('lrs._id', $lrs);
 
     $this->addParameters( $statements, $parameters );
 
     $getStatements = $statements->get();
 
     //get Related Agents
-    if( $parameters['related_agents'] == 'true' && isset($parameters['agent']) ){
+    if( isset($parameters['related_agents']) && $parameters['related_agents'] == 'true' && isset($parameters['agent']) ){
       $getStatements = $this->relatedAgents($getStatements, $lrs, $parameters['agent']);
     }
 
     //get Related Activities
-    if( $parameters['related_activities'] == 'true' && isset($parameters['activity']) ){
+    if( isset($parameters['related_activities']) && $parameters['related_activities'] == 'true' && isset($parameters['activity']) ){
       $getStatements = $this->relatedActivities($getStatements, $lrs, $parameters['activity']);
     }
 
@@ -74,7 +85,7 @@ class EloquentStatementRepository implements StatementRepository {
         $filters = isset($parameters['filters']) ? json_decode($parameters['filters'], true) : array();
 
         //overwrite the LRS filter
-        $filters[SPECIFIC_LRS] = $id;
+        $filters['lrs._id'] = $id;
 
         $results = $this->query->timedGrouping( $filters, $interval );
       break;
@@ -108,21 +119,6 @@ class EloquentStatementRepository implements StatementRepository {
   /*
   |-----------------------------------------------------------------------
   | Store incoming xAPI statements
-  |
-  | As Learning Locker lets you run several LRSs within the one install
-  | we add a context extension to determine which LRS the statement has been
-  | submitted against.
-  | 
-  | We also store a category for the statement as a context extension.
-  |
-  | Steps: 
-  | 1. Grab incoming statement and convert to associative array
-  | 2. Verify the statement
-  | 3. Add LRS details
-  | 4. Add category
-  | 5. Add stored 
-  | 6. Save statement
-  | 7. Return suitable message to application submitting
   | 
   | Notes: 
   | Mongo doesn't allow full stops (.) in keys as it is reserved, so, 
@@ -169,11 +165,6 @@ class EloquentStatementRepository implements StatementRepository {
         return array( 'success' => $result ); 
       }
 
-      //Add the correct learning locker LRS. 
-      $vs['context']['extensions']['http://learninglocker&46;net/extensions/lrs'] = array( '_id'  => $lrs->_id, 
-                                                                                           'name' => $lrs->title );
-
-
       //The date stored in LRS in ISO 8601 format
       $current_date = date('c');
       $vs['stored'] = $current_date;
@@ -206,9 +197,8 @@ class EloquentStatementRepository implements StatementRepository {
 
       //Create a new statement object
       $new_statement = new Statement;
-      //$new_statement->lrs = array( '_id'  => $lrs->_id, 'name' => $lrs->title );
-      //$new_statement->statement = $vs;
-      $new_statement->fill( $vs );
+      $new_statement->lrs = array( '_id'  => $lrs->_id, 'name' => $lrs->title );
+      $new_statement->statement = $vs;
 
       if( $new_statement->save() ){
         $saved_ids[] = $new_statement->id;
@@ -254,9 +244,9 @@ class EloquentStatementRepository implements StatementRepository {
    */
   public function statements( $id ){
 
-    return $this->statement->where(SPECIFIC_LRS, $id)
-          ->orderBy('created_at', 'desc')
-          ->paginate(15);
+    return \Statement::where('lrs._id', $id)
+           ->orderBy('statement.stored', 'desc')
+           ->paginate(15);
 
   }
 
@@ -297,27 +287,27 @@ class EloquentStatementRepository implements StatementRepository {
     
     //set verb, if none passed ust make sure no voided statements are sent
     if( isset($parameters['verb']) ){
-      $statements->where( 'verb.id', $parameters['verb'] );
-      $statements->orWhere( 'verb.id', '<>', 'http://adlnet.gov/expapi/verbs/voided');
+      $statements->where( 'statement.verb.id', $parameters['verb'] );
+      $statements->orWhere( 'statement.verb.id', '<>', 'http://adlnet.gov/expapi/verbs/voided');
     }else{
-      $statements->where( 'verb.id', '<>', 'http://adlnet.gov/expapi/verbs/voided');
+      $statements->where( 'statement.verb.id', '<>', 'http://adlnet.gov/expapi/verbs/voided');
     }
 
     if( isset($parameters['registration']) ){
-      $statements->where( 'context.registration', $parameters['registration'] );
+      $statements->where( 'statement.context.registration', $parameters['registration'] );
     }
 
     if( isset($parameters['activity']) ){
-      $statements->where( 'object.id', $parameters['activity'])->where('object.objectType', 'Activity');
+      $statements->where( 'statement.object.id', $parameters['activity'])->where('statement.object.objectType', 'Activity');
     }
 
     //since, until or between
     if( isset($parameters['until']) && isset($parameters['since']) ){
-      $statements->whereBetween('timestamp', array($parameters['since'], $parameters['until']));
+      $statements->whereBetween('statement.timestamp', array($parameters['since'], $parameters['until']));
     }elseif( isset($parameters['since']) ){
-      $statements->where( 'timestamp', '>', $parameters['since'] );
+      $statements->where( 'statement.timestamp', '>', $parameters['since'] );
     }elseif( isset($parameters['since']) ){
-      $statements->where( 'timestamp', '<', $parameters['until'] );
+      $statements->where( 'statement.timestamp', '<', $parameters['until'] );
     }
 
     //Format
@@ -326,7 +316,7 @@ class EloquentStatementRepository implements StatementRepository {
 
       //if ids then return minimum details for agent, activity and group objects
       if( $parameters['format'] == 'ids' ){
-        $statements->select('actor.mbox', 'verb.id', 'object.id', 'object.objectType');
+        $statements->select('statement.actor.mbox', 'statement.verb.id', 'statement.object.id', 'statement.object.objectType');
       }
 
       //if exact - return as stored
@@ -360,9 +350,9 @@ class EloquentStatementRepository implements StatementRepository {
     }
 
     if( isset( $parameters['ascending'] ) && $parameters['ascending'] == 'true' ){
-      $statements->orderBy('stored', 'asc');
+      $statements->orderBy('statement.stored', 'asc');
     }else{
-      $statements->orderBy('stored', 'desc');
+      $statements->orderBy('statement.stored', 'desc');
     }
 
     return $statements;
@@ -379,7 +369,7 @@ class EloquentStatementRepository implements StatementRepository {
       array('$match' => array()),
       array(
         '$group' => array(
-          '_id' => 'actor.mbox'
+          '_id' => 'statement.actor.mbox'
         )
       )
     );
@@ -409,11 +399,11 @@ class EloquentStatementRepository implements StatementRepository {
 
     //Do some checking on what actor field we are filtering with
     if( isset($agent->mbox) ){ //check for mbox
-      $agent_query = array('field' => 'actor.mbox', 'value'=>$agent->mbox);
+      $agent_query = array('field' => 'statement.actor.mbox', 'value'=>$agent->mbox);
     } else if( isset($agent->mbox_sha1sum) ) {//check for mbox_sha1sum
-      $agent_query = array('field' => 'actor.mbox_sha1sum', 'value'=>$agent->mbox_sha1sum);
+      $agent_query = array('field' => 'statement.actor.mbox_sha1sum', 'value'=>$agent->mbox_sha1sum);
     } else if( isset($agent->openid) ){ //check for open id
-      $agent_query = array('field' => 'actor.openid', 'value'=>$agent->openid);
+      $agent_query = array('field' => 'statement.actor.openid', 'value'=>$agent->openid);
     }
 
     if( isset($agent_query) && $agent_query != '' ){ //if we have agent query params lined up...
@@ -421,8 +411,8 @@ class EloquentStatementRepository implements StatementRepository {
     } else if( isset($agent->account) ){ //else if there is an account
       if( isset($agent->account->homePage) && isset($agent->account->name ) ){
         $query->$where_type( function($query){
-          $query->where('actor.account.homePage', $agent->account->homePage)
-                ->where('actor.account.name', $agent->account->name );
+          $query->where('statement.actor.account.homePage', $agent->account->homePage)
+                ->where('statement.actor.account.name', $agent->account->name );
         });
       } 
     } 
@@ -441,8 +431,8 @@ class EloquentStatementRepository implements StatementRepository {
    **/
   private function doesStatementIdExist( $lrs, $id, $statement ){
 
-    $exists = $this->statement->where(SPECIFIC_LRS, $lrs)
-              ->where('id', $id)
+    $exists = $this->statement->where('lrs._id', $lrs)
+              ->where('statement.id', $id)
               ->first();
     
     if( $exists ){
@@ -492,7 +482,7 @@ class EloquentStatementRepository implements StatementRepository {
         
       }
 
-      // $getConnected = Statement::where(SPECIFIC_LRS, $lrs)
+      // $getConnected = Statement::where('lrs._id', $lrs)
       //                 ->whereIn('object.id', $ids)
       //                 ->get();
 
@@ -521,7 +511,7 @@ class EloquentStatementRepository implements StatementRepository {
    * @return $statements
    **/ 
   private function getConnected( $id, $lrs ){
-    return \Statement::where(SPECIFIC_LRS, $lrs)->where('object.id', $id)->get();
+    return \Statement::where('lrs._id', $lrs)->where('statement.object.id', $id)->get();
   }
 
   /**
@@ -545,25 +535,25 @@ class EloquentStatementRepository implements StatementRepository {
       }
       
       //look in authority
-      $authority = \Statement::where(SPECIFIC_LRS, $lrs)->where('authority.mbox', $actor->mbox)->get();
+      $authority = \Statement::where('lrs._id', $lrs)->where('statement.authority.mbox', $actor->mbox)->get();
       if( $authority ){
         $statements = $this->addStatements( $statements, $authority, $ids );
       }
 
       //look in object where objectType = Agent
-      $object = \Statement::where(SPECIFIC_LRS, $lrs)->where('object.mbox', $actor->mbox)->get();
+      $object = \Statement::where('lrs._id', $lrs)->where('statement.object.mbox', $actor->mbox)->get();
       if( $object ){
         $statements = $this->addStatements( $statements, $object, $ids );
       }
 
       //look in team
-      $teams = \Statement::where(SPECIFIC_LRS, $lrs)->where('context.team', $actor->mbox)->get();
+      $teams = \Statement::where('lrs._id', $lrs)->where('statement.context.team', $actor->mbox)->get();
       if( $object ){
         $statements = $this->addStatements( $statements, $teams, $ids );
       }
 
       //look in instructor
-      $instructor = \Statement::where(SPECIFIC_LRS, $lrs)->where('context.instructor.mbox', $actor->mbox)->get();
+      $instructor = \Statement::where('lrs._id', $lrs)->where('statement.context.instructor.mbox', $actor->mbox)->get();
       if( $object ){
         $statements = $this->addStatements( $statements, $instructor, $ids );
       }
@@ -585,36 +575,36 @@ class EloquentStatementRepository implements StatementRepository {
     }
 
     //look in context parent
-    $parent = \Statement::where(SPECIFIC_LRS, $lrs)
-              ->where('context.contextActivities.parent.objectType', 'Activity')
-              ->where('context.contextActivities.parent.id', $activityId)
+    $parent = \Statement::where('lrs._id', $lrs)
+              ->where('statement.context.contextActivities.parent.objectType', 'Activity')
+              ->where('statement.context.contextActivities.parent.id', $activityId)
               ->get();
 
     if( $parent ){
       $statements = $this->addStatements( $statements, $parent, $ids );
     }
     //look in context grouping
-    $grouping = \Statement::where(SPECIFIC_LRS, $lrs)
-                ->where('context.contextActivities.grouping.objectType', 'Activity')
-                ->where('context.contextActivities.grouping.id', $activityId)
+    $grouping = \Statement::where('lrs._id', $lrs)
+                ->where('statement.context.contextActivities.grouping.objectType', 'Activity')
+                ->where('statement.context.contextActivities.grouping.id', $activityId)
                 ->get();
 
     if( $grouping ){
       $statements = $this->addStatements( $statements, $grouping, $ids );
     }
     //look in context category
-    $category = \Statement::where(SPECIFIC_LRS, $lrs)
-                ->where('context.contextActivities.category.objectType', 'Activity')
-                ->where('context.contextActivities.category.id', $activityId)
+    $category = \Statement::where('lrs._id', $lrs)
+                ->where('statement.context.contextActivities.category.objectType', 'Activity')
+                ->where('statement.context.contextActivities.category.id', $activityId)
                 ->get();
 
     if( $category ){
       $statements = $this->addStatements( $statements, $category, $ids );
     }
     //look in context other
-    $other= \Statement::where(SPECIFIC_LRS, $lrs)
-                ->where('context.contextActivities.other.objectType', 'Activity')
-                ->where('context.contextActivities.other.id', $activityId)
+    $other= \Statement::where('lrs._id', $lrs)
+                ->where('statement.context.contextActivities.other.objectType', 'Activity')
+                ->where('statement.context.contextActivities.other.id', $activityId)
                 ->get();
 
     if( $category ){
@@ -645,6 +635,7 @@ class EloquentStatementRepository implements StatementRepository {
     return $statements;
   }
 
+  ///////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////
 
   /*
@@ -680,7 +671,7 @@ class EloquentStatementRepository implements StatementRepository {
       }
     }
 
-    $query = $this->statement->where(SPECIFIC_LRS, $id);
+    $query = $this->statement->where('lrs._id', $id);
     $this->setRestriction( $restrict, $query );
     if( !empty($filter) ){
       $this->setWhere( $filter, $query );
@@ -689,7 +680,7 @@ class EloquentStatementRepository implements StatementRepository {
     $statements = $query->paginate(18);
 
     //@todo replace this using Mongo aggregation - no need to grab everything and loop through it.
-    $query = $this->statement->where(SPECIFIC_LRS, $id);
+    $query = $this->statement->where('lrs._id', $id);
     $this->setRestriction( $restrict, $query );
     if( !empty($filter) ){
       $this->setWhere( $filter, $query );

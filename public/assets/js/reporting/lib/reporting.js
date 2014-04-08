@@ -49,7 +49,7 @@ define([
           filter: function (grouping) {
               return $.map(grouping, function(group) {
                 return { 
-                  id: group.context.contextActivities.grouping.id
+                  id: group.statement.context.contextActivities.grouping.id
                 };
               });
           }
@@ -77,7 +77,7 @@ define([
 
       $('#grouping-selected').append(checkbox);
 
-      buildQueryArray('context.contextActivities.grouping.id', datum.id);
+      buildQueryArray('statement.context.contextActivities.grouping.id', datum.id);
 
       buildQueryDisplay('context', datum.id)
 
@@ -97,7 +97,7 @@ define([
           filter: function (parents) {
               return $.map(parents, function(parent) {
                 return { 
-                  id: parent.context.contextActivities.parent.id
+                  id: parent.statement.context.contextActivities.parent.id
                 };
               });
           }
@@ -125,7 +125,7 @@ define([
 
       $('#parents-selected').append(checkbox);
      
-      buildQueryArray('context.contextActivities.parent.id', datum.id);
+      buildQueryArray('statement.context.contextActivities.parent.id', datum.id);
 
       buildQueryDisplay('context', datum.id)
       displayQuery();
@@ -143,13 +143,14 @@ define([
           url: 'activities/%QUERY',
           filter: function (activities) {
               return $.map(activities, function(activity) {
+                console.log(activity.statement.object);
                 //get first value of name object, if not available, use id
-                var setName = activity.object.definition.name[Object.keys(activity.object.definition.name)[0]];
+                var setName = activity.statement.object.definition.name[Object.keys(activity.statement.object.definition.name)[0]];
                 if( setName == 'undefined' ){
-                  setName = activity.object.id;
+                  setName = activity.statement.object.id;
                 }
                 return { 
-                  id: activity.object.id,
+                  id: activity.statement.object.id,
                   name: setName
                 };
               });
@@ -179,7 +180,7 @@ define([
     
       $('#activities-selected').append(checkbox);
       
-      buildQueryArray('object.id', datum.id);
+      buildQueryArray('statement.object.id', datum.id);
 
       buildQueryDisplay('activity', datum.name)
 
@@ -196,11 +197,11 @@ define([
       remote: {
           url: 'actors/%QUERY',
           filter: function (actors) {
-              return $.map(actors, function(actor) {
-                return { 
-                  name: actor.name, mbox:actor.mbox
-                };
-              });
+            return $.map(actors, function(actor) {
+              return { 
+                name: actor.name, mbox:actor.mbox
+              };
+            });
           }
       }
     });
@@ -227,7 +228,7 @@ define([
       $('#actors-selected').append(checkbox);
       
       //build query which will be sent to API
-      buildQueryArray('actor.mbox', datum.mbox);
+      buildQueryArray('statement.actor.mbox', datum.mbox);
 
       buildQueryDisplay('actor', datum.name);
       displayQuery();
@@ -453,6 +454,7 @@ define([
         contentType: 'application/json',
         dataType: 'json',
         success: function (json) {
+          console.log(json);
           $('#line-example').empty();
           if( jQuery.isEmptyObject(json) ){
             $('#line-example').html('<p class="alert alert-danger">There are no results for that query.</p>');
@@ -651,37 +653,37 @@ define([
   function buildQuery(data_type, data){
     switch( data_type ){
       case 'actor':
-        buildQueryArray('actor.mbox', data);
+        buildQueryArray('statement.actor.mbox', data);
         break;
       case 'verb':
-        buildQueryArray('verb.id', data);
+        buildQueryArray('statement.verb.id', data);
         break;
       case 'activity_type':
-        buildQueryArray('object.definition.type', data);
+        buildQueryArray('statement.object.definition.type', data);
         break;
       case 'activity':
-        buildQueryArray('object.id', data);
+        buildQueryArray('statement.object.id', data);
         break;
       case 'context.platform':
-        buildQueryArray('context.platform', data);
+        buildQueryArray('statement.context.platform', data);
         break;
       case 'context.instructor':
-        buildQueryArray('context.instructor', data);
+        buildQueryArray('statement.context.instructor', data);
         break;
       case 'context.language':
-        buildQueryArray('context.language', data);
+        buildQueryArray('statement.context.language', data);
         break;
       case 'parent':
-        buildQueryArray('context.contextActivities.parent.id', data);
+        buildQueryArray('statement.context.contextActivities.parent.id', data);
         break;
       case 'grouping':
-        buildQueryArray('context.contextActivities.grouping.id', data);
+        buildQueryArray('statement.context.contextActivities.grouping.id', data);
         break;
       case 'result.completion':
         if( data == 'true' ){
-          query['result.completion'] = true;
+          query['statement.result.completion'] = true;
         }else{
-          query['result.completion'] = false;
+          query['statement.result.completion'] = false;
         }
         break;
       case 'result.attachments':
@@ -690,9 +692,9 @@ define([
         break;
       case 'result.success':
         if( data == 'true' ){
-          query['result.success'] = true;
+          query['statement.result.success'] = true;
         }else{
-          query['result.success'] = false;
+          query['statement.result.success'] = false;
         }
         break;
     }
@@ -701,55 +703,55 @@ define([
   function getType(data_type){
     switch( data_type ){
       case 'actor':
-        return 'actor.mbox';
+        return 'statement.actor.mbox';
         break;
       case 'verb':
-        return 'verb.id';
+        return 'statement.verb.id';
         break;
       case 'activity_type':
-        return 'object.definition.type';
+        return 'statement.object.definition.type';
         break;
       case 'activity':
-        return 'object.id';
+        return 'statement.object.id';
         break;
       case 'context.platform':
-        return 'context.platform';
+        return 'statement.context.platform';
         break;
       case 'context.instructor':
-        return 'context.instructor';
+        return 'statement.context.instructor';
         break;
       case 'context.language':
-        return 'context.language';
+        return 'statement.context.language';
         break;
       case 'parent':
-        return 'context.contextActivities.parent.id';
+        return 'statement.context.contextActivities.parent.id';
         break;
       case 'grouping':
-        return 'context.contextActivities.grouping.id';
+        return 'statement.context.contextActivities.grouping.id';
         break;
       case 'result.completion':
-        return 'result.completion';
+        return 'statement.result.completion';
         break;
       case 'result.attachments':
-        return 'result.attachments';
+        return 'statement.result.attachments';
         break;
       case 'result.response':
-        return 'result.response';
+        return 'statement.result.response';
         break;
       case 'result.success':
-        return 'result.success';
+        return 'statement.result.success';
         break;
       case 'result.max':
-        return 'result.max';
+        return 'statement.result.max';
         break;
       case 'result.min':
-        return 'result.min';
+        return 'statement.result.min';
         break;
       case 'result.raw':
-        return 'result.raw';
+        return 'statement.result.raw';
         break;
       case 'result.scaled':
-        return 'result.scaled';
+        return 'statement.result.scaled';
         break;
     }
   }
@@ -771,15 +773,15 @@ define([
     var arr = $.makeArray( json );
     $.each(arr, function(index, value) {
       var object = '';var verb = '';
-      if( typeof value.verb.display !== 'undefined' ){
-        verb = value.verb.display[Object.keys(value.verb.display)[0]];
+      if( typeof value.statement.verb.display !== 'undefined' ){
+        verb = value.statement.verb.display[Object.keys(value.statement.verb.display)[0]];
       }
-      if( typeof value.object.definition !== 'undefined' ){
-        if( typeof value.object.definition.name !== 'undefined' ){
-          object = value.object.definition.name[Object.keys(value.object.definition.name)[0]];
+      if( typeof value.statement.object.definition !== 'undefined' ){
+        if( typeof value.statement.object.definition.name !== 'undefined' ){
+          object = value.statement.object.definition.name[Object.keys(value.statement.object.definition.name)[0]];
         }
       }
-      statement += '<p>' + value.actor.name + ' ' + verb + ' ' + object + '</p>';
+      statement += '<div class="statement-row"><p>' + value.statement.actor.name + ' ' + verb + ' ' + object + '</p></div>';
     });
     //console.log( statement );
     return statement;

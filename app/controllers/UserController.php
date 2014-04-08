@@ -102,8 +102,6 @@ class UserController extends BaseController {
   public function updateRole( $id, $role ){
     $s = $this->user->updateRole($id, $role);
     return Response::json($s);
-    // return Redirect::to('/site/users')
-    // ->with('success', Lang::get('users.role_change'));
   }
 
   /**
@@ -113,8 +111,6 @@ class UserController extends BaseController {
    * @return View
    */
   public function destroy( $id ){
-    //@todo transfer ownership of all LRSs they admin to super admin
-    
     //delete
     $this->user->delete( $id );
     return Redirect::back()->with('success', Lang::get('users.deleted'));

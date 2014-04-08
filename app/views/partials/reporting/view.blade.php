@@ -99,18 +99,22 @@
       var statement = '';
       var arr = $.makeArray( json );
       $.each(arr, function(index, value) {
-        var object = '';var verb = '';
-        if( typeof value.verb.display !== 'undefined' ){
-          verb = value.verb.display[Object.keys(value.verb.display)[0]];
-        }
-        if( typeof value.object.definition !== 'undefined' ){
-          if( typeof value.object.definition.name !== 'undefined' ){
-            object = value.object.definition.name[Object.keys(value.object.definition.name)[0]];
-          }
-        }
-        statement += '<div class="statement-row"><p>' + value.actor.name + '(' + value.actor.mbox + ') ' + verb + ' <a href="">' + object + '</a></p></div>';
+        statement += setStatementDisplay(value);
       });
       return statement;
+    }
+
+    function setStatementDisplay(value){
+      var object = '';var verb = '';
+      if( typeof value.statement.verb.display !== 'undefined' ){
+        verb = value.statement.verb.display[Object.keys(value.statement.verb.display)[0]];
+      }
+      if( typeof value.statement.object.definition !== 'undefined' ){
+        if( typeof value.statement.object.definition.name !== 'undefined' ){
+          object = value.statement.object.definition.name[Object.keys(value.statement.object.definition.name)[0]];
+        }
+      }
+      return '<div class="statement-row"><p>' + value.statement.actor.name + ' (' + value.statement.actor.mbox + ') ' + verb + ' ' + object + '</p></div>';
     }
 
   </script>

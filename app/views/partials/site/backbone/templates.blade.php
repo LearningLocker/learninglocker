@@ -271,10 +271,6 @@
             <% if ( domain == 'undefined' ){ %> None <% }else{ %> <%= domain %> <% } %>
           </td>
         </tr>
-        <tr>
-          <td><b>{{Lang::get('site.claim')}}</b></td>
-          <td><span class="label <% if ( claim != 'No' ){ %> label-success <% }else{ %> label-danger <% } %>"><%= claim %></span></td>
-        </tr>
       </tbody>
     </table>
   </div>

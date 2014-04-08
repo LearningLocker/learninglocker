@@ -16,7 +16,7 @@ class BaseData {
    *
    **/
   protected function getMatch( $lrs ){
-    return array(SPECIFIC_LRS => $lrs);
+    return array('lrs._id' => $lrs);
   }
 
 }

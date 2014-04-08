@@ -110,41 +110,5 @@
         </div>
       </div>
     </div>
-    <!--
-    <div class="col-xs-12 col-sm-4">
-
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          Additional
-        </div>
-        <div class="panel-body">
-
-          <div class="form-group scaled">
-            <div class="checkbox">
-              <label>
-                <input type="checkbox" name="response" data-type="result.response" data-display="Include written response"> Has written response
-              </label>
-            </div>
-          </div>
-
-          <div class="form-group scaled">
-            <div class="checkbox">
-              <label>
-                <input type="checkbox" name="attachment" data-type="result.attachments" data-display="Include attachments"> Has attachments
-              </label>
-            </div>
-          </div>
-
-          <div class="form-group scaled">
-            <label>Signed by</label>
-            <select class="form-control pull-right" id="signed" data-type="result.signed" data-display="Include attachments" name="signed_by">
-              <option></option>
-            </select>
-          </div>
-        </div>
-      </div>
-    </div>
-    -->
-
   </div>
 </div>

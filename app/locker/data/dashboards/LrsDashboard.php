@@ -11,8 +11,6 @@ class LrsDashboard extends \app\locker\data\BaseData {
 
     $this->lrs = $lrs;
 
-   // $this->setFullStats();
-
   }
 
   /**
@@ -35,7 +33,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
    **/
   public function statementCount(){
     return \DB::collection('statements')
-    ->where(SPECIFIC_LRS, $this->lrs)
+    ->where('lrs._id', $this->lrs)
     ->remember(5)
     ->count();
   }
@@ -51,7 +49,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
 
     $count = $this->db->statements->aggregate(
               array('$match' => $this->getMatch( $this->lrs )),
-              array('$group' => array('_id' => '$actor.mbox')),
+              array('$group' => array('_id' => '$statement.actor.mbox')),
               array('$group' => array('_id' => 1, 'count' => array('$sum' => 1)))             
               );
           
@@ -72,7 +70,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
   private function statementDays(){
     $first_day = \DB::collection('statements')->first();
     if( $first_day ){
-      $datetime1 = date_create( gmdate("Y-m-d", $first_day['created_at']->sec) );
+      $datetime1 = date_create( gmdate("Y-m-d", strtotime($first_day['statement']['stored']) ) );
       $datetime2 = date_create( gmdate("Y-m-d", time()) );
       $interval  = date_diff($datetime1, $datetime2);
       $days      = $interval->days;
@@ -80,6 +78,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
     }else{
       return '';
     }
+
   }
 
   /**
@@ -112,8 +111,8 @@ class LrsDashboard extends \app\locker\data\BaseData {
     $match = $this->getMatch( $this->lrs ); 
     return $this->db->statements->aggregate(
                 array('$match' => $match),
-                array('$group' => array('_id'   => '$object.id',
-                      'name'  => array('$addToSet' => '$object.definition.name.en-US'), 
+                array('$group' => array('_id'   => '$statement.object.id',
+                      'name'  => array('$addToSet' => '$statement.object.definition.name.en-US'), 
                       'count' => array('$sum' => 1))),
                 array('$sort'  => array('count' => -1)),
                 array('$limit' => 6)
@@ -130,9 +129,9 @@ class LrsDashboard extends \app\locker\data\BaseData {
     $match = $this->getMatch( $this->lrs ); 
     return $this->db->statements->aggregate(
                 array('$match' => $match),
-                array('$group' => array('_id'   => '$actor.mbox',
-                      'name'   => array('$addToSet' => '$actor.name'),
-                      'mbox'   => array('$addToSet' => '$actor.mbox'),
+                array('$group' => array('_id'   => '$statement.actor.mbox',
+                      'name'   => array('$addToSet' => '$statement.actor.name'),
+                      'mbox'   => array('$addToSet' => '$statement.actor.mbox'),
                       'count'  => array('$sum' => 1))),
                 array('$sort'  => array('count' => -1)),
                 array('$limit' => 5)
@@ -156,7 +155,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
     }
     $avg   = 0;
     if( $count && $days ){
-      $avg = round( $count / $days );
+      $avg = round( ($count / $days), 2 );
     }
     return $avg;
   }
@@ -169,24 +168,28 @@ class LrsDashboard extends \app\locker\data\BaseData {
    **/
   public function getStatementNumbersByDate(){
 
+    $set_id = array( '$dayOfYear' => '$created_at' );
+
     $statements = $this->db->statements->aggregate(
       array('$match' => $this->getMatch( $this->lrs )),
       array(
         '$group' => array(
-          '_id'   => array('$dayOfYear' => '$created_at'),
+          '_id'   => $set_id,
           'count' => array('$sum' => 1),
-          'date'  => array('$addToSet' => '$stored'),
-          'actor' => array('$addToSet' => '$actor')
+          'date'  => array('$addToSet' => '$statement.stored'),
+          'actor' => array('$addToSet' => '$statement.actor')
         )
       ),
       array('$sort'    => array('_id' => 1)),
       array('$project' => array('count' => 1, 'date' => 1, 'actor' => 1))
     );
-    
+   
     //set statements for graphing
     $data = '';
-    foreach( $statements['result'] as $s ){
-      $data .= json_encode( array( "y" => substr($s['date'][0],0,10), "a" => $s['count'], 'b' => count($s['actor'])) ) . ' ';
+    if( isset($statements['result']) ){
+      foreach( $statements['result'] as $s ){
+        $data .= json_encode( array( "y" => substr($s['date'][0],0,10), "a" => $s['count'], 'b' => count($s['actor'])) ) . ' ';
+      }
     }
 
     return trim( $data );

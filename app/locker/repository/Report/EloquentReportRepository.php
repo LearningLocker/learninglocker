@@ -14,8 +14,6 @@ class EloquentReportRepository implements ReportRepository {
 
   public function create( $data ){
 
-    //check site has not already been set
-
     $report = new Report;
     $report->lrs = $data['lrs'];
     $report->query = $data['query'];
@@ -37,6 +35,23 @@ class EloquentReportRepository implements ReportRepository {
   public function delete($id){
     $report = $this->find($id);
     return $report->delete();
+  }
+
+  public function getActors($lrs, $query){
+    return \Statement::select('statement.actor')
+               ->where('lrs._id', $lrs)
+               ->where('statement.actor.name', 'like', '%'.$query.'%')
+               ->distinct()
+               ->take(6)
+               ->get();
+  }
+
+  public function setQuery($lrs, $query, $field, $wheres){
+    return \Statement::select($field)
+               ->where('lrs._id', $lrs)
+               ->where($wheres, 'like', '%'.$query.'%')
+               ->take(6)
+               ->get();
   }
 
 }

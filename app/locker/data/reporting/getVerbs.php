@@ -5,8 +5,8 @@ class getVerbs {
   public function __construct(){}
 
   public function getVerbs( $lrs ){
-    $verbs = \Statement::where(SPECIFIC_LRS, $lrs)
-             ->select('verb')
+    $verbs = \Statement::where('lrs._id', $lrs)
+             ->select('statement.verb')
              ->distinct()
              ->remember(15)
              ->get()->toArray();

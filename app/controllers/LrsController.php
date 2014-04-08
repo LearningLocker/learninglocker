@@ -146,11 +146,10 @@ class LrsController extends BaseController {
 
     $lrs      = $this->lrs->find( $id );
     $lrs_list = $this->lrs->all();
-    $site     = \Site::first();
     return View::make('partials.lrs.dashboard', array('lrs'      => $lrs, 
                                                       'list'     => $lrs_list,
-                                                      'site'     => $site,
                                                       'dash_nav' => true));
+    
   }
 
   public function getStats( $id, $segment = '' ){

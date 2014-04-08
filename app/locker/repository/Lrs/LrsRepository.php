@@ -14,4 +14,8 @@ interface LrsRepository {
 
 	public function removeUser($id, $user);
 
+  public function getLrsOwned($user);
+
+  public function getLrsMember($user);
+
 }

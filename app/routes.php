@@ -14,13 +14,14 @@
 Route::get('/', function(){
   if( Auth::check() ){
     $site = \Site::first();
+    $list  = \Lrs::all();
     //if super admin, show site dashboard, otherwise show list of LRSs can access
     if( Auth::user()->role == 'super' ){
       return View::make('partials.site.dashboard', 
-                  array('site' => $site, 'dash_nav' => true));
+                  array('site' => $site, 'list' => $list, 'dash_nav' => true));
     }else{
       $lrs = Lrs::where('users._id', \Auth::user()->_id)->get();
-      return View::make('partials.lrs.list', array('lrs' => $lrs, 'site' => $site));
+      return View::make('partials.lrs.list', array('lrs' => $lrs, 'list' => $list, 'site' => $site));
     }
   }else{
     $site = \Site::first();
@@ -225,7 +226,7 @@ Route::post('lrs/{id}/reporting/save', array(
 Route::get('lrs/{id}/reporting/show/{report}', array(
   'uses' => 'ReportingController@show',
 ));
-Route::get('lrs/{id}/reporting/delete/{report}', array(
+Route::delete('lrs/{id}/reporting/delete/{report}', array(
   'uses' => 'ReportingController@destroy',
 ));
 Route::get('lrs/{id}/reporting/getReports/{limt?}', array(
@@ -270,6 +271,18 @@ Route::get('lrs/{id}/statements/{extra}', 'ExplorerController@filter')
 ->where(array('extra' => '.*'));
 
 Route::resource('statements', 'StatementController');
+
+//temp for people running the dev version pre v1.0 to migrate statements
+//can only be run by super admins.
+Route::get('migrate', array(
+  'as'     => 'users.addpassword',
+  'before' => 'auth.super',
+  'uses'   => 'MigrateController@runMigration'
+));
+Route::post('migrate/{id}', array(
+  'before' => 'auth.super',
+  'uses'   => 'MigrateController@convertStatements'
+));
 
 /*
 |------------------------------------------------------------------

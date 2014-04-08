@@ -90,15 +90,6 @@ require app_path().'/filters.php';
 require app_path(). '/listeners.php';
 
 /*
-|--------------------------------------------------------------------------
-| Learning Locker specific key contained in all statements.
-| This is used to determine which LRS the statement is being stored in.
-|--------------------------------------------------------------------------
-*/
-
-const SPECIFIC_LRS =  'context.extensions.http://learninglocker&46;net/extensions/lrs._id';
-
-/*
 |---------------------------------------------------------------------------
 | Learning Locker specific validation
 |---------------------------------------------------------------------------

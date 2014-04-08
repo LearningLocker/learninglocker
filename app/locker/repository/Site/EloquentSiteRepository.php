@@ -19,8 +19,6 @@ class EloquentSiteRepository implements SiteRepository {
 
   public function create( $data ){
 
-    //check site has not already been set
-
     $site            = new Site;
     $site->name        = $data['name'];
     $site->description = $data['description'];
@@ -33,7 +31,7 @@ class EloquentSiteRepository implements SiteRepository {
     $site->save();
 
     return $site;
-    //return User::create($input);
+    
   }
 
   public function update($id, $data){
@@ -60,10 +58,14 @@ class EloquentSiteRepository implements SiteRepository {
     //check user exists
     $user = \User::find( $user_id );
     if( $user ){
-      $user->verified = 'yes';
+      if( $user->verified == 'yes' ){
+        $user->verified = 'no';
+      }else{
+        $user->verified = 'yes';
+      }
       $user->save();
     }
-    return $user;
+    return $user->verified;
   }
 
 }

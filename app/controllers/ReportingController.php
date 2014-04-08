@@ -204,12 +204,7 @@ class ReportingController extends \BaseController {
    * Get available actors to use with typeahead.
    **/
   public function getActors($lrs, $query){
-    $results = Statement::select('actor')
-               ->where(SPECIFIC_LRS, $lrs)
-               ->where('actor.name', 'like', '%'.$query.'%')
-               ->distinct()
-               ->take(6)
-               ->get();
+    $results = $this->report->getActors($lrs, $query);
     return Response::json($results);
   }
 
@@ -217,7 +212,7 @@ class ReportingController extends \BaseController {
    * Get available activities to use with typeahead.
    **/
   public function getActivities($lrs, $query){
-    $results = $this->setQuery($lrs, $query, 'object', 'object.id');
+    $results = $this->setQuery($lrs, $query, 'statement.object', 'statement.object.id');
     return Response::json($results);
   }
 
@@ -225,7 +220,7 @@ class ReportingController extends \BaseController {
    * Get available parent activities to use with typeahead.
    **/
   public function getParents($lrs, $query){
-    $results = $this->setQuery($lrs, $query, 'context.contextActivities.parent', 'context.contextActivities.parent.id');
+    $results = $this->setQuery($lrs, $query, 'statement.context.contextActivities.parent', 'statement.context.contextActivities.parent.id');
     return Response::json($results);
   }
 
@@ -233,16 +228,12 @@ class ReportingController extends \BaseController {
    * Get available grouping activities to use with typeahead.
    **/
   public function getGrouping($lrs, $query){
-    $results = $this->setQuery($lrs, $query, 'context.contextActivities.grouping', 'context.contextActivities.grouping.id');
+    $results = $this->setQuery($lrs, $query, 'statement.context.contextActivities.grouping', 'statement.context.contextActivities.grouping.id');
     return Response::json($results);
   }
 
   public function setQuery($lrs, $query, $field, $wheres){
-    return Statement::select($field)
-               ->where(SPECIFIC_LRS, $lrs)
-               ->where($wheres, 'like', '%'.$query.'%')
-               ->take(6)
-               ->get();
+    return $this->report->setQuery($lrs, $query, $field, $wheres);
   }
 
   /**

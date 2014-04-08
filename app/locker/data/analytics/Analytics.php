@@ -44,8 +44,6 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
     //parse over the filter and check for conditions
     $filter = $this->setFilter( $filter );
 
-    //var_dump( $filter );exit;
-
     //set type if passed
     if( isset( $options['type'] ) ){
       $type = $this->setType( $options['type'] );
@@ -79,8 +77,6 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
     }else{
       $filters = $filter;
     }
-
-    //var_dump( $filters );exit;
 
     //get the data
     $data = $this->query->timedGrouping( $lrs, $filters, $interval, $type );
@@ -120,10 +116,10 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
     //if section is courses or badges, add appropriate filter for the $match pipe
     switch( $section ){
       case 'courses': 
-        $filter = array_merge( $filter, array('context.contextActivities.grouping.type' => 'http://adlnet.gov/expapi/activities/course'));
+        $filter = array_merge( $filter, array('statement.context.contextActivities.grouping.type' => 'http://adlnet.gov/expapi/activities/course'));
         break;
       case 'badges': 
-        $filter = array_merge( $filter, array('object.definition.type' => 'http://activitystrea.ms/schema/1.0/badge'));
+        $filter = array_merge( $filter, array('statement.object.definition.type' => 'http://activitystrea.ms/schema/1.0/badge'));
         break;
     }
 

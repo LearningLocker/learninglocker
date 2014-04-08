@@ -1,5 +1,9 @@
-<script id="showQuery" type="text/template">
-  <div id="display-query">
+<script id="statements" type="text/template">
+ 
+</script>
+
+<script id="statement" type="text/template">
+
+  <%= title %>
   
-  </div>
 </script>

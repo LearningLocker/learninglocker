@@ -10,4 +10,8 @@ interface ReportRepository {
 
   public function find($id);
 
+  public function getActors($lrs, $query);
+
+  public function setQuery($lrs, $query, $field, $wheres);
+
 }

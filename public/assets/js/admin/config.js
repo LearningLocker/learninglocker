@@ -33,7 +33,7 @@ require.config({
     },
     bootstrap: {
       deps: ["jquery"],
-      exports: "Bootstrap"
+      exports: "$.fn.popover"
     },
   },
 });

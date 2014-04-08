@@ -281,15 +281,21 @@ class xAPIValidation {
     //depending on the objectType, validate accordingly.
     $object_keys = array_keys( $object );
 
-    if( in_array($object_type, array( 'Activity', 'Agent', 'Group' )) ){
+    if( in_array($object_type, array( 'Activity', 'Agent', 'Group', 'StatementRef' )) ){
 
-      $object_valid = $this->checkParams( 
-                                  array(
-                                    'objectType' => array('string'), 
-                                    'id'         => array('iri', true), 
-                                    'definition' => array('emptyArray')
-                                    ), $object, 'object'
-                                );
+      if( $object['objectType'] == 'StatementRef' ){
+        $array = array('objectType' => array('string'), 
+                       'id'         => array('uuid', true), 
+                       'definition' => array('emptyArray'));
+      }elseif( $object['objectType'] == 'SubStatement' ){
+        $array = array('objectType' => array('string'));
+      }else{
+        $array = array('objectType' => array('string'), 
+                       'id'         => array('iri', true), 
+                       'definition' => array('emptyArray'));
+      }
+
+      $object_valid = $this->checkParams( $array, $object, 'object' );
 
       if( $object_valid !== true ) return false; //end here if not true
 
@@ -361,27 +367,14 @@ class xAPIValidation {
 
     }
           
-    if( $object_type == 'StatementRef' ){
-      //Will only have objectType and id where id is a statement UUID.
-      $id = $object['id'];
-      if( isset($id) ){
-        //check it is in a valid UUID format
-        $this->assertionCheck((!$this->validateUUID( $id )),
-          'Object of type StatementRef needs an id with a valid UUID.');
-
-      }else{
-        $this->setError( 'Object of type StatementRef needs to contain the UUID of a statement.' );
-        return false;
-      }
-
-    }elseif( $object_type == 'SubStatement' ){
+    if( $object_type == 'SubStatement' ){
         
       //remove "id", "stored", "version" or "authority" if exist
       unset($object['id']);
       unset($object['stored']);
       unset($object['version']);
       unset($object['authority']);
-      unset($object['objectType']);
+      //unset($object['objectType']);
 
       //check object type is not SubStatement as nesting is not permitted
       if( $object['object']['objectType'] == 'SubStatement' ){
@@ -391,8 +384,6 @@ class xAPIValidation {
 
       $this->subStatement = $object;
 
-    }else{
-      //finished.
     }
 
   }
@@ -797,7 +788,7 @@ class xAPIValidation {
       break;
       case 'irl':
         $this->assertionCheck((!filter_var($value, FILTER_VALIDATE_URL)),
-        sprintf( "`%s` is not a valid UUID in " . $section, $key ));
+        sprintf( "`%s` is not a valid irl in " . $section, $key ));
       break;
       case 'lang_map':
         $this->assertionCheck($this->validateLanguageMap($value),

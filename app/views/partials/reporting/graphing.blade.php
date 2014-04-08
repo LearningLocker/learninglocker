@@ -11,7 +11,9 @@
     <div class="showStatements" style="display:none;">
       <hr>
       <h4>Related statements <span id="statementCount"></span></h4>
-      <div id="statements"></div>
+      <div id="statements">
+
+      </div>
     </div>
   </div>
 </div>

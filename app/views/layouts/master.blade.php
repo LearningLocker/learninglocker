@@ -42,6 +42,9 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="{{ URL() }}">
+            <?php 
+              $site = \Site::first();
+            ?>
             @if( isset($site->name) )
               {{ $site->name }}
             @else

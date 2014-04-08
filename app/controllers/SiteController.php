@@ -1,6 +1,9 @@
 <?php
 
 use Locker\Repository\Site\SiteRepository as Site;
+use Locker\Repository\Lrs\LrsRepository as Lrs;
+use Locker\Repository\Statement\StatementRepository as Statement;
+use Locker\Repository\User\UserRepository as User;
 
 class SiteController extends BaseController {
 
@@ -9,19 +12,37 @@ class SiteController extends BaseController {
   */
   protected $site;
 
+  /**
+   * Lrs
+   **/
+  protected $lrs;
+
+  /**
+   * $user
+   **/
+  protected $user;
+
+  /**
+   * Statements
+   **/
+  protected $statement;
+
 
   /**
    * Construct
    *
    * @param Site $site
    */
-  public function __construct(Site $site){
+  public function __construct(Site $site, Lrs $lrs, User $user, Statement $statement){
 
     $this->site = $site;
+    $this->lrs  = $lrs;
+    $this->statement  = $statement;
+    $this->user = $user;
 
-    $this->beforeFilter('auth');
-    $this->beforeFilter('csrf', array('only' => array('update', 'verifyUser', 'inviteUsers')));
+    //$this->beforeFilter('auth');
     $this->beforeFilter('auth.super');
+    $this->beforeFilter('csrf', array('only' => array('update', 'verifyUser', 'inviteUsers'))); 
 
   }
 
@@ -33,7 +54,8 @@ class SiteController extends BaseController {
   public function index(){
 
     $site  = $this->site->all();
-    return View::make('partials.site.dashboard', array('site' => $site));
+    $list  = $this->lrs->all();
+    return View::make('partials.site.dashboard', array('site' => $site, 'list' => $list));
 
   }
 
@@ -98,10 +120,10 @@ class SiteController extends BaseController {
    */
   public function lrs(){
 
-    $lrs = Lrs::all();
+    $lrs = $this->lrs->all();
     if( $lrs ){
       foreach( $lrs as $l ){
-        $l->statement_total = \Statement::where(SPECIFIC_LRS, $l->_id)->remember(5)->count();
+        $l->statement_total = $this->statement->count($l->_id);
       }
     }
     return Response::json( $lrs );
@@ -119,10 +141,10 @@ class SiteController extends BaseController {
    */
   public function users(){
 
-    $users = User::orderBy('created_at', 'asc')->get();
+    $users = $this->user->all();
     foreach($users as &$u){
-      $u->lrs_owned  = Lrs::where('owner._id', $u->_id)->select('title')->get()->toArray();
-      $u->lrs_member = Lrs::where('users.user', $u->_id)->select('title')->get()->toArray();
+      $u->lrs_owned  = $this->lrs->getLrsOwned( $u->_id );
+      $u->lrs_member = $this->lrs->getLrsMember( $u->_id );
     }
     return Response::json( $users );
 
@@ -144,9 +166,7 @@ class SiteController extends BaseController {
    **/
   public function inviteUsers(){
     $invite = \app\locker\helpers\User::inviteUser( Input::all() );
-    return Redirect::back()
-      ->with('success', Lang::get('users.invite.invited'));
-  
+    return Redirect::back()->with('success', Lang::get('users.invite.invited'));
   }
 
   /**

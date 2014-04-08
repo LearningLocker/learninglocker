@@ -3,9 +3,10 @@ define([
   'underscore',
   'backbone',
   'marionette',
+  'bootstrap',
   'layouts/main',
   'layouts/dashboard'
-], function($,_, Backbone, Marionette, MainLayout, DashboardView){
+], function($,_, Backbone, Marionette, Bootstrap, MainLayout, DashboardView){
 
   var App = new Backbone.Marionette.Application();
   

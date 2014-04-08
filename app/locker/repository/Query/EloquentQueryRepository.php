@@ -22,7 +22,7 @@ class EloquentQueryRepository implements QueryRepository {
    **/
   public function selectDistinctField( $lrs='', $table='', $field='', $value='', $select='' ){
     return \DB::table($table)
-    ->where(SPECIFIC_LRS, $lrs)
+    ->where('lrs._id', $lrs)
     ->where( $field, $value )
     ->select( $select )
     ->distinct()
@@ -39,8 +39,8 @@ class EloquentQueryRepository implements QueryRepository {
    * @return array results
    *
    **/
-  public function selectStatements( $lrs='', $filter ){
-    $statements = \Statement::where(SPECIFIC_LRS, $lrs);
+  public function selectStatements( $lrs='', $filter, $limit=20, $offset=0 ){
+    $statements = \Statement::where('lrs._id', $lrs);
     if( !empty($filter) ){
       
       foreach($filter as $key => $value ){
@@ -57,9 +57,10 @@ class EloquentQueryRepository implements QueryRepository {
       }
 
     }
+    $statements->take($limit);
+    $statements->skip($offset);
     $statements->remember(5);
-    $getStatements = $statements->get();
-    return $getStatements;
+    return $statements->get();
   }
 
   /**
@@ -77,7 +78,7 @@ class EloquentQueryRepository implements QueryRepository {
   public function timedGrouping( $lrs, $filters, $interval, $type='time' ){
 
     //set filters
-    $lrs_filter = array(SPECIFIC_LRS => $lrs);
+    $lrs_filter = array('lrs._id' => $lrs);
 
     //if further filters passed, add them
     $match = array_merge( $lrs_filter, $filters );
@@ -88,16 +89,16 @@ class EloquentQueryRepository implements QueryRepository {
     }else{
       switch($type){
         case 'user': 
-          $set_id  = array('actor' => '$actor');  
-          $project = array('$addToSet' => '$actor');  
+          $set_id  = array('actor' => '$statement.actor');  
+          $project = array('$addToSet' => '$statement.actor');  
           break;
         case 'verb': 
-          $set_id  = array('verb' => '$verb');   
-          $project = array('$addToSet' => '$verb');    
+          $set_id  = array('verb' => '$statement.verb');   
+          $project = array('$addToSet' => '$statement.verb');    
           break;
         case 'activity': 
-          $set_id  = array('activity' => '$object'); 
-          $project = array('$addToSet' => '$object');
+          $set_id  = array('activity' => '$statement.object'); 
+          $project = array('$addToSet' => '$statement.object');
           break;
       }
     }
@@ -110,7 +111,7 @@ class EloquentQueryRepository implements QueryRepository {
             '$group' => array(
               '_id'   => $set_id,
               'count' => array('$sum' => 1),
-              'date'  => array('$addToSet' => '$stored')
+              'date'  => array('$addToSet' => '$statement.stored')
             )
         ),
         array('$sort'  => array('date' => 1)),
@@ -123,7 +124,7 @@ class EloquentQueryRepository implements QueryRepository {
           '$group' => array(
             '_id'   => $set_id, //, 'dayOfYear' => '$created_at'
             'count' => array('$sum' => 1),
-            'dates' => array('$addToSet' => '$stored'),
+            'dates' => array('$addToSet' => '$statement.stored'),
             'data'  => $project
           ),
         ),
@@ -151,7 +152,7 @@ class EloquentQueryRepository implements QueryRepository {
   public function objectGrouping( $lrs, $section='', $filters='', $returnFields ){
 
     //set filters
-    $lrs_filter = array(SPECIFIC_LRS => $lrs);
+    $lrs_filter = array('lrs._id' => $lrs);
 
     //if further filters passed, add them
     $match = array_merge( $lrs_filter, $filters );

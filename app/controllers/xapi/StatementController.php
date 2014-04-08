@@ -29,7 +29,7 @@ class StatementsController extends BaseController {
 
     $this->statement = $statement;
 
-    $this->beforeFilter('@checkVersion');
+    $this->beforeFilter('@checkVersion', array('except' => 'index'));
     $this->beforeFilter('@getLrs');
     $this->beforeFilter('@setParameters', array('except' => 'store', 'put'));
     $this->beforeFilter('@reject', array('except' => 'store', 'put'));
