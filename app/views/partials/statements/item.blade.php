@@ -24,10 +24,10 @@
       $object = $statement['object']['definition']['name'];
       $object = reset( $object );
     }else {
-      $object = $statement['object']['id'];
+      $object = isset($statement['object']['id']) ? $statement['object']['id'] : $statement['object']['mbox'];
     }
   }else {
-    $object = $statement['object']['id'];
+    $object = isset($statement['object']['id']) ? $statement['object']['id'] : $statement['object']['mbox'];
   }
 
   $stored = new Carbon\Carbon($statement['stored']);
@@ -47,7 +47,7 @@
       
       <i>{{ $verb }}</i>
         
-      <a href="{{ $statement['object']['id'] }}">{{{ $object }}}</a>
+      <a href="{{ $object }}">{{{ $object }}}</a>
 
       <small>| {{ $stored->diffForHumans() }} ({{ $stored->toDayDateTimeString() }})</small>
 

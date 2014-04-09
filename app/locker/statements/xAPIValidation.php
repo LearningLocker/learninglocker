@@ -289,6 +289,10 @@ class xAPIValidation {
                        'definition' => array('emptyArray'));
       }elseif( $object['objectType'] == 'SubStatement' ){
         $array = array('objectType' => array('string'));
+      }elseif( $object['objectType'] == 'Agent' ){
+        $array = array('objectType' => array('string'), 
+                       'name'       => array('string'), 
+                       'mbox'       => array('mailto'));
       }else{
         $array = array('objectType' => array('string'), 
                        'id'         => array('iri', true), 

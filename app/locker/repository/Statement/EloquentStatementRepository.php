@@ -316,7 +316,7 @@ class EloquentStatementRepository implements StatementRepository {
 
       //if ids then return minimum details for agent, activity and group objects
       if( $parameters['format'] == 'ids' ){
-        $statements->select('statement.actor.mbox', 'statement.verb.id', 'statement.object.id', 'statement.object.objectType');
+        $statements->select('statement.id', 'statement.actor.mbox', 'statement.verb.id', 'statement.object.id', 'statement.object.objectType');
       }
 
       //if exact - return as stored
@@ -526,6 +526,26 @@ class EloquentStatementRepository implements StatementRepository {
 
     $actor = json_decode($actor);
 
+    //Do some checking on what actor field we are filtering with
+    if( isset($actor->mbox) ){ //check for mbox
+      $query = $actor->mbox;
+      $query_type = 'mbox';
+    } else if( isset($actor->mbox_sha1sum) ) {//check for mbox_sha1sum
+      $query = $actor->mbox_sha1sum;
+      $query_type = 'mbox_sha1sum';
+    } else if( isset($actor->openid) ){ //check for open id
+      $query = $actor->openid;
+      $query_type = 'openid';
+    } else if( isset($actor->account) ){ //else if there is an account
+      $query = $actor->account;
+      $query_type = 'account';
+    }
+
+    $authority  = 'statement.authority.' . $query_type;
+    $object     = 'statement.object.' . $query_type;
+    $teams      = 'statement.context.team.' . $query_type;
+    $instructor = 'tatement.context.instructor.' . $query_type;
+
     $ids = array();
 
     if( $statements ){
@@ -535,25 +555,25 @@ class EloquentStatementRepository implements StatementRepository {
       }
       
       //look in authority
-      $authority = \Statement::where('lrs._id', $lrs)->where('statement.authority.mbox', $actor->mbox)->get();
+      $authority = \Statement::where('lrs._id', $lrs)->where($authority, $query)->get();
       if( $authority ){
         $statements = $this->addStatements( $statements, $authority, $ids );
       }
 
       //look in object where objectType = Agent
-      $object = \Statement::where('lrs._id', $lrs)->where('statement.object.mbox', $actor->mbox)->get();
+      $object = \Statement::where('lrs._id', $lrs)->where($object, $query)->get();
       if( $object ){
         $statements = $this->addStatements( $statements, $object, $ids );
       }
 
       //look in team
-      $teams = \Statement::where('lrs._id', $lrs)->where('statement.context.team', $actor->mbox)->get();
+      $teams = \Statement::where('lrs._id', $lrs)->where($teams, $query)->get();
       if( $object ){
         $statements = $this->addStatements( $statements, $teams, $ids );
       }
 
       //look in instructor
-      $instructor = \Statement::where('lrs._id', $lrs)->where('statement.context.instructor.mbox', $actor->mbox)->get();
+      $instructor = \Statement::where('lrs._id', $lrs)->where($instructor, $query)->get();
       if( $object ){
         $statements = $this->addStatements( $statements, $instructor, $ids );
       }
@@ -634,6 +654,7 @@ class EloquentStatementRepository implements StatementRepository {
     }
     return $statements;
   }
+
 
   ///////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////
