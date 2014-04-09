@@ -293,11 +293,11 @@ define([
       }
       if( radioName == 'success' ){
         query_display['result.success'] = 'With success as ' + getValue;
-        query['result.success'] = getValue;
+        query['statement.result.success'] = getValue;
       }
       if( radioName == 'completion' ){
         query_display['result.completion'] = 'With completion as ' + getValue;
-        query['result.completion'] = getValue;
+        query['statement.result.completion'] = getValue;
       }
       displayQuery();
     });
@@ -306,7 +306,7 @@ define([
     $('#success-clear').click(function(e){
       e.preventDefault();
       $('input[name=success]').attr('checked',false);
-      delete query['result.success'];
+      delete query['statement.result.success'];
       delete query_display['result.success'];
       displayQuery();
     });
@@ -315,7 +315,7 @@ define([
     $('#completion-clear').click(function(e){
       e.preventDefault();
       $('input[name=completion]').attr('checked',false);
-      delete query['result.completion'];
+      delete query['statement.result.completion'];
       delete query_display['result.completion'];
       displayQuery();
     });
@@ -469,28 +469,28 @@ define([
     $('#scaled_values').click( function(e){
       scaled_from = $('#scaled_from').val();
       scaled_to   = $('#scaled_to').val();
-      buildQueryResultScore('result.score.scaled', ['<>', scaled_from, scaled_to]);
+      buildQueryResultScore('statement.result.score.scaled', ['<>', scaled_from, scaled_to]);
       buildActualDisplay('result.score.scaled', 'Scaled from ' + scaled_from + ' to ' + scaled_to);
       displayQuery();
     });
     $('#raw_values').click( function(e){
       raw_from = $('#raw_from').val();
       raw_to   = $('#raw_to').val();
-      buildQueryResultScore('result.score.raw', ['<>', raw_from, raw_to]);
+      buildQueryResultScore('statement.result.score.raw', ['<>', raw_from, raw_to]);
       buildActualDisplay('result.score.raw', 'Raw from ' + raw_from + ' to ' + raw_to);
       displayQuery();
     });
     $('#min_values').click( function(e){
       min_from = $('#min_from').val();
       min_to   = $('#min_to').val();
-      buildQueryResultScore('result.score.min', ['<>', min_from, min_to]);
+      buildQueryResultScore('statement.result.score.min', ['<>', min_from, min_to]);
       buildActualDisplay('result.score.min', 'Min from ' + min_from + ' to ' + min_to);
       displayQuery();
     });
     $('#max_values').click( function(e){
       max_from = $('#max_from').val();
       max_to   = $('#max_to').val();
-      buildQueryResultScore('result.score.max', ['<>', max_from, max_to]);
+      buildQueryResultScore('statement.result.score.max', ['<>', max_from, max_to]);
       buildActualDisplay('result.score.max', 'Max from ' + max_from + ' to ' + max_to);
       displayQuery();
     });
