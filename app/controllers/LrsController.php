@@ -115,6 +115,8 @@ class LrsController extends BaseController {
    */
   public function update($id){
 
+    $data = Input::all();
+
     //lrs input validation
     $rules['title']        = 'required|alpha_spaces';
     $rules['description']  = 'alpha_spaces';       
