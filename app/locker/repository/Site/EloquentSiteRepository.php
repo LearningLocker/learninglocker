@@ -24,9 +24,9 @@ class EloquentSiteRepository implements SiteRepository {
     $site->description = $data['description'];
     $site->email       = $data['email'];
     $site->create_lrs  = array('super');
-    $site->api         = $data['api'];
     $site->registration = $data['registration'];
     $site->restrict    = $data['restrict']; //restrict registration to a specific email domain
+    $site->domain      = $data['domain'];
     $site->super       = array( array('user' => \Auth::user()->_id ) );
     $site->save();
 
@@ -41,7 +41,6 @@ class EloquentSiteRepository implements SiteRepository {
     $site->description = $data['description'];
     $site->email       = $data['email'];
     $site->create_lrs  = $data['create_lrs'];
-    $site->api         = $data['api'];
     $site->registration = $data['registration'];
     $site->domain      = $data['domain']; //restrict registration to a specific email domain
     return $site->save();

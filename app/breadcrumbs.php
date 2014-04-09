@@ -37,7 +37,7 @@ Breadcrumbs::register('site.invite', function($breadcrumbs) {
   $breadcrumbs->push('Invite users', url('/site/invite'));
 });
 Breadcrumbs::register('settings', function($breadcrumbs) {
-  $breadcrumbs->push('Settings', url('/site/settings'));
+  $breadcrumbs->push('Settings', url('/site#settings'));
 });
 Breadcrumbs::register('site.edit', function($breadcrumbs, $site) {
   $breadcrumbs->parent('settings');

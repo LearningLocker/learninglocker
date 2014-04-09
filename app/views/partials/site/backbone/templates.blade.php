@@ -252,12 +252,6 @@
           </td>
         </tr>
         <tr>
-          <td><b>{{ Lang::get('site.api_status') }}</b></td>
-          <td>
-            <span class="label <% if ( api != 'Off' ){ %> label-success <% }else{ %> label-danger <% } %>">API <%= api %></span>
-          </td>
-        </tr>
-        <tr>
           <td><b>{{ Lang::get('site.registration') }}</b></td>
           <td>
             <span class="label <% if ( registration == 'Open' ){ %> label-success <% }else{ %> label-danger <% } %>">
