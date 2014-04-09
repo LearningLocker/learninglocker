@@ -71,7 +71,7 @@
                 <li class="dropdown-header">Other</li>
                 <li><a href="{{ URL() }}/lrs">LRS home</a></li>
                 @if( app\locker\helpers\Lrs::lrsCanCreate() )
-                  <li><a href="#">Create a new LRS</a></li>
+                  <li><a href="{{ URL() }}/lrs/create">Create a new LRS</a></li>
                 @endif
               </ul>
             </li>
