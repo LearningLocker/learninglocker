@@ -28,7 +28,7 @@ Route::get('/', function(){
     if( isset($site) ){
       return View::make('system.forms.login', array( 'site' => $site ));
     }else{
-      return View::make('system.forms.regsiter');
+      return View::make('system.forms.register');
     }
   }
 });
