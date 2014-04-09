@@ -44,9 +44,6 @@
     </li>
     @endif
   @endforeach
-
-
-  <p>Now drop the old statements table. <a href="">Drop it</a></p>
   
   <p>You should now have migrated all your existing statements.</p>
 
