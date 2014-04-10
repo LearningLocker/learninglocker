@@ -112,12 +112,13 @@ class LrsDashboard extends \app\locker\data\BaseData {
     return $this->db->statements->aggregate(
                 array('$match' => $match),
                 array('$group' => array('_id'   => '$statement.object.id',
-                      'name'  => array('$addToSet' => '$statement.object.definition.name.en-US'), 
+                      'name'  => array('$addToSet' => '$statement.object.definition.name'),
+                      'description' => array('$addToSet' => '$statement.object.definition.description'), 
                       'count' => array('$sum' => 1))),
                 array('$sort'  => array('count' => -1)),
                 array('$limit' => 6)
               );
-
+  
   }
 
   /**

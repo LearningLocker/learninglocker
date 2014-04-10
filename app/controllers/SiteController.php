@@ -40,7 +40,7 @@ class SiteController extends BaseController {
     $this->statement  = $statement;
     $this->user = $user;
 
-    //$this->beforeFilter('auth');
+    $this->beforeFilter('auth');
     $this->beforeFilter('auth.super');
     $this->beforeFilter('csrf', array('only' => array('update', 'verifyUser', 'inviteUsers'))); 
 
