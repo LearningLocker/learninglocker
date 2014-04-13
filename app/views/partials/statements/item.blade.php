@@ -1,16 +1,26 @@
 <?php
-  /*
-  |----------------------------------------------------------------------------
-  | The following is so we can handle legacy statements that are stored 
-  | with the lrs as an extension. V1.0 and forward does not do this so
-  | eventually we will be able to remove this hack.
-  |----------------------------------------------------------------------------
-  */
+ 
   $statement_lrs = $statement['lrs']['_id'];
   $statement = $statement['statement'];
   $json = $statement;
   
-  $avatar = \app\locker\helpers\Helpers::getGravatar( substr($statement['actor']['mbox'], 7), '20');
+  if( isset($statement['actor']['mbox']) ){
+    $avatar = \app\locker\helpers\Helpers::getGravatar( substr($statement['actor']['mbox'], 7), '20');
+  }else{
+    $avatar = 'http://placehold.it/20X20';
+  }
+
+  if( isset($statement['actor']['name']) && $statement['actor']['name'] != ''){
+    $name = $statement['actor']['name'];
+  }elseif(isset($statement['actor']['mbox']) && $statement['actor']['mbox'] != '' ){
+    $name = $statement['actor']['mbox'];
+  }elseif(isset($statement['actor']['openid']) && $statement['actor']['openid'] != '' ){
+    $name = $statement['actor']['openid'];
+  }elseif( isset($statement['actor']['account']['name']) && $statement['actor']['account']['name'] != '' ){
+    $name = $statement['actor']['account']['name'];
+  }else{
+    $name = 'no name available';
+  }
 
   if( isset($statement['verb']['display']) ){
     $verb = $statement['verb']['display'];
@@ -18,8 +28,6 @@
   }else{
     $verb = $statement['verb']['id'];
   }
-
-  $object_id = isset($statement['object']['id']) ? $statement['object']['id'] : '#';
 
   if( isset( $statement['object']['definition'] )){
     if( isset( $statement['object']['definition']['name'] )){
@@ -45,11 +53,11 @@
           <img src="{{ $avatar }}" alt='avatar' class="img-circle" />
       </span> 
         
-      {{ $statement['actor']['name'] }}
+      {{ $name }}
       
       <i>{{ $verb }}</i>
         
-      <a href="{{ $object_id }}">{{{ $object }}}</a>
+      <a href="{{ $object }}">{{{ $object }}}</a>
 
       <small>| {{ $stored->diffForHumans() }} ({{ $stored->toDayDateTimeString() }})</small>
 
