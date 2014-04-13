@@ -29,6 +29,8 @@
     $verb = $statement['verb']['id'];
   }
 
+  $object_id = isset($statement['object']['id']) ? $statement['object']['id'] : '#';
+
   if( isset( $statement['object']['definition'] )){
     if( isset( $statement['object']['definition']['name'] )){
       $object = $statement['object']['definition']['name'];
@@ -57,7 +59,7 @@
       
       <i>{{ $verb }}</i>
         
-      <a href="{{ $object }}">{{{ $object }}}</a>
+      <a href="{{ $object_id }}">{{{ $object }}}</a>
 
       <small>| {{ $stored->diffForHumans() }} ({{ $stored->toDayDateTimeString() }})</small>
 
