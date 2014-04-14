@@ -21,7 +21,7 @@
       </div><br />
       Once done, refresh this page and move on to the next step.
     </li>
-    <li>Next, click on each of your LRS's listed below to migrate the statements in each one.</li>
+    <li>Next, click on the migrate button under each LRS listed below to migrate the statements.</li>
   </ul> 
   <div id="loading" style="margin:10px 0 10px 0;display:none;"><img src="{{ URL() }}/assets/img/ajax-loader.gif" /></div>
   <ul class="list-group col-sm-8">
