@@ -34,12 +34,12 @@
     <li class="list-group-item">
       <span class="badge">{{ $count }}</span>
       <p>{{ $l->title }}</p>
-      @if( isset($count_new) )
+      @if( isset($count_new) && $count_new != 0 )
         <div class="label label-success">{{ $count_new }}</div>
       @endif 
       <div class="label label-success new_count" style="font-size:16px;padding:8px;"></div>
-      @if( !isset($count_new) ) 
-        <div class="migrate btn btn-primary btn-xs" data-lrs="{{$l->_id}}">Migrate</div>
+      @if( !isset($count_new) || $count_new == 0 ) 
+        <div class="migrate btn btn-primary btn-sm" data-lrs="{{$l->_id}}"><i class="icon-play-circle"></i> Migrate</div>
       @endif
     </li>
     @endif
