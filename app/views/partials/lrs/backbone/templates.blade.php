@@ -92,7 +92,13 @@
 <script id="activityListView" type="text/template">
   <span class="badge badge-warning"><%= count %></span>
   <a href="<%= _id %>">
-    <%= name %>
+    <% if( name[0] && name[0] != 'undefined' ){ %>
+        <%= name[0][Object.keys(name[0])[0]] %>
+    <% }else if( description[0] && description[0] != 'undefined' ){ %>
+        <%= description[0][Object.keys(description[0])[0]] %>
+    <% }else{ %>
+        <%= _id %>
+    <% } %>
   </a>
 </script>
 

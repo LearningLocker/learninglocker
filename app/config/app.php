@@ -110,6 +110,7 @@ return array(
     'Locker\Data\DataServiceProvider',
     'Locker\Graphing\GraphServiceProvider',
     'Jenssegers\Mongodb\MongodbServiceProvider',
+    'Jenssegers\Mongodb\Auth\ReminderServiceProvider',
     'DaveJamesMiller\Breadcrumbs\ServiceProvider',
     'Way\Generators\GeneratorsServiceProvider',
     'Barryvdh\Cors\CorsServiceProvider',

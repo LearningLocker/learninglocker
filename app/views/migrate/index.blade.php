@@ -21,7 +21,7 @@
       </div><br />
       Once done, refresh this page and move on to the next step.
     </li>
-    <li>Next, click on each of your LRS's listed below to migrate the statements in each one.</li>
+    <li>Next, click on the migrate button under each LRS listed below to migrate the statements.</li>
   </ul> 
   <div id="loading" style="margin:10px 0 10px 0;display:none;"><img src="{{ URL() }}/assets/img/ajax-loader.gif" /></div>
   <ul class="list-group col-sm-8">
@@ -34,19 +34,17 @@
     <li class="list-group-item">
       <span class="badge">{{ $count }}</span>
       <p>{{ $l->title }}</p>
-      @if( isset($count_new) )
+      @if( isset($count_new) && $count_new != 0 )
         <div class="label label-success">{{ $count_new }}</div>
       @endif 
       <div class="label label-success new_count" style="font-size:16px;padding:8px;"></div>
-      @if( !isset($count_new) ) 
-        <div class="migrate btn btn-primary btn-xs" data-lrs="{{$l->_id}}">Migrate</div>
+      @if( !isset($count_new) || $count_new == 0 ) 
+        <div class="migrate btn btn-primary btn-sm" data-lrs="{{$l->_id}}"><i class="icon-play-circle"></i> Migrate</div>
       @endif
     </li>
     @endif
   @endforeach
-  
-  <p>You should now have migrated all your existing statements.</p>
-
+  </ul>
 @stop
 @section('scripts')
   @parent
