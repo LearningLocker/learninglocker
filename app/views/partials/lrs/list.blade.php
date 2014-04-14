@@ -21,11 +21,26 @@
 
     @if ( isset($lrs) && !empty($lrs) )
 
+    <table class="table table-striped table-bordered">
+      <thead>        
+        <tr>
+          <th>Title</th>
+          <th>Description</th>
+          <th>User #</th>
+          <th>Created</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+
       @foreach( $lrs as $l )
         <div class="col-xs-12 col-sm-12 col-lg-12">
           @include('partials.lrs.item', array('lrs' => $l))
         </div>
       @endforeach
+
+      </tbody>
 
     @endif
 

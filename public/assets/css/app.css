@@ -1,0 +1,197 @@
+/* Bordered box - could replace with Bootstrap panels 
+--------------------------------------------------------------*/
+
+.bordered {
+  border:1px solid #f1f1f1;
+  border-radius:4px;
+  padding:10px;
+  margin-bottom:20px;
+  background:#fff;
+}
+
+.bordered h4 {
+  background:#f9f9f9;
+  padding:10px;
+  margin:-10px -10px 10px -10px;
+  border-bottom:1px solid #f1f1f1;
+}
+
+.bordered h4 span {
+  font-size:13px;
+}
+
+.background {
+  background:rgba(255,255,255,0.7);
+  border-radius:4px;
+  padding:10px;
+  margin:40px 0 20px 0;
+}
+
+.stats-box {
+  background:#f1f1f1;
+  text-align:center;
+  padding:20px 0 20px 0;
+  font-size:160%;
+}
+
+.stats-box span {
+  color:#36d0ff;
+  display:block;
+  font-size:160%;
+}
+
+.report-box {
+  height:200px;
+  position:relative;
+}
+
+.report-box-footer {
+  height:40px;
+  position:absolute;
+  bottom:0;
+  width:95%;
+}
+
+#footer {
+  border-top:1px solid #ccc;
+  border-bottom:1px solid #ccc;
+  padding:10px 0 10px 0;
+  text-align:center;
+  font-size:12px;
+}
+
+#footer a {
+  display:block;
+}
+
+/* Statement explorer
+--------------------------------------------------------------*/
+
+.explore-option {
+  text-align:center;
+  border:1px solid #f1f1f1;
+  background:#f9f9f9;
+  padding-bottom:20px;
+  margin-bottom:10px;
+}
+
+.explore-option:hover, .explore-option.active {
+  background:#f1f1f1;
+}
+
+.explore-option.disable {
+  background:#fff;
+}
+
+.explore-option.disable:hover {
+  background:#f9f9f9;
+}
+
+.explore-option span {
+  font-size:50px;
+  margin:20px 20px 5px 20px;
+  display:block;
+  color:#3276b1;
+}
+
+.explore-option span.stats {
+  font-size:26px;
+  color:#222;
+}
+
+#display-query {
+  margin:10px 0 20px 0;
+}
+
+.selector {
+  background:#f1f1f1;
+  margin:20px 0 20px 0;
+  padding:10px;
+}
+
+.explorer-stats {
+  margin:20px 0 20px 0;
+  padding:10px;
+}
+
+.explore-option .red-icon {
+  color:#b85e80;
+}
+.explore-option .blue-icon {
+  color:#36d0ff;
+}
+
+/* Statements 
+-------------------------------------------------------*/
+
+.statement-row {
+  border-bottom:1px solid #f1f1f1;
+  padding:10px 0 6px 0;
+}
+
+.statement-date {
+  margin-right:10px;
+}
+
+.full-statement {
+  margin:10px 0 10px 0;
+}
+
+.statement-avatar {
+  margin:-2px 10px 2px 6px;
+}
+
+.lightgrey {
+  color:#ccc;
+}
+
+.label-verb {
+  background:#f9f9f9;
+  border-radius:6px;
+  border:1px solid #f1f1f1;
+  padding:5px;
+  color:#222;
+  font-size:14px;
+  font-weight:normal;
+}
+
+/* User list
+----------------------------------------------------------*/
+
+.user-list {
+  padding:10px 10px 10px 10px;
+  margin-bottom:10px;
+  border:1px solid #f9f9f9;
+  background:#f9f9f9;
+  min-height:80px;
+}
+.user-avatar {
+  width:50px;
+  height:auto;
+  margin-right:10px;
+  margin-bottom:10px;
+}
+.user-details {
+  margin-left:65px;
+}
+
+.user-details-item {
+  margin:0 0 5px 0;
+}
+
+.btn-user-list {
+  width:50px;
+  margin:2px 0 2px 0;
+}
+
+/* Misc
+--------------------------------------------------------------*/
+
+div.tooltip-inner {
+    max-width: 350px;
+}
+
+.scaled {
+  border-bottom:1px solid #f1f1f1;
+  padding-bottom:5px;
+}

@@ -29,7 +29,7 @@ class StatementsController extends BaseController {
 
     $this->statement = $statement;
 
-    $this->beforeFilter('@checkVersion');
+    $this->beforeFilter('@checkVersion', array('except' => 'index'));
     $this->beforeFilter('@getLrs');
     $this->beforeFilter('@setParameters', array('except' => 'store', 'put'));
     $this->beforeFilter('@reject', array('except' => 'store', 'put'));
@@ -48,7 +48,7 @@ class StatementsController extends BaseController {
     //grab incoming statement
     $request            = \Request::instance();
     $incoming_statement = $request->getContent();
-    $statements_assoc = json_decode($incoming_statement, TRUE);
+    $statements_assoc   = json_decode($incoming_statement, TRUE);
 
     if( is_array(json_decode($incoming_statement)) ){
       $statements = $statements_assoc;
@@ -125,6 +125,12 @@ class StatementsController extends BaseController {
 
   }
 
+  public function grouped(){
+    $results = $this->statement->grouped( $this->lrs->_id, $this->params );
+
+    return $this->returnArray( $results, $this->params );
+  }
+
   /**
    * Display the specified resource.
    *
@@ -175,26 +181,25 @@ class StatementsController extends BaseController {
    * @return response
    *
    **/
-  public function returnArray( $statements=array(), $params=array() ){
+  public function returnArray( $statements=array(), $params=array(), $debug=array() ){
 
     $array = array(
-      'X-Experience-API-Version' =>  \Config::get('xapi.using_version'),
-      'route'                    =>  \Request::path()
+      'X-Experience-API-Version' =>  \Config::get('xapi.using_version')
     );
 
-    $array['params'] = $params;
 
     //replace replace &46; in keys with . 
     //see https://github.com/LearningLocker/LearningLocker/wiki/A-few-quirks for more info
     if( !empty($statements) ){
       foreach( $statements as &$s ){
-        $s = \app\locker\helpers\Helpers::replaceHtmlEntity( $s );
+        $s = \app\locker\helpers\Helpers::replaceHtmlEntity( $s['statement'] );
       }
     }
     
+    //$array['count'] = sizeof($statements);
     $array['statements'] = $statements;
 
-    //$array['more'] = '';// @todo if more results available, provide link to access them
+    $array['more'] = '';// @todo if more results available, provide link to access them
 
     $response = \Response::make( $array, 200 );
     $response->headers->set('X-Experience-API-Consistent-Through', 'now');

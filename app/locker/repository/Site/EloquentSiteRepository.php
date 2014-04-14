@@ -19,22 +19,19 @@ class EloquentSiteRepository implements SiteRepository {
 
   public function create( $data ){
 
-    //check site has not already been set
-
     $site            = new Site;
     $site->name        = $data['name'];
     $site->description = $data['description'];
     $site->email       = $data['email'];
-    $site->lang        = $data['lang'];
     $site->create_lrs  = array('super');
-    $site->api         = $data['api'];
     $site->registration = $data['registration'];
     $site->restrict    = $data['restrict']; //restrict registration to a specific email domain
+    $site->domain      = $data['domain'];
     $site->super       = array( array('user' => \Auth::user()->_id ) );
     $site->save();
 
     return $site;
-    //return User::create($input);
+    
   }
 
   public function update($id, $data){
@@ -43,9 +40,7 @@ class EloquentSiteRepository implements SiteRepository {
     $site->name        = $data['name'];
     $site->description = $data['description'];
     $site->email       = $data['email'];
-    $site->lang        = $data['lang'];
     $site->create_lrs  = $data['create_lrs'];
-    $site->api         = $data['api'];
     $site->registration = $data['registration'];
     $site->domain      = $data['domain']; //restrict registration to a specific email domain
     return $site->save();
@@ -62,10 +57,15 @@ class EloquentSiteRepository implements SiteRepository {
     //check user exists
     $user = \User::find( $user_id );
     if( $user ){
-      $user->verified = 'yes';
+      if( $user->verified == 'yes' ){
+        $user->verified = 'no';
+      }else{
+        $user->verified = 'yes';
+      }
       $user->save();
     }
-    return $user;
+    return $user->verified;
+
   }
 
 }

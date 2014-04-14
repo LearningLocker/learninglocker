@@ -26,6 +26,7 @@ return array(
   'password_current_wrong' => 'Your current password was not correct.',
   'password_instructions' => 'Please add a password for your account. You need to do this before you can continue.',
   'email'          => 'Email',
+  'verify'         => 'Verify',
   'verfiy_success' => 'You have verified this user.',
   'verified'       => 'Verified',
   'verify_request' => 'Please check your email for next steps.',

@@ -12,4 +12,6 @@ interface StatementRepository {
 
 	public function statements($id);
 
+  public function count($lrs);
+
 }

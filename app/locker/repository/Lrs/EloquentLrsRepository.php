@@ -87,4 +87,12 @@ class EloquentLrsRepository implements LrsRepository {
     return \DB::table('lrs')->where('_id', $id)->pull('users', array('_id' => $user));
   }
 
+  public function getLrsOwned( $user ){
+    return $this->lrs->where('owner._id', $user)->select('title')->get()->toArray();
+  }
+
+  public function getLrsMember( $user ){
+    return $this->lrs->where('users.user', $user)->select('title')->get()->toArray();
+  }
+
 }

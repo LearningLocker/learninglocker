@@ -12,9 +12,9 @@ class RegisterHandler {
       $site->email       = $user->email;
       $site->lang        = 'en-US';
       $site->create_lrs  = array('super');
-      $site->api         = 'Closed';
       $site->registration = 'Closed';
       $site->restrict    = 'None'; //restrict registration to a specific email domain
+      $site->domain      = '';
       $site->super       = array( array('user' => $user->_id ) );
       $site->save();
     }

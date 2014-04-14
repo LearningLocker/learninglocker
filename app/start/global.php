@@ -88,3 +88,11 @@ require app_path().'/filters.php';
 */
 
 require app_path(). '/listeners.php';
+
+/*
+|---------------------------------------------------------------------------
+| Learning Locker specific validation
+|---------------------------------------------------------------------------
+*/
+
+require app_path().'/validators.php';

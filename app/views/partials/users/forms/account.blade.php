@@ -9,7 +9,7 @@
     </div>
   </div>
   <div class="form-group">
-    {{ Form::label('email', Lang::get('user.email'), array('class' => 'col-sm-4 control-label' )) }}
+    {{ Form::label('email', Lang::get('users.email'), array('class' => 'col-sm-4 control-label' )) }}
     <div class="col-sm-8">
       {{ Form::text('email',$user->email, array('class' => 'form-control')) }}
     </div>

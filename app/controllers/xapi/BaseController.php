@@ -23,26 +23,11 @@ class BaseController extends APIBaseController {
     //should be X-Experience-API-Version: 1.0.0 or 1.0.1 (can accept 1.0), reject everything else.
     $version = \Request::header('X-Experience-API-Version');
 
-    if( !isset($version) || ( $version < '1.0.0' || $version > '1.0.9' ) && $version != '1.0' ){
+    if( !isset($version) || ( $version < '1.0.0' || $version > '1.0.99' ) && $version != '1.0' ){
       return $this->returnSuccessError( true, 'This is not an accepted version of xAPI.', '400' );
     }
 
   }
-
-  /**
-   * Get the LRS details based on Auth credentials
-   *
-   **/
-  public function getLrs(){
-    //get the lrs
-    $key    = \Request::getUser();
-    $secret = \Request::getPassword();
-    $lrs    = \Lrs::where('api.basic_key', $key)
-           ->where('api.basic_secret', $secret)
-           ->first();
-    $this->lrs = $lrs;
-  }
-
 
   /**
    * Get all of the input and files for the request and store them in params.

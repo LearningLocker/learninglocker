@@ -15,7 +15,7 @@
     <p>{{ Form::label('email', 'Email') }}
     {{ Form::text('email','',array('class' => 'form-control')) }}</p>
 
-    <p>{{ Form::submit('Submit',array('class' => 'btn btn-locker')) }}</p>
+    <p>{{ Form::submit('Submit',array('class' => 'btn btn-primary')) }}</p>
 
   {{ Form::close() }}
 

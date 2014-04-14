@@ -29,14 +29,22 @@ class StatementDisplay {
 
     $display = '<table class="table table-striped table-bordered">';
 
-    $display .= $this->setActor( $statement['actor'], $lrs );
-    $display .= $this->setActivity( $statement['object'] );
-    $display .= $this->setVerb( $statement['verb'], $lrs );
-    $display .= $this->setCourse( $statement['context'], $lrs );
-    $display .= $this->setScore( $statement['result'] );
-    $display .= $this->setDuration( $statement['result'] );
-    $display .= $this->setComment( $statement['result'], $statement['object'] );
-    $display .= $this->setParent( $statement['context'], $lrs );
+    if( isset($statement['actor']) )
+      $display .= $this->setActor( $statement['actor'], $lrs );
+    if( isset($statement['object']) )
+      $display .= $this->setActivity( $statement['object'] );
+    if( isset($statement['verb']) )
+      $display .= $this->setVerb( $statement['verb'], $lrs );
+    if( isset($statement['context']) )
+      $display .= $this->setCourse( $statement['context'], $lrs );
+    if( isset($statement['result']) )
+      $display .= $this->setScore( $statement['result'] );
+    if( isset($statement['result']) )
+      $display .= $this->setDuration( $statement['result'] );
+    if( isset($statement['result']) && isset($statement['object']) )
+      $display .= $this->setComment( $statement['result'], $statement['object'] );
+    if( isset($statement['context']) )
+      $display .= $this->setParent( $statement['context'], $lrs );
 
     $display .= '</table>';
 
@@ -92,7 +100,11 @@ class StatementDisplay {
 
   private function setVerb( $verb, $lrs, $return_type='table' ){
 
-    $set_verb = reset( $verb['display'] );
+    if( isset($verb['display']) ){
+      $set_verb = reset( $verb['display'] );
+    }else{
+      $set_verb = $verb['id'];
+    }
 
     $display  = array('title'   => 'Verb',
                       'url'     => \URL::current() . '/verb/' . $set_verb, 

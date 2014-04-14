@@ -2,13 +2,14 @@
 
 use Statement;
 use Locker\Repository\Activity\ActivityRepository as Activity;
+use Locker\Repository\Query\QueryRepository as Query;
 
 class EloquentStatementRepository implements StatementRepository {
 
   /**
   * Statement
   */
-  protected $statement;
+  protected $statement, $activity, $query;
 
   /**
    * Construct
@@ -17,11 +18,23 @@ class EloquentStatementRepository implements StatementRepository {
    * @param Activity  $activity
    *
    */
-  public function __construct( Statement $statement, Activity $activity ){
+  public function __construct( Statement $statement, Activity $activity, Query $query ){
 
     $this->statement = $statement;
     $this->activity  = $activity;
+    $this->query     = $query;
 
+  }
+
+  /**
+   * Count statements for any give lrs
+   *
+   * @param string Lrs
+   * @return count
+   *
+   **/
+  public function count( $lrs ){
+    return $this->statement->where('lrs._id', $lrs)->remember(5)->count();
   }
 
   /**
@@ -36,13 +49,58 @@ class EloquentStatementRepository implements StatementRepository {
    * @return statement objects
    *
    **/
-  public function all( $id, $parameters ){ 
+  public function all( $lrs, $parameters ){ 
 
-    $statements = $this->statement->where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id);
+    $statements = $this->statement->where('lrs._id', $lrs);
 
     $this->addParameters( $statements, $parameters );
 
-    return $statements->get();
+    $getStatements = $statements->get();
+
+    //get Related Agents
+    if( isset($parameters['related_agents']) && $parameters['related_agents'] == 'true' && isset($parameters['agent']) ){
+      $getStatements = $this->relatedAgents($getStatements, $lrs, $parameters['agent']);
+    }
+
+    //get Related Activities
+    if( isset($parameters['related_activities']) && $parameters['related_activities'] == 'true' && isset($parameters['activity']) ){
+      $getStatements = $this->relatedActivities($getStatements, $lrs, $parameters['activity']);
+    }
+
+    //now get all statements linked via StatementRef
+    $getStatements = $this->getLinkedStatements( $getStatements, $lrs );
+
+    return $getStatements;
+
+  }
+
+  public function grouped($id, $parameters){
+
+    $type = isset($parameters['grouping']) ? strtolower($parameters['grouping']) : '';
+    
+    switch( $type ){
+      default:
+      case "time":
+        $interval = isset($parameters['interval']) ? $parameters['interval'] : "day";
+        $filters = isset($parameters['filters']) ? json_decode($parameters['filters'], true) : array();
+
+        //overwrite the LRS filter
+        $filters['lrs._id'] = $id;
+
+        $results = $this->query->timedGrouping( $filters, $interval );
+      break;
+      case "actor":
+        //@todo
+      break;
+      case "activity":
+        //@todo
+      break;
+      case "verb":
+        //@todo
+      break;
+    }
+
+    return $results;
 
   }
 
@@ -61,21 +119,6 @@ class EloquentStatementRepository implements StatementRepository {
   /*
   |-----------------------------------------------------------------------
   | Store incoming xAPI statements
-  |
-  | As Learning Locker lets you run several LRSs within the one install
-  | we add a context extension to determine which LRS the statement has been
-  | submitted against.
-  | 
-  | We also store a category for the statement as a context extension.
-  |
-  | Steps: 
-  | 1. Grab incoming statement and convert to associative array
-  | 2. Verify the statement
-  | 3. Add LRS details
-  | 4. Add category
-  | 5. Add stored 
-  | 6. Save statement
-  | 7. Return suitable message to application submitting
   | 
   | Notes: 
   | Mongo doesn't allow full stops (.) in keys as it is reserved, so, 
@@ -102,10 +145,10 @@ class EloquentStatementRepository implements StatementRepository {
     $saved_ids = array();
     foreach( $statements as &$statement ){ //loop and amend - return on fail
 
-      $verify = new \app\locker\statements\xAPIValidation( $statement, \Site::first() );
+      $verify = new \app\locker\statements\xAPIValidation();
 
       //run full validation
-      $return = $verify->runValidation();
+      $return = $verify->runValidation( $statement, \Site::first() );
 
       if( $return['status'] == 'failed' ){
         return array( 'success' => 'false',  'message' => $return['errors'] );
@@ -122,14 +165,14 @@ class EloquentStatementRepository implements StatementRepository {
         return array( 'success' => $result ); 
       }
 
-      //Add the correct learning locker LRS. 
-      $vs['context']['extensions']['http://learninglocker&46;net/extensions/lrs'] = array( '_id'  => $lrs->_id, 
-                                                                                           'name' => $lrs->title );
-
-
       //The date stored in LRS in ISO 8601 format
-      $vs['stored'] = date('c');
+      $current_date = date('c');
+      $vs['stored'] = $current_date;
 
+      //if no timestamp, make it the same as stored
+      if( !isset($vs['timestamp']) ){
+        $vs['timestamp'] = $current_date;
+      }
        
       /*
       |------------------------------------------------------------------------------
@@ -154,13 +197,14 @@ class EloquentStatementRepository implements StatementRepository {
 
       //Create a new statement object
       $new_statement = new Statement;
-      $new_statement->fill( $vs );
+      $new_statement->lrs = array( '_id'  => $lrs->_id, 'name' => $lrs->title );
+      $new_statement->statement = $vs;
 
       if( $new_statement->save() ){
         $saved_ids[] = $new_statement->id;
       } else {
         return array( 'success' => 'false', 
-                    'message' => $new_statement->errors );
+                      'message' => $new_statement->errors );
       }
 
       
@@ -191,7 +235,7 @@ class EloquentStatementRepository implements StatementRepository {
 
   /**
    * 
-   * Return statements with no filter for a particular LRS
+   * Return statements with no filter for a particular LRS.
    *
    * @param int $id The LRS _id.
    *
@@ -200,11 +244,428 @@ class EloquentStatementRepository implements StatementRepository {
    */
   public function statements( $id ){
 
-    return $this->statement->where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id)
-    ->orderBy('created_at', 'desc')
-    ->paginate(15);
+    return \Statement::where('lrs._id', $id)
+           ->orderBy('statement.stored', 'desc')
+           ->paginate(15);
 
   }
+
+  /**
+   *
+   * Add parameters to statements query. This is used via xAPI GET 
+   * statements.
+   * 
+   * These allowed parameters are detemined by the xAPI spec see
+   * https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#stmtapi
+   * 
+   * @param object $statement  The statement query
+   * @param array  $parameters The parameters to add
+   *
+   */
+  private function addParameters( $statements, $parameters ){
+
+    //Check if agent has been passed
+    if( isset($parameters['agent']) ){
+
+      $agent_param = !is_object($parameters['agent']) ? json_decode($parameters['agent']) : $parameters['agent']; //convert to object if not already
+
+      if( is_array($agent_param) ){ //if array, apply OR filtering to agents
+
+        $statements = $statements->where( function($query) use ($agent_param){ //only apply ORs within agents
+          foreach( $agent_param as $agent ){ //for each agent
+            $query = $this->setAgent($query, $agent, true); //set agent with orWhere
+          }
+        });
+
+      } else if( is_object($agent_param) ){
+
+        $statements = $this->setAgent( $statements, $agent_param ); //do query on single agent
+
+      }
+
+    }
+    
+    //set verb, if none passed ust make sure no voided statements are sent
+    if( isset($parameters['verb']) ){
+      $statements->where( 'statement.verb.id', $parameters['verb'] );
+      $statements->orWhere( 'statement.verb.id', '<>', 'http://adlnet.gov/expapi/verbs/voided');
+    }else{
+      $statements->where( 'statement.verb.id', '<>', 'http://adlnet.gov/expapi/verbs/voided');
+    }
+
+    if( isset($parameters['registration']) ){
+      $statements->where( 'statement.context.registration', $parameters['registration'] );
+    }
+
+    if( isset($parameters['activity']) ){
+      $statements->where( 'statement.object.id', $parameters['activity'])->where('statement.object.objectType', 'Activity');
+    }
+
+    //since, until or between
+    if( isset($parameters['until']) && isset($parameters['since']) ){
+      $statements->whereBetween('statement.timestamp', array($parameters['since'], $parameters['until']));
+    }elseif( isset($parameters['since']) ){
+      $statements->where( 'statement.timestamp', '>', $parameters['since'] );
+    }elseif( isset($parameters['since']) ){
+      $statements->where( 'statement.timestamp', '<', $parameters['until'] );
+    }
+
+    //Format
+    $allowed_formats = array( 'ids', 'exact', 'canonical' );
+    if( isset($parameters['format']) && in_array($parameters['format'], $allowed_formats) ){
+
+      //if ids then return minimum details for agent, activity and group objects
+      if( $parameters['format'] == 'ids' ){
+        $statements->select('statement.id', 'statement.actor.mbox', 'statement.verb.id', 'statement.object.id', 'statement.object.objectType');
+      }
+
+      //if exact - return as stored
+      if( $parameters['format'] == 'exact' ){
+        //return as is
+      }
+
+      //if canonical, get language from Accept-Language header and only return language maps matching
+      if( $parameters['format'] == 'canonical' ){
+        //@todo
+      }
+    }
+
+    //@todo attachments
+
+    $server_statement_limit = 100;
+
+    if( isset( $parameters['limit'] ) ){
+      $limit = intval($parameters['limit']);
+      if( $limit === 0 ){
+        $statements->take( $server_statement_limit ); //server set limit
+      } else {
+        $statements->take( $limit );
+      }
+    } else {
+      $statements->take( $server_statement_limit );
+    }
+         
+    if( isset( $parameters['offset'] ) ){
+      $statements->skip( $parameters['offset'] );
+    }
+
+    if( isset( $parameters['ascending'] ) && $parameters['ascending'] == 'true' ){
+      $statements->orderBy('statement.stored', 'asc');
+    }else{
+      $statements->orderBy('statement.stored', 'desc');
+    }
+
+    return $statements;
+
+  }
+
+  public function timeGrouping($query, $interval ){
+    return $query;
+  }
+
+  public function actorGrouping($query){
+
+    $query->aggregate(
+      array('$match' => array()),
+      array(
+        '$group' => array(
+          '_id' => 'statement.actor.mbox'
+        )
+      )
+    );
+
+    return $query;
+
+  }
+
+  /**
+   * When agent json is passed, get correct identifier
+   *
+   * @param @query  The query in question - called from all and find.
+   * @param @agent  The agent json object
+   *
+   * @return $query
+   * 
+   */
+  public function setAgent( $query, $agent, $or = false ){
+
+    $agent_query = '';
+
+    $where_type = $or ? 'orWhere' : 'where';
+
+    if( is_string($agent) ){
+      $agent = json_decode($agent);
+    }
+
+    //Do some checking on what actor field we are filtering with
+    if( isset($agent->mbox) ){ //check for mbox
+      $agent_query = array('field' => 'statement.actor.mbox', 'value'=>$agent->mbox);
+    } else if( isset($agent->mbox_sha1sum) ) {//check for mbox_sha1sum
+      $agent_query = array('field' => 'statement.actor.mbox_sha1sum', 'value'=>$agent->mbox_sha1sum);
+    } else if( isset($agent->openid) ){ //check for open id
+      $agent_query = array('field' => 'statement.actor.openid', 'value'=>$agent->openid);
+    }
+
+    if( isset($agent_query) && $agent_query != '' ){ //if we have agent query params lined up...
+      $query->$where_type( $agent_query['field'], $agent_query['value'] );
+    } else if( isset($agent->account) ){ //else if there is an account
+      if( isset($agent->account->homePage) && isset($agent->account->name ) ){
+        $query->$where_type( function($query){
+          $query->where('statement.actor.account.homePage', $agent->account->homePage)
+                ->where('statement.actor.account.name', $agent->account->name );
+        });
+      } 
+    } 
+
+    return $query;
+  }
+
+  /**
+   * Check to see if a submitted statementId already exist and if so
+   * are the two statements idntical? If not, return true.
+   *
+   * @param uuid   $id
+   * @param string $lrs
+   * @return boolean
+   *
+   **/
+  private function doesStatementIdExist( $lrs, $id, $statement ){
+
+    $exists = $this->statement->where('lrs._id', $lrs)
+              ->where('statement.id', $id)
+              ->first();
+    
+    if( $exists ){
+      if( array_multisort( $exists->toArray() ) === array_multisort( $statement ) ){
+        return 'conflict-matches';
+      }
+      return 'conflict-nomatch';
+    }
+
+    return false;
+
+  }
+
+  /**
+   * Get all chained statements via StatementRef
+   * Details https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#filter-conditions-for-statementrefs
+   *
+   * Recursive function to drill through all statements.
+   *
+   * @param $statements object 
+   * @param $lrs int
+   *
+   * @return $statements object
+   *
+   **/
+  private function getLinkedStatements( $statements, $lrs ){
+    $ids = array();
+    if( $statements ){
+      //get statement ids
+      foreach($statements as $s){
+        $ids[] = $s->id;
+      }
+      foreach( $statements as $s ){
+        $getConnected = $this->getConnected( $s->id, $lrs );
+
+        if( $getConnected ){
+          //add new statements to statements return, if
+          //the statement is not already in the return object.
+          foreach($getConnected as $c ){
+            if( !in_array($c->id, $ids) ){
+              $statements[] = $c;
+            }
+          }
+          //check these statements for connected statements
+          $this->getLinkedStatements( $getConnected, $lrs );
+        }
+        
+      }
+
+      // $getConnected = Statement::where('lrs._id', $lrs)
+      //                 ->whereIn('object.id', $ids)
+      //                 ->get();
+
+      // if( $getConnected ){
+      //   //add new statements to statements return, if
+      //   //the statement is not already in the return object.
+      //   foreach($getConnected as $c ){
+      //     if( !in_array($c->id, $ids) ){
+      //       $statements[] = $c;
+      //     }
+      //   }
+      //   //check these statements for connected statements
+      //   $this->getLinkedStatements( $getConnected, $lrs );
+      // }
+
+    }
+    return $statements;
+  }
+
+  /**
+   * Grab stateent from DB. Called from getLinkedStatements
+   *
+   * @param $id int StatementRef ID
+   * @param $lrs int LRS in question
+   *
+   * @return $statements
+   **/ 
+  private function getConnected( $id, $lrs ){
+    return \Statement::where('lrs._id', $lrs)->where('statement.object.id', $id)->get();
+  }
+
+  /**
+   * Related Actors
+   *
+   * @param $statements object 
+   *
+   * @return $statements 
+   *
+   **/
+  private function relatedAgents($statements, $lrs, $actor){
+
+    $actor = json_decode($actor);
+
+    //Do some checking on what actor field we are filtering with
+    if( isset($actor->mbox) ){ //check for mbox
+      $query = $actor->mbox;
+      $query_type = 'mbox';
+    } else if( isset($actor->mbox_sha1sum) ) {//check for mbox_sha1sum
+      $query = $actor->mbox_sha1sum;
+      $query_type = 'mbox_sha1sum';
+    } else if( isset($actor->openid) ){ //check for open id
+      $query = $actor->openid;
+      $query_type = 'openid';
+    } else if( isset($actor->account) ){ //else if there is an account
+      $query = $actor->account;
+      $query_type = 'account';
+    }
+
+    $authority  = 'statement.authority.' . $query_type;
+    $object     = 'statement.object.' . $query_type;
+    $teams      = 'statement.context.team.' . $query_type;
+    $instructor = 'tatement.context.instructor.' . $query_type;
+
+    $ids = array();
+
+    if( $statements ){
+      //get statement ids
+      foreach($statements as $s){
+        $ids[] = $s->id;
+      }
+      
+      //look in authority
+      $authority = \Statement::where('lrs._id', $lrs)->where($authority, $query)->get();
+      if( $authority ){
+        $statements = $this->addStatements( $statements, $authority, $ids );
+      }
+
+      //look in object where objectType = Agent
+      $object = \Statement::where('lrs._id', $lrs)->where($object, $query)->get();
+      if( $object ){
+        $statements = $this->addStatements( $statements, $object, $ids );
+      }
+
+      //look in team
+      $teams = \Statement::where('lrs._id', $lrs)->where($teams, $query)->get();
+      if( $object ){
+        $statements = $this->addStatements( $statements, $teams, $ids );
+      }
+
+      //look in instructor
+      $instructor = \Statement::where('lrs._id', $lrs)->where($instructor, $query)->get();
+      if( $object ){
+        $statements = $this->addStatements( $statements, $instructor, $ids );
+      }
+      
+    }
+
+    return $statements;
+  }
+
+  /**
+   * Related Activities
+   *
+   **/
+  private function relatedActivities($statements, $lrs, $activityId){
+
+    $ids = array();
+    foreach($statements as $s){
+      $ids[] = $s->id;
+    }
+
+    //look in context parent
+    $parent = \Statement::where('lrs._id', $lrs)
+              ->where('statement.context.contextActivities.parent.objectType', 'Activity')
+              ->where('statement.context.contextActivities.parent.id', $activityId)
+              ->get();
+
+    if( $parent ){
+      $statements = $this->addStatements( $statements, $parent, $ids );
+    }
+    //look in context grouping
+    $grouping = \Statement::where('lrs._id', $lrs)
+                ->where('statement.context.contextActivities.grouping.objectType', 'Activity')
+                ->where('statement.context.contextActivities.grouping.id', $activityId)
+                ->get();
+
+    if( $grouping ){
+      $statements = $this->addStatements( $statements, $grouping, $ids );
+    }
+    //look in context category
+    $category = \Statement::where('lrs._id', $lrs)
+                ->where('statement.context.contextActivities.category.objectType', 'Activity')
+                ->where('statement.context.contextActivities.category.id', $activityId)
+                ->get();
+
+    if( $category ){
+      $statements = $this->addStatements( $statements, $category, $ids );
+    }
+    //look in context other
+    $other= \Statement::where('lrs._id', $lrs)
+                ->where('statement.context.contextActivities.other.objectType', 'Activity')
+                ->where('statement.context.contextActivities.other.id', $activityId)
+                ->get();
+
+    if( $category ){
+      $statements = $this->addStatements( $statements, $other, $ids );
+    }
+   
+    return $statements;
+  }
+
+  /**
+   * Loop and add additional statements to main statement object
+   *
+   * @param $statements
+   * @param $additional_statements
+   * @param $ids
+   *
+   * @return $statements
+   **/
+  private function addStatements( $statements, $additional_statements, $ids ){
+    if( $additional_statements ){
+      foreach($additional_statements as $s){
+        //don't include duplicates
+        if( !in_array($s->id, $ids) ){
+          $statements[] = $s;
+        }
+      }
+    }
+    return $statements;
+  }
+
+
+  ///////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////
+
+  /*
+  |----------------------------------------------------------------------
+  | Legacy functions for filtering which was used pre v1.0 amd will be 
+  | removed. Do not use these!
+  |
+  |----------------------------------------------------------------------
+  */
 
   /**
    *
@@ -231,7 +692,7 @@ class EloquentStatementRepository implements StatementRepository {
       }
     }
 
-    $query = $this->statement->where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id);
+    $query = $this->statement->where('lrs._id', $id);
     $this->setRestriction( $restrict, $query );
     if( !empty($filter) ){
       $this->setWhere( $filter, $query );
@@ -240,7 +701,7 @@ class EloquentStatementRepository implements StatementRepository {
     $statements = $query->paginate(18);
 
     //@todo replace this using Mongo aggregation - no need to grab everything and loop through it.
-    $query = $this->statement->where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $id);
+    $query = $this->statement->where('lrs._id', $id);
     $this->setRestriction( $restrict, $query );
     if( !empty($filter) ){
       $this->setWhere( $filter, $query );
@@ -327,167 +788,6 @@ class EloquentStatementRepository implements StatementRepository {
       case 'activity':
         return 'object.id';
     }
-  }
-
-  /**
-   *
-   * Add parameters to statements query. This is used via xAPI GET 
-   * statements.
-   * 
-   * These allowed parameters are detemined by the xAPI spec see
-   * https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#stmtapi
-   * 
-   * @param object $statement  The statement query
-   * @param array  $parameters The parameters to add
-   *
-   */
-  private function addParameters( $statements, $parameters ){
-
-    if( isset($parameters['agent']) ){
-      $statements = $this->setAgent( $statements, $parameters['agent'] );
-    }
-    
-    //set verb, if none passed ust make sure no voided statements are sent
-    if( isset($parameters['verb']) ){
-      $statements->Where( 'verb.id', $parameters['verb'] );
-    }else{
-      $statements->where( 'verb.id', '<>', 'http://adlnet.gov/expapi/verbs/voided');
-    }
-
-    if( isset($parameters['registration']) ){
-      $statements->where( 'context.registration', $parameters['registration'] );
-    }
-
-    if( isset($parameters['activity']) ){
-      $statements->where( 'object.id', $parameters['activity']);
-    }
-
-    //since, until or between
-    if( isset($parameters['until']) && isset($parameter['since']) ){
-
-      $statements->whereBetween('timestamp', array($parameter['since'], $parameters['until']));
-
-    }elseif( isset($parameter['since']) ){
-
-      $statements->where( 'timestamp', '>', $parameter['since'] );
-
-    }elseif( isset($parameter['since']) ){
-
-      $statements->where( 'timestamp', '<', $parameter['until'] );
-      
-    }
-
-    //@todo related_activities - look in sub-statements
-
-    //@todo related_agents - look in sub-statements
-
-    //@todo format
-    $allowed_formats = array( 'ids', 'exact', 'canonical' );
-    if( isset($parameter['format']) && in_array($parameter['format'], $allowed_formats) ){
-
-      //if ids then return minimum details for agent, activity and group objects
-
-      //if exact - return as stored
-
-      //if canonical, get language from Accept-Language header and only return language maps matching
-
-    }
-
-    //@todo attachments
-
-
-    if( isset( $parameters['limit'] ) ){
-      $statements->take( $parameters['limit'] );
-    }else{
-      $statements->take(10);
-    }
-         
-    if( isset( $parameters['offset'] ) ){
-      $statements->skip( $parameters['offset'] );
-    }
-
-    if( isset( $parameters['ascending'] ) && $parameters['ascending'] == 'true' ){
-      $statements->orderBy('stored', 'asc');
-    }else{
-      $statements->orderBy('stored', 'desc');
-    }
-
-    return $statements;
-
-  }
-
-  /**
-   * When agent json is passed, get correct identifier
-   *
-   * @param @query  The query in question - called from all and find.
-   * @param @agent  The agent json object
-   *
-   * @return $query
-   * 
-   */
-  public function setAgent( $query, $agent ){
-
-    $agent_query = '';
-
-    $agent = json_decode($agent);
-
-    //Do some checking on what actor field we are filtering with
-    if( isset($agent->mbox) ){ //check for mbox
-
-        $agent_query = array('field' => 'actor.mbox', 'value'=>$agent->mbox);
-
-    } else if( isset($agent->mbox_sha1sum) ) {//check for mbox_sha1sum
-
-      $agent_query = array('field' => 'actor.mbox_sha1sum', 'value'=>$agent->mbox_sha1sum);
-
-    } else if( isset($agent->openid) ){ //check for open id
-
-      $agent_query = array('field' => 'actor.openid', 'value'=>$agent->openid);
-
-    }
-
-    if( isset($agent_query) && $agent_query != '' ){ //if we have agent query params lined up...
-
-      $query->where( $agent_query['field'], $agent_query['value'] );
-
-    } else if( isset($agent->account) ){ //else if there is an account
-
-      if( isset($agent->account->homePage) && isset($agent->account->name ) ){
-
-        $query->where('actor.account.homePage', $agent->account->homePage)
-               ->where('actor.account.name', $agent->account->name );
-
-      } 
-
-    } 
-
-    return $query;
-  }
-
-  /**
-   * Check to see if a submitted statementId already exist and if so
-   * are the two statements idntical? If not, return true.
-   *
-   * @param uuid   $id
-   * @param string $lrs
-   * @return boolean
-   *
-   **/
-  private function doesStatementIdExist( $lrs, $id, $statement ){
-
-    $exists = $this->statement->where('context.extensions.http://learninglocker&46;net/extensions/lrs._id', $lrs)
-              ->where('id', $id)
-              ->first();
-    
-    if( $exists ){
-      if( array_multisort( $exists->toArray() ) === array_multisort( $statement ) ){
-        return 'conflict-matches';
-      }
-      return 'conflict-nomatch';
-    }
-
-    return false;
-
   }
 
 }

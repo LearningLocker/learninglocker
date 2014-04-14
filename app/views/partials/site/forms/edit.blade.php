@@ -30,14 +30,6 @@
     </div>
   </div>
   <div class="form-group">
-    {{ Form::label('api', Lang::get('site.api_status'), array('class' => 'col-sm-4 control-label' )) }}
-    <div class="col-sm-8">
-      {{ Form::radio('api', 'On', true) }} {{ Lang::get('site.on') }} 
-      {{ Form::radio('api', 'Off') }} {{ Lang::get('site.off') }}
-      <span class="help-block">{{ Lang::get('site.help.api_status') }}</span>
-    </div>
-  </div>
-  <div class="form-group">
     {{ Form::label('registration', Lang::get('site.registration'), array('class' => 'col-sm-4 control-label' )) }}
     <div class="col-sm-8">
       {{ Form::radio('registration', 'Open') }} {{ Lang::get('site.open') }}
@@ -50,13 +42,6 @@
     <div class="col-sm-8">
       {{ Form::text('domain', $site->domain, array('class' => 'form-control')) }}
       <span class="help-block">{{ Lang::get('site.help.restrict') }}</span>
-    </div>
-  </div>
-  <div class="form-group">
-    {{ Form::label('lang', Lang::get('site.language'), array('class' => 'col-sm-4 control-label' )) }}
-    <div class="col-sm-8">
-      {{ Form::text('lang', $site->lang, array('class' => 'form-control', 'placeholder' => 'en-US')) }}
-      <span class="help-block">{{ Lang::get('site.help.language') }}</span>
     </div>
   </div>
   <hr>

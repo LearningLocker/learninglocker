@@ -2,6 +2,14 @@
 
 @section('content')
 
+  @if(Session::has('success'))
+    <div class="clearfix">
+      <div class="alert alert-info">
+        {{ Lang::get('reminders.reset') }}
+      </div>
+    </div>
+  @endif
+
   <h1 class="col-sm-10 col-sm-offset-2">Login</h1>
 
   {{ Form::open(array('route' => 'login.store', 'class' => 'form-horizontal')) }}
@@ -22,7 +30,7 @@
 
     <div class="form-group">
       <div class="col-sm-10 col-lg-offset-2">
-        {{ Form::submit('Submit',array('class' => 'btn btn-locker')) }}
+        {{ Form::submit('Submit',array('class' => 'btn btn-primary')) }}
       </div>
     </div>
   
