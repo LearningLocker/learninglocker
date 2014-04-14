@@ -12,7 +12,7 @@
 
   <h1 class="col-sm-12">Password Reset</h1>
 
-  {{ Form::open(array('route' => array('password.update', $token))) }}
+  {{ Form::open(array('route' => array('password.update'))) }}
 
     <p>{{ Form::label('email', 'Email') }}
     {{ Form::text('email','',array('class' => 'form-control', 'required' => true)) }}</p>
@@ -25,7 +25,7 @@
 
     {{ Form::hidden('token', $token) }}
 
-    <p>{{ Form::submit('Submit',array('class' => 'btn btn-locker')) }}</p>
+    <p>{{ Form::submit('Submit',array('class' => 'btn btn-primary')) }}</p>
 
   {{ Form::close() }}
 

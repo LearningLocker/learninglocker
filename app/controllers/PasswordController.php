@@ -64,7 +64,7 @@ class PasswordController extends BaseController {
         return Redirect::back()->with('error', Lang::get($response));
 
       case Password::PASSWORD_RESET: 
-        return Redirect::to('/');
+        return Redirect::to('/')->with('success', Lang::get('reminders.reset'));
     }
     
   }
