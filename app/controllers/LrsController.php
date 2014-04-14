@@ -37,7 +37,7 @@ class LrsController extends BaseController {
     $this->statement = $statement;
 
     $this->beforeFilter('auth');
-    $this->beforeFilter('csrf', array('on' => array('store', 'update')));
+    $this->beforeFilter('csrf', array('only' => array('store', 'update', 'destroy', 'editCredentials', 'usersRemove')));
     $this->beforeFilter('auth.lrs', array('except' => array('index','create','store'))); //check user can access LRS.
     $this->beforeFilter('create.lrs', array('only' => 'create')); //Allowed to create an LRS?
 
@@ -71,8 +71,16 @@ class LrsController extends BaseController {
    */
   public function store(){
 
+    $data = Input::all();
+
+    //lrs input validation
+    $rules['title']        = 'required|alpha_spaces';
+    $rules['description']  = 'alpha_spaces';       
+    $validator = Validator::make($data, $rules);
+    if ($validator->fails()) return Redirect::back()->withErrors($validator);
+
     // Store lrs
-    $s = $this->lrs->create( Input::all() );
+    $s = $this->lrs->create( $data );
 
     if($s){
       return Redirect::to('/lrs')->with('success', Lang::get('lrs.created'));
@@ -107,6 +115,14 @@ class LrsController extends BaseController {
    */
   public function update($id){
 
+    $data = Input::all();
+
+    //lrs input validation
+    $rules['title']        = 'required|alpha_spaces';
+    $rules['description']  = 'alpha_spaces';       
+    $validator = Validator::make($data, $rules);
+    if ($validator->fails()) return Redirect::back()->withErrors($validator);
+
     $l = $this->lrs->update( $id, Input::all() );
 
     if($l){
@@ -132,13 +148,30 @@ class LrsController extends BaseController {
 
     $lrs      = $this->lrs->find( $id );
     $lrs_list = $this->lrs->all();
-    $stats    = new \app\locker\data\dashboards\LrsDashboard( $id );
-    $this->analytics->getAnalytics( $lrs->_id );
-    return View::make('partials.lrs.dashboard', array('stats'    => $stats->stats,
-                                                      'data'     => $this->analytics->results,
-                                                      'lrs'      => $lrs, 
-                                                      'list'     => $lrs_list, 
+    return View::make('partials.lrs.dashboard', array('lrs'      => $lrs, 
+                                                      'list'     => $lrs_list,
                                                       'dash_nav' => true));
+    
+  }
+
+  public function getStats( $id, $segment = '' ){
+
+    $stats = new \app\locker\data\dashboards\LrsDashboard( $id );
+
+    switch( $segment ){
+      case 'topActivities':
+        $get_stats = $stats->getTopActivities( $id );
+        $get_stats = $get_stats['result'];
+        break;
+      case 'activeUsers':
+        $get_stats = $stats->getActiveUsers( $id );
+        $get_stats = $get_stats['result'];
+        break;
+      default:
+        $get_stats = $stats->setTimelineGraph();
+        break;
+    }
+    return Response::json($get_stats);
   }
 
   /**
@@ -150,7 +183,7 @@ class LrsController extends BaseController {
   public function destroy($id){
 
     $this->lrs->delete($id);
-    return Redirect::back()->with('success', Lang::get('lrs.deleted'));
+    return Response::json(array('success'=>200, 'message'=>'deleted'));
 
   }
 
@@ -169,21 +202,6 @@ class LrsController extends BaseController {
                         'lrs'           => $lrs,
                         'list'          => $lrs_list,
                         'statement_nav' => true));
-
-  }
-
-  /**
-   * Display the reporting view.
-   *
-   * @return View
-   */
-  public function reporting( $id ){
-
-    $lrs    = $this->lrs->find( $id );
-    $lrs_list = $this->lrs->all();
-    return View::make('partials.reporting.index', array('lrs'           => $lrs, 
-                                                        'reporting_nav' => true,
-                                                        'list'          => $lrs_list));
 
   }
 

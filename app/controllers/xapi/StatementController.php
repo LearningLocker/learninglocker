@@ -29,7 +29,7 @@ class StatementsController extends BaseController {
 
     $this->statement = $statement;
 
-    $this->beforeFilter('@checkVersion');
+    $this->beforeFilter('@checkVersion', array('except' => 'index'));
     $this->beforeFilter('@getLrs');
     $this->beforeFilter('@setParameters', array('except' => 'store', 'put'));
     $this->beforeFilter('@reject', array('except' => 'store', 'put'));
@@ -48,7 +48,7 @@ class StatementsController extends BaseController {
     //grab incoming statement
     $request            = \Request::instance();
     $incoming_statement = $request->getContent();
-    $statements_assoc = json_decode($incoming_statement, TRUE);
+    $statements_assoc   = json_decode($incoming_statement, TRUE);
 
     if( is_array(json_decode($incoming_statement)) ){
       $statements = $statements_assoc;
@@ -125,6 +125,12 @@ class StatementsController extends BaseController {
 
   }
 
+  public function grouped(){
+    $results = $this->statement->grouped( $this->lrs->_id, $this->params );
+
+    return $this->returnArray( $results, $this->params );
+  }
+
   /**
    * Display the specified resource.
    *
@@ -175,7 +181,7 @@ class StatementsController extends BaseController {
    * @return response
    *
    **/
-  public function returnArray( $statements=array(), $params=array() ){
+  public function returnArray( $statements=array(), $params=array(), $debug=array() ){
 
     $array = array(
       'X-Experience-API-Version' =>  \Config::get('xapi.using_version'),
@@ -192,7 +198,14 @@ class StatementsController extends BaseController {
       }
     }
     
+    $array['count'] = sizeof($statements);
     $array['statements'] = $statements;
+
+    if( \Config::get('app.debug') ){
+      $array['debug'] = array(
+        'db'  =>  \DB::getQueryLog()
+      );
+    }
 
     //$array['more'] = '';// @todo if more results available, provide link to access them
 

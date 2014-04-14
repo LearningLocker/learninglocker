@@ -2,6 +2,8 @@
 
 interface AnalyticsInterface {
 
-  public function getAnalytics( $lrs );
+  public function analytics( $lrs, $options );
+
+  public function section( $lrs, $section, $filter, $returnFields );
 
 }

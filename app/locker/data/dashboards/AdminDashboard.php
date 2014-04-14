@@ -57,7 +57,7 @@ class AdminDashboard extends \app\locker\data\BaseData {
    *
    **/
   public function actorCount(){
-    return count( \Statement::distinct('actor.mbox')->remember(5)->get() );
+    return count( \Statement::distinct('statement.actor.mbox')->remember(5)->get() );
   }
 
   /**
@@ -99,6 +99,10 @@ class AdminDashboard extends \app\locker\data\BaseData {
   public function statementAvgCount(){
     $count = $this->statementCount();
     $days  = $this->statementDays();
+    if( $days == 0 ){
+      //this will be the first day, so increment to 1
+      $days = 1;
+    }
     $avg   = 0;
     if( $count && $days ){
       $avg = round( $count / $days );
@@ -116,6 +120,10 @@ class AdminDashboard extends \app\locker\data\BaseData {
   public function learnerAvgCount(){
     $count = $this->actorCount();
     $days  = $this->statementDays();
+    if( $days == 0 ){
+      //this will be the first day, so increment to 1
+      $days = 1;
+    }
     $avg   = 0;
     if( $count && $days ){
       $avg = round( $count / $days );
@@ -131,18 +139,24 @@ class AdminDashboard extends \app\locker\data\BaseData {
    **/
   public function getStatementNumbersByDate(){
 
+    $set_id = array( '$dayOfYear' => '$created_at' );
+
     $statements = $this->db->statements->aggregate(
-              array('$group' => array('_id'   => array('$dayOfYear' => '$created_at'),
-                          'count' => array('$sum' => 1),
-                          'date'  => array('$addToSet' => '$stored'),
-                          'actor' => array('$addToSet' => '$actor'))),
+              array('$group' => array(
+                        '_id'   => $set_id,
+                        'count' => array('$sum' => 1),
+                        'date'  => array('$addToSet' => '$statement.stored'),
+                        'actor' => array('$addToSet' => '$statement.actor'))),
               array('$sort'    => array('_id' => 1)),
               array('$project' => array('count' => 1, 'date' => 1, 'actor' => 1))
             );
+
     //set statements for graphing
     $data = '';
-    foreach( $statements['result'] as $s ){
-      $data .= json_encode( array( "y" => substr($s['date'][0],0,10), "a" => $s['count'], 'b' => count($s['actor'])) ) . ' ';
+    if( isset($statements['result']) ){
+      foreach( $statements['result'] as $s ){
+        $data .= json_encode( array( "y" => substr($s['date'][0],0,10), "a" => $s['count'], 'b' => count($s['actor'])) ) . ' ';
+      }
     }
 
     return trim( $data );

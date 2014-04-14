@@ -1,3 +1,3 @@
 <header class="page-header">
-  <h1>{{ $page }}</h1>
+  <h2>{{ $page }}</h2>
 </header>

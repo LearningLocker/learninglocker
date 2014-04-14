@@ -5,9 +5,13 @@
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-lg-offset-4 col-md-offset-3">
         <div class="logo">
+          @if( isset($site->name) )
+            {{ $site->name }}
+          @else
             <a href="{{ URL() }}">
-                <img src="{{ URL() }}/img/logo-sm.png" alt="Logo" />
+                <img src="{{ URL() }}/assets/img/logo2-grey.png" alt="Logo" />
             </a>
+          @endif
         </div>
         <div class="wrapper">
 
@@ -29,4 +33,16 @@
 
 @show
 
-@include('system.footer')
+  @section('footer')
+
+    <!-- required scripts -->
+    @section('scripts')
+      {{ HTML::script('assets/js/libs/jquery/jquery.1.10.2.js') }}
+      {{ HTML::script('assets/js/libs/bootstrap/bootstrap.min.js') }}
+      {{ HTML::script('assets/js/respond.min.js') }}
+      {{ HTML::script('assets/js/placeholder.js') }}
+    @show
+
+  @show
+  </body>
+</html>

@@ -79,7 +79,7 @@ class PasswordController extends BaseController {
 
     //check existing password
     $pass_check = Hash::check(Input::get('current_password'), Auth::user()->password);
-    if( !$pass_check ) return Redirect::back()->withErrors( array( lang::get('password_current_wrong') ) );
+    if( !$pass_check ) return Redirect::back()->withErrors( array( Lang::get('users.password_current_wrong') ) );
 
     $rules['password'] = 'required|confirmed';
     $validator = Validator::make(Input::all(), $rules);

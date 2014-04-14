@@ -10,6 +10,10 @@ class DataServiceProvider extends ServiceProvider {
       'Locker\Data\Analytics\AnalyticsInterface',
       'Locker\Data\Analytics\Analytics'
     );
+    // $this->app->bind(
+    //   'Locker\Data\Query\QueryInterface',
+    //   'Locker\Data\Query\Query'
+    // );
     
   }
   

@@ -37,7 +37,7 @@ Breadcrumbs::register('site.invite', function($breadcrumbs) {
   $breadcrumbs->push('Invite users', url('/site/invite'));
 });
 Breadcrumbs::register('settings', function($breadcrumbs) {
-  $breadcrumbs->push('Settings', url('/site/settings'));
+  $breadcrumbs->push('Settings', url('/site#settings'));
 });
 Breadcrumbs::register('site.edit', function($breadcrumbs, $site) {
   $breadcrumbs->parent('settings');
@@ -67,7 +67,37 @@ Breadcrumbs::register('analytics', function($breadcrumbs, $lrs) {
   $breadcrumbs->parent('statement', $lrs);
   $breadcrumbs->push(Lang::get('statements.analytics'), url('/lrs/$lrs->_id/statements/generator'));
 });
+
+/*
+|------------------------------------------------------------------
+| Reporting
+|------------------------------------------------------------------
+*/
 Breadcrumbs::register('reporting', function($breadcrumbs, $lrs) {
-  $breadcrumbs->parent('statement', $lrs);
-  $breadcrumbs->push(Lang::get('statements.reporting'), url('/lrs/$lrs->_id/statements/generator'));
+  $breadcrumbs->push(Lang::get('statements.reporting'), url('/lrs/'.$lrs->_id.'/reporting'));
+});
+Breadcrumbs::register('reporting.create', function($breadcrumbs, $lrs) {
+  $breadcrumbs->parent('reporting', $lrs);
+  $breadcrumbs->push(Lang::get('reporting.create'), url('/lrs/'.$lrs->_id.'/reporting/create'));
+});
+Breadcrumbs::register('reporting.view', function($breadcrumbs, $lrs) {
+  $breadcrumbs->parent('reporting', $lrs);
+  $breadcrumbs->push(Lang::get('reporting.view'), url('/lrs/'.$lrs->_id.'/reporting/show'));
+});
+
+/*
+|-------------------------------------------------------------------
+| OAuth app breadcrumbs
+|-------------------------------------------------------------------
+*/
+Breadcrumbs::register('apps', function($breadcrumbs) {
+  $breadcrumbs->push(Lang::get('apps.list'), url('/oauth/apps'));
+});
+Breadcrumbs::register('apps.create', function($breadcrumbs) {
+  $breadcrumbs->parent('apps');
+  $breadcrumbs->push(Lang::get('apps.create'), url('/oauth/apps'));
+});
+Breadcrumbs::register('apps.show', function($breadcrumbs) {
+  $breadcrumbs->parent('apps');
+  $breadcrumbs->push(Lang::get('apps.show'), url('/oauth/apps'));
 });

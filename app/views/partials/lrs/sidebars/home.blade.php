@@ -1,9 +1,9 @@
 @if( Auth::check() )
 
   @if( isset($list) )
-  <ul>
+  <ul class="nav nav-sidebar">
     <li>
-      <select class="form-control" style="width:220px;" onchange="javascript:location.href = this.value;">
+      <select class="form-control sidebar-select" onchange="javascript:location.href = this.value;">
         <option></option>
         @foreach( $list as $l )
           @if( isset($l->title) )
@@ -16,8 +16,8 @@
   @endif
 
   @if( app\locker\helpers\Lrs::lrsCanCreate() )
-  <ul class="nav nav-stacked sidebar-nav">
-    <li class="link">
+  <ul class="nav nav-sidebar">
+    <li class="">
       <a href="{{ URL() }}/lrs/create"><i class="icon icon-plus-sign"></i> {{ Lang::get('lrs.new') }}</a>
     </li>
   </ul>

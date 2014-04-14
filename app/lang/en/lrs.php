@@ -21,6 +21,7 @@ return array(
     'updated'   => 'The LRS was updated',
     'create_problem' => 'There was a problem creating that LRS.',
     'created'   => 'The LRS was created.',
+    'active'    => 'Active',
 
     'sidebar'	=> array(
     	'dash' 	    => 'Dashboard',

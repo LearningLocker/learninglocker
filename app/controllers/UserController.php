@@ -21,7 +21,7 @@ class UserController extends BaseController {
     $this->logged_in_user = Auth::user();
 
     $this->beforeFilter('auth', array('except' => array('verifyEmail','addPasswordForm')));
-    $this->beforeFilter('csrf', array('on' => array('update','updatePassword', 'addPassword', 'destroy')));
+    $this->beforeFilter('csrf', array('only' => array('update','updateRole', 'updatePassword', 'addPassword', 'destroy')));
     $this->beforeFilter('user.delete', array('only' => 'destroy'));
     $this->beforeFilter('auth.super', array('only' => 'updateRole'));
     
@@ -70,15 +70,18 @@ class UserController extends BaseController {
    */
   public function update( $id ){
 
-    $rules['email'] = 'required|email|unique:users';
-    $rules['name']  = 'required';
-             
-    $validator = Validator::make(Input::all(), $rules);
+    $data = Input::all();
 
+    //if email being changed, verify new one, otherwise ignore
+    if( $data['email'] != Auth::user()->email ){
+      $rules['email'] = 'required|email|unique:users';
+    }
+    $rules['name']  = 'required';       
+    $validator = Validator::make($data, $rules);
     if ($validator->fails()) return Redirect::back()->withErrors($validator);
   
     // Update the user
-    $s = $this->user->update($id, Input::all());
+    $s = $this->user->update($id, $data);
 
     if($s){
       return Redirect::back()->with('success', Lang::get('users.updated'));
@@ -96,10 +99,9 @@ class UserController extends BaseController {
    * @param  int  $id
    * @return View
    */
-  public function updateRole( $id ){
-    $s = $this->user->updateRole($id, Input::get('role'));
-    return Redirect::to('/site/users')
-    ->with('success', Lang::get('users.role_change'));
+  public function updateRole( $id, $role ){
+    $s = $this->user->updateRole($id, $role);
+    return Response::json($s);
   }
 
   /**
@@ -109,8 +111,6 @@ class UserController extends BaseController {
    * @return View
    */
   public function destroy( $id ){
-    //@todo transfer ownership of all LRSs they admin to super admin
-    
     //delete
     $this->user->delete( $id );
     return Redirect::back()->with('success', Lang::get('users.deleted'));
