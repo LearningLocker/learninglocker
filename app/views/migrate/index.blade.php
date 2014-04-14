@@ -44,9 +44,7 @@
     </li>
     @endif
   @endforeach
-  
-  <p>You should now have migrated all your existing statements.</p>
-
+  </ul>
 @stop
 @section('scripts')
   @parent
