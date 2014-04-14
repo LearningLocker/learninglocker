@@ -134,10 +134,6 @@ class SiteController extends BaseController {
     return OAuthApp::all();
   }
 
-  public function apps(){
-    return OAuthApp::all();
-  }
-
   /**
    * Display the super admin user list view.
    *
