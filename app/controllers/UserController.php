@@ -1,6 +1,7 @@
 <?php
 
 use Locker\Repository\User\UserRepository as User;
+use Locker\Repository\Lrs\LrsRepository as Lrs;
 
 class UserController extends BaseController {
 
@@ -9,15 +10,21 @@ class UserController extends BaseController {
   */
   protected $user;
 
+  /**
+   * Lrs
+   **/
+  protected $lrs;
+
 
   /**
    * Construct
    *
    * @param User $user
    */
-  public function __construct(User $user){
+  public function __construct(User $user, Lrs $lrs){
 
-    $this->user       = $user;
+    $this->user = $user;
+    $this->lrs  = $lrs;
     $this->logged_in_user = Auth::user();
 
     $this->beforeFilter('auth', array('except' => array('verifyEmail','addPasswordForm')));
@@ -58,7 +65,8 @@ class UserController extends BaseController {
   public function edit( $id ){
 
     return View::make('partials.users.edit')
-         ->with( 'user', $this->user->find( $id ) );
+         ->with( 'user', $this->user->find( $id ) )
+         ->with( 'list', $this->lrs->all() );
 
   }
 
