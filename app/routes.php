@@ -14,13 +14,14 @@
 Route::get('/', function(){
   if( Auth::check() ){
     $site = \Site::first();
-    $list  = \Lrs::all();
     //if super admin, show site dashboard, otherwise show list of LRSs can access
     if( Auth::user()->role == 'super' ){
+      $list = Lrs::all();
       return View::make('partials.site.dashboard', 
                   array('site' => $site, 'list' => $list, 'dash_nav' => true));
     }else{
       $lrs = Lrs::where('users._id', \Auth::user()->_id)->get();
+      $list = Lrs::where('users._id', \Auth::user()->_id)->get();
       return View::make('partials.lrs.list', array('lrs' => $lrs, 'list' => $list, 'site' => $site));
     }
   }else{
