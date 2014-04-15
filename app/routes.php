@@ -21,8 +21,7 @@ Route::get('/', function(){
                   array('site' => $site, 'list' => $list, 'dash_nav' => true));
     }else{
       $lrs = Lrs::where('users._id', \Auth::user()->_id)->get();
-      $list = Lrs::where('users._id', \Auth::user()->_id)->get();
-      return View::make('partials.lrs.list', array('lrs' => $lrs, 'list' => $list, 'site' => $site));
+      return View::make('partials.lrs.list', array('lrs' => $lrs, 'list' => $lrs, 'site' => $site));
     }
   }else{
     $site = \Site::first();
