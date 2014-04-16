@@ -408,7 +408,7 @@ class xAPIValidation {
                                 'platform'          => array('string', false),
                                 'language'          => array('string', false),
                                 'statement'         => array('uuid',   false),
-                                'extensions'        => array('array',  false));
+                                'extensions'        => array('emptyArray',  false));
 
     //check all keys submitted are valid
     $this->checkParams($valid_context_keys, $context, 'context');
@@ -471,7 +471,7 @@ class xAPIValidation {
                           'completion'  => array('boolean', false), 
                           'response'    => array('string',  false),
                           'duration'    => array('iso8601Duration', false), 
-                          'extensions'  => array('array',   false));
+                          'extensions'  => array('emptyArray',   false));
 
     //check all keys submitted are valid
     $this->checkParams($valid_keys, $result, 'result');
