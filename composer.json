@@ -27,7 +27,7 @@
     }
   ],
   "require": {
-    "laravel/framework": "4.1.*",
+    "laravel/framework": "4.1.25",
     "jenssegers/mongodb": "1.2.4",
     "davejamesmiller/laravel-breadcrumbs": "~2.1.0",
     "way/generators": "dev-master",

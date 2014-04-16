@@ -6,8 +6,12 @@
     <div class="panel-body">
   
       @foreach( $verbs as $v )
-      <?php 
-        $display = reset( $v['display'] );
+      <?php
+        if( isset($v['display']) ){
+          $display = reset( $v['display'] );
+        }else{
+          $display = $v['id'];
+        }
         //if the display is the verb URI, truncate for display
         if(filter_var($display, FILTER_VALIDATE_URL)){
           $display = substr( $display, strrpos( $display, '/' )+1 );
