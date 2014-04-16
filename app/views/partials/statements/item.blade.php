@@ -29,6 +29,11 @@
     $verb = $statement['verb']['id'];
   }
 
+  //if using verb id for display, or display is an iri, truncate for display
+  if(filter_var($verb, FILTER_VALIDATE_URL)){
+    $verb = substr( $verb, strrpos( $verb, '/' )+1 );
+  }
+
   //set object id for display
   $object_id = isset($statement['object']['id']) ? $statement['object']['id'] : '#';
 
