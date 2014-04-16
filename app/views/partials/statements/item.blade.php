@@ -29,17 +29,34 @@
     $verb = $statement['verb']['id'];
   }
 
+  //set object id for display
   $object_id = isset($statement['object']['id']) ? $statement['object']['id'] : '#';
 
-  if( isset( $statement['object']['definition'] )){
+  //set object for display
+
+  //is the object of type agent?
+  if( isset($statement['object']['objectType']) && $statement['object']['objectType'] == 'Agent' ){
+    if( isset($statement['object']['name']) ){
+      $object = $statement['object']['name'];
+    }else{
+      $object = isset($statement['object']['mbox']) ? $statement['object']['mbox'] : 'no name available';
+    }
+  }elseif( isset($statement['object']['objectType']) && $statement['object']['objectType'] == 'SubStatement' ){
+    $object = 'A SubStatement'; //@todo not sure how to handle substatement display?
+  }else{
+    //assume it is a statement ref or activity
     if( isset( $statement['object']['definition']['name'] )){
+      //does an acitivyt name exists?
       $object = $statement['object']['definition']['name'];
       $object = reset( $object );
-    }else {
-      $object = isset($statement['object']['id']) ? $statement['object']['id'] : $statement['object']['mbox'];
+    }elseif( isset( $statement['object']['definition']['description'] )){
+      //if not does a description exist?
+      $object = $statement['object']['definition']['description'];
+      $object = reset( $object );
+    }else{
+      //last resort, or in the case of statement ref, use the id
+      $object = $statement['object']['id'];
     }
-  }else {
-    $object = isset($statement['object']['id']) ? $statement['object']['id'] : $statement['object']['mbox'];
   }
 
   $stored = new Carbon\Carbon($statement['stored']);

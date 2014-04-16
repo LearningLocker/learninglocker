@@ -262,7 +262,7 @@
         <tr>
           <td><b>{{ Lang::get('site.restrict') }}</b></td>
           <td>
-            <% if ( domain == 'undefined' ){ %> None <% }else{ %> <%= domain %> <% } %>
+            <% if ( typeof domain == 'undefined' || !domain ){ %> None <% }else{ %> <%= domain %> <% } %>
           </td>
         </tr>
       </tbody>
