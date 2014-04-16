@@ -40,17 +40,22 @@ class Helpers {
   */
   static function replaceFullStop( $array ){
 
+    $output = '';
 
-    foreach($array as $key => $value){
+    if( !empty($array) ){
 
-      if(is_array($value)){
+      foreach($array as $key => $value){
 
-        $output[$key] = Helpers::replaceFullStop( $value );
+        if(is_array($value)){
 
-      }else{
+          $output[$key] = Helpers::replaceFullStop( $value );
 
-        $new = Helpers::replaceFullStopInKeys( $key );
-        $output[$new] = $value;
+        }else{
+
+          $new = Helpers::replaceFullStopInKeys( $key );
+          $output[$new] = $value;
+
+        }
 
       }
 
