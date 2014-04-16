@@ -766,7 +766,7 @@ class xAPIValidation {
       case 'emptyArray':
         //used if value can be empty but if available needs to be an array
         if( $value != '' ){
-          $this->assertionCheck((is_array($value) && !empty($value)),
+          $this->assertionCheck(is_array($value),
             sprintf( "`%s` is not a valid array in " . $section, $key ));
         }
       break;
