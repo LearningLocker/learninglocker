@@ -32,6 +32,7 @@ class Lrs {
     foreach( $lrs->users as $u ){
       $get_users[] = $u['_id'];
     }
+   
     //check current user is in the list of allowed users and is an admin
     if( !in_array($user->_id, $get_users) && $user->role == 'admin' ){
       return true;
@@ -50,13 +51,15 @@ class Lrs {
 
     $user = \Auth::user();
 
-    //get all users with access to the lrs
+    //get all users with admin access to the lrs
     foreach( $lrs->users as $u ){
-      $get_users[] = $u['_id'];
+      if( $u['role'] == 'admin' ){
+        $get_users[] = $u['_id'];
+      }
     }
 
     //check current user is in the list of allowed users and is an admin
-    if( !in_array($user->_id, $get_users) && $user->role == 'admin' || $user->role == 'super' ){
+    if( in_array($user->_id, $get_users) || $user->role == 'super' ){
       return true;
     }
     
