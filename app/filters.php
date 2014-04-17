@@ -135,7 +135,7 @@ Route::filter('auth.admin', function( $route, $request ){
 
 /*
 |--------------------------------------------------------------------------
-| LRS access
+| Who can access an LRS?
 |--------------------------------------------------------------------------
 |
 | Check logged in user can access the current lrs. To access an LRS you have
@@ -165,6 +165,46 @@ Route::filter('auth.lrs', function( $route, $request ){
   }else{
     return Redirect::to('/');
   }
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| Who can edit a LRS?
+|--------------------------------------------------------------------------
+|
+| Super admins and lrs admin only
+|
+*/
+
+Route::filter('edit.lrs', function( $route, $request ){
+
+  //check to see if lrs id exists?
+  $lrs  = Lrs::find( $route->parameter('id') );
+  //if not, let's try the lrs parameter
+  if( !$lrs ){
+    $lrs  = Lrs::find( $route->parameter('lrs') );
+  }
+
+  $user = \Auth::user();
+
+  if( $lrs ){
+
+    //get all users with admin access to the lrs
+    foreach( $lrs->users as $u ){
+      if( $u['role'] == 'admin' ){
+        $get_users[] = $u['_id'];
+      }
+    }
+
+    //check current user is in the list of allowed users or is super
+    if( !in_array($user->_id, $get_users) && $user->role != 'super' ){
+      return Redirect::to('/');
+    }
+
+  }else{
+    return Redirect::to('/');
+  }  
 
 });
 
