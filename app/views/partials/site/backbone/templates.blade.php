@@ -79,8 +79,8 @@
   <td class="col-sm-2">
     <select class="form-control role-select" id="<%= _id %>">
       <option value="super" <% if (role == 'super'){ %> selected <% } %>>Super</option>
-      <option value="admin" <% if (role == 'admin'){ %> selected <% } %>>Admin</option>
-      <option value="observer" <% if (role == 'observer'){ %> selected <% } %>>Observer</option>
+      <option value="plus" <% if (role == 'plus'){ %> selected <% } %>>Observer plus</option>
+      <option value="observer" <% if (role == 'observer' || role == 'admin'){ %> selected <% } %>>Observer</option>
     </select>
   </td>
   <td class="col-sm-2">
@@ -149,8 +149,12 @@
   <p>Nothing exists.</p>
 </script>
 
-<script id="addNew" type="text/template">
-  <a href="{{ URL() }}/lrs/create" class="btn btn-default pull-right">{{ Lang::get('lrs.create') }}
+<script id="addNewLrs" type="text/template">
+  <a href="{{ URL() }}/lrs/create" class="btn btn-primary pull-right">{{ Lang::get('lrs.create') }}
+</script>
+
+<script id="addNewUser" type="text/template">
+  <a href="{{ URL() }}/site/invite" class="btn btn-primary pull-right">{{ Lang::get('users.invite.invite') }}
 </script>
 
 <script id="mainTemplate" type="text/template">

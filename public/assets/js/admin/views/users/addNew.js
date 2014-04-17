@@ -6,12 +6,12 @@ define([
 
 ], function($, _, Backbone, Marionette){
 
-  var addNewView = Backbone.Marionette.ItemView.extend({
+  var addNewUser = Backbone.Marionette.ItemView.extend({
 
-    template:'#addNewLrs'
+    template:'#addNewUser'
 
   });
 
-  return addNewView;
+  return addNewUser;
 
 });

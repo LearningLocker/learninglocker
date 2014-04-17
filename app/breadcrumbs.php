@@ -30,7 +30,7 @@ Breadcrumbs::register('lrs.invite', function($breadcrumbs, $lrs) {
 |---------------------------------------------------------------
 */
 Breadcrumbs::register('users', function($breadcrumbs) {
-  $breadcrumbs->push('Users', url('/site/users'));
+  $breadcrumbs->push('Users', url('/site#users'));
 });
 Breadcrumbs::register('site.invite', function($breadcrumbs) {
   $breadcrumbs->parent('users');

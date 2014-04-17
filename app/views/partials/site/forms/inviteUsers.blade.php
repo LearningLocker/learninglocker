@@ -16,8 +16,10 @@
     {{ Form::label('role', 'Role', array('class' => 'col-sm-4 control-label' )) }}
     <div class="col-sm-8">
       {{ Form::radio('role', 'super') }} Super Admin (can access and do everything) <br />
-      {{ Form::radio('role', 'admin') }} Admin (can administer LRSs) <br />
-      {{ Form::radio('role', 'observer') }} Observer
+      {{ Form::radio('role', 'plus') }} Observer plus (No specific privileges)<br />
+      {{ Form::radio('role', 'observer') }} Observer (No specific privileges)
+      <span class="help-block">The only reason Observer and Observer plus exist is to provide an option to grant certain users the
+        privilege of creating LRSs.</span>
     </div>
   </div>
   <hr>
