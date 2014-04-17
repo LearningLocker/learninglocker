@@ -84,7 +84,7 @@ class EloquentLrsRepository implements LrsRepository {
   }
 
   public function removeUser( $id, $user ){
-    return \DB::table('lrs')->where('_id', $id)->pull('users', array('_id' => $user));
+    return $this->lrs->where('_id', $id)->pull('users', array('_id' => $user));
   }
 
   public function getLrsOwned( $user ){
@@ -93,6 +93,19 @@ class EloquentLrsRepository implements LrsRepository {
 
   public function getLrsMember( $user ){
     return $this->lrs->where('users.user', $user)->select('title')->get()->toArray();
+  }
+
+  public function changeRole( $id, $user, $role ){
+  
+    $lrs = $this->find($id);
+    $users = $lrs->users;
+    foreach($users as &$u){
+      if( $u['_id'] == $user ){
+        $u['role'] = $role;
+      }
+    }
+    $lrs->users = $users;
+    return $lrs->save();
   }
 
 }

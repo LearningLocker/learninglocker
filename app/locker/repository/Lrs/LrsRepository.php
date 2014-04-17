@@ -18,4 +18,6 @@ interface LrsRepository {
 
   public function getLrsMember($user);
 
+  public function changeRole($id, $user, $role);
+
 }

@@ -37,7 +37,7 @@ class LrsController extends BaseController {
     $this->statement = $statement;
 
     $this->beforeFilter('auth');
-    $this->beforeFilter('csrf', array('only' => array('store', 'update', 'destroy', 'editCredentials', 'usersRemove')));
+    $this->beforeFilter('csrf', array('only' => array('store', 'update', 'destroy', 'editCredentials', 'usersRemove', 'changeRole')));
     $this->beforeFilter('auth.lrs', array('except' => array('index','create','store'))); //check user can access LRS.
     $this->beforeFilter('create.lrs', array('only' => array('create','store'))); //Allowed to create an LRS?
 
@@ -287,6 +287,11 @@ class LrsController extends BaseController {
   public function usersRemove( $id ){
     $lrs = $this->lrs->removeUser( $id, Input::get('user') );
     return Redirect::back()->with('success', Lang::get('lrs.remove_user'));
+  }
+
+  public function changeRole( $id, $user, $role ){
+    $change = $this->lrs->changeRole( $id, $user, $role );
+    return Response::json(array('success' => true));
   }
 
 }

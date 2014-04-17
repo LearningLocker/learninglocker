@@ -40,3 +40,33 @@
   </div>
 
 @stop
+
+@section('scripts')
+  @parent
+  <script type="text/javascript">
+  
+    $('.lrs-user-role').on('change', function() {
+      var user = $(this).data('user');
+      var role = $(this).val();
+      var lrs = '<?php echo $lrs->_id; ?>';
+      var token = $('meta[name="token"]').attr('content');
+    
+      jQuery.ajax({
+        beforeSend: function (request){
+          request.setRequestHeader("X-CSRF-Token", token);
+        },
+        url: '../../lrs/'+ lrs + '/users/' + user + '/changeRole/' + role,
+        type: 'PUT',
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function (json) {
+          $(this).blur();
+          alert('Role successfully changed');
+        },
+        error: function( error ) {
+          console.log(error);
+        }
+      });
+    });
+  </script>
+@stop
