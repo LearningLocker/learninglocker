@@ -23,9 +23,9 @@
     {{ Form::label('create_lrs', Lang::get('site.create_lrs'), array('class' => 'col-sm-4 control-label' )) }}
     <div class="col-sm-8">
       <span class='label label-default'><i class="icon icon-check"></i> {{ Lang::get('site.super_admin') }}</span>
-      {{ Form::checkbox('create_lrs[]', 'admin') }} {{ Lang::get('site.admin') }}
+      {{ Form::checkbox('create_lrs[]', 'plus') }} {{ Lang::get('site.plus') }}
       {{ Form::checkbox('create_lrs[]', 'observer') }} {{ Lang::get('site.observers') }}
-      <input type="hidden" name="create_lrs[]" value="super" />';
+      <input type="hidden" name="create_lrs[]" value="super" />
       <span class="help-block">{{ Lang::get('site.help.create_lrs') }}</span>
     </div>
   </div>
