@@ -169,6 +169,10 @@ Route::put('lrs/{id}/users/remove', array(
   'uses' => 'LrsController@usersRemove',
   'as'   => 'lrs.remove'
 ));
+Route::put('lrs/{id}/users/{user}/changeRole/{role}', array(
+  'uses' => 'LrsController@changeRole',
+  'as'   => 'lrs.changeRole'
+));
 Route::get('lrs/{id}/users/invite', array(
   'uses' => 'LrsController@inviteUsersForm',
 ));

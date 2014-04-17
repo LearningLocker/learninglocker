@@ -17,7 +17,14 @@ $grav_url = \app\locker\helpers\Helpers::getGravatar( $user['email'], '50');
       {{ $user['email'] }}
     </div>
     <div class="user-details-item">
-      <b>{{ Lang::get('users.role') }}:</b> {{ $user['role'] }}
+      @if ( $lrs->owner['_id'] != $user['_id'] )
+        <select class="form-control lrs-user-role" data-user="{{ $user['_id'] }}">
+          <option value="admin" @if($user['role'] == 'admin') selected @endif>Admin</option>
+          <option value="observer" @if($user['role'] != 'admin') selected @endif>Observer</option>
+        </select>
+      @else
+        <b>Owner</b>
+      @endif
     </div>
   </div>
 </div>
