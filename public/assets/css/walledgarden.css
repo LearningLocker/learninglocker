@@ -38,6 +38,17 @@ li {
     position: relative;
     left: -2px; 
 }
+
+.login-options {
+  border-top:1px solid #7897AC;
+  margin-top:20px;
+  padding:20px 0 0 0;
+  text-align:center;
+}
+
+.btn-login-options {
+  width:140px;
+}
     
 .links {
   padding:5px 0 5px 0;
