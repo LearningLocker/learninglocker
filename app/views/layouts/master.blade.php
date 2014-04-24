@@ -46,7 +46,7 @@
           @show
         </div>
         <div class="navbar-collapse collapse">
-          section('navbar')
+          @section('navbar')
             @include('system.navbar')
           @show
         </div>
