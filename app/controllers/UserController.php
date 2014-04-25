@@ -30,7 +30,7 @@ class UserController extends BaseController {
     $this->beforeFilter('auth', array('except' => array('verifyEmail','addPasswordForm')));
     $this->beforeFilter('csrf', array('only' => array('update','updateRole', 'updatePassword', 'addPassword', 'destroy')));
     $this->beforeFilter('user.delete', array('only' => 'destroy'));
-    $this->beforeFilter('auth.super', array('only' => 'updateRole'));
+    $this->beforeFilter('auth.super', array('only' => array('updateRole','index')));
     
   }
 

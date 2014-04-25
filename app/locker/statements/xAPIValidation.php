@@ -182,7 +182,7 @@ class xAPIValidation {
                                     'objectType'   => array('string'),
                                     'mbox_sha1sum' => array('string'),
                                     'openID'       => array('irl'),
-                                    'account'      => array('object')
+                                    'account'      => array('array')
                                   ), $actor, 'actor'
                                 );
 
