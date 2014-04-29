@@ -28,7 +28,7 @@
   <div class="row">
 
     <div id="contents-one">
-      <div class="col-xs-12 col-sm-4">
+      <div class="col-xs-12 col-sm-12 col-md-4">
         <div class="panel panel-default" style="min-height:400px;">
           <div class="panel-heading">
             Most active users
@@ -42,7 +42,7 @@
     </div>
 
     <div id="contents-two">
-      <div class="col-xs-12 col-sm-4">
+      <div class="col-xs-12 col-sm-12 col-md-4">
         <div class="panel panel-default" style="min-height:400px;">
           <div class="panel-heading">
             Popular Activities
@@ -57,7 +57,7 @@
     </div>
 
     <div id="contents-three">
-      <div class="col-xs-12 col-sm-4">
+      <div class="col-xs-12 col-sm-12 col-md-4">
         <div class="panel panel-default" style="min-height:400px;">
           <div class="panel-heading">
             <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/reporting" class="btn btn-primary btn-xs pull-right">Visit reporting tool</a>

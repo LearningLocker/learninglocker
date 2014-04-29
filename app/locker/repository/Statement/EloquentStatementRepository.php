@@ -1,5 +1,6 @@
 <?php namespace Locker\Repository\Statement;
 
+use DateTime;
 use Statement;
 use Locker\Repository\Activity\ActivityRepository as Activity;
 use Locker\Repository\Query\QueryRepository as Query;
@@ -166,12 +167,13 @@ class EloquentStatementRepository implements StatementRepository {
       }
 
       //The date stored in LRS in ISO 8601 format
-      $current_date = date('c');
-      $vs['stored'] = $current_date;
+      $current_date = DateTime::createFromFormat('U.u', microtime(true));
+      $current_date->setTimezone(new \DateTimeZone(\Config::get('app.timezone')));
+      $vs['stored'] = $current_date->format('Y-m-d\TH:i:s.uP');
 
       //if no timestamp, make it the same as stored
       if( !isset($vs['timestamp']) ){
-        $vs['timestamp'] = $current_date;
+        $vs['timestamp'] = $vs['stored'];
       }
        
       /*

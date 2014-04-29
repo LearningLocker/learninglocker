@@ -162,7 +162,7 @@ class StatementsController extends BaseController {
    **/
   public function checkAccess( $statement ){
 
-    $statement_lrs = $statement['context']['extensions']['http://learninglocker&46;net/extensions/lrs']['_id'];
+    $statement_lrs = $statement['lrs']['_id'];
 
     if( $statement_lrs == $this->lrs->_id ){
       return true;
