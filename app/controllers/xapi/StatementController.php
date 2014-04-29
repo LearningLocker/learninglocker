@@ -143,7 +143,7 @@ class StatementsController extends BaseController {
     
     //can the requester access this statement?
     if( $this->checkAccess( $statement ) ){
-      return $this->returnArray( $statement->toArray() );
+      return $this->returnArray( array($statement->toArray()) );
     }else{
       return \Response::json( array( 'error'    => true, 
                                      'message'  => 'You are not authorized to access this statement.'), 

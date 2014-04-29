@@ -113,7 +113,7 @@ class EloquentStatementRepository implements StatementRepository {
    **/
   public function find( $id ){
 
-    return \Statement::where('id', $id)->first();
+    return \Statement::where('statement.id', $id)->first();
 
   }
 
