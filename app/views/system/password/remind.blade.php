@@ -8,7 +8,7 @@
     An email with the password reset has been sent.
   @endif
 
-  <h1 class="col-sm-12">Password Reminder</h1>
+  <h1 class="col-sm-12">{{ trans('users.password_remind') }}</h1>
 
   {{ Form::open(array('route' => 'password.request')) }}
 

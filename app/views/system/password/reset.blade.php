@@ -10,7 +10,7 @@
     </div>
   @endif
 
-  <h1 class="col-sm-12">Password Reset</h1>
+  <h1 class="col-sm-12">{{ trans('reminders.password_reset') }}</h1>
 
   {{ Form::open(array('route' => array('password.update'))) }}
 
