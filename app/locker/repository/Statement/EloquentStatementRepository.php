@@ -203,7 +203,7 @@ class EloquentStatementRepository implements StatementRepository {
       $new_statement->statement = $vs;
 
       if( $new_statement->save() ){
-        $saved_ids[] = $new_statement->id;
+        $saved_ids[] = $new_statement->statement['id'];
       } else {
         return array( 'success' => 'false', 
                       'message' => $new_statement->errors );
