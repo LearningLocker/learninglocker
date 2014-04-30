@@ -113,8 +113,7 @@ class ReportingController extends \BaseController {
     $validator = Validator::make($data, $rules);
     if ($validator->fails())  return \Response::json( $validator );
 
-
-    $save     = $this->report->create( $data );
+    $save = $this->report->create( $data );
 
     if( $save ){
       return \Response::json( 'success' );
@@ -131,13 +130,37 @@ class ReportingController extends \BaseController {
    */
   public function show($id, $report){
 
-    $lrs    = $this->lrs->find($id);
+    $lrs      = $this->lrs->find($id);
     $lrs_list = $this->lrs->all();
-    $report = $this->report->find($report);
-    return View::make('partials.reporting.view', array('lrs' => $lrs,
-                                                       'list' => $lrs_list, 
-                                                       'report' => $report, 
+    $report   = $this->report->find($report);
+    $statements = $this->getStatements($id, $this->decodeURL( $report->query ));
+    return View::make('partials.reporting.view', array('lrs'        => $lrs,
+                                                       'list'       => $lrs_list,
+                                                       'statements' => $statements,
+                                                       'report'     => $report, 
                                                        'reporting_nav' => true));
+
+  }
+
+  /**
+   * Loop through saved report query and decode any url's
+   *
+   **/
+  public function decodeURL($array){
+
+    $output = '';
+
+    if( !empty($array) ){
+      foreach($array as $key => $value){
+        if(is_array($value)){
+          $output[$key] = $this->decodeURL( $value );
+        }else{
+          $output[$key] = urldecode($value);
+        }
+      }
+    }
+
+    return $output;
 
   }
 
@@ -177,9 +200,9 @@ class ReportingController extends \BaseController {
   /** 
    * Get data based on query created.
    **/
-  public function getData($lrs){
+  public function getData($lrs, $data=''){
 
-    $data = $this->analytics->analytics( $lrs, $this->params );
+    $data = $this->analytics->analytics( $lrs, $data );
 
     if( $data['success'] == false ){
       return \Response::json( array( 'success'  => false, 'message'  => \Lang::get('apps.no_data')), 400 );
@@ -191,11 +214,9 @@ class ReportingController extends \BaseController {
   /**
    * Return statements based on query created
    **/
-  public function getStatements($lrs){
+  public function getStatements($lrs, $filter=''){
 
-    $params        = json_decode( $this->params['filter'], true );
-    $getStatements = $this->query->selectStatements( $lrs, $params );
-
+    return $this->query->selectStatements( $lrs, $filter );
     return \Response::json( $getStatements );
 
   }

@@ -40,6 +40,7 @@ class EloquentQueryRepository implements QueryRepository {
    *
    **/
   public function selectStatements( $lrs='', $filter, $limit=20, $offset=0 ){
+    //var_dump( $filter );exit;
     $statements = \Statement::where('lrs._id', $lrs);
     if( !empty($filter) ){
       
@@ -60,7 +61,7 @@ class EloquentQueryRepository implements QueryRepository {
     $statements->take($limit);
     $statements->skip($offset);
     $statements->remember(5);
-    return $statements->get();
+    return $statements->paginate(20);
   }
 
   /**
