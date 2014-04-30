@@ -200,9 +200,9 @@ class ReportingController extends \BaseController {
   /** 
    * Get data based on query created.
    **/
-  public function getData($lrs, $data=''){
+  public function getData($lrs){
 
-    $data = $this->analytics->analytics( $lrs, $data );
+    $data = $this->analytics->analytics( $lrs, $this->params );
 
     if( $data['success'] == false ){
       return \Response::json( array( 'success'  => false, 'message'  => \Lang::get('apps.no_data')), 400 );
