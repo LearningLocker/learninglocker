@@ -4,12 +4,12 @@
     <meta charset="utf-8">
   </head>
   <body>
-    <h2>{{ $sender->name }} has invited you to join {{ $title }}</h2>
+    <h2>{{ $sender->name }} {{ trans('users.invite.has_invited') }} {{ $title }}</h2>
     <div>
       {{ $custom_message }}
     </div>
     <div>
-      <p>To do this, please click on the following link: {{ URL::to('email/invite', array($token)) }}.</p>
+      <p>{{ trans('users.invite.invite_instructions') }}: {{ URL::to('email/invite', array($token)) }}.</p>
     </div>
   </body>
 </html>

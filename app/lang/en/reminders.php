@@ -21,6 +21,10 @@ return array(
 
 	"sent" => "Password reminder sent!",
 
-  "reset" => "Your password has been reset"
+  "reset" => "Your password has been reset",
+
+  "password_reset" => "Password Reset",
+
+  "password_reset_form" => "To reset your password, complete this form"
 
 );

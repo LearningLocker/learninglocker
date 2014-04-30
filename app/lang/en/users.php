@@ -15,7 +15,9 @@ return array(
     'message' => 'Message (optional)',
     'sample'  => 'I would like to invite you to join this LRS.',
     'invited' => 'Those users have been invited.',
-    'failed'  => 'Inviting that user failed, check the user is not already a member of the LRS and the email is valid.'
+    'failed'  => 'Inviting that user failed, check the user is not already a member of the LRS and the email is valid.',
+    'has_invited' => 'has invited you to join',
+    'invite_instructions' => 'To do this, please click on the following link'
   ),
   'password'         => 'Password',
   'password_again'   => 'Password confirm',
@@ -23,6 +25,7 @@ return array(
   'password_change'  => 'Change password',
   'password_add'     => 'Add a password',
   'password_problem' => 'There was a problem saving your password.',
+  'password_remind'  => 'Password Reminder',
   'password_current_wrong' => 'Your current password was not correct.',
   'password_instructions' => 'Please add a password for your account. You need to do this before you can continue.',
   'email'          => 'Email',

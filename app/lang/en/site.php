@@ -61,7 +61,14 @@ return array(
     	'restrict'     => 'Restrict registration to a particular email domain. Just enter the domain part e.g. ht2.co.uk',
     	'claim'        => 'Can learners\' login and claim all xAPI statements that belong to them?',
     	'language'     => 'Default language to be used when generating statements using the statement generator'
-    	),
+    ),
 
-    'updated' => 'Learning Locker details have been updated',
+    'navbar' => array(
+      'lrs_home' => 'LRS home',
+      'other'    => 'Other',
+      'none'     => 'No LRSs available',
+      'lrs_list' => 'LRS List'
+    ),
+
+    'updated'     => 'Learning Locker details have been updated'
 );
