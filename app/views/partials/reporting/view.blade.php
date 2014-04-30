@@ -21,7 +21,12 @@
           Related statements <span id="statementCount"></span>
         </div>
         <div class="panel-body">
-          <div id="statements"></div>
+          @if($statements)
+            @foreach($statements as $s)
+              @include('partials.statements.item', array( 'statement' => $s ))
+            @endforeach
+            {{ $statements->links() }}
+          @endif
         </div>
       </div>
     </div>
@@ -36,6 +41,7 @@
 
     $( document ).ready(function() {
       var query = {{ json_encode($report->query) }};
+      console.log(query);
       //get graph
       jQuery.ajax({
         url: '../data',
@@ -50,23 +56,6 @@
           }else{
             displayGraph(json);
           }
-        },
-        error: function( error ) {
-          
-        }
-      });
-      //get statements
-      jQuery.ajax({
-        url: '../statements',
-        type: 'GET',
-        data: 'filter=' + JSON.stringify( query ),
-        contentType: 'application/json',
-        dataType: 'json',
-        success: function (json) {
-          statements = statementDisplay(json);
-          count = json.length;
-          $('#statementCount').html('(' + count + ')');
-          $('#statements').html(statements);
         },
         error: function( error ) {
           
@@ -94,28 +83,6 @@
         labels: ['Number of statements']
       });
     };
-
-    function statementDisplay(json) {
-      var statement = '';
-      var arr = $.makeArray( json );
-      $.each(arr, function(index, value) {
-        statement += setStatementDisplay(value);
-      });
-      return statement;
-    }
-
-    function setStatementDisplay(value){
-      var object = '';var verb = '';
-      if( typeof value.statement.verb.display !== 'undefined' ){
-        verb = value.statement.verb.display[Object.keys(value.statement.verb.display)[0]];
-      }
-      if( typeof value.statement.object.definition !== 'undefined' ){
-        if( typeof value.statement.object.definition.name !== 'undefined' ){
-          object = value.statement.object.definition.name[Object.keys(value.statement.object.definition.name)[0]];
-        }
-      }
-      return '<div class="statement-row"><p>' + value.statement.actor.name + ' (' + value.statement.actor.mbox + ') ' + verb + ' ' + object + '</p></div>';
-    }
 
   </script>
 @stop
