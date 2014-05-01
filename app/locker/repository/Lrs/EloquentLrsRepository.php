@@ -42,8 +42,8 @@ class EloquentLrsRepository implements LrsRepository {
     $lrs              = new Lrs;
     $lrs->title       = $input['title'];
     $lrs->description = $input['description'];
-    $lrs->api         = array('basic_key'    => \app\locker\helpers\Helpers::getRandomValue(),
-                              'basic_secret' => \app\locker\helpers\Helpers::getRandomValue());
+    $lrs->api         = array( array('basic_key'    => \app\locker\helpers\Helpers::getRandomValue(),
+                              'basic_secret' => \app\locker\helpers\Helpers::getRandomValue()));
     $lrs->owner       = array( '_id' => \Auth::user()->_id );
     $lrs->users       = array( array('_id'   => $user->_id,
                                      'email' => $user->email,

@@ -23,13 +23,13 @@
         <b>{{ Lang::get('site.username') }}</b>
       </div>
       <div class="col-sm-10">
-        {{ $lrs->api['basic_key']}}
+        {{ $lrs->api[0]['basic_key']}}
       </div>
       <div class="col-sm-2">
         <b>{{ Lang::get('site.password') }}</b>
       </div>
       <div class="col-sm-10">
-        {{ $lrs->api['basic_secret'] }}
+        {{ $lrs->api[0]['basic_secret'] }}
       </div>
     </div>
     <div class="bordered clearfix">

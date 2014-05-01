@@ -63,6 +63,7 @@ Route::filter('auth.statement', function(){
 
   if( $method !== "OPTIONS" ){
 
+	//I'm not sure what to do here?? for each? How do I get the list of arrays? 
     //see if the lrs exists based on key and secret
     $lrs = \Lrs::where('api.basic_key', $key)
         ->where('api.basic_secret', $secret)
