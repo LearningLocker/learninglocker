@@ -63,11 +63,22 @@ Route::filter('auth.statement', function(){
 
   if( $method !== "OPTIONS" ){
 
-	//I'm not sure what to do here?? for each? How do I get the list of arrays? 
     //see if the lrs exists based on key and secret
-    $lrs = \Lrs::where('api.basic_key', $key)
+    /*$lrs = \Lrs::where('api.basic_key', $key)
         ->where('api.basic_secret', $secret)
-        ->select('owner._id')->first();
+        ->select('owner._id')->first();*/
+        
+    $allLrs = Lrs::all();
+    $lrs;    
+    
+	foreach ($allLrs as $currentLrs) {
+		foreach ($currentLrs->api as $currentApi) {
+			if (($currentApi["basic_key"] == $key) && ($currentApi["basic_secret"] == $secret)) {
+				//TODO: also get the current API set being used
+				$lrs = $currentLrs;
+			}
+		}
+	}
 
     //if no id found, return error
     if ( $lrs == NULL ) {
