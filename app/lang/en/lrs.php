@@ -46,6 +46,11 @@ return array(
     	'settings' => 'API Settings',
     	'api'	   => 'LRS API'
     ),
+    
+	'client'       => array(
+    	'manageclients'   => 'Manage additional clients',
+    	'manageclients_intro'   => 'Lorem ipstuff',
+    ),
 
     'update_key'       => 'Your key has now been updated.',
     'update_key_error' => 'There was an error updating your key and secret.',

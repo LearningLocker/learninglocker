@@ -19,5 +19,9 @@ class Lrs extends Eloquent {
   public function validate( $data ) {
     return Validator::make($data, $this->rules);
   }
+  
+  public function clients() {
+  	return $this->hasMany('Client');
+  }
 
 }

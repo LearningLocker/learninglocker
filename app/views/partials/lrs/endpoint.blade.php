@@ -18,6 +18,7 @@
     </div>
     <div class="bordered clearfix">
       @include('partials.lrs.forms.apikey')
+      
       <h4>{{ Lang::get('lrs.endpoint.basic_http') }}</h4>
       <div class="col-sm-2">
         <b>{{ Lang::get('site.username') }}</b>
@@ -30,6 +31,12 @@
       </div>
       <div class="col-sm-10">
         {{ $lrs->api['basic_secret'] }}
+      </div>
+      <div class="col-sm-12">
+      	<br/>
+        <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/client/manage" class="btn btn-primary btn-xs">
+	  	  <i class="icon icon-globe"></i> {{ Lang::get('lrs.client.manageclients') }}
+	    </a>
       </div>
     </div>
     <div class="bordered clearfix">
