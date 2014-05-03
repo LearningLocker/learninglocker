@@ -196,7 +196,12 @@ Route::get('lrs/{id}/client/manage', array(
   'as' => 'client.manage'
 ));
 
-Route::resource('client', 'ClientController');
+Route::post('lrs/{id}/client/create', array(
+  'before' => 'csrf', 
+  'uses' => 'ClientController@create',
+  'as' => 'client.create'
+));
+
 /*
 |------------------------------------------------------------------
 | Reporting

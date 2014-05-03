@@ -22,7 +22,7 @@ class ClientController extends BaseController {
    * Client
    **/
   protected $client;
-
+  
 
   /**
    * Construct
@@ -46,14 +46,40 @@ class ClientController extends BaseController {
    * @return View
    */
   public function manage($id){
-
+  	
      $lrs    = $this->lrs->find( $id );
-     $lrs_list = $this->lrs->all();
-     return View::make('partials.client.manage', array('lrs'          => $lrs, 
-                                                     'endpoint_nav' => true,
-                                                     'list'         => $lrs_list));
+     $lrs_list = $this->lrs->all(); //is this needed???
+	
+	 $clients = \Client::where('lrs_id', $lrs->id)->get();
+	 	  
+	 
+     return View::make('partials.client.manage', array('clients'    => $clients,
+						                        'lrs'           => $lrs,
+						                        'list'          => $lrs_list
+												));
   }
+  
+    /**
+   * Create a new client
+   *
+   **/
 
+  public function create($id){
+
+	$lrs = $this->lrs->find( $id );
+	
+	$data = array('lrs_id' => $lrs->id);
+	
+    if( $this->client->create( $data ) ){
+      $message_type = 'success';
+      $message      = Lang::get('update_key');
+    }else{
+      $message_type = 'error';
+      $message      = Lang::get('update_key_error');
+    }
+    
+    return Redirect::back()->with($message_type, $message);
+  }
 
 
 }

@@ -49,7 +49,11 @@ return array(
     
 	'client'       => array(
     	'manageclients'   => 'Manage additional clients',
-    	'manageclients_intro'   => 'Lorem ipstuff',
+    	'manageclients_intro'   => 'Create a new client for each application or user accessing the LRS via xapi. Coming soon: data tagging by client, client permissions and client management API.',
+    	'new_client'   => 'Create new client',
+    	'unnamed_client' => 'Unnamed client',
+    	'created_fail' => 'The client was not created sucecssfully. Sorry.',
+    	'created_sucecss' => 'The client was created sucecssfully. Hurrah!'
     ),
 
     'update_key'       => 'Your key has now been updated.',

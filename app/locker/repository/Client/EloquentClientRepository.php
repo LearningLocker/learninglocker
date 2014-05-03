@@ -35,10 +35,9 @@ class EloquentClientRepository implements ClientRepository {
 
     $user             = \Auth::user();
     $client              = new Client;
-    $client->title       = $input['title'];
-    $client->description = $input['description'];
     $client->api         = array('basic_key'    => \app\locker\helpers\Helpers::getRandomValue(),
                               'basic_secret' => \app\locker\helpers\Helpers::getRandomValue());
+	$client->lrs_id = $input['lrs_id'];
 
     $client->save() ? $result = true : $return = false;
 

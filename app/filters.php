@@ -63,13 +63,26 @@ Route::filter('auth.statement', function(){
 
   if( $method !== "OPTIONS" ){
 
+	//Note: this code is duplicated in Controllers\API\BaseController\GetLrs
     //see if the lrs exists based on key and secret
     $lrs = \Lrs::where('api.basic_key', $key)
         ->where('api.basic_secret', $secret)
         ->select('owner._id')->first();
+		
+	
+	//if main credentials not matched, try the additional credentials
+	if ( $lrs == NULL ) {
+		$client = \Client::where('api.basic_key', $key)
+	    ->where('api.basic_secret', $secret)
+	    ->first();
+		
+		$lrs = \Lrs::find(  $client->lrs_id );
+
+	}
+
 
     //if no id found, return error
-    if ( $lrs == NULL ) {
+    if ( $lrs == NULL ) {	
       return Response::json(array(
         'error' => true,
         'message' => 'Unauthorized request.'),

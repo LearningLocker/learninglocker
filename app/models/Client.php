@@ -10,5 +10,13 @@ class Client extends Eloquent {
    * @var string
    */
   protected $collection = 'client';
+  
+   /**
+   * All clients belong to an LRS
+   *
+   **/
+  public function lrs(){
+    return $this->belongsTo('Lrs');
+  }
 
 }
