@@ -53,7 +53,11 @@ return array(
     	'new_client'   => 'Create new client',
     	'unnamed_client' => 'Unnamed client',
     	'created_fail' => 'The client was not created sucecssfully. Sorry.',
-    	'created_sucecss' => 'The client was created sucecssfully. Hurrah!'
+    	'created_sucecss' => 'The client was created sucecssfully. Hurrah!',
+    	'none' => 'Yes, we have no clients.',
+    	'delete_client_success' => 'Client deleted.',
+    	'delete_client_error' => 'Oops. Something went wrong. The client has not been deleted.'
+    	
     ),
 
     'update_key'       => 'Your key has now been updated.',

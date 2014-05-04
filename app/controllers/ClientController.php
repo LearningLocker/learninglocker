@@ -82,4 +82,24 @@ class ClientController extends BaseController {
   }
 
 
+  /**
+   * Remove the specified resource from storage.
+   *
+   * @param  int  $id
+   * @return View
+   */
+  public function destroy($lrs_id, $id){
+
+	if( $this->client->delete($id) ){
+      $message_type = 'success';
+      $message      = Lang::get('delete_client_success');
+    }else{
+      $message_type = 'error';
+      $message      = Lang::get('delete_client_error');
+    }
+	
+   return Redirect::back()->with($message_type, $message);
+
+  }
+
 }

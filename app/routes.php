@@ -196,6 +196,16 @@ Route::get('lrs/{id}/client/manage', array(
   'as' => 'client.manage'
 ));
 
+Route::delete('lrs/{lrs_id}/client/{id}/destory', array(
+  'uses' => 'ClientController@destroy',
+  'as' => 'client.destroy'
+));
+
+Route::get('lrs/{lrs_id}/client/{id}/edit', array(
+  'uses' => 'ClientController@edit',
+  'as' => 'client.edit'
+));
+
 Route::post('lrs/{id}/client/create', array(
   'before' => 'csrf', 
   'uses' => 'ClientController@create',
