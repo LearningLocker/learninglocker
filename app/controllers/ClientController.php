@@ -28,6 +28,8 @@ class ClientController extends BaseController {
    * Construct
    *
    * @param User $user
+   * @param Lrs $lrs
+   * @param Client $client
    */
   public function __construct(User $user, Lrs $lrs, Client $client){
 
@@ -35,20 +37,19 @@ class ClientController extends BaseController {
     $this->lrs  = $lrs;
 	$this->client  = $client;
     $this->logged_in_user = Auth::user();
-
-
     
   }
   
   /**
-   * 
+   * Load the manage clients page
    *
+   * @param  int  $id
    * @return View
    */
   public function manage($id){
   	
      $lrs    = $this->lrs->find( $id );
-     $lrs_list = $this->lrs->all(); //is this needed???
+     $lrs_list = $this->lrs->all(); 
 	
 	 $clients = \Client::where('lrs_id', $lrs->id)->get();
 	 	  
@@ -59,9 +60,32 @@ class ClientController extends BaseController {
 												));
   }
   
+   /**
+   * Load the manage clients page
+   *
+   * @param  int  $lrs_id
+   * @param  int  $id
+   * @return View
+   */
+  public function edit($lrs_id, $id){
+  	
+     $lrs    = $this->lrs->find( $lrs_id );
+     $lrs_list = $this->lrs->all(); 
+	
+	 $client = $this->client->find( $id );
+	 	  
+	 
+     return View::make('partials.client.edit', array('client'    => $client,
+						                        'lrs'           => $lrs,
+						                        'list'          => $lrs_list
+												));
+  }
+  
     /**
    * Create a new client
    *
+   * @param  int  $id
+   * @return View
    **/
 
   public function create($id){
@@ -85,6 +109,7 @@ class ClientController extends BaseController {
   /**
    * Remove the specified resource from storage.
    *
+   * @param  int  $lrs_id
    * @param  int  $id
    * @return View
    */

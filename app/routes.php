@@ -212,6 +212,12 @@ Route::post('lrs/{id}/client/create', array(
   'as' => 'client.create'
 ));
 
+Route::put('lrs/{lrs_id}/client/{id}/update', array(
+  'before' => 'csrf', 
+  'uses' => 'ClientController@update',
+  'as' => 'client.update'
+));
+
 /*
 |------------------------------------------------------------------
 | Reporting

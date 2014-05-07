@@ -56,7 +56,16 @@ return array(
     	'created_sucecss' => 'The client was created sucecssfully. Hurrah!',
     	'none' => 'Yes, we have no clients.',
     	'delete_client_success' => 'Client deleted.',
-    	'delete_client_error' => 'Oops. Something went wrong. The client has not been deleted.'
+    	'delete_client_error' => 'Oops. Something went wrong. The client has not been deleted.',
+    	'authority' => array(
+			'ifi' => 'Identifier',
+			'mbox' => 'Email',
+			'mbox_sha1sum' => 'Encrypted email',
+			'openid' => 'Open id',
+			'account' => 'Account',
+			'accountname' => 'Account Name',
+			'accounthomepage' => 'Account Homepage'
+		)
     	
     ),
 

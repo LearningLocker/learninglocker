@@ -75,20 +75,17 @@ Route::filter('auth.statement', function(){
 		$client = \Client::where('api.basic_key', $key)
 	    ->where('api.basic_secret', $secret)
 	    ->first();
-		
-		$lrs = \Lrs::find(  $client->lrs_id );
-
+		if( $client != NULL ){
+			$lrs = \Lrs::find(  $client->lrs_id );
+		}
+		else {
+			return Response::json(array(
+	          'error' => true,
+	          'message' => 'Unauthorized request.'),
+	          401
+	      	); 
+		}
 	}
-
-
-    //if no id found, return error
-    if ( $lrs == NULL ) {	
-      return Response::json(array(
-        'error' => true,
-        'message' => 'Unauthorized request.'),
-        401
-      ); 
-    }
 
     //attempt login once
     if ( ! Auth::onceUsingId($lrs->owner['_id']) ) {
