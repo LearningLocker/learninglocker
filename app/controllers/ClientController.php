@@ -105,6 +105,33 @@ class ClientController extends BaseController {
     return Redirect::back()->with($message_type, $message);
   }
 
+  /**
+   * Update the specified resource in storage.
+   *
+   * @param  int  $id
+   * @return View
+   */
+  public function update($lrs_id, $id){
+
+    /*$data = Input::all();
+
+    //TODO :client input validation This may be able to re-use some of the statement validator
+    $rules['title']        = 'required|alpha_spaces';
+    $rules['description']  = 'alpha_spaces';       
+    $validator = Validator::make($data, $rules);
+    if ($validator->fails()) return Redirect::back()->withErrors($validator);
+	 */
+
+    if($this->client->update( $id, Input::all() )){
+      return Redirect::back()->with('success', Lang::get('lrs.client.updated'));
+    }
+
+    return Redirect::back()
+          ->withInput()
+          ->withErrors($this->client->errors());
+
+  }
+
 
   /**
    * Remove the specified resource from storage.

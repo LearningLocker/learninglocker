@@ -16,7 +16,7 @@
   @include('partials.site.elements.page_title', array('page' => ucfirst(Lang::get('site.edit'))))
   
   <div class="row">
-    <div class="col-xs-12 col-sm-8 col-lg-8">
+    <div class="col-md-8">
       @include('partials.client.forms.edit')
     </div>
   </div>

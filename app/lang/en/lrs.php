@@ -54,6 +54,7 @@ return array(
     	'unnamed_client' => 'Unnamed client',
     	'created_fail' => 'The client was not created sucecssfully. Sorry.',
     	'created_sucecss' => 'The client was created sucecssfully. Hurrah!',
+    	'updated'   => 'The client was updated',
     	'none' => 'Yes, we have no clients.',
     	'delete_client_success' => 'Client deleted.',
     	'delete_client_error' => 'Oops. Something went wrong. The client has not been deleted.',

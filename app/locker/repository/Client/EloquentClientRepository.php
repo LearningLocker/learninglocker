@@ -56,8 +56,37 @@ class EloquentClientRepository implements ClientRepository {
   public function update($id, $input){
 
     $client = $this->find($id);
-
-    $client->title       = $input['title'];
+	
+	$authority = $client->authority;
+	
+    $authority['name'] = $input['name'];
+	
+	//clear all previously saved ifis
+	unset ($authority['mbox']);
+	unset ($authority['mbox_sha1sum']);
+	unset ($authority['openid']);
+	unset ($authority['account']);
+	
+	switch ($input['ifi']) {
+		case 'mbox' :
+			$authority['mbox'] = 'mailto:'.$input['mbox'];
+			break;
+		case 'mbox_sha1sum' :
+			$authority['mbox_sha1sum'] = $input['mbox_sha1sum'];
+			break;
+		case 'openid' :
+			$authority['openid'] = $input['openid'];
+			break;
+		case 'account':
+			$authority['account'] = array(
+				'name' => $input['account_name'],
+				'homePage' => $input['account_homePage']
+			);
+			break;		
+	}
+	
+	$client->authority = $authority;
+	
     $client->description = $input['description'];
    
     $client->save();
