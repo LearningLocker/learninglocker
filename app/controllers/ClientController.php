@@ -122,8 +122,11 @@ class ClientController extends BaseController {
     if ($validator->fails()) return Redirect::back()->withErrors($validator);
 	 */
 
+	 
+	//{{ URL() }}/lrs/{{ $lrs->_id }}/client/manage#{{ $client->_id }} 
+	
     if($this->client->update( $id, Input::all() )){
-      return Redirect::back()->with('success', Lang::get('lrs.client.updated'));
+      return Redirect::to('/lrs/'.$lrs_id.'/client/manage#'.$id)->with('success', Lang::get('lrs.client.updated'));
     }
 
     return Redirect::back()
