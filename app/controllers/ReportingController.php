@@ -217,7 +217,6 @@ class ReportingController extends \BaseController {
   public function getStatements($lrs, $filter=''){
 
     return $this->query->selectStatements( $lrs, $filter );
-    return \Response::json( $getStatements );
 
   }
 
