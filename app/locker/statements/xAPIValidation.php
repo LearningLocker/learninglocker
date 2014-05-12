@@ -589,7 +589,11 @@ class xAPIValidation {
                                    'fileUrl'     => array('iri', false));
 
     //check all keys are valid
-    $this->checkParams($valid_attachment_keys, $attachments, 'attachment');
+    if( $attachments ){
+      foreach( $attachments as $a ){
+        $this->checkParams($valid_attachment_keys, $a, 'attachment');
+      }
+    }
 
   }
 
@@ -823,7 +827,7 @@ class xAPIValidation {
         sprintf( "`%s` is not a valid integer in " . $section, $key ));
       break;
       case 'contentType':
-        $this->assertionCheck($this->validateInternetMediaTyp($value),
+        $this->assertionCheck($this->validateInternetMediaType($value),
         sprintf( "`%s` is not a valid Internet Media Type in " . $section, $key ));
       break;
       case 'mailto':
