@@ -60,7 +60,7 @@
   	<h4> 		
   		<div class="pull-left" >Credentials </div>
     	&nbsp;
-    	<div class="pull-right" style="margin-top: -6px;">
+    	<div class="pull-right hidden" style="margin-top: -6px;">
 			<a href="{{ URL() }}/lrs/{{ $lrs->_id }}/client/{{ $client->_id }}/refreshcredentials" class="btn btn-default btn-sm pull-right" title="{{ Lang::get('lrs.endpoint.new_key_secret') }}">
 				<i class="icon-refresh"></i><span class="hidden-xs"> {{ Lang::get('lrs.endpoint.new_key_secret') }}</span>
 			</a>

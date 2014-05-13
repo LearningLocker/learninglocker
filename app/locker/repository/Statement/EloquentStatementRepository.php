@@ -149,7 +149,7 @@ class EloquentStatementRepository implements StatementRepository {
       $verify = new \app\locker\statements\xAPIValidation();
 
       //run full validation
-      $return = $verify->runValidation( $statement, \Site::first() );
+      $return = $verify->runValidation( $statement, \Site::first() );  
 
       if( $return['status'] == 'failed' ){
         return array( 'success' => 'false',  'message' => $return['errors'] );
@@ -186,6 +186,21 @@ class EloquentStatementRepository implements StatementRepository {
       if( isset($vs['object']['definition'])){
         $vs['object']['definition'] = $this->activity->saveActivity( $vs['object']['id'], $vs['object']['definition'] );
       }
+	  
+	  //TODO: The validator currently adds authority but doesn't do a a very good job. It sets the authority to the e-mail address of the site admin with no name. 
+	  //If one of the additional sets of credentials has been used, replace the authority with that. 
+	  $key    = \Request::getUser();
+      $secret = \Request::getPassword();
+	  
+	  //TODO: this is now the _thrid_ time we've cycled through the list of clients to find a match based on credentials. This needs to be rationalised!
+	  $client = \Client::where('api.basic_key', $key)
+	    ->where('api.basic_secret', $secret)
+	    ->first();
+	  if (!($client == NULL)){
+	  	if (isset($client['authority'])){
+	  		$vs['authority'] = $client['authority'];
+		}
+	  }
 
 
       /*
