@@ -24,7 +24,7 @@ class BaseController extends APIBaseController {
     $version = \Request::header('X-Experience-API-Version');
 
     if( !isset($version) || ( $version < '1.0.0' || $version > '1.0.99' ) && $version != '1.0' ){
-      return $this->returnSuccessError( true, 'This is not an accepted version of xAPI.', '400' );
+      return $this->returnSuccessError( false, 'This is not an accepted version of xAPI.', '400' );
     }
 
   }
