@@ -1,6 +1,7 @@
 <?php namespace Controllers\xAPI;
 
 use \Locker\Repository\Statement\StatementRepository as Statement;
+use \App\Locker\Helpers\Attachments;
 
 class StatementsController extends BaseController {
 
@@ -48,30 +49,63 @@ class StatementsController extends BaseController {
     //grab incoming statement
     $request            = \Request::instance();
     $incoming_statement = $request->getContent();
-    $statements_assoc   = json_decode($incoming_statement, TRUE);
+
+    //get content type header
+    $content_type = \Request::header('content-type');
+
+    // get the actual content type
+    $get_type = explode(";", $content_type, 2);
+    if( sizeof($get_type) >= 1 ){
+      $mimeType = $get_type[0];
+    } else {
+      $mimeType = $get_type;
+    }
+    
+    //if mimetype multipart/mixed then we are dealing with physical attachments
+    if( $mimeType == 'multipart/mixed'){
+      //get statements and reset $incoming_statement
+      $components = Attachments::setAttachments( $content_type, $incoming_statement );
+      if( empty($components) ){
+        return \Response::json( array( 'error'    => true, 
+                                       'message'  => 'There is a problem with the formatting of your submitted content.'), 
+                                        400 );
+      }
+      $incoming_statement = $components['body'];
+      //if no attachments, abort
+      if( !isset($components['attachments']) ){
+        return \Response::json( array( 'error'    => true, 
+                                       'message'  => 'There were no attachments.'), 
+                                        403 );
+      }
+      $attachments = $components['attachments'];
+      
+    }else{
+      $attachments = '';
+    }
+
+    $statements_assoc = json_decode($incoming_statement, TRUE);
 
     if( is_array(json_decode($incoming_statement)) ){
       $statements = $statements_assoc;
     } else {
       $statements = array( $statements_assoc );
     }
-    
-
-    //@todo if incoming is an array of statements, loop through
-    $save = $this->saveStatement( $statements );
+      
+    $save = $this->saveStatement( $statements, $attachments );
     return $this->sendResponse( $save );
 
   }
 
   /**
-   * Save a single statement in the DB
+   * Save statements in the DB
    *
    * @param json $incoming_statement
+   * @param array $attachments
    * @return response
    */
-  public function saveStatement( $statements ){
+  public function saveStatement( $statements, $attachments ){
   
-    $save = $this->statement->create( $statements, $this->lrs );
+    $save = $this->statement->create( $statements, $this->lrs, $attachments );
     return $save;
 
   }
@@ -86,7 +120,7 @@ class StatementsController extends BaseController {
 
     $request            = \Request::instance();
     $incoming_statement = $request->getContent();
-    $statement         = json_decode($incoming_statement, TRUE);
+    $statement          = json_decode($incoming_statement, TRUE);
     
 
     //if no id submitted, reject
