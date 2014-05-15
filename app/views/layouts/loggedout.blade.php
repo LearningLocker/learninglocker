@@ -23,9 +23,9 @@
       <div class="login-options">
         <?php $site = Site::first(); ?>
         @if( isset($site) && $site->registration === 'Open' )
-          <a href="{{ URL() }}/register" class="btn btn-sm btn-primary btn-login-options">Register</a>
+          <a href="{{ URL() }}/register" class="btn btn-sm btn-primary btn-login-options">{{ trans('site.register') }}</a>
         @endif
-        <a href="{{ URL() }}/password/reset" class="btn btn-sm btn-default btn-login-options">Forgotten password</a>
+        <a href="{{ URL() }}/password/reset" class="btn btn-sm btn-default btn-login-options">{{ trans('site.forgotten_pw') }}</a>
       </div>
 
       <div class="links">
