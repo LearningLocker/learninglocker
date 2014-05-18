@@ -43,4 +43,8 @@ return array(
   'deleted'        => 'The user was delete and any LRSs they created transferred to the site admin.',
   'updated'        => 'Account settings have been updated',
   'updated_error'  => 'There was a problem updating that account.',
+  'registration_various' => array(
+      'thanks' => 'Thanks for signing up to use Learning Locker. To complete your registration, we need you to verify your email.',
+      'click'  => 'To do this, please click on the following link'
+    ) 
 );

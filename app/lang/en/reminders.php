@@ -25,6 +25,8 @@ return array(
 
   "password_reset" => "Password Reset",
 
-  "password_reset_form" => "To reset your password, complete this form"
+  "password_reset_form" => "To reset your password, complete this form",
+
+  "password_reset_sent" => "An email with the password reset has been sent"
 
 );
