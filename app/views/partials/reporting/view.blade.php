@@ -18,7 +18,7 @@
     <div class="col-sm-12 col-md-8">
       <div class="panel panel-default">
         <div class="panel-heading">
-          Related statements <span id="statementCount"></span>
+          {{ trans('reporting.related') }} <span id="statementCount"></span>
         </div>
         <div class="panel-body">
           @if($statements)

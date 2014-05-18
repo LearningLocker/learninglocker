@@ -18,10 +18,10 @@
     <table class="table table-striped table-bordered">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Created</th>
-          <th>Run</th>
+          <th>{{ trans('reporting.name') }}</th>
+          <th>{{ trans('reporting.desc') }}</th>
+          <th>{{ trans('reporting.created') }}</th>
+          <th>{{ trans('reporting.run') }}</th>
           <th></th>
         </tr>
       </thead>

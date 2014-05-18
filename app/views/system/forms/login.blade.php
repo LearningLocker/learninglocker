@@ -10,7 +10,7 @@
     </div>
   @endif
 
-  <h1 class="col-sm-10 col-sm-offset-2">Login</h1>
+  <h1 class="col-sm-10 col-sm-offset-2">{{ trans('site.login') }}</h1>
 
   {{ Form::open(array('route' => 'login.store', 'class' => 'form-horizontal')) }}
 

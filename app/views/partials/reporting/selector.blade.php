@@ -3,7 +3,7 @@
     <a href="#actor" data-toggle="tab">
       <div class="explore-option active">
         <span><i class="icon icon-user"></i></span>
-        Who
+        {{ trans('reporting.who') }}
       </div>
     </a>
   </div>
@@ -11,7 +11,7 @@
     <a href="#verb" data-toggle="tab">
       <div class="explore-option">
         <span><i class="icon icon-star"></i></span>
-        Did
+        {{ trans('reporting.did') }}
       </div>
     </a>
   </div>
@@ -19,7 +19,7 @@
     <a href="#activity" data-toggle="tab">
       <div class="explore-option">
         <span><i class="icon icon-question"></i></span>
-        What
+        {{ trans('reporting.what') }}
       </div>
     </a>
   </div>
@@ -27,7 +27,7 @@
     <a href="#context" data-toggle="tab">
       <div class="explore-option">
         <span><i class="icon icon-sitemap"></i></span>
-        Where
+        {{ trans('reporting.where') }}
       </div>
     </a>
   </div>
@@ -35,7 +35,7 @@
     <a href="#result" data-toggle="tab">
       <div class="explore-option">
         <span><i class="icon icon-bar-chart"></i></span>
-        With result
+        {{ trans('reporting.with_result') }}
       </div>
     </a>
   </div>
@@ -43,7 +43,7 @@
     <a href="#dates" data-toggle="tab">
       <div class="explore-option">
         <span><i class="icon icon-calendar"></i></span>
-        Dates
+        {{ trans('reporting.dates') }}
       </div>
     </a>
   </div>
