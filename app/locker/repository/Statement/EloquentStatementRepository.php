@@ -179,15 +179,13 @@ class EloquentStatementRepository implements StatementRepository {
        
       /*
       |------------------------------------------------------------------------------
-      | Check to see if the object is an activity, if so, check to see if that 
-      | activity is already in the DB. if it is, use the stored version. 
-      | If not, store it.
+      | For now we store the latest submitted definition. @todo this will change
+      | when we have a way to determine authority to edit.
       |------------------------------------------------------------------------------
       */
       if( isset($vs['object']['definition'])){
-        $vs['object']['definition'] = $this->activity->saveActivity( $vs['object']['id'], $vs['object']['definition'] );
+        $this->activity->saveActivity( $vs['object']['id'], $vs['object']['definition'] );
       }
-
 
       /*
       |------------------------------------------------------------------------------
