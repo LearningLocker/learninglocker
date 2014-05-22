@@ -441,11 +441,19 @@ class EloquentStatementRepository implements StatementRepository {
               ->where('statement.id', $id)
               ->first();
     
-    if( $exists ){
-      if( array_multisort( $exists->toArray() ) === array_multisort( $statement ) ){
-        return 'conflict-matches';
-      }
-      return 'conflict-nomatch';
+    if ($exists) {
+        $saved_statement = (array)$exists['statement'];
+        unset($saved_statement['stored']);
+        array_multisort($saved_statement);
+        array_multisort($statement);
+        ksort($saved_statement);
+        ksort($statement);
+    
+        if ($saved_statement == $statement) {
+            return 'conflict-matches';
+        }
+    
+        return 'conflict-nomatch';
     }
 
     return false;
