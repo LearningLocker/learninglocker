@@ -11,7 +11,8 @@ Learning Locker requires PHP 5.4+ with the MongoDB extension, MongoDB and Apache
 
 ## Official Documentation
 
-Check out the [wiki pages](https://github.com/learninglocker/learninglocker/wiki) to install and begin using Learning Locker.
+*  [Documentation site](http://docs.learninglocker.net)
+*  [Documentation repo](http://github.com/learninglocker/docs)
 
 ### License
 
@@ -19,13 +20,14 @@ Learning Locker is open source software licensed under the [GPL v3](http://opens
 
 ### Contributing To Learning Locker
 
-There are several ways you can get involved with Learning Locker. Visit our site to find out more http://learninglocker.net/community/
+There are several ways you can get involved with Learning Locker. Find out more at the links below.
+
+*  Code [http://docs.learninglocker.net/docs/contributing](http://docs.learninglocker.net/docs/contributing)
+*  Community [http://learninglocker.net/community/get-involved/](http://learninglocker.net/community/get-involved/)
 
 #### Contributors
 
-* HT2 (http://ht2.co.uk)
-* Dave Tosh (http://davetosh.com)
-* James Mullaney [mailto:james@ht2.co.uk](james@ht2.co.uk)
+* See contributors.md
 
 #### Copyright
 
