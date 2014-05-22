@@ -464,7 +464,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    */
   public function setQueryAgent( $query, $agent ){
 
-    $agent_query = '';
+    $agent_query = NULL;
 
     //Do some checking on what actor field we are filtering with
     if( isset($agent->mbox) ){ //check for mbox
