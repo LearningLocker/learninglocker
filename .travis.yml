@@ -3,6 +3,18 @@ language: php
 php:
   - 5.4
 
+services:
+  - mongodb
+  - mysql
+  
+mysql:
+  database: learninglocker
+  username: root
+  encoding: utf8
+
+install:
+  - mysql -e 'create database learninglocker;'
+
 before_script:
   - composer install --prefer-source
   - php artisan generate:migration add_statements
