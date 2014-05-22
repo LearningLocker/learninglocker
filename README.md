@@ -1,4 +1,4 @@
-Learning Locker
+Learning Locker [![Build Status](https://travis-ci.org/andytruong/learninglocker.svg?branch=master)](https://travis-ci.org/andytruong/learninglocker)
 ================
 
 Learning Locker is an open source Learning Record Store (LRS).
