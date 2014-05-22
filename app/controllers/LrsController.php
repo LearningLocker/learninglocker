@@ -77,8 +77,8 @@ class LrsController extends BaseController {
     $data = Input::all();
 
     //lrs input validation
-    $rules['title']        = 'required|alpha_spaces';
-    $rules['description']  = 'alpha_spaces';       
+    $rules['title']        = 'required';
+    $rules['description']  = '';       
     $validator = Validator::make($data, $rules);
     if ($validator->fails()) return Redirect::back()->withErrors($validator);
 
