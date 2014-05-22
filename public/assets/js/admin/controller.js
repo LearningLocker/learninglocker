@@ -18,10 +18,11 @@ define([
   'views/stats/linegraph',
   'views/site/loadingView',
   'views/lrs/addNew',
-  'views/users/addNew'
+  'views/users/addNew',
+  'views/site/edit'
 ], function($, _, Backbone, Marionette, App, LrsCollection, LrsView, UsersCollection, UsersView,
   OAuthAppsCollection, OAuthAppsView, SiteModel, Settings, StatsModel, Stats, Header, LineGraph, 
-  LoadingView, AddNewLrs, AddNewUser){
+  LoadingView, AddNewLrs, AddNewUser, EditSettings){
 
   var Controller = Backbone.Marionette.Controller.extend({
 
@@ -55,8 +56,10 @@ define([
 
     settings:function () {
       var site = new SiteModel;
+      var editSettings = new EditSettings({ model: site });
       site.fetch().then(function() {
         var settingsView = new Settings({ model: site });
+        App.actionRegion.show( editSettings );
         App.layouts.main.mainRegion.show( settingsView );
       });
     },
