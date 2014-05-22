@@ -12,5 +12,5 @@ Learning Locker is an community effort, this page lists those who have been invo
 
 ## Community Contributors
 
-*  [James Richards](https://github.com/pondermatic)
-*  [Andy Truong](https://github.com/andytruong)
+*  James Richards [https://github.com/pondermatic](https://github.com/pondermatic)
+*  Andy Truong [https://github.com/andytruong](https://github.com/andytruong)
