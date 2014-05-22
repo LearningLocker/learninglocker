@@ -103,7 +103,7 @@ class StatementsController extends BaseController {
    * @param array $attachments
    * @return response
    */
-  public function saveStatement( $statements, $attachments ){
+  public function saveStatement( $statements, $attachments = '' ){
   
     $save = $this->statement->create( $statements, $this->lrs, $attachments );
     return $save;
