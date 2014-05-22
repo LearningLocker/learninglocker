@@ -157,6 +157,10 @@
   <a href="{{ URL() }}/site/invite" class="btn btn-primary pull-right">{{ Lang::get('users.invite.invite') }}
 </script>
 
+<script id="editSettings" type="text/template">
+  <a href="{{ URL() }}/site/<%= _id %>/edit" class="btn btn-primary pull-right">{{ Lang::get('site.edit_settings') }}
+</script>
+
 <script id="mainTemplate" type="text/template">
   <div id="contents">
 
@@ -227,7 +231,6 @@
 </script>
 
 <script id="settingsTemplate" type="text/template">
-  <a href="{{ URL() }}/site/<%= _id %>/edit" class="btn btn-default pull-right">Edit</a>
   <div class="table-responsive">
     <table class="table table-bordered table-striped">
       <tbody>
@@ -275,5 +278,7 @@
 </script>
 
 <script id="showLoading" type="text/template">
-  <img src="{{ URL() }}/assets/img/ajax-loader.gif" />
+  <div id="loading">
+    <img src="{{ URL() }}/assets/img/ajax-loader.gif" />
+  </div>
 </script>

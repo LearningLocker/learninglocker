@@ -43,6 +43,7 @@ return array(
     'register'    => 'Register',
     'login'       => 'Login',
     'forgotten_pw' => 'Forgotten password',
+    'edit_settings' => 'Edit settings',
 
     'total_learners'   => 'Total learners',
     'statement_total'  => 'Statement total',
