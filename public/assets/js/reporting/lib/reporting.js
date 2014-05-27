@@ -37,7 +37,7 @@ define([
       };
     };
 
-    var grouping = '';//<?php echo $grouping ?>;
+    var grouping = '';
 
     // constructs the suggestion engine
     var setGrouping = new Bloodhound({
@@ -45,9 +45,10 @@ define([
       queryTokenizer: Bloodhound.tokenizers.whitespace,
       limit: 6,
       remote: {
-          url: 'grouping/%QUERY',
+          url: 'typeahead/grouping?query=%QUERY',
           filter: function (grouping) {
               return $.map(grouping, function(group) {
+                //console.log(group);
                 return { 
                   id: group.statement.context.contextActivities.grouping.id
                 };
@@ -93,7 +94,7 @@ define([
       queryTokenizer: Bloodhound.tokenizers.whitespace,
       limit: 6,
       remote: {
-          url: 'parents/%QUERY',
+          url: 'typeahead/parents?query=%QUERY',
           filter: function (parents) {
               return $.map(parents, function(parent) {
                 return { 
@@ -140,7 +141,7 @@ define([
       queryTokenizer: Bloodhound.tokenizers.whitespace,
       limit: 6,
       remote: {
-          url: 'activities/%QUERY',
+          url: 'typeahead/activities?query=%QUERY',
           filter: function (activities) {
               return $.map(activities, function(activity) {
                 console.log(activity.statement.object);
