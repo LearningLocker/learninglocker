@@ -87,7 +87,7 @@
 
       <div class="full-statement state-{{ $statement['id'] }}" style="display:none;">
         <?php $statement = \app\locker\Helpers\Helpers::replaceHtmlEntity( $json ); ?>
-        <pre><?php echo json_encode($statement,JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES); ?></pre>
+        <pre>{{{ json_encode($statement,JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}}</pre>
       </div>
 
     </div>
