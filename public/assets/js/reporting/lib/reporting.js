@@ -83,9 +83,9 @@ define([
             } else {
               //only add to array if not already added to index
               if( !_.isUndefined(contextGrouping.id) ){
-                if( _.indexOf(existing_ids, contextGroup.id) === -1 ){
-                  grouping_array.push(contextGroup);
-                  existing_ids.push( contextGroup.id );
+                if( _.indexOf(existing_ids, contextGrouping.id) === -1 ){
+                  grouping_array.push(contextGrouping);
+                  existing_ids.push( contextGrouping.id );
                 }
               }
             }
