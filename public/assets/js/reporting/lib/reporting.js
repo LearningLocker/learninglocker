@@ -27,7 +27,7 @@ define([
 
 /*
 |---------------------------------------------------------------------------------
-| Typeahead functions with bloodhound
+| Typeahead functions with bloodhound.
 |---------------------------------------------------------------------------------
 */
 
@@ -50,6 +50,12 @@ define([
       cb(matches);
     };
   };
+
+  /*
+  |-------------------------------------------------------------------------------
+  | Typeahead grouping
+  |-------------------------------------------------------------------------------
+  */
 
   var grouping = '';
 
@@ -154,7 +160,13 @@ define([
 
   }
 
-  var parents = '';//{{ $parents }};
+  /*
+  |-------------------------------------------------------------------------------
+  | Typeahead parents
+  |-------------------------------------------------------------------------------
+  */
+
+  var parents = '';
 
   // constructs the suggestion engine
   var setParents = new Bloodhound({
@@ -201,6 +213,12 @@ define([
     displayQuery();
 
   }
+
+  /*
+  |-------------------------------------------------------------------------------
+  | Typeahead activities
+  |-------------------------------------------------------------------------------
+  */
      
   // constructs the suggestion engine
   var setActivities = new Bloodhound({
@@ -548,7 +566,7 @@ define([
       url: 'statements',
       type: 'GET',
       data: 'filter=' + JSON.stringify( query ),
-     contentType: 'application/json',
+      contentType: 'application/json',
       dataType: 'json',
       success: function (json) {
         statements = statementDisplay(json);
@@ -589,7 +607,6 @@ define([
       contentType: 'application/json',
       dataType: 'json',
       success: function (json) {
-        console.log(json);
         $('#line-example').empty();
         if( jQuery.isEmptyObject(json) ){
           $('#line-example').html('<p class="alert alert-danger">There are no results for that query.</p>');
@@ -797,13 +814,13 @@ define([
 
     var statement = '';
     var arr = $.makeArray( json );
-    $.each(arr, function(index, value) {
+    _.each( arr, function(value){
       var object = '';var verb = '';
-      if( typeof value.statement.verb.display !== 'undefined' ){
+      if( !_.isUndefined(value.statement.verb.display) ){
         verb = value.statement.verb.display[Object.keys(value.statement.verb.display)[0]];
       }
-      if( typeof value.statement.object.definition !== 'undefined' ){
-        if( typeof value.statement.object.definition.name !== 'undefined' ){
+      if( !_.isUndefined(value.statement.object.definition) ){
+        if( !_.isUndefined(value.statement.object.definition.name) ){
           object = value.statement.object.definition.name[Object.keys(value.statement.object.definition.name)[0]];
         }
       }

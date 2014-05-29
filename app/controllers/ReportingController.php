@@ -133,7 +133,7 @@ class ReportingController extends \BaseController {
     $lrs      = $this->lrs->find($id);
     $lrs_list = $this->lrs->all();
     $report   = $this->report->find($report);
-    $statements = $this->getStatements($id, $this->decodeURL( $report->query ));
+    $statements = $this->query->selectStatements($id, $this->decodeURL( $report->query ));
     return View::make('partials.reporting.view', array('lrs'        => $lrs,
                                                        'list'       => $lrs_list,
                                                        'statements' => $statements,
@@ -213,10 +213,19 @@ class ReportingController extends \BaseController {
 
   /**
    * Return statements based on query created
+   * 
+   * @param $lrs   string   The current LRS _id
+   * @return json object
    **/
-  public function getStatements($lrs, $filter=''){
+  public function getStatements($lrs){
 
-    return $this->query->selectStatements( $lrs, $filter );
+    if( isset($this->params['filter']) ){
+      $filter = json_decode($this->params['filter'], TRUE);
+    }else{
+      $filter = '';
+    }
+
+    return $this->query->selectStatements( $lrs, $filter, true );
 
   }
 
@@ -243,27 +252,28 @@ class ReportingController extends \BaseController {
     if( $query ){
       switch( $segment ){
         case 'grouping':
-          $results = $this->setQuery($lrs, $query, 'statement.context.contextActivities.grouping', 'statement.context.contextActivities.grouping.id');
+          $results = $this->report->setQuery($lrs, 
+                                             $query, 
+                                             'statement.context.contextActivities.grouping', 
+                                             'statement.context.contextActivities.grouping.id');
           break;
         case 'activities':
-          $results = $this->setQuery($lrs, $query, 'statement.object', 'statement.object.id');
+          $results = $this->report->setQuery($lrs, 
+                                             $query, 
+                                             'statement.object', 
+                                             'statement.object.id');
           break;
         case 'parents':
-          $results = $this->setQuery($lrs, $query, 'statement.context.contextActivities.parent', 'statement.context.contextActivities.parent.id');
+          $results = $this->report->setQuery($lrs, 
+                                             $query, 
+                                             'statement.context.contextActivities.parent', 
+                                             'statement.context.contextActivities.parent.id');
           break;
       }
     }else{
       $results = '';
     }
     return Response::json($results);
-  }
-
-  /**
-   * Set our report query and send it to the reporting API
-   *
-   **/
-  public function setQuery($lrs, $query, $field, $wheres){
-    return $this->report->setQuery($lrs, $query, $field, $wheres);
   }
 
   /**

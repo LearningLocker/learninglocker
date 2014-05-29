@@ -35,11 +35,12 @@ class EloquentQueryRepository implements QueryRepository {
    *
    * @param $lrs       id      The Lrs to search in (required)
    * @param $filter    array   The filter array
+   * @param $raw       boolean  Pagination or raw statements?
    * 
    * @return array results
    *
    **/
-  public function selectStatements( $lrs='', $filter, $limit=20, $offset=0 ){
+  public function selectStatements( $lrs='', $filter, $raw=false ){
     //var_dump( $filter );exit;
     $statements = \Statement::where('lrs._id', $lrs);
     if( !empty($filter) ){
@@ -58,9 +59,10 @@ class EloquentQueryRepository implements QueryRepository {
       }
 
     }
-    $statements->take($limit);
-    $statements->skip($offset);
     $statements->remember(5);
+    if( $raw ){
+      return $statements->get();
+    }
     return $statements->paginate(20);
   }
 
