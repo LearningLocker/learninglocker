@@ -61,12 +61,37 @@ define([
     remote: {
         url: 'typeahead/grouping?query=%QUERY',
         filter: function (grouping) {
-            return $.map(grouping, function(group) {
-              //console.log(group);
-              return { 
-                id: group.statement.context.contextActivities.grouping.id
-              };
-            });
+          // Loop through each grouping and add to array (if not present already)
+
+          var grouping_array = [];
+          var existing_ids = [];
+
+          _.each( grouping, function(group){
+
+            var contextGrouping = group.statement.context.contextActivities.grouping;
+            if( contextGrouping instanceof Array ){
+
+              //if item is an array, then loop through each one
+              _.each( contextGrouping, function(contextGroup){                
+                if( !_.isUndefined(contextGroup.id) ){
+                  if( _.indexOf(existing_ids, contextGroup.id) === -1 ){
+                    grouping_array.push(contextGroup);
+                    existing_ids.push( contextGroup.id );
+                  }
+                }                    
+              });
+            } else {
+              //only add to array if not already added to index
+              if( !_.isUndefined(contextGroup.id) ){
+                if( _.indexOf(existing_ids, contextGroup.id) === -1 ){
+                  grouping_array.push(contextGroup);
+                  existing_ids.push( contextGroup.id );
+                }
+              }
+            }
+          });
+          
+          return grouping_array;
         }
     }
   });
@@ -81,7 +106,36 @@ define([
     },
     {
       name: 'grouping',
-      displayKey: 'id',
+      displayKey: function(data){
+        // Return a friendly name for the typeahead dropdown
+        var id, name, str = "";
+
+        //Check if there is an ID value
+        if( !_.isUndefined(data.id) ){
+          id = data.id;
+        }
+
+        //Check for a name value
+        if( !_.isUndefined(data.definition.name) ){
+          var namedef = data.definition.name;
+
+          
+          if( !_.isUndefined(namedef['en-GB']) ){ //See if there is a english versin
+            name = namedef['en-GB'];
+          } else { //otherwise use the first object in the name definition (if any)
+            var namedef_keys = Object.keys(namedef);
+            if( namedef_keys.length > 0 ){
+              name = namedef[ namedef_keys[0] ];
+            }
+          }
+        }
+
+        //concat the resulting strings
+        if( !_.isUndefined(id) ) str += id;
+        if( !_.isUndefined(name) ) str += " (" + name + ")";
+
+        return str;
+      },
       source: setGrouping.ttAdapter()
     }
   ).on('typeahead:selected', onGroupingSelected).on('typeahead:autocompleted', onGroupingSelected);
