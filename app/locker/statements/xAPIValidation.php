@@ -416,10 +416,10 @@ class xAPIValidation {
     //check properties in contextActivies
     if( isset($context['contextActivities']) ){
 
-      $valid_context_keys = array('parent'   => array('array'), 
-                                  'grouping' => array('array'), 
-                                  'category' => array('array'), 
-                                  'other'    => array('array'));
+      $valid_context_keys = array('parent'   => array('emptyArray'), 
+                                  'grouping' => array('emptyArray'), 
+                                  'category' => array('emptyArray'), 
+                                  'other'    => array('emptyArray'));
 
       //check all keys submitted are valid
       $this->checkParams($valid_context_keys, 
