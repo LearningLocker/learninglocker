@@ -6,11 +6,12 @@
 
 @section('content')
 
-  <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/reporting/create" class="btn btn-default pull-right">
-    <i class="icon icon-plus"></i> {{ Lang::get('reporting.create') }}
-  </a>
-
-  @include('partials.site.elements.page_title', array('page' => Lang::get('statements.reporting') ))
+  <div class="page-header">
+    <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/reporting/create" class="btn btn-primary pull-right">
+      <i class="icon icon-plus"></i> {{ Lang::get('reporting.create') }}
+    </a>
+    <h1>{{ Lang::get('statements.reporting') }}</h1>
+  </div>
 
   {{ Breadcrumbs::render('reporting', $lrs) }}
 
