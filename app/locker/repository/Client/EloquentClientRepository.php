@@ -43,7 +43,7 @@ class EloquentClientRepository implements ClientRepository {
 		'name' => '' 
 	);
 
-    $client->save() ? $result = true : $return = false;
+    $client->save() ? $result = $client : $return = false;
 
     //fire a create client event if it worked and saved
     if( $result )

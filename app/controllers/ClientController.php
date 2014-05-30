@@ -2,9 +2,7 @@
 
 use Locker\Repository\User\UserRepository as User;
 use Locker\Repository\Lrs\LrsRepository as Lrs;
-use Locker\Repository\Client\ClientRepository as Client; //this is currently generating an error - 
-//Illuminate \ Container \ BindingResolutionException
-//Target [Locker\Repository\Client\ClientRepository] is not instantiable.
+use Locker\Repository\Client\ClientRepository as Client; 
 
 class ClientController extends BaseController {
 
