@@ -5,7 +5,7 @@
   @if (Session::has('error'))
     {{ Session::get('error') }}
   @elseif (Session::has('success'))
-    An email with the password reset has been sent.
+    {{ trans('reminders.password_reset_sent') }}
   @endif
 
   <h1 class="col-sm-12">{{ trans('users.password_remind') }}</h1>

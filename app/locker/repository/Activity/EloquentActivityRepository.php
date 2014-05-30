@@ -26,14 +26,20 @@ class EloquentActivityRepository implements ActivityRepository {
 
     //if the object activity exists, return details on record.
     if( $exists ){
-      return $exists['definition'];
+
+      //update record
+      \DB::table('activities')
+      ->where('_id', $activity_id)
+      ->update(array('definition' => $activity_def));
+      
     }else{
-      //save it
+
+      //save new record
       \DB::table('activities')->insert(
         array('_id'        => $activity_id, 
               'definition' => $activity_def)
       );
-      return $activity_def;
+      
     }
 
   }

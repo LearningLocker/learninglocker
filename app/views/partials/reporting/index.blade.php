@@ -6,11 +6,12 @@
 
 @section('content')
 
-  <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/reporting/create" class="btn btn-default pull-right">
-    <i class="icon icon-plus"></i> {{ Lang::get('reporting.create') }}
-  </a>
-
-  @include('partials.site.elements.page_title', array('page' => Lang::get('statements.reporting') ))
+  <div class="page-header">
+    <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/reporting/create" class="btn btn-primary pull-right">
+      <i class="icon icon-plus"></i> {{ Lang::get('reporting.create') }}
+    </a>
+    <h1>{{ Lang::get('statements.reporting') }}</h1>
+  </div>
 
   {{ Breadcrumbs::render('reporting', $lrs) }}
 
@@ -18,10 +19,10 @@
     <table class="table table-striped table-bordered">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Created</th>
-          <th>Run</th>
+          <th>{{ trans('reporting.name') }}</th>
+          <th>{{ trans('reporting.desc') }}</th>
+          <th>{{ trans('reporting.created') }}</th>
+          <th>{{ trans('reporting.run') }}</th>
           <th></th>
         </tr>
       </thead>

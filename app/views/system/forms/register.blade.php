@@ -2,7 +2,7 @@
 
 @section('content')
 
-  <h1 class="col-sm-8 col-sm-offset-4">Register</h1>
+  <h1 class="col-sm-8 col-sm-offset-4">{{ trans('site.register') }}</h1>
 
   {{ Form::open(array('route' => 'register.store', 'class' => 'form-horizontal')) }}
 

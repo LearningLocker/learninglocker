@@ -40,6 +40,10 @@ return array(
   	'open'		    => 'Open',
   	'closed'	    => 'Closed',
   	'details'	    => 'Details',
+    'register'    => 'Register',
+    'login'       => 'Login',
+    'forgotten_pw' => 'Forgotten password',
+    'edit_settings' => 'Edit settings',
 
     'total_learners'   => 'Total learners',
     'statement_total'  => 'Statement total',
@@ -70,5 +74,6 @@ return array(
       'lrs_list' => 'LRS List'
     ),
 
-    'updated'     => 'Learning Locker details have been updated'
+    'updated'     => 'Learning Locker details have been updated',
+    'welcome'  => 'Welcome to Learning Locker'
 );

@@ -39,10 +39,6 @@
 	    </a>
       </div>
     </div>
-    <div class="bordered clearfix">
-      <h4>{{ Lang::get('lrs.api.oauth') }}</h4>
-      <p>Coming soon.</p>
-    </div>
   </div>
 
 @stop

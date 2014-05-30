@@ -6,9 +6,7 @@ interface StatementRepository {
 
 	public function find($id);
 
-	public function create($statement, $lrs);
-
-	public function filter($id, $vars, $restrict);
+	public function create($statement, $lrs, $attachment);
 
 	public function statements($id);
 

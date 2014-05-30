@@ -243,14 +243,11 @@ Route::get('lrs/{id}/reporting/statements', array(
 Route::get('lrs/{id}/reporting/actors/{query}', array(
   'uses' => 'ReportingController@getActors',
 ));
-Route::get('lrs/{id}/reporting/activities/{query}', array(
-  'uses' => 'ReportingController@getActivities',
-));
-Route::get('lrs/{id}/reporting/parents/{query}', array(
-  'uses' => 'ReportingController@getParents',
-));
-Route::get('lrs/{id}/reporting/grouping/{query}', array(
-  'uses' => 'ReportingController@getGrouping',
+
+
+//used by typeahead to get objects
+Route::get('lrs/{id}/reporting/typeahead/{segment}', array(
+  'uses' => 'ReportingController@getTypeahead',
 ));
 
 //Route::resource('reporting', 'ReportingController');
