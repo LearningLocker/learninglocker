@@ -29,8 +29,7 @@ define([
     },
 
     deleteUser: function() {
-      confirm = confirm('Are you sure?');
-      if( confirm == true ){
+      if(confirm('Are you sure?')){
         this.model.destroy({});
       }
     },
