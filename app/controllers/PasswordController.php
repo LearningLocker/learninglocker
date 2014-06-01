@@ -10,9 +10,8 @@ class PasswordController extends BaseController {
   protected $user;
 
   public function __construct(User $user){
-
     $this->user = $user;
-
+    $this->beforeFilter('auth', array('only' => array('addPasswordForm', 'addPassword', 'updatePassword')));
   }
 
   public function remind(){
