@@ -108,8 +108,7 @@ class ReportingController extends \BaseController {
     $data     = json_decode($incoming, true);
 
     //lrs input validation
-    $rules['name']         = 'required|alpha_spaces';
-    $rules['description']  = 'alpha_spaces';       
+    $rules['name']         = 'required';
     $validator = Validator::make($data, $rules);
     if ($validator->fails())  return \Response::json( $validator );
 
