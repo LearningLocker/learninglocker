@@ -9,7 +9,7 @@
       {{ $custom_message }}
     </div>
     <div>
-      <p>{{ trans('users.invite.invite_instructions') }}: {{ URL::to('email/invite', array($token)) }}.</p>
+      <p>{{ trans('users.invite.invite_instructions') }}: {{ URL::to('email/invite', array($token)) }}</p>
     </div>
   </body>
 </html>
