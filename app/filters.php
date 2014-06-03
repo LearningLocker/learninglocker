@@ -20,6 +20,11 @@ App::before(function($request)
 App::after(function($request, $response)
 {
   $response->headers->set('X-Experience-API-Version', '1.0.1');
+
+  if( isset($_SERVER['HTTP_ORIGIN']) ){
+    $response->headers->set('Access-Control-Allow-Origin', $_SERVER['HTTP_ORIGIN']);
+  }
+
 });
 
 /*
