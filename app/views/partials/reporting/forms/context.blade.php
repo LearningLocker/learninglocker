@@ -24,7 +24,7 @@
         </div>
         <div class="panel-body">
           <span id="grouping-list">
-            <input type="text" class="form-control typeahead" placeholder="Search for parent activities" />
+            <input type="text" class="form-control typeahead" placeholder="Search for grouping activities" />
           </span>
           <div class="row">
             <div id="grouping-selected"></div>

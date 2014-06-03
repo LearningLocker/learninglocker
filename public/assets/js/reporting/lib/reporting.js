@@ -27,7 +27,7 @@ define([
 
 /*
 |---------------------------------------------------------------------------------
-| Typeahead functions with bloodhound
+| Typeahead functions with bloodhound.
 |---------------------------------------------------------------------------------
 */
 
@@ -51,6 +51,12 @@ define([
     };
   };
 
+  /*
+  |-------------------------------------------------------------------------------
+  | Typeahead grouping
+  |-------------------------------------------------------------------------------
+  */
+
   var grouping = '';
 
   // constructs the suggestion engine
@@ -61,37 +67,7 @@ define([
     remote: {
         url: 'typeahead/grouping?query=%QUERY',
         filter: function (grouping) {
-          // Loop through each grouping and add to array (if not present already)
-
-          var grouping_array = [];
-          var existing_ids = [];
-
-          _.each( grouping, function(group){
-
-            var contextGrouping = group.statement.context.contextActivities.grouping;
-            if( contextGrouping instanceof Array ){
-
-              //if item is an array, then loop through each one
-              _.each( contextGrouping, function(contextGroup){                
-                if( !_.isUndefined(contextGroup.id) ){
-                  if( _.indexOf(existing_ids, contextGroup.id) === -1 ){
-                    grouping_array.push(contextGroup);
-                    existing_ids.push( contextGroup.id );
-                  }
-                }                    
-              });
-            } else {
-              //only add to array if not already added to index
-              if( !_.isUndefined(contextGrouping.id) ){
-                if( _.indexOf(existing_ids, contextGrouping.id) === -1 ){
-                  grouping_array.push(contextGrouping);
-                  existing_ids.push( contextGrouping.id );
-                }
-              }
-            }
-          });
-          
-          return grouping_array;
+          return filterReplies(grouping, 'grouping');
         }
     }
   });
@@ -107,54 +83,29 @@ define([
     {
       name: 'grouping',
       displayKey: function(data){
-        // Return a friendly name for the typeahead dropdown
-        var id, name, str = "";
-
-        //Check if there is an ID value
-        if( !_.isUndefined(data.id) ){
-          id = data.id;
-        }
-
-        //Check for a name value
-        if( !_.isUndefined(data.definition.name) ){
-          var namedef = data.definition.name;
-
-          
-          if( !_.isUndefined(namedef['en-GB']) ){ //See if there is a english versin
-            name = namedef['en-GB'];
-          } else { //otherwise use the first object in the name definition (if any)
-            var namedef_keys = Object.keys(namedef);
-            if( namedef_keys.length > 0 ){
-              name = namedef[ namedef_keys[0] ];
-            }
-          }
-        }
-
-        //concat the resulting strings
-        if( !_.isUndefined(id) ) str += id;
-        if( !_.isUndefined(name) ) str += " (" + name + ")";
-
-        return str;
+        return setDisplayKey(data);
       },
       source: setGrouping.ttAdapter()
     }
   ).on('typeahead:selected', onGroupingSelected).on('typeahead:autocompleted', onGroupingSelected);
 
   function onGroupingSelected($e, datum) {
-     
-    checkbox = buildCheckboxes('grouping', datum.id, datum.id);
 
-    $('#grouping-selected').append(checkbox);
-    //build query for API
-    buildQueryArray('statement.context.contextActivities.grouping.id', datum.id);
-    //build query for display
-    buildQueryDisplay('context', datum.id);
-    //redraq query display
-    displayQuery();
+    setTypeaheadQuery('grouping', 
+                      datum, 
+                      '#grouping-selected', 
+                      'statement.context.contextActivities.grouping.id', 
+                      'context');
 
   }
 
-  var parents = '';//{{ $parents }};
+  /*
+  |-------------------------------------------------------------------------------
+  | Typeahead parents
+  |-------------------------------------------------------------------------------
+  */
+
+  var parents = '';
 
   // constructs the suggestion engine
   var setParents = new Bloodhound({
@@ -164,11 +115,7 @@ define([
     remote: {
         url: 'typeahead/parents?query=%QUERY',
         filter: function (parents) {
-            return $.map(parents, function(parent) {
-              return { 
-                id: parent.statement.context.contextActivities.parent.id
-              };
-            });
+          return filterReplies(parents, 'parents');
         }
     }
   });
@@ -183,24 +130,28 @@ define([
     },
     {
       name: 'parents',
-      displayKey: 'id',
+      displayKey: function(data){
+        return setDisplayKey(data);
+      },
       source: setParents.ttAdapter()
     }
   ).on('typeahead:selected', onContextSelected).on('typeahead:autocompleted', onContextSelected);
 
   function onContextSelected($e, datum) {
-      
-    checkbox = buildCheckboxes('parents', datum.id, datum.id);
 
-    $('#parents-selected').append(checkbox);
-    //build query for API
-    buildQueryArray('statement.context.contextActivities.parent.id', datum.id);
-    //build query for display
-    buildQueryDisplay('context', datum.id);
-    //redraw query display
-    displayQuery();
+    setTypeaheadQuery('parents', 
+                      datum, 
+                      '#parents-selected', 
+                      'statement.context.contextActivities.parent.id', 
+                      'context');
 
   }
+
+  /*
+  |-------------------------------------------------------------------------------
+  | Typeahead activities
+  |-------------------------------------------------------------------------------
+  */
      
   // constructs the suggestion engine
   var setActivities = new Bloodhound({
@@ -210,18 +161,7 @@ define([
     remote: {
         url: 'typeahead/activities?query=%QUERY',
         filter: function (activities) {
-            return $.map(activities, function(activity) {
-              console.log(activity.statement.object);
-              //get first value of name object, if not available, use id
-              var setName = activity.statement.object.definition.name[Object.keys(activity.statement.object.definition.name)[0]];
-              if( setName == 'undefined' ){
-                setName = activity.statement.object.id;
-              }
-              return { 
-                id: activity.statement.object.id,
-                name: setName
-              };
-            });
+          return filterReplies(activities, 'activities');
         }
     }
   });
@@ -236,24 +176,26 @@ define([
     },
     {
       name: 'activities',
-      displayKey: 'id',
+      displayKey: function(data){
+        return setDisplayKey(data);
+      },
       source: setActivities.ttAdapter()
     }
   ).on('typeahead:selected', onActivitySelected).on('typeahead:autocompleted', onActivitySelected);
 
   function onActivitySelected($e, datum) {
-      
-    checkbox = buildCheckboxes('activities', datum.id, datum.name);
-    
-    $('#activities-selected').append(checkbox);
-    //build query to send to API endpoint
-    buildQueryArray('statement.object.id', datum.id);
-    //build query for display
-    buildQueryDisplay('activity', datum.name);
-    //redraw query display
-    displayQuery();
-
+    setTypeaheadQuery('activities', 
+                      datum, 
+                      '#activities-selected', 
+                      'statement.object.id', 
+                      'activity');
   }
+
+  /*
+  |-------------------------------------------------------------------------------
+  | Typeahead actors
+  |-------------------------------------------------------------------------------
+  */
 
   // constructs the suggestion engine
   var setActors = new Bloodhound({
@@ -297,6 +239,125 @@ define([
     buildQueryDisplay('actor', datum.name);
     //redraw query display
     displayQuery();
+  }
+
+  /**
+   * Set query display, api query and then display
+   *
+   **/
+  function setTypeaheadQuery(segment, datum, destinationClass, queryKey, displayKey){
+
+    //get id and name from the object
+    var idAndName = setIdAndName(datum);
+    //build checkbox
+    checkbox = buildCheckboxes(segment, idAndName.id, idAndName.name);
+    $(destinationClass).append(checkbox);
+    //build query to send to API endpoint
+    buildQueryArray(queryKey, idAndName.id);
+    //build query for display
+    buildQueryDisplay(displayKey, idAndName.name);
+    //redraw query display
+    displayQuery();
+
+  }
+
+  /**
+   * Set display key
+   **/
+  function setDisplayKey(data){
+    var id, name, str = "";
+
+    //Check if there is an ID value
+    if( !_.isUndefined(data.id) ){
+      id = data.id;
+    }
+
+    //check to see if definition is set
+    if( !_.isUndefined(data.definition) ){
+      //Check for a name value
+      if( !_.isUndefined(data.definition.name) ){
+        var namedef = data.definition.name;
+
+        if( !_.isUndefined(namedef['en-GB']) ){ //See if there is a english versin
+          name = namedef['en-GB'];
+        } else { //otherwise use the first object in the name definition (if any)
+          var namedef_keys = Object.keys(namedef);
+          if( namedef_keys.length > 0 ){
+            name = namedef[ namedef_keys[0] ];
+          }
+        }
+      }
+    }
+
+    //concat the resulting strings
+    if( !_.isUndefined(id) ) str += id;
+    if( !_.isUndefined(name) ) str += " (" + name + ")";
+    return str;
+  }
+
+  /**
+   * Filter and returns to typeahead
+   **/
+  function filterReplies(data, segment){
+    
+    var segment_array = [];
+    var existing_ids = [];
+
+    _.each( data, function(d){
+      switch(segment){
+        case 'activities': var contextSegment = d.statement.object; break;
+        case 'grouping'  : var contextSegment = d.statement.context.contextActivities.grouping; break;
+        case 'parents'   : var contextSegment = d.statement.context.contextActivities.parent; break;
+      }
+      //var contextSegment = d + for_context;
+      //console.log( contextSegment );
+      if( contextSegment instanceof Array ){
+
+        //if item is an array, then loop through each one
+        _.each( contextSegment, function(S){                
+          if( !_.isUndefined(S.id) ){
+            if( _.indexOf(existing_ids, S.id) === -1 ){
+              segment_array.push(S);
+              existing_ids.push( S.id );
+            }
+          }                    
+        });
+      } else {
+        //only add to array if not already added to index
+        if( !_.isUndefined(contextSegment.id) ){
+          if( _.indexOf(existing_ids, contextSegment.id) === -1 ){
+            segment_array.push(contextSegment);
+            existing_ids.push( contextSegment.id );
+          }
+        }
+      }
+    });      
+    return segment_array;
+  }
+
+  /**
+   * Set id and name for a given object
+   **/
+  function setIdAndName(data){
+    var id = data.id;
+    //check to see if definition is set
+    if( !_.isUndefined(data.definition) ){
+      //Check for a name value
+      if( !_.isUndefined(data.definition.name) ){
+        var namedef = data.definition.name;
+        if( !_.isUndefined(namedef['en-GB']) ){ //See if there is a english versin
+          name = namedef['en-GB'];
+        } else { //otherwise use the first object in the name definition (if any)
+          var namedef_keys = Object.keys(namedef);
+          if( namedef_keys.length > 0 ){
+            name = namedef[ namedef_keys[0] ];
+          }
+        }
+      }
+    } else {
+      name = id;
+    }
+    return {id: id, name: name};
   }
 
 /*
@@ -548,7 +609,7 @@ define([
       url: 'statements',
       type: 'GET',
       data: 'filter=' + JSON.stringify( query ),
-     contentType: 'application/json',
+      contentType: 'application/json',
       dataType: 'json',
       success: function (json) {
         statements = statementDisplay(json);
@@ -589,7 +650,6 @@ define([
       contentType: 'application/json',
       dataType: 'json',
       success: function (json) {
-        console.log(json);
         $('#line-example').empty();
         if( jQuery.isEmptyObject(json) ){
           $('#line-example').html('<p class="alert alert-danger">There are no results for that query.</p>');
@@ -797,13 +857,13 @@ define([
 
     var statement = '';
     var arr = $.makeArray( json );
-    $.each(arr, function(index, value) {
+    _.each( arr, function(value){
       var object = '';var verb = '';
-      if( typeof value.statement.verb.display !== 'undefined' ){
+      if( !_.isUndefined(value.statement.verb.display) ){
         verb = value.statement.verb.display[Object.keys(value.statement.verb.display)[0]];
       }
-      if( typeof value.statement.object.definition !== 'undefined' ){
-        if( typeof value.statement.object.definition.name !== 'undefined' ){
+      if( !_.isUndefined(value.statement.object.definition) ){
+        if( !_.isUndefined(value.statement.object.definition.name) ){
           object = value.statement.object.definition.name[Object.keys(value.statement.object.definition.name)[0]];
         }
       }
