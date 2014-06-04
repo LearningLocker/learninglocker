@@ -118,7 +118,12 @@ class DocumentAPI extends Eloquent {
   }
 
   public function getContentDir(){
-    return base_path().'/uploads/'.$this->lrs.'/documents/';
+    $dir = base_path().'/uploads/'.$this->lrs.'/documents/';
+    if( !file_exists($dir) ){
+      mkdir( $dir, 0774, true );
+    }
+
+    return $dir;
   }
 
   public function getFilePath(){
