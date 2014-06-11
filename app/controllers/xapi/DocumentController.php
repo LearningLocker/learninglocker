@@ -126,30 +126,31 @@ class DocumentController extends BaseController {
 
     $document = $this->document->find( $this->lrs->_id, $this->document_type, $data ); //find the correct document
     if( !$document ){
-      \App::abort(204);
-    }
-
-    $headers = array(
-      'Updated'       =>  $document->updated_at->toISO8601String(),
-      'Content-Type'  => $document->contentType
-    );
-
-    if( $this->method === 'HEAD' ){ //Only return headers
-        $response = \Response::make(null, 200, $headers);
+      $response = \Response::make("", 204);
     } else {
 
-      switch( $document->contentType ){
-        case "application/json":
-          $response = \Response::json($document->content, 200, $headers);
-        break;
-        case "text/plain":
-          $response = \Response::make($document->content, 200, $headers);
-        break;
-        default:
-          $response = \Response::download($document->getFilePath(), $document->content, $headers);
-        break;
-      }
+      $headers = array(
+        'Updated'       =>  $document->updated_at->toISO8601String(),
+        'Content-Type'  => $document->contentType
+      );
 
+      if( $this->method === 'HEAD' ){ //Only return headers
+          $response = \Response::make(null, 200, $headers);
+      } else {
+
+        switch( $document->contentType ){
+          case "application/json":
+            $response = \Response::json($document->content, 200, $headers);
+          break;
+          case "text/plain":
+            $response = \Response::make($document->content, 200, $headers);
+          break;
+          default:
+            $response = \Response::download($document->getFilePath(), $document->content, $headers);
+          break;
+        }
+
+      } 
     }
 
     return $response;
