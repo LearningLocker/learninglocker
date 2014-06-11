@@ -1,9 +1,9 @@
 <?php
- 
+
   $statement_lrs = $statement['lrs']['_id'];
   $statement = $statement['statement'];
   $json = $statement;
-  
+
   if( isset($statement['actor']['mbox']) ){
     $avatar = \app\locker\helpers\Helpers::getGravatar( substr($statement['actor']['mbox'], 7), '20');
   }else{
@@ -63,8 +63,11 @@
       $object = $statement['object']['id'];
     }
   }
+  $timestamp = Carbon\Carbon::createFromTimeStamp($statement['timestamp']->sec);
 
-  $stored = new Carbon\Carbon($statement['stored']);
+  $json = $statement;
+  $json['timestamp'] = $timestamp->toRFC2822String();
+  $json = json_encode($json,JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 ?>
 
 <div class="row">
@@ -75,19 +78,19 @@
 
       <span class="pull-left statement-avatar">
           <img src="{{ $avatar }}" alt='avatar' class="img-circle" />
-      </span> 
-        
+      </span>
+
       {{ $name }}
-      
+
       <i>{{ $verb }}</i>
-        
+
       <a href="{{ $object_id }}">{{{ $object }}}</a>
 
-      <small>| {{ $stored->diffForHumans() }} ({{ $stored->toDayDateTimeString() }})</small>
+      <small>| {{ $timestamp->diffForHumans() }} ({{ $timestamp->toDayDateTimeString() }})</small>
 
       <div class="full-statement state-{{ $statement['id'] }}" style="display:none;">
         <?php $statement = \app\locker\Helpers\Helpers::replaceHtmlEntity( $json ); ?>
-        <pre>{{{ json_encode($statement,JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}}</pre>
+        <pre>{{{ $json }}}</pre>
       </div>
 
     </div>

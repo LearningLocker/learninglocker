@@ -145,7 +145,7 @@ class AdminDashboard extends \app\locker\data\BaseData {
               array('$group' => array(
                         '_id'   => $set_id,
                         'count' => array('$sum' => 1),
-                        'date'  => array('$addToSet' => '$statement.stored'),
+                        'date'  => array('$addToSet' => '$statement.timestamp'),
                         'actor' => array('$addToSet' => '$statement.actor'))),
               array('$sort'    => array('_id' => 1)),
               array('$project' => array('count' => 1, 'date' => 1, 'actor' => 1))

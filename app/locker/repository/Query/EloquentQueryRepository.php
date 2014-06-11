@@ -114,7 +114,7 @@ class EloquentQueryRepository implements QueryRepository {
             '$group' => array(
               '_id'   => $set_id,
               'count' => array('$sum' => 1),
-              'date'  => array('$addToSet' => '$statement.stored')
+              'date'  => array('$addToSet' => '$statement.timestamp')
             )
         ),
         array('$sort'  => array('date' => 1)),
@@ -127,7 +127,7 @@ class EloquentQueryRepository implements QueryRepository {
           '$group' => array(
             '_id'   => $set_id, //, 'dayOfYear' => '$created_at'
             'count' => array('$sum' => 1),
-            'dates' => array('$addToSet' => '$statement.stored'),
+            'dates' => array('$addToSet' => '$statement.timestamp'),
             'data'  => $project
           ),
         ),

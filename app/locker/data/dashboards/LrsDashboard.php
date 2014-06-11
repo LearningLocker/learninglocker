@@ -70,7 +70,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
   private function statementDays(){
     $first_day = \DB::collection('statements')->first();
     if( $first_day ){
-      $datetime1 = date_create( gmdate("Y-m-d", strtotime($first_day['statement']['stored']) ) );
+      $datetime1 = date_create( gmdate("Y-m-d", strtotime($first_day['statement']['timestamp']) ) );
       $datetime2 = date_create( gmdate("Y-m-d", time()) );
       $interval  = date_diff($datetime1, $datetime2);
       $days      = $interval->days;
@@ -169,15 +169,14 @@ class LrsDashboard extends \app\locker\data\BaseData {
    **/
   public function getStatementNumbersByDate(){
 
-    $set_id = array( '$dayOfYear' => '$created_at' );
-
+    $set_id = array( '$dayOfYear' => '$statement.timestamp' );
     $statements = $this->db->statements->aggregate(
       array('$match' => $this->getMatch( $this->lrs )),
       array(
         '$group' => array(
           '_id'   => $set_id,
           'count' => array('$sum' => 1),
-          'date'  => array('$addToSet' => '$statement.stored'),
+          'date'  => array('$addToSet' => '$statement.timestamp'),
           'actor' => array('$addToSet' => '$statement.actor')
         )
       ),
@@ -189,7 +188,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
     $data = '';
     if( isset($statements['result']) ){
       foreach( $statements['result'] as $s ){
-        $data .= json_encode( array( "y" => substr($s['date'][0],0,10), "a" => $s['count'], 'b' => count($s['actor'])) ) . ' ';
+        $data .= json_encode( array( "y" => date("Y-m-d", $s['date'][0]->sec), "a" => $s['count'], 'b' => count($s['actor'])) ) . ' ';
       }
     }
 
