@@ -66,7 +66,7 @@
   $timestamp = Carbon\Carbon::createFromTimeStamp($statement['timestamp']->sec);
 
   $json = $statement;
-  $json['timestamp'] = $timestamp->toRFC2822String();
+  $json['timestamp'] = $timestamp->format('Y-m-d\TH:i:s.uP');
   $json = json_encode($json,JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 ?>
 
