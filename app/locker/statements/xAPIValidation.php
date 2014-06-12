@@ -276,6 +276,7 @@ class xAPIValidation {
 
     }else{
       $object_type = 'Activity'; //this is the default if nothing defined.
+      $object['objectType'] = $object_type;
     }
 
     //depending on the objectType, validate accordingly.
