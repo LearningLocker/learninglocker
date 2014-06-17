@@ -41,30 +41,13 @@ class ConvertTimestamp extends Command {
    */
   public function fire()
   {
-    //count number of statements
-    $count = \Statement::count();
-
-    for ($x = 0; $x <= $count; $x = $x + 1000) {
-
-      $skip = $x;
-      $take = 1000;
-
-      //get statements
-      $statements = \Statement::skip($skip)->take($take)->get();
-
-      if( $statements ){
-
-        foreach( $statements as $s ){
-          //now add timestamp as a date object for mongodb aggregation in document root
-          $s->timestamp = new \MongoDate(strtotime($s->statement['timestamp']));
-          $s->save();
-        }
-
+    Statement::chunk(1000, function($statements){
+      foreach ($statements as $s){
+        $s->timestamp = new \MongoDate(strtotime($s->statement['timestamp']));
+        $s->save();
       }
-
-      $this->info($x . ' converted');
-
-    }
+      $this->info(count($statements) . ' converted.');
+    });
 
     $this->info('All finished, hopefully!');
   }
