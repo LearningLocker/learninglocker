@@ -88,7 +88,7 @@ class EloquentQueryRepository implements QueryRepository {
 
     if( $type == 'time' ){
       if( !$interval ) $interval = '$dayOfYear';
-      $set_id = array( $interval => '$created_at' );
+      $set_id = array( $interval => '$timestamp' );
     }else{
       switch($type){
         case 'user': 
