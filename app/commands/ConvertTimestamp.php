@@ -6,41 +6,41 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class ConvertTimestamp extends Command {
 
-	/**
-	 * The console command name.
-	 *
-	 * @var string
-	 */
-	protected $name = 'timestamp:convert';
+  /**
+   * The console command name.
+   *
+   * @var string
+   */
+  protected $name = 'timestamp:convert';
 
-	/**
-	 * The console command description.
-	 *
-	 * @var string
-	 */
-	protected $description = 'Create a new key in the document root that is a copy of timestamp in MongoData format.';
+  /**
+   * The console command description.
+   *
+   * @var string
+   */
+  protected $description = 'Create a new key in the document root that is a copy of timestamp in MongoData format.';
 
-	/**
-	 * Create a new command instance.
-	 *
-	 * @return void
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-	}
+  /**
+   * Create a new command instance.
+   *
+   * @return void
+   */
+  public function __construct()
+  {
+    parent::__construct();
+  }
 
-	/**
-	 * Execute the console command.
-	 *
+  /**
+   * Execute the console command.
+   *
    * Loop through all statements and create a new key in the document route.
    * This key 'convertedTimestamp' is the same as the statement timestamp but in a 
    * data format the MongoDB aggregation function needs.
    * 
-	 * @return string
-	 */
-	public function fire()
-	{
+   * @return string
+   */
+  public function fire()
+  {
     //count number of statements
     $count = \Statement::count();
 
@@ -49,7 +49,7 @@ class ConvertTimestamp extends Command {
       $skip = $x;
       $take = 1000;
 
-  		//get statements
+      //get statements
       $statements = \Statement::skip($skip)->take($take)->get();
 
       if( $statements ){
@@ -67,7 +67,7 @@ class ConvertTimestamp extends Command {
     }
 
     $this->info('All finished, hopefully!');
-	}
+  }
 
 
 }
