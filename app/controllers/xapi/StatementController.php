@@ -223,20 +223,61 @@ class StatementsController extends BaseController {
 
 
     //replace replace &46; in keys with . 
-    //see https://github.com/LearningLocker/LearningLocker/wiki/A-few-quirks for more info
+    //see http://docs.learninglocker.net/docs/statements#quirks for more info
     if( !empty($statements) ){
       foreach( $statements as &$s ){
         $s = \app\locker\helpers\Helpers::replaceHtmlEntity( $s['statement'] );
       }
     }
     
-    //$array['count'] = sizeof($statements);
     $array['statements'] = $statements;
 
-    $array['more'] = '';// @todo if more results available, provide link to access them
+    //return total available statements
+    $array['total'] = $this->statement->count( $this->lrs->_id, $this->params );
+
+    //set more link. 100 is our default limit. This should be a value that admins can
+    //set, not hardcoded.
+    if( isset($this->params['offset']) ){
+      if( isset($this->params['limit']) ){
+        $offset = $this->params['offset'] + $this->params['limit'];
+      }else{
+        $offset = $this->params['offset'] + 100;
+      }
+    }else{
+      if( isset($this->params['limit']) ){
+        $offset = $this->params['limit'];
+      }else{
+        $offset = 100;
+      }
+    }
+
+    //set the more url
+    if( $array['total'] > $offset ){
+      $url = 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+      if( isset($this->params) ){
+        if( isset($this->params['offset']) && count($this->params) > 1 ){
+          $url = str_replace('&offset=' . $this->params['offset'], "", $url);
+          $url = $url . '&offset=' . $offset;
+        }elseif(isset($this->params['offset'])) {
+          $url = str_replace('?offset=' . $this->params['offset'], "", $url);
+          $url = $url . '?offset=' . $offset;
+        }else{
+          $url = $url . '&offset=' . $offset;
+        }
+      }else{
+        $url = $url . '?offset=' . $offset;
+      }
+      $array['more'] = $url;
+    }
 
     $response = \Response::make( $array, 200 );
-    $response->headers->set('X-Experience-API-Consistent-Through', 'now');
+
+    //set consistent through data
+    $current_date = \DateTime::createFromFormat('U.u', microtime(true));
+    $current_date->setTimezone(new \DateTimeZone(\Config::get('app.timezone')));
+    $current_date = $current_date->format('Y-m-d\TH:i:s.uP');
+
+    $response->headers->set('X-Experience-API-Consistent-Through', $current_date);
 
     return $response;
     

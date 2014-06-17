@@ -13,7 +13,7 @@ return array(
     'invite'  => 'Invite users',
     'email'   => 'Email addresses (separate lines)',
     'message' => 'Message (optional)',
-    'sample'  => 'I would like to invite you to join this LRS.',
+    'sample'  => 'I would like to invite you to join this Learning Record Store (LRS).',
     'invited' => 'Those users have been invited.',
     'failed'  => 'Inviting that user failed, check the user is not already a member of the LRS and the email is valid.',
     'has_invited' => 'has invited you to join',
