@@ -53,7 +53,7 @@ class LrsController extends BaseController {
    */
   public function index(){
     $lrs = $this->lrs->all();
-    return View::make('partials.lrs.list', array('lrs' => $lrs));
+    return View::make('partials.lrs.list', array('lrs' => $lrs, 'list' => $lrs));
   }
 
   /**
