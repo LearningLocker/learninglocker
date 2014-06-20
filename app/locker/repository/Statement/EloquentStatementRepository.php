@@ -40,7 +40,6 @@ class EloquentStatementRepository implements StatementRepository {
   }
 
   /**
-   * Return a list of statements ordered by stored desc
    *
    * Don't return voided statements, these are requested 
    * in a different call.

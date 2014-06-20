@@ -69,10 +69,6 @@ class EloquentQueryRepository implements QueryRepository {
   /**
    * Return data based on dates
    *
-   * @todo if timestamp becomes required in the spec, we could use that to 
-   * better reflect when the action actually happened, not when
-   * saved in the LRS, instead of $stored
-   *
    * @param int    $lrs
    * @param array  $filters e.g. date, from a date, between dates, including in / or
    * @param string $interval e.g. dayOfYear, week, month, year etc
@@ -114,7 +110,7 @@ class EloquentQueryRepository implements QueryRepository {
             '$group' => array(
               '_id'   => $set_id,
               'count' => array('$sum' => 1),
-              'date'  => array('$addToSet' => '$statement.stored')
+              'date'  => array('$addToSet' => '$statement.timestamp')
             )
         ),
         array('$sort'  => array('date' => 1)),
@@ -127,7 +123,7 @@ class EloquentQueryRepository implements QueryRepository {
           '$group' => array(
             '_id'   => $set_id, //, 'dayOfYear' => '$created_at'
             'count' => array('$sum' => 1),
-            'dates' => array('$addToSet' => '$statement.stored'),
+            'dates' => array('$addToSet' => '$statement.timestamp'),
             'data'  => $project
           ),
         ),
