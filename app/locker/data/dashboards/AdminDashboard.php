@@ -152,7 +152,7 @@ class AdminDashboard extends \app\locker\data\BaseData {
             );
 
     //set statements for graphing
-    $data = '';
+    $data = array();
     if( isset($statements['result']) ){
       foreach( $statements['result'] as $s ){
         $date = substr($s['date'][0],0,10);
