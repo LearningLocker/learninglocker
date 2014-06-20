@@ -151,7 +151,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
     $days  = $this->statementDays();
     
     // Get actor count
-    $set_id = array( 'day' => array( '$dayOfYear' => '$statement.timestamp' ), 'statement_actor' => '$statement.actor');
+    $set_id = array( 'day' => array( '$dayOfYear' => '$timestamp' ), 'statement_actor' => '$statement.actor');
     $statements = $this->db->statements->aggregate(
       array('$match' => $this->getMatch( $this->lrs )),
       array(
