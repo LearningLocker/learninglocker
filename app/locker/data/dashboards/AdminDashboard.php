@@ -77,7 +77,7 @@ class AdminDashboard extends \app\locker\data\BaseData {
    *
    **/
   private function statementDays(){
-    $first_day = \DB::collection('statements')->first();
+    $first_day = \DB::collection('statements')->orderBy("timestamp")->first();
     if( $first_day ){
       $datetime1 = date_create( gmdate("Y-m-d", $first_day['timestamp']->sec) );
       $datetime2 = date_create( gmdate("Y-m-d", time()) );
