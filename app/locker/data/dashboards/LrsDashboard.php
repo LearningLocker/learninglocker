@@ -189,7 +189,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
     $data = '';
     if( isset($statements['result']) ){
       foreach( $statements['result'] as $s ){
-        $data .= json_encode( array( "y" => date("Y-m-d", $s['date'][0]->sec), "a" => $s['count'], 'b' => count($s['actor'])) ) . ' ';
+        $data .= json_encode( array( "y" => substr($s['date'][0], 0, 10), "a" => $s['count'], 'b' => count($s['actor'])) ) . ' ';
       }
     }
 

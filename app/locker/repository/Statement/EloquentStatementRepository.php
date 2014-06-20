@@ -177,8 +177,6 @@ class EloquentStatementRepository implements StatementRepository {
         $vs['timestamp'] = $vs['stored'];
       }
 
-      $vs['timestamp'] = new \MongoDate(strtotime($vs['timestamp']));
-
       /*
       |------------------------------------------------------------------------------
       | For now we store the latest submitted definition. @todo this will change

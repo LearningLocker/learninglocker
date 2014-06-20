@@ -63,11 +63,7 @@
       $object = $statement['object']['id'];
     }
   }
-  $timestamp = Carbon\Carbon::createFromTimeStamp($statement['timestamp']->sec);
-
-  $json = $statement;
-  $json['timestamp'] = $timestamp->format('Y-m-d\TH:i:s.uP');
-  $json = json_encode($json,JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+  $timestamp = new Carbon\Carbon($statement['timestamp']);;
 ?>
 
 <div class="row">
@@ -90,7 +86,7 @@
 
       <div class="full-statement state-{{ $statement['id'] }}" style="display:none;">
         <?php $statement = \app\locker\Helpers\Helpers::replaceHtmlEntity( $json ); ?>
-        <pre>{{{ $json }}}</pre>
+        <pre>{{{ json_encode($statement,JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}}</pre>
       </div>
 
     </div>
