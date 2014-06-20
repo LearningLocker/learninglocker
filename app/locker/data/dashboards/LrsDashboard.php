@@ -169,7 +169,8 @@ class LrsDashboard extends \app\locker\data\BaseData {
    **/
   public function getStatementNumbersByDate(){
 
-    $set_id = array( '$dayOfYear' => '$statement.timestamp' );
+    $set_id = array( '$dayOfYear' => '$timestamp' );
+
     $statements = $this->db->statements->aggregate(
       array('$match' => $this->getMatch( $this->lrs )),
       array(

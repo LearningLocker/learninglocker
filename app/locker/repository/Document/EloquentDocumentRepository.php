@@ -537,7 +537,7 @@ class EloquentDocumentRepository implements DocumentRepository {
 
     if( !empty($since) ){
       $since_carbon = new Carbon($since);
-      $query = $query->where('created_at', '>', $since_carbon);
+      $query = $query->where('timestamp', '>', $since_carbon);
     }
 
     return $query;

@@ -266,11 +266,11 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
    **/
   private function buildDates($since='', $until=''){
     if( $since != '' && $until != ''){
-      $dates = array( 'created_at' => array( '$gte' => $since, '$lte' => $until));
+      $dates = array( 'timestamp' => array( '$gte' => $since, '$lte' => $until));
     }elseif( $since != '' ){
-      $dates = array( 'created_at' => array( '$gte' => $since ));
+      $dates = array( 'timestamp' => array( '$gte' => $since ));
     }elseif( $until != '' ){
-      $dates = array( 'created_at' => array( '$lte' => $until));
+      $dates = array( 'timestamp' => array( '$lte' => $until));
     }else{
       $dates = array();
     }

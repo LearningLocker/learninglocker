@@ -473,8 +473,7 @@ App::missing(function($exception){
     $error = array(
       'error'     =>  true,
       'message'   =>  $exception->getMessage(),
-      'code'      =>  $exception->getStatusCode(),
-      'trace'     =>  $exception->getTrace()
+      'code'      =>  $exception->getStatusCode()
     );
 
     return Response::json( $error, $exception->getStatusCode());

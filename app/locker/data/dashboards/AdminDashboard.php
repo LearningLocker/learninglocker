@@ -79,7 +79,7 @@ class AdminDashboard extends \app\locker\data\BaseData {
   private function statementDays(){
     $first_day = \DB::collection('statements')->first();
     if( $first_day ){
-      $datetime1 = date_create( gmdate("Y-m-d", $first_day['created_at']->sec) );
+      $datetime1 = date_create( gmdate("Y-m-d", $first_day['timestamp']->sec) );
       $datetime2 = date_create( gmdate("Y-m-d", time()) );
       $interval  = date_diff($datetime1, $datetime2);
       $days      = $interval->days;
@@ -139,7 +139,7 @@ class AdminDashboard extends \app\locker\data\BaseData {
    **/
   public function getStatementNumbersByDate(){
 
-    $set_id = array( '$dayOfYear' => '$created_at' );
+    $set_id = array( '$dayOfYear' => '$timestamp' );
 
     $statements = $this->db->statements->aggregate(
               array('$group' => array(

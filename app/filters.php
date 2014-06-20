@@ -241,7 +241,7 @@ Route::filter('create.lrs', function( $route, $request ){
 |---------------------------------------------------------------------------
 */
 
-Route::filter('registation.status', function( $route, $request ){
+Route::filter('registration.status', function( $route, $request ){
   $site = \Site::first();
   if( $site ){
     if( $site->registration != 'Open' ) return Redirect::to('/');
