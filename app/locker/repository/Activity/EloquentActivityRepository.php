@@ -27,15 +27,15 @@ class EloquentActivityRepository implements ActivityRepository {
    **/
   public function saveActivity( $activity_id, $activity_def ){
 
-    $exists = \DB::table('activities')->find( $activity_id );
+    $exists = \Activity::find( $activity_id );
 
     //if the object activity exists, remove and update with recent
     if( $exists ){
-      \DB::table('activities')->where('_id', $activity_id)->delete(); 
+      \Activity::where('_id', $activity_id)->delete(); 
     }
 
     //save record
-    \DB::table('activities')->insert(
+    \Activity::insert(
       array('_id'        => $activity_id, 
             'definition' => $activity_def)
     );
@@ -43,7 +43,7 @@ class EloquentActivityRepository implements ActivityRepository {
   }
 
   public function getActivity( $activity_id ){
-    return  \DB::table('activities')->where('_id', $activity_id)->first();
+    return  \Activity::where('_id', $activity_id)->first();
   }
 
 }
