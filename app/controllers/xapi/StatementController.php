@@ -253,21 +253,26 @@ class StatementsController extends BaseController {
 
     //set the more url
     if( $array['total'] > $offset ){
-      $url = 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
-      if( isset($this->params) ){
-        if( isset($this->params['offset']) && count($this->params) > 1 ){
-          $url = str_replace('&offset=' . $this->params['offset'], "", $url);
-          $url = $url . '&offset=' . $offset;
-        }elseif(isset($this->params['offset'])) {
-          $url = str_replace('?offset=' . $this->params['offset'], "", $url);
-          $url = $url . '?offset=' . $offset;
+      //$url = 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+      $url = "{$_SERVER['REQUEST_URI']}";
+      if( isset($this->params['offset']) ){
+        if (strpos($url,'?offset=' . $this->params['offset']) !== false) {
+          $url = str_replace('?offset=' . $this->params['offset'], '?offset=' . $offset, $url);
+        }elseif(strpos($url,'&offset=' . $this->params['offset']) !== false) {
+          $url = str_replace('&offset=' . $this->params['offset'], '&offset=' . $offset, $url);
         }else{
           $url = $url . '&offset=' . $offset;
         }
       }else{
-        $url = $url . '?offset=' . $offset;
+        if( isset($this->params) ){
+          $url = $url . '&offset=' . $offset;
+        }else{
+          $url = $url . '?offset=' . $offset;
+        }
       }
       $array['more'] = $url;
+    }else{
+      $array['more'] = '';
     }
 
     $response = \Response::make( $array, 200 );
