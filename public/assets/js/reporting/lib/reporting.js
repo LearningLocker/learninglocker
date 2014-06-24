@@ -883,8 +883,7 @@ define([
 
     var morrisData = [];
     $.each(json, function() {
-      var setDate = new Date(this.date[0].sec*1000+this.date[0].usec);
-      setDate = setDate.getFullYear()+"-"+(setDate.getMonth()+1)+"-"+setDate.getDate();
+      var setDate = this.date[0].substring(0,10);
       var setData = { y: setDate, a: this.count, b: 2 };
       morrisData.push(setData);
     });
