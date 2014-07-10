@@ -401,6 +401,8 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
 
   Config::set('api.using_version', 'v1');
 
+  Route::options('/{extra}',  'Controllers\API\BaseController@CORSOptions')->where('extra', '(.*)');
+
   Route::get('/', function() {
     return Response::json( array('version' => Config::get('api.using_version')));
   });
