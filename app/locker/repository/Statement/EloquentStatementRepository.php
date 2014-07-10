@@ -430,6 +430,10 @@ class EloquentStatementRepository implements StatementRepository {
       } 
     } 
 
+    if( isset($agent->name) ){
+      $query->$where_type('statement.actor.name', $agent->name);
+    }
+
     return $query;
   }
 
