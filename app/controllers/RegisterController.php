@@ -18,7 +18,7 @@ class RegisterController extends BaseController {
 
     $this->user = $user;
     $this->beforeFilter('guest');
-    $this->beforeFilter('registation.status');
+    $this->beforeFilter('registration.status');
 
   }
 
@@ -47,7 +47,7 @@ class RegisterController extends BaseController {
     $user = $this->user->create(Input::all());
 
     if($user){
-      //event hook to fire upon successful regitration
+      //event hook to fire upon successful registration
       Event::fire('user.register', array($user));
       // log in new user
       Auth::attempt(array(

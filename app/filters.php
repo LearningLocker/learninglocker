@@ -20,6 +20,11 @@ App::before(function($request)
 App::after(function($request, $response)
 {
   $response->headers->set('X-Experience-API-Version', '1.0.1');
+
+  if( isset($_SERVER['HTTP_ORIGIN']) ){
+    $response->headers->set('Access-Control-Allow-Origin', $_SERVER['HTTP_ORIGIN']);
+  }
+
 });
 
 /*
@@ -246,7 +251,7 @@ Route::filter('create.lrs', function( $route, $request ){
 |---------------------------------------------------------------------------
 */
 
-Route::filter('registation.status', function( $route, $request ){
+Route::filter('registration.status', function( $route, $request ){
   $site = \Site::first();
   if( $site ){
     if( $site->registration != 'Open' ) return Redirect::to('/');

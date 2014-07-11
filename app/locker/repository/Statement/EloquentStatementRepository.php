@@ -40,7 +40,6 @@ class EloquentStatementRepository implements StatementRepository {
   }
 
   /**
-   * Return a list of statements ordered by stored desc
    *
    * Don't return voided statements, these are requested 
    * in a different call.
@@ -216,8 +215,16 @@ class EloquentStatementRepository implements StatementRepository {
       $new_statement->lrs = array( '_id'  => $lrs->_id, 'name' => $lrs->title );
       $new_statement->statement = $vs;
 
+      //now add our MongoData timestamp (based on statement timestamp) to use with Mongo Aggregation Function
+      $new_statement->timestamp = new \MongoDate(strtotime($vs['timestamp']));
+
       if( $new_statement->save() ){
+        
+        //event hook for plugins
+        Event::fire('statements.create', array($new_statement));
+
         $saved_ids[] = $new_statement->statement['id'];
+
       } else {
         return array( 'success' => 'false', 
                       'message' => $new_statement->errors );
@@ -437,6 +444,10 @@ class EloquentStatementRepository implements StatementRepository {
         });
       } 
     } 
+
+    if( isset($agent->name) ){
+      $query->$where_type('statement.actor.name', $agent->name);
+    }
 
     return $query;
   }

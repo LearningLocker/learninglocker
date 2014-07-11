@@ -438,6 +438,8 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
 
   Config::set('api.using_version', 'v1');
 
+  Route::options('/{extra}',  'Controllers\API\BaseController@CORSOptions')->where('extra', '(.*)');
+
   Route::get('/', function() {
     return Response::json( array('version' => Config::get('api.using_version')));
   });
@@ -510,8 +512,7 @@ App::missing(function($exception){
     $error = array(
       'error'     =>  true,
       'message'   =>  $exception->getMessage(),
-      'code'      =>  $exception->getStatusCode(),
-      'trace'     =>  $exception->getTrace()
+      'code'      =>  $exception->getStatusCode()
     );
 
     return Response::json( $error, $exception->getStatusCode());

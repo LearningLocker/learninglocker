@@ -7,8 +7,11 @@ class BaseController extends Controller {
 
 public function CORSOptions(){
   $statusCode = 204;
+
+  $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : URL();
+
   $headers = [
-      'Access-Control-Allow-Origin'      => 'http://mydomain.com',
+      'Access-Control-Allow-Origin'      => $origin,
       'Access-Control-Allow-Methods'     => 'GET, PUT, POST, DELETE, OPTIONS',
       'Access-Control-Allow-Headers'     => 'Origin, Content-Type, Accept, Authorization, X-Requested-With, X-Experience-API-Version, X-Experience-API-Consistent-Through, Updated',
       'Access-Control-Allow-Credentials' => 'true'

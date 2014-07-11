@@ -15,7 +15,7 @@
     <div class="form-group">
       {{ Form::label('email', 'Email', array('class' => 'col-sm-4 control-label')) }}
       <div class="col-sm-8">
-        {{ Form::text('email', '', array('class' => 'form-control', 'required' => true)) }}
+        {{ Form::email('email', '', array('class' => 'form-control', 'required' => true)) }}
       </div>
     </div>
     <div class="form-group">

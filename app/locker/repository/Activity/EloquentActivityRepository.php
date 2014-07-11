@@ -20,32 +20,30 @@ class EloquentActivityRepository implements ActivityRepository {
 
   }
 
+  /**
+   * This is a temp solution, we need something better depending
+   * on authority to update activity stored.
+   *
+   **/
   public function saveActivity( $activity_id, $activity_def ){
 
-    $exists = \DB::table('activities')->find( $activity_id );
+    $exists = \Activity::find( $activity_id );
 
-    //if the object activity exists, return details on record.
+    //if the object activity exists, remove and update with recent
     if( $exists ){
-
-      //update record
-      \DB::table('activities')
-      ->where('_id', $activity_id)
-      ->update(array('definition' => $activity_def));
-      
-    }else{
-
-      //save new record
-      \DB::table('activities')->insert(
-        array('_id'        => $activity_id, 
-              'definition' => $activity_def)
-      );
-      
+      \Activity::where('_id', $activity_id)->delete(); 
     }
+
+    //save record
+    \Activity::insert(
+      array('_id'        => $activity_id, 
+            'definition' => $activity_def)
+    );
 
   }
 
   public function getActivity( $activity_id ){
-    return  \DB::table('activities')->where('_id', $activity_id)->first();
+    return  \Activity::where('_id', $activity_id)->first();
   }
 
 }
