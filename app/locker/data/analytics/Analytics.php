@@ -211,7 +211,7 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
         foreach( $options as $key => $value ){
           $in_statement = array();
           //loop through this value to check for nested array
-          if( is_array($value) ){
+          if( is_array($value) && sizeof($value) > 0 ){
             //is it an in request, or a between two values request?
             if( $value[0] == '<>' ){
               $set_inbetween[$key] = array('$gte' => (int) $value[1], '$lte' => (int) $value[2]);
@@ -222,6 +222,7 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
               $set_in[] = array($key => array('$in' => $in_statement));
             }
           }else{
+            //if not an array or an empty array, set key/value
             $set_in[] = array( $key => $value );
           }
         
