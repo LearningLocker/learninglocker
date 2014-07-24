@@ -36,13 +36,15 @@ class EloquentQueryRepository implements QueryRepository {
    * @param $lrs       id      The Lrs to search in (required)
    * @param $filter    array   The filter array
    * @param $raw       boolean  Pagination or raw statements?
+   * @param $sections  array   Sections of the statement to return, default = all
    * 
    * @return array results
    *
    **/
-  public function selectStatements( $lrs='', $filter, $raw=false ){
+  public function selectStatements( $lrs='', $filter, $raw=false, $sections=[] ){
     //var_dump( $filter );exit;
     $statements = \Statement::where('lrs._id', $lrs);
+
     if( !empty($filter) ){
       
       foreach($filter as $key => $value ){
@@ -59,9 +61,23 @@ class EloquentQueryRepository implements QueryRepository {
       }
 
     }
+
+    //which part of the statement should we return?
+    if( empty($sections) ){
+      $statements->select('statement');
+    }else{
+      //loop through and construct select query
+      $select = [];
+      foreach( $sections as $s ){
+        //create select string
+        $select[] = 'statement.' . $s;
+      }
+      $statements->select($select);
+    }
+
     $statements->remember(5);
     if( $raw ){
-      return $statements->get();
+      return $statements->get()->toArray();
     }
     return $statements->paginate(20);
   }
