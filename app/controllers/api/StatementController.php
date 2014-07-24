@@ -38,9 +38,9 @@ class StatementController extends BaseController {
   public function index(){
 
     //were statement sections passed?
-    if( $this->params['sections'] ){
-      $section = json_decode( $this->params['sections']);
-      $section = $section->sections;
+    if( isset( $this->params['sections'] ) ){
+      $section = json_decode( $this->params['sections'], true);
+      $section = $section;
     }else{
       $section = [];
     }
