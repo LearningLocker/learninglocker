@@ -204,9 +204,6 @@ class EloquentStatementRepository implements StatementRepository {
       $new_statement->timestamp = new \MongoDate(strtotime($vs['timestamp']));
 
       if( $new_statement->save() ){
-        
-        //event hook for plugins
-        Event::fire('statements.create', array($new_statement));
 
         $saved_ids[] = $new_statement->statement['id'];
 
