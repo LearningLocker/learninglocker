@@ -44,8 +44,11 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
       $filter = array();
     }
 
-    //parse over the filter and check for conditions
-    $filter = $this->setFilter( $filter );
+    //parse filter and check for conditions if not $return = statements
+    //as returning statement does not use mongodb aggregation
+    if( $return != 'statements' ){
+      $filter = $this->setFilter( $filter );
+    }
 
     //set type if passed
     if( isset( $options['type'] ) ){
