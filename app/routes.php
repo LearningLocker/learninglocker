@@ -409,6 +409,9 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
   Route::get('query/analytics', array(
     'uses' => 'Controllers\API\AnalyticsController@index'
   ));
+  Route::get('query/statements', array(
+    'uses' => 'Controllers\API\StatementController@index'
+  ));
   Route::get('query/{section}', array(
     'uses' => 'Controllers\API\AnalyticsController@getSection'
   ));

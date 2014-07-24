@@ -25,12 +25,15 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
   /**
    * Get analytic data.
    *
+   * @param string $lrs 
    * @param object $options
+   * @param string $return | This is the return value expected. Analytics or raw statements.
+   * @param array  $sections | If the $return value is statements, what section(s) of statements. Default = all.
    *
    * @return array
    *
    **/
-  public function analytics( $lrs, $options ){
+  public function analytics( $lrs, $options, $return='timedGrouping', $sections=[] ){
 
     $since = $until = '';
 
@@ -79,7 +82,13 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
     }
 
     //get the data
-    $data = $this->query->timedGrouping( $lrs, $filters, $interval, $type );
+
+    //timedGrouping or statements?
+    if( $return == 'statements' ){
+      $data = $this->query->selectStatements( $lrs, $filters, true, $sections );
+    }else{
+      $data = $this->query->timedGrouping( $lrs, $filters, $interval, $type );
+    }
 
     if( !$data || isset($data['errmsg']) ){
       return array('success' => false, 'message' => $data['errmsg'] );
