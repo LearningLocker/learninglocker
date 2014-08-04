@@ -9,7 +9,7 @@
 return array(
     'add'       => 'Legg til LRS',
     'home'		=> 'LRS hjem',
-    'create'    => 'Lag et LRS',
+    'create'    => 'Opprett et LRS',
     'delete_confirm' => 'Er du sikker på at du vil slette valgt LRS? HENDELSEN KAN IKKE ANGRES PÅ.',
     'edit'      => 'Endre på et LRS',
     'new'		=> 'Lag nytt LRS',
