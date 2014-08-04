@@ -34,10 +34,10 @@ return array(
     ),
 
     'endpoint' 	=> array(
-    	'endpoint'       => 'xAPI uttrykk',
+    	'endpoint'       => 'xAPI adresse',
     	'basic_http'     => 'Basic HTTP Authentication',
-    	'submit'         => 'Godta xAPI uttrykk',
-    	'instructions'   => 'For å kunne koble xAPI utrykk må du legge ved følgende adresse, bruker og passord.',
+    	'submit'         => 'xAPI tilkobling',
+    	'instructions'   => 'For å kunne koble xAPI utrykk til LRS-et må du legge ved følgende adresse, bruker og passord i klienten.',
     	'new_key_secret' => 'Opprett ny nøkkel og hemmlighet'
     ),
 
