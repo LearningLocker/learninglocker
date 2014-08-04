@@ -97,7 +97,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
     }
     $avg   = 0;
     if( $count && $days ){
-      $avg = round( $count / $days );
+      $avg = round( $count / $days, 2 );
     }
     return $avg;
   }
