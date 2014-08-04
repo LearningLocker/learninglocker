@@ -12,7 +12,7 @@ return array(
 	| General words
 	|-----------------------------------------------------------------------
 	*/
-	'edit'        => 'edit',
+	'edit'        => 'endre',
 	'delete'	  => 'slett',
 	'username'    => 'Brukernavn',
 	'password'    => 'Passord',
@@ -62,5 +62,5 @@ return array(
     	'language'     => 'Forhåndsvalgt språk som skal brukes ved bruk av uttrykkgenerator. '
     	),
 
-    'updated' => 'Learning Locker detaljer har blitt oppdater',
+    'updated' => 'Learning Locker detaljer har blitt oppdatert',
 );

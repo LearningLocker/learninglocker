@@ -7,7 +7,7 @@
 */
 
 return array(
-    'create'  => 'Lag rapport',
+    'create'  => 'Opprett rapport',
     'view'    => 'Vis rapport',
-    'deleted' => 'Denne rapporten har blitt slettet'
+    'deleted' => 'Rapporten har blitt slettet'
 );
