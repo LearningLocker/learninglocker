@@ -175,7 +175,7 @@ class EloquentStatementRepository implements StatementRepository {
       if( !isset($vs['timestamp']) ){
         $vs['timestamp'] = $vs['stored'];
       }
-       
+
       /*
       |------------------------------------------------------------------------------
       | For now we store the latest submitted definition. @todo this will change
@@ -255,7 +255,7 @@ class EloquentStatementRepository implements StatementRepository {
   public function statements( $id ){
 
     return \Statement::where('lrs._id', $id)
-           ->orderBy('statement.stored', 'desc')
+           ->orderBy('statement.timestamp', 'desc')
            ->paginate(15);
 
   }
@@ -360,9 +360,9 @@ class EloquentStatementRepository implements StatementRepository {
     }
 
     if( isset( $parameters['ascending'] ) && $parameters['ascending'] == 'true' ){
-      $statements->orderBy('statement.stored', 'asc');
+      $statements->orderBy('statement.timestamp', 'asc');
     }else{
-      $statements->orderBy('statement.stored', 'desc');
+      $statements->orderBy('statement.timestamp', 'desc');
     }
 
     return $statements;

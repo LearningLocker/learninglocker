@@ -1,9 +1,9 @@
 <?php
- 
+
   $statement_lrs = $statement['lrs']['_id'];
   $statement = $statement['statement'];
   $json = $statement;
-  
+
   if( isset($statement['actor']['mbox']) ){
     $avatar = \app\locker\helpers\Helpers::getGravatar( substr($statement['actor']['mbox'], 7), '20');
   }else{
@@ -63,8 +63,7 @@
       $object = $statement['object']['id'];
     }
   }
-
-  $stored = new Carbon\Carbon($statement['stored']);
+  $timestamp = new Carbon\Carbon($statement['timestamp']);;
 ?>
 
 <div class="row">
@@ -75,15 +74,15 @@
 
       <span class="pull-left statement-avatar">
           <img src="{{ $avatar }}" alt='avatar' class="img-circle" />
-      </span> 
-        
+      </span>
+
       {{ $name }}
-      
+
       <i>{{ $verb }}</i>
-        
+
       <a href="{{ $object_id }}">{{{ $object }}}</a>
 
-      <small>| {{ $stored->diffForHumans() }} ({{ $stored->toDayDateTimeString() }})</small>
+      <small>| {{ $timestamp->diffForHumans() }} ({{ $timestamp->toDayDateTimeString() }})</small>
 
       <div class="full-statement state-{{ $statement['id'] }}" style="display:none;">
         <?php $statement = \app\locker\Helpers\Helpers::replaceHtmlEntity( $json ); ?>

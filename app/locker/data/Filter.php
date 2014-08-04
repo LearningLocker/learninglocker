@@ -60,7 +60,7 @@ class Filter extends BaseData {
 
     foreach( $this->data as $d ){
 
-      $day = substr($d['stored'],0,10);
+      $day = substr($d['timestamp'],0,10);
 
       if( $first ) {
         $last_timestamp = $day;
