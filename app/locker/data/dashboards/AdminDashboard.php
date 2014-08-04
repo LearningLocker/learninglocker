@@ -118,8 +118,27 @@ class AdminDashboard extends \app\locker\data\BaseData {
    *
    **/
   public function learnerAvgCount(){
-    $count = $this->actorCount();
     $days  = $this->statementDays();
+    
+    // Get actor count
+    $set_id = array( 'day' => array( '$dayOfYear' => '$timestamp' ), 'statement_actor' => '$statement.actor');
+    $statements = $this->db->statements->aggregate(
+      array(
+        '$group' => array(
+          '_id'   => $set_id,
+        )
+      ),
+      array(
+        '$group' => array(
+          '_id'   => null,
+          'count' => array('$sum' => 1),
+        )
+      )
+    );
+    
+    $count = $statements["result"][0]["count"];
+    
+    
     if( $days == 0 ){
       //this will be the first day, so increment to 1
       $days = 1;
