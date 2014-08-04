@@ -62,5 +62,5 @@ return array(
     	'language'     => 'Forhåndsvalgt språk som skal brukes ved bruk av uttrykkgenerator. '
     	),
 
-    'updated' => 'Learning Locker details have been updated',
+    'updated' => 'Learning Locker detaljer har blitt oppdater',
 );
