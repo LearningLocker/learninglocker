@@ -1,0 +1,28 @@
+language: php
+
+php:
+  - 5.4
+
+services:
+  - mongodb
+  - mysql
+  
+mysql:
+  database: learninglocker
+  username: root
+  encoding: utf8
+
+install:
+  - mysql -e 'create database learninglocker;'
+
+before_script:
+  - sleep 3
+  - mongo mydb_test --eval 'db.addUser("travis", "test");'
+  - composer install --prefer-source
+  - php artisan generate:migration add_statements
+  - php artisan migrate
+  # @todo: add to ./app/config/app.php > 'Jenssegers\Mongodb\Auth\ReminderServiceProvider'
+  # @todo: config mail
+  # @todo: create first user
+
+script: ./vendor/bin/phpunit
