@@ -15,7 +15,7 @@ return array(
     'new'		=> 'Lag nytt LRS',
     'verify'    => 'Du må <a href=":verify_link">verifisere din mail</a> før du kan lage et LRS.',
     'list'      => 'LRS liste',
-    'none'      => 'Ingen LRS tilgjengelig.',
+    'none'      => 'No LRS\'s available.',
     'reporting' => 'Reporting',
     'deleted'   => 'Valgt LRS ble slettet',
     'updated'   => 'Valgt LRS ble oppdatert',
