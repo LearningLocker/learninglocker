@@ -6,8 +6,9 @@ php:
 services:
   - mongodb
 
+install: composer install
+
 before_script:
-  - php composer.phar install
   - php artisan generate:migration add_statements
   - php artisan migrate
 
