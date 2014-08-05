@@ -1,0 +1,14 @@
+language: php
+
+php:
+  - 5.4
+
+services:
+  - mongodb
+
+before_script:
+  - composer.phar install
+  - php artisan generate:migration add_statements
+  - php artisan migrate
+
+script: ./vendor/bin/phpunit
