@@ -155,4 +155,13 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
     return helpers::getRandomValue() . '@go1.com.au';
   }
 
+  protected function makeRequestHeaders($auth, $version="1.0.1")
+  {
+    return [
+      'PHP_AUTH_USER' => $auth['api_key'],
+      'PHP_AUTH_PW' => $auth['api_secret'],
+      'HTTP_X-Experience-API-Version' => $version
+    ];
+  }
+
 }

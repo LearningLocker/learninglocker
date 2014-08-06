@@ -16,12 +16,7 @@ class StatementGetTest extends TestCase
 
   private function _makeRequest($auth, $version)
   {
-    return $this->call("GET", '/data/xAPI/statements', [], [], [
-        'PHP_AUTH_USER'                 => $auth['api_key'],
-        'PHP_AUTH_PW'                   => $auth['api_secret'],
-        'HTTP_X-Experience-API-Version' => $version
-      ]
-    );
+    return $this->call("GET", '/data/xAPI/statements', [], [], $this->makeRequestHeaders($auth, $version));
   }
 
   /**
