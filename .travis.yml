@@ -7,8 +7,8 @@ services:
   - mongodb
 
 install:
-  - composer install
-  - pecl install mongo
+  - composer install --prefer-source --no-interaction --dev
+  - printf "\n" | pecl install apcpecl install mongo
 
 before_script:
   - sleep 30
