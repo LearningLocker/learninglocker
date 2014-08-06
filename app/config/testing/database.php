@@ -4,7 +4,7 @@ return array(
   'connections' => array(
     'mongodb' => array(
       'driver'   => 'mongodb',
-      'host'     => '127.0.0.1',
+      'host'     => 'localhost',
       'port'     => 27017,
       'username' => '',
       'password' => '',
