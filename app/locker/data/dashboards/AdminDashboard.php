@@ -147,8 +147,8 @@ class AdminDashboard extends \app\locker\data\BaseData {
     }
     $avg   = 0;
     if( $count && $days ){
-      $avg = $count / $days;
-      if( $avg < 10 ) $avg = round($avg,2); 
+      $rounding_dp = ($avg < 10) ? 2 : 0;
+      $avg = round($avg, $rounding_dp); 
     }
     return $avg;
   }
