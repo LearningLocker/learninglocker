@@ -1,14 +1,17 @@
 language: php
 
 php:
-  - 5.4
+  - 5.5
 
 services:
   - mongodb
 
-install: composer install
+install:
+  - composer install
+  - pecl install mongo
 
 before_script:
+  - sleep 30
   - php artisan generate:migration add_statements
   - php artisan migrate
 
