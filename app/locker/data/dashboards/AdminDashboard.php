@@ -136,7 +136,10 @@ class AdminDashboard extends \app\locker\data\BaseData {
       )
     );
     
-    $count = $statements["result"][0]["count"];
+    $count = 0;
+    if (count($statements["result"])) {
+      $count = $statements["result"][0]["count"];
+    }
 
     if( $days == 0 ){
       //this will be the first day, so increment to 1

@@ -151,7 +151,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
     $days  = $this->statementDays();
     
     // Get actor count
-    $set_id = array( 'day' => array( '$dayOfYear' => '$statement.timestamp' ), 'statement_actor' => '$statement.actor');
+    $set_id = array( 'day' => array( '$dayOfYear' => '$timestamp' ), 'statement_actor' => '$statement.actor');
     $statements = $this->db->statements->aggregate(
       array('$match' => $this->getMatch( $this->lrs )),
       array(
@@ -167,15 +167,19 @@ class LrsDashboard extends \app\locker\data\BaseData {
       )
     );
     
-    $count = $statements["result"][0]["count"];
-    
+    $count = 0;
+    if (count($statements["result"])) {
+      $count = $statements["result"][0]["count"];
+    }
+
     if( $days == 0 ){
       //this will be the first day, so increment to 1
       $days = 1;
     }
     $avg   = 0;
     if( $count && $days ){
-      $avg = round( ($count / $days), 2 );
+      $avg = $count / $days;
+      if( $avg < 10 ) $avg = round($avg,2); 
     }
     return $avg;
   }
