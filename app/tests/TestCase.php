@@ -81,6 +81,7 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
    */
   protected function defaultStatment()
   {
+    $siteAttrs = \Site::first()['attributes'];
     return array(
       'actor' => array(
         'objectType' => 'Agent',
@@ -116,8 +117,8 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
         )
       ),
       "authority" => array(
-        "name" => "Aduro",
-        "mbox" => "mailto:quan@ll.com",
+        "name" => $siteAttrs['name'],
+        "mbox" => "mailto:" . $siteAttrs['email'],
         "objectType" => "Agent"
       ),
     );
