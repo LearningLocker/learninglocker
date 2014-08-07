@@ -101,6 +101,18 @@ public function returnJSON( $data=array(), $additional_params=array(), $extra=ar
     $lrs    = \Lrs::where('api.basic_key', $key)
            ->where('api.basic_secret', $secret)
            ->first();
+		   
+	//NOTE: this code is duplicated in filters.php
+	//if main credentials not matched, try the additional credentials
+	if ( $lrs == NULL ) {
+		$client = \Client::where('api.basic_key', $key)
+	    ->where('api.basic_secret', $secret)
+	    ->first();
+		
+		$lrs = \Lrs::find(  $client->lrs_id );
+
+	}
+		   
     $this->lrs = $lrs;
   }
 

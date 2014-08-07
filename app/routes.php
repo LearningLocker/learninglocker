@@ -188,6 +188,38 @@ Route::resource('lrs', 'LrsController');
 
 /*
 |------------------------------------------------------------------
+| Lrs client
+|------------------------------------------------------------------
+*/
+Route::get('lrs/{id}/client/manage', array(
+  'uses' => 'ClientController@manage',
+  'as' => 'client.manage'
+));
+
+Route::delete('lrs/{lrs_id}/client/{id}/destory', array(
+  'uses' => 'ClientController@destroy',
+  'as' => 'client.destroy'
+));
+
+Route::get('lrs/{lrs_id}/client/{id}/edit', array(
+  'uses' => 'ClientController@edit',
+  'as' => 'client.edit'
+));
+
+Route::post('lrs/{id}/client/create', array(
+  'before' => 'csrf', 
+  'uses' => 'ClientController@create',
+  'as' => 'client.create'
+));
+
+Route::put('lrs/{lrs_id}/client/{id}/update', array(
+  'before' => 'csrf', 
+  'uses' => 'ClientController@update',
+  'as' => 'client.update'
+));
+
+/*
+|------------------------------------------------------------------
 | Reporting
 |------------------------------------------------------------------
 */
