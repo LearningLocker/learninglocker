@@ -1,0 +1,16 @@
+{
+    "id": "88664422-1234-5678-1234-567812345678",
+    "actor": {
+        "mbox": "zachary+pierce@gmail.com"
+    },
+    "verb": {
+        "id": "http://adlnet.gov/expapi/verbs/created",
+        "display": {
+            "en-US": "created"
+        }
+    },
+    "object": {
+        "id": "http://ZackPierce.github.io/xAPI-Validator-JS",
+        "objectType": "Activity"
+    }
+}
