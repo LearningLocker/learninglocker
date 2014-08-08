@@ -383,7 +383,7 @@ class xAPIValidation {
 
       //check object type is not SubStatement as nesting is not permitted
       if( $object['object']['objectType'] == 'SubStatement' ){
-        $this->setError( 'A SubStatement cannot contain a nested statement.' );
+        $this->setError( \Lang::get('xAPIValidation.errors.nesting') );
         return false;
       }
 
@@ -491,25 +491,25 @@ class xAPIValidation {
       //now check format of each score key
       if( isset($result['score']['scaled']) ){
         if( $result['score']['scaled'] > 1 || $result['score']['scaled'] < -1){
-          $this->setError( 'Result: score: scaled must be between 1 and -1.' );
+          $this->setError(\Lang::get('xAPIValidation.errors.score.scaled'));
         }
       }
       if( isset($result['score']['max']) ){
         if( $result['score']['max'] < $result['score']['min'] ){
-          $this->setError( 'Result: score: max must be greater than min.' );
+          $this->setError(\Lang::get('xAPIValidation.errors.score.max'));
         }
       }
       if( isset($result['score']['min']) ){
         if( isset($result['score']['max'])){
           if( $result['score']['min'] > $result['score']['max'] ){
-            $this->setError( 'Result: score: min must be less than max.' );
+            $this->setError(\Lang::get('xAPIValidation.errors.score.min'));
           }
         }
       }
       if( isset($result['score']['raw']) ){
         if( isset($result['score']['max']) && isset($result['score']['min']) ){
           if( ($result['score']['raw'] > $result['score']['max']) || ($result['score']['raw'] < $result['score']['min']) ){
-            $this->setError( 'Result: score: raw must be between max and min.' );
+            $this->setError(\Lang::get('xAPIValidation.errors.score.raw'));
           }
         }
       }
@@ -533,7 +533,7 @@ class xAPIValidation {
 
     //check format using http://www.pelagodesign.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
     if (!preg_match('/^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/', $timestamp) > 0) {
-      $this->setError( 'Timestamp needs to be in ISO 8601 format.' );
+      $this->setError(\Lang::get('xAPIValidation.errors.timestamp'));
       return false;
     } 
 
@@ -561,7 +561,7 @@ class xAPIValidation {
     if( isset( $this->statement['version'] ) ){
       $result = $result = substr($this->statement['version'], 0, 4);
       if( $result != '1.0.' ){
-        $this->setError( 'The statement has an invalid version.' );
+        $this->setError(\Lang::get('xAPIValidation.errors.version'));
         return false;
       }
     }else{
@@ -621,12 +621,13 @@ class xAPIValidation {
 
     //only allow one identifier
     if( $count > 1 ){
+      dd($count);
       $identifier_valid = false;
-      $this->setError( 'A statement can only set one actor functional identifier.' ); 
+      $this->setError(\Lang::get('xAPIValidation.errors.actor.one')); 
     }
 
     if( !$identifier_valid ){
-      $this->setError( 'A statement must have a valid actor functional identifier.' ); 
+      $this->setError(\Lang::get('xAPIValidation.errors.actor.valid')); 
     }
     
     return $identifier_valid;
@@ -703,7 +704,10 @@ class xAPIValidation {
     //if there are foriegn keys, set required error message
     if( !empty($check_keys) ){
       foreach( $check_keys as $k => $v ){
-        $this->setError( sprintf( "`%s` is not a permitted property in %s", $k, $section ), $fail_status='failed', $value='' );
+        $this->setError(\Lang::get('xAPIValidation.errors.actor.one', array(
+          'key' => $k,
+          'section' => $section
+        )), $fail_status='failed', $value='' );
       }
       $valid = false;
     }
@@ -800,12 +804,22 @@ class xAPIValidation {
         sprintf( "`%s` is not a valid irl in " . $section, $key ));
       break;
       case 'lang_map':
-        $this->assertionCheck($this->validateLanguageMap($value),
-        sprintf( "`%s` is not a valid language map in " . $section, $key ));
+        $this->assertionCheck(
+          $this->validateLanguageMap($value),
+          \Lang::get('xAPIValidation.errors.langMap', array(
+            'key' => $key,
+            'section' => $section
+          ))
+        );
       break;
       case 'base64':
-        $this->assertionCheck(base64_encode(base64_decode($value)) === $value,
-        sprintf( "`%s` is not a valid language map in " . $section, $key ));
+        $this->assertionCheck(
+          base64_encode(base64_decode($value)) === $value,
+          \Lang::get('xAPIValidation.errors.base64', array(
+            'key' => $key,
+            'section' => $section
+          ))
+        );
       break;
       case 'boolean':
         $this->assertionCheck(is_bool($value),
@@ -865,8 +879,14 @@ class xAPIValidation {
    * Regex to validate Internet media type
    *
    */
-  private function validateInternetMediaType(){
-    return true;
+  private function validateInternetMediaType( $value ){
+    $type = '(application|audio|example|image|message|model|multipart|text|video)';
+    $subtype = '(/[-\w\+]+)';
+    $attribute = '(;\s*[-\w]+\=[-\w]+)';
+    if (is_String($value) && preg_match('#^' . $type . $subtype . $attribute . '*;?$#', $value)) {
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -883,6 +903,7 @@ class xAPIValidation {
         return true;
       }
     }
+
     return false;
   }
 
