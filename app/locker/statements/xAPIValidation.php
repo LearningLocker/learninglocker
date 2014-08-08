@@ -54,12 +54,12 @@ class xAPIValidation {
         case 'context':     $this->validateContext( $v );     break;
         case 'timestamp':   $this->validateTimestamp( $v );   break;
         case 'result':      $this->validateResult( $v );      break;
-        case 'version':     $this->validateVersion( $v );     break;
         case 'attachments': $this->validateAttachments( $v ); break;
       }
       
     }
 
+    $this->validateVersion();
     $this->validateAuthority( $authority );
     $this->validateId();
     $this->validateStored();
