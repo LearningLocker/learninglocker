@@ -4,6 +4,7 @@ use DateTime;
 use Statement;
 use Locker\Repository\Activity\ActivityRepository as Activity;
 use Locker\Repository\Query\QueryRepository as Query;
+use Locker\Repository\Document\FileTypes;
 
 class EloquentStatementRepository implements StatementRepository {
 
@@ -39,7 +40,6 @@ class EloquentStatementRepository implements StatementRepository {
   }
 
   /**
-   * Return a list of statements ordered by stored desc
    *
    * Don't return voided statements, these are requested 
    * in a different call.
@@ -139,7 +139,7 @@ class EloquentStatementRepository implements StatementRepository {
    * @param array $lrs
    *
    **/
-  public function create( $statements, $lrs ){
+  public function create( $statements, $lrs, $attachments='' ){
 
     //Full tincan statement validation to make sure the statement conforms
     
@@ -178,15 +178,13 @@ class EloquentStatementRepository implements StatementRepository {
        
       /*
       |------------------------------------------------------------------------------
-      | Check to see if the object is an activity, if so, check to see if that 
-      | activity is already in the DB. if it is, use the stored version. 
-      | If not, store it.
+      | For now we store the latest submitted definition. @todo this will change
+      | when we have a way to determine authority to edit.
       |------------------------------------------------------------------------------
       */
       if( isset($vs['object']['definition'])){
-        $vs['object']['definition'] = $this->activity->saveActivity( $vs['object']['id'], $vs['object']['definition'] );
+        $this->activity->saveActivity( $vs['object']['id'], $vs['object']['definition'] );
       }
-
 
       /*
       |------------------------------------------------------------------------------
@@ -202,14 +200,24 @@ class EloquentStatementRepository implements StatementRepository {
       $new_statement->lrs = array( '_id'  => $lrs->_id, 'name' => $lrs->title );
       $new_statement->statement = $vs;
 
+      //now add our MongoData timestamp (based on statement timestamp) to use with Mongo Aggregation Function
+      $new_statement->timestamp = new \MongoDate(strtotime($vs['timestamp']));
+
       if( $new_statement->save() ){
+
         $saved_ids[] = $new_statement->statement['id'];
+
       } else {
         return array( 'success' => 'false', 
                       'message' => $new_statement->errors );
       }
 
       
+    }
+
+    //now we have saved statements, store attachments
+    if( $attachments != '' ){
+      $this->storeAttachments( $attachments, $lrs->_id );
     }
 
     return array('success'=>true, 'ids'=>$saved_ids );
@@ -419,6 +427,10 @@ class EloquentStatementRepository implements StatementRepository {
       } 
     } 
 
+    if( isset($agent->name) ){
+      $query->$where_type('statement.actor.name', $agent->name);
+    }
+
     return $query;
   }
 
@@ -437,11 +449,19 @@ class EloquentStatementRepository implements StatementRepository {
               ->where('statement.id', $id)
               ->first();
     
-    if( $exists ){
-      if( array_multisort( $exists->toArray() ) === array_multisort( $statement ) ){
-        return 'conflict-matches';
-      }
-      return 'conflict-nomatch';
+    if ($exists) {
+        $saved_statement = (array)$exists['statement'];
+        unset($saved_statement['stored']);
+        array_multisort($saved_statement);
+        array_multisort($statement);
+        ksort($saved_statement);
+        ksort($statement);
+    
+        if ($saved_statement == $statement) {
+            return 'conflict-matches';
+        }
+    
+        return 'conflict-nomatch';
     }
 
     return false;
@@ -657,139 +677,50 @@ class EloquentStatementRepository implements StatementRepository {
     return $statements;
   }
 
-
-  ///////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////////////////////////
-
-  /*
-  |----------------------------------------------------------------------
-  | Legacy functions for filtering which was used pre v1.0 amd will be 
-  | removed. Do not use these!
-  |
-  |----------------------------------------------------------------------
-  */
-
   /**
+   * Store any attachments
    *
-   * Filter statements via our filtering options. 
-   *
-   * @param int   $id        The LRS unique id.
-   * @param array $vars      An array or parameters grabbed from the url
-   * @param string $restrict Value to restrict query 
-   *
-   * @return array An array containing statements for display and data 
-   * for the graph.
-   *
-   */
-  public function filter( $id, $vars='', $restrict='' ){
+   **/
+  private function storeAttachments( $attachments, $lrs ){
 
-    $filter = array();
-    $data   = '';
+    foreach( $attachments as $a ){
 
-    //create key / value array for wheres from $vars sent over
-    if( isset($vars) && !empty($vars) ){
-      while (count($vars)) {
-        list($key,$value) = array_splice($vars, 0, 2);
-        $filter[$key] = $value;
+      // Separate body contents from headers
+      $a = ltrim($a, "\n");
+      list($raw_headers, $body) = explode("\n\n", $a, 2);
+
+      // Parse headers and separate so we can access
+      $raw_headers = explode("\n", $raw_headers);
+      $headers     = array();
+      foreach ($raw_headers as $header) {
+        list($name, $value) = explode(':', $header);
+        $headers[strtolower($name)] = ltrim($value, ' '); 
       }
-    }
 
-    $query = $this->statement->where('lrs._id', $id);
-    $this->setRestriction( $restrict, $query );
-    if( !empty($filter) ){
-      $this->setWhere( $filter, $query );
-    }
-    $query->orderBy('created_at', 'desc');
-    $statements = $query->paginate(18);
+      //get the correct ext if valid
+      $ext = array_search( $headers['content-type'], FileTypes::getMap() );
+      if( $ext === false ){
+        \App::abort(400, 'This file type cannot be supported');
+      }
 
-    //@todo replace this using Mongo aggregation - no need to grab everything and loop through it.
-    $query = $this->statement->where('lrs._id', $id);
-    $this->setRestriction( $restrict, $query );
-    if( !empty($filter) ){
-      $this->setWhere( $filter, $query );
-    }
-    $query->remember(5);
-    $data = $query->get();
+      $filename = str_random(12) . "." . $ext;
+      
+      //create directory if it doesn't exist
+      if (!\File::exists(base_path().'/uploads/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/')) {
+        \File::makeDirectory(base_path().'/uploads/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/', 0775, true);
+      }
 
-    return array( 'statements' => $statements, 
-                  'data'       => $data, 
-                  'filter'     => $filter );
+      $destinationPath = base_path().'/uploads/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/';
 
-  }
+      $filename = $destinationPath.$filename; 
+      $file = fopen( $filename, 'wb'); //opens the file for writing with a BINARY (b) fla
+      $size = fwrite( $file, $body ); //write the data to the file
+      fclose( $file );
 
-  /**
-   *
-   * Loop through passed parameters and add to DB query. Used when 
-   * filtering statements on the site.
-   * 
-   * @todo only decode on urls not everything
-   *
-   * @param string $filter
-   * @param object $query
-   * 
-   * @return object $query
-   *
-   */
-  private function setWhere( $filter, $query ){
-
-    foreach( $filter as $k => $v ){
-      $k = $this->filterKeyLookUp( $k );
-      $query->where( $k, rawurldecode( $v ) );
-    }
-    return $query;
-
-  }
-
-  /**
-   *
-   * Set a restriction for the query if one was passed
-   *
-   * @param $restriction
-   * @param $query
-   *
-   * @return
-   *
-   */
-  private function setRestriction( $restriction, $query ){
-
-    if( $restriction != '' ){
-      switch( $restriction ){
-        case 'comments':
-          return $query->where( 'object.definition.type', 'http://activitystrea.ms/schema/1.0/comment' );
-        case 'badges':
-          return $query->where( 'object.definition.type', 'http://activitystrea.ms/schema/1.0/badge' );
-        case 'results':
-          return $query->where( '', '' );
-        case 'courses':
-          return $query->where( 'object.definition.type', 'http://activitystrea.ms/schema/1.0/course' );
-        default:
-          return $query->where( 'object.definition.type', 'http://activitystrea.ms/schema/1.0/comment' );
+      if( $size === false ){
+        \App::abort( 400, 'There was an issue saving the attachment');
       }
     }
 
   }
-
-  /**
-   *
-   * A look up service to grab xAPI key based on url key.
-   *
-   * @param  string $key
-   * @return string 
-   *
-   */
-  private function filterKeyLookUp( $key ){
-    switch( $key ){
-      case 'actor':
-        return 'actor.mbox';
-      case 'verb':
-        return 'verb.display.en-US';
-      case 'parent':
-        return 'context.contextActivities.parent.id';
-      case 'course':
-        return 'context.contextActivities.grouping.id';
-      case 'activity':
-        return 'object.id';
-    }
-  }
-
 }

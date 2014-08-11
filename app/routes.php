@@ -211,14 +211,11 @@ Route::get('lrs/{id}/reporting/statements', array(
 Route::get('lrs/{id}/reporting/actors/{query}', array(
   'uses' => 'ReportingController@getActors',
 ));
-Route::get('lrs/{id}/reporting/activities/{query}', array(
-  'uses' => 'ReportingController@getActivities',
-));
-Route::get('lrs/{id}/reporting/parents/{query}', array(
-  'uses' => 'ReportingController@getParents',
-));
-Route::get('lrs/{id}/reporting/grouping/{query}', array(
-  'uses' => 'ReportingController@getGrouping',
+
+
+//used by typeahead to get objects
+Route::get('lrs/{id}/reporting/typeahead/{segment}', array(
+  'uses' => 'ReportingController@getTypeahead',
 ));
 
 //Route::resource('reporting', 'ReportingController');
@@ -404,11 +401,16 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
 
   Config::set('api.using_version', 'v1');
 
+  Route::options('/{extra}',  'Controllers\API\BaseController@CORSOptions')->where('extra', '(.*)');
+
   Route::get('/', function() {
     return Response::json( array('version' => Config::get('api.using_version')));
   });
   Route::get('query/analytics', array(
     'uses' => 'Controllers\API\AnalyticsController@index'
+  ));
+  Route::get('query/statements', array(
+    'uses' => 'Controllers\API\StatementController@index'
   ));
   Route::get('query/{section}', array(
     'uses' => 'Controllers\API\AnalyticsController@getSection'
@@ -476,8 +478,7 @@ App::missing(function($exception){
     $error = array(
       'error'     =>  true,
       'message'   =>  $exception->getMessage(),
-      'code'      =>  $exception->getStatusCode(),
-      'trace'     =>  $exception->getTrace()
+      'code'      =>  $exception->getStatusCode()
     );
 
     return Response::json( $error, $exception->getStatusCode());

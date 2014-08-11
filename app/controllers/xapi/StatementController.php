@@ -1,6 +1,7 @@
 <?php namespace Controllers\xAPI;
 
 use \Locker\Repository\Statement\StatementRepository as Statement;
+use \App\Locker\Helpers\Attachments;
 
 class StatementsController extends BaseController {
 
@@ -48,30 +49,63 @@ class StatementsController extends BaseController {
     //grab incoming statement
     $request            = \Request::instance();
     $incoming_statement = $request->getContent();
-    $statements_assoc   = json_decode($incoming_statement, TRUE);
+
+    //get content type header
+    $content_type = \Request::header('content-type');
+
+    // get the actual content type
+    $get_type = explode(";", $content_type, 2);
+    if( sizeof($get_type) >= 1 ){
+      $mimeType = $get_type[0];
+    } else {
+      $mimeType = $get_type;
+    }
+    
+    //if mimetype multipart/mixed then we are dealing with physical attachments
+    if( $mimeType == 'multipart/mixed'){
+      //get statements and reset $incoming_statement
+      $components = Attachments::setAttachments( $content_type, $incoming_statement );
+      if( empty($components) ){
+        return \Response::json( array( 'error'    => true, 
+                                       'message'  => 'There is a problem with the formatting of your submitted content.'), 
+                                        400 );
+      }
+      $incoming_statement = $components['body'];
+      //if no attachments, abort
+      if( !isset($components['attachments']) ){
+        return \Response::json( array( 'error'    => true, 
+                                       'message'  => 'There were no attachments.'), 
+                                        403 );
+      }
+      $attachments = $components['attachments'];
+      
+    }else{
+      $attachments = '';
+    }
+
+    $statements_assoc = json_decode($incoming_statement, TRUE);
 
     if( is_array(json_decode($incoming_statement)) ){
       $statements = $statements_assoc;
     } else {
       $statements = array( $statements_assoc );
     }
-    
-
-    //@todo if incoming is an array of statements, loop through
-    $save = $this->saveStatement( $statements );
+      
+    $save = $this->saveStatement( $statements, $attachments );
     return $this->sendResponse( $save );
 
   }
 
   /**
-   * Save a single statement in the DB
+   * Save statements in the DB
    *
    * @param json $incoming_statement
+   * @param array $attachments
    * @return response
    */
-  public function saveStatement( $statements ){
+  public function saveStatement( $statements, $attachments = '' ){
   
-    $save = $this->statement->create( $statements, $this->lrs );
+    $save = $this->statement->create( $statements, $this->lrs, $attachments );
     return $save;
 
   }
@@ -86,7 +120,7 @@ class StatementsController extends BaseController {
 
     $request            = \Request::instance();
     $incoming_statement = $request->getContent();
-    $statement         = json_decode($incoming_statement, TRUE);
+    $statement          = json_decode($incoming_statement, TRUE);
     
 
     //if no id submitted, reject
@@ -189,20 +223,66 @@ class StatementsController extends BaseController {
 
 
     //replace replace &46; in keys with . 
-    //see https://github.com/LearningLocker/LearningLocker/wiki/A-few-quirks for more info
+    //see http://docs.learninglocker.net/docs/statements#quirks for more info
     if( !empty($statements) ){
       foreach( $statements as &$s ){
         $s = \app\locker\helpers\Helpers::replaceHtmlEntity( $s['statement'] );
       }
     }
     
-    //$array['count'] = sizeof($statements);
     $array['statements'] = $statements;
 
-    $array['more'] = '';// @todo if more results available, provide link to access them
+    //return total available statements
+    $array['total'] = $this->statement->count( $this->lrs->_id, $this->params );
+
+    //set more link. 100 is our default limit. This should be a value that admins can
+    //set, not hardcoded.
+    if( isset($this->params['offset']) ){
+      if( isset($this->params['limit']) ){
+        $offset = $this->params['offset'] + $this->params['limit'];
+      }else{
+        $offset = $this->params['offset'] + 100;
+      }
+    }else{
+      if( isset($this->params['limit']) ){
+        $offset = $this->params['limit'];
+      }else{
+        $offset = 100;
+      }
+    }
+
+    //set the more url
+    if( $array['total'] > $offset ){
+      //$url = 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+      $url = "{$_SERVER['REQUEST_URI']}";
+      if( isset($this->params['offset']) ){
+        if (strpos($url,'?offset=' . $this->params['offset']) !== false) {
+          $url = str_replace('?offset=' . $this->params['offset'], '?offset=' . $offset, $url);
+        }elseif(strpos($url,'&offset=' . $this->params['offset']) !== false) {
+          $url = str_replace('&offset=' . $this->params['offset'], '&offset=' . $offset, $url);
+        }else{
+          $url = $url . '&offset=' . $offset;
+        }
+      }else{
+        if( isset($this->params) ){
+          $url = $url . '&offset=' . $offset;
+        }else{
+          $url = $url . '?offset=' . $offset;
+        }
+      }
+      $array['more'] = $url;
+    }else{
+      $array['more'] = '';
+    }
 
     $response = \Response::make( $array, 200 );
-    $response->headers->set('X-Experience-API-Consistent-Through', 'now');
+
+    //set consistent through data
+    $current_date = \DateTime::createFromFormat('U.u', microtime(true));
+    $current_date->setTimezone(new \DateTimeZone(\Config::get('app.timezone')));
+    $current_date = $current_date->format('Y-m-d\TH:i:s.uP');
+
+    $response->headers->set('X-Experience-API-Consistent-Through', $current_date);
 
     return $response;
     

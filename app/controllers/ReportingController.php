@@ -108,8 +108,7 @@ class ReportingController extends \BaseController {
     $data     = json_decode($incoming, true);
 
     //lrs input validation
-    $rules['name']         = 'required|alpha_spaces';
-    $rules['description']  = 'alpha_spaces';       
+    $rules['name']         = 'required';
     $validator = Validator::make($data, $rules);
     if ($validator->fails())  return \Response::json( $validator );
 
@@ -133,7 +132,7 @@ class ReportingController extends \BaseController {
     $lrs      = $this->lrs->find($id);
     $lrs_list = $this->lrs->all();
     $report   = $this->report->find($report);
-    $statements = $this->getStatements($id, $this->decodeURL( $report->query ));
+    $statements = $this->query->selectStatements($id, $this->decodeURL( $report->query ));
     return View::make('partials.reporting.view', array('lrs'        => $lrs,
                                                        'list'       => $lrs_list,
                                                        'statements' => $statements,
@@ -213,11 +212,19 @@ class ReportingController extends \BaseController {
 
   /**
    * Return statements based on query created
+   * 
+   * @param $lrs   string   The current LRS _id
+   * @return json object
    **/
-  public function getStatements($lrs, $filter=''){
+  public function getStatements($lrs){
 
-    return $this->query->selectStatements( $lrs, $filter );
-    return \Response::json( $getStatements );
+    if( isset($this->params['filter']) ){
+      $filter = json_decode($this->params['filter'], TRUE);
+    }else{
+      $filter = '';
+    }
+
+    return $this->query->selectStatements( $lrs, $filter, true );
 
   }
 
@@ -230,31 +237,42 @@ class ReportingController extends \BaseController {
   }
 
   /**
-   * Get available activities to use with typeahead.
+   * Return available objects for typeahead. Used to search activities 
+   * as well as parent and groups id in context.
+   *
+   * @param string $lrs
+   * @param string $segement    Which segment we are targetting e.g. activities, grouping, parent
+   *
+   * @return results or empty string
+   *
    **/
-  public function getActivities($lrs, $query){
-    $results = $this->setQuery($lrs, $query, 'statement.object', 'statement.object.id');
+  public function getTypeahead($lrs, $segment){
+    $query = $this->params['query'];
+    if( $query ){
+      switch( $segment ){
+        case 'grouping':
+          $results = $this->report->setQuery($lrs, 
+                                             $query, 
+                                             'statement.context.contextActivities.grouping', 
+                                             'statement.context.contextActivities.grouping.id');
+          break;
+        case 'activities':
+          $results = $this->report->setQuery($lrs, 
+                                             $query, 
+                                             'statement.object', 
+                                             'statement.object.id');
+          break;
+        case 'parents':
+          $results = $this->report->setQuery($lrs, 
+                                             $query, 
+                                             'statement.context.contextActivities.parent', 
+                                             'statement.context.contextActivities.parent.id');
+          break;
+      }
+    }else{
+      $results = '';
+    }
     return Response::json($results);
-  }
-
-  /**
-   * Get available parent activities to use with typeahead.
-   **/
-  public function getParents($lrs, $query){
-    $results = $this->setQuery($lrs, $query, 'statement.context.contextActivities.parent', 'statement.context.contextActivities.parent.id');
-    return Response::json($results);
-  }
-
-  /**
-   * Get available grouping activities to use with typeahead.
-   **/
-  public function getGrouping($lrs, $query){
-    $results = $this->setQuery($lrs, $query, 'statement.context.contextActivities.grouping', 'statement.context.contextActivities.grouping.id');
-    return Response::json($results);
-  }
-
-  public function setQuery($lrs, $query, $field, $wheres){
-    return $this->report->setQuery($lrs, $query, $field, $wheres);
   }
 
   /**

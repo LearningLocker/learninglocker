@@ -3,12 +3,15 @@ define([
   'underscore',
   'backbone',
   'marionette',
+  'datepicker',
+  'datepicker_custom',
   'app',
   'lib/reporting',
   'collections/StatementCollection',
   'models/StatementModel',
-  'views/statement/StatementList',
-], function($, _, Backbone, Marionette, App, Reporting, StatementCollection, StatementModel, StatementList){
+  'views/statement/StatementList'
+], function($, _, Backbone, Marionette, Datepicker, DatepickerCustom, App, Reporting, StatementCollection, 
+  StatementModel, StatementList){
 
   var Controller = Backbone.Marionette.Controller.extend({
 
@@ -16,11 +19,6 @@ define([
     },
 
     index: function(){
-
-    
-      //var stateCol = new StatementList({ collection: '' });
-      //App.pageRegion.show(stateCol);
-
 
     },
 

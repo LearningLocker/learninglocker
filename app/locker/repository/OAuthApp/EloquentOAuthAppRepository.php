@@ -50,7 +50,7 @@ class EloquentOAuthAppRepository implements OAuthAppRepository {
                               'name'  => $user->name, 
                               'role'  => $user->role );
 
-    $app->save() ? $result = true : $return = false;
+    $result = $app->save() ? true : false;
 
     $this->oauthDetails( $app->_id, $input['name'], $app->client_id, $app->secret, 1, $input['callback'] );
 

@@ -53,7 +53,7 @@ class LrsController extends BaseController {
    */
   public function index(){
     $lrs = $this->lrs->all();
-    return View::make('partials.lrs.list', array('lrs' => $lrs));
+    return View::make('partials.lrs.list', array('lrs' => $lrs, 'list' => $lrs));
   }
 
   /**
@@ -77,8 +77,8 @@ class LrsController extends BaseController {
     $data = Input::all();
 
     //lrs input validation
-    $rules['title']        = 'required|alpha_spaces';
-    $rules['description']  = 'alpha_spaces';       
+    $rules['title']        = 'required';
+    $rules['description']  = '';       
     $validator = Validator::make($data, $rules);
     if ($validator->fails()) return Redirect::back()->withErrors($validator);
 
@@ -121,8 +121,7 @@ class LrsController extends BaseController {
     $data = Input::all();
 
     //lrs input validation
-    $rules['title']        = 'required|alpha_spaces';
-    $rules['description']  = 'alpha_spaces';       
+    $rules['title']        = 'required';      
     $validator = Validator::make($data, $rules);
     if ($validator->fails()) return Redirect::back()->withErrors($validator);
 

@@ -54,12 +54,12 @@ class xAPIValidation {
         case 'context':     $this->validateContext( $v );     break;
         case 'timestamp':   $this->validateTimestamp( $v );   break;
         case 'result':      $this->validateResult( $v );      break;
-        case 'version':     $this->validateVersion( $v );     break;
         case 'attachments': $this->validateAttachments( $v ); break;
       }
       
     }
 
+    $this->validateVersion();
     $this->validateAuthority( $authority );
     $this->validateId();
     $this->validateStored();
@@ -276,6 +276,7 @@ class xAPIValidation {
 
     }else{
       $object_type = 'Activity'; //this is the default if nothing defined.
+      $object['objectType'] = $object_type;
     }
 
     //depending on the objectType, validate accordingly.
@@ -416,10 +417,10 @@ class xAPIValidation {
     //check properties in contextActivies
     if( isset($context['contextActivities']) ){
 
-      $valid_context_keys = array('parent'   => array('array'), 
-                                  'grouping' => array('array'), 
-                                  'category' => array('array'), 
-                                  'other'    => array('array'));
+      $valid_context_keys = array('parent'   => array('emptyArray'), 
+                                  'grouping' => array('emptyArray'), 
+                                  'category' => array('emptyArray'), 
+                                  'other'    => array('emptyArray'));
 
       //check all keys submitted are valid
       $this->checkParams($valid_context_keys, 
@@ -589,7 +590,11 @@ class xAPIValidation {
                                    'fileUrl'     => array('iri', false));
 
     //check all keys are valid
-    $this->checkParams($valid_attachment_keys, $attachments, 'attachment');
+    if( $attachments ){
+      foreach( $attachments as $a ){
+        $this->checkParams($valid_attachment_keys, $a, 'attachment');
+      }
+    }
 
   }
 
@@ -823,7 +828,7 @@ class xAPIValidation {
         sprintf( "`%s` is not a valid integer in " . $section, $key ));
       break;
       case 'contentType':
-        $this->assertionCheck($this->validateInternetMediaTyp($value),
+        $this->assertionCheck($this->validateInternetMediaType($value),
         sprintf( "`%s` is not a valid Internet Media Type in " . $section, $key ));
       break;
       case 'mailto':

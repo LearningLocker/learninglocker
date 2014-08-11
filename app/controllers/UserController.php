@@ -27,8 +27,8 @@ class UserController extends BaseController {
     $this->lrs  = $lrs;
     $this->logged_in_user = Auth::user();
 
-    $this->beforeFilter('auth', array('except' => array('verifyEmail','addPasswordForm')));
-    $this->beforeFilter('csrf', array('only' => array('update','updateRole', 'updatePassword', 'addPassword', 'destroy')));
+    $this->beforeFilter('auth', array('except' => array('verifyEmail')));
+    $this->beforeFilter('csrf', array('only' => array('update','updateRole', 'destroy')));
     $this->beforeFilter('user.delete', array('only' => 'destroy'));
     $this->beforeFilter('auth.super', array('only' => array('updateRole','index')));
     

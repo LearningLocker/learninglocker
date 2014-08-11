@@ -13,7 +13,7 @@ return array(
     'invite'  => 'Invite users',
     'email'   => 'Email addresses (separate lines)',
     'message' => 'Message (optional)',
-    'sample'  => 'I would like to invite you to join this LRS.',
+    'sample'  => 'I would like to invite you to join this Learning Record Store (LRS).',
     'invited' => 'Those users have been invited.',
     'failed'  => 'Inviting that user failed, check the user is not already a member of the LRS and the email is valid.',
     'has_invited' => 'has invited you to join',
@@ -43,4 +43,8 @@ return array(
   'deleted'        => 'The user was delete and any LRSs they created transferred to the site admin.',
   'updated'        => 'Account settings have been updated',
   'updated_error'  => 'There was a problem updating that account.',
+  'registration_various' => array(
+      'thanks' => 'Thanks for signing up to use Learning Locker. To complete your registration, we need you to verify your email.',
+      'click'  => 'To do this, please click on the following link'
+    ) 
 );

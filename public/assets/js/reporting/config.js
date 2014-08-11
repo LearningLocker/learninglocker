@@ -9,10 +9,12 @@ require.config({
     'backbone.wreqr': '../libs/backbone/backbone.wreqr',
     'backbone.babysitter' : '../libs/backbone/backbone.babysitter',
     'bootstrap': '../libs/bootstrap/bootstrap.min',
+    'datepicker': '../libs/bootstrap/bootstrap-datepicker',
     'raphael': '../libs/morrisjs/raphael.min',
     'morris': '../libs/morrisjs/morris.min',
     'typeahead': '../libs/typeahead/typeahead.min',
-    'custom': 'lib/reporting'
+    'reporting': 'lib/reporting',
+    'datepicker_custom': 'lib/datepicker'
   },
   shim : {
     jquery : {
@@ -41,10 +43,14 @@ require.config({
       deps: ["jquery", "bootstrap"],
       exports: "Typeahead"
     },
-    custom: {
-      deps: ["typeahead"],
-      exports: "Reporting"
+    datepicker: {
+      deps: ["jquery", "bootstrap"],
+      exports: "Datepicker"
     },
+    reporting: {
+      deps: ["jquery", "typeahead"],
+      exports: "Reporting"
+    }
   },
 });
 

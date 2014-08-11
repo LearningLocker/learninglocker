@@ -78,6 +78,7 @@ class EloquentLrsRepository implements LrsRepository {
     $lrs = $this->find($id);
 
     //first delete all statements
+    \Statement::where('lrs._id', $id)->delete();
 
     //now delete the lrs
     return $lrs->delete();

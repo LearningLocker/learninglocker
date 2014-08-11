@@ -25,12 +25,15 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
   /**
    * Get analytic data.
    *
+   * @param string $lrs 
    * @param object $options
+   * @param string $return | This is the return value expected. Analytics or raw statements.
+   * @param array  $sections | If the $return value is statements, what section(s) of statements. Default = all.
    *
    * @return array
    *
    **/
-  public function analytics( $lrs, $options ){
+  public function analytics( $lrs, $options, $return='timedGrouping', $sections=[] ){
 
     $since = $until = '';
 
@@ -41,8 +44,11 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
       $filter = array();
     }
 
-    //parse over the filter and check for conditions
-    $filter = $this->setFilter( $filter );
+    //parse filter and check for conditions if not $return = statements
+    //as returning statement does not use mongodb aggregation
+    if( $return != 'statements' ){
+      $filter = $this->setFilter( $filter );
+    }
 
     //set type if passed
     if( isset( $options['type'] ) ){
@@ -79,7 +85,13 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
     }
 
     //get the data
-    $data = $this->query->timedGrouping( $lrs, $filters, $interval, $type );
+
+    //timedGrouping or statements?
+    if( $return == 'statements' ){
+      $data = $this->query->selectStatements( $lrs, $filters, true, $sections );
+    }else{
+      $data = $this->query->timedGrouping( $lrs, $filters, $interval, $type );
+    }
 
     if( !$data || isset($data['errmsg']) ){
       return array('success' => false, 'message' => $data['errmsg'] );
@@ -211,7 +223,7 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
         foreach( $options as $key => $value ){
           $in_statement = array();
           //loop through this value to check for nested array
-          if( is_array($value) ){
+          if( is_array($value) && sizeof($value) > 0 ){
             //is it an in request, or a between two values request?
             if( $value[0] == '<>' ){
               $set_inbetween[$key] = array('$gte' => (int) $value[1], '$lte' => (int) $value[2]);
@@ -222,6 +234,7 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
               $set_in[] = array($key => array('$in' => $in_statement));
             }
           }else{
+            //if not an array or an empty array, set key/value
             $set_in[] = array( $key => $value );
           }
         
@@ -266,11 +279,11 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
    **/
   private function buildDates($since='', $until=''){
     if( $since != '' && $until != ''){
-      $dates = array( 'created_at' => array( '$gte' => $since, '$lte' => $until));
+      $dates = array( 'timestamp' => array( '$gte' => $since, '$lte' => $until));
     }elseif( $since != '' ){
-      $dates = array( 'created_at' => array( '$gte' => $since ));
+      $dates = array( 'timestamp' => array( '$gte' => $since ));
     }elseif( $until != '' ){
-      $dates = array( 'created_at' => array( '$lte' => $until));
+      $dates = array( 'timestamp' => array( '$lte' => $until));
     }else{
       $dates = array();
     }
