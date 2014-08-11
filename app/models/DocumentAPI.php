@@ -72,7 +72,11 @@ class DocumentAPI extends Eloquent {
         if( !$this->exists ){
           $this->content = $content;
         } else {
-          \App::abort(400, sprintf('Cannot amend existing %s document with a string', $this->contentType) );
+          if ($method === 'PUT') {
+            $this->content = $content;
+          } else {
+            \App::abort(400, sprintf('Cannot amend existing %s document with a string', $this->contentType) );
+          }
         }
       break;
 
