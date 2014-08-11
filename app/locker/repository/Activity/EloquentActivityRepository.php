@@ -31,19 +31,19 @@ class EloquentActivityRepository implements ActivityRepository {
 
     //if the object activity exists, remove and update with recent
     if( $exists ){
-      \Activity::where('_id', $activity_id)->delete(); 
+      \Activity::where('activityId', $activity_id)->delete(); 
     }
 
     //save record
-    \Activity::insert(
-      array('_id'        => $activity_id, 
-            'definition' => $activity_def)
-    );
+    \Activity::insert([
+      'activityId' => $activity_id, 
+      'definition' => $activity_def
+    ]);
 
   }
 
   public function getActivity( $activity_id ){
-    return  \Activity::where('_id', $activity_id)->first();
+    return  \Activity::where('activityId', $activity_id)->first();
   }
 
 }
