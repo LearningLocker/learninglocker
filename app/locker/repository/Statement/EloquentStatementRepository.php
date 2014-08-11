@@ -151,12 +151,18 @@ class EloquentStatementRepository implements StatementRepository {
     //Full tincan statement validation to make sure the statement conforms
     
     $saved_ids = array();
+    $site = \Site::first();
+    $authority = [
+      "name" => $site->name,
+      "mbox" => "mailto:" . $site->email,
+      "objectType" => "Agent"
+    ]; 
     foreach( $statements as &$statement ){ //loop and amend - return on fail
 
       $verify = new \app\locker\statements\xAPIValidation();
 
       //run full validation
-      $return = $verify->runValidation( $statement, \Site::first() );
+      $return = $verify->runValidation( $statement, $authority );
 
       if( $return['status'] == 'failed' ){
         return array( 'success' => 'false',  'message' => $return['errors'] );

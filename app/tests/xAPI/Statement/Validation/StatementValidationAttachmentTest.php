@@ -10,7 +10,11 @@ class StatementValidationAttachmentTest extends BaseStatementValidationTest
     $results = $this->exec($this->getFixturePath() . '/Invalid/Attachment/content-type-is-not-string.json');
     $this->assertEquals('failed', $results['status']);
     $this->assertEquals(
-      '`contentType` is not a valid Internet Media Type in attachment', trim($results['errors'][0])
+      \Lang::get('xAPIValidation.errors.type', array(
+        'key' => 'contentType',
+        'section' => 'attachment',
+        'type' => 'Internet Media Type'
+      )), trim($results['errors'][0])
     );
   }
 
@@ -19,7 +23,11 @@ class StatementValidationAttachmentTest extends BaseStatementValidationTest
     $results = $this->exec($this->getFixturePath() . '/Invalid/Attachment/length-is-not-integer.json');
     $this->assertEquals('failed', $results['status']);
     $this->assertEquals(
-      '`length` is not a valid number in attachment', trim($results['errors'][0])
+      \Lang::get('xAPIValidation.errors.type', array(
+        'key' => 'length',
+        'section' => 'attachment',
+        'type' => 'number'
+      )), trim($results['errors'][0])
     );
   }
 
@@ -28,7 +36,10 @@ class StatementValidationAttachmentTest extends BaseStatementValidationTest
     $results = $this->exec($this->getFixturePath() . '/Invalid/Attachment/missing-sha2.json');
     $this->assertEquals('failed', $results['status']);
     $this->assertEquals(
-      '`sha2` is a required key and is not present in attachment', trim($results['errors'][0])
+      \Lang::get('xAPIValidation.errors.required', array(
+        'key' => 'sha2',
+        'section' => 'attachment'
+      )), trim($results['errors'][0])
     );
   }
 
@@ -59,7 +70,10 @@ class StatementValidationAttachmentTest extends BaseStatementValidationTest
     $results = $this->exec($this->getFixturePath() . '/Invalid/Attachment/missing-usage-type.json');
     $this->assertEquals('failed', $results['status']);
     $this->assertEquals(
-      '`usageType` is a required key and is not present in attachment', trim($results['errors'][0])
+      \Lang::get('xAPIValidation.errors.required', array(
+        'key' => 'usageType',
+        'section' => 'attachment'
+      )), trim($results['errors'][0])
     );
   }
 

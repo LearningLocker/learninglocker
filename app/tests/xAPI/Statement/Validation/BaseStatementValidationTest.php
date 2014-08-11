@@ -21,11 +21,12 @@ abstract class BaseStatementValidationTest extends PHPUnit_Framework_TestCase
   protected function exec($path)
   {
     $json = file_get_contents($path);
-    $auth = [
-      'name' => "John Smith",
-      'email' => "test@learninglocker.co.uk",
-    ];
     $this->json_input = json_decode($json, true);
+    $auth = isset($this->json_input['authority']) ? $this->json_input['authority'] : [
+      'name' => "John Smith",
+      'mbox' => "mailto:test@learninglocker.co.uk",
+      'objectType' => "Agent"
+    ];
     $manager = new xAPIValidation();
     return $manager->runValidation($this->json_input, $auth);
   }
