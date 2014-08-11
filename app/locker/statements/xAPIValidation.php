@@ -86,21 +86,23 @@ class xAPIValidation {
   public function getStarted( $statement ){
 
     //check statement is set, is an array and not empty
-    if( !$this->assertionCheck(
-          (isset($statement) && !empty($statement) && is_array($statement)),
-          'The statement doesn\'t exist or is not in the correct format.')) return false;
+    if ( !$this->assertionCheck(
+      (isset($statement) && !empty($statement) && is_array($statement)),
+      \Lang::get('xAPIValidation.errors.incorrect')
+    )) return false;
 
     $data = $this->checkParams( 
-      array('id'         => array('uuid', false), 
-            'actor'      => array('array', true),
-            'verb'       => array('array', true), 
-            'object'     => array('array', true), 
-            'result'     => array('emptyArray', false), 
-            'context'    => array('emptyArray', false),
-            'timestamp'  => array('timestamp', false),
-            'authority'  => array('emptyArray', false),
-            'version'    => array('string', false), 
-            'attachments' => array('emptyArray', false)
+      array(
+        'id'         => array('uuid', false), 
+        'actor'      => array('array', true),
+        'verb'       => array('array', true), 
+        'object'     => array('array', true), 
+        'result'     => array('emptyArray', false), 
+        'context'    => array('emptyArray', false),
+        'timestamp'  => array('timestamp', false),
+        'authority'  => array('emptyArray', false),
+        'version'    => array('string', false), 
+        'attachments' => array('emptyArray', false)
       ), $statement, 'core statement'
     );
 
@@ -291,11 +293,8 @@ class xAPIValidation {
    *
    */
   public function validateAuthority( $authority ){
-    $this->statement['authority'] = array(
-      'name'         =>  $authority['name'],
-      'mbox'         =>  'mailto:' . $authority['email'],
-      'objectType'   =>  'Agent'
-    );
+    $this->statement['authority'] = $authority;
+    return $this->validateActor($authority, 2);
   }
 
   /**
@@ -408,7 +407,8 @@ class xAPIValidation {
 
           $this->assertionCheck(
             (in_array($definition['interactionType'], $allowed_interaction_types)),
-            'Object: definition: interactionType is not valid.');
+            \Lang::get('xAPIValidation.errors.object.interactionType')
+          );
         }
 
         if( isset($definition['choices'], $definition['scale'], $definition['source'], $definition['target'],$definition['steps']) ){
@@ -421,19 +421,23 @@ class xAPIValidation {
             //check activity object definition only has valid keys.
             $is_valid = $this->checkKeys($check_valid_keys, $definition[$l], 'Object Definition' );
 
-            if( !$this->assertionCheck(($definition_valid === true),
-              'Object: definition: It has an invalid property.') ) return false;
+            if(!$this->assertionCheck(
+              ($definition_valid === true),
+              \Lang::get('xAPIValidation.errors.object.invalidProperty')
+            )) return false;
 
             $this->assertionCheck(
               (array_key_exists('id', $definition[$l]) || array_key_exists('description', $definition[$l])),
-              'Object: definition: It needs to be an array with keys id and description.');
+              \Lang::get('xAPIValidation.errors.object.definition')
+            );
           }
 
         }
 
         $this->assertionCheck(
           (!isset($definition['extensions']) || is_array($definition['extensions'])),
-          'Object: definition: extensions need to be an object.');
+          \Lang::get('xAPIValidation.errors.object.extensions')
+        );
 
       }
 
@@ -672,7 +676,7 @@ class xAPIValidation {
    * @return boolean 
    *
    **/
-  public function validActorIdentifier( $actor_keys ){
+  public function validActorIdentifier( $actor_keys, $required=true ){
 
     $identifier_valid = false;
     $count = 0;
@@ -693,7 +697,7 @@ class xAPIValidation {
       $this->setError(\Lang::get('xAPIValidation.errors.actor.one')); 
     }
 
-    if( !$identifier_valid ){
+    if( !$identifier_valid && $required ){
       $this->setError(\Lang::get('xAPIValidation.errors.actor.valid')); 
     }
     
@@ -712,7 +716,10 @@ class xAPIValidation {
     $valid = true;
     foreach( $submitted_keys as $k ){
       if( !$this->assertionCheck(in_array($k, $valid_keys),
-          sprintf( "`%s` is not a permitted key in %s", $k, $section ))) $valid=false;
+          \Lang::get('xAPIValidation.errors.property', array(
+            'key' => $k,
+            'section' => $section
+          )))) $valid=false;
     }
     return $valid;
   }
@@ -771,7 +778,7 @@ class xAPIValidation {
     //if there are foriegn keys, set required error message
     if( !empty($check_keys) ){
       foreach( $check_keys as $k => $v ){
-        $this->setError(\Lang::get('xAPIValidation.errors.actor.one', array(
+        $this->setError(\Lang::get('xAPIValidation.errors.property', array(
           'key' => $k,
           'section' => $section
         )), $fail_status='failed', $value='' );
@@ -792,7 +799,11 @@ class xAPIValidation {
         //check data value is not null apart from in extensions
         if( $key != 'extensions' ){
           if( !$this->assertionCheck(!is_null($data[$key]),
-              sprintf( "`%s` in '%s' contains a NULL value which is not permitted.", $key, $section ))){
+            \Lang::get('xAPIValidation.errors.null', array(
+              'key' => $key,
+              'section' => $section
+            ))
+          )) {
             $valid = false;
           }
         }
@@ -807,7 +818,11 @@ class xAPIValidation {
       }else{
         //check to see if the key was required. If yes, set valid to false and set error.
         if( !$this->assertionCheck( !$required,
-            sprintf( "`%s` is a required key and is not present in %s", $key, $section ))){
+          \Lang::get('xAPIValidation.errors.required', array(
+            'key' => $key,
+            'section' => $section
+          ))
+        )) {
           $valid = false;
         }
       }
@@ -831,44 +846,98 @@ class xAPIValidation {
 
     switch($expected_type){
       case 'string':
-        $this->assertionCheck(is_String($value),
-        sprintf( "`%s` is not a valid string in " . $section, $key ));
+        $this->assertionCheck(
+          is_String($value),
+          \Lang::get('xAPIValidation.errors.type', array(
+            'key' => $key,
+            'section' => $section,
+            'type' => 'string'
+          ))
+        );
       break;
       case 'array':
         //used when an array is required 
-        $this->assertionCheck((is_array($value) && !empty($value)),
-        sprintf( "`%s` is not a valid array in " . $section, $key ));
+        $this->assertionCheck(
+          (is_array($value) && !empty($value)),
+          \Lang::get('xAPIValidation.errors.type', array(
+            'key' => $key,
+            'section' => $section,
+            'type' => 'array'
+          ))
+        );
       break;
       case 'emptyArray':
         //used if value can be empty but if available needs to be an array
         if( $value != '' ){
-          $this->assertionCheck(is_array($value),
-            sprintf( "`%s` is not a valid array in " . $section, $key ));
+          $this->assertionCheck(
+            is_array($value),
+            \Lang::get('xAPIValidation.errors.type', array(
+              'key' => $key,
+              'section' => $section,
+              'type' => 'array'
+            ))
+          );
         }
       break;
       case 'object':
-        $this->assertionCheck(is_object( $value ),
-        sprintf( "`%s` is not a valid object in " . $section, $key ));
+        $this->assertionCheck(
+          is_object( $value ),
+          \Lang::get('xAPIValidation.errors.type', array(
+            'key' => $key,
+            'section' => $section,
+            'type' => 'object'
+          ))
+        );
       break;
       case 'iri':
-        $this->assertionCheck($this->validateIRI($value),
-        sprintf( "`%s` is not a valid IRI in " . $section, $key ));
+        $this->assertionCheck(
+          $this->validateIRI($value),
+          \Lang::get('xAPIValidation.errors.type', array(
+            'key' => $key,
+            'section' => $section,
+            'type' => 'IRI'
+          ))
+        );
       break;
       case 'iso8601Duration':
-        $this->assertionCheck($this->validateISO8601($value),
-        sprintf( "`%s` is not a valid iso8601 Duration format in " . $section, $key ));
+        $this->assertionCheck(
+          $this->validateISO8601($value),
+          \Lang::get('xAPIValidation.errors.type', array(
+            'key' => $key,
+            'section' => $section,
+            'type' => 'iso8601 Duration format'
+          ))
+        );
       break;
       case 'timestamp':
-        $this->assertionCheck($this->validateTimestamp($value),
-        sprintf( "`%s` is not a valid timestamp in " . $section, $key ));
+        $this->assertionCheck(
+          $this->validateTimestamp($value),
+          \Lang::get('xAPIValidation.errors.type', array(
+            'key' => $key,
+            'section' => $section,
+            'type' => 'timestamp'
+          ))
+        );
       break;
       case 'uuid':
-        $this->assertionCheck($this->validateUUID($value),
-        sprintf( "`%s` is not a valid UUID in " . $section, $key ));
+        $this->assertionCheck(
+          $this->validateUUID($value),
+          \Lang::get('xAPIValidation.errors.type', array(
+            'key' => $key,
+            'section' => $section,
+            'type' => 'UUID'
+          ))
+        );
       break;
       case 'irl':
-        $this->assertionCheck((!filter_var($value, FILTER_VALIDATE_URL)),
-        sprintf( "`%s` is not a valid irl in " . $section, $key ));
+        $this->assertionCheck(
+          (!filter_var($value, FILTER_VALIDATE_URL)),
+          \Lang::get('xAPIValidation.errors.type', array(
+            'key' => $key,
+            'section' => $section,
+            'type' => 'irl'
+          ))
+        );
       break;
       case 'lang_map':
         $this->assertionCheck(
@@ -889,33 +958,73 @@ class xAPIValidation {
         );
       break;
       case 'boolean':
-        $this->assertionCheck(is_bool($value),
-        sprintf( "`%s` is not a valid boolean " . $section, $key ));
+        $this->assertionCheck(
+          is_bool($value),
+          \Lang::get('xAPIValidation.errors.type', array(
+            'key' => $key,
+            'section' => $section,
+            'type' => 'boolean'
+          ))
+        );
       break;
       case 'score':
-        $this->assertionCheck(!is_string($value) && (is_int($value) || is_float($value)),
-        sprintf( " `%s` needs to be a number in " . $section, $key ));
+        $this->assertionCheck(
+          !is_string($value) && (is_int($value) || is_float($value)),
+          \Lang::get('xAPIValidation.errors.type', array(
+            'key' => $key,
+            'section' => $section,
+            'type' => 'number'
+          ))
+        );
       break;
       case 'numeric':
-        $this->assertionCheck(is_numeric($value),
-        sprintf( "`%s` is not numeric in " . $section, $key ));
+        $this->assertionCheck(
+          is_numeric($value),
+          \Lang::get('xAPIValidation.errors.numeric', array(
+            'key' => $key,
+            'section' => $section
+          ))
+        );
       break;
       case 'int':
-        $this->assertionCheck(is_int($value),
-        sprintf( "`%s` is not a valid number in " . $section, $key ));
+        $this->assertionCheck(
+          is_int($value),
+          \Lang::get('xAPIValidation.errors.type', array(
+            'key' => $key,
+            'section' => $section,
+            'type' => 'number'
+          ))
+        );
       break;
       case 'integer':
-        $this->assertionCheck(is_integer($value),
-        sprintf( "`%s` is not a valid integer in " . $section, $key ));
+        $this->assertionCheck(
+          is_integer($value),
+          \Lang::get('xAPIValidation.errors.type', array(
+            'key' => $key,
+            'section' => $section,
+            'type' => 'integer'
+          ))
+        );
       break;
       case 'contentType':
-        $this->assertionCheck($this->validateInternetMediaType($value),
-        sprintf( "`%s` is not a valid Internet Media Type in " . $section, $key ));
+        $this->assertionCheck(
+          $this->validateInternetMediaType($value),
+          \Lang::get('xAPIValidation.errors.type', array(
+            'key' => $key,
+            'section' => $section,
+            'type' => 'Internet Media Type'
+          ))
+        );
       break;
       case 'mailto':
         $mbox_format = substr($value, 0, 7);
-        $this->assertionCheck($mbox_format == 'mailto:' && is_string($value),
-          sprintf( "`%s` is not in the correct format in " . $section, $key ));
+        $this->assertionCheck(
+          $mbox_format == 'mailto:' && is_string($value),
+          \Lang::get('xAPIValidation.errors.format', array(
+            'key' => $key,
+            'section' => $section
+          ))
+        );
       break;
     }
 

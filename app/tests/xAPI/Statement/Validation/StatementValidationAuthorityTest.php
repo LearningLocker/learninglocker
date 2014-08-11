@@ -9,9 +9,7 @@ class StatementValidationAuthorityTest extends BaseStatementValidationTest
   {
     $results = $this->exec($this->getFixturePath() . '/Invalid/Authority/Member/wrong-object-type.json');
     $this->assertEquals('failed', $results['status']);
-    $this->assertEquals(
-      'Invalid object with characteristics of a Group when an Agent was expected.', trim($results['errors'][0])
-    );
+    $this->assertEquals(\Lang::get('xAPIValidation.errors.group.groups'), trim($results['errors'][0]));
   }
 
 }

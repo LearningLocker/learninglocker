@@ -15,8 +15,24 @@ return array(
 			'one' => 'A statement can only set one actor functional identifier.',
 			'valid' => 'A statement must have a valid actor functional identifier.'
 		),
-		'property' => ':key is not a permitted property in :section.',
-		'langMap' => ':key is not a valid language map in :section.',
-		'base64' => ':key is not a valid string with base64 contents in :section.'
+		'required' => '`:key` is a required key and is not present in :section',
+		'property' => '`:key` is not a permitted property in :section.',
+		'langMap' => '`:key` is not a valid language map in :section.',
+		'base64' => '`:key` is not a valid string with base64 contents in :section.',
+		'incorrect' => 'The statement doesn\'t exist or is not in the correct format.',
+		'null' => '`:key` in :section contains a NULL value which is not permitted.',
+		'object' => array(
+			'interactionType' => 'Object: definition: interactionType is not valid.',
+			'invalidProperty' => 'Object: definition: It has an invalid property.',
+			'definition' => 'Object: definition: It needs to be an array with keys id and description.',
+			'extensions' => 'Object: definition: extensions need to be an object.'
+		),
+		'group' => array(
+			'groups' => 'A group cannot contain groups.',
+			'limit' => 'The group can only have :limit members.'
+		),
+		'type' => '`:key` is not a valid :type in :section.',
+		'numeric' => '`:key` is not numeric in :section.',
+		'format' => '`:key` is not in the correct format in :section.'
 	)
 );
