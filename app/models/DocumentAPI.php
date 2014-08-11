@@ -45,7 +45,7 @@ class DocumentAPI extends Eloquent {
       case "application/json":
 
         $request_content = json_decode($content, TRUE);
-        if( is_object( $request_content ) ){ //check that the content type of the request matches the content
+        if( !is_array( $request_content ) ){ //check that the content type of the request matches the content
           \App::abort(400, 'JSON detected without a correct Content-Type sent');
         }
 
