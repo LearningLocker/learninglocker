@@ -165,6 +165,101 @@ class xAPIValidation {
   }
 
   /**
+   * Validate agent.
+   * @requirements https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#actor
+   *
+   * @param array $agent
+   */
+  public function validateAgent($agent) {
+    // Validate params (returns false if invalid).
+    if (!$this->checkParams(array(
+        'mbox'         => array('mailto'),
+        'name'         => array('string'),
+        'objectType'   => array('string'),
+        'mbox_sha1sum' => array('string'),
+        'openID'       => array('irl'),
+        'account'      => array('array')
+      ), $agent, 'actor'
+    )) return false; // Invalid params.
+
+    // Validate identifier.
+    if (!$this->validActorIdentifier(array_keys($agent))) return false;
+
+    return true; // Valid agent.
+  }
+
+  /**
+   * Validate group.
+   * @requirements https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#actor
+   *
+   * @param array $group
+   */
+  public function validateGroup($group, $groupLimit = null) {
+    $validIdentifier = $this->validActorIdentifier(array_keys($group), false);
+    $validGroup = $validIdentifier ? $this->validateIdentifiedGroup($group) : $this->validateAnonymousGroup($group);
+
+    if ($validGroup && isset($group['member'])) {
+      if (!is_null($groupLimit) && count($group['member']) != $groupLimit) {
+        $this->setError(\Lang::get('xAPIValidation.errors.group.limit', array(
+          'limit' => $groupLimit
+        )));
+        return false;
+      }
+
+      foreach ($group['member'] as $member) {
+        if ($member['objectType'] != 'Agent') {
+          $this->setError(\Lang::get('xAPIValidation.errors.group.groups'));
+          $validGroup = false;
+        } else if ($this->validateAgent($member)) {
+          $validGroup = false;
+        }
+      }
+    }
+
+    return $validGroup;
+  }
+
+  /**
+   * Validate agent.
+   * @requirements https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#actor
+   *
+   * @param array $group
+   */
+  public function validateIdentifiedGroup($group) {
+    // Validate params (returns false if invalid).
+    if (!$this->checkParams(array(
+        'mbox'         => array('mailto'),
+        'name'         => array('string'),
+        'objectType'   => array('string', true),
+        'mbox_sha1sum' => array('string'),
+        'openID'       => array('irl'),
+        'member'      => array('array'),
+        'account'      => array('array')
+      ), $group, 'actor'
+    )) return false; // Invalid params.
+    
+    return true; // Valid group.
+  }
+
+  /**
+   * Validate group.
+   * @requirements https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#actor
+   *
+   * @param array $group
+   */
+  public function validateAnonymousGroup($group) {
+    // Validate params (returns false if invalid).
+    if (!$this->checkParams(array(
+        'name'         => array('string'),
+        'objectType'   => array('string', true),
+        'member'      => array('array', true)
+      ), $group, 'actor'
+    )) return false; // Invalid params.
+
+    return true; // Valid group.
+  }
+
+  /**
    * Validate actor. Mandatory.
    * @requirements https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#actor
    * 
@@ -173,44 +268,16 @@ class xAPIValidation {
    * @todo check only one functional identifier is passed
    *
    */
-  public function validateActor( $actor ){
+  public function validateActor($actor, $groupLimit = null){
+    $actor['objectType'] = isset($actor['objectType']) ? $actor['objectType'] : 'Agent';
 
-    $actor_valid = $this->checkParams( 
-                                  array(
-                                    'mbox'         => array('mailto'),
-                                    'name'         => array('string'),
-                                    'objectType'   => array('string'),
-                                    'mbox_sha1sum' => array('string'),
-                                    'openID'       => array('irl'),
-                                    'account'      => array('array')
-                                  ), $actor, 'actor'
-                                );
-
-    if( $actor_valid !== true ) return false; //end here if not true
-
-    //Check that only one functional identifier exists and is permitted
-    $identifier_valid = $this->validActorIdentifier( array_keys($actor) );
-
-    if( $identifier_valid != true ) return false; //end here if not true
-
-    //check, if objectType is set, that it is either Group or Agent
-    if( isset($actor['objectType']) ){
-      if( !$this->assertionCheck( ($actor['objectType'] == 'Agent' || 
-                                   $actor['objectType'] == 'Group' ), 
-        'The Actor objectType must be Agent or Group.') ) return false;
-
-      if( $actor['objectType'] == 'Group' ){
-
-        //if objectType Group and no functional identifier: unidentified group
-        if( $identifier_valid === false ){
-          //Unidentified group so it must have an array containing at least one member
-          if( !$this->assertionCheck( (isset($actor['member']) && is_array($actor['member'])),
-              'As Actor objectType is Group, it must contain a members array.') ) return false;
-        }
-
-      }
+    switch ($actor['objectType']) {
+      case 'Agent': return $this->validateAgent($actor);
+      case 'Group': return $this->validateGroup($actor, $groupLimit);
+      default:
+        $this->setError('The actor\'s objectType must be Agent or Group');
+        return false;
     }
-
   }
 
   /**
