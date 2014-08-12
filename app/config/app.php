@@ -114,6 +114,7 @@ return array(
     'Way\Generators\GeneratorsServiceProvider',
     'Barryvdh\Cors\CorsServiceProvider',
     'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
+    'JsLocalization\JsLocalizationServiceProvider'
 
   ),
 
