@@ -264,7 +264,7 @@ class StatementsController extends BaseController {
           $url = $url . '&offset=' . $offset;
         }
       }else{
-        if( isset($this->params) ){
+        if( sizeof($this->params) > 0 ){
           $url = $url . '&offset=' . $offset;
         }else{
           $url = $url . '?offset=' . $offset;

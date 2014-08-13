@@ -1,0 +1,29 @@
+{
+    "id": "54321876-b88b-4b20-a0a5-a4c32391aaa0",
+    "actor": {
+        "mbox": "mailto:zachary+pierce@gmail.com"
+    },
+    "verb": {
+        "id": "http:\/\/adlnet.gov\/expapi\/verbs\/experienced",
+        "display": {
+            "und": "experienced"
+        }
+    },
+    "object": {
+        "id": "http://ZackPierce.github.io/xAPI-Validator-JS",
+        "objectType": "Activity"
+    },
+    "authority": {
+        "objectType": "Group",
+        "member": [
+            {
+                "objectType": "Agent",
+                "mbox": "mailto:bob@example.com"
+            },
+            {
+                "objectType": "Group",
+                "mbox": "mailto:group@example.com"
+            }
+        ]
+    }
+}

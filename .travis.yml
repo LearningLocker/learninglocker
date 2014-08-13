@@ -1,0 +1,18 @@
+language: php
+
+php:
+  - 5.5
+
+services:
+  - mongodb
+
+install:
+  - composer install --prefer-source --no-interaction --dev
+  - printf "\n" | pecl install mongo
+
+before_script:
+  - sleep 30
+  - php artisan generate:migration add_statements
+  - php artisan migrate
+
+script: ./vendor/bin/phpunit

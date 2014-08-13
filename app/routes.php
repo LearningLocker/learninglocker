@@ -486,3 +486,24 @@ App::missing(function($exception){
     return Response::view( 'errors.missing', array( 'message'=>$exception->getMessage() ), 404);
   }
 });
+
+App::error(function(Exception $exception)
+{
+  Log::error($exception);
+
+  if( Request::segment(1) == "data" || Request::segment(1) == "api" ){
+    $error = array(
+        'error'     =>  true,
+        'message'   =>  $exception->getMessage(),
+        'code'      =>  $exception->getStatusCode()
+    );
+
+    if( Config::get('app.debug') ){
+      $error['trace'] = $exception->getTrace();
+    }
+
+    return Response::json( $error, $exception->getStatusCode());
+  } else {
+    echo "Status: ".$exception->getStatusCode()." Error: ".$exception->getMessage();
+  }
+});

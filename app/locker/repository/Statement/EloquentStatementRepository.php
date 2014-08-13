@@ -32,11 +32,18 @@ class EloquentStatementRepository implements StatementRepository {
    * Count statements for any give lrs
    *
    * @param string Lrs
+   * @param array parameters Any parameters for filtering
    * @return count
    *
    **/
-  public function count( $lrs ){
-    return $this->statement->where('lrs._id', $lrs)->remember(5)->count();
+  public function count( $lrs, $parameters=null ){
+    $query = $this->statement->where('lrs._id', $lrs);
+
+    if( !is_null($parameters)){
+      $this->addParameters( $query, $parameters, true );
+    }
+
+    return $query->remember(5)->count();
   }
 
   /**
@@ -144,12 +151,18 @@ class EloquentStatementRepository implements StatementRepository {
     //Full tincan statement validation to make sure the statement conforms
     
     $saved_ids = array();
+    $site = \Site::first();
+    $authority = [
+      "name" => $site->name,
+      "mbox" => "mailto:" . $site->email,
+      "objectType" => "Agent"
+    ]; 
     foreach( $statements as &$statement ){ //loop and amend - return on fail
 
       $verify = new \app\locker\statements\xAPIValidation();
 
       //run full validation
-      $return = $verify->runValidation( $statement, \Site::first() );
+      $return = $verify->runValidation( $statement, $authority );
 
       if( $return['status'] == 'failed' ){
         return array( 'success' => 'false',  'message' => $return['errors'] );
@@ -272,7 +285,7 @@ class EloquentStatementRepository implements StatementRepository {
    * @param array  $parameters The parameters to add
    *
    */
-  private function addParameters( $statements, $parameters ){
+  private function addParameters( $statements, $parameters, $count=false ){
 
     //Check if agent has been passed
     if( isset($parameters['agent']) ){
@@ -341,28 +354,29 @@ class EloquentStatementRepository implements StatementRepository {
     }
 
     //@todo attachments
+    if(!$count){
+      $server_statement_limit = 100;
 
-    $server_statement_limit = 100;
-
-    if( isset( $parameters['limit'] ) ){
-      $limit = intval($parameters['limit']);
-      if( $limit === 0 ){
-        $statements->take( $server_statement_limit ); //server set limit
+      if( isset( $parameters['limit'] ) ){
+        $limit = intval($parameters['limit']);
+        if( $limit === 0 ){
+          $statements->take( $server_statement_limit ); //server set limit
+        } else {
+          $statements->take( $limit );
+        }
       } else {
-        $statements->take( $limit );
+        $statements->take( $server_statement_limit );
       }
-    } else {
-      $statements->take( $server_statement_limit );
-    }
-         
-    if( isset( $parameters['offset'] ) ){
-      $statements->skip( $parameters['offset'] );
-    }
+           
+      if( isset( $parameters['offset'] ) ){
+        $statements->skip( $parameters['offset'] );
+      }
 
-    if( isset( $parameters['ascending'] ) && $parameters['ascending'] == 'true' ){
-      $statements->orderBy('statement.stored', 'asc');
-    }else{
-      $statements->orderBy('statement.stored', 'desc');
+      if( isset( $parameters['ascending'] ) && $parameters['ascending'] == 'true' ){
+        $statements->orderBy('statement.stored', 'asc');
+      }else{
+        $statements->orderBy('statement.stored', 'desc');
+      }
     }
 
     return $statements;

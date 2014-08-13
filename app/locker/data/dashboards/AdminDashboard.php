@@ -77,7 +77,7 @@ class AdminDashboard extends \app\locker\data\BaseData {
    *
    **/
   private function statementDays(){
-    $first_day = \DB::collection('statements')->first();
+    $first_day = \DB::collection('statements')->orderBy("timestamp")->first();
     if( $first_day ){
       $datetime1 = date_create( gmdate("Y-m-d", $first_day['timestamp']->sec) );
       $datetime2 = date_create( gmdate("Y-m-d", time()) );
@@ -118,15 +118,37 @@ class AdminDashboard extends \app\locker\data\BaseData {
    *
    **/
   public function learnerAvgCount(){
-    $count = $this->actorCount();
     $days  = $this->statementDays();
+    
+    // Get actor count
+    $set_id = array( 'day' => array( '$dayOfYear' => '$timestamp' ), 'statement_actor' => '$statement.actor');
+    $statements = $this->db->statements->aggregate(
+      array(
+        '$group' => array(
+          '_id'   => $set_id,
+        )
+      ),
+      array(
+        '$group' => array(
+          '_id'   => null,
+          'count' => array('$sum' => 1),
+        )
+      )
+    );
+    
+    $count = 0;
+    if (count($statements["result"])) {
+      $count = $statements["result"][0]["count"];
+    }
+
     if( $days == 0 ){
       //this will be the first day, so increment to 1
       $days = 1;
     }
     $avg   = 0;
     if( $count && $days ){
-      $avg = round( $count / $days );
+      $rounding_dp = ($avg < 10) ? 2 : 0;
+      $avg = round($avg, $rounding_dp); 
     }
     return $avg;
   }
@@ -152,14 +174,31 @@ class AdminDashboard extends \app\locker\data\BaseData {
             );
 
     //set statements for graphing
-    $data = '';
+    $data = array();
     if( isset($statements['result']) ){
       foreach( $statements['result'] as $s ){
-        $data .= json_encode( array( "y" => substr($s['date'][0],0,10), "a" => $s['count'], 'b' => count($s['actor'])) ) . ' ';
+        $date = substr($s['date'][0],0,10);
+        $data[$date] = json_encode( array( "y" => $date, "a" => $s['count'], 'b' => count($s['actor'])) );
+      }
+    }
+    
+    // Add empty point in data (fixes issue #265).
+    $dates = array_keys($data);
+
+    if( count($dates) > 0 ){
+      sort($dates);
+      $start = strtotime(reset($dates));
+      $end = strtotime(end($dates));
+
+      for($i=$start; $i<=$end; $i+=24*60*60) { 
+        $date = date("Y-m-d", $i);
+        if(!isset($data[$date])) {
+          $data[$date] = json_encode( array( "y" => $date, "a" => 0, 'b' => 0 ) );
+        }
       }
     }
 
-    return trim( $data );
+    return trim( implode(" ", $data) );
 
   }
 

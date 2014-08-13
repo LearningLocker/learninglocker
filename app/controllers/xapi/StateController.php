@@ -96,10 +96,10 @@ class StateController extends DocumentController {
     $store = $this->document->store( $this->lrs->_id, $this->document_type, $data, $updated, $this->method );
 
     if( $store ){
-      return \Response::json( array( 'ok', 204 ) );
+      return \Response::json( array( 'ok' ), 204 );
     }
 
-    return \Response::json( array( 'error', 400 ) );
+    return \Response::json( array( 'error' ), 400 );
 
   }
 
@@ -140,10 +140,10 @@ class StateController extends DocumentController {
     $success = $this->document->delete( $this->lrs->_id, $this->document_type, $data, $single_delete );
     
     if( $success ){
-      return \Response::json( array( 'ok', 204 ) );
+      return \Response::json( array( 'ok' ), 204 );
     }
 
-    return \Response::json( array( 'error', 400 ) );
+    return \Response::json( array( 'error' ), 400 );
   }
 
 }
