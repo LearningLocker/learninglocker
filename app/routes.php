@@ -489,20 +489,21 @@ App::missing(function($exception){
 
 App::error(function(Exception $exception)
 {
-    if( Request::segment(1) == "data" || Request::segment(1) == "api" ){
-      $error = array(
-          'error'     =>  true,
-          'message'   =>  $exception->getMessage(),
-          'code'      =>  $exception->getStatusCode()
-      );
+  Log::error($exception);
 
-      if( Config::get('app.debug') ){
-        $error['trace'] = $exception->getTrace();
-      }
+  if( Request::segment(1) == "data" || Request::segment(1) == "api" ){
+    $error = array(
+        'error'     =>  true,
+        'message'   =>  $exception->getMessage(),
+        'code'      =>  $exception->getStatusCode()
+    );
 
-      return Response::json( $error, $exception->getStatusCode());
-    } else {
-      Log::error($exception);
-      echo "Status: ".$exception->getStatusCode()." Error: ".$exception->getMessage();
+    if( Config::get('app.debug') ){
+      $error['trace'] = $exception->getTrace();
     }
+
+    return Response::json( $error, $exception->getStatusCode());
+  } else {
+    echo "Status: ".$exception->getStatusCode()." Error: ".$exception->getMessage();
+  }
 });
