@@ -25,6 +25,16 @@ class DocumentAPI extends Eloquent {
    **/
   protected $hidden = array('_id', 'created_at', 'updated_at', 'lrs', 'apitype');
 
+  /**
+   * Returns true if an array is associative 
+   * @param  Array  $arr 
+   * @return boolean      
+   */
+  private function isAssoc($arr)
+  {
+    return array_keys($arr) !== range(0, count($arr) - 1);
+  }
+
 
   /**
    * Handle content storage
@@ -45,18 +55,21 @@ class DocumentAPI extends Eloquent {
       case "application/json":
 
         $request_content = json_decode($content, TRUE);
-        if( !is_array( $request_content ) ){ //check that the content type of the request matches the content
-          \App::abort(400, 'JSON detected without a correct Content-Type sent');
-        }
 
         if( !$this->exists ){ //if we are adding a new piece of content...
           $this->content      = $request_content;
         } else if( $this->contentType === $mimeType ){ //if existing content, check that it is also JSON
           switch( $method ){
             case 'PUT': //overwrite content
+              if( is_null( $request_content ) ){
+                \App::abort(400, 'JSON is invalid.');
+              }
               $this->content = $request_content;
             break;
             case 'POST': //merge variables
+              if(!(is_array($request_content) && $this->isAssoc( $request_content ))) {
+                \App::abort(400, 'JSON must contain an object at the top level.');
+              }
               $this->content = array_merge( $this->content, $request_content );
             break;
             default:
