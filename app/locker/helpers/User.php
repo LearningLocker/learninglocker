@@ -35,7 +35,7 @@ class User {
   public static function inviteUser( $data ){
 
     //explode email addresses
-    $emails = explode(',', $data['emails']);
+    $emails = explode("\r\n", $data['emails']);
 
     foreach( $emails as $e ){
 
