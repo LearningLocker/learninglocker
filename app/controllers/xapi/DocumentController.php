@@ -126,7 +126,7 @@ class DocumentController extends BaseController {
 
     $document = $this->document->find( $this->lrs->_id, $this->document_type, $data ); //find the correct document
     if( !$document ){
-      $response = \Response::make("", 204);
+      $response = \Response::make("", 404);
     } else {
 
       $headers = array(
