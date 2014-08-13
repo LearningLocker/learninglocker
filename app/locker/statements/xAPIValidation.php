@@ -479,7 +479,7 @@ class xAPIValidation {
                                 'revision'          => array('string', false), 
                                 'platform'          => array('string', false),
                                 'language'          => array('string', false),
-                                'statement'         => array('uuid',   false),
+                                'statement'         => array('statementRef', false),
                                 'extensions'        => array('emptyArray',  false));
 
     //check all keys submitted are valid
@@ -692,7 +692,6 @@ class xAPIValidation {
 
     //only allow one identifier
     if( $count > 1 ){
-      dd($count);
       $identifier_valid = false;
       $this->setError(\Lang::get('xAPIValidation.errors.actor.one')); 
     }
@@ -791,7 +790,7 @@ class xAPIValidation {
 
       $data_type      = $value[0];
       $required       = isset($value[1]) ? $value[1] : false;
-      $allowed_values = isset($value[2]) ? $value[2] : false;
+      $allowed_values = isset($value[2]) ? $value[2] : null;
 
       //does key exist in data
       if( array_key_exists($key, $data) ){
@@ -810,9 +809,16 @@ class xAPIValidation {
 
         $this->checkTypes($key, $data[$key], $data_type, $section );
 
-        //@todo if allowed values set, check value is in allowed values
-        if( $allowed_values ){
-          //in_array( $value, $allowed_values )
+        // Check value is in allowed values.
+        if (!is_null($allowed_values) && !$this->assertionCheck(
+          in_array($data[$key], $allowed_values),
+          \Lang::get('xAPIValidation.errors.allowed', array(
+            'key' => $key,
+            'section' => $section,
+            'value' => $data[$key]
+          ))
+        )) {
+          $valid = false;
         }
 
       }else{
@@ -1026,6 +1032,16 @@ class xAPIValidation {
           ))
         );
       break;
+      case 'statementRef':
+        $this->assertionCheck(
+          $this->validateStatementReference($value),
+          \Lang::get('xAPIValidation.errors.type', array(
+            'key' => $key,
+            'section' => $section,
+            'type' => 'Statement Reference'
+          ))
+        );
+      break;
     }
 
   }
@@ -1107,6 +1123,23 @@ class xAPIValidation {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Validate Statement Reference
+   *
+   * @param Array $item
+   * @return boolean
+   */
+  public function validateStatementReference( $item ){
+    // Validate params (returns false if invalid).
+    if (!$this->checkParams([
+        'id'         => ['uuid', true],
+        'objectType'   => ['string', true, ['StatementRef']]
+      ], $item, 'statement reference'
+    )) return false; // Invalid params.
+
+    return true;
   }
 
   /**
