@@ -15,6 +15,7 @@ return array(
 			'one' => 'A statement can only set one actor functional identifier.',
 			'valid' => 'A statement must have a valid actor functional identifier.'
 		),
+		'allowed' => '`:value` is not an allowed `:key` in :section',
 		'required' => '`:key` is a required key and is not present in :section',
 		'property' => '`:key` is not a permitted property in :section.',
 		'langMap' => '`:key` is not a valid language map in :section.',
