@@ -490,6 +490,8 @@ App::missing(function($exception){
 App::error(function(Exception $exception)
 {
 
+  Log::error($exception);
+
   if ($exception instanceof HttpExceptionInterface) {
       $code = $exception->getStatusCode();
   }
