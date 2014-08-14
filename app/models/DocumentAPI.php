@@ -58,7 +58,7 @@ class DocumentAPI extends Eloquent {
 
         if( !$this->exists ){ //if we are adding a new piece of content...
           $this->content      = $request_content;
-        } else if( $this->contentType === $mimeType ){ //if existing content, check that it is also JSON
+        } else { //if existing content, check that it is also JSON
           switch( $method ){
             case 'PUT': //overwrite content
               if( is_null( $request_content ) ){
@@ -69,6 +69,8 @@ class DocumentAPI extends Eloquent {
             case 'POST': //merge variables
               if(!(is_array($request_content) && $this->isAssoc( $request_content ))) {
                 \App::abort(400, 'JSON must contain an object at the top level.');
+              } else if ($this->contentType !== $mimeType) {
+                \App::abort(400, 'JSON document content may not be merged with that of another type');
               }
               $this->content = array_merge( $this->content, $request_content );
             break;
@@ -76,8 +78,6 @@ class DocumentAPI extends Eloquent {
               \App::abort( 400, 'Only PUT AND POST methods may amend content');
             break;
           }
-        } else { //reject updating with non JSON content
-          \App::abort(400, 'JSON document content may not be overwritten with that of another type');
         }
       break;
 
