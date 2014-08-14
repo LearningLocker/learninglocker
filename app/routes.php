@@ -489,21 +489,33 @@ App::missing(function($exception){
 
 App::error(function(Exception $exception)
 {
-  Log::error($exception);
+
+  if ($exception instanceof HttpExceptionInterface) {
+      $code = $exception->getStatusCode();
+  }
+
+  // If the exception doesn't implement the HttpExceptionInterface we will
+  // just use the generic 500 error code for a server side error. If it
+  // implements the Http interface we'll grab the error code from it.
+  // 
+  // Couresty of http://fideloper.com/laravel4-error-handling
+  else {
+    $code = 500;
+  }
 
   if( Request::segment(1) == "data" || Request::segment(1) == "api" ){
     $error = array(
         'error'     =>  true,
         'message'   =>  $exception->getMessage(),
-        'code'      =>  $exception->getStatusCode()
+        'code'      =>  $code
     );
 
     if( Config::get('app.debug') ){
       $error['trace'] = $exception->getTrace();
     }
 
-    return Response::json( $error, $exception->getStatusCode());
+    return Response::json( $error, $code);
   } else {
-    echo "Status: ".$exception->getStatusCode()." Error: ".$exception->getMessage();
+    echo "Status: ".$code." Error: ".$exception->getMessage();
   }
 });
