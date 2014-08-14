@@ -37,6 +37,10 @@ class BaseController extends APIBaseController {
     $this->params = \Request::all();
     $this->CORS = isset($this->params['method']);
     $this->method = $this->CORS ? $this->params['method'] : \Request::server('REQUEST_METHOD');
+
+    if( !isset($this->params['content']) ){
+      $this->params['content'] = file_get_contents("php://input");
+    }
   }
 
 }
