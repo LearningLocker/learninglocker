@@ -435,7 +435,7 @@ class EloquentStatementRepository implements StatementRepository {
     } else if( isset($agent->account) ){ //else if there is an account
       if( isset($agent->account->homePage) && isset($agent->account->name ) ){
         
-        if( !$or ){
+        if( $or ){
           /*
           // This has been deprecated because `use` currently doesn't work.
           // However this code is unused at the time of deprecation.
