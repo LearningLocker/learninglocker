@@ -13,6 +13,6 @@ install:
 before_script:
   - sleep 30
   - php artisan generate:migration add_statements
-  - php artisan migrate
+  - php artisan migrate --env="testing"
 
 script: ./vendor/bin/phpunit
