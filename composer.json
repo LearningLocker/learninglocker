@@ -27,9 +27,9 @@
     }
   ],
   "require": {
-    "laravel/framework": "4.1.25",
-    "jenssegers/mongodb": "1.2.4",
-    "davejamesmiller/laravel-breadcrumbs": "~2.1.0",
+    "laravel/framework": "4.2.x",
+    "jenssegers/mongodb": "1.4.x",
+    "davejamesmiller/laravel-breadcrumbs": "2.2.x",
     "way/generators": "dev-master",
     "rhumsaa/array_column": "~1.1",
     "barryvdh/laravel-cors": "dev-master",
