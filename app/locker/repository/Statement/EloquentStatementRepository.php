@@ -434,10 +434,22 @@ class EloquentStatementRepository implements StatementRepository {
       $query->$where_type( $agent_query['field'], $agent_query['value'] );
     } else if( isset($agent->account) ){ //else if there is an account
       if( isset($agent->account->homePage) && isset($agent->account->name ) ){
-        $query->$where_type( function($query){
+        
+        if( !$or ){
+          /*
+          // This has been deprecated because `use` currently doesn't work.
+          // However this code is unused at the time of deprecation.
+          $query->$where_type( function($query) use ($agent) {
+            $query->where('statement.actor.account.homePage', $agent->account->homePage)
+                  ->where('statement.actor.account.name', $agent->account->name );
+          });*/
+          \App::abort(501, "Learning Locker does not current support `OR` queries with accounts.");
+        } else {
           $query->where('statement.actor.account.homePage', $agent->account->homePage)
-                ->where('statement.actor.account.name', $agent->account->name );
-        });
+            ->where('statement.actor.account.name', $agent->account->name );
+        }
+
+
       } 
     } 
 
