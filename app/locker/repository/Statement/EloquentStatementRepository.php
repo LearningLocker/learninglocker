@@ -290,20 +290,20 @@ class EloquentStatementRepository implements StatementRepository {
 
     //Check if agent has been passed
     if( isset($parameters['agent']) ){
-
+      $allow_name_filter_param = isset($parameters['allow_name_filter']) ? $parameters['allow_name_filter'] : false;
+      $allow_name_filter_param = $allow_name_filter_param === 'true' ? true : false;
       $agent_param = !is_object($parameters['agent']) ? json_decode($parameters['agent']) : $parameters['agent']; //convert to object if not already
 
       if( is_array($agent_param) ){ //if array, apply OR filtering to agents
 
-        $statements = $statements->where( function($query) use ($agent_param){ //only apply ORs within agents
+        $statements = $statements->where( function($query) use ($agent_param, $allow_name_filter_param){ //only apply ORs within agents
           foreach( $agent_param as $agent ){ //for each agent
-            $query = $this->setAgent($query, $agent, true); //set agent with orWhere
+            $query = $this->setAgent($query, $agent, $allow_name_filter_param, true); //set agent with orWhere
           }
         });
 
       } else if( is_object($agent_param) ){
-
-        $statements = $this->setAgent( $statements, $agent_param ); //do query on single agent
+        $statements = $this->setAgent( $statements, $agent_param, $allow_name_filter_param ); //do query on single agent
 
       }
 
@@ -412,7 +412,7 @@ class EloquentStatementRepository implements StatementRepository {
    * @return $query
    * 
    */
-  public function setAgent( $query, $agent, $or = false ){
+  public function setAgent( $query, $agent, $allow_name_filter_param = false, $or = false ){
 
     $agent_query = '';
 
@@ -450,8 +450,8 @@ class EloquentStatementRepository implements StatementRepository {
       } 
     } 
 
-    if( isset($agent->name) ){
-      $query->$where_type('statement.actor.name', $agent->name);
+    if( isset($agent->name) && $allow_name_filter_param){
+      $query->where('statement.actor.name', $agent->name);
     }
 
     return $query;
