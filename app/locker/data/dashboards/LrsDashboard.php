@@ -68,17 +68,22 @@ class LrsDashboard extends \app\locker\data\BaseData {
    *
    **/
   private function statementDays(){
-    $first_day = \DB::collection('statements')->orderBy("timestamp")->first();
-    if( $first_day ){
-      $datetime1 = date_create( gmdate("Y-m-d", strtotime($first_day['statement']['timestamp']) ) );
-      $datetime2 = date_create( gmdate("Y-m-d", time()) );
-      $interval  = date_diff($datetime1, $datetime2);
-      $days      = $interval->days;
+    $firstStatement = \DB::collection('statements')
+      ->where('lrs._id', $this->lrs)
+      ->orderBy("timestamp")->first();
+
+    if($firstStatement) {
+      $firstDay = date_create(gmdate(
+        "Y-m-d",
+        strtotime($firstStatement['statement']['timestamp'])
+      ));
+      $today = date_create(gmdate("Y-m-d", time()));
+      $interval = date_diff($firstDay, $today);
+      $days = $interval->days;
       return $days;
-    }else{
+    } else {
       return '';
     }
-
   }
 
   /**
