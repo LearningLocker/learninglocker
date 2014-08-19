@@ -79,7 +79,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
       ));
       $today = date_create(gmdate("Y-m-d", time()));
       $interval = date_diff($firstDay, $today);
-      $days = $interval->days;
+      $days = $interval->days + 1;
       return $days;
     } else {
       return '';
@@ -96,10 +96,6 @@ class LrsDashboard extends \app\locker\data\BaseData {
   public function statementAvgCount(){
     $count = $this->statementCount();
     $days  = $this->statementDays();
-    if( $days == 0 ){
-      //this will be the first day, so increment to 1
-      $days = 1;
-    }
     $avg   = 0;
     if( $count && $days ){
       $avg = round( $count / $days );
