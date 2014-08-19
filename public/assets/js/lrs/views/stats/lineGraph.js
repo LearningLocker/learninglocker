@@ -26,7 +26,6 @@ define([
     drawGraph: function(chartId, lineData) {
 
       var avg   = lineData.statement_avg;
-      var l_avg = lineData.learner_avg;
       var data  = lineData.statement_graph;
 
       var totals   = 'Statement total';
@@ -45,9 +44,9 @@ define([
         element: chartId,
         data: category_data,
         xkey: 'y',
-        goals: [avg, l_avg],
+        goals: [avg],
         goalStrokeWidth: 2,
-        goalLineColors: ['#00cc00', '#b85e80'],
+        goalLineColors: ['#00cc00'],
         barColors:['#354b59'],
         ykeys: ['a', 'b'],
         labels: [totals, learners]
