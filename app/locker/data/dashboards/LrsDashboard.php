@@ -20,7 +20,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
   public function setTimelineGraph(){
     return array('statement_count' => $this->statementCount(),
                  'statement_avg'   => $this->statementAvgCount(),
-                 'learner_avg'     => $this->learnerAvgCount(),
+                 'actor_count'     => $this->actorCount(),
                  'statement_graph' => $this->getStatementNumbersByDate()
                  );      
   }
@@ -139,50 +139,6 @@ class LrsDashboard extends \app\locker\data\BaseData {
                 array('$limit' => 5)
               );
 
-  }
-
-  /**
-   * Using the number of days the LRS has been running with statements
-   * work out the average number of learners participating per day.
-   *
-   * @return $avg
-   *
-   **/
-  public function learnerAvgCount(){
-    $days  = $this->statementDays();
-    
-    // Get actor count
-    $set_id = array( 'day' => array( '$dayOfYear' => '$timestamp' ), 'statement_actor' => '$statement.actor');
-    $statements = $this->db->statements->aggregate(
-      array('$match' => $this->getMatch( $this->lrs )),
-      array(
-        '$group' => array(
-          '_id'   => $set_id,
-        )
-      ),
-      array(
-        '$group' => array(
-          '_id'   => null,
-          'count' => array('$sum' => 1),
-        )
-      )
-    );
-    
-    $count = 0;
-    if (count($statements["result"])) {
-      $count = $statements["result"][0]["count"];
-    }
-
-    if( $days == 0 ){
-      //this will be the first day, so increment to 1
-      $days = 1;
-    }
-    $avg   = 0;
-    if( $count && $days ){
-      $rounding_dp = ($avg < 10) ? 2 : 0;
-      $avg = round($avg, $rounding_dp);
-    }
-    return $avg;
   }
 
   /**

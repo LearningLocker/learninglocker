@@ -208,7 +208,7 @@
       <div class="statement-graph clearfix">
         <h3>Statements <span><%= stats.statement_count %></span></h3>
         <p class="averages">Your daily average is <span style="color:#00cc00;"> <%= stats.statement_avg %> statements</span> with 
-        <span style="color:#b85e80"><%= stats.learner_avg %> learners</span> participating.</p>
+        <span style="color:#b85e80"><%= stats.actor_count %> learners</span> in total.</p>
       </div>
     </div>
   </div>
