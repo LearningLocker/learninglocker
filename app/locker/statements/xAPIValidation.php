@@ -185,7 +185,7 @@ class xAPIValidation {
     )) return false; // Invalid params.
 
     // Validate identifier.
-    if (!$this->validActorIdentifier(array_keys($agent))) return false;
+    if (!$this->validActorIdentifier($agent)) return false;
 
     return true; // Valid agent.
   }
@@ -197,8 +197,8 @@ class xAPIValidation {
    * @param array $group
    */
   public function validateGroup($group, $groupLimit = null) {
-    $validIdentifier = $this->validActorIdentifier(array_keys($group), false);
-    $validGroup = $validIdentifier ? $this->validateIdentifiedGroup($group) : $this->validateAnonymousGroup($group);
+    $identifiers = $this->countIdentifiers($group);
+    $validGroup = $identifiers === 0 ? $this->validateAnonymousGroup($group) : $this->validateIdentifiedGroup($group);
 
     if ($validGroup && isset($group['member'])) {
       if (!is_null($groupLimit) && count($group['member']) != $groupLimit) {
@@ -240,7 +240,7 @@ class xAPIValidation {
       ), $group, 'actor'
     )) return false; // Invalid params.
     
-    return true; // Valid group.
+    return validActorIdentifier($group); // Valid group.
   }
 
   /**
@@ -327,20 +327,19 @@ class xAPIValidation {
   public function validateObject( $object ){
 
     //find out what type of object it is as that will inform next steps
-    if( isset($object['objectType']) ){
+    if (isset($object['objectType'])) {
 
       $object_type = $object['objectType'];
 
-      $object_type_valid = $this->checkKeys( array(
-                                                'Activity', 
-                                                'Group', 
-                                                'Agent', 
-                                                'SubStatement', 
-                                                'StatementRef'
-                                              ), array($object_type), 'object'
-                                            );
+      $object_type_valid = $this->checkKeys([
+        'Activity', 
+        'Group', 
+        'Agent', 
+        'SubStatement', 
+        'StatementRef'
+      ], [$object_type], 'object');
 
-    }else{
+    } else {
       $object_type = 'Activity'; //this is the default if nothing defined.
       $object['objectType'] = $object_type;
     }
@@ -350,23 +349,27 @@ class xAPIValidation {
 
     if( in_array($object_type, array( 'Activity', 'Agent', 'Group', 'StatementRef' )) ){
 
-      if( $object['objectType'] == 'StatementRef' ){
-        $array = array('objectType' => array('string'), 
-                       'id'         => array('uuid', true), 
-                       'definition' => array('emptyArray'));
-      }elseif( $object['objectType'] == 'SubStatement' ){
-        $array = array('objectType' => array('string'));
-      }elseif( $object['objectType'] == 'Agent' ){
-        $array = array('objectType' => array('string'), 
-                       'name'       => array('string'), 
-                       'mbox'       => array('mailto'));
-      }else{
-        $array = array('objectType' => array('string'), 
-                       'id'         => array('iri', true), 
-                       'definition' => array('emptyArray'));
+      switch ($object['objectType']) {
+        case 'StatementRef':
+          $object_valid = $this->validateStatementReference($object);
+        break;
+        case 'SubStatement':
+          $object_valid = $this->checkParams(
+            ['objectType' => ['string']],
+            $object,
+            'object'
+          );
+        break;
+        case 'Agent':
+          $object_valid = $this->validateActor($object);
+        break;
+        default: // Activity.
+          $object_valid = $this->checkParams([
+            'objectType' => ['string'],
+            'id' => ['iri', true],
+            'definition' => ['emptyArray']
+          ], $object, 'object' );
       }
-
-      $object_valid = $this->checkParams( $array, $object, 'object' );
 
       if( $object_valid !== true ) return false; //end here if not true
 
@@ -670,37 +673,63 @@ class xAPIValidation {
   }
 
   /**
-   * Check to make sure an valid identifier has been included in the statement.
-   *
-   * @param $actor_keys (array) The array of actor keys to validate
-   * @return boolean 
-   *
-   **/
-  public function validActorIdentifier( $actor_keys, $required=true ){
-
-    $identifier_valid = false;
-    $count = 0;
+   * Gets the number of identifiers in $actor.
+   * @param  [array] $actor the actor containing the identifiers.
+   * @return [integer] the number of identifiers.
+   */
+  private function countIdentifiers($actor) {
+    $actor_keys = array_keys($actor);
     $functional_identifiers = array('mbox', 'mbox_sha1sum', 'openID', 'account');
+    $count = 0;
 
-    //check functional identifier exists and is valid
     foreach( $actor_keys as $k ){
       if( in_array($k, $functional_identifiers) ){
-        $identifier_valid = true;
-        $count++; //increment counter so we can check only one identifier is present
+        $count += 1;
       }
     }
 
-    //only allow one identifier
-    if( $count > 1 ){
-      $identifier_valid = false;
-      $this->setError(\Lang::get('xAPIValidation.errors.actor.one')); 
+    return $count;
+  }
+
+  /**
+   * Checks that a valid account (or no account) exists in $actor.
+   * @param  [array] $actor the actor to validate.
+   * @return [boolean]
+   */
+  public function validateAccount($actor) {
+    $account_set = isset($actor['account']);
+    return !$account_set || (
+      $account_set &&
+      isset($actor['account']['name']) &&
+      isset($actor['account']['homePage']) &&
+      $this->checkTypes('name', $actor['account']['name'], 'string', 'account') &&
+      $this->checkTypes('homePage', $actor['account']['homePage'], 'irl', 'account')
+    );
+  }
+
+  /**
+   * Check to make sure an valid identifier has been included in the statement.
+   *
+   * @param $actor (array) The actor to validate
+   * @return boolean 
+   *
+   **/
+  public function validActorIdentifier($actor){
+    $count = $this->countIdentifiers($actor);
+
+    // Must have one identifier.
+    if( $count > 1 || $count < 1){
+      $this->setError(\Lang::get('xAPIValidation.errors.actor.one'));
+      return false;
     }
 
-    if( !$identifier_valid && $required ){
-      $this->setError(\Lang::get('xAPIValidation.errors.actor.valid')); 
+    // Must have a valid actor.
+    else if ($count === 1 && !$this->validateAccount($actor)) {
+      $this->setError(\Lang::get('xAPIValidation.errors.account')); 
+      return false;
     }
     
-    return $identifier_valid;
+    return true;
   }
 
   /**
@@ -852,7 +881,7 @@ class xAPIValidation {
 
     switch($expected_type){
       case 'string':
-        $this->assertionCheck(
+        return $this->assertionCheck(
           is_String($value),
           \Lang::get('xAPIValidation.errors.type', array(
             'key' => $key,
@@ -863,7 +892,7 @@ class xAPIValidation {
       break;
       case 'array':
         //used when an array is required 
-        $this->assertionCheck(
+        return $this->assertionCheck(
           (is_array($value) && !empty($value)),
           \Lang::get('xAPIValidation.errors.type', array(
             'key' => $key,
@@ -875,7 +904,7 @@ class xAPIValidation {
       case 'emptyArray':
         //used if value can be empty but if available needs to be an array
         if( $value != '' ){
-          $this->assertionCheck(
+          return $this->assertionCheck(
             is_array($value),
             \Lang::get('xAPIValidation.errors.type', array(
               'key' => $key,
@@ -883,10 +912,12 @@ class xAPIValidation {
               'type' => 'array'
             ))
           );
+        } else {
+          return false;
         }
       break;
       case 'object':
-        $this->assertionCheck(
+        return $this->assertionCheck(
           is_object( $value ),
           \Lang::get('xAPIValidation.errors.type', array(
             'key' => $key,
@@ -896,7 +927,7 @@ class xAPIValidation {
         );
       break;
       case 'iri':
-        $this->assertionCheck(
+        return $this->assertionCheck(
           $this->validateIRI($value),
           \Lang::get('xAPIValidation.errors.type', array(
             'key' => $key,
@@ -906,7 +937,7 @@ class xAPIValidation {
         );
       break;
       case 'iso8601Duration':
-        $this->assertionCheck(
+        return $this->assertionCheck(
           $this->validateISO8601($value),
           \Lang::get('xAPIValidation.errors.type', array(
             'key' => $key,
@@ -916,7 +947,7 @@ class xAPIValidation {
         );
       break;
       case 'timestamp':
-        $this->assertionCheck(
+        return $this->assertionCheck(
           $this->validateTimestamp($value),
           \Lang::get('xAPIValidation.errors.type', array(
             'key' => $key,
@@ -926,7 +957,7 @@ class xAPIValidation {
         );
       break;
       case 'uuid':
-        $this->assertionCheck(
+        return $this->assertionCheck(
           $this->validateUUID($value),
           \Lang::get('xAPIValidation.errors.type', array(
             'key' => $key,
@@ -936,8 +967,8 @@ class xAPIValidation {
         );
       break;
       case 'irl':
-        $this->assertionCheck(
-          (!filter_var($value, FILTER_VALIDATE_URL)),
+        return $this->assertionCheck(
+          filter_var($value, FILTER_VALIDATE_URL),
           \Lang::get('xAPIValidation.errors.type', array(
             'key' => $key,
             'section' => $section,
@@ -946,7 +977,7 @@ class xAPIValidation {
         );
       break;
       case 'lang_map':
-        $this->assertionCheck(
+        return $this->assertionCheck(
           $this->validateLanguageMap($value),
           \Lang::get('xAPIValidation.errors.langMap', array(
             'key' => $key,
@@ -955,7 +986,7 @@ class xAPIValidation {
         );
       break;
       case 'base64':
-        $this->assertionCheck(
+        return $this->assertionCheck(
           base64_encode(base64_decode($value)) === $value,
           \Lang::get('xAPIValidation.errors.base64', array(
             'key' => $key,
@@ -964,7 +995,7 @@ class xAPIValidation {
         );
       break;
       case 'boolean':
-        $this->assertionCheck(
+        return $this->assertionCheck(
           is_bool($value),
           \Lang::get('xAPIValidation.errors.type', array(
             'key' => $key,
@@ -974,7 +1005,7 @@ class xAPIValidation {
         );
       break;
       case 'score':
-        $this->assertionCheck(
+        return $this->assertionCheck(
           !is_string($value) && (is_int($value) || is_float($value)),
           \Lang::get('xAPIValidation.errors.type', array(
             'key' => $key,
@@ -984,7 +1015,7 @@ class xAPIValidation {
         );
       break;
       case 'numeric':
-        $this->assertionCheck(
+        return $this->assertionCheck(
           is_numeric($value),
           \Lang::get('xAPIValidation.errors.numeric', array(
             'key' => $key,
@@ -993,7 +1024,7 @@ class xAPIValidation {
         );
       break;
       case 'int':
-        $this->assertionCheck(
+        return $this->assertionCheck(
           is_int($value),
           \Lang::get('xAPIValidation.errors.type', array(
             'key' => $key,
@@ -1003,7 +1034,7 @@ class xAPIValidation {
         );
       break;
       case 'integer':
-        $this->assertionCheck(
+        return $this->assertionCheck(
           is_integer($value),
           \Lang::get('xAPIValidation.errors.type', array(
             'key' => $key,
@@ -1013,7 +1044,7 @@ class xAPIValidation {
         );
       break;
       case 'contentType':
-        $this->assertionCheck(
+        return $this->assertionCheck(
           $this->validateInternetMediaType($value),
           \Lang::get('xAPIValidation.errors.type', array(
             'key' => $key,
@@ -1024,7 +1055,7 @@ class xAPIValidation {
       break;
       case 'mailto':
         $mbox_format = substr($value, 0, 7);
-        $this->assertionCheck(
+        return $this->assertionCheck(
           $mbox_format == 'mailto:' && is_string($value),
           \Lang::get('xAPIValidation.errors.format', array(
             'key' => $key,
@@ -1033,7 +1064,7 @@ class xAPIValidation {
         );
       break;
       case 'statementRef':
-        $this->assertionCheck(
+        return $this->assertionCheck(
           $this->validateStatementReference($value),
           \Lang::get('xAPIValidation.errors.type', array(
             'key' => $key,

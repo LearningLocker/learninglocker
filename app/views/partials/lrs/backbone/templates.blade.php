@@ -127,7 +127,7 @@
 <script id="dashboardHeader" type="text/template">
   <h3>Statements <span><%= statement_count %></span></h3>
   <p class="averages">Your daily average is <span style="color:#00cc00;"> <%= statement_avg %> statements</span> with 
-  <span style="color:#b85e80"><%= learner_avg %> learners</span> participating.</p>
+  <span style="color:#b85e80"><%= actor_count %> learners</span> in total.</p>
 </script>
 
 <script id="showLoading" type="text/template">

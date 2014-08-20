@@ -491,17 +491,10 @@ App::error(function(Exception $exception)
 {
 
   Log::error($exception);
-
-  if ($exception instanceof HttpExceptionInterface) {
-      $code = $exception->getStatusCode();
-  }
-
-  // If the exception doesn't implement the HttpExceptionInterface we will
-  // just use the generic 500 error code for a server side error. If it
-  // implements the Http interface we'll grab the error code from it.
-  // 
-  // Couresty of http://fideloper.com/laravel4-error-handling
-  else {
+  
+  if (method_exists($exception, 'getStatusCode')) {
+    $code = $exception->getStatusCode();
+  } else {
     $code = 500;
   }
 

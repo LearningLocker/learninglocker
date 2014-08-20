@@ -34,6 +34,7 @@ return array(
 		),
 		'type' => '`:key` is not a valid :type in :section.',
 		'numeric' => '`:key` is not numeric in :section.',
-		'format' => '`:key` is not in the correct format in :section.'
+		'format' => '`:key` is not in the correct format in :section.',
+		'account' => 'An `account` must have a `name` and a `homePage`.'
 	)
 );

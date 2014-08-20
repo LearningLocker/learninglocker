@@ -20,7 +20,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
   public function setTimelineGraph(){
     return array('statement_count' => $this->statementCount(),
                  'statement_avg'   => $this->statementAvgCount(),
-                 'learner_avg'     => $this->learnerAvgCount(),
+                 'actor_count'     => $this->actorCount(),
                  'statement_graph' => $this->getStatementNumbersByDate()
                  );      
   }
@@ -68,17 +68,22 @@ class LrsDashboard extends \app\locker\data\BaseData {
    *
    **/
   private function statementDays(){
-    $first_day = \DB::collection('statements')->orderBy("timestamp")->first();
-    if( $first_day ){
-      $datetime1 = date_create( gmdate("Y-m-d", strtotime($first_day['statement']['timestamp']) ) );
-      $datetime2 = date_create( gmdate("Y-m-d", time()) );
-      $interval  = date_diff($datetime1, $datetime2);
-      $days      = $interval->days;
+    $firstStatement = \DB::collection('statements')
+      ->where('lrs._id', $this->lrs)
+      ->orderBy("timestamp")->first();
+
+    if($firstStatement) {
+      $firstDay = date_create(gmdate(
+        "Y-m-d",
+        strtotime($firstStatement['statement']['timestamp'])
+      ));
+      $today = date_create(gmdate("Y-m-d", time()));
+      $interval = date_diff($firstDay, $today);
+      $days = $interval->days + 1;
       return $days;
-    }else{
+    } else {
       return '';
     }
-
   }
 
   /**
@@ -91,10 +96,6 @@ class LrsDashboard extends \app\locker\data\BaseData {
   public function statementAvgCount(){
     $count = $this->statementCount();
     $days  = $this->statementDays();
-    if( $days == 0 ){
-      //this will be the first day, so increment to 1
-      $days = 1;
-    }
     $avg   = 0;
     if( $count && $days ){
       $avg = round( $count / $days );
@@ -138,50 +139,6 @@ class LrsDashboard extends \app\locker\data\BaseData {
                 array('$limit' => 5)
               );
 
-  }
-
-  /**
-   * Using the number of days the LRS has been running with statements
-   * work out the average number of learners participating per day.
-   *
-   * @return $avg
-   *
-   **/
-  public function learnerAvgCount(){
-    $days  = $this->statementDays();
-    
-    // Get actor count
-    $set_id = array( 'day' => array( '$dayOfYear' => '$timestamp' ), 'statement_actor' => '$statement.actor');
-    $statements = $this->db->statements->aggregate(
-      array('$match' => $this->getMatch( $this->lrs )),
-      array(
-        '$group' => array(
-          '_id'   => $set_id,
-        )
-      ),
-      array(
-        '$group' => array(
-          '_id'   => null,
-          'count' => array('$sum' => 1),
-        )
-      )
-    );
-    
-    $count = 0;
-    if (count($statements["result"])) {
-      $count = $statements["result"][0]["count"];
-    }
-
-    if( $days == 0 ){
-      //this will be the first day, so increment to 1
-      $days = 1;
-    }
-    $avg   = 0;
-    if( $count && $days ){
-      $rounding_dp = ($avg < 10) ? 2 : 0;
-      $avg = round($avg, $rounding_dp);
-    }
-    return $avg;
   }
 
   /**
