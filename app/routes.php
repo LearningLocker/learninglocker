@@ -188,6 +188,54 @@ Route::resource('lrs', 'LrsController');
 
 /*
 |------------------------------------------------------------------
+| Exporting
+|------------------------------------------------------------------
+*/
+
+// Pages.
+Route::get('lrs/{id}/exporting', array(
+  'uses' => 'ExportingController@index',
+));
+Route::get('lrs/{id}/exporting/create', array(
+  'uses' => 'ExportingController@create',
+));
+
+//get data and statements, returns json
+Route::get('lrs/{id}/exporting/data', array(
+  'uses' => 'ReportingController@getData',
+));
+Route::get('lrs/{id}/exporting/statements', array(
+  'uses' => 'ReportingController@getStatements',
+));
+//routes to query actors and activities, returns json
+Route::get('lrs/{id}/exporting/actors/{query}', array(
+  'uses' => 'ReportingController@getActors',
+));
+
+
+//used by typeahead to get objects
+Route::get('lrs/{id}/exporting/typeahead/{segment}', array(
+  'uses' => 'ReportingController@getTypeahead',
+));
+
+//Route::resource('reporting', 'ReportingController');
+
+//save,view,edit,delete reports
+Route::post('lrs/{id}/exporting/save', array(
+  'uses' => 'ReportingController@store',
+));
+Route::get('lrs/{id}/exporting/show/{report}', array(
+  'uses' => 'ReportingController@show',
+));
+Route::delete('lrs/{id}/exporting/delete/{report}', array(
+  'uses' => 'ReportingController@destroy',
+));
+Route::get('lrs/{id}/exporting/getReports/{limt?}', array(
+  'uses' => 'ReportingController@getReports',
+));
+
+/*
+|------------------------------------------------------------------
 | Reporting
 |------------------------------------------------------------------
 */
