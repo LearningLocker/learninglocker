@@ -1,5 +1,7 @@
 define([
   'marionette',
 ], function(Marionette){
-  return Marionette.Controller.extend({});
+  return Marionette.Controller.extend({
+  	index: function () {}
+  });
 });

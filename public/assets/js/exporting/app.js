@@ -1,8 +1,9 @@
 define([
   'jquery',
   'backbone',
-  'marionette'
-], function($, Backbone, Marionette){
+  'marionette',
+  'controller'
+], function($, Backbone, Marionette, AppController){
 
   var App = new Marionette.Application();
   
@@ -11,16 +12,15 @@ define([
   App.views = {};
   App.models = {};
 
-  //a hack to get current LRS @todo find a better way
-  path = window.location.pathname.split( '/' );
-  for ( i = 0; i < path.length; i++ ) {
-    if( path[i] == 'lrs' ){
-      //find at which point 'lrs' is as we know the next path item is the id
-      var array_num = i;
+  App.appRouter = new Marionette.AppRouter.extend({
+    controller: new AppController(),
+    appRoutes: {
+      '': 'index'
     }
-  }
-  array_position = array_num + 1;
-  App.lrs_id = path[array_position];
+  });
+
+  // Gets the current LRS ID.
+  App.lrs_id = window.location.pathname.split('lrs/')[1].split('/')[0];
 
   App.addRegions({
     pageRegion: '#statements'

@@ -1,11 +1,10 @@
 //the require library is configuring paths
 require.config({
-  baseUrl:"../../../assets/js/reporting",
   paths: {
-    jquery: "../libs/jquery/jquery.1.10.2",
-    underscore: "../libs/lodash/lodash",
-    backbone: "../libs/backbone/backbone.min",
-    marionette: "../libs/backbone/backbone.marionette",
+    jquery: '../libs/jquery/jquery.1.10.2',
+    underscore: '../libs/lodash/lodash',
+    backbone: '../libs/backbone/backbone.min',
+    marionette: '../libs/backbone/backbone.marionette',
     'backbone.wreqr': '../libs/backbone/backbone.wreqr',
     'backbone.babysitter' : '../libs/backbone/backbone.babysitter',
     'bootstrap': '../libs/bootstrap/bootstrap.min',
@@ -13,7 +12,6 @@ require.config({
     'raphael': '../libs/morrisjs/raphael.min',
     'morris': '../libs/morrisjs/morris.min',
     'typeahead': '../libs/typeahead/typeahead.min',
-    'reporting': 'lib/reporting',
     'datepicker_custom': 'lib/datepicker'
   },
   shim : {
@@ -36,22 +34,24 @@ require.config({
       exports : 'Marionette'
     },
     bootstrap: {
-      deps: ["jquery"],
-      exports: "Bootstrap"
+      deps: ['jquery'],
+      exports: 'Bootstrap'
     },
     typeahead: {
-      deps: ["jquery", "bootstrap"],
-      exports: "Typeahead"
+      deps: ['jquery', 'bootstrap'],
+      exports: 'Typeahead'
     },
     datepicker: {
-      deps: ["jquery", "bootstrap"],
-      exports: "Datepicker"
+      deps: ['jquery', 'bootstrap'],
+      exports: 'Datepicker'
     },
     reporting: {
-      deps: ["jquery", "typeahead"],
-      exports: "Reporting"
+      deps: ['jquery', 'typeahead'],
+      exports: 'Reporting'
     }
   },
 });
 
-require(["init/app"], function(){});
+require(['app'], function (App) {
+  App.start()
+});
