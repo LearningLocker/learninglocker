@@ -1,12 +1,10 @@
 define([
   'jquery',
-  'underscore',
   'backbone',
-  'marionette',
-  'typeahead'
-], function($,_, Backbone, Marionette, Typeahead){
+  'marionette'
+], function($, Backbone, Marionette){
 
-  var App = new Backbone.Marionette.Application();
+  var App = new Marionette.Application();
   
   App.layouts = {};
   App.collections = {};

@@ -1,25 +1,11 @@
 define([
-  'jquery',
-  'underscore',
-  'backbone',
-  'models/StatementModel',
-  'collections/StatementCollection',
+  'marionette',
   'views/statement/StatementListView'
-], function($, _, Backbone, StatementModel, StatementColleciton, StatementListView){
-
-  var StatementList = Backbone.Marionette.CompositeView.extend({
-
+], function(Marionette, StatementListView){
+  return Marionette.CompositeView.extend({
     tagName: "ul",
     className: 'list-group',
     template: "#statementList",
-    itemView: StatementListView,
-
-    // appendHtml: function(collectionView, itemView){
-    //     collectionView.$("#recent").append('hello');
-    // }
-
+    itemView: StatementListView
   });
-
-  return StatementList;
-
 });
