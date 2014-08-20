@@ -1051,8 +1051,8 @@ class xAPIValidation {
         );
       break;
       case 'mailto':
-        return $mbox_format = substr($value, 0, 7);
-        $this->assertionCheck(
+        $mbox_format = substr($value, 0, 7);
+        return $this->assertionCheck(
           $mbox_format == 'mailto:' && is_string($value),
           \Lang::get('xAPIValidation.errors.format', array(
             'key' => $key,
