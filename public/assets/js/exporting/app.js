@@ -4,31 +4,26 @@ define([
   'marionette',
   'controller'
 ], function($, Backbone, Marionette, AppController){
-
   var App = new Marionette.Application();
-  
-  App.layouts = {};
-  App.collections = {};
-  App.views = {};
-  App.models = {};
 
-  App.appRouter = new Marionette.AppRouter.extend({
-    controller: new AppController(),
+  var AppRouter = Marionette.AppRouter.extend({
+    controller: new AppController({
+      app: App
+    }),
     appRoutes: {
       '': 'index'
     }
   });
 
-  // Gets the current LRS ID.
+  // Gets the LRS ID from the current url.
   App.lrs_id = window.location.pathname.split('lrs/')[1].split('/')[0];
 
   App.addRegions({
-    pageRegion: '#statements'
+    fields: '#fields'
   });
 
   App.addInitializer(function (options) {
-
-    //add our csrf token to every ajax request
+    // Add our CSRF token to every AJAX request.
     $.ajaxPrefilter(function(options, originalOptions, jqXHR){
       var token;
       if( !options.crossDomain ){
@@ -39,11 +34,12 @@ define([
       }
     });
   
+    // Start router and history.
+    new AppRouter();
     if (Backbone.history){
       Backbone.history.start();
     }
   });
-
+  
   return App;
-
 });
