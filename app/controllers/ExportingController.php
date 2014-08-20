@@ -7,41 +7,17 @@ use Locker\Repository\Report\ReportRepository as Report;
 
 class ExportingController extends \BaseController {
 
-  /**
-  * Analytics Interface
-  */
   protected $analytics;
-
-  /**
-   * Lrs
-   **/
   protected $lrs;
-
-  /**
-   * Query interface
-   **/
   protected $query;
-
-  /**
-   * Report interface
-   **/
-  protected $report;
-
-  /** 
-   * Lrs
-   **/
-
-  /**
-   * Filter parameters
-   **/
+  protected $export;
   protected $params;
 
   public function __construct(Analytics $analytics, Lrs $lrs, Query $query, Report $report){
-
     $this->analytics = $analytics;
     $this->lrs       = $lrs;
     $this->query     = $query;
-    $this->report    = $report;
+    $this->export    = $report;
     
     $this->beforeFilter('auth');
     $this->beforeFilter('auth.lrs'); //check user can access LRS.
@@ -57,9 +33,13 @@ class ExportingController extends \BaseController {
   public function index($id){
     $lrs      = $this->lrs->find( $id );
     $lrs_list = $this->lrs->all();
-    $reports  = $this->report->all($id);
-    return View::make('partials.exporting.index', array('lrs' => $lrs, 
-      'list' => $lrs_list, 'exporting_nav' => true, 'exports' => $reports));
+    $exports  = $this->export->all($id);
+    return View::make('partials.exporting.index', [
+      'lrs' => $lrs, 
+      'list' => $lrs_list,
+      'exporting_nav' => true,
+      'exports' => $exports
+    ]);
   }
 
   /**
@@ -68,8 +48,8 @@ class ExportingController extends \BaseController {
    * @return response
    **/
   public function getReports($id, $limit=5){
-    $reports = $this->report->all($id);
-    return Response::json( $reports );
+    $exports = $this->export->all($id);
+    return Response::json( $exports );
   }
 
   /**
@@ -79,21 +59,14 @@ class ExportingController extends \BaseController {
    * @return Response
    */
   public function create($id){
-
     $lrs      = $this->lrs->find( $id );
     $lrs_list = $this->lrs->all();
-    $verbs    = new \app\locker\data\reporting\getVerbs();
-    $activities = new \app\locker\data\reporting\getActivities();
-    $activities = $activities->getActivities( $id );
-    $context = new \app\locker\data\reporting\getContext();
-    return View::make('partials.exporting.create', array('lrs'           => $lrs,
-                                                         'verbs'         => $verbs->getVerbs( $id ),
-                                                         'languages'     => $context->getContextLanguages( $id ),
-                                                         'platforms'     => $context->getContextPlatforms( $id ),
-                                                         'instructors'   => $context->getContextInstructors( $id ),
-                                                         'activity_type' => $activities,
-                                                         'reporting_nav' => true,
-                                                         'list'          => $lrs_list));
+
+    return View::make('partials.exporting.create', [
+      'lrs' => $lrs,
+      'list' => $lrs_list,
+      'exporting_nav' => true
+    ]);
   }
 
   /**
@@ -102,7 +75,6 @@ class ExportingController extends \BaseController {
    * @return Response
    */
   public function store(){
-
     $request  = \Request::instance();
     $incoming = $request->getContent();
     $data     = json_decode($incoming, true);
@@ -112,7 +84,7 @@ class ExportingController extends \BaseController {
     $validator = Validator::make($data, $rules);
     if ($validator->fails())  return \Response::json( $validator );
 
-    $save = $this->report->create( $data );
+    $save = $this->export->create( $data );
 
     if( $save ){
       return \Response::json( 'success' );
@@ -128,17 +100,15 @@ class ExportingController extends \BaseController {
    * @return Response
    */
   public function show($id, $report){
-
     $lrs      = $this->lrs->find($id);
     $lrs_list = $this->lrs->all();
-    $report   = $this->report->find($report);
-    $statements = $this->query->selectStatements($id, $this->decodeURL( $report->query ));
-    return View::make('partials.reporting.view', array('lrs'        => $lrs,
-                                                       'list'       => $lrs_list,
-                                                       'statements' => $statements,
-                                                       'report'     => $report, 
-                                                       'reporting_nav' => true));
-
+    $export   = $this->export->find($export);
+    return View::make('partials.exporting.view', [
+      'lrs'        => $lrs,
+      'list'       => $lrs_list,
+      'export'     => $export, 
+      'exporting_nav' => true
+    ]);
   }
 
   /**
@@ -146,7 +116,6 @@ class ExportingController extends \BaseController {
    *
    **/
   public function decodeURL($array){
-
     $output = '';
 
     if( !empty($array) ){
@@ -160,29 +129,6 @@ class ExportingController extends \BaseController {
     }
 
     return $output;
-
-  }
-
-  /**
-   * Show the form for editing the specified resource.
-   *
-   * @param  int  $id
-   * @return Response
-   */
-  public function edit($id)
-  {
-    //
-  }
-
-  /**
-   * Update the specified resource in storage.
-   *
-   * @param  int  $id
-   * @return Response
-   */
-  public function update($id)
-  {
-    //
   }
 
   /**
@@ -191,88 +137,20 @@ class ExportingController extends \BaseController {
    * @param  int  $id
    * @return Response
    */
-  public function destroy($id, $report){
-    $report = $this->report->delete($report);
-    return Redirect::back()->with('success', Lang::get('reporting.deleted')); 
-  }
-
-  /** 
-   * Get data based on query created.
-   **/
-  public function getData($lrs){
-
-    $data = $this->analytics->analytics( $lrs, $this->params );
-
-    if( $data['success'] == false ){
-      return \Response::json( array( 'success'  => false, 'message'  => \Lang::get('apps.no_data')), 400 );
-    }
-
-    return \Response::json( $data['data']['result'] );
-  }
-
-  /**
-   * Return statements based on query created
-   * 
-   * @param $lrs   string   The current LRS _id
-   * @return json object
-   **/
-  public function getStatements($lrs){
-
-    if( isset($this->params['filter']) ){
-      $filter = json_decode($this->params['filter'], TRUE);
-    }else{
-      $filter = '';
-    }
-
-    return $this->query->selectStatements( $lrs, $filter, true );
-
-  }
-
-  /**
-   * Get available actors to use with typeahead.
-   **/
-  public function getActors($lrs, $query){
-    $results = $this->report->getActors($lrs, $query);
-    return Response::json($results);
+  public function destroy($id, $export){
+    $export = $this->export->delete($export);
+    return Redirect::back()->with('success', Lang::get('exporting.deleted')); 
   }
 
   /**
    * Return available objects for typeahead. Used to search activities 
    * as well as parent and groups id in context.
-   *
-   * @param string $lrs
-   * @param string $segement    Which segment we are targetting e.g. activities, grouping, parent
-   *
+   * 
    * @return results or empty string
    *
    **/
-  public function getTypeahead($lrs, $segment){
-    $query = $this->params['query'];
-    if( $query ){
-      switch( $segment ){
-        case 'grouping':
-          $results = $this->report->setQuery($lrs, 
-                                             $query, 
-                                             'statement.context.contextActivities.grouping', 
-                                             'statement.context.contextActivities.grouping.id');
-          break;
-        case 'activities':
-          $results = $this->report->setQuery($lrs, 
-                                             $query, 
-                                             'statement.object', 
-                                             'statement.object.id');
-          break;
-        case 'parents':
-          $results = $this->report->setQuery($lrs, 
-                                             $query, 
-                                             'statement.context.contextActivities.parent', 
-                                             'statement.context.contextActivities.parent.id');
-          break;
-      }
-    }else{
-      $results = '';
-    }
-    return Response::json($results);
+  public function getTypeahead() {
+    return Response::json(['actor']);
   }
 
   /**
