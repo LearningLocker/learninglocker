@@ -327,20 +327,19 @@ class xAPIValidation {
   public function validateObject( $object ){
 
     //find out what type of object it is as that will inform next steps
-    if( isset($object['objectType']) ){
+    if (isset($object['objectType'])) {
 
       $object_type = $object['objectType'];
 
-      $object_type_valid = $this->checkKeys( array(
-                                                'Activity', 
-                                                'Group', 
-                                                'Agent', 
-                                                'SubStatement', 
-                                                'StatementRef'
-                                              ), array($object_type), 'object'
-                                            );
+      $object_type_valid = $this->checkKeys([
+        'Activity', 
+        'Group', 
+        'Agent', 
+        'SubStatement', 
+        'StatementRef'
+      ], [$object_type], 'object');
 
-    }else{
+    } else {
       $object_type = 'Activity'; //this is the default if nothing defined.
       $object['objectType'] = $object_type;
     }
@@ -350,23 +349,27 @@ class xAPIValidation {
 
     if( in_array($object_type, array( 'Activity', 'Agent', 'Group', 'StatementRef' )) ){
 
-      if( $object['objectType'] == 'StatementRef' ){
-        $array = array('objectType' => array('string'), 
-                       'id'         => array('uuid', true), 
-                       'definition' => array('emptyArray'));
-      }elseif( $object['objectType'] == 'SubStatement' ){
-        $array = array('objectType' => array('string'));
-      }elseif( $object['objectType'] == 'Agent' ){
-        $array = array('objectType' => array('string'), 
-                       'name'       => array('string'), 
-                       'mbox'       => array('mailto'));
-      }else{
-        $array = array('objectType' => array('string'), 
-                       'id'         => array('iri', true), 
-                       'definition' => array('emptyArray'));
+      switch ($object['objectType']) {
+        case 'StatementRef':
+          $object_valid = $this->validateStatementReference($object);
+        break;
+        case 'SubStatement':
+          $object_valid = $this->checkParams(
+            ['objectType' => ['string']],
+            $object,
+            'object'
+          );
+        break;
+        case 'Agent':
+          $object_valid = $this->validateActor($object);
+        break;
+        default: // Activity.
+          $object_valid = $this->checkParams([
+            'objectType' => ['string'],
+            'id' => ['iri', true],
+            'definition' => ['emptyArray']
+          ], $object, 'object' );
       }
-
-      $object_valid = $this->checkParams( $array, $object, 'object' );
 
       if( $object_valid !== true ) return false; //end here if not true
 
