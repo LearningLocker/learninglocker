@@ -17,36 +17,7 @@
 
   {{ Breadcrumbs::render('exporting.create', $lrs) }}
 
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      Select fields
-    </div>
-    <div class="panel-body">
-      <ul class="list-group">
-        <li id="field-list" class="input-group">
-          <input type="text" class="form-control typeahead" placeholder="Enter field name" />
-          <span class="btn btn-danger input-group-addon">
-            <i class="icon icon-minus"></i>
-          </span>
-        </li>
-        <li id="field-list" class="input-group">
-          <input type="text" class="form-control typeahead" placeholder="Enter field name" />
-          <span class="btn btn-danger input-group-addon">
-            <i class="icon icon-minus"></i>
-          </span>
-        </li>
-      </ul>
-      <div class="btn btn-success">
-        <i class="icon icon-plus"></i> {{ Lang::get('exporting.addField') }}
-      </div>
-    </div>
-  </div>
-  <div class="btn btn-primary">
-    <i class="icon icon-play-circle"></i> {{ Lang::get('exporting.run') }}
-  </div>
-  <div class="btn btn-primary">
-    <i class="icon icon-download"></i> {{ Lang::get('exporting.download') }}
-  </div>
+  <div id="fields"></div>
 
 @stop
 
