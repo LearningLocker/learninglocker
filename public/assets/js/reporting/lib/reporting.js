@@ -591,7 +591,6 @@ define([
     var setDescription = $('#createReport').find('input[name="description"]').val();
     var setQuery = query;
     ajaxData = { query: setQuery, name: setName, description: setDescription, lrs: App.lrs_id };
-    console.log( ajaxData );
     jQuery.ajax({
       url: 'save',
       type: 'POST',
@@ -610,7 +609,6 @@ define([
 
   $('#getStatements').click( function(e){
     e.preventDefault();
-    console.log( query );
     $('.showStatements').toggle();
     jQuery.ajax({
       url: 'statements',
