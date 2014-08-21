@@ -43,7 +43,9 @@ class ExportingController extends \BaseController {
   }
 
   public function getData($id) {
-    return $this->query->selectFields($id);
+    $fields = json_decode($this->params['fields'], true);
+    $result = $this->query->selectFields($id, array_keys($fields));
+    return Response::json($result);
   }
 
   /**

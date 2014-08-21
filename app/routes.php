@@ -463,6 +463,10 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
   Route::get('query/{section}', array(
     'uses' => 'Controllers\API\AnalyticsController@getSection'
   ));
+  
+  Route::get('exporting/get/{report_id}', array(
+    'uses' => 'Controllers\API\ExportingController@get'
+  ));
 
   Route::resource('reports', 'Controllers\API\ReportController');
   Route::resource('site', 'Controllers\API\SiteController');
