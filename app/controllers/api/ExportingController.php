@@ -42,10 +42,11 @@ class ExportingController extends BaseController {
       \App::Abort(400, 'Fields were not supplied');
     }
 
-    $fields = explode(',', $this->params['fields']);
-    $filtered_results = $this->exporter->filter( $statements, $fields );
+    $fields = json_decode($this->params['fields'], true);
+    $filtered_results = $this->exporter->filter($statements, array_keys($fields));
+    $mapped_results = $this->exporter->mapFields($filtered_results, $fields);
 
-    return \Response::json($filtered_results);
+    return \Response::json($mapped_results);
   }
 
   /**
