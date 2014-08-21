@@ -202,7 +202,7 @@ Route::get('lrs/{id}/exporting/create', array(
 
 //get data and statements, returns json
 Route::get('lrs/{id}/exporting/data', array(
-  'uses' => 'ReportingController@getData',
+  'uses' => 'ExportingController@getData',
 ));
 Route::get('lrs/{id}/exporting/statements', array(
   'uses' => 'ReportingController@getStatements',

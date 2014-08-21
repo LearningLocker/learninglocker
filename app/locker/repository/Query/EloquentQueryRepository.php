@@ -30,6 +30,12 @@ class EloquentQueryRepository implements QueryRepository {
     ->get();
   }
 
+  public function selectFields($lrs = '', $fields = ['statement.id']) {
+    return \DB::table('statements')
+      ->select($fields)
+      ->first();
+  }
+
   /**
    * Query to grab statement based on a filter
    *

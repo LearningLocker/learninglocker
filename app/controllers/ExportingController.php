@@ -42,6 +42,10 @@ class ExportingController extends \BaseController {
     ]);
   }
 
+  public function getData($id) {
+    return $this->query->selectFields($id);
+  }
+
   /**
    * Return json feed of reports
    *
