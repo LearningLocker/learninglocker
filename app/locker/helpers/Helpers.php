@@ -47,9 +47,8 @@ class Helpers {
       foreach($array as $key => $value){
 
         if(is_array($value)){
-
-          $output[$key] = Helpers::replaceFullStop( $value );
-
+          $new = Helpers::replaceFullStopInKeys( $key );
+          $output[$new] = Helpers::replaceFullStop( $value );
         }else{
 
           $new = Helpers::replaceFullStopInKeys( $key );
