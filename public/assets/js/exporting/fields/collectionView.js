@@ -2,7 +2,6 @@ define([
   'marionette',
   './modelView'
 ], function (Marionette, ModelView) {
-  console.log(ModelView);
   return Marionette.CompositeView.extend({
     template: '#fieldCollection',
     itemView: ModelView,

@@ -17,7 +17,6 @@ define([
           }
         ])
       }));
-      window.fields = FieldsCollection;
     }
   });
 });
