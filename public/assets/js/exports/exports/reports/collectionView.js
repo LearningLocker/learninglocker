@@ -4,6 +4,13 @@ define([
 ], function (Marionette, ModelView) {
   return Marionette.CompositeView.extend({
     itemView: ModelView,
-    template: '#'
+    template: '#',
+    events: {
+      'change #reports': 'change'
+    },
+
+    change: function (event) {
+      
+    }
   });
 });
