@@ -468,6 +468,10 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
     'uses' => 'Controllers\API\ExportingController@show'
   ));
 
+  Route::get('exports/{export_id}/show/csv', array(
+    'uses' => 'Controllers\API\ExportingController@showCSV'
+  ));
+
   Route::get('exports/{export_id}', array(
     'uses' => 'Controllers\API\ExportingController@get'
   ));

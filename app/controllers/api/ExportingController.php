@@ -106,7 +106,30 @@ class ExportingController extends BaseController {
     $mapped_results = $this->exporter->mapFields($filtered_results, $fields);
 
     // Return mapped results and json.
-    return \Response::json($mapped_results);
+    return $mapped_results;
+  }
+
+  public function showCSV($export_id) {
+    $mapped_results = $this->show($export_id);
+    $csv_rows = [];
+    $keys = array_keys($mapped_results[0]);
+    array_push($csv_rows, implode(',', $keys));
+
+    foreach ($mapped_results as $result) {
+      $values = [];
+
+      foreach ($keys as $key) {
+        array_push($values, $result[$key]);
+      }
+
+      array_push($csv_rows, implode(',', $values));
+    }
+
+    $headers = [
+      'Content-Type' => 'text/csv'
+    ];
+ 
+    return \Response::make(implode('\n', $csv_rows), 200, $headers);
   }
 
   /**
