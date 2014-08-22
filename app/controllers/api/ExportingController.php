@@ -63,7 +63,7 @@ class ExportingController extends BaseController {
    * @return boolean Success of the deletion.
    */
   public function destroy($export_id) {
-    
+    return $this->export->delete($export_id);
   }
 
 
