@@ -68,7 +68,11 @@ class ExportingController extends BaseController {
    * @return boolean Success of the deletion.
    */
   public function destroy($export_id) {
-    return $this->export->delete($export_id);
+    if ($this->export->delete($this->get($export_id))) {
+      \Response::json(['ok'], 204);
+    } else {
+      \App::abort(500, 'Could not delete report.');
+    }
   }
 
 

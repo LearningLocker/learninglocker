@@ -45,9 +45,13 @@ class EloquentExportRepository implements ExportRepository {
     return $export->save() ? $export->_id : false;
   }
 
-  public function delete($id){
-    $export = $this->find($id);
-    return $export->delete();
+  public function delete($export){
+    if ($export['exists']) {
+      $export->delete();
+      return true;
+    } else {
+      return false; 
+    }
   }
 
 }
