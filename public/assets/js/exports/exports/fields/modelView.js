@@ -1,8 +1,10 @@
 define([
-  'marionette'
-], function (Marionette) {
+  'underscore',
+  'marionette',
+  'text!./modelTemplate.html'
+], function (_, Marionette, template) {
   return Marionette.ItemView.extend({
-    template: '#',
+    template: _.template(template),
     events: {
       'click #remove': 'remove'
     },

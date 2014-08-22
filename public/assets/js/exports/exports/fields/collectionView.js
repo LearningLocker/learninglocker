@@ -1,10 +1,12 @@
 define([
+  'underscore',
   'marionette',
   './modelView'
-], function (Marionette, ModelView) {
+  'text!./collectionTemplate.html'
+], function (_, Marionette, ModelView, template) {
   return Marionette.CompositeView.extend({
     itemView: ModelView,
-    template: '#',
+    template: _.template(template),
     events: {
       'click #addField': 'addField'
     },

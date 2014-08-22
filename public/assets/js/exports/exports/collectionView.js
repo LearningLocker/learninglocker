@@ -1,9 +1,11 @@
 define([
+  'underscore',
   'marionette',
-  './modelView'
-], function (Marionette, ModelView) {
+  './modelView',
+  'text!./collectionTemplate.html'
+], function (_, Marionette, ModelView, template) {
   return Marionette.CompositeView.extend({
-    itemView: ModelView,
+    itemView: _.template(template),
     template: '#',
     events: {
       'click #addExport': 'add'

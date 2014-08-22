@@ -5,9 +5,10 @@ require.config({
     underscore: '../libs/lodash/lodash',
     backbone: '../libs/backbone/backbone.min',
     marionette: '../libs/backbone/backbone.marionette',
+    text: '//cdnjs.cloudflare.com/ajax/libs/require-text/2.0.12/text.min',
     'backbone.wreqr': '../libs/backbone/backbone.wreqr',
     'backbone.babysitter' : '../libs/backbone/backbone.babysitter',
-    'bootstrap': '../libs/bootstrap/bootstrap.min',
+    'bootstrap': '../libs/bootstrap/bootstrap.min'
   },
   shim : {
     jquery : {

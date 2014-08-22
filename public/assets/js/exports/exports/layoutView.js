@@ -1,8 +1,10 @@
 define([
-  'marionette'
-], function (Marionette) {
+  'underscore',
+  'marionette',
+  'text!./layoutTemplate.html'
+], function (_, Marionette, template) {
   return Marionette.LayoutView.extend({
-    template: '#',
+    template: _.template(template),
     regions: {
       'report': '#report',
       'fields': '#fields'
