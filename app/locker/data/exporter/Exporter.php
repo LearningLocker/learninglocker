@@ -32,8 +32,4 @@ class Exporter {
   public function filter ( $statements, $fields ) {
     return $statements->select($fields)->get();
   }
-
-  private function isAssoc($arr) {
-    return is_array($arr) && array_keys($arr) !== range(0, count($arr) - 1);
-  }
 }
