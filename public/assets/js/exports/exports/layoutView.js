@@ -2,6 +2,10 @@ define([
   'marionette'
 ], function (Marionette) {
   return Marionette.LayoutView.extend({
-    // Code.
+    template: '#',
+    regions: {
+      'report': '#report',
+      'fields': '#fields'
+    }
   });
 });

@@ -11,7 +11,7 @@ define([
   App.lrs_id = window.location.pathname.split('lrs/')[1].split('/')[0];
 
   App.addRegions({
-    fields: '#fields'
+    content: '#content'
   });
 
   App.addInitializer(function (options) {
