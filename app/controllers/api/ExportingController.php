@@ -109,6 +109,11 @@ class ExportingController extends BaseController {
     return $mapped_results;
   }
 
+  /**
+   * Shows the result of an export as CSV.
+   * @param  id $export_id Identifier of the export to be run.
+   * @return csv
+   */
   public function showCSV($export_id) {
     $csv_rows = [];
 
