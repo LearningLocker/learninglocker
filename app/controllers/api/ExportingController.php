@@ -3,6 +3,7 @@
 use Locker\Data\Exporter\Exporter as Exporter;
 use Locker\Repository\Query\QueryRepository as Query;
 use Locker\Repository\Report\ReportRepository as Report;
+use Locker\Repository\Export\ExportRepository as Export;
 
 class ExportingController extends BaseController {
 
@@ -11,7 +12,7 @@ class ExportingController extends BaseController {
    **/
   protected $params;
 
-  protected $exporter, $query, $report;
+  protected $exporter, $query, $report, $export;
 
 
   /**
@@ -19,18 +20,59 @@ class ExportingController extends BaseController {
    *
    * @param StatementRepository $statement
    */
-  public function __construct( Exporter $exporter, Query $query, Report $report ){
+  public function __construct( Exporter $exporter, Query $query, Report $report, Export $export ) {
 
     $this->exporter = $exporter;
     $this->query = $query;
     $this->report = $report;
+    $this->export = $export;
     $this->beforeFilter('@setParameters');
     $this->beforeFilter('@getLrs');
 
   }
 
+  /**
+   * Gets an export.
+   * @param  id $export_id Identifier of the export to be retrieved.
+   * @return Export The retrieved export.
+   */
+  public function get($export_id) {
+    
+  }
 
-  public function get($report_id) {
+  /**
+   * Creates an export.
+   * @return id Identifer of the created export.
+   */
+  public function create() {
+    return $this->export->create($this->params);
+  }
+
+  /**
+   * Updates an export.
+   * @param  id $export_id Identifier of the export to be updated.
+   * @return boolean Success of the update.
+   */
+  public function update($export_id) {
+    
+  }
+
+  /**
+   * Deletes an export.
+   * @param  id $export_id Identifier of the export to be delete.
+   * @return boolean Success of the deletion.
+   */
+  public function destroy($export_id) {
+    
+  }
+
+
+  /**
+   * Runs an export.
+   * @param  id $report_id Identifier of the report to run.
+   * @return response Mapped statements in JSON. 
+   */
+  public function run($report_id) {
 
     $report = $this->report->find($report_id);
     if( !$report ){

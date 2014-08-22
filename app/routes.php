@@ -465,7 +465,23 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
   ));
   
   Route::get('exporting/get/{report_id}', array(
+    'uses' => 'Controllers\API\ExportingController@run'
+  ));
+
+  Route::get('exports/{export_id}', array(
     'uses' => 'Controllers\API\ExportingController@get'
+  ));
+
+  Route::post('exports', array(
+    'uses' => 'Controllers\API\ExportingController@create'
+  ));
+
+  Route::put('exports/{export_id}', array(
+    'uses' => 'Controllers\API\ExportingController@update'
+  ));
+
+  Route::delete('exports/{export_id}', array(
+    'uses' => 'Controllers\API\ExportingController@destroy'
   ));
 
   Route::resource('reports', 'Controllers\API\ReportController');
