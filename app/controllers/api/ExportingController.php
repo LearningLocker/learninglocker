@@ -110,11 +110,16 @@ class ExportingController extends BaseController {
   }
 
   public function showCSV($export_id) {
-    $mapped_results = $this->show($export_id);
     $csv_rows = [];
+
+    // Get mapped results.
+    $mapped_results = $this->show($export_id);
+
+    // Add fields.
     $keys = array_keys($mapped_results[0]);
     array_push($csv_rows, implode(',', $keys));
 
+    // Add each mapped result as a row.
     foreach ($mapped_results as $result) {
       $values = [];
 
@@ -125,10 +130,10 @@ class ExportingController extends BaseController {
       array_push($csv_rows, implode(',', $values));
     }
 
+    // Respond with CSV.
     $headers = [
       'Content-Type' => 'text/csv'
     ];
- 
     return \Response::make(implode('\n', $csv_rows), 200, $headers);
   }
 
