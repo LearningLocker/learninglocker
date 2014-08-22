@@ -37,7 +37,7 @@ class ExportingController extends BaseController {
    * @return Export The retrieved export.
    */
   public function get($export_id) {
-    
+    return $this->export->find($export_id);
   }
 
   /**
