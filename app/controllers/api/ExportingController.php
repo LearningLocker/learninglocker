@@ -37,7 +37,12 @@ class ExportingController extends BaseController {
    * @return Export The retrieved export.
    */
   public function get($export_id) {
-    return $this->export->find($export_id);
+    $export = $this->export->find($export_id);
+    if ($export['exists']) {
+      return $export;
+    } else {
+      \App::abort(404, "Export with id `" . $export_id . "` not found.");
+    }
   }
 
   /**
@@ -54,7 +59,7 @@ class ExportingController extends BaseController {
    * @return boolean Success of the update.
    */
   public function update($export_id) {
-    
+    return $this->export->update($export_id, $this->params);
   }
 
   /**
