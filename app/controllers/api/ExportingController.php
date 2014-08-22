@@ -75,28 +75,37 @@ class ExportingController extends BaseController {
     }
   }
 
-
   /**
-   * Runs an export.
-   * @param  id $report_id Identifier of the report to run.
-   * @return response Mapped statements in JSON. 
+   * Shows the result of an export as JSON.
+   * @param  id $export_id Identifier of the export to be run.
+   * @return json
    */
-  public function run($report_id) {
+  public function show($export_id) {
+    $export = $this->get($export_id);
 
-    $report = $this->report->find($report_id);
+    // Get and check report.
+    $report = $this->report->find($export->report);
     if( !$report ){
       \App::abort(404, "Report does not exist");
     }
-    $statements = $this->query->selectStatementDocs($this->lrs->_id, $this->decodeURL( $report->query ));
 
-    if( !isset($this->params['fields']) ){ //todo - check not empty, check is_array, check meets format requirements
+    // Select statements.
+    $statements = $this->query->selectStatementDocs(
+      $this->lrs->_id,
+      $this->decodeURL($report->query)
+    );
+
+    // Get and check fields.
+    if(is_null($export['fields'])) {
       \App::Abort(400, 'Fields were not supplied');
     }
+    $fields = json_decode($export['fields'], true);
 
-    $fields = json_decode($this->params['fields'], true);
+    // Filter and map results.
     $filtered_results = $this->exporter->filter($statements, array_keys($fields));
     $mapped_results = $this->exporter->mapFields($filtered_results, $fields);
 
+    // Return mapped results and json.
     return \Response::json($mapped_results);
   }
 

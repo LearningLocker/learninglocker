@@ -464,8 +464,8 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
     'uses' => 'Controllers\API\AnalyticsController@getSection'
   ));
   
-  Route::get('exporting/get/{report_id}', array(
-    'uses' => 'Controllers\API\ExportingController@run'
+  Route::get('exports/{export_id}/show', array(
+    'uses' => 'Controllers\API\ExportingController@show'
   ));
 
   Route::get('exports/{export_id}', array(
