@@ -11,40 +11,14 @@ class Exporter {
     # code...
   }
 
-  private function getField ( $value, $field ) {
-    $fields = explode('.', $field);
-    return $this->getFieldValue($value, $fields, 0, count($fields));
-  }
-
-  private function getFieldValue ( $value, $fields, $fieldIndex, $fieldCount ) {
-    $set = isset($value[$fields[$fieldIndex]]);
-    dd(json_encode($value['statement.id']));
-
-    // Base case: reached last field so return value.
-    if ($fieldIndex === $fieldCount - 1) {
-      return $set ? $value[$fields[$fieldIndex]] : null;
-    }
-
-    // Recursive case: more fields remaining.
-    else {
-      return $set && isAssoc($value[$fields[$fieldIndex]]) ? $this->getFieldValue(
-        $value[$fields[$fieldIndex]],
-        $fields,
-        $fieldIndex + 1,
-        $fieldCount
-      ) : null;
-    }
-  }
-
   public function mapFields ( $statements, $fields ) {
     $mappedStatements = [];
 
     foreach ($statements as $statement) {
       $mappedStatement = [];
       foreach ($fields as $oldField => $newField) {
-        dd($statement['statement.timestamp']);
         $mappedStatement[$newField] = 
-          $this->getField($statement, $oldField) ?
+          !is_null($statement[$oldField]) ?
           $statement[$oldField] :
           null;
       }
