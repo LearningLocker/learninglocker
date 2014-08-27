@@ -1,0 +1,13 @@
+ul#fields input {
+	width: 39%;
+	display: inline;
+}
+
+ul#fields {
+	list-style-type: none;
+	padding-left: 0;
+}
+
+input[type='text'] {
+	margin-bottom: 5px;
+}
