@@ -32,6 +32,14 @@ class ExportingController extends BaseController {
   }
 
   /**
+   * Gets all exports.
+   * @return Array of Exports
+   */
+  public function getAll() {
+    return $this->export->all($this->lrs->_id);
+  }
+
+  /**
    * Gets an export.
    * @param  id $export_id Identifier of the export to be retrieved.
    * @return Export The retrieved export.
