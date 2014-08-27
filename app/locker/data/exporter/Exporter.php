@@ -16,11 +16,13 @@ class Exporter {
 
     foreach ($statements as $statement) {
       $mappedStatement = [];
-      foreach ($fields as $oldField => $newField) {
-        $mappedStatement[$newField] = 
-          !is_null($statement[$oldField]) ?
-          $statement[$oldField] :
-          null;
+      foreach ($fields as $field) {
+        if (!is_null($field['to'])) {
+          $mappedStatement[$field['to']] = 
+            !is_null($field['from']) ?
+            $statement[$field['from']] :
+            null;
+        }
       }
 
       array_push($mappedStatements, $mappedStatement);
@@ -30,6 +32,12 @@ class Exporter {
   }
 
   public function filter ( $statements, $fields ) {
-    return $statements->select($fields)->get();
+    $statementFields = [];
+
+    foreach ($fields as $field) {
+      array_push($statementFields, $field['from']);
+    }
+
+    return $statements->select($statementFields)->get();
   }
 }
