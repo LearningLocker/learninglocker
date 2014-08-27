@@ -2,6 +2,9 @@ define([
   'backbone'
 ], function (Backbone) {
   return Backbone.Model.extend({
-    // Code.
+    defaults: {
+      from: '',
+      to: ''
+    }
   });
 });
