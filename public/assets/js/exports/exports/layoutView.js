@@ -7,7 +7,8 @@ define([
     template: _.template(template),
     regions: {
       'report': '#report',
-      'fields': '#fields'
+      'fields': '#fields',
+      'exportInfo': '#exportInfo'
     }
   });
 });

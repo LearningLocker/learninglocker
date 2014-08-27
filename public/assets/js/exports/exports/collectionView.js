@@ -5,14 +5,8 @@ define([
   'text!./collectionTemplate.html'
 ], function (_, Marionette, ModelView, template) {
   return Marionette.CompositeView.extend({
-    itemView: _.template(template),
-    template: '#',
-    events: {
-      'click #addExport': 'add'
-    },
-
-    add: function () {
-      
-    }
+    childView: ModelView,
+    template: _.template(template),
+    childViewContainer: '#exports'
   });
 });
