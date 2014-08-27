@@ -196,27 +196,6 @@ Route::resource('lrs', 'LrsController');
 Route::get('lrs/{id}/exporting', array(
   'uses' => 'ExportingController@index',
 ));
-Route::get('lrs/{id}/exporting/create', array(
-  'uses' => 'ExportingController@create',
-));
-
-//get data and statements, returns json
-Route::get('lrs/{id}/exporting/data', array(
-  'uses' => 'ExportingController@getData',
-));
-Route::get('lrs/{id}/exporting/statements', array(
-  'uses' => 'ReportingController@getStatements',
-));
-//routes to query actors and activities, returns json
-Route::get('lrs/{id}/exporting/actors/{query}', array(
-  'uses' => 'ReportingController@getActors',
-));
-
-
-//used by typeahead to get objects
-Route::get('lrs/{id}/exporting/typeahead/{segment}', array(
-  'uses' => 'ReportingController@getTypeahead',
-));
 
 //Route::resource('reporting', 'ReportingController');
 
@@ -472,6 +451,10 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
     'uses' => 'Controllers\API\ExportingController@showCSV'
   ));
 
+  Route::get('exports', array(
+    'uses' => 'Controllers\API\ExportingController@getAll'
+  ));
+
   Route::get('exports/{export_id}', array(
     'uses' => 'Controllers\API\ExportingController@get'
   ));
@@ -488,7 +471,10 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
     'uses' => 'Controllers\API\ExportingController@destroy'
   ));
 
-  Route::resource('reports', 'Controllers\API\ReportController');
+  Route::get('reports', array(
+    'uses' => 'Controllers\API\ReportController@getAll'
+  ));
+
   Route::resource('site', 'Controllers\API\SiteController');
 
 });
