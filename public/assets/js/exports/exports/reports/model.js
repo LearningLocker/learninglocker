@@ -1,10 +1,12 @@
 define([
-  'backbone'
+  'backbone',
+  'basicauth'
 ], function (Backbone) {
   return Backbone.Model.extend({
-    '_id': '',
-    'name': '',
-    'description': '',
-    'filters': ''
+    idAttribute: "_id",
+    credentials: {
+      username: window.lrs.key,
+      password: window.lrs.secret
+    },
   });
 });
