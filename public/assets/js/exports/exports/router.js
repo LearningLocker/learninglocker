@@ -3,8 +3,9 @@ define([
 ], function (Marionette) {
   return Marionette.AppRouter.extend({
     appRoutes: {
-      "/": "list",
-      "/:exportId": "item"
+      '': 'list',
+      'new': 'new',
+      ':exportId': 'item'
     }
   });
 });
