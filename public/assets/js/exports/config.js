@@ -4,11 +4,12 @@ require.config({
     jquery: '../libs/jquery/jquery.1.10.2',
     underscore: '../libs/lodash/lodash',
     backbone: '../libs/backbone/backbone.min',
-    marionette: '../libs/backbone/backbone.marionette',
+    marionette: '//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.0.2/backbone.marionette.min',
     text: '//cdnjs.cloudflare.com/ajax/libs/require-text/2.0.12/text.min',
     'backbone.wreqr': '../libs/backbone/backbone.wreqr',
     'backbone.babysitter' : '../libs/backbone/backbone.babysitter',
-    'bootstrap': '../libs/bootstrap/bootstrap.min'
+    'bootstrap': '../libs/bootstrap/bootstrap.min',
+    'basicauth': '../libs/backbone/backbone.basicauth'
   },
   shim : {
     jquery : {
@@ -24,6 +25,10 @@ require.config({
     marionette : {
       deps : ['jquery', 'underscore', 'backbone'],
       exports : 'Marionette'
+    },
+    basicauth : {
+      deps : ['jquery', 'underscore', 'backbone'],
+      exports : 'Backbone.BasicAuth'
     },
     bootstrap: {
       deps: ['jquery'],
