@@ -107,11 +107,10 @@ class ExportingController extends BaseController {
     if(is_null($export['fields'])) {
       \App::Abort(400, 'Fields were not supplied');
     }
-    $fields = json_decode($export['fields'], true);
 
     // Filter and map results.
-    $filtered_results = $this->exporter->filter($statements, array_keys($fields));
-    $mapped_results = $this->exporter->mapFields($filtered_results, $fields);
+    $filtered_results = $this->exporter->filter($statements, $export['fields']);
+    $mapped_results = $this->exporter->mapFields($filtered_results, $export['fields']);
 
     // Return mapped results and json.
     return $mapped_results;
