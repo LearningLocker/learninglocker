@@ -29,7 +29,7 @@ class EloquentExportRepository implements ExportRepository {
   public function create( $data ){
     $export = new Export;
     $this->setProperties($export, $data);
-    return $export->save() ? $export->_id : false;
+    return $export->save() ? $export : false;
   }
 
   public function update($id, $data){
@@ -42,7 +42,7 @@ class EloquentExportRepository implements ExportRepository {
     }
 
     $export = $this->setProperties($export, $data, true);
-    return $export->save() ? $export->_id : false;
+    return $export->save() ? $export : false;
   }
 
   public function delete($export){
