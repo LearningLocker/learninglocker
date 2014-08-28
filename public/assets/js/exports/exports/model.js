@@ -10,8 +10,8 @@ define([
     	lrs: null,
     	report: null,
     	fields: new FieldsCollection(),
-    	name: '',
-    	description: ''
+    	name: trans('exporting.new.name'),
+    	description: trans('exporting.new.description')
     },
     credentials: {
       username: window.lrs.key,
