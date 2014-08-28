@@ -8,6 +8,7 @@ services:
 
 install:
   - composer install --prefer-source --no-interaction --dev
+  - printf "\n" | pecl install mongo
 
 before_script:
   - sleep 30
