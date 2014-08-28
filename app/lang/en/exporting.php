@@ -11,23 +11,37 @@ return [
   'info' => 'Export information',
   'select' => [
     'report' => 'Select a report',
-    'export' => 'Select fields'
+    'fields' => 'Select fields'
+  ],
+  'fields' => [
+    'name' => 'Name',
+    'description' => 'Description',
+    'created' => 'Created'
   ],
   'actions' => [
+    'saved' => 'The export has been saved.',
     'save' => 'Save',
     'download' => 'Download',
     'add' => [
       'field' => 'Add field',
       'export' => 'Add export'
     ],
-    'delete' => 'Delete',
     'edit' => 'Edit',
+    'delete' => 'Delete'
   ],
   'new' => [
     'name' => 'New export',
     'description' => 'A new export.'
   ],
   'errors' => [
-    'noReport' => 'Must have a report.'
-  ]
+    'noReport' => 'Must have a report.',
+    'mustSave' => 'You must save this new export before you can download it\'s result.'
+  ],
+  'placeholders' => [
+    'suggestionField' => 'Suggestion field name',
+    'userField' => 'Your field name',
+    'name' => 'Name this export',
+    'description' => 'Describe this export'
+  ],
+  'unknown' => 'Unknown'
 ];

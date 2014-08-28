@@ -45,7 +45,7 @@ define([
 
     validate: function (attrs, opts) {
       if (attrs.report == null) {
-        return 'Must have a report';
+        return trans('exporting.errors.noReport');
       }
     }
   });

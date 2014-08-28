@@ -23,7 +23,7 @@ define([
       var self = this;
       var opts = {
         success: function (model, response, options) {
-          alert('Export has been saved.');
+          alert(trans('exporting.actions.saved'));
           self.options.created = true;
         },
         error: function (model, response, options) {
@@ -47,7 +47,7 @@ define([
 
     downloadJSON: function () {
       if (!this.options.created) {
-        alert('You must save this new export before you can download it\'s result.');
+        alert(trans('exporting.errors.mustSave'));
       } else {
         this.model.downloadJSON().done(function (data) {
           saveTextAs(JSON.stringify(data, null, 2), 'download.json');
@@ -59,7 +59,7 @@ define([
 
     downloadCSV: function () {
       if (!this.options.created) {
-        alert('You must save this new export before you can download it\'s result.');
+        alert(trans('exporting.errors.mustSave'));
       } else {
         this.model.downloadCSV().done(function (data) {
           saveTextAs(data, 'download.csv');

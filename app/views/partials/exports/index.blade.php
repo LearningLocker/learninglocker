@@ -19,7 +19,7 @@
 @section('content')
 
   <div class="page-header">
-    <h1>{{ Lang::get('statements.exporting') }}</h1>
+    <h1>{{ Lang::get('exporting.title') }}</h1>
   </div>
 
   <div id="content"></div>

@@ -1,17 +1,17 @@
 <!-- Breadcrumbs. -->
 <ol class="breadcrumb">
-  <li class="active">Exports</li>
+  <li class="active"><%= trans('exporting.title') %></li>
 </ol>
 
 <!-- Exports. -->
 <table class="table table-striped table-bordered">
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Description</th>
-      <th>Created</th>
-      <th>Edit</th>
-      <th>Delete</th>
+      <th><%= trans('exporting.fields.name') %></th>
+      <th><%= trans('exporting.fields.description') %></th>
+      <th><%= trans('exporting.fields.created') %></th>
+      <th><%= trans('exporting.actions.edit') %></th>
+      <th><%= trans('exporting.actions.delete') %></th>
     </tr>
   </thead>
   <tbody id="exports">
@@ -21,5 +21,5 @@
 
 <!-- Buttons. -->
 <a id="addExport" class="btn btn-success" href="#new">
-  <i class="icon icon-plus"></i> Add Export
+  <i class="icon icon-plus"></i> <%= trans('exporting.actions.add.export') %>
 </a>

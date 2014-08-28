@@ -11,7 +11,9 @@ define([
     },
 
     delete: function () {
-      this.model.destroy();
+      if (confirm(trans('site.sure'))) {
+        this.model.destroy();
+      }
     }
   });
 });

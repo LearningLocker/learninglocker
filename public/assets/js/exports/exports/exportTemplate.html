@@ -1,24 +1,24 @@
 <!-- Breadcrumbs. -->
 <ol class="breadcrumb">
-  <li><a href="#">Exports</a></li>
-  <li class="active"><%= name || 'Unknown' %></li>
+  <li><a href="#"><%= trans('exporting.title') %></a></li>
+  <li class="active"><%= name || trans('exporting.unknown') %></li>
 </ol>
 
 <!-- Buttons. -->
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title">Export information</h3>
+    <h3 class="panel-title"><%= trans('exporting.info') %></h3>
   </div>
   <div id="exportInfo" class="panel-body">
-  	<input id="name" type="text" class="form-control" placeholder="Name this export" value="<%= name %>">
-  	<input id="description" type="text" class="form-control" placeholder="Describe this export" value="<%= description %>">
+  	<input id="name" type="text" class="form-control" placeholder="<%= trans('exporting.placeholders.name') %>" value="<%= name %>">
+  	<input id="description" type="text" class="form-control" placeholder="<%= trans('exporting.placeholders.description') %>" value="<%= description %>">
 
   	<div id="save" class="btn btn-primary">
-  	  <i class="icon icon-save"></i> Save
+  	  <i class="icon icon-save"></i> <%= trans('exporting.actions.save') %>
   	</div>
   	<div id="download" class="btn-group">
   	  <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
-  	    <i class="icon icon-download"></i> Download <span class="caret"></span>
+  	    <i class="icon icon-download"></i> <%= trans('exporting.actions.download') %> <span class="caret"></span>
   	  </button>
   	  <ul class="dropdown-menu" role="menu">
   	    <li id='json'><a>JSON</a></li>
