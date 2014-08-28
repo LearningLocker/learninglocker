@@ -2,7 +2,8 @@ define([
   'jquery',
   'underscore',
   'marionette',
-  'text!./exportTemplate.html'
+  'text!./exportTemplate.html',
+  'fileSaver'
 ], function ($, _, Marionette, template) {
   return Marionette.ItemView.extend({
     template: _.template(template),
@@ -48,8 +49,8 @@ define([
       if (!this.options.created) {
         alert('You must save this new export before you can download it\'s result.');
       } else {
-        this.model.runJSON().done(function (data) {
-          console.info(data);
+        this.model.downloadJSON().done(function (data) {
+          saveTextAs(JSON.stringify(data, null, 2), 'download.json');
         }).fail(function (jqXHR, status, error) {
           alert(jqXHR.responseJSON.message || error);
         });
@@ -60,8 +61,8 @@ define([
       if (!this.options.created) {
         alert('You must save this new export before you can download it\'s result.');
       } else {
-        this.model.runCSV().done(function (data) {
-          console.info(data);
+        this.model.downloadCSV().done(function (data) {
+          saveTextAs(data, 'download.csv');
         }).fail(function (jqXHR, status, error) {
           alert(jqXHR.responseJSON.message || error);
         });

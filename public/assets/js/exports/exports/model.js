@@ -1,8 +1,9 @@
 define([
+  'jquery',
   'backbone',
   './fields/collection',
   'basicauth'
-], function (Backbone, FieldsCollection) {
+], function ($, Backbone, FieldsCollection) {
   return Backbone.Model.extend({
     idAttribute: "_id",
     defaults: {
@@ -17,24 +18,24 @@ define([
       password: window.lrs.secret
     },
 
-    runJSON: function () {
+    downloadJSON: function () {
       return $.ajax({
         url: this.url() + '/show',
         headers: Backbone.BasicAuth.getHeader({
           username: this.credentials.username,
           password: this.credentials.password
         })
-      });
+      })
     },
 
-    runCSV: function () {
+    downloadCSV: function () {
       return $.ajax({
         url: this.url() + '/show/csv',
         headers: Backbone.BasicAuth.getHeader({
           username: this.credentials.username,
           password: this.credentials.password
         })
-      });
+      })
     },
 
     parse: function (response) {

@@ -146,7 +146,7 @@ class ExportingController extends BaseController {
     $headers = [
       'Content-Type' => 'text/csv'
     ];
-    return \Response::make(implode('\n', $csv_rows), 200, $headers);
+    return \Response::make(implode("\r\n", $csv_rows), 200, $headers);
   }
 
   /**

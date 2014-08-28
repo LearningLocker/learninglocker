@@ -10,7 +10,8 @@ require.config({
     'backbone.babysitter' : '../libs/backbone/backbone.babysitter',
     'bootstrap': '../libs/bootstrap/bootstrap.min',
     'typeahead': '../libs/typeahead/typeahead.min',
-    'basicauth': '../libs/backbone/backbone.basicauth'
+    'basicauth': '../libs/backbone/backbone.basicauth',
+    'fileSaver': '../libs/fileSaver/fileSaver'
   },
   shim : {
     jquery : {
@@ -38,6 +39,9 @@ require.config({
     typeahead: {
       deps: ["jquery"],
       exports: "Typeahead"
+    },
+    fileSaver: {
+      exports: "fileSaver"
     }
   },
 });
