@@ -18,8 +18,8 @@ define([
       this.app = options.app;
       this.options = options;
 
-      this.exports.fetch();
-      this.reports.fetch();
+      this.exports.fetch({async:false});
+      this.reports.fetch({async:false});
     },
 
     // Router methods.
