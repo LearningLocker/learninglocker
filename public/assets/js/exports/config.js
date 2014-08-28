@@ -9,6 +9,7 @@ require.config({
     'backbone.wreqr': '../libs/backbone/backbone.wreqr',
     'backbone.babysitter' : '../libs/backbone/backbone.babysitter',
     'bootstrap': '../libs/bootstrap/bootstrap.min',
+    'typeahead': '../libs/typeahead/typeahead.min',
     'basicauth': '../libs/backbone/backbone.basicauth'
   },
   shim : {
@@ -28,11 +29,15 @@ require.config({
     },
     basicauth : {
       deps : ['jquery', 'underscore', 'backbone'],
-      exports : 'Backbone.BasicAuth'
+      exports : 'BasicAuth'
     },
     bootstrap: {
       deps: ['jquery'],
       exports: 'Bootstrap'
+    },
+    typeahead: {
+      deps: ["jquery"],
+      exports: "Typeahead"
     }
   },
 });
