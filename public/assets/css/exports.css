@@ -1,6 +1,15 @@
-ul#fields input {
+ul#fields li > input {
 	width: 39%;
 	display: inline;
+}
+
+ul#fields li > .twitter-typeahead {
+	width: 39%;
+	vertical-align: middle;
+}
+
+ul#fields li .tt-dropdown-menu {
+	margin-top: -5px;
 }
 
 ul#fields {
@@ -11,3 +20,4 @@ ul#fields {
 input[type='text'] {
 	margin-bottom: 5px;
 }
+
