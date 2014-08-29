@@ -49,7 +49,9 @@ class ExportingController extends BaseController {
     if ($export['exists']) {
       return $export;
     } else {
-      \App::abort(404, "Export with id `" . $export_id . "` not found.");
+      \App::abort(404, trans('exporting.errors.notFound', [
+        'exportId' => $export_id
+      ]));
     }
   }
 
@@ -79,7 +81,7 @@ class ExportingController extends BaseController {
     if ($this->export->delete($this->get($export_id))) {
       \Response::json(['ok'], 204);
     } else {
-      \App::abort(500, 'Could not delete report.');
+      \App::abort(500, trans('exporting.errors.delete');
     }
   }
 
@@ -94,7 +96,7 @@ class ExportingController extends BaseController {
     // Get and check report.
     $report = $this->report->find($export->report);
     if( !$report ){
-      \App::abort(404, "Report does not exist");
+      \App::abort(404, trans('exporting.errors.reportExistence'));
     }
 
     // Select statements.
@@ -105,7 +107,7 @@ class ExportingController extends BaseController {
 
     // Get and check fields.
     if(is_null($export['fields'])) {
-      \App::Abort(400, 'Fields were not supplied');
+      \App::Abort(400, trans('exporting.errors.noFields');
     }
 
     // Filter and map results.

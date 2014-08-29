@@ -36,7 +36,11 @@ return [
   'errors' => [
     'noReport' => 'Must have a report.',
     'noFields' => 'Must have at least one field.',
-    'mustSave' => 'You must save this new export before you can download it\'s result.'
+    'mustSave' => 'You must save this new export before you can download it\'s result.',
+    'notFound' => 'Export with id `:exportId` not found.',
+    'reportExistence' => 'Report does not exist',
+    'delete' => 'Could not delete report.',
+    'undefinedKey' => ':key is not defined.'
   ],
   'placeholders' => [
     'suggestionField' => 'Suggestion field name',
