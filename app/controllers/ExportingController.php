@@ -1,22 +1,15 @@
 <?php
 
-use \Locker\Data\Analytics\AnalyticsInterface as Analytics;
 use Locker\Repository\Lrs\LrsRepository as Lrs;
-use Locker\Repository\Query\QueryRepository as Query;
-use Locker\Repository\Report\ReportRepository as Report;
 
 class ExportingController extends \BaseController {
 
-  protected $analytics;
   protected $lrs;
-  protected $query;
   protected $export;
   protected $params;
 
-  public function __construct(Analytics $analytics, Lrs $lrs, Query $query){
-    $this->analytics = $analytics;
-    $this->lrs       = $lrs;
-    $this->query     = $query;
+  public function __construct(Lrs $lrs){
+    $this->lrs = $lrs;
     
     $this->beforeFilter('auth');
     $this->beforeFilter('auth.lrs'); //check user can access LRS.
