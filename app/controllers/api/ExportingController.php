@@ -81,7 +81,7 @@ class ExportingController extends BaseController {
     if ($this->export->delete($this->get($export_id))) {
       \Response::json(['ok'], 204);
     } else {
-      \App::abort(500, trans('exporting.errors.delete');
+      \App::abort(500, trans('exporting.errors.delete'));
     }
   }
 
@@ -107,7 +107,7 @@ class ExportingController extends BaseController {
 
     // Get and check fields.
     if(is_null($export['fields'])) {
-      \App::Abort(400, trans('exporting.errors.noFields');
+      \App::Abort(400, trans('exporting.errors.noFields'));
     }
 
     // Filter and map results.
