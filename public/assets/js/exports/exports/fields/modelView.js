@@ -60,7 +60,11 @@ define([
     },
 
     delete: function () {
-      this.model.destroy();
+      if (this.model.collection.length > 1) {
+        this.model.destroy();
+      } else {
+        alert(trans('exporting.errors.noFields'));
+      }
     }
   });
 });

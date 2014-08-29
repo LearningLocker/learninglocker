@@ -34,8 +34,10 @@ define([
         }
       }
 
-      this.model.set({'report': this.options.reports.selected.id});
-
+      if (this.options.reports.selected !== undefined) {
+        this.model.set({'report': this.options.reports.selected.id});
+      }
+      
       if (!this.model.isValid()) {
         alert(this.model.validationError);
       } else if (this.options.collection) {

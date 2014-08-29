@@ -35,6 +35,7 @@ return [
   ],
   'errors' => [
     'noReport' => 'Must have a report.',
+    'noFields' => 'Must have at least one field.',
     'mustSave' => 'You must save this new export before you can download it\'s result.'
   ],
   'placeholders' => [

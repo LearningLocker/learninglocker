@@ -9,7 +9,10 @@ define([
     defaults: {
     	lrs: null,
     	report: null,
-    	fields: new FieldsCollection(),
+    	fields: new FieldsCollection([{
+        from: 'statement.id',
+        to: 'id'
+      }]),
     	name: trans('exporting.new.name'),
     	description: trans('exporting.new.description')
     },
@@ -46,6 +49,9 @@ define([
     validate: function (attrs, opts) {
       if (attrs.report == null) {
         return trans('exporting.errors.noReport');
+      }
+      if (attrs.fields.length < 1) {
+        return trans('exporting.errors.noFields');
       }
     }
   });
