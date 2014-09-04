@@ -188,6 +188,33 @@ Route::resource('lrs', 'LrsController');
 
 /*
 |------------------------------------------------------------------
+| Exporting
+|------------------------------------------------------------------
+*/
+
+// Pages.
+Route::get('lrs/{id}/exporting', array(
+  'uses' => 'ExportingController@index',
+));
+
+//Route::resource('reporting', 'ReportingController');
+
+//save,view,edit,delete reports
+Route::post('lrs/{id}/exporting/save', array(
+  'uses' => 'ReportingController@store',
+));
+Route::get('lrs/{id}/exporting/show/{report}', array(
+  'uses' => 'ReportingController@show',
+));
+Route::delete('lrs/{id}/exporting/delete/{report}', array(
+  'uses' => 'ReportingController@destroy',
+));
+Route::get('lrs/{id}/exporting/getReports/{limt?}', array(
+  'uses' => 'ReportingController@getReports',
+));
+
+/*
+|------------------------------------------------------------------
 | Reporting
 |------------------------------------------------------------------
 */
@@ -415,8 +442,39 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
   Route::get('query/{section}', array(
     'uses' => 'Controllers\API\AnalyticsController@getSection'
   ));
+  
+  Route::get('exports/{export_id}/show', array(
+    'uses' => 'Controllers\API\ExportingController@show'
+  ));
 
-  Route::resource('reports', 'Controllers\API\ReportController');
+  Route::get('exports/{export_id}/show/csv', array(
+    'uses' => 'Controllers\API\ExportingController@showCSV'
+  ));
+
+  Route::get('exports', array(
+    'uses' => 'Controllers\API\ExportingController@getAll'
+  ));
+
+  Route::get('exports/{export_id}', array(
+    'uses' => 'Controllers\API\ExportingController@get'
+  ));
+
+  Route::post('exports', array(
+    'uses' => 'Controllers\API\ExportingController@create'
+  ));
+
+  Route::put('exports/{export_id}', array(
+    'uses' => 'Controllers\API\ExportingController@update'
+  ));
+
+  Route::delete('exports/{export_id}', array(
+    'uses' => 'Controllers\API\ExportingController@destroy'
+  ));
+
+  Route::get('reports', array(
+    'uses' => 'Controllers\API\ReportController@getAll'
+  ));
+
   Route::resource('site', 'Controllers\API\SiteController');
 
 });

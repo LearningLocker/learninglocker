@@ -31,17 +31,16 @@ class EloquentQueryRepository implements QueryRepository {
   }
 
   /**
-   * Query to grab statement based on a filter
-   *
+   * Gets statement documents based on a filter.
+   * 
    * @param $lrs       id      The Lrs to search in (required)
    * @param $filter    array   The filter array
    * @param $raw       boolean  Pagination or raw statements?
    * @param $sections  array   Sections of the statement to return, default = all
    * 
-   * @return array results
-   *
-   **/
-  public function selectStatements( $lrs='', $filter, $raw=false, $sections=[] ){
+   * @return Statement query
+   */
+  public function selectStatementDocs( $lrs='', $filter, $raw=false, $sections=[] ){
     //var_dump( $filter );exit;
     $statements = \Statement::where('lrs._id', $lrs);
 
@@ -61,6 +60,23 @@ class EloquentQueryRepository implements QueryRepository {
       }
 
     }
+
+    return $statements;
+  }
+
+  /**
+   * Query to grab statement based on a filter
+   *
+   * @param $lrs       id      The Lrs to search in (required)
+   * @param $filter    array   The filter array
+   * @param $raw       boolean  Pagination or raw statements?
+   * @param $sections  array   Sections of the statement to return, default = all
+   * 
+   * @return array results
+   *
+   **/
+  public function selectStatements( $lrs='', $filter, $raw=false, $sections=[] ){
+    $statements = $this->selectStatementDocs($lrs, $filter, $raw, $sections);
 
     //which part of the statement should we return?
     if( empty($sections) ){
