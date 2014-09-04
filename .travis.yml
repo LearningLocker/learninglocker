@@ -8,11 +8,15 @@ services:
 
 install:
   - composer install --prefer-source --no-interaction --dev
-  - printf "\n" | pecl install mongo
 
 before_script:
-  - sleep 30
-  - php artisan generate:migration add_statements
+  - phpenv config-add travisconfig.ini
+  - sleep 3
+  - php artisan generate:migration add_statements --path=app/database/migrations
   - php artisan migrate --env="testing"
 
 script: ./vendor/bin/phpunit
+
+notifications:
+  slack:
+    secure: bSHZUJ5uisX15oQVLu/6Q+Q6719//x1oWo02noCY2WhXTszTbdKV25OG34pwcndO7AfrXLetm6CAF46Yj0K+GzwEtqjear8JQj8ugnZmjJTG0prYNzFJic7Lkf2a+2mROBDd60cLDW3OMGhBvxMV5ZEhutQ9o+fwMgcbKIy/gAM=

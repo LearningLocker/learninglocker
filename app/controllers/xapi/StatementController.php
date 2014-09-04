@@ -124,7 +124,11 @@ class StatementsController extends BaseController {
     
 
     //if no id submitted, reject
-    if( !isset($statement['id']) ) return $this->sendResponse( array('success' => 'noId') );
+    if(is_null($this->params['statementId'])) {
+      return $this->sendResponse( array('success' => 'noId') );
+    } else {
+      $statement['id'] = $this->params['statementId'];
+    }
 
     $save = $this->saveStatement( array($statement) );
 
