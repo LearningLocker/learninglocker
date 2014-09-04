@@ -51,8 +51,7 @@ define([
       // Buttons.
       layout.exportInfo.show(new ExportView({
         model: exp,
-        reports: reportsView,
-        created: true
+        reports: reportsView
       }));
     },
 
@@ -79,8 +78,7 @@ define([
       layout.exportInfo.show(new ExportView({
         model: exp,
         reports: reportsView,
-        collection: this.exports,
-        created: false
+        collection: this.exports
       }));
     }
   });

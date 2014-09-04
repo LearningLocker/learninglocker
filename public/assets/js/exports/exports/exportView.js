@@ -24,11 +24,10 @@ define([
       var opts = {
         success: function (model, response, options) {
           alert(trans('exporting.actions.saved'));
-          self.options.created = true;
         },
         error: function (model, response, options) {
           alert(response);
-          if (!self.options.created) {
+          if (this.model.isNew()) {
             self.options.collection.remove(self.model);
           }
         }
