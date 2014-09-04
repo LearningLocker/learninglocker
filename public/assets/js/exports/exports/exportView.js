@@ -48,7 +48,7 @@ define([
     },
 
     downloadJSON: function () {
-      if (!this.options.created) {
+      if (this.model.isNew()) {
         alert(trans('exporting.errors.mustSave'));
       } else {
         this.model.downloadJSON().done(function (data) {
@@ -60,7 +60,7 @@ define([
     },
 
     downloadCSV: function () {
-      if (!this.options.created) {
+      if (this.model.isNew()) {
         alert(trans('exporting.errors.mustSave'));
       } else {
         this.model.downloadCSV().done(function (data) {
