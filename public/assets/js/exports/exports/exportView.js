@@ -39,8 +39,8 @@ define([
       
       if (!this.model.isValid()) {
         alert(this.model.validationError);
-      } else if (this.options.collection) {
-        this.options.collection.create(this.model.toJSON(), opts);
+      } else if (this.options.collection && this.model.isNew()) {
+        this.options.collection.create(this.model, opts);
       } else {
         this.model.save({}, opts);
       }
