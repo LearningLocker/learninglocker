@@ -92,8 +92,12 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
     }else{
       $data = $this->query->timedGrouping( $lrs, $filters, $interval, $type );
     }
+    
+    if ( !$data ) {
+      $data = [];
+    }
 
-    if( !$data || isset($data['errmsg']) ){
+    if( isset($data['errmsg']) ){
       return array('success' => false, 'message' => $data['errmsg'] );
     }
 
