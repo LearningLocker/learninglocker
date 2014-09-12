@@ -12,34 +12,45 @@ class Exporter {
   }
 
   /**
-   * Adds quotes to a field that already contains quotes.
-   * @param  String $field The field to be quoted.
-   * @return String        The correctly quoted field.
-   */
-  private function quoteQuotedField ( $field ) {
-    $splits = explode('"', $field);
-    $quotedField = array_shift($splits);
-
-    foreach ($splits as $split) {
-      $quotedField .= '"' . $split . '"';
-    }
-
-    return $quotedField;
-  }
-
-  /**
    * Adds quotes to a field if necessary.
+   * http://stackoverflow.com/questions/3933668/convert-array-into-csv
    * @param  String $field The field to be quoted.
    * @return String        The correctly quoted field.
    */
-  private function quoteField ( $field ) {
-    if (strpos($field, '"') !== false) {
-      return quoteQuotedField($field);
-    } else if (strpos($field, ',') !== false) {
-      return '"' . $field . '"';
+  private function quoteField($field, $delimiter = ';', $enclosure = '"') {
+    $delimiter_esc = preg_quote($delimiter, '/');
+    $enclosure_esc = preg_quote($enclosure, '/');
+
+    if (preg_match( "/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field)) {
+      return $enclosure . str_replace(
+        $enclosure,
+        $enclosure . $enclosure,
+        $field
+      ) . $enclosure;
     } else {
       return $field;
     }
+  }
+
+  /**
+   * Gets a field from an AssocArray.
+   * @param  AssocArray $object The AssocArray containing the field.
+   * @param  String $field  The field to be retrieved.
+   * @return String         The value contained in the field.
+   */
+  private function getField($object, $field) {
+    $keys = explode('.', $field);
+    $len = count($keys);
+
+    for (
+      $i = 0;
+      $i < $len && !is_null($object[$keys[$i]]);
+      $i += 1
+    ) {
+      $object = $object[$keys[$i]];
+    }
+
+    return $this->quoteField(json_encode($object));
   }
 
   /**
@@ -57,7 +68,7 @@ class Exporter {
         if (!is_null($field['to'])) {
           $mappedStatement[$field['to']] = 
             !is_null($field['from']) ?
-            $this->quoteField($statement[$field['from']]) :
+            $this->getField($statement, $field['from']) :
             null;
         }
       }
