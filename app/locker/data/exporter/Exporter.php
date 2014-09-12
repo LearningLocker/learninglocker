@@ -17,7 +17,7 @@ class Exporter {
    * @param  String $field The field to be quoted.
    * @return String        The correctly quoted field.
    */
-  private function quoteField($field, $delimiter = ';', $enclosure = '"') {
+  private function quoteField($field, $delimiter = ',', $enclosure = '"') {
     $delimiter_esc = preg_quote($delimiter, '/');
     $enclosure_esc = preg_quote($enclosure, '/');
 
