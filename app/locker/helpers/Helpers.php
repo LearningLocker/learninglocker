@@ -17,7 +17,7 @@ class Helpers {
   |----------------------------------------------------------------------------
   */
   static function replaceHtmlEntity( $array ){
-
+    
     return json_decode(str_replace('&46;','.', json_encode($array)));
 
   }
