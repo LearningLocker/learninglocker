@@ -27,12 +27,12 @@
     }
   ],
   "require": {
-    "laravel/framework": "4.2.x",
+    "laravel/framework": "4.2.8",
     "jenssegers/mongodb": "1.4.x",
     "davejamesmiller/laravel-breadcrumbs": "2.2.x",
-    "way/generators": "dev-master",
+    "way/generators": "2.6.x",
     "rhumsaa/array_column": "~1.1",
-    "barryvdh/laravel-cors": "dev-master",
+    "barryvdh/laravel-cors": "0.2.x",
     "lucadegasperi/oauth2-server-laravel": "1.0.x",
     "andywer/js-localization": "dev-master"
   },

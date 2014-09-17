@@ -82,19 +82,6 @@ class ApiV1QueryAnalyticsTest extends TestCase {
         $this->assertEquals($data->version, 'v1');
         $this->assertEquals($data->route, 'api/v1/query/analytics');
 
-        //FAILURES
-        //testing params: filter
-        // $filter = array(
-        // 	'object.definition.type' => 'http://activitystrea.ms/schema/2.0/badge'
-        // );
-        // $response = $this->call('GET', '/api/v1/query/analytics', 
-        // 	array('filters' => json_encode($filter)), 
-        // 	array(), 
-        // 	array('PHP_AUTH_USER' => $this->lrs->api['basic_key'], 
-        // 		'PHP_AUTH_PW' => $this->lrs->api['basic_secret']));
-        // $data = $response->getData()->data;
-        // var_dump($data);
-        //testing params: type:time
         $response = $this->call('GET', '/api/v1/query/analytics', array('type' => 'time'), array(), array('PHP_AUTH_USER' => $this->lrs->api['basic_key'],
           'PHP_AUTH_PW' => $this->lrs->api['basic_secret']));
 
@@ -145,19 +132,7 @@ class ApiV1QueryAnalyticsTest extends TestCase {
             //need 2 statements which different Month
             $this->assertEquals(count($data), 2);
         }
-        // FAILURES
-        // $intervalYearLrs = Lrs::find('536b057dc01f1377638b4567');
-        // if ($intervalYearLrs) {
-        // 	$response = $this->call('GET', '/api/v1/query/analytics', 
-        //  	array('interval' => 'Year'), 
-        //  	array(), 
-        //  	array('PHP_AUTH_USER' => $intervalYearLrs->api['basic_key'], 
-        //  		'PHP_AUTH_PW' => $intervalYearLrs->api['basic_secret']));
-        //  $data = $response->getData()->data;
-        //  var_dump($data);
-        //  //need 2 statement which different Year
-        //  $this->assertEquals(count($data), 2);
-        // }
+        
         $intervalWeekLrs = Lrs::find('536b05ccc01f1392638b4567');
         if ($intervalWeekLrs) {
             $response = $this->call('GET', '/api/v1/query/analytics', array('interval' => 'Year'), array(), array('PHP_AUTH_USER' => $intervalWeekLrs->api['basic_key'],
