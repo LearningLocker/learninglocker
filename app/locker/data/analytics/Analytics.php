@@ -97,6 +97,14 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
       $data = [];
     }
 
+    //replace replace &46; in keys with . 
+    //see http://docs.learninglocker.net/docs/statements#quirks for more info
+    if( !empty($data) ){
+      foreach( $data as &$s ){
+        $s = \app\locker\helpers\Helpers::replaceHtmlEntity( $s['statement'] );
+      }
+    }
+
     if( isset($data['errmsg']) ){
       return array('success' => false, 'message' => $data['errmsg'] );
     }
