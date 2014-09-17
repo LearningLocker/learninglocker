@@ -89,6 +89,17 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
     //timedGrouping or statements?
     if( $return == 'statements' ){
       $data = $this->query->selectStatements( $lrs, $filters, true, $sections );
+
+      //replace replace &46; in keys with . 
+      //see http://docs.learninglocker.net/docs/statements#quirks for more info
+      if( !empty($data) ){
+        foreach( $data as &$s ){
+          if( isset($s['statement']) ){
+            $s = \app\locker\helpers\Helpers::replaceHtmlEntity( $s['statement'] );
+          }
+        }
+      }
+
     }else{
       $data = $this->query->timedGrouping( $lrs, $filters, $interval, $type );
     }
@@ -97,13 +108,6 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
       $data = [];
     }
 
-    //replace replace &46; in keys with . 
-    //see http://docs.learninglocker.net/docs/statements#quirks for more info
-    if( !empty($data) ){
-      foreach( $data as &$s ){
-        $s = \app\locker\helpers\Helpers::replaceHtmlEntity( $s['statement'] );
-      }
-    }
 
     if( isset($data['errmsg']) ){
       return array('success' => false, 'message' => $data['errmsg'] );
