@@ -95,7 +95,7 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
       if( !empty($data) ){
         foreach( $data as &$s ){
           if( isset($s['statement']) ){
-            $s = \app\locker\helpers\Helpers::replaceHtmlEntity( $s['statement'] );
+            $s['statement'] = \app\locker\helpers\Helpers::replaceHtmlEntity( $s['statement'] );
           }
         }
       }
@@ -108,11 +108,9 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
       $data = [];
     }
 
-
     if( isset($data['errmsg']) ){
       return array('success' => false, 'message' => $data['errmsg'] );
     }
-
     return array('success' => true, 'data' => $data);
 
   }
