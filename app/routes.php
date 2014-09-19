@@ -188,6 +188,33 @@ Route::resource('lrs', 'LrsController');
 
 /*
 |------------------------------------------------------------------
+| Exporting
+|------------------------------------------------------------------
+*/
+
+// Pages.
+Route::get('lrs/{id}/exporting', array(
+  'uses' => 'ExportingController@index',
+));
+
+//Route::resource('reporting', 'ReportingController');
+
+//save,view,edit,delete reports
+Route::post('lrs/{id}/exporting/save', array(
+  'uses' => 'ReportingController@store',
+));
+Route::get('lrs/{id}/exporting/show/{report}', array(
+  'uses' => 'ReportingController@show',
+));
+Route::delete('lrs/{id}/exporting/delete/{report}', array(
+  'uses' => 'ReportingController@destroy',
+));
+Route::get('lrs/{id}/exporting/getReports/{limt?}', array(
+  'uses' => 'ReportingController@getReports',
+));
+
+/*
+|------------------------------------------------------------------
 | Lrs client
 |------------------------------------------------------------------
 */
