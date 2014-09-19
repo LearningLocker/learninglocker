@@ -473,11 +473,45 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
   Route::get('query/analytics', array(
     'uses' => 'Controllers\API\AnalyticsController@index'
   ));
+  Route::get('query/statements', array(
+    'uses' => 'Controllers\API\StatementController@index'
+  ));
   Route::get('query/{section}', array(
     'uses' => 'Controllers\API\AnalyticsController@getSection'
   ));
+  
+  Route::get('exports/{export_id}/show', array(
+    'uses' => 'Controllers\API\ExportingController@show'
+  ));
 
-  Route::resource('reports', 'Controllers\API\ReportController');
+  Route::get('exports/{export_id}/show/csv', array(
+    'uses' => 'Controllers\API\ExportingController@showCSV'
+  ));
+
+  Route::get('exports', array(
+    'uses' => 'Controllers\API\ExportingController@getAll'
+  ));
+
+  Route::get('exports/{export_id}', array(
+    'uses' => 'Controllers\API\ExportingController@get'
+  ));
+
+  Route::post('exports', array(
+    'uses' => 'Controllers\API\ExportingController@create'
+  ));
+
+  Route::put('exports/{export_id}', array(
+    'uses' => 'Controllers\API\ExportingController@update'
+  ));
+
+  Route::delete('exports/{export_id}', array(
+    'uses' => 'Controllers\API\ExportingController@destroy'
+  ));
+
+  Route::get('reports', array(
+    'uses' => 'Controllers\API\ReportController@getAll'
+  ));
+
   Route::resource('site', 'Controllers\API\SiteController');
 
 });
@@ -545,5 +579,33 @@ App::missing(function($exception){
     return Response::json( $error, $exception->getStatusCode());
   } else {
     return Response::view( 'errors.missing', array( 'message'=>$exception->getMessage() ), 404);
+  }
+});
+
+App::error(function(Exception $exception)
+{
+
+  Log::error($exception);
+  
+  if (method_exists($exception, 'getStatusCode')) {
+    $code = $exception->getStatusCode();
+  } else {
+    $code = 500;
+  }
+
+  if( Request::segment(1) == "data" || Request::segment(1) == "api" ){
+    $error = array(
+        'error'     =>  true,
+        'message'   =>  $exception->getMessage(),
+        'code'      =>  $code
+    );
+
+    if( Config::get('app.debug') ){
+      $error['trace'] = $exception->getTrace();
+    }
+
+    return Response::json( $error, $code);
+  } else {
+    echo "Status: ".$code." Error: ".$exception->getMessage();
   }
 });
