@@ -24,6 +24,9 @@
 
   if( isset($statement['verb']['display']) ){
     $verb = $statement['verb']['display'];
+    if (!is_array($verb)) {
+      $verb = [$verb];
+    }
     $verb = reset( $verb );
   }else{
     $verb = $statement['verb']['id'];
@@ -53,10 +56,16 @@
     if( isset( $statement['object']['definition']['name'] )){
       //does an acitivyt name exists?
       $object = $statement['object']['definition']['name'];
+      if (!is_array($object)) {
+        $object = [$object];
+      }
       $object = reset( $object );
     }elseif( isset( $statement['object']['definition']['description'] )){
       //if not does a description exist?
       $object = $statement['object']['definition']['description'];
+      if (!is_array($object)) {
+        $object = [$object];
+      }
       $object = reset( $object );
     }else{
       //last resort, or in the case of statement ref, use the id
