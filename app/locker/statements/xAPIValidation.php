@@ -400,9 +400,9 @@ class xAPIValidation {
           //check to see it type is set, if not, set to http://adlnet.gov/expapi/activities/cmi.interaction
           $allowed_interaction_types = array('choice',
                                              'sequencing',
-                                             'Likert',
-                                             'Matching',
-                                             'Performance',
+                                             'likert',
+                                             'matching',
+                                             'performance',
                                              'true-false',
                                              'fill-in',
                                              'numeric',
