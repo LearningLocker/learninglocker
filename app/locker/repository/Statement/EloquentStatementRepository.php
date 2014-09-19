@@ -32,11 +32,19 @@ class EloquentStatementRepository implements StatementRepository {
    * Count statements for any give lrs
    *
    * @param string Lrs
+   * @param array parameters Any parameters for filtering
    * @return count
    *
    **/
-  public function count( $lrs ){
-    return $this->statement->where('lrs._id', $lrs)->remember(5)->count();
+  public function count( $lrs, $parameters=null ){
+    $query = $this->statement->where('lrs._id', $lrs);
+
+    if(!is_null($parameters)){
+      $this->addParameters( $query, $parameters, true );
+    }
+    $count = $query->count();
+    $query->remember(5);
+    return $count;
   }
 
   /**
@@ -144,12 +152,18 @@ class EloquentStatementRepository implements StatementRepository {
     //Full tincan statement validation to make sure the statement conforms
     
     $saved_ids = array();
+    $site = \Site::first();
+    $authority = [
+      "name" => $site->name,
+      "mbox" => "mailto:" . $site->email,
+      "objectType" => "Agent"
+    ]; 
     foreach( $statements as &$statement ){ //loop and amend - return on fail
 
       $verify = new \app\locker\statements\xAPIValidation();
 
       //run full validation
-      $return = $verify->runValidation( $statement, $authority );  
+      $return = $verify->runValidation( $statement, $authority );
 
       if( $return['status'] == 'failed' ){
         return array( 'success' => 'false',  'message' => $return['errors'] );
@@ -219,9 +233,6 @@ class EloquentStatementRepository implements StatementRepository {
       $new_statement->timestamp = new \MongoDate(strtotime($vs['timestamp']));
 
       if( $new_statement->save() ){
-        
-        //event hook for plugins
-        Event::fire('statements.create', array($new_statement));
 
         $saved_ids[] = $new_statement->statement['id'];
 
@@ -290,24 +301,24 @@ class EloquentStatementRepository implements StatementRepository {
    * @param array  $parameters The parameters to add
    *
    */
-  private function addParameters( $statements, $parameters ){
+  private function addParameters( $statements, $parameters, $count=false ){
 
     //Check if agent has been passed
     if( isset($parameters['agent']) ){
-
+      $allow_name_filter_param = isset($parameters['allow_name_filter']) ? $parameters['allow_name_filter'] : false;
+      $allow_name_filter_param = $allow_name_filter_param === 'true' ? true : false;
       $agent_param = !is_object($parameters['agent']) ? json_decode($parameters['agent']) : $parameters['agent']; //convert to object if not already
 
       if( is_array($agent_param) ){ //if array, apply OR filtering to agents
 
-        $statements = $statements->where( function($query) use ($agent_param){ //only apply ORs within agents
+        $statements = $statements->where( function($query) use ($agent_param, $allow_name_filter_param){ //only apply ORs within agents
           foreach( $agent_param as $agent ){ //for each agent
-            $query = $this->setAgent($query, $agent, true); //set agent with orWhere
+            $query = $this->setAgent($query, $agent, $allow_name_filter_param, true); //set agent with orWhere
           }
         });
 
       } else if( is_object($agent_param) ){
-
-        $statements = $this->setAgent( $statements, $agent_param ); //do query on single agent
+        $statements = $this->setAgent( $statements, $agent_param, $allow_name_filter_param ); //do query on single agent
 
       }
 
@@ -359,28 +370,29 @@ class EloquentStatementRepository implements StatementRepository {
     }
 
     //@todo attachments
+    if(!$count){
+      $server_statement_limit = 100;
 
-    $server_statement_limit = 100;
-
-    if( isset( $parameters['limit'] ) ){
-      $limit = intval($parameters['limit']);
-      if( $limit === 0 ){
-        $statements->take( $server_statement_limit ); //server set limit
+      if( isset( $parameters['limit'] ) ){
+        $limit = intval($parameters['limit']);
+        if( $limit === 0 ){
+          $statements->take( $server_statement_limit ); //server set limit
+        } else {
+          $statements->take( $limit );
+        }
       } else {
-        $statements->take( $limit );
+        $statements->take( $server_statement_limit );
       }
-    } else {
-      $statements->take( $server_statement_limit );
-    }
-         
-    if( isset( $parameters['offset'] ) ){
-      $statements->skip( $parameters['offset'] );
-    }
+           
+      if( isset( $parameters['offset'] ) ){
+        $statements->skip( $parameters['offset'] );
+      }
 
-    if( isset( $parameters['ascending'] ) && $parameters['ascending'] == 'true' ){
-      $statements->orderBy('statement.stored', 'asc');
-    }else{
-      $statements->orderBy('statement.stored', 'desc');
+      if( isset( $parameters['ascending'] ) && $parameters['ascending'] == 'true' ){
+        $statements->orderBy('statement.stored', 'asc');
+      }else{
+        $statements->orderBy('statement.stored', 'desc');
+      }
     }
 
     return $statements;
@@ -415,7 +427,7 @@ class EloquentStatementRepository implements StatementRepository {
    * @return $query
    * 
    */
-  public function setAgent( $query, $agent, $or = false ){
+  public function setAgent( $query, $agent, $allow_name_filter_param = false, $or = false ){
 
     $agent_query = '';
 
@@ -438,15 +450,23 @@ class EloquentStatementRepository implements StatementRepository {
       $query->$where_type( $agent_query['field'], $agent_query['value'] );
     } else if( isset($agent->account) ){ //else if there is an account
       if( isset($agent->account->homePage) && isset($agent->account->name ) ){
-        $query->$where_type( function($query){
+        
+        if( $or ){
+          $query->$where_type( function($query) use ($agent) {
+            $query->where('statement.actor.account.homePage', $agent->account->homePage)
+                  ->where('statement.actor.account.name', $agent->account->name );
+          });
+        } else {
           $query->where('statement.actor.account.homePage', $agent->account->homePage)
-                ->where('statement.actor.account.name', $agent->account->name );
-        });
+            ->where('statement.actor.account.name', $agent->account->name );
+        }
+
+
       } 
     } 
 
-    if( isset($agent->name) ){
-      $query->$where_type('statement.actor.name', $agent->name);
+    if( isset($agent->name) && $allow_name_filter_param){
+      $query->where('statement.actor.name', $agent->name);
     }
 
     return $query;
