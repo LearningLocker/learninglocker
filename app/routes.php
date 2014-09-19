@@ -215,6 +215,38 @@ Route::get('lrs/{id}/exporting/getReports/{limt?}', array(
 
 /*
 |------------------------------------------------------------------
+| Lrs client
+|------------------------------------------------------------------
+*/
+Route::get('lrs/{id}/client/manage', array(
+  'uses' => 'ClientController@manage',
+  'as' => 'client.manage'
+));
+
+Route::delete('lrs/{lrs_id}/client/{id}/destory', array(
+  'uses' => 'ClientController@destroy',
+  'as' => 'client.destroy'
+));
+
+Route::get('lrs/{lrs_id}/client/{id}/edit', array(
+  'uses' => 'ClientController@edit',
+  'as' => 'client.edit'
+));
+
+Route::post('lrs/{id}/client/create', array(
+  'before' => 'csrf', 
+  'uses' => 'ClientController@create',
+  'as' => 'client.create'
+));
+
+Route::put('lrs/{lrs_id}/client/{id}/update', array(
+  'before' => 'csrf', 
+  'uses' => 'ClientController@update',
+  'as' => 'client.update'
+));
+
+/*
+|------------------------------------------------------------------
 | Reporting
 |------------------------------------------------------------------
 */
@@ -415,6 +447,11 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
   Route::any('activities/state', array(
     'uses' => 'Controllers\xAPI\StateController@index',
   ));  
+  
+  //Basic Request API
+  Route::post('Basic/request', array(
+    'uses' => 'Controllers\xAPI\BasicRequestController@store',
+  ));
 
 });
 
