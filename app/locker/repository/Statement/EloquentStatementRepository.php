@@ -65,15 +65,10 @@ class EloquentStatementRepository implements StatementRepository {
     $this->addParameters( $statements, $parameters );
 
     $getStatements = $statements->get();
-
+    
     //get Related Agents
     if( isset($parameters['related_agents']) && $parameters['related_agents'] == 'true' && isset($parameters['agent']) ){
       $getStatements = $this->relatedAgents($getStatements, $lrs, $parameters['agent']);
-    }
-
-    //get Related Activities
-    if( isset($parameters['related_activities']) && $parameters['related_activities'] == 'true' && isset($parameters['activity']) ){
-      $getStatements = $this->relatedActivities($getStatements, $lrs, $parameters['activity']);
     }
 
     //now get all statements linked via StatementRef
@@ -321,8 +316,45 @@ class EloquentStatementRepository implements StatementRepository {
       $statements->where( 'statement.context.registration', $parameters['registration'] );
     }
 
+    //set activity
     if( isset($parameters['activity']) ){
-      $statements->where( 'statement.object.id', $parameters['activity'])->where('statement.object.objectType', 'Activity');
+      $statements->where(function($query) use ($parameters) {
+          
+          //look in object
+          $query->where( function($query) use ($parameters) {
+              $query->where('statement.object.objectType', 'Activity')
+                    ->where('statement.object.id', $parameters['activity']);
+          });
+          
+          //if related_activities is true, broaden filter
+          if(isset($parameters['related_activities']) && $parameters['related_activities'] == 'true') {
+
+            //...or look in context parent
+            $query->orWhere( function($query) use ($parameters) {
+                $query->where('statement.context.contextActivities.parent.objectType', 'Activity')
+                      ->where('statement.context.contextActivities.parent.id', $parameters['activity']);
+            });
+            
+            //..or look in context grouping
+            $query->orWhere( function($query) use ($parameters) {
+                $query->where('statement.context.contextActivities.grouping.objectType', 'Activity')
+                      ->where('statement.context.contextActivities.grouping.id', $parameters['activity']);
+            });
+
+            //...or look in context category
+            $query->orWhere( function($query) use ($parameters) {
+                $query->where('statement.context.contextActivities.category.objectType', 'Activity')
+                      ->where('statement.context.contextActivities.category.id', $parameters['activity']);
+            });
+
+            //...or look in context other
+            $query->orWhere( function($query) use ($parameters) {
+                $query->where('statement.context.contextActivities.other.objectType', 'Activity')
+                      ->where('statement.context.contextActivities.other.id', $parameters['activity']);
+            });
+            
+          }
+      });
     }
 
     //since, until or between
@@ -628,56 +660,6 @@ class EloquentStatementRepository implements StatementRepository {
     return $statements;
   }
 
-  /**
-   * Related Activities
-   *
-   **/
-  private function relatedActivities($statements, $lrs, $activityId){
-
-    $ids = array();
-    foreach($statements as $s){
-      $ids[] = $s->id;
-    }
-
-    //look in context parent
-    $parent = \Statement::where('lrs._id', $lrs)
-              ->where('statement.context.contextActivities.parent.objectType', 'Activity')
-              ->where('statement.context.contextActivities.parent.id', $activityId)
-              ->get();
-
-    if( $parent ){
-      $statements = $this->addStatements( $statements, $parent, $ids );
-    }
-    //look in context grouping
-    $grouping = \Statement::where('lrs._id', $lrs)
-                ->where('statement.context.contextActivities.grouping.objectType', 'Activity')
-                ->where('statement.context.contextActivities.grouping.id', $activityId)
-                ->get();
-
-    if( $grouping ){
-      $statements = $this->addStatements( $statements, $grouping, $ids );
-    }
-    //look in context category
-    $category = \Statement::where('lrs._id', $lrs)
-                ->where('statement.context.contextActivities.category.objectType', 'Activity')
-                ->where('statement.context.contextActivities.category.id', $activityId)
-                ->get();
-
-    if( $category ){
-      $statements = $this->addStatements( $statements, $category, $ids );
-    }
-    //look in context other
-    $other= \Statement::where('lrs._id', $lrs)
-                ->where('statement.context.contextActivities.other.objectType', 'Activity')
-                ->where('statement.context.contextActivities.other.id', $activityId)
-                ->get();
-
-    if( $category ){
-      $statements = $this->addStatements( $statements, $other, $ids );
-    }
-   
-    return $statements;
-  }
 
   /**
    * Loop and add additional statements to main statement object
