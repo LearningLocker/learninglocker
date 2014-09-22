@@ -47,6 +47,29 @@ return array(
     	'settings' => 'API Settings',
     	'api'	   => 'LRS API'
     ),
+    
+	'client'       => array(
+    	'manageclients'   => 'Manage additional clients',
+    	'manageclients_intro'   => 'Create a new client for each application or user accessing the LRS via xapi. Coming soon: data tagging by client, client permissions and client management API.',
+    	'new_client'   => 'Create new client',
+    	'unnamed_client' => 'Unnamed client',
+    	'created_fail' => 'The client was not created sucecssfully. Sorry.',
+    	'created_sucecss' => 'The client was created sucecssfully. Hurrah!',
+    	'updated'   => 'The client was updated',
+    	'none' => 'Yes, we have no clients.',
+    	'delete_client_success' => 'Client deleted.',
+    	'delete_client_error' => 'Oops. Something went wrong. The client has not been deleted.',
+    	'authority' => array(
+			'ifi' => 'Identifier',
+			'mbox' => 'Email',
+			'mbox_sha1sum' => 'Encrypted email',
+			'openid' => 'Open id',
+			'account' => 'Account',
+			'accountname' => 'Account Name',
+			'accounthomepage' => 'Account Homepage'
+		)
+    	
+    ),
 
     'update_key'       => 'Your key has now been updated.',
     'update_key_error' => 'There was an error updating your key and secret.',
