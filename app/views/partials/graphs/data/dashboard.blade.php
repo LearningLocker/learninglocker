@@ -2,7 +2,6 @@
 
   var data  = '<?php if(isset($stats['statement_graph'])) echo $stats['statement_graph']; ?>';
   var avg   = '<?php if(isset($stats['statement_avg'])) echo $stats['statement_avg']; else echo 0; ?>';
-  var l_avg = '<?php if(isset($stats['learner_avg'])) echo $stats['learner_avg']; else echo 0; ?>';
 
   var totals   = '<?php echo Lang::get('site.statement_total'); ?>';
   var learners = '<?php echo Lang::get('site.learner_number'); ?>';
@@ -22,9 +21,9 @@
       element: 'dashboard',
       data: category_data,
       xkey: 'y',
-      goals: [avg, l_avg],
+      goals: [avg],
       goalStrokeWidth: 2,
-      goalLineColors: ['#00cc00', '#b85e80'],
+      goalLineColors: ['#00cc00'],
       barColors:['#354b59'],
       ykeys: ['a', 'b'],
       labels: [totals, learners]

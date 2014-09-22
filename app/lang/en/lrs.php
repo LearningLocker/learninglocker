@@ -30,7 +30,8 @@ return array(
     	'api'	    => 'LRS API',
     	'users'     => 'Manage users',
     	'analytics' => 'Analytics',
-    	'reporting' => 'Reporting'
+    	'reporting' => 'Reporting',
+      'exporting' => 'Exporting'
     ),
 
     'endpoint' 	=> array(

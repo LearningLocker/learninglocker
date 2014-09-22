@@ -2,6 +2,8 @@
 
 return array(
 
+  'cipher' => MCRYPT_RIJNDAEL_256,
+
   /*
   |--------------------------------------------------------------------------
   | Application Debug Mode
@@ -38,7 +40,7 @@ return array(
   | ahead and set this to a sensible default for you out of the box.
   |
   */
-
+ 
   'timezone' => 'UTC',
 
   /*
@@ -114,6 +116,7 @@ return array(
     'Way\Generators\GeneratorsServiceProvider',
     'Barryvdh\Cors\CorsServiceProvider',
     'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
+    'JsLocalization\JsLocalizationServiceProvider'
 
   ),
 

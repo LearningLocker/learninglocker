@@ -63,7 +63,7 @@ return array(
 		    'port'     => 27017,
 		    'username' => '',
 		    'password' => '',
-		    'database' => ''
+		    'database' => 'learninglocker' // Default name (removing this makes Travis fail).
 		),
 
 	),

@@ -3,6 +3,8 @@ Learning Locker
 
 Learning Locker is an open source Learning Record Store (LRS).
 
+[![Build Status](https://travis-ci.org/LearningLocker/learninglocker.png)](https://travis-ci.org/LearningLocker/learninglocker)
+
 Homepage: http://learninglocker.net
 
 ## Official Documentation

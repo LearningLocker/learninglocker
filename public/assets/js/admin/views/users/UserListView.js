@@ -29,7 +29,7 @@ define([
     },
 
     deleteUser: function() {
-      if(confirm('Are you sure?')){
+      if(confirm(trans('site.sure'))){
         this.model.destroy({});
       }
     },
@@ -45,7 +45,7 @@ define([
         dataType: 'json',
         success: function (json) {
           $(element.target).blur();
-          alert('Role successfully changed');
+          alert(trans('site.roleChange'));
         },
         error: function( error ) {
           console.log(error);

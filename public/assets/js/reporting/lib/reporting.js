@@ -208,7 +208,7 @@ define([
         filter: function (actors) {
           return $.map(actors, function(actor) {
             return { 
-              name: actor.name, mbox:actor.mbox
+              name: actor.name, mbox:actor.mbox, account:actor.account, openid:actor.openid
             };
           });
         }
@@ -234,7 +234,13 @@ define([
     checkbox = buildCheckboxes('actor', datum.mbox, datum.name);
     $('#actors-selected').append(checkbox);
     //build query which will be sent to API
-    buildQueryArray('statement.actor.mbox', datum.mbox);
+    if( datum.mbox ){
+      buildQueryArray('statement.actor.mbox', datum.mbox);
+    }else if ( datum.account.name ){
+      buildQueryArray('statement.actor.account.name', datum.account.name);
+    } else if (datum.openid) {
+      buildQueryArray('statement.actor.openid', datum.openid);
+    }
     //build query for display
     buildQueryDisplay('actor', datum.name);
     //redraw query display
@@ -585,7 +591,6 @@ define([
     var setDescription = $('#createReport').find('input[name="description"]').val();
     var setQuery = query;
     ajaxData = { query: setQuery, name: setName, description: setDescription, lrs: App.lrs_id };
-    console.log( ajaxData );
     jQuery.ajax({
       url: 'save',
       type: 'POST',

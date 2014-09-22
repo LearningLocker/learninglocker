@@ -25,8 +25,7 @@ class AdminDashboard extends \app\locker\data\BaseData {
                          'actor_count'     => $this->actorCount(),
                          'user_count'      => $this->userCount(),
                          'statement_graph' => $this->getStatementNumbersByDate(),
-                         'statement_avg'   => $this->statementAvgCount(),
-                         'learner_avg'     => $this->learnerAvgCount()
+                         'statement_avg'   => $this->statementAvgCount()
                         );
   }
 
@@ -77,14 +76,19 @@ class AdminDashboard extends \app\locker\data\BaseData {
    *
    **/
   private function statementDays(){
-    $first_day = \DB::collection('statements')->first();
-    if( $first_day ){
-      $datetime1 = date_create( gmdate("Y-m-d", $first_day['timestamp']->sec) );
-      $datetime2 = date_create( gmdate("Y-m-d", time()) );
-      $interval  = date_diff($datetime1, $datetime2);
-      $days      = $interval->days;
+    $firstStatement = \DB::collection('statements')
+      ->orderBy("timestamp")->first();
+
+    if($firstStatement) {
+      $firstDay = date_create(gmdate(
+        "Y-m-d",
+        strtotime($firstStatement['statement']['timestamp'])
+      ));
+      $today = date_create(gmdate("Y-m-d", time()));
+      $interval = date_diff($firstDay, $today);
+      $days = $interval->days + 1;
       return $days;
-    }else{
+    } else {
       return '';
     }
   }
@@ -99,31 +103,6 @@ class AdminDashboard extends \app\locker\data\BaseData {
   public function statementAvgCount(){
     $count = $this->statementCount();
     $days  = $this->statementDays();
-    if( $days == 0 ){
-      //this will be the first day, so increment to 1
-      $days = 1;
-    }
-    $avg   = 0;
-    if( $count && $days ){
-      $avg = round( $count / $days );
-    }
-    return $avg;
-  }
-
-  /**
-   * Using the number of days Learning Locker has been running with statements
-   * work out the average number of learners participating per day.
-   *
-   * @return $avg
-   *
-   **/
-  public function learnerAvgCount(){
-    $count = $this->actorCount();
-    $days  = $this->statementDays();
-    if( $days == 0 ){
-      //this will be the first day, so increment to 1
-      $days = 1;
-    }
     $avg   = 0;
     if( $count && $days ){
       $avg = round( $count / $days );
@@ -152,14 +131,31 @@ class AdminDashboard extends \app\locker\data\BaseData {
             );
 
     //set statements for graphing
-    $data = '';
+    $data = array();
     if( isset($statements['result']) ){
       foreach( $statements['result'] as $s ){
-        $data .= json_encode( array( "y" => substr($s['date'][0],0,10), "a" => $s['count'], 'b' => count($s['actor'])) ) . ' ';
+        $date = substr($s['date'][0],0,10);
+        $data[$date] = json_encode( array( "y" => $date, "a" => $s['count'], 'b' => count($s['actor'])) );
+      }
+    }
+    
+    // Add empty point in data (fixes issue #265).
+    $dates = array_keys($data);
+
+    if( count($dates) > 0 ){
+      sort($dates);
+      $start = strtotime(reset($dates));
+      $end = strtotime(end($dates));
+
+      for($i=$start; $i<=$end; $i+=24*60*60) { 
+        $date = date("Y-m-d", $i);
+        if(!isset($data[$date])) {
+          $data[$date] = json_encode( array( "y" => $date, "a" => 0, 'b' => 0 ) );
+        }
       }
     }
 
-    return trim( $data );
+    return trim( implode(" ", $data) );
 
   }
 

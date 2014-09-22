@@ -88,6 +88,10 @@ public function returnJSON( $data=array(), $additional_params=array(), $extra=ar
    */
   public function setParameters(){
     $this->params = \Request::all();
+
+    if( !isset($this->params['content']) ){
+      $this->params['content'] = file_get_contents("php://input");
+    }
   }
   
   /**

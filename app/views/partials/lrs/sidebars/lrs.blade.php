@@ -28,6 +28,11 @@
         <span class="menu-icon"><i class="icon icon-pencil"></i></span>  {{ Lang::get('lrs.sidebar.reporting') }}
       </a>
     </li>
+    <li class="@if ( isset($exporting_nav) ) active @endif">
+      <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/exporting">
+        <span class="menu-icon"><i class="icon icon-download"></i></span>  {{ Lang::get('lrs.sidebar.exporting') }}
+      </a>
+    </li>
     <li class="@if ( isset($statement_nav) ) active @endif">
       <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/statements">
         <span class="menu-icon"><i class="icon icon-exchange"></i></span> {{ Lang::get('statements.statements') }}

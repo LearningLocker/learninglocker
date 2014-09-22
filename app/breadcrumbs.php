@@ -70,6 +70,23 @@ Breadcrumbs::register('analytics', function($breadcrumbs, $lrs) {
 
 /*
 |------------------------------------------------------------------
+| Exporting
+|------------------------------------------------------------------
+*/
+Breadcrumbs::register('exporting', function($breadcrumbs, $lrs) {
+  $breadcrumbs->push('Exporting', url('/lrs/'.$lrs->_id.'/exporting'));
+});
+Breadcrumbs::register('exporting.create', function($breadcrumbs, $lrs) {
+  $breadcrumbs->parent('exporting', $lrs);
+  $breadcrumbs->push('Create Export', url('/lrs/'.$lrs->_id.'/exporting/create'));
+});
+Breadcrumbs::register('exporting.view', function($breadcrumbs, $lrs) {
+  $breadcrumbs->parent('exporting', $lrs);
+  $breadcrumbs->push('View Export', url('/lrs/'.$lrs->_id.'/exporting/show'));
+});
+
+/*
+|------------------------------------------------------------------
 | Reporting
 |------------------------------------------------------------------
 */

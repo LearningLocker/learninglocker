@@ -25,6 +25,16 @@ class DocumentAPI extends Eloquent {
    **/
   protected $hidden = array('_id', 'created_at', 'updated_at', 'lrs', 'apitype');
 
+  /**
+   * Returns true if an array is associative 
+   * @param  Array  $arr 
+   * @return boolean      
+   */
+  private function isAssoc($arr)
+  {
+    return array_keys($arr) !== range(0, count($arr) - 1);
+  }
+
 
   /**
    * Handle content storage
@@ -45,26 +55,26 @@ class DocumentAPI extends Eloquent {
       case "application/json":
 
         $request_content = json_decode($content, TRUE);
-        if( is_object( $request_content ) ){ //check that the content type of the request matches the content
-          \App::abort(400, 'JSON detected without a correct Content-Type sent');
-        }
 
         if( !$this->exists ){ //if we are adding a new piece of content...
           $this->content      = $request_content;
-        } else if( $this->contentType === $mimeType ){ //if existing content, check that it is also JSON
+        } else { //if existing content, check that it is also JSON
           switch( $method ){
             case 'PUT': //overwrite content
               $this->content = $request_content;
             break;
             case 'POST': //merge variables
+              if(!(is_array($request_content) && $this->isAssoc( $request_content ))) {
+                \App::abort(400, 'JSON must contain an object at the top level.');
+              } else if ($this->contentType !== $mimeType) {
+                \App::abort(400, 'JSON document content may not be merged with that of another type');
+              }
               $this->content = array_merge( $this->content, $request_content );
             break;
             default:
               \App::abort( 400, 'Only PUT AND POST methods may amend content');
             break;
           }
-        } else { //reject updating with non JSON content
-          \App::abort(400, 'JSON document content may not be overwritten with that of another type');
         }
       break;
 
@@ -72,7 +82,11 @@ class DocumentAPI extends Eloquent {
         if( !$this->exists ){
           $this->content = $content;
         } else {
-          \App::abort(400, sprintf('Cannot amend existing %s document with a string', $this->contentType) );
+          if ($method === 'PUT') {
+            $this->content = $content;
+          } else {
+            \App::abort(400, sprintf('Cannot amend existing %s document with a string', $this->contentType) );
+          }
         }
       break;
 

@@ -75,5 +75,8 @@ return array(
     ),
 
     'updated'     => 'Learning Locker details have been updated',
-    'welcome'  => 'Welcome to Learning Locker'
+    'welcome'  => 'Welcome to Learning Locker',
+    'sure' => 'Are you sure?',
+    'roleChange' => 'Role successfully changed',
+    'hello' => 'hello'
 );

@@ -124,7 +124,11 @@ class StatementsController extends BaseController {
     
 
     //if no id submitted, reject
-    if( !isset($statement['id']) ) return $this->sendResponse( array('success' => 'noId') );
+    if(is_null($this->params['statementId'])) {
+      return $this->sendResponse( array('success' => 'noId') );
+    } else {
+      $statement['id'] = $this->params['statementId'];
+    }
 
     $save = $this->saveStatement( array($statement) );
 
@@ -251,27 +255,30 @@ class StatementsController extends BaseController {
       }
     }
 
-    //set the more url
+    // Set the `more` url param.
     if( $array['total'] > $offset ){
-      //$url = 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+      // Get the current request URI.
       $url = "{$_SERVER['REQUEST_URI']}";
-      if( isset($this->params['offset']) ){
-        if (strpos($url,'?offset=' . $this->params['offset']) !== false) {
-          $url = str_replace('?offset=' . $this->params['offset'], '?offset=' . $offset, $url);
-        }elseif(strpos($url,'&offset=' . $this->params['offset']) !== false) {
-          $url = str_replace('&offset=' . $this->params['offset'], '&offset=' . $offset, $url);
-        }else{
-          $url = $url . '&offset=' . $offset;
-        }
-      }else{
-        if( isset($this->params) ){
-          $url = $url . '&offset=' . $offset;
-        }else{
-          $url = $url . '?offset=' . $offset;
-        }
+
+      // If the offset already exists, change it.
+      if (isset($this->params['offset'])) {
+        $url = str_replace(
+          'offset=' . $this->params['offset'],
+          'offset=' . $offset,
+          $url
+        );
       }
+
+      // If the offset does not exist, add it.
+      else {
+        // If there are already params then append otherwise start.
+        $url .= strpos($url, '?') !== False ? '&' : '?';
+        $url .= 'offset=' . $offset;
+      }
+
+      // Set the more link to the new url.
       $array['more'] = $url;
-    }else{
+    } else {
       $array['more'] = '';
     }
 

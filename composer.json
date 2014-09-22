@@ -27,13 +27,17 @@
     }
   ],
   "require": {
-    "laravel/framework": "4.1.25",
-    "jenssegers/mongodb": "1.2.4",
-    "davejamesmiller/laravel-breadcrumbs": "~2.1.0",
-    "way/generators": "dev-master",
+    "laravel/framework": "4.2.8",
+    "jenssegers/mongodb": "1.4.x",
+    "davejamesmiller/laravel-breadcrumbs": "2.2.x",
+    "way/generators": "2.6.x",
     "rhumsaa/array_column": "~1.1",
-    "barryvdh/laravel-cors": "dev-master",
-    "lucadegasperi/oauth2-server-laravel": "1.0.x"
+    "barryvdh/laravel-cors": "0.2.x",
+    "lucadegasperi/oauth2-server-laravel": "1.0.x",
+    "andywer/js-localization": "dev-master"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "4.1.*"
   },
   "autoload": {
     "classmap": [
@@ -54,11 +58,13 @@
   },
   "scripts": {
     "post-install-cmd": [
-      "php artisan optimize"
+      "php artisan optimize",
+      "php artisan js-localization:refresh"
     ],
     "post-update-cmd": [
       "php artisan clear-compiled",
-      "php artisan optimize"
+      "php artisan optimize",
+      "php artisan js-localization:refresh"
     ],
     "post-create-project-cmd": [
       "php artisan key:generate"

@@ -24,7 +24,7 @@ define([
 
     showLoading: function() {
       this.$el.addClass('loading');
-      alert('hello');
+      alert(trans('site.hello'));
     },
 
   });
