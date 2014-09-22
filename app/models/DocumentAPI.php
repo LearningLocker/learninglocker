@@ -61,9 +61,6 @@ class DocumentAPI extends Eloquent {
         } else { //if existing content, check that it is also JSON
           switch( $method ){
             case 'PUT': //overwrite content
-              if( is_null( $request_content ) ){
-                \App::abort(400, 'JSON is invalid.');
-              }
               $this->content = $request_content;
             break;
             case 'POST': //merge variables
