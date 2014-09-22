@@ -452,7 +452,7 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
   Route::post('Basic/request', array(
     'uses' => 'Controllers\xAPI\BasicRequestController@store',
   ));
-  
+
 });
 
 /*
