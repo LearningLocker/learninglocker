@@ -44,7 +44,7 @@ class Exporter {
 
     for (
       $i = 0;
-      $i < $len && !is_null($object[$keys[$i]]);
+      $i < $len && isset($object[$keys[$i]]);
       $i += 1
     ) {
       $object = $object[$keys[$i]];
@@ -92,6 +92,6 @@ class Exporter {
       array_push($statementFields, $field['from']);
     }
 
-    return $statements->select($statementFields)->get();
+    return $statements->get();
   }
 }
