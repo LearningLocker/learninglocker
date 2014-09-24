@@ -36,30 +36,38 @@ class Exporter {
    * Gets a field from an AssocArray.
    * @param  AssocArray $object The AssocArray containing the field.
    * @param  String $field  The field to be retrieved.
+   * @param  Boolean $json determines if the field should be json.
    * @return String         The value contained in the field.
    */
-  private function getField($object, $field) {
+  private function getField($object, $field, $json = true) {
     $keys = explode('.', $field);
     $len = count($keys);
+    $i = 0;
 
-    for (
-      $i = 0;
-      $i < $len && isset($object[$keys[$i]]);
-      $i += 1
-    ) {
+    while ($i < $len && isset($object[$keys[$i]])) {
       $object = $object[$keys[$i]];
+      $i += 1;
     }
 
-    return $this->quoteField(json_encode($object));
+    if ($i >= $len) {
+      if ($json) {
+        return $object;
+      } else {
+        return $this->quoteField(json_encode($object));
+      }
+    } else {
+      return null;
+    }
   }
 
   /**
    * Maps values from old keys to new keys.
    * @param  Array $statements The statements to be mapped.
    * @param  AssocArray $fields     The fields to be mapped.
+   * @param  Boolean $json determines if fields should be json.
    * @return Array             The mapped statements.
    */
-  public function mapFields ( $statements, $fields ) {
+  public function mapFields($statements, $fields, $json = true) {
     $mappedStatements = [];
 
     foreach ($statements as $statement) {
@@ -68,7 +76,7 @@ class Exporter {
         if (!is_null($field['to'])) {
           $mappedStatement[$field['to']] = 
             !is_null($field['from']) ?
-            $this->getField($statement, $field['from']) :
+            $this->getField($statement, $field['from'], $json) :
             null;
         }
       }
@@ -85,7 +93,7 @@ class Exporter {
    * @param  AssocArray $fields     The fields to be mapped.
    * @return Array             The array of filtered statements.
    */
-  public function filter ( $statements, $fields ) {
+  public function filter($statements, $fields) {
     $statementFields = [];
 
     foreach ($fields as $field) {
