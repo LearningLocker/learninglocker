@@ -88,9 +88,10 @@ class ExportingController extends BaseController {
   /**
    * Shows the result of an export as JSON.
    * @param  id $export_id Identifier of the export to be run.
+   * @param  json Determines if fields should be json.
    * @return json
    */
-  public function show($export_id) {
+  public function show($export_id, $json = true) {
     $export = $this->get($export_id);
 
     // Get and check report.
@@ -112,7 +113,11 @@ class ExportingController extends BaseController {
 
     // Filter and map results.
     $filtered_results = $this->exporter->filter($statements, $export['fields']);
-    $mapped_results = $this->exporter->mapFields($filtered_results, $export['fields']);
+    $mapped_results = $this->exporter->mapFields(
+      $filtered_results,
+      $export['fields'],
+      $json
+    );
 
     // Return mapped results and json.
     return $mapped_results;
@@ -127,7 +132,7 @@ class ExportingController extends BaseController {
     $csv_rows = [];
 
     // Get mapped results.
-    $mapped_results = $this->show($export_id);
+    $mapped_results = $this->show($export_id, false);
 
     // Add fields.
     $keys = array_keys($mapped_results[0]);
