@@ -37,7 +37,7 @@ class ExportingController extends \BaseController {
    *
    */
   public function setParameters(){
-    $this->params = \Request::all();
+    $this->params = \LockerRequest::all();
   }
 
 }

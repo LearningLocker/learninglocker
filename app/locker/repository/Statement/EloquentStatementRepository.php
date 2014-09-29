@@ -197,8 +197,8 @@ class EloquentStatementRepository implements StatementRepository {
 	  
 	  //TODO: The validator currently adds authority but doesn't do a a very good job. It sets the authority to the e-mail address of the site admin with no name. 
 	  //If one of the additional sets of credentials has been used, replace the authority with that. 
-	  $key    = \Request::getUser();
-      $secret = \Request::getPassword();
+	  $key    = \LockerRequest::getUser();
+      $secret = \LockerRequest::getPassword();
 	  
 	  //TODO: this is now the _thrid_ time we've cycled through the list of clients to find a match based on credentials. This needs to be rationalised!
 	  $client = \Client::where('api.basic_key', $key)
