@@ -41,7 +41,6 @@ class EloquentQueryRepository implements QueryRepository {
    * @return Statement query
    */
   public function selectStatementDocs( $lrs='', $filter, $raw=false, $sections=[] ){
-    //var_dump( $filter );exit;
     $statements = \Statement::where('lrs._id', $lrs);
 
     if( !empty($filter) ){

@@ -46,12 +46,10 @@ class StatementsController extends BaseController {
    */
   public function store(){
 
-    //grab incoming statement
-    $request            = \Request::instance();
-    $incoming_statement = $request->getContent();
+    $incoming_statement = \LockerRequest::getContent();
 
     //get content type header
-    $content_type = \Request::header('content-type');
+    $content_type = \LockerRequest::header('content-type');
 
     // get the actual content type
     $get_type = explode(";", $content_type, 2);
@@ -118,8 +116,7 @@ class StatementsController extends BaseController {
    */
   public function storePut(){
 
-    $request            = \Request::instance();
-    $incoming_statement = $request->getContent();
+    $incoming_statement = \LockerRequest::getContent();
     $statement          = json_decode($incoming_statement, TRUE);
     
 

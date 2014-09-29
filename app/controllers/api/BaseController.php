@@ -87,11 +87,8 @@ public function returnJSON( $data=array(), $additional_params=array(), $extra=ar
    *
    */
   public function setParameters(){
-    $this->params = \Request::all();
-
-    if( !isset($this->params['content']) ){
-      $this->params['content'] = file_get_contents("php://input");
-    }
+    $this->params = \LockerRequest::all();
+    $this->params['content'] = \LockerRequest::getContent();
   }
   
   /**
@@ -100,8 +97,8 @@ public function returnJSON( $data=array(), $additional_params=array(), $extra=ar
    **/
   public function getLrs(){
     //get the lrs
-    $key    = \Request::getUser();
-    $secret = \Request::getPassword();
+    $key    = \LockerRequest::getUser();
+    $secret = \LockerRequest::getPassword();
     $lrs    = \Lrs::where('api.basic_key', $key)
            ->where('api.basic_secret', $secret)
            ->first();

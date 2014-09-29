@@ -59,10 +59,9 @@ Route::filter('auth.basic', function()
 */
 
 Route::filter('auth.statement', function(){
-
   //set passed credentials
-  $key    = Request::getUser();
-  $secret = Request::getPassword();
+  $key    = LockerRequest::getUser();
+  $secret = LockerRequest::getPassword();
 
   $method = Request::server('REQUEST_METHOD');
 
@@ -303,7 +302,7 @@ Route::filter('guest', function()
 
 Route::filter('csrf', function()
 {
-  $token = Request::ajax() ? Request::header('X-CSRF-Token') : Input::get('_token');
+  $token = Request::ajax() ? LockerRequest::header('X-CSRF-Token') : Input::get('_token');
   if (Session::token() != $token)
   {
     throw new Illuminate\Session\TokenMismatchException;
