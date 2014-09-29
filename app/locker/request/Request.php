@@ -7,8 +7,8 @@ class Request {
   const authUser = 'user';
   const authPass = 'password';
 
-  // Stores/caches params from the payload.
-  protected $params;
+  // Stores/caches params.
+  protected $params = null;
 
   /**
    * Gets all params (merges payload params with request params).
@@ -16,10 +16,10 @@ class Request {
    */
   public function getParams() {
     // If no params were cached, get them.
-    if ($this->params !== null) {
+    if ($this->params === null || count($this->params) < 1) {
       $requestParams = \Request::all();
       $payloadParams = $this->getPayloadParams();
-      $this->params = array_merge($this->requestParams, $payloadParams);
+      $this->params = array_merge($requestParams, $payloadParams);
     }
     
     // Return the cached params.
