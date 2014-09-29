@@ -61,7 +61,8 @@ class EloquentDocumentRepository implements DocumentRepository {
 
     switch( $documentType ){
       case DocumentType::STATE:
-        return $this->findStateDoc( $lrs, $data['stateId'], $data['activityId'], $data['agent'], $data['registration'], $get );
+        $registration = isset($data['registration']) ? $data['registration'] : null;
+        return $this->findStateDoc( $lrs, $data['stateId'], $data['activityId'], $data['agent'], $registration, $get );
       break;
       case DocumentType::ACTIVITY:
         return $this->findActivityDoc( $lrs, $data['profileId'], $data['activityId'], $get );
@@ -195,7 +196,10 @@ class EloquentDocumentRepository implements DocumentRepository {
          ->where('identId', $stateId);
 
     $query = $this->setQueryAgent( $query, $agent );
-    $query = $this->setQueryRegistration( $query, $registration );
+
+    if ( !is_null($registration) ) {
+      $query = $this->setQueryRegistration( $query, $registration );
+    }
 
     if( $get ){
       return $query->first();

@@ -63,7 +63,7 @@ class DocumentController extends BaseController {
           //Retrieve POST content
           return $this->getPostContent($name);
         } else {
-          $contentType    = \Request::header('Content-Type');
+          $contentType    = \LockerRequest::header('Content-Type');
           if( !isset($contentType) ){
             \App::abort(400, 'PUT requests must include a Content-Type header');
           }
@@ -210,7 +210,7 @@ class DocumentController extends BaseController {
    */
   public function getUpdatedValue(){
     //Get the updated parameter from the header and check formatting
-    $updated = \Request::header('Updated');
+    $updated = \LockerRequest::header('Updated');
     if( !empty($updated) ){
       if( !$this->validateTimestamp($updated) ){
         \App::abort(400, sprintf( "`%s` is not an valid ISO 8601 formatted timestamp", $updated ) );

@@ -21,7 +21,7 @@ class BaseController extends APIBaseController {
   public function checkVersion( $route, $request ){
 
     //should be X-Experience-API-Version: 1.0.0 or 1.0.1 (can accept 1.0), reject everything else.
-    $version = \Request::header('X-Experience-API-Version');
+    $version = \LockerRequest::header('X-Experience-API-Version');
 
     if( !isset($version) || ( $version < '1.0.0' || $version > '1.0.99' ) && $version != '1.0' ){
       return $this->returnSuccessError( false, 'This is not an accepted version of xAPI.', '400' );
@@ -34,13 +34,11 @@ class BaseController extends APIBaseController {
    *
    */
   public function setParameters(){
-    $this->params = \Request::all();
+    $this->params = \LockerRequest::all();
     $this->CORS = isset($this->params['method']);
     $this->method = $this->CORS ? $this->params['method'] : \Request::server('REQUEST_METHOD');
 
-    if( !isset($this->params['content']) ){
-      $this->params['content'] = file_get_contents("php://input");
-    }
+    $this->params['content'] = \LockerRequest::getContent();
   }
 
 }
