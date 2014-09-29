@@ -7,25 +7,23 @@ class Request {
   const authUser = 'user';
   const authPass = 'password';
 
-  //the current request
-  protected $request;
-  //the payload content
-  protected $payload;
   // Stores/caches params from the payload.
   protected $params;
 
   /**
-   * Constructs a new Locker Request.
+   * Gets all params (merges payload params with request params).
+   * @return AssocArray params.
    */
-  public function __construct() {
-    $this->request = \Request::instance();
-    $this->payload = $this->request->getContent(); 
-
-    $this->request_params = \Request::all();
-    $this->payload_params = $this->getPayloadParams();
-
-    $this->params = array_merge($this->payload_params, $this->request_params);
-
+  public function getParams() {
+    // If no params were cached, get them.
+    if ($this->params !== null) {
+      $requestParams = \Request::all();
+      $payloadParams = $this->getPayloadParams();
+      $this->params = array_merge($this->requestParams, $payloadParams);
+    }
+    
+    // Return the cached params.
+    return $this->params;
   }
 
   /**
@@ -34,7 +32,7 @@ class Request {
    */
   public function getPayloadParams() {
     $payloadParams = [];
-    parse_str($this->payload, $payloadParams); // Parse the payload into an AssocArray.
+    parse_str($this->getPayload(), $payloadParams); // Parse the payload into an AssocArray.
     $payloadParams = json_decode(json_encode($payloadParams), true);
     return $payloadParams;
   }
@@ -100,7 +98,7 @@ class Request {
    * @return AssocArray Stored/cached params.
    */
   public function all() {
-    return $this->params;
+    return $this->getParams();
   }
 
   /**
@@ -108,7 +106,7 @@ class Request {
    * @return AssocArray Stored/cached params.
    */
   public function getPayload() {
-    return $this->payload;
+    return \Request::getContent();
   }
 
   /**
@@ -120,7 +118,7 @@ class Request {
   public function getParam($key, $default = null) {
     // If the key has been set then return its value.
     if ($this->hasParam($key)) {
-      return $this->params[$key];
+      return $this->getParams()[$key];
     }
 
     // If the key has not been set then return the default value.
@@ -130,7 +128,7 @@ class Request {
   }
 
   public function getContent() {
-    return $this->getParam('content', $this->payload );
+    return $this->getParam('content', \Request::getContent());
   }
 
   /**
@@ -139,7 +137,7 @@ class Request {
    * @return boolean True if the param exists, false if it doesn't.
    */
   public function hasParam($key) {
-    return isset($this->params[$key]);
+    return isset($this->getParams()[$key]);
   }
 
   /**

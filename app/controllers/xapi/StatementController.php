@@ -118,10 +118,10 @@ class StatementsController extends BaseController {
 
     $incoming_statement = \LockerRequest::getContent();
     $statement          = json_decode($incoming_statement, TRUE);
-    
+
 
     //if no id submitted, reject
-    if(is_null($this->params['statementId'])) {
+    if(!isset($this->params['statementId']) || is_null($this->params['statementId'])) {
       return $this->sendResponse( array('success' => 'noId') );
     } else {
       $statement['id'] = $this->params['statementId'];
