@@ -19,7 +19,7 @@ class EloquentExportRepository implements ExportRepository {
       if (isset($data[$key]) && !is_null($data[$key])) {
         $export[$key] = $data[$key];
       } else if (!$overwrite)  {
-        \App::abort(404, trans('undefinedKey', [
+        \App::abort(404, trans('exporting.errors.undefinedKey', [
           'key' => $key
         ]));
       }
