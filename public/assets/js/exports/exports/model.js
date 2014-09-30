@@ -9,16 +9,19 @@ define([
     defaults: {
     	lrs: null,
     	report: null,
-    	fields: new FieldsCollection([{
-        from: 'statement.id',
-        to: 'id'
-      }]),
     	name: trans('exporting.new.name'),
     	description: trans('exporting.new.description')
     },
     credentials: {
       username: window.lrs.key,
       password: window.lrs.secret
+    },
+
+    initialize: function () {
+      this.set({'fields': new FieldsCollection([{
+        from: 'statement.id',
+        to: 'id'
+      }])});
     },
 
     downloadJSON: function () {
@@ -50,7 +53,7 @@ define([
       if (attrs.report == null) {
         return trans('exporting.errors.noReport');
       }
-      if (attrs.fields.length < 1) {
+      if (attrs.fields && attrs.fields.length < 1) {
         return trans('exporting.errors.noFields');
       }
     }

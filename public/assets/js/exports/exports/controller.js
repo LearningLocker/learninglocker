@@ -56,30 +56,12 @@ define([
     },
 
     new: function () {
-      var layout = new LayoutView({});
-      var reportsView;
-      this.app.content.show(layout);
-
-      var exp = new Model({
+      this.exports.create({
+        report: this.reports.at(0).id,
         lrs: this.app.lrs_id
-      });
-
-      // Reports.
-      layout.report.show(reportsView = new ReportsView({
-        collection: this.reports
-      }));
-
-      // Fields.
-      layout.fields.show(new FieldsView({
-        collection: exp.get('fields')
-      }));
-
-      // Buttons.
-      layout.exportInfo.show(new ExportView({
-        model: exp,
-        reports: reportsView,
-        collection: this.exports
-      }));
+      }, {wait: true, error: function (a, b, err) {
+        alert(err.xhr.responseJSON.message);
+      }});
     }
   });
 });
