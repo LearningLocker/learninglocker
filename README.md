@@ -1,6 +1,5 @@
 Learning Locker
 ================
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/LearningLocker/learninglocker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Learning Locker is an open source Learning Record Store (LRS).
 
@@ -8,6 +7,7 @@ Learning Locker is an open source Learning Record Store (LRS).
 [![Latest Stable Version](https://poser.pugx.org/learninglocker/learninglocker/v/stable.svg)](https://packagist.org/packages/learninglocker/learninglocker)
 [![Total Downloads](https://poser.pugx.org/learninglocker/learninglocker/downloads.svg)](https://packagist.org/packages/learninglocker/learninglocker)
 [![License](https://poser.pugx.org/learninglocker/learninglocker/license.svg)](https://packagist.org/packages/learninglocker/learninglocker)
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/LearningLocker/learninglocker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Homepage: http://learninglocker.net
 
