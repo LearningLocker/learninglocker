@@ -11,6 +11,8 @@
 |
 */
 
+use \app\locker\helpers\Helpers as Helpers;
+
 $app = new Illuminate\Foundation\Application;
 
 /*
@@ -25,39 +27,28 @@ $app = new Illuminate\Foundation\Application;
 */
 
 
-$env = $app->detectEnvironment( function() {
-  // local development environments are set with machine host names
-  $environments = array(
-  'local'       => array('your-machine-name'),
-  'ht2'         => array('HT2-007')
-);
+$env = $app->detectEnvironment(function () use ($app) {
+  // Attempts to set the environment using the hostname (env => hostname).
+  $env = Helpers::getEnvironment([
+    'local' => ['your-machine-host-name']
+  ], gethostname());
+  if ($env) return $env;
 
-  // loop through environments and check for local development hostnames
-  foreach( $environments as $environment => $hosts ) {
-    foreach( (array) $hosts as $host ) {
-      $isThisMachine = str_is($host, gethostname());
-      if ($isThisMachine) return $environment;
-    }
-  }
+  // Attempts to set the environment using the domain (env => domain).
+  $env = Helpers::getEnvironment([
+    'local' => ['127.0.0.1', 'localhost']
+    // 'production' => ['*.example.com']
+  ], $app['request']->getHost());
+  if ($env) return $env;
 
-  $hosts = array(
-    '127.0.0.1'                   => 'local',
-    'staging.learninglocker.net'  => 'staging'
-  );
 
-  if( isset($_SERVER['SERVER_NAME']) ){
-    if( isset( $hosts[$_SERVER['SERVER_NAME']]) ) {
-      return $hosts[$_SERVER['SERVER_NAME']];
-    }
-  }
-
-  // if no local hostname is found, look for
-  // other environments are set using the LARAVEL_ENV server variable
-  if( array_key_exists('LARAVEL_ENV', $_SERVER) ) {
+  // Sets environment using LARAVEL_ENV server variable if it's set.
+  if (array_key_exists('LARAVEL_ENV', $_SERVER)) {
     return $_SERVER['LARAVEL_ENV'];
-  } else { // and we fall back to production
-    return 'production';
   }
+
+  // Otherwise sets the environment to production.
+  return 'production';
 });
 
 /*
