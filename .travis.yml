@@ -12,7 +12,6 @@ install:
 before_script:
   - phpenv config-add travisconfig.ini
   - sleep 3
-  - php artisan generate:migration add_statements --path=app/database/migrations
   - php artisan migrate --env="testing"
 
 script: ./vendor/bin/phpunit

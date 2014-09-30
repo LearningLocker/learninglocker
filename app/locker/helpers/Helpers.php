@@ -104,4 +104,17 @@ class Helpers {
     return "https://www.gravatar.com/avatar/" . md5( strtolower( trim( $email ) ) ) . "?s=" . $size;
   }
 
+  /**
+   * Gets the environment by matching a given host to a config.
+   * @param  AssocArray $config Configuration mapping an environment => hosts
+   * @param  String $givenHost A string representing the host.
+   * @return String Matched environment from the config.
+   */
+  static function getEnvironment($config, $givenHost) {
+    foreach ($config as $environment => $hosts) {
+      foreach ($hosts as $host) {
+        if (str_is($host, $givenHost)) return $environment;
+      }
+    }
+  }
 }
