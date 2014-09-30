@@ -7,21 +7,21 @@
 */
 
 return array(
-    'add'       => 'Add LRS',
+    'add'       => 'Añadir LRS',
     'home'		=> 'LRS home',
-    'create'    => 'Create an LRS',
-    'delete_confirm' => 'Are you sure you want to delete this LRS? THERE IS NO UNDO AND YOU WILL LOSE ALL STATEMENTS.',
-    'edit'      => 'Edit an LRS',
-    'new'		=> 'Create new LRS',
-    'verify'    => 'You need to <a href=":verify_link">verify your email</a> before you can create an LRS.',
-    'list'      => 'LRS List',
-    'none'      => 'No LRS\'s available.',
-    'reporting' => 'Reporting',
-    'deleted'   => 'The LRS was deleted',
-    'updated'   => 'The LRS was updated',
-    'create_problem' => 'There was a problem creating that LRS.',
-    'created'   => 'The LRS was created.',
-    'active'    => 'Active',
+    'create'    => 'Crear un LRS',
+    'delete_confirm' => '¿Seguro que quieres borrar este LRS? Perderá todos los estados y esto no se puede deshacer.',
+    'edit'      => 'Editar un LRS',
+    'new'		=> 'Crear un LRS',
+    'verify'    => '<a href=":verify_link">Verificar su correo electrónico </a> para poder crear un LRS.',
+    'list'      => 'Lista LRS',
+    'none'      => 'No hay LRS disponibles',
+    'reporting' => 'Informes',
+    'deleted'   => 'El LRS se suprimió',
+    'updated'   => 'El LRS se actualizó',
+    'create_problem' => 'Hubo un problema al crear ese LRS.',
+    'created'   => 'El LRS fue creado.',
+    'active'    => 'Activo',
 
     'sidebar'	=> array(
     	'dash' 	    => 'Cuadro de mando',
@@ -47,7 +47,7 @@ return array(
     	'api'	   => 'LRS API'
     ),
 
-    'update_key'       => 'Your key has now been updated.',
-    'update_key_error' => 'There was an error updating your key and secret.',
-    'remove_user'      => 'That user has been removed from this LRS.'
+    'update_key'       => 'Su clave ha sido actualizado.',
+    'update_key_error' => 'Hubo un error al actualizar su clave y el secreto.',
+    'remove_user'      => 'Ese usuario se ha eliminado de este LRS.'
 );
