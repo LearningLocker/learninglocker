@@ -27,7 +27,7 @@ $app = new Illuminate\Foundation\Application;
 */
 
 
-$env = $app->detectEnvironment(function () use ($app) {
+$env = $app->detectEnvironment(function () use ($app, $unitTesting, $testEnvironment) {
   // Attempts to set the environment using the hostname (env => hostname).
   $env = Helpers::getEnvironment([
     'local' => ['your-machine-host-name']
@@ -41,14 +41,13 @@ $env = $app->detectEnvironment(function () use ($app) {
   ], $app['request']->getHost());
   if ($env) return $env;
 
-
   // Sets environment using LARAVEL_ENV server variable if it's set.
   if (array_key_exists('LARAVEL_ENV', $_SERVER)) {
     return $_SERVER['LARAVEL_ENV'];
   }
 
-  // Otherwise sets the environment to production.
-  return 'production';
+  // Otherwise sets the environment to production or the test environment if unit testing.
+  return $unitTesting ? $testEnvironment : 'production';
 });
 
 /*
