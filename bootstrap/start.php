@@ -27,7 +27,7 @@ $app = new Illuminate\Foundation\Application;
 */
 
 
-$env = $app->detectEnvironment(function () use ($app, $unitTesting, $testEnvironment) {
+$env = $app->detectEnvironment(function () use ($app) {
   // Attempts to set the environment using the hostname (env => hostname).
   $env = Helpers::getEnvironment([
     'local' => ['your-machine-host-name']
@@ -47,7 +47,7 @@ $env = $app->detectEnvironment(function () use ($app, $unitTesting, $testEnviron
   }
 
   // Otherwise sets the environment to production or the test environment if unit testing.
-  return $unitTesting ? $testEnvironment : 'production';
+  return 'production';
 });
 
 /*
