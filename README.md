@@ -1,5 +1,6 @@
 Learning Locker
 ================
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/LearningLocker/learninglocker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Learning Locker is an open source Learning Record Store (LRS).
 
