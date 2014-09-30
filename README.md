@@ -3,7 +3,7 @@ Learning Locker
 
 Learning Locker is an open source Learning Record Store (LRS).
 
-[![Build Status](https://travis-ci.org/LearningLocker/learninglocker.png)](https://travis-ci.org/LearningLocker/learninglocker)
+[![Build Status](https://travis-ci.org/LearningLocker/learninglocker.svg?branch=master)](https://travis-ci.org/LearningLocker/learninglocker)
 [![Latest Stable Version](https://poser.pugx.org/learninglocker/learninglocker/v/stable.svg)](https://packagist.org/packages/learninglocker/learninglocker)
 [![Total Downloads](https://poser.pugx.org/learninglocker/learninglocker/downloads.svg)](https://packagist.org/packages/learninglocker/learninglocker)
 [![License](https://poser.pugx.org/learninglocker/learninglocker/license.svg)](https://packagist.org/packages/learninglocker/learninglocker)
