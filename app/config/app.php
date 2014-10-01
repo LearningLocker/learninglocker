@@ -117,7 +117,8 @@ return array(
     'Barryvdh\Cors\CorsServiceProvider',
     'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
     'JsLocalization\JsLocalizationServiceProvider',
-    'locker\RequestServiceProvider'
+    'locker\RequestServiceProvider',
+    'Philo\Translate\TranslateServiceProvider'
 
   ),
 
