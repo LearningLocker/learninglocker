@@ -282,7 +282,7 @@ class StatementsController extends BaseController {
     $response = \Response::make( $array, 200 );
 
     //set consistent through data
-    $current_date = \DateTime::createFromFormat('U.u', microtime(true));
+    $current_date = \DateTime::createFromFormat('U.u', strftime('%.4f', microtime(true)));
     $current_date->setTimezone(new \DateTimeZone(\Config::get('app.timezone')));
     $current_date = $current_date->format('Y-m-d\TH:i:s.uP');
 

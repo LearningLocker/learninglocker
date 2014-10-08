@@ -176,7 +176,7 @@ class EloquentStatementRepository implements StatementRepository {
       }
 
       //The date stored in LRS in ISO 8601 format
-      $current_date = DateTime::createFromFormat('U.u', microtime(true));
+      $current_date = DateTime::createFromFormat('U.u', strftime('%.4f', microtime(true)));
       $current_date->setTimezone(new \DateTimeZone(\Config::get('app.timezone')));
       $vs['stored'] = $current_date->format('Y-m-d\TH:i:s.uP');
 
