@@ -43,7 +43,7 @@ return [
     'undefinedKey' => '`:key` is not defined.'
   ],
   'placeholders' => [
-    'suggestionField' => 'Suggestion field name',
+    'statementField' => 'Statement field name',
     'userField' => 'Your field name',
     'name' => 'Name this export',
     'description' => 'Describe this export'
