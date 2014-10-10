@@ -18,10 +18,14 @@ define([
     },
 
     initialize: function () {
-      this.set({'fields': new FieldsCollection([{
-        from: 'statement.id',
-        to: 'id'
-      }])});
+      if (!this.setFields) {
+        this.setFields = true;
+        this.set({'fields': new FieldsCollection([{
+          from: 'statement.id',
+          to: 'id'
+        }])});
+      }
+      window.fields = this.get('fields');
     },
 
     downloadJSON: function () {
@@ -45,7 +49,12 @@ define([
     },
 
     parse: function (response) {
-      response.fields = new FieldsCollection(response.fields);
+      if (!this.setFields) {
+        this.setFields = true;
+        response.fields = new FieldsCollection(response.fields);
+      } else {
+        response.fields = this.get('fields');
+      }
       return response;
     },
 

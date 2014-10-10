@@ -21,7 +21,7 @@ class Exporter {
     $delimiter_esc = preg_quote($delimiter, '/');
     $enclosure_esc = preg_quote($enclosure, '/');
 
-    if (preg_match( "/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field)) {
+    if (preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field)) {
       return $enclosure . str_replace(
         $enclosure,
         $enclosure . $enclosure,
@@ -53,7 +53,7 @@ class Exporter {
       if ($json) {
         return $object;
       } else {
-        return $this->quoteField(json_encode($object));
+        return substr($this->quoteField(json_encode($object)), 3, -3);
       }
     } else {
       return null;
