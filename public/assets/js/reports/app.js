@@ -4,7 +4,7 @@ define([
   'beagle',
   './reports/router',
   './reports/collection'
-], function(Backbone, Marionette, beagle, ReportsRouter, ReportsCollection) {
+], function(backbone, Marionette, beagle, ReportsRouter, ReportsCollection) {
   var App = new Marionette.Application();
 
   // Gets the LRS ID from the current url.

@@ -1,8 +1,8 @@
 define([
   'locker',
   'text!./runLayout.html'
-], function(Locker, template) {
-  return Locker.LayoutView.extend({
+], function(locker, template) {
+  return locker.LayoutView.extend({
     template: template
   });
 });

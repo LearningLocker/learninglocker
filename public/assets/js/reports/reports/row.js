@@ -2,8 +2,8 @@ define([
   'locker',
   './model',
   'text!./row.html'
-], function(Locker, Model, template) {
-  return Locker.ItemView.extend({
+], function(locker, Model, template) {
+  return locker.ItemView.extend({
     model: Model,
     template: template
   });

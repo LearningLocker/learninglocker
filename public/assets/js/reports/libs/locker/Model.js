@@ -1,5 +1,5 @@
-define(['backbone'], function(Backbone) {
-  return Backbone.Model.extend({
+define(['backbone'], function(backbone) {
+  return backbone.Model.extend({
     // Adds utility methods (these should not override Marionette methods).
     _initializeRelations: function (response, empty) {
       var self = this;
