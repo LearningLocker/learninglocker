@@ -8,7 +8,7 @@ define([
   var App = new Marionette.Application();
 
   // Gets the LRS ID from the current url.
-  App.lrs_id = window.location.pathname.split('lrs/')[1].split('/')[0];
+  window.lrsId = window.location.pathname.split('lrs/')[1].split('/')[0];
 
   App.addRegions({
     content: '#content'
