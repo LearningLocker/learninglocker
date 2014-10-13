@@ -1,10 +1,11 @@
 define([
   'beagle',
   './collection',
+  './model',
   './table',
-  './layout',
-  './model'
-], function(beagle, Collection, Table, Layout, Model) {
+  './editLayout',
+  './runLayout'
+], function(beagle, Collection, Model, Table, EditLayout, RunLayout) {
   return beagle.routes({
     // List.
     '': function (params, path) {
@@ -16,14 +17,14 @@ define([
 
     // Item.
     ':id/edit': function (params, path) {
-      params.app.content.show(new Layout({
+      params.app.content.show(new EditLayout({
         model: new Model({}, {
           url: params.url
         })
       }));
     },
     ':id/run': function (params, path) {
-      params.app.content.show(new Layout({
+      params.app.content.show(new RunLayout({
         model: new Model({}, {
           url: params.url
         })
