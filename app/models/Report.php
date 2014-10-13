@@ -10,5 +10,6 @@ class Report extends Eloquent {
    * @var string
    */
   protected $collection = 'reports';
+  public static $rules = [];
 
 }

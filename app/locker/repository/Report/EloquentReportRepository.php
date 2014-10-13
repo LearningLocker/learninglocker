@@ -17,11 +17,13 @@ class EloquentReportRepository implements ReportRepository {
     $report = new Report;
     $report->lrs = $data['lrs'];
     $report->query = $data['query'];
-    $report->name  = $data['name'];
-    $report->description = $data['description'];
+
+    // Adds defaults.
+    $report->name  = $data['name'] ?: 'New report';
+    $report->description = $data['description'] ?: 'New description';
     
     if( $report->save() ){
-      return true;
+      return $report;
     }
 
     return false;
