@@ -12,8 +12,8 @@ return array(
 	| General words
 	|-----------------------------------------------------------------------
 	*/
-  	'edit'        => 'edit',
-  	'delete'	    => 'delete',
+  	'edit'        => 'Edit',
+  	'delete'	    => 'Delete',
   	'username'    => 'Username',
   	'password'    => 'Password',
   	'title'       => 'Title',
