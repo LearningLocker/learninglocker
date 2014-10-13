@@ -1,6 +1,6 @@
 define([
   'locker',
-  'text!./layout.html'
+  'text!./editLayout.html'
 ], function(Locker, template) {
   return Locker.LayoutView.extend({
     template: template
