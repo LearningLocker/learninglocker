@@ -24,7 +24,8 @@ requirejs.config({
     marionette: '//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.0.2/backbone.marionette.min',
     text: '//cdnjs.cloudflare.com/ajax/libs/require-text/2.0.12/text.min',
     beagle: '//cdn.rawgit.com/ht2/beagle/1.0.3/build/export',
-    basicauth: '//cdn.rawgit.com/fiznool/backbone.basicauth/master/backbone.basicauth'
+    basicauth: '//cdn.rawgit.com/fiznool/backbone.basicauth/master/backbone.basicauth',
+    typeahead: '//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.4/typeahead.bundle.min'
   },
   packages: [
     {

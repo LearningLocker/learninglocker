@@ -1,52 +1,52 @@
 define([
   'locker',
-  './TypeAhead/ItemView'
+  './TypeAhead/ItemView',
   'text!./editLayout.html'
 ], function(locker, TypeaheadView, template) {
   return locker.LayoutView.extend({
     template: template,
     relations: {
-      actors: locker.CollectionView.extend({
+      actors: locker.CompositeView.extend({
         itemView: TypeaheadView.extend({
           typeaheadUrl: '../../api/v1/bla'
         })
       }),
-      verbs: locker.CollectionView.extend({
+      verbs: locker.CompositeView.extend({
         itemView: TypeaheadView.extend({
           typeaheadUrl: '../../api/v1/bla'
         })
       }),
-      activities: locker.CollectionView.extend({
+      activities: locker.CompositeView.extend({
         itemView: TypeaheadView.extend({
           typeaheadUrl: '../../api/v1/bla'
         })
       }),
-      activityTypes: locker.CollectionView.extend({
+      activityTypes: locker.CompositeView.extend({
         itemView: TypeaheadView.extend({
           typeaheadUrl: '../../api/v1/bla'
         })
       }),
-      parents: locker.CollectionView.extend({
+      parents: locker.CompositeView.extend({
         itemView: TypeaheadView.extend({
           typeaheadUrl: '../../api/v1/bla'
         })
       }),
-      groups: locker.CollectionView.extend({
+      groups: locker.CompositeView.extend({
         itemView: TypeaheadView.extend({
           typeaheadUrl: '../../api/v1/bla'
         })
       }),
-      platforms: locker.CollectionView.extend({
+      platforms: locker.CompositeView.extend({
         itemView: TypeaheadView.extend({
           typeaheadUrl: '../../api/v1/bla'
         })
       }),
-      instructors: locker.CollectionView.extend({
+      instructors: locker.CompositeView.extend({
         itemView: TypeaheadView.extend({
           typeaheadUrl: '../../api/v1/bla'
         })
       }),
-      languages: locker.CollectionView.extend({
+      languages: locker.CompositeView.extend({
         itemView: TypeaheadView.extend({
           typeaheadUrl: '../../api/v1/bla'
         })

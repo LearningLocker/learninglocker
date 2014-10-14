@@ -1,9 +1,9 @@
 define([
   'underscore',
   'locker',
-  'jQuery'
+  'jquery',
   'typeahead'
-], function (_, locker, jQuery) {
+], function (_, locker, jquery) {
   return locker.ItemView.extend({
     typeaheadUrl: '',
     _matchTypeahead: function (query, cb) {
@@ -37,13 +37,13 @@ define([
         'typeahead:autocompleted',
         trigger
       );
-    }
+    },
     _requestKeys: function () {
-      jQuery.ajax(this.typeaheadUrl, {
+      jquery.ajax(this.typeaheadUrl, {
         beforeSend: function (xhr) {
           var auth = btoa(window.lrs.key + ':' + window.lrs.secret);
           xhr.setRequestHeader ('Authorization', 'Basic ' + auth);
-        },
+        }
       }).done(function (data, status, xhr) {
         this._typeaheadKeys = data;
         this._initialiseTypeahead();
