@@ -146,58 +146,38 @@
           <div class="panel-body">
           
             <div class="form-group scaled">
+              Scaled
               <div class="pull-right">
-                <input type="text" id="scaled_from" style="width:50px;" disabled="" /> 
-                to <input type="text" id="scaled_to" style="width:50px;" disabled="" />
-                <span class="btn btn-primary btn-xs" id="scaled_values" data-type="result" 
-                style="display:none;"><i class='icon icon-plus'></i></span>
-              </div>
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" id="scaled" value="result.score" data-type="result.score.scaled" data-display="Include Scaled"> Scaled
-                </label>
+                <input type="number" id="scaled-min" style="width:50px;" value="<%= query['statement.result.score.scaled[1]'] || null %>"/> to 
+                <input type="number" id="scaled-max" style="width:50px;" value="<%= query['statement.result.score.scaled[2]'] || null %>"/>
+                <button class="btn btn-xs btn-danger" id="scaled-clear"><i class="icon icon-trash"></i> Clear</button>
               </div>
             </div>
 
             <div class="form-group scaled">
+              Raw
               <div class="pull-right">
-                <input type="text" id="raw_from" style="width:50px;" disabled="" /> to 
-                <input type="text" id="raw_to" style="width:50px;" disabled="" />
-                <span class="btn btn-primary btn-xs" id="raw_values" data-type="result"  
-                style="display:none;"><i class='icon icon-plus'></i></span>
-              </div>
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" id="raw" value="result.score" data-type="result.score.raw" data-display="Include Raw"> Raw
-                </label>
+                <input type="number" id="raw-min" style="width:50px;" value="<%= query['statement.result.score.raw[1]'] || null %>"/> to 
+                <input type="number" id="raw-max" style="width:50px;" value="<%= query['statement.result.score.raw[2]'] || null %>"/>
+                <button class="btn btn-xs btn-danger" id="raw-clear"><i class="icon icon-trash"></i> Clear</button>
               </div>
             </div>
 
             <div class="form-group scaled">
+              Min
               <div class="pull-right">
-                <input type="text" id="min_from" style="width:50px;" disabled="" /> to 
-                <input type="text" id="min_to" style="width:50px;" disabled="" />
-                <span class="btn btn-primary btn-xs" id="min_values" data-type="result" 
-                style="display:none;"><i class='icon icon-plus'></i></span>
-              </div>
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" id="min" value="result.score" data-type="result.score.min" data-display="Include Min"> Min
-                </label>
+                <input type="number" id="min-min" style="width:50px;" value="<%= query['statement.result.score.min[1]'] || null %>"/> to 
+                <input type="number" id="min-max" style="width:50px;" value="<%= query['statement.result.score.min[2]'] || null %>"/>
+                <button class="btn btn-xs btn-danger" id="min-clear"><i class="icon icon-trash"></i> Clear</button>
               </div>
             </div>
 
             <div class="form-group scaled">
+              Max
               <div class="pull-right">
-                <input type="text" id="max_from" style="width:50px;" disabled="" /> to 
-                <input type="text" id="max_to" style="width:50px;" disabled="" />
-                <span class="btn btn-primary btn-xs" id="max_values" data-type="result" 
-                style="display:none;"><i class='icon icon-plus'></i></span>
-              </div>
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" id="max" value="result.score" data-type="result.score.max" data-display="Include Max"> Max
-                </label>
+                <input type="number" id="max-min" style="width:50px;" value="<%= query['statement.result.score.max[1]'] || null %>"/> to 
+                <input type="number" id="max-max" style="width:50px;" value="<%= query['statement.result.score.max[2]'] || null %>"/>
+                <button class="btn btn-xs btn-danger" id="max-clear"><i class="icon icon-trash"></i> Clear</button>
               </div>
             </div>
             
@@ -213,33 +193,33 @@
           <div class="panel-body">
 
             <div class="form-group scaled">
-              <button class="btn btn-xs btn-default pull-right" id="success-clear">Clear</button>
+              <button class="btn btn-xs btn-danger pull-right" id="success-clear"><i class="icon icon-trash"></i> Clear</button>
               <b>Success</b>
               <div class="radio">
                 <label>
-                  <input type="radio" name="success" id="success" value="<%= query['statement.result.success'] === true %>">
+                  <input type="radio" name="success" id="success-true" value="<%= query['statement.result.success'] === true %>">
                   Yes
                 </label>
               </div>
               <div class="radio">
                 <label>
-                  <input type="radio" name="success" id="success" value="<%= query['statement.result.success'] === false %>">
+                  <input type="radio" name="success" id="success-false" value="<%= query['statement.result.success'] === false %>">
                   No
                 </label>
               </div>
             </div>
 
             <div class="form-group scaled">
-              <button class="btn btn-xs btn-default pull-right" id="completion-clear">Clear</button>
+              <button class="btn btn-xs btn-danger pull-right" id="completion-clear"><i class="icon icon-trash"></i> Clear</button>
               <div class="radio">
                 <label>
-                  <input type="radio" name="completion" id="completion" value="<%= query['statement.result.completion'] === true %>">
+                  <input type="radio" name="completion" id="completion-true" value="<%= query['statement.result.completion'] === true %>">
                   Yes
                 </label>
               </div>
               <div class="radio">
                 <label>
-                  <input type="radio" name="completion" id="completion" value="<%= query['statement.result.completion'] === false %>">
+                  <input type="radio" name="completion" id="completion-false" value="<%= query['statement.result.completion'] === false %>">
                   No
                 </label>
               </div>
