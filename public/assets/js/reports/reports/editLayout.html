@@ -16,81 +16,256 @@
 </div>
 
 <!-- Selector -->
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">Filters</h3>
-  </div>
-  <div class="panel-body">
+<div class="row">
+  <div class="col-xs-12 col-sm-12">
     <div class="row">
-      <div class="col-xs-12 col-sm-12">
-        <div class="row">
-      <div class="col-xs-6 col-sm-2">
-        <a href="#actor" data-toggle="tab">
-          <div class="explore-option active">
-            <span><i class="icon icon-user"></i></span>
-            <%=  trans('reporting.who')  %>
-          </div>
-        </a>
+  <div class="col-xs-6 col-sm-2">
+    <a href="#actor" data-toggle="tab">
+      <div class="explore-option active">
+        <span><i class="icon icon-user"></i></span>
+        <%=  trans('reporting.who')  %>
       </div>
-      <div class="col-xs-6 col-sm-2">
-        <a href="#verb" data-toggle="tab">
-          <div class="explore-option">
-            <span><i class="icon icon-star"></i></span>
-            <%=  trans('reporting.did')  %>
-          </div>
-        </a>
+    </a>
+  </div>
+  <div class="col-xs-6 col-sm-2">
+    <a href="#verb" data-toggle="tab">
+      <div class="explore-option">
+        <span><i class="icon icon-star"></i></span>
+        <%=  trans('reporting.did')  %>
       </div>
-      <div class="col-xs-6 col-sm-2">
-        <a href="#activity" data-toggle="tab">
-          <div class="explore-option">
-            <span><i class="icon icon-question"></i></span>
-            <%=  trans('reporting.what')  %>
-          </div>
-        </a>
+    </a>
+  </div>
+  <div class="col-xs-6 col-sm-2">
+    <a href="#activity" data-toggle="tab">
+      <div class="explore-option">
+        <span><i class="icon icon-question"></i></span>
+        <%=  trans('reporting.what')  %>
       </div>
-      <div class="col-xs-6 col-sm-2">
-        <a href="#context" data-toggle="tab">
-          <div class="explore-option">
-            <span><i class="icon icon-sitemap"></i></span>
-            <%=  trans('reporting.where')  %>
-          </div>
-        </a>
+    </a>
+  </div>
+  <div class="col-xs-6 col-sm-2">
+    <a href="#context" data-toggle="tab">
+      <div class="explore-option">
+        <span><i class="icon icon-sitemap"></i></span>
+        <%=  trans('reporting.where')  %>
       </div>
-      <div class="col-xs-6 col-sm-2">
-        <a href="#result" data-toggle="tab">
-          <div class="explore-option">
-            <span><i class="icon icon-bar-chart"></i></span>
-            <%=  trans('reporting.with_result')  %>
-          </div>
-        </a>
+    </a>
+  </div>
+  <div class="col-xs-6 col-sm-2">
+    <a href="#result" data-toggle="tab">
+      <div class="explore-option">
+        <span><i class="icon icon-bar-chart"></i></span>
+        <%=  trans('reporting.with_result')  %>
       </div>
-      <div class="col-xs-6 col-sm-2">
-        <a href="#dates" data-toggle="tab">
-          <div class="explore-option">
-            <span><i class="icon icon-calendar"></i></span>
-            <%=  trans('reporting.dates')  %>
-          </div>
-        </a>
+    </a>
+  </div>
+  <div class="col-xs-6 col-sm-2">
+    <a href="#dates" data-toggle="tab">
+      <div class="explore-option">
+        <span><i class="icon icon-calendar"></i></span>
+        <%=  trans('reporting.dates')  %>
       </div>
-    </div>
-      </div>
-    </div>
+    </a>
+  </div>
+</div>
+  </div>
+</div>
 
-    <!-- App container. -->
-    <div class='row'>
-      <!-- Tab panes -->
-      <div class="tab-content reporting">
-        <div class="tab-pane active" id="actor">
-          <input type="text" class="form-control typeahead" placeholder="Search for user" />
-          <div class="row">
-            <div id="actors-selected"></div>
+<!-- App container. -->
+<div class='row'>
+  <!-- Tab panes -->
+  <div class="tab-content reporting">
+    <div class="tab-pane active" id="actor">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Select learners</h3>
+        </div>
+        <div class="panel-body" id="actors"></div>
+      </div>
+    </div>
+    <div class="tab-pane" id="verb">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Select verbs</h3>
+        </div>
+        <div class="panel-body" id="verbs"></div>
+      </div>
+    </div>
+    <div class="tab-pane" id="activity">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Select activities</h3>
+        </div>
+        <div class="panel-body" id="activities"></div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Select activity types</h3>
+        </div>
+        <div class="panel-body" id="activityTypes"></div>
+      </div>
+    </div>
+    <div class="tab-pane" id="context">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Select parent activities</h3>
+        </div>
+        <div class="panel-body" id="parents"></div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Select grouping activities</h3>
+        </div>
+        <div class="panel-body" id="groups"></div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Select platforms</h3>
+        </div>
+        <div class="panel-body" id="platforms"></div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Select instructors</h3>
+        </div>
+        <div class="panel-body" id="instructors"></div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Select languages</h3>
+        </div>
+        <div class="panel-body" id="languages"></div>
+      </div>
+    </div>
+    <div class="tab-pane" id="result">
+      <div class="col-xs-12 col-sm-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            Scaled
+          </div>
+          <div class="panel-body">
+          
+            <div class="form-group scaled">
+              <div class="pull-right">
+                <input type="text" id="scaled_from" style="width:50px;" disabled="" /> 
+                to <input type="text" id="scaled_to" style="width:50px;" disabled="" />
+                <span class="btn btn-primary btn-xs" id="scaled_values" data-type="result" 
+                style="display:none;"><i class='icon icon-plus'></i></span>
+              </div>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="scaled" value="result.score" data-type="result.score.scaled" data-display="Include Scaled"> Scaled
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group scaled">
+              <div class="pull-right">
+                <input type="text" id="raw_from" style="width:50px;" disabled="" /> to 
+                <input type="text" id="raw_to" style="width:50px;" disabled="" />
+                <span class="btn btn-primary btn-xs" id="raw_values" data-type="result"  
+                style="display:none;"><i class='icon icon-plus'></i></span>
+              </div>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="raw" value="result.score" data-type="result.score.raw" data-display="Include Raw"> Raw
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group scaled">
+              <div class="pull-right">
+                <input type="text" id="min_from" style="width:50px;" disabled="" /> to 
+                <input type="text" id="min_to" style="width:50px;" disabled="" />
+                <span class="btn btn-primary btn-xs" id="min_values" data-type="result" 
+                style="display:none;"><i class='icon icon-plus'></i></span>
+              </div>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="min" value="result.score" data-type="result.score.min" data-display="Include Min"> Min
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group scaled">
+              <div class="pull-right">
+                <input type="text" id="max_from" style="width:50px;" disabled="" /> to 
+                <input type="text" id="max_to" style="width:50px;" disabled="" />
+                <span class="btn btn-primary btn-xs" id="max_values" data-type="result" 
+                style="display:none;"><i class='icon icon-plus'></i></span>
+              </div>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="max" value="result.score" data-type="result.score.max" data-display="Include Max"> Max
+                </label>
+              </div>
+            </div>
+            
           </div>
         </div>
-        <div class="tab-pane" id="verb"></div>
-        <div class="tab-pane" id="activity"></div>
-        <div class="tab-pane" id="context"></div>
-        <div class="tab-pane" id="result"></div>
-        <div class="tab-pane" id="dates"></div>
+      </div>
+      <div class="col-xs-12 col-sm-6">
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            Success / Complete
+          </div>
+          <div class="panel-body">
+
+            <div class="form-group scaled">
+              <button class="btn btn-xs btn-default pull-right" id="success-clear">Clear</button>
+              <b>Success</b>
+              <div class="radio">
+                <label>
+                  <input type="radio" name="success" id="success" value="<%= query['statement.result.success'] === true %>">
+                  Yes
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" name="success" id="success" value="<%= query['statement.result.success'] === false %>">
+                  No
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group scaled">
+              <button class="btn btn-xs btn-default pull-right" id="completion-clear">Clear</button>
+              <div class="radio">
+                <label>
+                  <input type="radio" name="completion" id="completion" value="<%= query['statement.result.completion'] === true %>">
+                  Yes
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" name="completion" id="completion" value="<%= query['statement.result.completion'] === false %>">
+                  No
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane" id="dates">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          Dates
+        </div>
+        <div class="panel-body">
+          <p>You can select a since date, until date or both to filter results between two dates.</p>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="since">From (Since)</label>
+              <input id="since" type="date" class="form-control" value"<%= query.since %>"/>
+            </div>
+            <div class="col-md-6">
+              <label for="until">To (Until)</label>
+              <input id="until" type="date" class="form-control" value"<%= query.until %>"/>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

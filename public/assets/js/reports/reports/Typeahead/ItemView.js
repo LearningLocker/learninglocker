@@ -1,10 +1,11 @@
 define([
-  'underscore',
   'locker',
   'jquery',
+  'text!./itemView.html',
   'typeahead'
-], function (_, locker, jquery) {
+], function (locker, jquery, template) {
   return locker.ItemView.extend({
+    template: template,
     typeaheadUrl: '',
     _matchTypeahead: function (query, cb) {
       var matches = [];
