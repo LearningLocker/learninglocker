@@ -1,0 +1,72 @@
+mixin tab-pane(id, active)
+  .tab-pane(id=id, class=active ? ['active'] : [])
+    block
+
+mixin panel(title, id)
+  .panel.panel-default
+    .panel-heading
+      h3.panel-title= title
+    .panel-body(id=id)
+      block
+
+mixin labelledRadio(name, suffix, label)
+  label(for=name + suffix)= label
+  input(id=name + suffix, type='radio', name=name)
+
+mixin bool(name)
+  - var id = name.toLowerCase()
+  .form-group.scaled
+    button.btn.btn-xs.btn-danger.pull-right(id=id + '-clear')
+      i.icon.icon-trash= ' Clear'
+    b= name
+    form
+      +labelledRadio(id, '-true', 'True')
+      +labelledRadio(id, '-false', 'False')
+
+mixin scaled(name)
+  - var id = name.toLowerCase()
+  .form-group.scaled
+    = name
+    .pull-right
+      input(type="number" id=id + "-min" style="width:50px;" value!="<%= query['statement.result.score." + id + "[1]'] || null %>")
+      span= ' to '
+      input(type="number" id=id + "-max" style="width:50px;" value!="<%= query['statement.result.score." + id + "[2]'] || null %>")
+      button.btn.btn-xs.btn-danger.pull-right(id=id + '-clear')
+        i.icon.icon-trash= ' Clear'
+
+.row
+  .tab-content.reporting
+    +tab-pane('actor', true)
+      +panel('Select learners', 'actors')
+    +tab-pane('verb')
+      +panel('Select verbs', 'verbs')
+    +tab-pane('activity')
+      .col-md-6: +panel('Select activities', 'activities')
+      .col-md-6: +panel('Select activity types', 'activityTypes')
+    +tab-pane('context')
+      .row
+        .col-md-6: +panel('Select parent activities', 'parents')
+        .col-md-6: +panel('Select grouping activities', 'groups')
+      .row
+        .col-md-4: +panel('Select platforms', 'platforms')
+        .col-md-4: +panel('Select instructors', 'instructors')
+        .col-md-4: +panel('Select languages', 'languages')
+    +tab-pane('result')
+      .col-md-6: +panel('Scaled', 'Scaled')
+        +scaled('Scaled')
+        +scaled('Raw')
+        +scaled('Min')
+        +scaled('Max')
+      .col-md-6: +panel('Success / Complete', 'success-complete')
+        +bool('Success')
+        +bool('Completion')
+    +tab-pane('dates')
+      +panel('Dates', 'dates')
+        p You can select a since date, until date or both to filter results between two dates.
+        .row
+          .col-md-6
+            label(for='since') From (Since)
+            input#since.form-control(type='date', value='value')
+          .col-md-6
+            label(for='until') To (Until)
+            input#until.form-control(type='date', value='value')

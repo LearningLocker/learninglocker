@@ -1,10 +1,8 @@
-<!-- Breadcrumbs. -->
+
 <ol class="breadcrumb">
   <li><a href="#">Reports</a></li>
   <li class="active"><%= name %></li>
 </ol>
-
-<!-- Report information.-->
 <div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Report information</h3>
@@ -14,243 +12,202 @@
     <input id="description" placeholder="Report's description" value="<%= description %>" class="form-control"/>
   </div>
 </div>
-
-<!-- Selector -->
 <div class="row">
-  <div class="col-xs-12 col-sm-12">
-    <div class="row">
-  <div class="col-xs-6 col-sm-2">
-    <a href="#actor" data-toggle="tab">
-      <div class="explore-option active">
-        <span><i class="icon icon-user"></i></span>
-        <%=  trans('reporting.who')  %>
-      </div>
-    </a>
-  </div>
-  <div class="col-xs-6 col-sm-2">
-    <a href="#verb" data-toggle="tab">
-      <div class="explore-option">
-        <span><i class="icon icon-star"></i></span>
-        <%=  trans('reporting.did')  %>
-      </div>
-    </a>
-  </div>
-  <div class="col-xs-6 col-sm-2">
-    <a href="#activity" data-toggle="tab">
-      <div class="explore-option">
-        <span><i class="icon icon-question"></i></span>
-        <%=  trans('reporting.what')  %>
-      </div>
-    </a>
-  </div>
-  <div class="col-xs-6 col-sm-2">
-    <a href="#context" data-toggle="tab">
-      <div class="explore-option">
-        <span><i class="icon icon-sitemap"></i></span>
-        <%=  trans('reporting.where')  %>
-      </div>
-    </a>
-  </div>
-  <div class="col-xs-6 col-sm-2">
-    <a href="#result" data-toggle="tab">
-      <div class="explore-option">
-        <span><i class="icon icon-bar-chart"></i></span>
-        <%=  trans('reporting.with_result')  %>
-      </div>
-    </a>
-  </div>
-  <div class="col-xs-6 col-sm-2">
-    <a href="#dates" data-toggle="tab">
-      <div class="explore-option">
-        <span><i class="icon icon-calendar"></i></span>
-        <%=  trans('reporting.dates')  %>
-      </div>
-    </a>
-  </div>
+  <div class="col-xs-6 col-sm-2"><a href="#actor" data-toggle="tab">
+      <div class="explore-option active"><span><i class="icon icon-user"></i></span><%= trans('reporting.who') %>
+      </div></a></div>
+  <div class="col-xs-6 col-sm-2"><a href="#verb" data-toggle="tab">
+      <div class="explore-option"><span><i class="icon icon-star"></i></span><%= trans('reporting.did') %>
+      </div></a></div>
+  <div class="col-xs-6 col-sm-2"><a href="#activity" data-toggle="tab">
+      <div class="explore-option"><span><i class="icon icon-question"></i></span><%= trans('reporting.what') %>
+      </div></a></div>
+  <div class="col-xs-6 col-sm-2"><a href="#context" data-toggle="tab">
+      <div class="explore-option"><span><i class="icon icon-sitemap"></i></span><%= trans('reporting.where') %>
+      </div></a></div>
+  <div class="col-xs-6 col-sm-2"><a href="#result" data-toggle="tab">
+      <div class="explore-option"><span><i class="icon icon-bar-chart"></i></span><%= trans('reporting.with_result') %>
+      </div></a></div>
+  <div class="col-xs-6 col-sm-2"><a href="#dates" data-toggle="tab">
+      <div class="explore-option"><span><i class="icon icon-calendar"></i></span><%= trans('reporting.dates') %>
+      </div></a></div>
 </div>
-  </div>
-</div>
-
-<!-- App container. -->
-<div class='row'>
-  <!-- Tab panes -->
+<div class="row">
   <div class="tab-content reporting">
-    <div class="tab-pane active" id="actor">
+    <div id="actor" class="tab-pane active">
       <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">Select learners</h3>
         </div>
-        <div class="panel-body" id="actors"></div>
+        <div id="actors" class="panel-body">
+        </div>
       </div>
     </div>
-    <div class="tab-pane" id="verb">
+    <div id="verb" class="tab-pane">
       <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">Select verbs</h3>
         </div>
-        <div class="panel-body" id="verbs"></div>
+        <div id="verbs" class="panel-body">
+        </div>
       </div>
     </div>
-    <div class="tab-pane" id="activity">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Select activities</h3>
-        </div>
-        <div class="panel-body" id="activities"></div>
-      </div>
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Select activity types</h3>
-        </div>
-        <div class="panel-body" id="activityTypes"></div>
-      </div>
-    </div>
-    <div class="tab-pane" id="context">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Select parent activities</h3>
-        </div>
-        <div class="panel-body" id="parents"></div>
-      </div>
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Select grouping activities</h3>
-        </div>
-        <div class="panel-body" id="groups"></div>
-      </div>
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Select platforms</h3>
-        </div>
-        <div class="panel-body" id="platforms"></div>
-      </div>
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Select instructors</h3>
-        </div>
-        <div class="panel-body" id="instructors"></div>
-      </div>
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Select languages</h3>
-        </div>
-        <div class="panel-body" id="languages"></div>
-      </div>
-    </div>
-    <div class="tab-pane" id="result">
-      <div class="col-xs-12 col-sm-6">
+    <div id="activity" class="tab-pane">
+      <div class="col-md-6">
         <div class="panel panel-default">
           <div class="panel-heading">
-            Scaled
+            <h3 class="panel-title">Select activities</h3>
           </div>
-          <div class="panel-body">
-          
-            <div class="form-group scaled">
-              Scaled
+          <div id="activities" class="panel-body">
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Select activity types</h3>
+          </div>
+          <div id="activityTypes" class="panel-body">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="context" class="tab-pane">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Select parent activities</h3>
+            </div>
+            <div id="parents" class="panel-body">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Select grouping activities</h3>
+            </div>
+            <div id="groups" class="panel-body">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Select platforms</h3>
+            </div>
+            <div id="platforms" class="panel-body">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Select instructors</h3>
+            </div>
+            <div id="instructors" class="panel-body">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Select languages</h3>
+            </div>
+            <div id="languages" class="panel-body">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="result" class="tab-pane">
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Scaled</h3>
+          </div>
+          <div id="Scaled" class="panel-body">
+            <div class="form-group scaled">Scaled
               <div class="pull-right">
-                <input type="number" id="scaled-min" style="width:50px;" value="<%= query['statement.result.score.scaled[1]'] || null %>"/> to 
+                <input type="number" id="scaled-min" style="width:50px;" value="<%= query['statement.result.score.scaled[1]'] || null %>"/><span> to </span>
                 <input type="number" id="scaled-max" style="width:50px;" value="<%= query['statement.result.score.scaled[2]'] || null %>"/>
-                <button class="btn btn-xs btn-danger" id="scaled-clear"><i class="icon icon-trash"></i> Clear</button>
+                <button id="scaled-clear" class="btn btn-xs btn-danger pull-right"><i class="icon icon-trash"> Clear</i></button>
               </div>
             </div>
-
-            <div class="form-group scaled">
-              Raw
+            <div class="form-group scaled">Raw
               <div class="pull-right">
-                <input type="number" id="raw-min" style="width:50px;" value="<%= query['statement.result.score.raw[1]'] || null %>"/> to 
+                <input type="number" id="raw-min" style="width:50px;" value="<%= query['statement.result.score.raw[1]'] || null %>"/><span> to </span>
                 <input type="number" id="raw-max" style="width:50px;" value="<%= query['statement.result.score.raw[2]'] || null %>"/>
-                <button class="btn btn-xs btn-danger" id="raw-clear"><i class="icon icon-trash"></i> Clear</button>
+                <button id="raw-clear" class="btn btn-xs btn-danger pull-right"><i class="icon icon-trash"> Clear</i></button>
               </div>
             </div>
-
-            <div class="form-group scaled">
-              Min
+            <div class="form-group scaled">Min
               <div class="pull-right">
-                <input type="number" id="min-min" style="width:50px;" value="<%= query['statement.result.score.min[1]'] || null %>"/> to 
+                <input type="number" id="min-min" style="width:50px;" value="<%= query['statement.result.score.min[1]'] || null %>"/><span> to </span>
                 <input type="number" id="min-max" style="width:50px;" value="<%= query['statement.result.score.min[2]'] || null %>"/>
-                <button class="btn btn-xs btn-danger" id="min-clear"><i class="icon icon-trash"></i> Clear</button>
+                <button id="min-clear" class="btn btn-xs btn-danger pull-right"><i class="icon icon-trash"> Clear</i></button>
               </div>
             </div>
-
-            <div class="form-group scaled">
-              Max
+            <div class="form-group scaled">Max
               <div class="pull-right">
-                <input type="number" id="max-min" style="width:50px;" value="<%= query['statement.result.score.max[1]'] || null %>"/> to 
+                <input type="number" id="max-min" style="width:50px;" value="<%= query['statement.result.score.max[1]'] || null %>"/><span> to </span>
                 <input type="number" id="max-max" style="width:50px;" value="<%= query['statement.result.score.max[2]'] || null %>"/>
-                <button class="btn btn-xs btn-danger" id="max-clear"><i class="icon icon-trash"></i> Clear</button>
+                <button id="max-clear" class="btn btn-xs btn-danger pull-right"><i class="icon icon-trash"> Clear</i></button>
               </div>
             </div>
-            
           </div>
         </div>
       </div>
-      <div class="col-xs-12 col-sm-6">
-
+      <div class="col-md-6">
         <div class="panel panel-default">
           <div class="panel-heading">
-            Success / Complete
+            <h3 class="panel-title">Success / Complete</h3>
           </div>
-          <div class="panel-body">
-
+          <div id="success-complete" class="panel-body">
             <div class="form-group scaled">
-              <button class="btn btn-xs btn-danger pull-right" id="success-clear"><i class="icon icon-trash"></i> Clear</button>
-              <b>Success</b>
-              <div class="radio">
-                <label>
-                  <input type="radio" name="success" id="success-true" value="<%= query['statement.result.success'] === true %>">
-                  Yes
-                </label>
-              </div>
-              <div class="radio">
-                <label>
-                  <input type="radio" name="success" id="success-false" value="<%= query['statement.result.success'] === false %>">
-                  No
-                </label>
-              </div>
+              <button id="success-clear" class="btn btn-xs btn-danger pull-right"><i class="icon icon-trash"> Clear</i></button><b>Success</b>
+              <form>
+                <label for="success-true">True</label>
+                <input id="success-true" type="radio" name="success"/>
+                <label for="success-false">False</label>
+                <input id="success-false" type="radio" name="success"/>
+              </form>
             </div>
-
             <div class="form-group scaled">
-              <button class="btn btn-xs btn-danger pull-right" id="completion-clear"><i class="icon icon-trash"></i> Clear</button>
-              <div class="radio">
-                <label>
-                  <input type="radio" name="completion" id="completion-true" value="<%= query['statement.result.completion'] === true %>">
-                  Yes
-                </label>
-              </div>
-              <div class="radio">
-                <label>
-                  <input type="radio" name="completion" id="completion-false" value="<%= query['statement.result.completion'] === false %>">
-                  No
-                </label>
-              </div>
+              <button id="completion-clear" class="btn btn-xs btn-danger pull-right"><i class="icon icon-trash"> Clear</i></button><b>Completion</b>
+              <form>
+                <label for="completion-true">True</label>
+                <input id="completion-true" type="radio" name="completion"/>
+                <label for="completion-false">False</label>
+                <input id="completion-false" type="radio" name="completion"/>
+              </form>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="tab-pane" id="dates">
+    <div id="dates" class="tab-pane">
       <div class="panel panel-default">
         <div class="panel-heading">
-          Dates
+          <h3 class="panel-title">Dates</h3>
         </div>
-        <div class="panel-body">
+        <div id="dates" class="panel-body">
           <p>You can select a since date, until date or both to filter results between two dates.</p>
           <div class="row">
             <div class="col-md-6">
               <label for="since">From (Since)</label>
-              <input id="since" type="date" class="form-control" value"<%= query.since %>"/>
+              <input id="since" type="date" value="value" class="form-control"/>
             </div>
             <div class="col-md-6">
               <label for="until">To (Until)</label>
-              <input id="until" type="date" class="form-control" value"<%= query.until %>"/>
+              <input id="until" type="date" value="value" class="form-control"/>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-
-<!-- Buttons.-->
-<a id="save" class="btn btn-primary"><i class="icon icon-save"></i> Save</a>
-<a id="run" href="#<%= _id %>/run" class="btn btn-success"><i class="icon icon-play"></i> Run</a>
+</div><a id="save" class="btn btn-primary"><i class="icon icon-save"> Save</i></a><a id="run" href="href"></a>
