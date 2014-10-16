@@ -1,10 +1,10 @@
 define([
   'marionette',
   'locker',
-  './TypeAhead/ItemView',
-  './TypeAhead/CompositeView',
+  './typeaheadHelpers',
   'text!./editLayout.html'
-], function(marionette, locker, TypeaheadItem, TypeaheadComposite, template) {
+], function(marionette, locker, typeaheadHelpers, template) {
+  // Helps with changing the query.
   var changeQuery = function (fn) {
     return function (e) {
       var query = this.model.get('query') || {};
@@ -25,88 +25,100 @@ define([
   var clearQueryField = function (field) {
     return changeQuery(function (query, e) {
       query[field] = null;
+      $(e.currentTarget.parentElement).find('input').val(null).prop('checked', null);
     });
   };
   var changeBoolean = function (field, value) {
     return changeQuery(function (query, e) {
-      query[field] = e.currentTarget.value === value;
+      query[field] = e.currentTarget.checked ? value : !value;
+    });
+  };
+  var changeDate = function (field) {
+    return changeQuery(function (query, e) {
+      query[field] = e.currentTarget.value === '' ? undefined : new Date(e.currentTarget.value);
     });
   };
 
+
+  // Helps with query initialisation.
+  var initQueryProp = function (options) {
+    return function (selector) {
+      var lowKey =  selector + options.lowKey;
+      var highKey = selector + options.highKey;
+      var clearKey = selector + 'Clear';
+      var field = options.field + selector;
+
+      // Adds to UI.
+      this.ui[lowKey] = '#' + selector + '-' + options.lowKey.toLowerCase();
+      this.ui[highKey] = '#' + selector + '-' + options.highKey.toLowerCase();
+      this.ui[clearKey] = '#' + selector + '-clear';
+
+      // Adds events.
+      this.events['change @ui.' + lowKey] = options.handler(field, false);
+      this.events['change @ui.' + highKey] = options.handler(field, true);
+      this.events['click @ui.' + clearKey] = clearQueryField(field);
+    };
+  };
+
+  var booleanQuery = initQueryProp({
+    lowKey: 'False',
+    highKey: 'True',
+    field: 'statement.result.',
+    handler: changeBoolean
+  });
+
+  var scoreQuery = initQueryProp({
+    lowKey: 'Min',
+    highKey: 'Max',
+    field: 'statement.result.score.',
+    handler: changeScore
+  });
+
   return locker.LayoutView.extend({
-    template: template,
+    ui: {},
     events: {
-      'change #since': 'bla',
-      'change #until': 'bla',
+      // Toggles active class on tabs.
+      'click a[data-toggle=\'tab\']': function (e) {
+        $(e.currentTarget.parentElement.parentElement).find('.explore-option').removeClass('active');
+        $(e.currentTarget).find('.explore-option').addClass('active');
+      }
+    },
+    template: template,
+    initialize: function (options) {
+      // Initalises scores and booleans.
+      ['completion', 'success'].forEach(booleanQuery.bind(this));
+      ['scaled', 'raw', 'min', 'max'].forEach(scoreQuery.bind(this));
 
-      // Success/Completion.
-      'change #completion-true': changeBoolean('statement.result.completion', true),
-      'change #completion-false': changeBoolean('statement.result.completion', false),
-      'click #completion-clear': clearQueryField('statement.result.completion'),
-      'change #success-true': changeBoolean('statement.result.completion', true),
-      'change #success-false': changeBoolean('statement.result.completion', false),
-      'click #success-clear': clearQueryField('statement.result.success'),
+      // Calls parent.
+      return locker.LayoutView.prototype.initialize.call(this, options);
+    },
+    onRender: function (options) {
+      // Renders initial values of radio buttons.
+      // This is done here to reduce code duplication in the template.
+      var query = this.model.get('query');
+      var completion = query['statement.result.completion'];
+      var success = query['statement.result.success'];
+      this.ui.completionTrue.prop('checked', completion === true ? true : undefined);
+      this.ui.completionFalse.prop('checked', completion === false ? true : undefined);
+      this.ui.successTrue.prop('checked', success === true ? true : undefined);
+      this.ui.successFalse.prop('checked', success === false ? true : undefined);
 
-      // 
-      'change #scaled-min': changeScore('statement.result.score.scaled', false),
-      'change #scaled-max': changeScore('statement.result.score.scaled', true),
-      'click #scaled-clear': clearQueryField('statement.result.score.scaled'),
-      'change #raw-min': changeScore('statement.result.score.raw', false),
-      'change #raw-max': changeScore('statement.result.score.raw', true),
-      'click #raw-clear': clearQueryField('statement.result.score.raw'),
-      'change #min-min': changeScore('statement.result.score.min', false),
-      'change #min-max': changeScore('statement.result.score.min', true),
-      'click #min-clear': clearQueryField('statement.result.score.min'),
-      'change #max-min': changeScore('statement.result.score.max', false),
-      'change #max-max': changeScore('statement.result.score.max', true),
-      'click #max-clear': clearQueryField('statement.result.score.max'),
+      // Calls parent.
+      return locker.LayoutView.prototype.onShow.call(this, options);
     },
     relations: {
-      actors: TypeaheadComposite.extend({
-        childView: TypeaheadItem.extend({
-          typeaheadUrl: '../../api/v1/bla'
-        })
+      actors: typeaheadHelpers.view('actors', typeaheadHelpers.displayActor),
+      verbs: typeaheadHelpers.view('verbs', function (item) {
+        var id = item.id
+        return item.display['en-GB'] + ' (' + id + ')';
       }),
-      verbs: TypeaheadComposite.extend({
-        childView: TypeaheadItem.extend({
-          typeaheadUrl: '../../api/v1/bla'
-        })
-      }),
-      activities: TypeaheadComposite.extend({
-        childView: TypeaheadItem.extend({
-          typeaheadUrl: '../../api/v1/bla'
-        })
-      }),
-      activityTypes: TypeaheadComposite.extend({
-        childView: TypeaheadItem.extend({
-          typeaheadUrl: '../../api/v1/bla'
-        })
-      }),
-      parents: TypeaheadComposite.extend({
-        childView: TypeaheadItem.extend({
-          typeaheadUrl: '../../api/v1/bla'
-        })
-      }),
-      groups: TypeaheadComposite.extend({
-        childView: TypeaheadItem.extend({
-          typeaheadUrl: '../../api/v1/bla'
-        })
-      }),
-      platforms: TypeaheadComposite.extend({
-        childView: TypeaheadItem.extend({
-          typeaheadUrl: '../../api/v1/bla'
-        })
-      }),
-      instructors: TypeaheadComposite.extend({
-        childView: TypeaheadItem.extend({
-          typeaheadUrl: '../../api/v1/bla'
-        })
-      }),
-      languages: TypeaheadComposite.extend({
-        childView: TypeaheadItem.extend({
-          typeaheadUrl: '../../api/v1/bla'
-        })
-      })
+      activities: typeaheadHelpers.view('activities'),
+      activityTypes: typeaheadHelpers.view('activityTypes', typeaheadHelpers.displayItem),
+      parents: typeaheadHelpers.view('parents'),
+      groups: typeaheadHelpers.view('grouping'),
+      platforms: typeaheadHelpers.view('platforms', typeaheadHelpers.displayItem),
+      instructors: typeaheadHelpers.view('instructors', typeaheadHelpers.displayActor),
+      languages: typeaheadHelpers.view('languages', typeaheadHelpers.displayItem)
     }
   });
 });

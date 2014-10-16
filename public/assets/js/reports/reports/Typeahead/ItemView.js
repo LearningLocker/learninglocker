@@ -1,26 +1,33 @@
 define([
+  'underscore',
   'locker',
   'jquery',
   'text!./itemView.html',
   'typeahead'
-], function (locker, jquery, template) {
+], function (_, locker, jquery, template) {
   return locker.ItemView.extend({
     template: template,
+    ui: {
+      typeahead: '#value'
+    },
     typeaheadUrl: '',
     _matchTypeahead: function (query, cb) {
-      var matches = [];
-      var substrRegex = new RegExp(query, 'i');
-   
-      $.each(this._typeaheadKeys, function (i, str) {
-        if (substrRegex.test(str)) {
-          matches.push({value: str});
+      this._requestKeys(this.typeaheadUrl + '/' + query).done((function (data, status, xhr) {
+        cb(this._getTypeaheadKeys(data, query));
+      }).bind(this));
+    },
+    _requestKeys: _.memoize(function (url) {
+      return jquery.ajax(url, {
+        beforeSend: function (xhr) {
+          var auth = btoa(window.lrs.key + ':' + window.lrs.secret);
+          xhr.setRequestHeader ('Authorization', 'Basic ' + auth);
         }
       });
-
-      cb(matches);
+    }),
+    _getTypeaheadKeys: function (data) {
+      return {value: data};
     },
-    _typeaheadKeys: [],
-    _initialiseTypeahead: function () {
+    onRender: function () {
       var trigger = (function () {
         this.ui.typeahead.trigger('change');
       }).bind(this);
@@ -30,7 +37,7 @@ define([
       }, {
         name: 'keys',
         displayKey: 'value',
-        source: this._matchTypeahead
+        source: this._matchTypeahead.bind(this)
       }).on(
         'typeahead:selected',
         trigger
@@ -38,22 +45,6 @@ define([
         'typeahead:autocompleted',
         trigger
       );
-    },
-    _requestKeys: function () {
-      jquery.ajax(this.typeaheadUrl, {
-        beforeSend: function (xhr) {
-          var auth = btoa(window.lrs.key + ':' + window.lrs.secret);
-          xhr.setRequestHeader ('Authorization', 'Basic ' + auth);
-        }
-      }).done(function (data, status, xhr) {
-        this._typeaheadKeys = data;
-        this._initialiseTypeahead();
-      }).fail(function (xhr, status, error) {
-
-      });
-    },
-    onRender: function () {
-      this._requestKeys();
     }
   });
 });

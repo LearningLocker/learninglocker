@@ -8,8 +8,8 @@ define([
     idAttribute: '_id',
     defaults: {
       _id: null,
-      name: null,
-      description: null,
+      name: 'New report',
+      description: 'Description of the new report.',
       lrs: window.lrsId,
       query: {
         since: null,
@@ -31,23 +31,47 @@ define([
       username: window.lrs.key,
       password: window.lrs.secret
     },
+    _queryResponseMap: {
+      'actor.mbox': 'actors',
+      'verb.id': 'verbs',
+      'object.definition.type': 'activities',
+      'object.id': 'activityTypes',
+      'context.contextActivities.parent.id': 'parents',
+      'context.contextActivities.grouping.id': 'groups',
+      'context.platform': 'platforms',
+      'context.instructor': 'instructors',
+      'context.language': 'languages'
+    },
+    _mapQueryToResponse: function (query, response) {
+      Object.keys(this._queryResponseMap).forEach(function (queryKey) {
+        var responseKey = this._queryResponseMap[queryKey];
+        queryKey = 'statement.' + queryKey;
+        response[responseKey] = query[queryKey];
+      }.bind(this));
+    },
+    _mapResponseToQuery: function (query, response) {
+      Object.keys(this._queryResponseMap).forEach(function (queryKey) {
+        var responseKey = this._queryResponseMap[queryKey];
+        queryKey = 'statement.' + queryKey;
+        query[queryKey] = response[responseKey];
+      }.bind(this));
+    },
     _initializeRelations: function (response, empty) {
-      // Maps relations in query.
+      // Maps query relations to response.
       if (!empty && response.query) {
         var query = response.query;
-        response.actors = query['statement.actor.mbox'];
-        response.verbs = query['statement.verb.id'];
-        response.activities = query['statement.object.definition.type'];
-        response.activityTypes = query['statement.object.id'];
-        response.parents = query['statement.context.contextActivities.parent.id'];
-        response.groups = query['statement.context.contextActivities.grouping.id'];
-        response.platforms = query['statement.context.platform'];
-        response.instructors = query['statement.context.instructor'];
-        response.languages = query['statement.context.language'];
+        this._mapQueryToResponse(query, response);
+      } else {
+        response.query = {};
       }
 
       // Calls parent to initialise relations.
-      return locker.Model.prototype._initializeRelations.bind(this)(response, empty);
+      var result = locker.Model.prototype._initializeRelations.bind(this)(response, empty);
+
+      // Maps reponse collections to query.
+      this._mapResponseToQuery(query || {}, response);
+
+      return result;
     }
   });
 });
