@@ -7,34 +7,46 @@ use Locker\Repository\Report\ReportRepository as Report;
 
 class ReportingController extends \BaseController {
 
-  /**
-  * Analytics Interface
-  */
-  protected $analytics;
+  protected $analytics, $lrs, $query, $report, $params;
 
-  /**
-   * Lrs
-   **/
-  protected $lrs;
-
-  /**
-   * Query interface
-   **/
-  protected $query;
-
-  /**
-   * Report interface
-   **/
-  protected $report;
-
-  /** 
-   * Lrs
-   **/
-
-  /**
-   * Filter parameters
-   **/
-  protected $params;
+  protected static $segments = [
+    'actors' => [
+      'return' => 'actor',
+      'query' => 'actor.name'
+    ],
+    'grouping' => [
+      'return' => 'context.contextActivities.grouping',
+      'query' => 'context.contextActivities.grouping.definition.name.en-GB'
+    ],
+    'parents' => [
+      'return' => 'context.contextActivities.parent',
+      'query' => 'context.contextActivities.parent.definition.name.en-GB'
+    ],
+    'activities' => [
+      'return' => 'object',
+      'query' => 'object.definition.name.en-GB'
+    ],
+    'verbs' => [
+      'return' => 'verb',
+      'query' => 'verb.display.en-GB'
+    ],
+    'activityTypes' => [
+      'return' => 'object.definition.type',
+      'query' => 'object.definition.type'
+    ],
+    'languages' => [
+      'return' => 'context.language',
+      'query' => 'context.language'
+    ],
+    'platforms' => [
+      'return' => 'context.platform',
+      'query' => 'context.platform'
+    ],
+    'instructors' => [
+      'return' => 'context.instructor',
+      'query' => 'context.instructor.name'
+    ]
+  ];
 
   public function __construct(Analytics $analytics, Lrs $lrs, Query $query, Report $report){
 
@@ -246,32 +258,15 @@ class ReportingController extends \BaseController {
    * @return results or empty string
    *
    **/
-  public function getTypeahead($lrs, $segment){
-    $query = $this->params['query'];
-    if( $query ){
-      switch( $segment ){
-        case 'grouping':
-          $results = $this->report->setQuery($lrs, 
-                                             $query, 
-                                             'statement.context.contextActivities.grouping', 
-                                             'statement.context.contextActivities.grouping.id');
-          break;
-        case 'activities':
-          $results = $this->report->setQuery($lrs, 
-                                             $query, 
-                                             'statement.object', 
-                                             'statement.object.id');
-          break;
-        case 'parents':
-          $results = $this->report->setQuery($lrs, 
-                                             $query, 
-                                             'statement.context.contextActivities.parent', 
-                                             'statement.context.contextActivities.parent.id');
-          break;
-      }
-    }else{
-      $results = '';
-    }
+  public function getTypeahead($lrs, $segment, $query){
+    $options = self::$segments[$segment];
+    $statement = 'statement.';
+    $results = $this->report->setQuery(
+      $lrs,
+      $query,
+      $statement . $options['return'],
+      $statement . $options['query']
+    );
     return Response::json($results);
   }
 
