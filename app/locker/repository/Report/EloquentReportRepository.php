@@ -1,11 +1,12 @@
 <?php namespace Locker\Repository\Report;
 
+use \app\locker\helpers\Helpers as Helpers;
 use Report;
 
 class EloquentReportRepository implements ReportRepository {
 
   public function all($lrs){
-    return Report::where('lrs', $lrs)->get();
+    return Helpers::replaceHtmlEntity(Report::where('lrs', $lrs)->get());
   }
 
   public function find($id){

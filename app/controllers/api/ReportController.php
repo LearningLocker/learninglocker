@@ -4,15 +4,16 @@ use Locker\Repository\Query\QueryRepository as Query;
 use Locker\Repository\Report\ReportRepository as Report;
 
 class ReportController extends BaseController {
-  protected $params, $report;
+  protected $report, $query, $params, $lrs;
 
   /**
    * Construct
    *
    * @param StatementRepository $statement
    */
-  public function __construct( Report $report ) {
+  public function __construct(Report $report, Query $query) {
     $this->report = $report;
+    $this->query = $query;
     $this->beforeFilter('@setParameters');
     $this->beforeFilter('@getLrs');
   }
@@ -40,6 +41,7 @@ class ReportController extends BaseController {
    */
   public function index() {
     $reports = $this->report->all($this->lrs->_id);
+    $reports = \app\locker\helpers\Helpers::replaceHtmlEntity($reports);
     return \Response::json($reports);
   }
 
@@ -58,6 +60,7 @@ class ReportController extends BaseController {
       $data['lrs'] = $this->lrs->_id;
 
       // Creates a report.
+      $data = \app\locker\helpers\Helpers::replaceFullStop($data);
       $report = $this->report->create($data);
       return \Response::json($report);
     }
@@ -69,6 +72,7 @@ class ReportController extends BaseController {
    * @return Report The report with the given id.
    */
   public function show($report) {
+    $report = \app\locker\helpers\Helpers::replaceHtmlEntity($report);
     return \Response::json($report);
   }
 
@@ -82,8 +86,12 @@ class ReportController extends BaseController {
     $validator = $this->validate($data);
 
     if ($validator->fails()) {
-      return \Response::json(['success'=>false, 'errors'=>$validator->errors() ], 400);
+      return \Response::json([
+        'success'=>false,
+        'errors'=>$validator->errors()
+      ], 400);
     } else {
+      $data = \app\locker\helpers\Helpers::replaceFullStop($data);
       $report->update($data);
       return \Response::json($report);
     }
@@ -108,7 +116,10 @@ class ReportController extends BaseController {
    * @return [Statement] the statements selected by the report.
    */
   public function run($report) {
-
+    return \Response::json($this->query->selectStatements(
+      $this->lrs->_id,
+      $this->decodeURL($report->query)
+    ));
   }
 
 }

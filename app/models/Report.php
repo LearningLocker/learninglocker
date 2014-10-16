@@ -11,5 +11,6 @@ class Report extends Eloquent {
    */
   protected $collection = 'reports';
   public static $rules = [];
+  protected $fillable = ['name', 'description', 'query', 'lrs'];
 
 }
