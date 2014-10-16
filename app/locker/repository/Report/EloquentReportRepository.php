@@ -39,21 +39,13 @@ class EloquentReportRepository implements ReportRepository {
     return $report->delete();
   }
 
-  public function getActors($lrs, $query){
-    return \Statement::select('statement.actor')
-               ->where('lrs._id', $lrs)
-               ->where('statement.actor.name', 'like', '%'.$query.'%')
-               ->distinct()
-               ->take(6)
-               ->get();
-  }
-
   public function setQuery($lrs, $query, $field, $wheres){
     return \Statement::select($field)
-               ->where('lrs._id', $lrs)
-               ->where($wheres, 'like', '%'.$query.'%')
-               ->take(6)
-               ->get();
+      ->where('lrs._id', $lrs)
+      ->where($wheres, 'like', '%'.$query.'%')
+      ->distinct()
+      ->take(6)
+      ->get();
   }
 
 }

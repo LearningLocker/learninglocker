@@ -266,14 +266,9 @@ Route::get('lrs/{id}/reporting/data', array(
 Route::get('lrs/{id}/reporting/statements', array(
   'uses' => 'ReportingController@getStatements',
 ));
-//routes to query actors and activities, returns json
-Route::get('lrs/{id}/reporting/actors/{query}', array(
-  'uses' => 'ReportingController@getActors',
-));
-
 
 //used by typeahead to get objects
-Route::get('lrs/{id}/reporting/typeahead/{segment}', array(
+Route::get('lrs/{id}/reporting/typeahead/{segment}/{query}', array(
   'uses' => 'ReportingController@getTypeahead',
 ));
 
