@@ -503,8 +503,10 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
     'uses' => 'Controllers\API\ExportingController@destroy'
   ));
 
-  Route::model('reports', 'Report');
   Route::resource('reports', 'Controllers\API\ReportController');
+  Route::get('reports/{id}/run', array(
+    'uses' => 'Controllers\API\ReportController@run'
+  ));
   Route::resource('site', 'Controllers\API\SiteController');
 
 });
