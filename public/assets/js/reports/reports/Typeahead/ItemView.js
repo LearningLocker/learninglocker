@@ -8,7 +8,7 @@ define([
   return locker.ItemView.extend({
     template: template,
     ui: {
-      typeahead: '#value'
+      typeahead: '#typeahead-value'
     },
     typeaheadUrl: '',
     _matchTypeahead: function (query, cb) {
@@ -20,7 +20,7 @@ define([
       return jquery.ajax(url, {
         beforeSend: function (xhr) {
           var auth = btoa(window.lrs.key + ':' + window.lrs.secret);
-          xhr.setRequestHeader ('Authorization', 'Basic ' + auth);
+          xhr.setRequestHeader('Authorization', 'Basic ' + auth);
         }
       });
     }),
@@ -45,6 +45,12 @@ define([
         'typeahead:autocompleted',
         trigger
       );
+    },
+    changeValue: function(e) {
+      var changes = {};
+      var prop = e.currentTarget.id.split('-').pop(); // Allows for collectionname-prop.
+      changes[prop] = e.currentTarget.value;
+      this.model.set(changes);
     }
   });
 });
