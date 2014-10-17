@@ -8,6 +8,15 @@ define([
       this.events['click #add'] = this.add;
     },
     _initializeTemplate: ItemView.prototype._initializeTemplate,
+    _fetchIfExists: function (model) {
+      if (model) {
+        return model.fetch();
+      } else {
+        return {
+          success: function () {}
+        };
+      }
+    },
 
     // Extends Marionette.
     childViewContainer: '#models',
@@ -16,7 +25,7 @@ define([
       this.options = options;
       this._initializeTemplate();
       this._initHelperEvents();
-      this.collection.fetch();
+      this._fetchIfExists(this.collection);
     },
 
     // Defines callbacks for helper events.
