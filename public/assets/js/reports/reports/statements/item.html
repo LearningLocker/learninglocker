@@ -1,0 +1,22 @@
+<div class='statement-row'>
+  <span><i class="icon icon-cog lightgrey pull-left"></i></span>
+
+  <span class="pull-left statement-avatar">
+    <img src="<%= gravatar %>" alt='avatar' class="img-circle" />
+  </span> 
+
+  <%= statement.actor.name %>
+
+  <i><%= statement.verb.display['en-GB'] %> </i>
+
+  <a href="<%= statement.object.id %>"><%=statement.object.definition.name['en-GB'] %></a>
+
+
+  <%= when %> (<%= (new Date(statement.timestamp)).toLocaleString() %>).
+</div>
+<!--
+<div class="full-statement state-{{ $statement['id'] }}" style="display:none;">
+  <?php $statement = \app\locker\helpers\Helpers::replaceHtmlEntity( $json ); ?>
+  <pre>{{{ json_encode($statement,JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}}</pre>
+</div>
+-->
