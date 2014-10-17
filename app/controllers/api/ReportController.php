@@ -40,9 +40,7 @@ class ReportController extends BaseController {
    * @return [Report] Array of reports that have been stored.
    */
   public function index() {
-    $reports = $this->report->all($this->lrs->_id);
-    $reports = \app\locker\helpers\Helpers::replaceHtmlEntity($reports);
-    return \Response::json($reports);
+    return \Response::json($this->report->all($this->lrs->_id));
   }
 
   /**
@@ -51,18 +49,17 @@ class ReportController extends BaseController {
    */
   public function store() {
     $data = $this->input();
-    $validator = $this->validate($data);
 
-    if ($validator->fails()) {
-      return \Response::json(['success'=>false, 'errors'=>$validator->errors() ], 400);
-    } else {
+    try {
       // Adds current LRS.
       $data['lrs'] = $this->lrs->_id;
-
-      // Creates a report.
-      $data = \app\locker\helpers\Helpers::replaceFullStop($data);
-      $report = $this->report->create($data);
-      return \Response::json($report);
+      return \Response::json($this->report->create($data));
+    } catch (Exception $exception) {
+      return \Response::json([
+        'success' => false,
+        'errors' => $this->report->$validator->errors(),
+        'message' => $exception->getMessage()
+      ], 400);
     }
   }
 
@@ -71,9 +68,8 @@ class ReportController extends BaseController {
    * @param Report $report Report to be retrieved.
    * @return Report The report with the given id.
    */
-  public function show($report) {
-    $report = \app\locker\helpers\Helpers::replaceHtmlEntity($report);
-    return \Response::json($report);
+  public function show($id) {
+    return \Response::json($this->report->find($id));
   }
 
   /**
@@ -81,19 +77,17 @@ class ReportController extends BaseController {
    * @param Report $report Report to be updated.
    * @return Report The updated report.
    */
-  public function update($report) {
+  public function update($id) {
     $data = $this->input();
-    $validator = $this->validate($data);
 
-    if ($validator->fails()) {
+    try {
+      return \Response::json($this->report->update($id, $data));
+    } catch (Exception $exception) {
       return \Response::json([
-        'success'=>false,
-        'errors'=>$validator->errors()
+        'success' => false,
+        'errors' => $this->report->$validator->errors(),
+        'message' => $exception->getMessage()
       ], 400);
-    } else {
-      $data = \app\locker\helpers\Helpers::replaceFullStop($data);
-      $report->update($data);
-      return \Response::json($report);
     }
   }
 
@@ -102,12 +96,10 @@ class ReportController extends BaseController {
    * @param Report $report Report to be deleted.
    * @return Boolean Success of the deletion.
    */
-  public function destroy($report) {
-    if ($report->delete()) {
-      return \Response::json(['success'=>true]);
-    } else {
-      return \Response::json(['success'=>false]);
-    }
+  public function destroy($id) {
+    return \Response::json([
+      'success' => $this->report->delete($id)
+    ]);
   }
 
   /**
@@ -115,11 +107,34 @@ class ReportController extends BaseController {
    * @param Report $report Report to be ran.
    * @return [Statement] the statements selected by the report.
    */
-  public function run($report) {
+  public function run($id) {
+    $report = $this->report->find($id);
     return \Response::json($this->query->selectStatements(
-      $this->lrs->_id,
-      $this->decodeURL($report->query)
+      $report->lrs,
+      $this->decodeURL($report->query),
+      true
     ));
+  }
+
+  /**
+   * Decodes all URLs in array values.
+   * @param Array $array
+   * @return Array with all URLs decoded.
+   */
+  public function decodeURL($array) {
+    $output = '';
+
+    if (!empty($array)) {
+      foreach ($array as $key => $value) {
+        if (is_array($value)) {
+          $output[$key] = $this->decodeURL($value);
+        } else {
+          $output[$key] = urldecode($value);
+        }
+      }
+    }
+
+    return $output;
   }
 
 }
