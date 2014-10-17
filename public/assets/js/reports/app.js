@@ -17,8 +17,7 @@ define([
   App.addInitializer(function(options) {
     beagle.walk(ReportsRouter, {
       app: App,
-      url: '../../api/v1',
-      collection: new ReportsCollection
+      url: '../../api/v1'
     });
   });
   

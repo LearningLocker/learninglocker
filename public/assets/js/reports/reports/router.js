@@ -5,13 +5,22 @@ define([
   './table',
   './editLayout',
   './runLayout'
-], function(beagle, Collection, Model, Table, EditLayout, RunLayout) {
+], function(
+  beagle,
+  Collection,
+  Model,
+  Table,
+  EditLayout,
+  RunLayout
+) {
+  var collection = new Collection();
+
   return beagle.routes({
     // List.
     '': function (params, path) {
-      params.collection.url = params.url + '/' + params.collection.nestedUrl;
+      collection.url = params.url + '/' + collection.nestedUrl;
       params.app.content.show(new Table({
-        collection: params.collection
+        collection: collection
       }));
     },
 
@@ -32,7 +41,7 @@ define([
     }
   }, {
     'id': function (id, params) {
-      params.url += '/' + params.collection.nestedUrl + '/' + id;
+      params.url += '/' + collection.nestedUrl + '/' + id;
       return id;
     }
   });

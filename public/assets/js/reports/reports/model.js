@@ -49,29 +49,36 @@ define([
         response[responseKey] = query[queryKey];
       }.bind(this));
     },
-    _mapResponseToQuery: function (query, response) {
+    _mapResponseToQuery: function () {
+      var query = this.get('query');
       Object.keys(this._queryResponseMap).forEach(function (queryKey) {
         var responseKey = this._queryResponseMap[queryKey];
         queryKey = 'statement.' + queryKey;
-        query[queryKey] = response[responseKey];
+        query[queryKey] = this.get(responseKey).map(function (model) {
+          return model.get('value');
+        });
       }.bind(this));
     },
     _initializeRelations: function (response, empty) {
       // Maps query relations to response.
       if (!empty && response.query) {
-        var query = response.query;
-        this._mapQueryToResponse(query, response);
+        this._mapQueryToResponse(response.query, response);
       } else {
         response.query = {};
       }
 
       // Calls parent to initialise relations.
-      var result = locker.Model.prototype._initializeRelations.bind(this)(response, empty);
+      response = locker.Model.prototype._initializeRelations.bind(this)(response, empty);
 
-      // Maps reponse collections to query.
-      this._mapResponseToQuery(query || {}, response);
-
-      return result;
+      return response;
+    },
+    sync: function (method, model, options) {
+      if (method === 'update') {
+        this._mapResponseToQuery();
+        return locker.Model.prototype.sync.call(this, method, model, options);
+      } else {
+        return locker.Model.prototype.sync.call(this, method, model, options);
+      }
     }
   });
 });
