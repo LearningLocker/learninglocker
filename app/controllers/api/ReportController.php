@@ -2,18 +2,20 @@
 
 use Locker\Repository\Query\QueryRepository as Query;
 use Locker\Repository\Report\ReportRepository as Report;
+use \Locker\Data\Analytics\AnalyticsInterface as Analytics;
 
 class ReportController extends BaseController {
-  protected $report, $query, $params, $lrs;
+  protected $report, $query, $analytics, $params, $lrs;
 
   /**
    * Construct
    *
    * @param StatementRepository $statement
    */
-  public function __construct(Report $report, Query $query) {
+  public function __construct(Report $report, Query $query, Analytics $analytics) {
     $this->report = $report;
     $this->query = $query;
+    $this->analytics = $analytics;
     $this->beforeFilter('@setParameters');
     $this->beforeFilter('@getLrs');
   }
@@ -108,33 +110,26 @@ class ReportController extends BaseController {
    * @return [Statement] the statements selected by the report.
    */
   public function run($id) {
-    $report = $this->report->find($id);
-    return \Response::json($this->query->selectStatements(
-      $report->lrs,
-      $this->decodeURL($report->query),
-      true
-    ));
+    return \Response::json($this->report->statements($id));
   }
 
   /**
-   * Decodes all URLs in array values.
-   * @param Array $array
-   * @return Array with all URLs decoded.
+   * Runs a report and returns a graph.
+   * @param Report $report Report to be ran.
+   * @return [Statement] the statements selected by the report.
    */
-  public function decodeURL($array) {
-    $output = '';
+  public function graph($id) {
+    $report = $this->report->find($id);
+    $data = $this->analytics->analytics($report->lrs, $report->filter);
 
-    if (!empty($array)) {
-      foreach ($array as $key => $value) {
-        if (is_array($value)) {
-          $output[$key] = $this->decodeURL($value);
-        } else {
-          $output[$key] = urldecode($value);
-        }
-      }
+    if ($data['success'] == false) {
+      return \Response::json([
+        'success' => false,
+        'message' => \Lang::get('apps.no_data')
+      ], 400);
     }
 
-    return $output;
+    return \Response::json($data['data']['result']);
   }
 
 }
