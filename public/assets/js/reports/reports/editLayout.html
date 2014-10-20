@@ -132,29 +132,29 @@
           <div id="Scaled" class="panel-body">
             <div class="form-group scaled">Scaled
               <div class="pull-right">
-                <input type="number" id="scaled-min" style="width:50px;" value="<%= query['statement.result.score.scaled[1]'] || null %>"/><span> to </span>
-                <input type="number" id="scaled-max" style="width:50px;" value="<%= query['statement.result.score.scaled[2]'] || null %>"/>
+                <input type="number" id="scaled-min" style="width:50px;" value="<%= (query['statement.result.score.scaled'] && query['statement.result.score.scaled'][1]) || null %>"/><span> to </span>
+                <input type="number" id="scaled-max" style="width:50px;" value="<%= (query['statement.result.score.scaled'] && query['statement.result.score.scaled'][2]) || null %>"/>
                 <button id="scaled-clear" class="btn btn-xs btn-danger pull-right"><i class="icon icon-trash"> Clear</i></button>
               </div>
             </div>
             <div class="form-group scaled">Raw
               <div class="pull-right">
-                <input type="number" id="raw-min" style="width:50px;" value="<%= query['statement.result.score.raw[1]'] || null %>"/><span> to </span>
-                <input type="number" id="raw-max" style="width:50px;" value="<%= query['statement.result.score.raw[2]'] || null %>"/>
+                <input type="number" id="raw-min" style="width:50px;" value="<%= (query['statement.result.score.raw'] && query['statement.result.score.raw'][1]) || null %>"/><span> to </span>
+                <input type="number" id="raw-max" style="width:50px;" value="<%= (query['statement.result.score.raw'] && query['statement.result.score.raw'][2]) || null %>"/>
                 <button id="raw-clear" class="btn btn-xs btn-danger pull-right"><i class="icon icon-trash"> Clear</i></button>
               </div>
             </div>
             <div class="form-group scaled">Min
               <div class="pull-right">
-                <input type="number" id="min-min" style="width:50px;" value="<%= query['statement.result.score.min[1]'] || null %>"/><span> to </span>
-                <input type="number" id="min-max" style="width:50px;" value="<%= query['statement.result.score.min[2]'] || null %>"/>
+                <input type="number" id="min-min" style="width:50px;" value="<%= (query['statement.result.score.min'] && query['statement.result.score.min'][1]) || null %>"/><span> to </span>
+                <input type="number" id="min-max" style="width:50px;" value="<%= (query['statement.result.score.min'] && query['statement.result.score.min'][2]) || null %>"/>
                 <button id="min-clear" class="btn btn-xs btn-danger pull-right"><i class="icon icon-trash"> Clear</i></button>
               </div>
             </div>
             <div class="form-group scaled">Max
               <div class="pull-right">
-                <input type="number" id="max-min" style="width:50px;" value="<%= query['statement.result.score.max[1]'] || null %>"/><span> to </span>
-                <input type="number" id="max-max" style="width:50px;" value="<%= query['statement.result.score.max[2]'] || null %>"/>
+                <input type="number" id="max-min" style="width:50px;" value="<%= (query['statement.result.score.max'] && query['statement.result.score.max'][1]) || null %>"/><span> to </span>
+                <input type="number" id="max-max" style="width:50px;" value="<%= (query['statement.result.score.max'] && query['statement.result.score.max'][2]) || null %>"/>
                 <button id="max-clear" class="btn btn-xs btn-danger pull-right"><i class="icon icon-trash"> Clear</i></button>
               </div>
             </div>

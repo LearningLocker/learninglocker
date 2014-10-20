@@ -7,9 +7,9 @@ define([
   // Helps with changing the query.
   var changeQuery = function (fn) {
     return function (e) {
-      var query = this.model.get('query') || {};
+      var query = this.model.get('query');
       e.stopPropagation();
-      query = fn(query, e);
+      fn(query, e);
       this.model.set({query: query});
     };
   };
@@ -19,7 +19,7 @@ define([
         query[field] = ['<>', '', ''];
       }
 
-      query[field][!!min + 2] = e.currentTarget.value;
+      query[field][1 + !!min] = e.currentTarget.value;
     });
   };
   var clearQueryField = function (field) {
@@ -81,7 +81,9 @@ define([
       'click a[data-toggle=\'tab\']': function (e) {
         $(e.currentTarget.parentElement.parentElement).find('.explore-option').removeClass('active');
         $(e.currentTarget).find('.explore-option').addClass('active');
-      }
+      },
+      'change #since': changeDate('statement.since'),
+      'change #until': changeDate('statement.until')
     },
     template: template,
     initialize: function (options) {

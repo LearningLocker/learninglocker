@@ -28,9 +28,9 @@ mixin scaled(name)
   .form-group.scaled
     = name
     .pull-right
-      input(type="number" id=id + "-min" style="width:50px;" value!="<%= query['statement.result.score." + id + "[1]'] || null %>")
+      input(type="number" id=id + "-min" style="width:50px;" value!="<%= (query['statement.result.score." + id + "'] && query['statement.result.score." + id + "'][1]) || null %>")
       span= ' to '
-      input(type="number" id=id + "-max" style="width:50px;" value!="<%= query['statement.result.score." + id + "[2]'] || null %>")
+      input(type="number" id=id + "-max" style="width:50px;" value!="<%= (query['statement.result.score." + id + "'] && query['statement.result.score." + id + "'][2]) || null %>")
       button.btn.btn-xs.btn-danger.pull-right(id=id + '-clear')
         i.icon.icon-trash= ' Clear'
 
