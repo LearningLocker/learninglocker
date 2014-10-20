@@ -254,22 +254,13 @@ Route::put('lrs/{lrs_id}/client/{id}/update', array(
 //index and create pages
 Route::get('lrs/{id}/reporting', array(
   'uses' => 'ReportingController@index',
+  'as' => 'reporting.index'
 ));
-Route::get('lrs/{id}/reporting/create', array(
-  'uses' => 'ReportingController@create',
+Route::get('lrs/{id}/reporting/{report_id}/statements', array(
+  'uses' => 'ReportingController@statements',
 ));
-
-//get data and statements, returns json
-Route::get('lrs/{id}/reporting/data', array(
-  'uses' => 'ReportingController@getData',
-));
-Route::get('lrs/{id}/reporting/statements', array(
-  'uses' => 'ReportingController@getStatements',
-));
-
-//used by typeahead to get objects
 Route::get('lrs/{id}/reporting/typeahead/{segment}/{query}', array(
-  'uses' => 'ReportingController@getTypeahead',
+  'uses' => 'ReportingController@typeahead',
 ));
 
 //Route::resource('reporting', 'ReportingController');
@@ -506,6 +497,9 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
   Route::resource('reports', 'Controllers\API\ReportController');
   Route::get('reports/{id}/run', array(
     'uses' => 'Controllers\API\ReportController@run'
+  ));
+  Route::get('reports/{id}/graph', array(
+    'uses' => 'Controllers\API\ReportController@graph'
   ));
   Route::resource('site', 'Controllers\API\SiteController');
 
