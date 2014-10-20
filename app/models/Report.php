@@ -14,18 +14,18 @@ class Report extends Eloquent {
   protected $fillable = ['name', 'description', 'query', 'lrs'];
 
   public function getFilterAttribute() {
-    $report = $this->toArray();
+    $reportArr = $this->toArray();
     $filter = [];
 
-    if (isset($this->query)) $filter['filter'] = json_encode($this->query);
-    if (isset($this->since)) $filter['since'] = $this->since;
-    if (isset($this->until)) $filter['until'] = $this->until;
+    if (isset($reportArr['query'])) $filter['filter'] = json_encode($reportArr['query']);
+    if (isset($reportArr['since'])) $filter['since'] = $reportArr['since'];
+    if (isset($reportArr['until'])) $filter['until'] = $reportArr['until'];
 
     return $filter;
   }
 
   public function toArray() {
-    return \app\locker\helpers\Helpers::replaceHtmlEntity(parent::toArray());
+    return (array) \app\locker\helpers\Helpers::replaceHtmlEntity(parent::toArray());
   }
 
 }
