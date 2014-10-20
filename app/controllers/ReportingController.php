@@ -55,8 +55,8 @@ class ReportingController extends \BaseController {
   }
 
   /**
-   * Displays 
-   * @return 
+   * Displays the reporting view.
+   * @return reporting view.
    */
   public function index($id){
     $lrs      = $this->lrs->find($id);
@@ -71,13 +71,27 @@ class ReportingController extends \BaseController {
   }
 
   /**
+   * Displays the statements from the report.
+   * @return reporting view.
+   */
+  public function statements($lrsId, $reportId) {
+    return View::make('partials.reporting.statements', [
+      'lrs' => $this->lrs->find($lrsId), 
+      'list' => $this->lrs->all(),
+      'reporting_nav' => true,
+      'statements' => $this->report->statements($reportId),
+      'report' => $this->report->find($reportId)
+    ]);
+  }
+
+  /**
    * Gets typeahead values (matching the query) in segments for the current lrs.
    * @param string $lrs LRS in use.
    * @param string $segement Statement segment (i.e. 'verbs').
    * @param query String to match against.
    * @return [Typeahead values] Typeahead values.
    **/
-  public function getTypeahead($lrs, $segment, $query){
+  public function typeahead($lrs, $segment, $query){
     $options = self::$segments[$segment];
 
     return Response::json($this->report->setQuery(
