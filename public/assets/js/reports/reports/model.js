@@ -12,8 +12,8 @@ define([
       description: 'Description of the new report.',
       lrs: window.lrsId,
       query: {
-        since: null,
-        until: null
+        since: undefined,
+        until: undefined
       }
     },
     relations: {
@@ -53,10 +53,20 @@ define([
       var query = this.get('query');
       Object.keys(this._queryResponseMap).forEach(function (queryKey) {
         var responseKey = this._queryResponseMap[queryKey];
-        queryKey = 'statement.' + queryKey;
-        query[queryKey] = this.get(responseKey).map(function (model) {
-          return model.get('value');
+        var newValue = this.get(responseKey).map(function (model) {
+          var value = model.get('value');
+
+          // Returns the full value if there is no identifier in brackets.
+          if (value.indexOf('(') === -1) {
+            return value;
+          }
+
+          // Returns the identifier from between brackets if it exists.
+          else {
+            return value.split('(').pop().slice(0, -1);
+          }
         });
+        query['statement.' + queryKey] = newValue.length > 0 ? newValue : undefined;
       }.bind(this));
     },
     _initializeRelations: function (response, empty) {

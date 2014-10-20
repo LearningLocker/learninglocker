@@ -24,8 +24,8 @@ define([
   };
   var clearQueryField = function (field) {
     return changeQuery(function (query, e) {
-      query[field] = null;
       $(e.currentTarget.parentElement).find('input').val(null).prop('checked', null);
+      query[field] = undefined;
     });
   };
   var changeBoolean = function (field, value) {
