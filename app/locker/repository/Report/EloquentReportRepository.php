@@ -39,7 +39,7 @@ class EloquentReportRepository implements ReportRepository {
    * @return Report
    */
   public function find($id) {
-    return Helpers::replaceHtmlEntity(Report::find($id));
+    return Report::find($id);
   }
 
   /**
@@ -79,7 +79,7 @@ class EloquentReportRepository implements ReportRepository {
       $data = Helpers::replaceFullStop($data);
 
       // Updates a report with the given data.
-      $report = Report::find($id);
+      $report = $this->find($id);
       $report->update($data);
       return Helpers::replaceHtmlEntity($report);
     }
@@ -91,7 +91,7 @@ class EloquentReportRepository implements ReportRepository {
    * @return Boolean Success of the deletion.
    */
   public function delete($id) {
-    return Report::find($id)->delete();
+    return $this->find($id)->delete();
   }
 
   public function setQuery($lrs, $query, $field, $wheres) {
@@ -101,6 +101,36 @@ class EloquentReportRepository implements ReportRepository {
       ->distinct()
       ->take(6)
       ->get();
+  }
+
+  public function statements($id) {
+    $report = $this->find($id);
+    return (new \Locker\Repository\Query\EloquentQueryRepository)->selectStatements(
+      $report->lrs,
+      $this->decodeURL($report->query),
+      false
+    );
+  }
+
+  /**
+   * Decodes all URLs in array values.
+   * @param Array $array
+   * @return Array with all URLs decoded.
+   */
+  public function decodeURL($array) {
+    $output = '';
+
+    if (!empty($array)) {
+      foreach ($array as $key => $value) {
+        if (is_array($value)) {
+          $output[$key] = $this->decodeURL($value);
+        } else {
+          $output[$key] = urldecode($value);
+        }
+      }
+    }
+
+    return $output;
   }
 
 }
