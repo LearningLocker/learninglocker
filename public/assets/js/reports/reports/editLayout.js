@@ -34,9 +34,12 @@ define([
     });
   };
   var changeDate = function (field) {
-    return changeQuery(function (query, e) {
-      query[field] = e.currentTarget.value === '' ? undefined : new Date(e.currentTarget.value);
-    });
+    return function (e) {
+      var changes = {};
+      changes[field] = e.currentTarget.value === '' ? undefined : new Date(e.currentTarget.value);
+      this.model.set(changes);
+      e.stopPropagation();
+    };
   };
 
 
@@ -82,8 +85,8 @@ define([
         $(e.currentTarget.parentElement.parentElement).find('.explore-option').removeClass('active');
         $(e.currentTarget).find('.explore-option').addClass('active');
       },
-      'change #since': changeDate('statement.since'),
-      'change #until': changeDate('statement.until')
+      'change #since': changeDate('since'),
+      'change #until': changeDate('until')
     },
     template: template,
     initialize: function (options) {

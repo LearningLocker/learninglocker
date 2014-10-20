@@ -66,7 +66,7 @@ mixin scaled(name)
         .row
           .col-md-6
             label(for='since') From (Since)
-            input#since.form-control(type='date', value='value')
+            input#since.form-control(type='date', value='<%= since %>')
           .col-md-6
             label(for='until') To (Until)
-            input#until.form-control(type='date', value='value')
+            input#until.form-control(type='date', value='<%= until %>')
