@@ -15,6 +15,10 @@ requirejs.config({
     basicauth : {
       deps : ['jquery', 'underscore', 'backbone'],
       exports : 'BasicAuth'
+    },
+    morris : {
+      deps : ['jquery', 'raphael'],
+      exports : 'Morris'
     }
   },
   paths: {
@@ -25,7 +29,9 @@ requirejs.config({
     text: '//cdnjs.cloudflare.com/ajax/libs/require-text/2.0.12/text.min',
     beagle: '//cdn.rawgit.com/ht2/beagle/1.0.3/build/export',
     basicauth: '//cdn.rawgit.com/fiznool/backbone.basicauth/master/backbone.basicauth',
-    typeahead: '//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.4/typeahead.bundle.min'
+    typeahead: '//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.4/typeahead.bundle.min',
+    raphael: '//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min',
+    morris: '//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min'
   },
   packages: [
     {
