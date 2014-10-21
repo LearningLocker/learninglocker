@@ -10,5 +10,5 @@
 
 @section('buttons')
   <a id="edit" href="{{ route('reporting.index', [$report->lrs]) }}#{{$report->_id}}/edit" class="btn btn-info"><i class="icon icon-pencil"></i> Edit</a>
-  <a id="graph" href="{{ route('reporting.index', [$report->lrs]) }}#{{$report->_id}}/run" class="btn btn-info"><i class="icon icon-signal"></i> Graph</a>
+  <a id="graph" href="{{ route('reporting.index', [$report->lrs]) }}#{{$report->_id}}/graph" class="btn btn-success"><i class="icon icon-signal"></i> Graph</a>
 @stop

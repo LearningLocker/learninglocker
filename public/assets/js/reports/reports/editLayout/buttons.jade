@@ -1,4 +1,11 @@
 a#save.btn.btn-primary
-  i.icon.icon-save= ' Save'
-a#run(href!='#<%= _id %>/run').btn.btn-success
-  i.icon.icon-play= ' Run'
+  i.icon.icon-save
+  = ' Save'
+= '\n'
+a#graph(href!='#<%= _id %>/graph').btn.btn-success
+  i.icon.icon-signal
+  = ' Graph'
+= '\n'
+a#statements(href!='reporting/<%= _id %>/statements').btn.btn-success
+  i.icon.icon-eye-open
+  = ' Statements'

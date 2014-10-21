@@ -32,7 +32,7 @@ define([
         })
       }));
     },
-    ':id/run': function (params, path) {
+    ':id/graph': function (params, path) {
       params.app.content.show(new RunLayout({
         model: new Model({}, {
           url: params.url
