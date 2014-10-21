@@ -66,7 +66,7 @@ define([
             value =  value.split('(').pop().slice(0, -1);
           }
 
-          return encodeURIComponent(value);
+          return value;
         });
         query['statement.' + queryKey] = newValue.length > 0 ? newValue : undefined;
       }.bind(this));
