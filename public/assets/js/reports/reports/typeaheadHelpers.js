@@ -5,8 +5,27 @@ define([
   var getKeys = function (display) {
     // Sets display to default if not set.
     display = display || function (item) {
-      var id = item.id
-      return item.definition.name['en-GB'] + ' (' + id + ')';
+      var id = item.id;
+      var value = null;
+
+      // Return a human-readable value if the browsers defines languages.
+      if (navigator.languages instanceof Array) {
+        var value = navigator.languages.map(function (lang) {
+          return item.definition && item.definition.name && item.definition.name[lang];
+        }).filter(function (value) {
+          return value != null;
+        })[0];
+      }
+
+      // Display human-readable value if it exists
+      if (value != null) {
+        return value + ' (' + id + ')';
+      }
+
+      // Otherwise display just the identifier.
+      else {
+        return id;
+      }
     };
 
     return function (items, query) {

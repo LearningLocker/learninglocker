@@ -14,19 +14,19 @@ class ReportingController extends \BaseController {
     ],
     'grouping' => [
       'return' => 'context.contextActivities.grouping',
-      'query' => 'context.contextActivities.grouping.definition.name.en-GB'
+      'query' => 'context.contextActivities.grouping.id'
     ],
     'parents' => [
       'return' => 'context.contextActivities.parent',
-      'query' => 'context.contextActivities.parent.definition.name.en-GB'
+      'query' => 'context.contextActivities.parent.id'
     ],
     'activities' => [
       'return' => 'object',
-      'query' => 'object.definition.name.en-GB'
+      'query' => 'object.id'
     ],
     'verbs' => [
       'return' => 'verb',
-      'query' => 'verb.display.en-GB'
+      'query' => 'verb.id'
     ],
     'activityTypes' => [
       'return' => 'object.definition.type',
