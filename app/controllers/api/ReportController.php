@@ -29,15 +29,6 @@ class ReportController extends BaseController {
   }
 
   /**
-   * Validates the given data.
-   * @param  AssocArray $data The data to be validated.
-   * @return Validator The validator used to validate the data.
-   */
-  private function validate($data) {
-    return \Validator::make($data, \Report::$rules);
-  }
-
-  /**
    * Gets all reports.
    * @return [Report] Array of reports that have been stored.
    */
@@ -81,6 +72,7 @@ class ReportController extends BaseController {
    */
   public function update($id) {
     $data = json_decode(\LockerRequest::getContent(), true);
+    dd($this->input());
 
     try {
       return \Response::json($this->report->update($id, $data));
