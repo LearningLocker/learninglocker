@@ -72,7 +72,6 @@ class ReportController extends BaseController {
    */
   public function update($id) {
     $data = json_decode(\LockerRequest::getContent(), true);
-    dd($this->input());
 
     try {
       return \Response::json($this->report->update($id, $data));
@@ -113,7 +112,6 @@ class ReportController extends BaseController {
   public function graph($id) {
     $report = $this->report->find($id);
     $data = $this->analytics->analytics($report->lrs, $report->filter);
-    dd($report->filter);
 
     if ($data['success'] == false) {
       return \Response::json([
