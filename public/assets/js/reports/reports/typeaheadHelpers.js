@@ -10,7 +10,7 @@ define([
 
       // Return a human-readable value if the browsers defines languages.
       if (navigator.languages instanceof Array) {
-        var value = navigator.languages.map(function (lang) {
+        value = navigator.languages.map(function (lang) {
           return item.definition && item.definition.name && item.definition.name[lang];
         }).filter(function (value) {
           return value != null;
