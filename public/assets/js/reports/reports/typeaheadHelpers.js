@@ -19,8 +19,7 @@ define([
     return item;
   };
   var displayActor = function (actor) {
-    var mbox = actor.mbox && actor.mbox.replace('mailto:', '');
-    var id = mbox || actor.account.href || actor.openId
+    var id = actor.mbox || actor.account.href || actor.openId
     return actor.name + ' (' + id + ')';
   };
   var view = function (segment, display) {
