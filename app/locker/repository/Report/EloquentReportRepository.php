@@ -91,8 +91,8 @@ class EloquentReportRepository implements ReportRepository {
       ->where('lrs._id', $lrs)
       ->where($wheres, 'like', '%'.$query.'%')
       ->distinct()
-      ->take(6)
-      ->get();
+      ->get()
+      ->take(6);
   }
 
   public function statements($id) {
