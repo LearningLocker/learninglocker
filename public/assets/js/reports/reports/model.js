@@ -56,15 +56,17 @@ define([
         var newValue = this.get(responseKey).map(function (model) {
           var value = model.get('value');
 
-          // Returns the full value if there is no identifier in brackets.
+          // Sets value to the full value if there is no identifier in brackets.
           if (value.indexOf('(') === -1) {
-            return value;
+            value = value;
           }
 
-          // Returns the identifier from between brackets if it exists.
+          // Sets value to the identifier from between brackets if it exists.
           else {
-            return value.split('(').pop().slice(0, -1);
+            value =  value.split('(').pop().slice(0, -1);
           }
+
+          return encodeURIComponent(value);
         });
         query['statement.' + queryKey] = newValue.length > 0 ? newValue : undefined;
       }.bind(this));
