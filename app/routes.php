@@ -197,22 +197,6 @@ Route::get('lrs/{id}/exporting', array(
   'uses' => 'ExportingController@index',
 ));
 
-//Route::resource('reporting', 'ReportingController');
-
-//save,view,edit,delete reports
-Route::post('lrs/{id}/exporting/save', array(
-  'uses' => 'ReportingController@store',
-));
-Route::get('lrs/{id}/exporting/show/{report}', array(
-  'uses' => 'ReportingController@show',
-));
-Route::delete('lrs/{id}/exporting/delete/{report}', array(
-  'uses' => 'ReportingController@destroy',
-));
-Route::get('lrs/{id}/exporting/getReports/{limt?}', array(
-  'uses' => 'ReportingController@getReports',
-));
-
 /*
 |------------------------------------------------------------------
 | Lrs client
@@ -261,22 +245,6 @@ Route::get('lrs/{id}/reporting/{report_id}/statements', array(
 ));
 Route::get('lrs/{id}/reporting/typeahead/{segment}/{query}', array(
   'uses' => 'ReportingController@typeahead',
-));
-
-//Route::resource('reporting', 'ReportingController');
-
-//save,view,edit,delete reports
-Route::post('lrs/{id}/reporting/save', array(
-  'uses' => 'ReportingController@store',
-));
-Route::get('lrs/{id}/reporting/show/{report}', array(
-  'uses' => 'ReportingController@show',
-));
-Route::delete('lrs/{id}/reporting/delete/{report}', array(
-  'uses' => 'ReportingController@destroy',
-));
-Route::get('lrs/{id}/reporting/getReports/{limt?}', array(
-  'uses' => 'ReportingController@getReports',
 ));
 
 
@@ -494,6 +462,7 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
     'uses' => 'Controllers\API\ExportingController@destroy'
   ));
 
+  // Adds routes for reports.
   Route::resource('reports', 'Controllers\API\ReportController');
   Route::get('reports/{id}/run', array(
     'uses' => 'Controllers\API\ReportController@run'
@@ -501,6 +470,8 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
   Route::get('reports/{id}/graph', array(
     'uses' => 'Controllers\API\ReportController@graph'
   ));
+
+  
   Route::resource('site', 'Controllers\API\SiteController');
 
 });
