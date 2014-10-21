@@ -8,14 +8,6 @@ class EloquentReportRepository implements ReportRepository {
   public $validator;
 
   /**
-   * Gets accepted fields from the input.
-   * @return AssocArray The accepted fields.
-   */
-  private function input() {
-    return \Input::only('lrs', 'query', 'name', 'description');
-  }
-
-  /**
    * Validates the given data.
    * @param  AssocArray $data The data to be validated.
    * @return Validator The validator used to validate the data.
@@ -107,30 +99,9 @@ class EloquentReportRepository implements ReportRepository {
     $report = $this->find($id);
     return (new \Locker\Repository\Query\EloquentQueryRepository)->selectStatements(
       $report->lrs,
-      $this->decodeURL($report->query),
+      Helpers::replaceHtmlEntity($report->query),
       false
     );
-  }
-
-  /**
-   * Decodes all URLs in array values.
-   * @param Array $array
-   * @return Array with all URLs decoded.
-   */
-  public function decodeURL($array) {
-    $output = '';
-
-    if (!empty($array)) {
-      foreach ($array as $key => $value) {
-        if (is_array($value)) {
-          $output[$key] = $this->decodeURL($value);
-        } else {
-          $output[$key] = urldecode($value);
-        }
-      }
-    }
-
-    return $output;
   }
 
 }

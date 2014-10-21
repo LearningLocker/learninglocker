@@ -21,14 +21,6 @@ class ReportController extends BaseController {
   }
 
   /**
-   * Gets accepted fields from the input.
-   * @return AssocArray The accepted fields.
-   */
-  private function input() {
-    return \Input::only('lrs', 'query', 'name', 'description');
-  }
-
-  /**
    * Gets all reports.
    * @return [Report] Array of reports that have been stored.
    */
