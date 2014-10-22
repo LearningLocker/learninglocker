@@ -25,14 +25,14 @@ define([
     // Defines callbacks for helper events.
     save: function () {
       this.model.save().success(function (model, response, options) {
-        alert('Saved successfully.');
+        alert(trans('site.saved'));
       }).error(function (model, response, options) {
-        alert('Could not save.');
+        alert(trans('site.notSaved'));
         console.error(model, response, options);
       });
     },
     trash: function() {
-      if (confirm('Are you sure?')) {
+      if (confirm(trans('site.sure'))) {
         return this.model.destroy();
       }
     },

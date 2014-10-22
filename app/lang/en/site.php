@@ -82,5 +82,7 @@ return array(
     'welcome'  => 'Welcome to Learning Locker',
     'sure' => 'Are you sure?',
     'roleChange' => 'Role successfully changed',
-    'hello' => 'hello'
+    'hello' => 'hello',
+    'saved' => 'Saved successfully',
+    'notSaved' => 'Could not save.'
 );
