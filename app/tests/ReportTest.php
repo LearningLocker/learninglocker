@@ -1,150 +1,230 @@
 <?php
 
-/**
- * @file Test case for report service
- * 
- * Ensure:
- *  - User can create report
- *  - User can run report
- *  - Report works correctly
- *  - Delete report works
- */
-
 class ReportTest extends TestCase {
 
-  protected $lrs;
-  protected $statements;
-  protected $user;
+  // Defines the number of test statements to be used.
+  const STATEMENTS = 7;
 
+  // Defines the data required by multiple tests.
+  protected $lrs;
+  protected $data = [
+    'description' => 'Some description',
+    'name' => '',
+    'query' => [
+      'statement.actor.mbox' => [
+        "mailto:duy.nguyen@go1.com.au"
+      ],
+      'statement.verb.id' => [
+        "http://adlnet.gov/expapi/verbs/experienced"
+      ]
+    ],
+  ];
+
+  /**
+   * Sets up the tests.
+   */
   public function setUp() {
     parent::setUp();
-    // Authentication as super user.
+    
+    // Authenticates as super user.
     $user = User::first();  
-    Auth::login($user);  
-    $this->createLRS();
-  }
+    Auth::login($user);
 
-  /**
-   * lrs/{id}/reporting/create  
-   * 
-   * This test case create new reporting and run report
-   * 
-   * It is ensure reporting work correctly.
-   * */
-  public function testRouterReportCreate() {
-    for ($i = 0; $i < 7; $i++) {
-      $vs = $this->defaultStatment();
-      $this->statements[] = $this->createStatement($vs, $this->lrs);
+    $this->lrs = $this->createLRS();
+    $this->data['lrs'] = $this->lrs->_id;
+
+    // Creates seven statements in the LRS.
+    for ($i = 0; $i < self::STATEMENTS; $i++) {
+      $this->createStatement($this->defaultStatment(), $this->lrs);
     }
-    $data = array(
-      'description' => \app\locker\helpers\Helpers::getRandomValue(),
-      'name' => '',
-      'lrs' => $this->lrs->_id,
-      'query' => array(
-        'statement.actor.mbox' => array(
-          "mailto:duy.nguyen@go1.com.au"
-        ),
-        'statement.verb.id' => array(
-          "http://adlnet.gov/expapi/verbs/experienced"
-        )
-      ),
-    );
-    //lrs input validation
-    $rules['name']         = 'required|alpha_spaces';
-    $rules['description']  = 'alpha_spaces';
-    $validator = Validator::make($data, $rules);
-    $this->assertTrue($validator->fails());
-    
-    $data['name'] = 'reportabcd';
-    $data['description'] = 'reportabcd description';
-    $validator = Validator::make($data, $rules);
-    $this->assertTrue($validator->passes());
 
-    // create report.
-    $report = new Report;
-    $report->lrs = $data['lrs'];
-    $report->query = $data['query'];
-    $report->name  = $data['name'];
-    $report->description = $data['description'];
-    $save = $report->save();
-    $this->assertTrue($save);
-    
-    // Ensure report show in reporting page.
-    $crawler = $this->client->request('GET', "/lrs/{$this->lrs->_id}/reporting");
-    $this->assertGreaterThan(0, $crawler->filter('html:contains("reportabcd")')->count());
-    $this->assertGreaterThan(0, $crawler->filter('html:contains("reportabcd description")')->count());
-    
-    $crawler = $this->client->request('GET', "/lrs/{$this->lrs->_id}/reporting/show/{$report->_id}");
-    $this->assertGreaterThan(0, $crawler->filter('html:contains("Number of statements")')->count());
-    $this->assertGreaterThan(0, $crawler->filter('html:contains("7")')->count());
-    
-    // Delete report by router.
-    $crawler = $this->client->request('DELETE', "/lrs/{$this->lrs->_id}/reporting/delete/{$report->_id}");
-    $this->assertEquals(Report::find($report->_id), NULL);
-
+    // Creates a report in the LRS.
+    $this->report = $this->constructReport();
+    $this->report->save();
   }
 
   /**
-   * lrs/{id}/reporting/statements
-   * Ensure report statement of lrs work correctly
+   * Constructs a new report with test data.
+   * @return Report Constructed report.
    */
-  public function testRouterReportStatements() {
-    for ($i = 0; $i < 5; $i++) {
-      $vs = $this->defaultStatment();
-      $this->statements[] = $this->createStatement($vs, $this->lrs);
-    }
-    $crawler = $this->client->request('GET', "/lrs/{$this->lrs->_id}/reporting/statements?filter={}");
-    $this->assertTrue($this->client->getResponse()->isOk());
-    
-    $json = $this->client->getResponse()->getContent();
-    $result = json_decode($json);
-    $this->assertEquals(5, count($result));
+  protected function constructReport() {
+    return new Report($this->data);
   }
 
+  // API tests.
   /**
-   * lrs/{id}/reporting/data
-   * Test run report
+   * Creates a request to the API.
+   * @param string $method HTTP method.
+   * @param string $url URL to append to the API's base URL.
+   * @param mixed $content Request content.
+   * @return Request
    */
-  function testReportRun() {
-    // Router run report.
-    for ($i = 0; $i < 3; $i++) {
-      $vs = $this->defaultStatment();
-      $this->statements[] = $this->createStatement($vs, $this->lrs);
-    }
-    $crawler = $this->client->request('GET', "/lrs/{$this->lrs->_id}/reporting/data?filter={}");
-    $this->assertTrue($this->client->getResponse()->isOk());
-    
-    $json = $this->client->getResponse()->getContent();
-    $result = json_decode($json);
-    $this->assertEquals(3, count($result[0]->date));
-    $this->assertEquals(3, $result[0]->count);
-    
-    // @see RoutingServiceProvider.php line 35.
+  protected function requestAPI($method = 'GET', $url = '', $content = '') {
+    // Defines the base URL for all API requests.
+    $url = '/api/v1/reports' . ($url === '' ? '' : '/') . $url;
+
+    // Merges given headers with testing headers.
+    $headers = $this->makeRequestHeaders([
+      'api_key' => $this->lrs->api['basic_key'],
+      'api_secret' => $this->lrs->api['basic_secret']
+    ]);
+
+    // Calls API.
     Route::enableFilters();
-    $crawler = $this->client->request('GET', "/lrs/{$this->lrs->_id}/reporting/data?filter={\"statement.verb.id\":[\"http://adlnet.gov/expapi/verbs/attempted\"]}");
-    $json = $this->client->getResponse()->getContent();
-    $result = json_decode($json);
-    $this->assertEquals(0, count($result));
-
-    for ($i = 0; $i < 4; $i++) {
-      $vs = $this->defaultStatment();
-      $vs['verb'] = array(
-        "id" => "http://adlnet.gov/expapi/verbs/attempted",
-        "display" => array("und" => "attempted")
-      );
-      $this->statements[] = $this->createStatement($vs, $this->lrs);
-    }
-    $crawler = $this->client->request('GET', "/lrs/{$this->lrs->_id}/reporting/data?filter={\"statement.verb.id\":[\"http://adlnet.gov/expapi/verbs/attempted\"]}");
-    $json = $this->client->getResponse()->getContent();
-    $result = json_decode($this->client->getResponse()->getContent());
-    $this->assertEquals(4, count($result[0]->date));
-    
-    // Service run report.
+    return $this->call($method, $url, [], [], $headers, $content);
+  }
+  
+  /**
+   * Tests the index endpoint on the API.
+   */
+  public function testIndex() {
+    $response = $this->requestAPI();
+    $content = json_decode($response->getContent(), true);
+    $this->assertEquals(1, count($content));
   }
 
+  /**
+   * Tests the store endpoint on the API.
+   */
+  public function testStore() {
+    $response = $this->requestAPI('POST', '', json_encode($this->data));
+    $content = json_decode($response->getContent(), true);
+
+    // Removes properties added by the Learning Locker.
+    unset($content['_id']);
+    unset($content['created_at']);
+    unset($content['updated_at']);
+
+    // Checks that data and remaining content matches.
+    $this->assertEquals($this->data, $content);
+  }
+
+  /**
+   * Tests the update endpoint on the API.
+   */
+  public function testUpdate() {
+    $updatedData = $this->data;
+    $updatedData['name'] = 'New name';
+
+    $response = $this->requestAPI('PUT', $this->report->_id, json_encode($updatedData));
+    $content = json_decode($response->getContent(), true);
+
+    // Removes properties added by the Learning Locker.
+    unset($content['_id']);
+    unset($content['created_at']);
+    unset($content['updated_at']);
+
+    // Checks that data and remaining content matches.
+    $this->assertEquals($updatedData, $content);
+  }
+
+  /**
+   * Tests the show endpoint on the API.
+   */
+  public function testShow() {
+    $response = $this->requestAPI('GET', $this->report->_id);
+    $content = json_decode($response->getContent(), true);
+
+    // Removes properties added by the Learning Locker.
+    unset($content['_id']);
+    unset($content['created_at']);
+    unset($content['updated_at']);
+
+    // Checks that data and remaining content matches.
+    $this->assertEquals($this->data, $content);
+  }
+
+  /**
+   * Tests the destroy endpoint on the API.
+   */
+  public function testDestroy() {
+    $response = $this->requestAPI('DELETE', $this->report->_id);
+    $content = json_decode($response->getContent(), true);
+    $this->assertEquals([
+      'success' => true
+    ], $content);
+  }
+
+  /**
+   * Tests the run endpoint on the API.
+   */
+  public function testRun() {
+    $response = $this->requestAPI('GET', "{$this->report->_id}/run");
+    $content = json_decode($response->getContent(), true);
+
+    // Checks that the correct number of statements are returned.
+    $this->assertEquals(self::STATEMENTS, count($content));
+  }
+
+  /**
+   * Tests the graph endpoint on the API.
+   */
+  public function testGraph() {
+    $response = $this->requestAPI('GET', "{$this->report->_id}/graph");
+    $content = json_decode($response->getContent(), true);
+
+    // Checks that the correct number of statements are returned.
+    $this->assertEquals(self::STATEMENTS, $content[0]['count']);
+    $this->assertEquals(self::STATEMENTS, count($content[0]['date']));
+  }
+
+  // View tests.
+  /**
+   * Creates a request to the views.
+   * @param string $method HTTP method.
+   * @param string $url URL to append to the API's base URL.
+   * @param mixed $content Request content.
+   * @return Request
+   */
+  protected function requestView($url = '') {
+    // Defines the base URL for all API requests.
+    $url = "/lrs/{$this->lrs->_id}/reporting" . ($url === '' ? '' : '/') . $url;
+
+    // Merges given headers with testing headers.
+    $headers = $this->makeRequestHeaders([
+      'api_key' => $this->lrs->api['basic_key'],
+      'api_secret' => $this->lrs->api['basic_secret']
+    ]);
+
+    // Calls API.
+    Route::enableFilters();
+    return $this->call('GET', $url, [], [], $headers, '');
+  }
+  
+  /**
+   * Tests the index endpoint in views.
+   */
+  public function testRouterIndex() {
+    $code = $this->requestView()->getStatusCode();
+    $this->assertEquals(200, $code);
+  }
+
+  /**
+   * Tests the statements endpoint in views.
+   */
+  public function testRouterStatements() {
+    $code = $this->requestView("{$this->report->_id}/statements")->getStatusCode();
+    $this->assertEquals(200, $code);
+  }
+
+  /**
+   * Tests the typeahead endpoint in views for actors.
+   */
+  public function testRouterActorTypeahead() {
+    $actor = $this->defaultStatment()['actor'];
+    $response = $this->requestView("typeahead/actors/{$actor['name']}");
+    $content = json_decode($response->getContent(), true);
+
+    // Checks that response content matches the default statement's actor.
+    $this->assertEquals(200, $response->getStatusCode());
+    $this->assertEquals($actor, $content[0]);
+  }
+
+  /**
+   * Destroys the data used by the tests.
+   */
   function tearDown() {
     parent::tearDown();
-    // Delete data.
     $this->lrs->delete();
   }
 

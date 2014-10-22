@@ -12,8 +12,12 @@ return array(
 	| General words
 	|-----------------------------------------------------------------------
 	*/
-  	'edit'        => 'edit',
-  	'delete'	    => 'delete',
+  	'edit'        => 'Edit',
+    'add'         => 'Add',
+    'cancel'      => 'Cancel',
+    'save'        => 'Save',
+  	'delete'	    => 'Delete',
+    'value'       => 'Value',
   	'username'    => 'Username',
   	'password'    => 'Password',
   	'title'       => 'Title',
@@ -78,5 +82,7 @@ return array(
     'welcome'  => 'Welcome to Learning Locker',
     'sure' => 'Are you sure?',
     'roleChange' => 'Role successfully changed',
-    'hello' => 'hello'
+    'hello' => 'hello',
+    'saved' => 'Saved successfully',
+    'notSaved' => 'Could not save.'
 );

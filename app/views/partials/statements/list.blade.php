@@ -6,7 +6,9 @@
 
 @section('content')
     
-  @include('partials.site.elements.page_title', array('page' => Lang::get('statements.statements') ))
+  @section('title')  
+    @include('partials.site.elements.page_title', array('page' => Lang::get('statements.statements') ))
+  @show
   
   @foreach ( $statements as $statement )
         
@@ -15,5 +17,10 @@
   @endforeach
 
   {{ $statements->links() }}
+
+  <div>
+    @section('buttons')
+    @show
+  </div>
 
 @stop
