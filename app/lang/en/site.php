@@ -13,7 +13,11 @@ return array(
 	|-----------------------------------------------------------------------
 	*/
   	'edit'        => 'Edit',
+    'add'         => 'Add',
+    'cancel'      => 'Cancel',
+    'save'        => 'Save',
   	'delete'	    => 'Delete',
+    'value'       => 'Value',
   	'username'    => 'Username',
   	'password'    => 'Password',
   	'title'       => 'Title',
