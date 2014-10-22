@@ -1,6 +1,6 @@
 <?php
  
-  $statement_lrs = $statement['lrs']['_id'];
+  //$statement_lrs = $statement['lrs']['_id'];
   $statement = $statement['statement'];
   $json = $statement;
   

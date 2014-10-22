@@ -90,7 +90,6 @@ class EloquentQueryRepository implements QueryRepository {
       $statements->select($select);
     }
 
-    $statements->remember(5);
     if( $raw ){
       return $statements->get()->toArray();
     }

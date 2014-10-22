@@ -1,0 +1,22 @@
+<!-- Breadcrumbs. -->
+<ol class="breadcrumb">
+  <li class="active"><%= trans('statements.reporting') %></li>
+</ol>
+
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th><%= trans('site.name') %></th>
+      <th><%= trans('site.description') %></th>
+      <th><%= trans('reporting.created') %></th>
+      <th><%= trans('site.edit') %></th>
+      <th><%= trans('reporting.graph') %></th>
+      <th><%= trans('statements.statements') %></th>
+      <th><%= trans('site.delete') %></th>
+    </tr>
+  </thead>
+  <tbody id="models"></tbody>
+</table>
+
+<!-- Buttons.-->
+<a id="add" class="btn btn-success"><i class="icon icon-plus"></i> <%= trans('site.add') %></a>

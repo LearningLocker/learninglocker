@@ -1,0 +1,6 @@
+.panel.panel-default
+  .panel-heading
+    h3.panel-title!= "<%= trans('reporting.headings.info') %>"
+  .panel-body
+    input#name.form-control(placeholder!= "<%= trans('reporting.placeholders.name') %>" value!="<%= name %>")
+    input#description.form-control(placeholder!= "<%= trans('reporting.placeholders.desc') %>" value!="<%= description %>")

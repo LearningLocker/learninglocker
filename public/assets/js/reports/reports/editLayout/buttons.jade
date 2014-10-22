@@ -1,0 +1,15 @@
+a#save.btn.btn-primary
+  i.icon.icon-save
+  != " <%= trans('site.save') %>"
+= '\n'
+a#graph(href!='#<%= _id %>/graph').btn.btn-success
+  i.icon.icon-signal
+  != " <%= trans('reporting.graph') %>"
+= '\n'
+a#statements(href!='reporting/<%= _id %>/statements').btn.btn-success
+  i.icon.icon-eye-open
+  != " <%= trans('site.delete') %>"
+= '\n'
+a#cancel(href!='#').btn.btn-danger
+  i.icon.icon-remove
+  != " <%= trans('site.cancel') %>"

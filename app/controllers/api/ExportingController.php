@@ -103,7 +103,7 @@ class ExportingController extends BaseController {
     // Select statements.
     $statements = $this->query->selectStatementDocs(
       $this->lrs->_id,
-      $this->decodeURL($report->query)
+      \app\locker\helpers\Helpers::replaceHtmlEntity($report->query)
     );
 
     // Get and check fields.

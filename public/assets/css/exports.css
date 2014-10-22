@@ -21,3 +21,6 @@ input[type='text'] {
 	margin-bottom: 5px;
 }
 
+input#typeahead-value {
+  width: 100%;
+}

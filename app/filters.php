@@ -83,21 +83,19 @@ Route::filter('auth.statement', function(){
 			$lrs = \Lrs::find(  $client->lrs_id );
 		}
 		else {
-			return Response::json(array(
-	          'error' => true,
-	          'message' => 'Unauthorized request.'),
-	          401
-	      	); 
+			return Response::json([
+        'error' => true,
+        'message' => 'Unauthorized request.'
+      ], 401); 
 		}
 	}
 
     //attempt login once
     if ( ! Auth::onceUsingId($lrs->owner['_id']) ) {
-      return Response::json(array(
+      return Response::json([
         'error' => true,
-        'message' => 'Unauthorized Request'),
-        401
-      ); 
+        'message' => 'Unauthorized request.'
+      ], 401); 
     }
     
   }

@@ -1,0 +1,15 @@
+mixin tab(id, key, icon, active)
+  .col-xs-6.col-sm-2
+    a(href='#' + id, data-toggle='tab')
+      .explore-option(class=active ? ['active'] : [])
+        span
+          i.icon(class=['icon-' + icon])
+        != "<%= trans('reporting." + key + "') %>"
+
+.row
+  +tab('actor', 'who', 'user', true)
+  +tab('verb', 'did', 'star')
+  +tab('activity', 'what', 'question')
+  +tab('context', 'where', 'sitemap')
+  +tab('result', 'with_result', 'bar-chart')
+  +tab('dates', 'dates', 'calendar')

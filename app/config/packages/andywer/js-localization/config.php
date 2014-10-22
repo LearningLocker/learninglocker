@@ -28,6 +28,6 @@ return array(
     |
     */
 
-    'messages' => array('reporting', 'exporting', 'site'),
+    'messages' => array('reporting', 'exporting', 'site', 'statements'),
 
 );

@@ -1,0 +1,216 @@
+
+<ol class="breadcrumb">
+  <li><a href="#"><%= trans('statements.reporting') %></a></li>
+  <li class="active"><%= name %></li>
+</ol>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title"><%= trans('reporting.headings.info') %></h3>
+  </div>
+  <div class="panel-body">
+    <input id="name" placeholder="<%= trans('reporting.placeholders.name') %>" value="<%= name %>" class="form-control"/>
+    <input id="description" placeholder="<%= trans('reporting.placeholders.desc') %>" value="<%= description %>" class="form-control"/>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-6 col-sm-2"><a href="#actor" data-toggle="tab">
+      <div class="explore-option active"><span><i class="icon icon-user"></i></span><%= trans('reporting.who') %>
+      </div></a></div>
+  <div class="col-xs-6 col-sm-2"><a href="#verb" data-toggle="tab">
+      <div class="explore-option"><span><i class="icon icon-star"></i></span><%= trans('reporting.did') %>
+      </div></a></div>
+  <div class="col-xs-6 col-sm-2"><a href="#activity" data-toggle="tab">
+      <div class="explore-option"><span><i class="icon icon-question"></i></span><%= trans('reporting.what') %>
+      </div></a></div>
+  <div class="col-xs-6 col-sm-2"><a href="#context" data-toggle="tab">
+      <div class="explore-option"><span><i class="icon icon-sitemap"></i></span><%= trans('reporting.where') %>
+      </div></a></div>
+  <div class="col-xs-6 col-sm-2"><a href="#result" data-toggle="tab">
+      <div class="explore-option"><span><i class="icon icon-bar-chart"></i></span><%= trans('reporting.with_result') %>
+      </div></a></div>
+  <div class="col-xs-6 col-sm-2"><a href="#dates" data-toggle="tab">
+      <div class="explore-option"><span><i class="icon icon-calendar"></i></span><%= trans('reporting.dates') %>
+      </div></a></div>
+</div>
+<div class="row">
+  <div class="tab-content reporting">
+    <div id="actor" class="tab-pane active">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><%= trans('reporting.headings.learners') %></h3>
+        </div>
+        <div id="actors" class="panel-body">
+        </div>
+      </div>
+    </div>
+    <div id="verb" class="tab-pane">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><%= trans('reporting.headings.verbs') %></h3>
+        </div>
+        <div id="verbs" class="panel-body">
+        </div>
+      </div>
+    </div>
+    <div id="activity" class="tab-pane">
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><%= trans('reporting.headings.activities') %></h3>
+          </div>
+          <div id="activities" class="panel-body">
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><%= trans('reporting.headings.types') %></h3>
+          </div>
+          <div id="activityTypes" class="panel-body">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="context" class="tab-pane">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title"><%= trans('reporting.headings.parents') %></h3>
+            </div>
+            <div id="parents" class="panel-body">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title"><%= trans('reporting.headings.groups') %></h3>
+            </div>
+            <div id="groups" class="panel-body">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title"><%= trans('reporting.headings.platforms') %></h3>
+            </div>
+            <div id="platforms" class="panel-body">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title"><%= trans('reporting.headings.instructors') %></h3>
+            </div>
+            <div id="instructors" class="panel-body">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title"><%= trans('reporting.headings.languages') %></h3>
+            </div>
+            <div id="languages" class="panel-body">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="result" class="tab-pane">
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><%= trans('reporting.headings.scales') %></h3>
+          </div>
+          <div id="Scaled" class="panel-body">
+            <div class="form-group scaled"><%= trans('reporting.scales.scaled') %>
+              <div class="pull-right">
+                <input type="number" id="scaled-min" style="width:50px;" value="<%= (query['statement.result.score.scaled'] && query['statement.result.score.scaled'][1]) || null %>"/><span> <%= trans('reporting.to') %></span>
+                <input type="number" id="scaled-max" style="width:50px;" value="<%= (query['statement.result.score.scaled'] && query['statement.result.score.scaled'][2]) || null %>"/>
+                <button id="scaled-clear" class="btn btn-xs btn-danger pull-right"><i class="icon icon-trash"> <%= trans('reporting.clear') %></i></button>
+              </div>
+            </div>
+            <div class="form-group scaled"><%= trans('reporting.scales.raw') %>
+              <div class="pull-right">
+                <input type="number" id="raw-min" style="width:50px;" value="<%= (query['statement.result.score.raw'] && query['statement.result.score.raw'][1]) || null %>"/><span> <%= trans('reporting.to') %></span>
+                <input type="number" id="raw-max" style="width:50px;" value="<%= (query['statement.result.score.raw'] && query['statement.result.score.raw'][2]) || null %>"/>
+                <button id="raw-clear" class="btn btn-xs btn-danger pull-right"><i class="icon icon-trash"> <%= trans('reporting.clear') %></i></button>
+              </div>
+            </div>
+            <div class="form-group scaled"><%= trans('reporting.scales.min') %>
+              <div class="pull-right">
+                <input type="number" id="min-min" style="width:50px;" value="<%= (query['statement.result.score.min'] && query['statement.result.score.min'][1]) || null %>"/><span> <%= trans('reporting.to') %></span>
+                <input type="number" id="min-max" style="width:50px;" value="<%= (query['statement.result.score.min'] && query['statement.result.score.min'][2]) || null %>"/>
+                <button id="min-clear" class="btn btn-xs btn-danger pull-right"><i class="icon icon-trash"> <%= trans('reporting.clear') %></i></button>
+              </div>
+            </div>
+            <div class="form-group scaled"><%= trans('reporting.scales.max') %>
+              <div class="pull-right">
+                <input type="number" id="max-min" style="width:50px;" value="<%= (query['statement.result.score.max'] && query['statement.result.score.max'][1]) || null %>"/><span> <%= trans('reporting.to') %></span>
+                <input type="number" id="max-max" style="width:50px;" value="<%= (query['statement.result.score.max'] && query['statement.result.score.max'][2]) || null %>"/>
+                <button id="max-clear" class="btn btn-xs btn-danger pull-right"><i class="icon icon-trash"> <%= trans('reporting.clear') %></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><%= trans('reporting.headings.completion') %></h3>
+          </div>
+          <div id="success-complete" class="panel-body">
+            <div class="form-group scaled">
+              <button id="success-clear" class="btn btn-xs btn-danger pull-right"><i class="icon icon-trash"> <%= trans('reporting.clear') %></i></button><b><%= trans('reporting.booleans.success') %></b>
+              <form>
+                <label for="success-true">True</label>
+                <input id="success-true" type="radio" name="success"/>
+                <label for="success-false">False</label>
+                <input id="success-false" type="radio" name="success"/>
+              </form>
+            </div>
+            <div class="form-group scaled">
+              <button id="complete-clear" class="btn btn-xs btn-danger pull-right"><i class="icon icon-trash"> <%= trans('reporting.clear') %></i></button><b><%= trans('reporting.booleans.complete') %></b>
+              <form>
+                <label for="complete-true">True</label>
+                <input id="complete-true" type="radio" name="complete"/>
+                <label for="complete-false">False</label>
+                <input id="complete-false" type="radio" name="complete"/>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="dates" class="tab-pane">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><%= trans('reporting.headings.when') %></h3>
+        </div>
+        <div id="dates" class="panel-body">
+          <p><%= trans('reporting.dates.intro') %></p>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="since"><%= trans('reporting.dates.since') %></label>
+              <input id="since" type="date" value="&lt;%= since %&gt;" class="form-control"/>
+            </div>
+            <div class="col-md-6">
+              <label for="until"><%= trans('reporting.dates.until') %></label>
+              <input id="until" type="date" value="&lt;%= until %&gt;" class="form-control"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><a id="save" class="btn btn-primary"><i class="icon icon-save"></i> <%= trans('site.save') %></a>
+<a id="graph" href="#<%= _id %>/graph" class="btn btn-success"><i class="icon icon-signal"></i> <%= trans('reporting.graph') %></a>
+<a id="statements" href="reporting/<%= _id %>/statements" class="btn btn-success"><i class="icon icon-eye-open"></i> <%= trans('site.delete') %></a>
+<a id="cancel" href="#" class="btn btn-danger"><i class="icon icon-remove"></i> <%= trans('site.cancel') %></a>
