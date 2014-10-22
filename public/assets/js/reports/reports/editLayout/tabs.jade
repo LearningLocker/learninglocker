@@ -5,68 +5,66 @@ mixin tab-pane(id, active)
 mixin panel(title, id)
   .panel.panel-default
     .panel-heading
-      h3.panel-title= title
+      h3.panel-title!= title
     .panel-body(id=id)
       block
 
 mixin labelledRadio(name, suffix, label)
-  label(for=name + suffix)= label
-  input(id=name + suffix, type='radio', name=name)
+  label(for!=name + suffix)= label
+  input(id!=name + suffix, type='radio', name!=name)
 
-mixin bool(name)
-  - var id = name.toLowerCase()
+mixin bool(id)
   .form-group.scaled
     button.btn.btn-xs.btn-danger.pull-right(id=id + '-clear')
-      i.icon.icon-trash= ' Clear'
-    b= name
+      i.icon.icon-trash!= " <%= trans('reporting.clear') %>"
+    b!= "<%= trans('reporting.booleans." + id + "') %>"
     form
       +labelledRadio(id, '-true', 'True')
       +labelledRadio(id, '-false', 'False')
 
-mixin scaled(name)
-  - var id = name.toLowerCase()
+mixin scaled(id)
   .form-group.scaled
-    = name
+    != "<%= trans('reporting.scales." + id + "') %>"
     .pull-right
       input(type="number" id=id + "-min" style="width:50px;" value!="<%= (query['statement.result.score." + id + "'] && query['statement.result.score." + id + "'][1]) || null %>")
-      span= ' to '
+      span!= " <%= trans('reporting.to') %>"
       input(type="number" id=id + "-max" style="width:50px;" value!="<%= (query['statement.result.score." + id + "'] && query['statement.result.score." + id + "'][2]) || null %>")
       button.btn.btn-xs.btn-danger.pull-right(id=id + '-clear')
-        i.icon.icon-trash= ' Clear'
+        i.icon.icon-trash!= " <%= trans('reporting.clear') %>"
 
 .row
   .tab-content.reporting
     +tab-pane('actor', true)
-      +panel('Select learners', 'actors')
+      +panel("<%= trans('reporting.headings.learners') %>", 'actors')
     +tab-pane('verb')
-      +panel('Select verbs', 'verbs')
+      +panel("<%= trans('reporting.headings.verbs') %>", 'verbs')
     +tab-pane('activity')
-      .col-md-6: +panel('Select activities', 'activities')
-      .col-md-6: +panel('Select activity types', 'activityTypes')
+      .col-md-6: +panel("<%= trans('reporting.headings.activities') %>", 'activities')
+      .col-md-6: +panel("<%= trans('reporting.headings.types') %>", 'activityTypes')
     +tab-pane('context')
       .row
-        .col-md-6: +panel('Select parent activities', 'parents')
-        .col-md-6: +panel('Select grouping activities', 'groups')
+        .col-md-6: +panel("<%= trans('reporting.headings.parents') %>", 'parents')
+        .col-md-6: +panel("<%= trans('reporting.headings.groups') %>", 'groups')
       .row
-        .col-md-4: +panel('Select platforms', 'platforms')
-        .col-md-4: +panel('Select instructors', 'instructors')
-        .col-md-4: +panel('Select languages', 'languages')
+        .col-md-4: +panel("<%= trans('reporting.headings.platforms') %>", 'platforms')
+        .col-md-4: +panel("<%= trans('reporting.headings.instructors') %>", 'instructors')
+        .col-md-4: +panel("<%= trans('reporting.headings.languages') %>", 'languages')
     +tab-pane('result')
-      .col-md-6: +panel('Scaled', 'Scaled')
-        +scaled('Scaled')
-        +scaled('Raw')
-        +scaled('Min')
-        +scaled('Max')
-      .col-md-6: +panel('Success / Complete', 'success-complete')
-        +bool('Success')
-        +bool('Completion')
+      .col-md-6: +panel("<%= trans('reporting.headings.scales') %>", 'Scaled')
+        +scaled('scaled')
+        +scaled('raw')
+        +scaled('min')
+        +scaled('max')
+      .col-md-6: +panel("<%= trans('reporting.headings.completion') %>", 'success-complete')
+        +bool('success')
+        +bool('complete')
     +tab-pane('dates')
-      +panel('Dates', 'dates')
-        p You can select a since date, until date or both to filter results between two dates.
+      +panel("<%= trans('reporting.headings.when') %>", 'dates')
+        p!= "<%= trans('reporting.dates.intro') %>"
         .row
           .col-md-6
-            label(for='since') From (Since)
+            label(for='since')!= "<%= trans('reporting.dates.since') %>"
             input#since.form-control(type='date', value='<%= since %>')
           .col-md-6
-            label(for='until') To (Until)
+            label(for='until')!= "<%= trans('reporting.dates.until') %>"
             input#until.form-control(type='date', value='<%= until %>')
