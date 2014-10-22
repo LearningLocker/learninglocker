@@ -1,20 +1,12 @@
 <?php
 
-/**
- * @file Test case for report service
- * 
- * Ensure:
- *  - User can create report
- *  - User can run report
- *  - Report works correctly
- *  - Delete report works
- */
-
 class ReportTest extends TestCase {
 
+  // Defines the number of test statements to be used.
+  const STATEMENTS = 7;
+
+  // Defines the data required by multiple tests.
   protected $lrs;
-  protected $statements;
-  protected $user;
   protected $data = [
     'description' => 'Some description',
     'name' => '',
@@ -28,6 +20,9 @@ class ReportTest extends TestCase {
     ],
   ];
 
+  /**
+   * Sets up the tests.
+   */
   public function setUp() {
     parent::setUp();
     
@@ -39,9 +34,8 @@ class ReportTest extends TestCase {
     $this->data['lrs'] = $this->lrs->_id;
 
     // Creates seven statements in the LRS.
-    for ($i = 0; $i < 7; $i++) {
-      $statement = $this->defaultStatment();
-      $this->statements = $this->createStatement($statement, $this->lrs);
+    for ($i = 0; $i < self::STATEMENTS; $i++) {
+      $this->createStatement($this->defaultStatment(), $this->lrs);
     }
 
     // Creates a report in the LRS.
@@ -49,6 +43,10 @@ class ReportTest extends TestCase {
     $this->report->save();
   }
 
+  /**
+   * Constructs a new report with test data.
+   * @return Report Constructed report.
+   */
   protected function constructReport() {
     return new Report($this->data);
   }
@@ -76,12 +74,18 @@ class ReportTest extends TestCase {
     return $this->call($method, $url, [], [], $headers, $content);
   }
   
+  /**
+   * Tests the index endpoint on the API.
+   */
   public function testIndex() {
     $response = $this->requestAPI();
     $content = json_decode($response->getContent(), true);
     $this->assertEquals(1, count($content));
   }
 
+  /**
+   * Tests the store endpoint on the API.
+   */
   public function testStore() {
     $response = $this->requestAPI('POST', '', json_encode($this->data));
     $content = json_decode($response->getContent(), true);
@@ -95,6 +99,9 @@ class ReportTest extends TestCase {
     $this->assertEquals($this->data, $content);
   }
 
+  /**
+   * Tests the update endpoint on the API.
+   */
   public function testUpdate() {
     $updatedData = $this->data;
     $updatedData['name'] = 'New name';
@@ -109,9 +116,11 @@ class ReportTest extends TestCase {
 
     // Checks that data and remaining content matches.
     $this->assertEquals($updatedData, $content);
-    
   }
 
+  /**
+   * Tests the show endpoint on the API.
+   */
   public function testShow() {
     $response = $this->requestAPI('GET', $this->report->_id);
     $content = json_decode($response->getContent(), true);
@@ -125,6 +134,9 @@ class ReportTest extends TestCase {
     $this->assertEquals($this->data, $content);
   }
 
+  /**
+   * Tests the destroy endpoint on the API.
+   */
   public function testDestroy() {
     $response = $this->requestAPI('DELETE', $this->report->_id);
     $content = json_decode($response->getContent(), true);
@@ -133,41 +145,84 @@ class ReportTest extends TestCase {
     ], $content);
   }
 
+  /**
+   * Tests the run endpoint on the API.
+   */
   public function testRun() {
-    $id = $this->report->_id;
-    $response = $this->requestAPI('GET', "$id/run");
+    $response = $this->requestAPI('GET', "{$this->report->_id}/run");
     $content = json_decode($response->getContent(), true);
 
     // Checks that the correct number of statements are returned.
-    $this->assertEquals(7, count($content));
+    $this->assertEquals(self::STATEMENTS, count($content));
   }
 
+  /**
+   * Tests the graph endpoint on the API.
+   */
   public function testGraph() {
-    $id = $this->report->_id;
-    $response = $this->requestAPI('GET', "$id/graph");
+    $response = $this->requestAPI('GET', "{$this->report->_id}/graph");
     $content = json_decode($response->getContent(), true);
-    $this->assertEquals(7, $content[0]['count']);
-    $this->assertEquals(7, count($content[0]['date']));
+
+    // Checks that the correct number of statements are returned.
+    $this->assertEquals(self::STATEMENTS, $content[0]['count']);
+    $this->assertEquals(self::STATEMENTS, count($content[0]['date']));
   }
 
   // View tests.
-  /*
+  /**
+   * Creates a request to the views.
+   * @param string $method HTTP method.
+   * @param string $url URL to append to the API's base URL.
+   * @param mixed $content Request content.
+   * @return Request
+   */
+  protected function requestView($url = '') {
+    // Defines the base URL for all API requests.
+    $url = "/lrs/{$this->lrs->_id}/reporting" . ($url === '' ? '' : '/') . $url;
+
+    // Merges given headers with testing headers.
+    $headers = $this->makeRequestHeaders([
+      'api_key' => $this->lrs->api['basic_key'],
+      'api_secret' => $this->lrs->api['basic_secret']
+    ]);
+
+    // Calls API.
+    Route::enableFilters();
+    return $this->call('GET', $url, [], [], $headers, '');
+  }
+  
+  /**
+   * Tests the index endpoint in views.
+   */
   public function testRouterIndex() {
-    $code = $this->call('GET', "/lrs/{$this->lrs->_id}/reporting")->getStatusCode();
+    $code = $this->requestView()->getStatusCode();
     $this->assertEquals(200, $code);
   }
 
+  /**
+   * Tests the statements endpoint in views.
+   */
   public function testRouterStatements() {
-    $code = $this->call('GET', "/lrs/{$this->lrs->_id}/reporting")->getStatusCode();
+    $code = $this->requestView("{$this->report->_id}/statements")->getStatusCode();
     $this->assertEquals(200, $code);
   }
 
-  public function testRouterTypeahead() {
-    $code = $this->call('GET', "/lrs/{$this->lrs->_id}/reporting")->getStatusCode();
-    $this->assertEquals(200, $code);
-  }
-  */
+  /**
+   * Tests the typeahead endpoint in views for actors.
+   */
+  public function testRouterActorTypeahead() {
+    $actor = $this->defaultStatment()['actor'];
+    $response = $this->requestView("typeahead/actors/{$actor['name']}");
+    $content = json_decode($response->getContent(), true);
 
+    // Checks that response content matches the default statement's actor.
+    $this->assertEquals(200, $response->getStatusCode());
+    $this->assertEquals($actor, $content[0]);
+  }
+
+  /**
+   * Destroys the data used by the tests.
+   */
   function tearDown() {
     parent::tearDown();
     $this->lrs->delete();
