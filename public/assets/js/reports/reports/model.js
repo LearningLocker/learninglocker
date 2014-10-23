@@ -11,10 +11,9 @@ define([
       name: 'New report',
       description: 'Description of the new report.',
       lrs: window.lrsId,
-      query: {
-        since: undefined,
-        until: undefined
-      }
+      query: {},
+      since: undefined,
+      until: undefined
     },
     relations: {
       actors: TypeAheadCollection,
