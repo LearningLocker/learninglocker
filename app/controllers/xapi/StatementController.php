@@ -5,12 +5,21 @@ use \App\Locker\Helpers\Attachments;
 
 class StatementController extends BaseController {
 
+  // Sets constants for status codes.
+  const OK = 200;
+  const NO_CONTENT = 204;
+  const BAD_REQUEST = 400;
+  const CONFLICT = 409;
+
+  // Sets constants for param keys.
+  const STATEMENT_ID = 'statementId';
+  const VOIDED_ID = 'voidedStatementId';
+
   // Defines properties to be set to constructor parameters.
   protected $statement;
 
   // Defines properties to be set by filters.
   protected $lrs, $params;
-
 
   /**
    * Constructs a new StatementController.
@@ -20,10 +29,10 @@ class StatementController extends BaseController {
     $this->statement = $statement;
 
     // Defines which filters to be run.
-    $this->beforeFilter('@checkVersion', array('except' => 'index'));
+    $this->beforeFilter('@checkVersion', ['except' => 'index']);
     $this->beforeFilter('@getLrs');
-    $this->beforeFilter('@setParameters', array('except' => 'store', 'put'));
-    $this->beforeFilter('@reject', array('except' => 'store', 'put'));
+    $this->beforeFilter('@setParameters', ['except' => ['store']]);
+    $this->beforeFilter('@reject', ['except' => ['store', 'storePut']]);
   }
 
   /**
@@ -35,8 +44,8 @@ class StatementController extends BaseController {
     $contentType = \LockerRequest::header('content-type');
 
     // Gets the actual content type.
-    $types = explode(";", $contentType, 2);
-    if (sizeof($get_type) >= 1) {
+    $types = explode(';', $contentType, 2);
+    if (count($types) >= 1) {
       $mimeType = $types[0];
     } else {
       $mimeType = $types;
@@ -46,15 +55,15 @@ class StatementController extends BaseController {
     if( $mimeType == 'multipart/mixed'){
       $components = Attachments::setAttachments($contentType, $content);
 
-      // Returns "formatting" error.
+      // Returns 'formatting' error.
       if(empty($components)) {
         return \Response::json([
           'error'    => true,
           'message'  => 'There is a problem with the formatting of your submitted content.'
-        ], 400);
+        ], self::BAD_REQUEST);
       }
 
-      // Returns "no attachment" error.
+      // Returns 'no attachment' error.
       if( !isset($components['attachments']) ){
         return \Response::json([
           'error'    => true,
@@ -68,11 +77,11 @@ class StatementController extends BaseController {
       $attachments = '';
     }
 
-    $statements = json_decode($content, TRUE);
+    $statements = json_decode($content, true);
 
     // Ensures that $statements is an array.
-    if (array_values($statements) !== $statements) {
-      $statements = [$statements_assoc];
+    if (!is_array(json_decode($content))) {
+      $statements = [$statements];
     }
     
     // Saves $statements with $attachments.
@@ -85,278 +94,248 @@ class StatementController extends BaseController {
   }
 
   /**
-   * Save statements in the DB
-   *
-   * @param json $incoming_statement
-   * @param array $attachments
-   * @return response
+   * Stores (PUTs) Statement with the given id.
+   * @return Response
    */
-  public function saveStatement( $statements, $attachments = '' ){
-  
-    $save = $this->statement->create( $statements, $this->lrs, $attachments );
-    return $save;
+  public function storePut() {
+    // Decodes the statement.
+    $statement = \LockerRequest::getContent();
+    $statement = json_decode($statement, true);
+    $statementId = $this->getKeyValue($this->params, self::STATEMENT_ID);
 
+    // Returns a 'noId' error if no ID is present.
+    if(!$statementId) {
+      return $this->sendResponse(['success' => 'noId']);
+    }
+
+    // Attempts to create the statement if `statementId` is present.
+    else {
+      $statement['id'] = $statementId;
+      $save = $this->statement->create([$statement], $this->lrs, '');
+
+      // Sends a response.
+      if($save['success'] == 'true'){
+        return $this->sendResponse(['success' => 'put']);
+      } else {
+        return $this->sendResponse($save);
+      }
+    }
   }
 
   /**
-   * Stores Statement with the given id.
-   *
-   * @param  int  $id
-   * @return Response
+   * Gets the value of a $key from an $array.
+   * @param Array $array
+   * @param String $key
+   * @param mixed $default Value to be returned if the $key is not in the $array.
+   * @return mixed Value associated with the $key in the $array.
    */
-  public function update(){
-
-    $incoming_statement = \LockerRequest::getContent();
-    $statement          = json_decode($incoming_statement, TRUE);
-
-
-    //if no id submitted, reject
-    if(!isset($this->params['statementId']) || is_null($this->params['statementId'])) {
-      return $this->sendResponse( array('success' => 'noId') );
-    } else {
-      $statement['id'] = $this->params['statementId'];
-    }
-
-    $save = $this->saveStatement( array($statement) );
-
-    if( $save['success'] == 'true' ){
-      return $this->sendResponse( array('success' => 'put') );
-    }
-
-    return $this->sendResponse( $save );
-
+  public function getKeyValue($array, $key, $default = null) {
+    return isset($array[$key]) ? $array[$key] : $default;
   }
 
   /**
-   * Display a listing of the resource.
-   *
+   * Gets an array of statements.
    * @return Response
    */
-  public function index(){
+  public function index() {
+    // Attempts to get IDs from the params.
+    $statementId = $this->getKeyValue($this->params, self::STATEMENT_ID);
+    $voidedId = $this->getKeyValue($this->params, self::VOIDED_ID);
 
-    //If the statementId or voidedStatementId parameter is specified a 
-    //single Statement is returned.
-    if( isset($this->params['statementId'] ) ){
-      return $this->show( $this->params['statementId'] );
+    // Returns an error if both `statementId` and `voidedId` are set.
+    if ($statementId && $voidedId) {
+      // Error.
     }
 
-    if( isset($this->params['voidedStatementId'] ) ){
-      return $this->show( $this->params['voidedStatementId'] );
+    // Returns the statement with `statementId` if ID is given.
+    else if ($statementId) {
+      return $this->show($statementId);
     }
 
-    $statements = $this->statement->all( $this->lrs->_id, $this->params );
+    // Returns the statement with `voidedId` if ID is given.
+    else if ($voidedId) {
+      return $this->show($voidedId);
+    }
 
-    return $this->returnArray( $statements->toArray(), $this->params );
+    // Returns array statements if no IDs are given.
+    else {
+      return $this->returnArray(
+        $this->statement->all( $this->lrs->_id, $this->params )->toArray(),
+        $this->params
+      );
+    }
 
   }
 
   public function grouped(){
-    $results = $this->statement->grouped( $this->lrs->_id, $this->params );
-
-    return $this->returnArray( $results, $this->params );
+    return $this->returnArray(
+      $this->statement->grouped($this->lrs->_id, $this->params),
+      $this->params
+    );
   }
 
   /**
-   * Display the specified resource.
-   *
-   * @param  int  $id  This can be statementId or voidedStatementId
-   * @return View
+   * Gets the statement with the given $id.
+   * @param int $id `statementId` or `voidedStatementId`
+   * @return Statement
    */
-  public function show( $id ){
-
-    $statement = $this->statement->find( $id );
+  public function show($id) {
+    $statement = $this->statement->find($id);
     
-    //can the requester access this statement?
-    if( $this->checkAccess( $statement ) ){
+    // Returns the statement if the requester can access this statement.
+    if ($this->checkAccess($statement)) {
       return $this->returnArray( array($statement->toArray()) );
-    }else{
-      return \Response::json( array( 'error'    => true, 
-                                     'message'  => 'You are not authorized to access this statement.'), 
-                                     403 );
+    }
+
+    // Returns an authorisation error if the requester can't access this statement.
+    else {
+      return \Response::json([
+        'error'    => true,
+        'message'  => 'You are not authorized to access this statement.'
+      ], 403);
     }
     
   }
 
   /**
-   * This is used when retriving statements. Make sure any 
-   * statements requested are in the LRS relating to the 
-   * credentials used to authenticate.
-   *
-   * @param object Statement
-   * @return boolean
+   * Determines if a $statement is in the current LRS.
+   * @param Statement $statement
+   * @return boolean `true` if the $statement is in the current LRS.
    **/
-  public function checkAccess( $statement ){
-
+  public function checkAccess($statement) {
     $statement_lrs = $statement['lrs']['_id'];
-
-    if( $statement_lrs == $this->lrs->_id ){
-      return true;
-    }
-
-    return false;
-
+    return $statement_lrs == $this->lrs->_id;
   }
 
   /**
-   * Build the required return array for a single or multiple statements.
-   *
-   * @param array $statements  Statements to return
-   * @param array $params      Parameters used to filter statements
-   *
+   * Constructs a response for $statements.
+   * @param array $statements Statements to return.
+   * @param array $params Filter.
+   * @param array $debug Log for debgging information.
    * @return response
    *
    **/
-  public function returnArray( $statements=array(), $params=array(), $debug=array() ){
+  const DEFAULT_LIMIT = 100; // @todo make this configurable.
+  public function returnArray($statements=[], $params=[], $debug=[]) {
+    // Adds 'about resouce' information required by specification.
+    // Adds 'X-Experience-API-Version' for LL backwards compatibility.
+    // https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#77-about-resource
+    $array = [
+      'X-Experience-API-Version' => \Config::get('xapi.using_version'),
+      'version' => [\Config::get('xapi.using_version')]
+    ];
 
-    $array = array(
-      'X-Experience-API-Version' =>  \Config::get('xapi.using_version')
-    );
-
-
-    //replace replace &46; in keys with . 
-    //see http://docs.learninglocker.net/docs/statements#quirks for more info
-    if( !empty($statements) ){
-      foreach( $statements as &$s ){
-        $s = \app\locker\helpers\Helpers::replaceHtmlEntity( $s['statement'] );
-      }
+    // Replaces '&46;' in keys with '.' in statements. 
+    // http://docs.learninglocker.net/docs/statements#quirks
+    $statements = $statements ?: [];
+    foreach ($statements as &$s) {
+      $s = \app\locker\helpers\Helpers::replaceHtmlEntity($s['statement']);
     }
     
     $array['statements'] = $statements;
+    $array['total'] = $this->statement->count($this->lrs->_id, $this->params);
 
-    //return total available statements
-    $array['total'] = $this->statement->count( $this->lrs->_id, $this->params );
+    // Calculates the next offset.
+    $limit = $this->getKeyValue($this->params, 'limit', self::DEFAULT_LIMIT);
+    $offset = $this->getKeyValue($this->params, 'offset', null);
+    $nextOffset = $offset ? $offset += $limit : $limit;
 
-    //set more link. 100 is our default limit. This should be a value that admins can
-    //set, not hardcoded.
-    if( isset($this->params['offset']) ){
-      if( isset($this->params['limit']) ){
-        $offset = $this->params['offset'] + $this->params['limit'];
-      }else{
-        $offset = $this->params['offset'] + 100;
-      }
-    }else{
-      if( isset($this->params['limit']) ){
-        $offset = $this->params['limit'];
-      }else{
-        $offset = 100;
-      }
-    }
-
-    // Set the `more` url param.
-    if( $array['total'] > $offset ){
+    // Sets the `more` and `offset` url param.
+    if ($array['total'] > $nextOffset) {
       // Get the current request URI.
-      $url = "{$_SERVER['REQUEST_URI']}";
+      $url = $_SERVER['REQUEST_URI'];
 
-      // If the offset already exists, change it.
-      if (isset($this->params['offset'])) {
+      // Changes the offset if it does exist.
+      if ($offset) {
         $url = str_replace(
-          'offset=' . $this->params['offset'],
           'offset=' . $offset,
+          'offset=' . $nextOffset,
           $url
         );
       }
 
-      // If the offset does not exist, add it.
+      // Adds the offset if it does not exist.
       else {
         // If there are already params then append otherwise start.
         $url .= strpos($url, '?') !== False ? '&' : '?';
-        $url .= 'offset=' . $offset;
+        $url .= 'offset=' . $nextOffset;
       }
 
-      // Set the more link to the new url.
+      // Sets the more link to the new url.
       $array['more'] = $url;
     } else {
       $array['more'] = '';
     }
 
-    $response = \Response::make( $array, 200 );
+    $response = \Response::make($array, self::OK);
 
-    //set consistent through data
+    // Sets 'X-Experience-API-Consistent-Through' header to the current date.
     $current_date = \DateTime::createFromFormat('U.u', sprintf('%.4f', microtime(true)));
     $current_date->setTimezone(new \DateTimeZone(\Config::get('app.timezone')));
     $current_date = $current_date->format('Y-m-d\TH:i:s.uP');
-
     $response->headers->set('X-Experience-API-Consistent-Through', $current_date);
 
     return $response;
-    
   }
 
   /**
-   * Set and send back approriate response.
-   *
-   * @param array $outcome 
-   * @return response
+   * Sets and sends back the approriate response for the $outcome.
+   * @param array $outcome.
+   * @return Response.
    **/
-  public function sendResponse( $outcome ){
-
-    switch( $outcome['success'] ){
+  public function sendResponse($outcome) {
+    switch ($outcome['success']) {
       case 'true': 
-        return \Response::json( $outcome['ids'], 200 );
-        break;
+        return \Response::json($outcome['ids'], self::OK);
       case 'conflict-nomatch':
-        return \Response::json( array('success'  => false), 409 );
-        break;
+        return \Response::json(['success'  => false], self::CONFLICT);
       case 'conflict-matches':
-        return \Response::json( array(), 204 );
-        break;
+        return \Response::json([], self::NO_CONTENT);
       case 'put':
-        return \Response::json( array('success'  => true), 204 );
-        break;
+        return \Response::json(['success'  => true], self::NO_CONTENT);
       case 'noId':
-        return \Response::json( array('success'  => false, 'message' => 'A statement ID is required to PUT.'), 400 );
-        break;
+        return \Response::json([
+          'success'  => false,
+          'message' => 'A statement ID is required to PUT.'
+        ], self::BAD_REQUEST);
       case 'false':
-        return \Response::json( array( 'success'  => false, 
-                                       'message'  => implode($outcome['message'])), 
-                                       400 );
-        break;
-
+        return \Response::json([
+          'success'  => false,
+          'message'  => implode($outcome['message'])
+        ], self::BAD_REQUEST);
     }
-   
   }
 
   /**
-   * Run a check to make sure critria are being met, if not, reject
-   * with a 400.
-   *
+   * Checks params to comply with requirements.
+   * https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#723-getstatements
    **/
-  public function reject(){
+  public function reject() {
+    // Attempts to get IDs from the params.
+    $statementId = $this->getKeyValue($this->params, self::STATEMENT_ID);
+    $voidedId = $this->getKeyValue($this->params, self::VOIDED_ID);
 
-    if( $this->method !== "PUT" && $this->method !== "POST" ){
+    // Returns an error if both `statementId` and `voidedId` are set.
+    if ($statementId && $voidedId) {
+      return \Response::json([
+        'error' => true,
+        'message' => 'You can\'t request based on both`' . self::STATEMENT_ID . '` and `' . self::VOIDED_ID . '`'
+      ], self::BAD_REQUEST);
+    }
 
-      //first check that statementId and voidedStatementId
-      //have not been requested.
-      if (array_key_exists("statementId", $this->params) 
-        AND array_key_exists("voidedStatementId", $this->params)) {
+    // Checks that params are allowed if `statementId` or `voidedId` are set.
+    else if ($statementId || $voidedId) {
+      $allowedParams = ['content', self::STATEMENT_ID, self::VOIDED_ID, 'attachments', 'format'];
 
-        return \Response::json( array( 'error'    => true, 
-                                       'message'  => 'You can\'t request based on both 
-                                                      statementId and voidedStatementId'), 
-                                       400 );
-      }
-
-      //The LRS MUST reject with an HTTP 400 error any requests to this resource 
-      //which contain statementId or voidedStatementId parameters, and also contain any other 
-      //parameter besides "attachments" or "format".
-
-      if (array_key_exists("statementId", $this->params) 
-        OR array_key_exists("voidedStatementId", $this->params)) {
-
-        $allowed_params = array('attachments', 'format');
-
-        foreach( $this->params as $k => $v ){
-          if( $k != 'statementId' && $k != 'voidedStatementId' && !in_array( $k, $allowed_params) ){
-            return \Response::json( array( 'error'    => true, 
-                                           'message'  => 'When using statementId or voidedStatementId, the only other 
-                                                          parameters allowed are attachments and/or format.'), 
-                                           400 );
-          }
+      // Returns an error if a $key is not an allowed param.
+      foreach ($this->params as $key => $value) {
+        if (!in_array($key, $allowedParams)) {
+          return \Response::json([
+            'error' => true, 
+            'message' => 'When using `' . self::STATEMENT_ID . '` or `' . self::VOIDED_ID . '`, the only other parameters allowed are `attachments` and/or `format`.'
+          ], self::BAD_REQUEST);
         }
       }
-
     }
-
   }
-
 }
