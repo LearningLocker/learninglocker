@@ -11,7 +11,7 @@ class Report extends Eloquent {
    */
   protected $collection = 'reports';
   public static $rules = [];
-  protected $fillable = ['name', 'description', 'query', 'lrs'];
+  protected $fillable = ['name', 'description', 'query', 'lrs', 'since', 'until'];
 
   public function getFilterAttribute() {
     $reportArr = $this->toArray();

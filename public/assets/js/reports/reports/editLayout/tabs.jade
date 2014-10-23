@@ -59,12 +59,12 @@ mixin scaled(id)
         +bool('success')
         +bool('complete')
     +tab-pane('dates')
-      +panel("<%= trans('reporting.headings.when') %>", 'dates')
+      +panel("<%= trans('reporting.headings.dates') %>", 'dates')
         p!= "<%= trans('reporting.dates.intro') %>"
         .row
           .col-md-6
             label(for='since')!= "<%= trans('reporting.dates.since') %>"
-            input#since.form-control(type='date', value='<%= since %>')
+            input#since.form-control(type='date', value!='<%= since %>')
           .col-md-6
             label(for='until')!= "<%= trans('reporting.dates.until') %>"
-            input#until.form-control(type='date', value='<%= until %>')
+            input#until.form-control(type='date', value!='<%= until %>')

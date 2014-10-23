@@ -14,6 +14,7 @@ return array(
     'did'     => 'Did',
     'what'    => 'What',
     'where'   => 'Where',
+    'when'    => 'When',
     'with_result' => 'With result',
     'related' => 'Related statements',
     'clear'   => 'Clear',
@@ -40,7 +41,7 @@ return array(
       'languages' => 'Select languages',
       'scales' => 'Scaled',
       'completion' => 'Success / Complete',
-      'when' => 'When'
+      'dates' => 'Select dates'
     ],
     'scales' => [
       'scaled' => 'Scaled',
