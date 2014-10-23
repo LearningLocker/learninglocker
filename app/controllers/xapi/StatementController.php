@@ -3,94 +3,84 @@
 use \Locker\Repository\Statement\StatementRepository as Statement;
 use \App\Locker\Helpers\Attachments;
 
-class StatementsController extends BaseController {
+class StatementController extends BaseController {
 
-  /**
-  * Statement Repository
-  */
+  // Defines properties to be set to constructor parameters.
   protected $statement;
 
-  /**
-   * Current LRS based on Auth credentials
-   **/
-  protected $lrs;
-
-  /**
-   * Filter parameters
-   **/
-  protected $params;
+  // Defines properties to be set by filters.
+  protected $lrs, $params;
 
 
   /**
-   * Construct
-   *
+   * Constructs a new StatementController.
    * @param StatementRepository $statement
    */
-  public function __construct(Statement $statement){
-
+  public function __construct(Statement $statement) {
     $this->statement = $statement;
 
+    // Defines which filters to be run.
     $this->beforeFilter('@checkVersion', array('except' => 'index'));
     $this->beforeFilter('@getLrs');
     $this->beforeFilter('@setParameters', array('except' => 'store', 'put'));
     $this->beforeFilter('@reject', array('except' => 'store', 'put'));
-
   }
 
   /**
-   * Store a newly created resource in storage.
-   *
-   * @todo handle mulitple incoming statements
-   *
+   * Store (POST) a newly created statement in storage.
    * @return Response
    */
   public function store(){
+    $content = \LockerRequest::getContent();
+    $contentType = \LockerRequest::header('content-type');
 
-    $incoming_statement = \LockerRequest::getContent();
-
-    //get content type header
-    $content_type = \LockerRequest::header('content-type');
-
-    // get the actual content type
-    $get_type = explode(";", $content_type, 2);
-    if( sizeof($get_type) >= 1 ){
-      $mimeType = $get_type[0];
+    // Gets the actual content type.
+    $types = explode(";", $contentType, 2);
+    if (sizeof($get_type) >= 1) {
+      $mimeType = $types[0];
     } else {
-      $mimeType = $get_type;
+      $mimeType = $types;
     }
     
-    //if mimetype multipart/mixed then we are dealing with physical attachments
+    // Deals with physical attachments.
     if( $mimeType == 'multipart/mixed'){
-      //get statements and reset $incoming_statement
-      $components = Attachments::setAttachments( $content_type, $incoming_statement );
-      if( empty($components) ){
-        return \Response::json( array( 'error'    => true, 
-                                       'message'  => 'There is a problem with the formatting of your submitted content.'), 
-                                        400 );
+      $components = Attachments::setAttachments($contentType, $content);
+
+      // Returns "formatting" error.
+      if(empty($components)) {
+        return \Response::json([
+          'error'    => true,
+          'message'  => 'There is a problem with the formatting of your submitted content.'
+        ], 400);
       }
-      $incoming_statement = $components['body'];
-      //if no attachments, abort
+
+      // Returns "no attachment" error.
       if( !isset($components['attachments']) ){
-        return \Response::json( array( 'error'    => true, 
-                                       'message'  => 'There were no attachments.'), 
-                                        403 );
+        return \Response::json([
+          'error'    => true,
+          'message'  => 'There were no attachments.'
+        ], 403);
       }
+
+      $content = $components['body'];
       $attachments = $components['attachments'];
-      
-    }else{
+    } else {
       $attachments = '';
     }
 
-    $statements_assoc = json_decode($incoming_statement, TRUE);
+    $statements = json_decode($content, TRUE);
 
-    if( is_array(json_decode($incoming_statement)) ){
-      $statements = $statements_assoc;
-    } else {
-      $statements = array( $statements_assoc );
+    // Ensures that $statements is an array.
+    if (array_values($statements) !== $statements) {
+      $statements = [$statements_assoc];
     }
-      
-    $save = $this->saveStatement( $statements, $attachments );
-    return $this->sendResponse( $save );
+    
+    // Saves $statements with $attachments.
+    return $this->sendResponse($this->statement->create(
+      $statements,
+      $this->lrs,
+      $attachments
+    ));
 
   }
 
@@ -114,7 +104,7 @@ class StatementsController extends BaseController {
    * @param  int  $id
    * @return Response
    */
-  public function storePut(){
+  public function update(){
 
     $incoming_statement = \LockerRequest::getContent();
     $statement          = json_decode($incoming_statement, TRUE);
