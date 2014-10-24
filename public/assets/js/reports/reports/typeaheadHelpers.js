@@ -1,6 +1,6 @@
 define([
-  './TypeAhead/CompositeView',
-  './TypeAhead/ItemView'
+  './Typeahead/CompositeView',
+  './Typeahead/ItemView'
 ], function (CompositeView, ItemView) {
   var getKeys = function (display) {
     // Sets display to default if not set.

@@ -1,7 +1,7 @@
 define([
   'locker',
   'backbone',
-  './TypeAhead/Collection',
+  './Typeahead/Collection',
   'basicauth'
 ], function(locker, backbone, TypeAheadCollection) {
   return locker.Model.extend({
