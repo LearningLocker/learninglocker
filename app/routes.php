@@ -332,17 +332,20 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
   Route::options('/{extra}',  'Controllers\API\BaseController@CORSOptions')->where('extra', '(.*)');
 
   Route::get('/about', function() {
-    return Response::json( array('X-Experience-API-Version'=>Config::get('xapi.using_version')));
+    return Response::json([
+      'X-Experience-API-Version'=>Config::get('xapi.using_version'),
+      'version' => [\Config::get('xapi.using_version')]
+    ]);
   });
 
   //statement resource (post, put, get, delete) route
   Route::get('statements/grouped', array(
-    'uses' => 'Controllers\xAPI\StatementsController@grouped',
+    'uses' => 'Controllers\xAPI\StatementController@grouped',
   ));
   Route::put('statements', array(
-    'uses' => 'Controllers\xAPI\StatementsController@storePut',
+    'uses' => 'Controllers\xAPI\StatementController@storePut',
   ));
-  Route::resource('statements', 'Controllers\xAPI\StatementsController');
+  Route::resource('statements', 'Controllers\xAPI\StatementController');
 
   //Agent API
   Route::get('agents/profile', array(
