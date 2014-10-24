@@ -36,7 +36,7 @@ requirejs.config({
   packages: [
     {
       name: 'locker',
-      location: './libs/Locker',
+      location: './libs/locker',
       main: 'export.js'
     }
   ]
