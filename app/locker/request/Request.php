@@ -83,7 +83,7 @@ class Request {
     $value = \Request::header($key);
 
     // If the key is set in the headers then return it.
-    if ($value) {
+    if (isset($value)) {
       return $value;
     }
 
