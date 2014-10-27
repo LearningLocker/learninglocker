@@ -6,10 +6,8 @@ use Locker\Repository\Document\DocumentType as DocumentType;
 
 class ActivityController extends DocumentController {
 
-  /**
-  * Activity Repository
-  */
-  protected $activity;
+  // Defines properties to be set to constructor parameters.
+  protected $activity, $document;
 
   /**
    * Constructs a new ActivityController.
@@ -17,27 +15,29 @@ class ActivityController extends DocumentController {
    * @param Activity $activity
    */
   public function __construct(Document $document, Activity $activity){
-
     parent::__construct($document);
 
+    // Sets constructor params on $this.
+    $this->document = $document;
     $this->activity = $activity;
 
     $this->document_type = DocumentType::ACTIVITY;
     $this->identifier = 'profileId';
-
   }
 
   /**
    * Returns a list of stateId's based on activityId and actor match.
    * @return Response
    */
-  public function index(){
+  public function index() {
+    // Checks and gets the data from the params.
     $data = $this->checkParams([
       'activityId' => 'string'
     ], [
       'since' => ['string', 'timestamp']
     ], $this->params);
 
+    // Gets all documents.
     $documents = $this->document->all($this->lrs->_id, $this->document_type, $data);
     
     // Returns array of only the stateId values for each document.
@@ -50,7 +50,8 @@ class ActivityController extends DocumentController {
    * Returns (GETs) a single document.
    * @return DocumentResponse
    */
-  public function get(){
+  public function get() {
+    // Checks and gets the data from the params.
     $data = $this->checkParams([
       'activityId' => 'string',
       'profileId'  => 'string'
@@ -63,7 +64,8 @@ class ActivityController extends DocumentController {
    * Creates (POSTs) a new document.
    * @return Response
    */
-  public function store(){
+  public function store() {
+    // Checks and gets the data from the params.
     $data = $this->checkParams([
       'activityId' => 'string',
       'profileId'    => 'string'
@@ -99,56 +101,47 @@ class ActivityController extends DocumentController {
   }
 
   /**
-   * Handles routing to single document delete requests
-   * Multiple document deletes are not permitted on activities
-   *
-   * @param  int  $id
-   * 
+   * Deletes a document.
    * @return Response
    */
   public function delete(){
-    $single_delete = \LockerRequest::hasParam($this->identifier);
-
-    if ($single_delete) {
-      $data = $this->checkParams([
-        'activityId' => 'string',
-        'profileId'    => 'string'
-      ], [], $this->params);
-    } else {
+    if (!\LockerRequest::hasParam($this->identifier)) {
       \App::abort(400, 'Multiple document DELETE not permitted');
     }
 
+    // Checks and gets the data from the params.
+    $data = $this->checkParams([
+      'activityId' => 'string',
+      'profileId'    => 'string'
+    ], [], $this->params);
+
+    // Attempts to delete the document.
     $success = $this->document->delete(
       $this->lrs->_id,
       $this->document_type,
       $data,
-      $single_delete
+      false
     );
     
-    if( $success ){
-      return \Response::json( array( 'ok' ), 204 );
+    if ($success) {
+      return \Response::json(['ok'], 204);
+    } else {
+      return \Response::json(['error'], 400);
     }
-
-    return \Response::json( array( 'error' ), 400 );
   }
 
   /**
-   * Return the full activity object
-   * 
+   * Returns the full activity object.
    * @return Response
    **/
   public function full(){
-
-    $data = $this->checkParams( 
-      array(
+    $data = $this->checkParams([
         'activityId' => 'string'
-      ), 
-      array(), $this->params 
+    ], [], $this->params);
+
+    return \Response::json(
+      $this->activity->getActivity($data['activityId'])
     );
-
-    $activity = $this->activity->getActivity($data['activityId']);
-    return \Response::json($activity);
-
   }
 
 
