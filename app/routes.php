@@ -353,7 +353,7 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
 
   // Activiy API.
   Route::any('activities/profile', [
-    'uses' => 'Controllers\xAPI\AgentController@selectMethod'
+    'uses' => 'Controllers\xAPI\ActivityController@selectMethod'
   ]);
   Route::get('activities', [
     'uses' => 'Controllers\xAPI\ActivityController@full'
@@ -361,7 +361,7 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
 
   // State API.
   Route::any('activities/state', [
-    'uses' => 'Controllers\xAPI\AgentController@selectMethod'
+    'uses' => 'Controllers\xAPI\StateController@selectMethod'
   ]); 
   
   //Basic Request API

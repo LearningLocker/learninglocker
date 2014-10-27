@@ -35,7 +35,7 @@ class BaseController extends APIBaseController {
       case 'HEAD':
       case 'GET':
         if (\LockerRequest::hasParam($this->identifier)) {
-          return $this->get();
+          return $this->show();
         } else {
           return $this->index();
         }
@@ -57,7 +57,10 @@ class BaseController extends APIBaseController {
    */
   public function setParameters() {
     parent::setParameters();
-    \LockerRequest::getParam('method', \Request::server('REQUEST_METHOD'));
+    $this->method = \LockerRequest::getParam(
+      'method',
+      \Request::server('REQUEST_METHOD')
+    );
   }
 
 }
