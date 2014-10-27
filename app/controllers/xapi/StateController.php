@@ -9,16 +9,16 @@ class StateController extends DocumentController {
   protected $document;
 
   // Overrides parent's properties.
-  protected $identifier = 'profileId';
+  protected $identifier = 'stateId';
   protected $required = [
     'activityId' => 'string',
     'agent' => ['string', 'json'],
-    'stateId'    => 'string'
+    'stateId' => 'string'
   ];
   protected $optional = [
     'registration' => 'string'
   ];
-  protected $document_type = DocumentType::AGENT;
+  protected $document_type = DocumentType::STATE;
 
   /**
    * Handles routing to single and multiple document delete requests

@@ -89,7 +89,7 @@ abstract class DocumentController extends BaseController {
    * @return Response
    */
   public function update() {
-    return store();
+    return $this->store();
   }
 
   /**
