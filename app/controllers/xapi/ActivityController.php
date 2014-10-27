@@ -12,9 +12,9 @@ class ActivityController extends DocumentController {
   protected $activity;
 
   /**
-   * Construct
-   *
-   * @param DocumentRepository $document
+   * Constructs a new ActivityController.
+   * @param Document $document
+   * @param Activity $activity
    */
   public function __construct(Document $document, Activity $activity){
 
@@ -23,84 +23,79 @@ class ActivityController extends DocumentController {
     $this->activity = $activity;
 
     $this->document_type = DocumentType::ACTIVITY;
-    $this->document_ident = "profileId";
+    $this->identifier = 'profileId';
 
   }
 
   /**
-   * Handle Single and Multiple GETs and CORS PUT/POST/DELETE requests
-   * Return a list of stateId's based on activityId and actor match.
-   *
+   * Returns a list of stateId's based on activityId and actor match.
    * @return Response
    */
-  public function all(){
+  public function index(){
+    $data = $this->checkParams([
+      'activityId' => 'string'
+    ], [
+      'since' => ['string', 'timestamp']
+    ], $this->params);
 
-    $data = $this->checkParams( 
-      array(
-        'activityId' => 'string'
-      ), 
-      array(
-        'since'        => array('string', 'timestamp')
-      ), $this->params 
-    );
-
-    $documents = $this->document->all( $this->lrs->_id, $this->document_type, $data );
+    $documents = $this->document->all($this->lrs->_id, $this->document_type, $data);
     
-    //return array of only the stateId values for each document
+    // Returns array of only the stateId values for each document.
     $ids = array_column($documents->toArray(), 'identId');
-    return \Response::json( $ids );
+    return \Response::json($ids);
   }
 
 
   /**
-   * Single Document GET
-   *
-   * @return Response
+   * Returns (GETs) a single document.
+   * @return DocumentResponse
    */
   public function get(){
-    
-    $data = $this->checkParams( 
-      array(
-        'activityId' => 'string',
-        'profileId'  => 'string'
-      ),
-      array(),
-      $this->params
-    );
+    $data = $this->checkParams([
+      'activityId' => 'string',
+      'profileId'  => 'string'
+    ], [], $this->params);
 
-    return $this->documentResponse( $data ); // use the DocumentController to handle document response
+    return $this->documentResponse($data);
   }
 
   /**
-   * Handle PUT and POST methods
-   *
+   * Creates (POSTs) a new document.
    * @return Response
    */
   public function store(){
+    $data = $this->checkParams([
+      'activityId' => 'string',
+      'profileId'    => 'string'
+    ], [], $this->params);
 
-    $data = $this->checkParams( 
-      array(
-        'activityId' => 'string',
-        'profileId'    => 'string'
-      ),
-      array(), $this->params
-    );
-
-    //Get the content from the request
+    // Gets the content from the request.
     $data['content_info'] = $this->getAttachedContent('content');
 
-    //Get the updated timestamp
+    // Gets the updated timestamp.
     $updated = $this->getUpdatedValue();
 
-    //Store the document
-    $store = $this->document->store( $this->lrs->_id, $this->document_type, $data, $updated, $this->method );
+    // Stores the document.
+    $store = $this->document->store(
+      $this->lrs->_id,
+      $this->document_type,
+      $data, $updated,
+      $this->method
+    );
 
-    if( $store ){
-      return \Response::json( array( 'ok' ), 204 );
+    if ($store) {
+      return \Response::json(['ok'], 204);
+    } else {
+      return \Response::json(['error'], 400);
     }
+  }
 
-    return \Response::json( array( 'error' ), 400 );
-
+  /**
+   * Creates (PUTs) a new document.
+   * @return Response
+   */
+  public function update() {
+    return store();
   }
 
   /**
@@ -112,21 +107,23 @@ class ActivityController extends DocumentController {
    * @return Response
    */
   public function delete(){
-    $single_delete = isset($this->params[$this->document_ident]);
+    $single_delete = \LockerRequest::hasParam($this->identifier);
 
-    if( $single_delete ){ //single document delete
-      $data = $this->checkParams( 
-        array(
-          'activityId' => 'string',
-          'profileId'    => 'string'
-        ),
-        array(), $this->params
-      );
+    if ($single_delete) {
+      $data = $this->checkParams([
+        'activityId' => 'string',
+        'profileId'    => 'string'
+      ], [], $this->params);
     } else {
       \App::abort(400, 'Multiple document DELETE not permitted');
     }
 
-    $success = $this->document->delete( $this->lrs->_id, $this->document_type, $data, $single_delete );
+    $success = $this->document->delete(
+      $this->lrs->_id,
+      $this->document_type,
+      $data,
+      $single_delete
+    );
     
     if( $success ){
       return \Response::json( array( 'ok' ), 204 );

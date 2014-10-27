@@ -17,7 +17,7 @@ class BaseController extends APIBaseController {
   public function checkVersion() {
     $version = \LockerRequest::header('X-Experience-API-Version');
 
-    if(!isset($version) || substr($version, 0, 4) !== '1.0.'){
+    if (!isset($version) || substr($version, 0, 4) !== '1.0.') {
       return $this->returnSuccessError(
         false,
         'This is not an accepted version of xAPI.',
@@ -34,7 +34,7 @@ class BaseController extends APIBaseController {
     switch ($this->method) {
       case 'HEAD':
       case 'GET':
-        if (isset($this->params[$this->identifier])) {
+        if (\LockerRequest::hasParam($this->identifier)) {
           return $this->get();
         } else {
           return $this->index();
