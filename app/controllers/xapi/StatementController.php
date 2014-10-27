@@ -21,6 +21,9 @@ class StatementController extends BaseController {
   // Defines properties to be set by filters.
   protected $lrs, $params;
 
+  // Overrides parent's properties.
+  protected $identifier = self::STATEMENT_ID;
+
   /**
    * Constructs a new StatementController.
    * @param StatementRepository $statement
@@ -28,18 +31,24 @@ class StatementController extends BaseController {
   public function __construct(Statement $statement) {
     $this->statement = $statement;
 
-    // Defines which filters to be run.
-    $this->beforeFilter('@checkVersion', ['except' => 'index']);
-    $this->beforeFilter('@getLrs');
-    $this->beforeFilter('@setParameters', ['except' => ['store']]);
-    $this->beforeFilter('@reject', ['except' => ['store', 'storePut']]);
+    // Runs filters.
+    $this->setParameters();
+    $this->getLrs();
+
+    if (!($this->method === 'GET' && \LockerRequest::hasParam($this->identifier))) {
+      $this->checkVersion();
+    }
+
+    if ($this->method !== 'POST' && $this->method !== 'PUT') {
+      $this->reject();
+    }
   }
 
   /**
    * Store (POST) a newly created statement in storage.
    * @return Response
    */
-  public function store(){
+  public function store() {
     $content = \LockerRequest::getContent();
     $contentType = \LockerRequest::header('content-type');
 
@@ -97,7 +106,7 @@ class StatementController extends BaseController {
    * Stores (PUTs) Statement with the given id.
    * @return Response
    */
-  public function storePut() {
+  public function update() {
     // Decodes the statement.
     $statement = \LockerRequest::getContent();
     $statement = json_decode($statement, true);
@@ -176,10 +185,9 @@ class StatementController extends BaseController {
 
   /**
    * Gets the statement with the given $id.
-   * @param int $id `statementId` or `voidedStatementId`
    * @return Statement
    */
-  public function show($id) {
+  public function show() {
     $statement = $this->statement->find($id);
     
     // Returns the statement if the requester can access this statement.
@@ -285,7 +293,7 @@ class StatementController extends BaseController {
    **/
   public function sendResponse($outcome) {
     switch ($outcome['success']) {
-      case 'true': 
+      case 'true':
         return \Response::json($outcome['ids'], self::OK);
       case 'conflict-nomatch':
         return \Response::json(['success'  => false], self::CONFLICT);
