@@ -5,14 +5,10 @@ use Controllers\API\BaseController as APIBaseController;
 
 class BaseController extends APIBaseController {
 
-  /**
-   * Current LRS based on Auth credentials
-   **/
+  // Current LRS based on Auth credentials.
   protected $lrs;
 
-  /**
-   * Filter parameters, HTTP method type
-   **/
+  // Filter parameters, HTTP method type.
   protected $params, $CORS, $method;
 
   /**
@@ -31,15 +27,37 @@ class BaseController extends APIBaseController {
   }
 
   /**
-   * Get all of the input and files for the request and store them in params.
-   *
+   * Selects a method to be called.
+   * @return mixed Result of the method.
    */
-  public function setParameters(){
-    $this->params = \LockerRequest::all();
-    $this->CORS = isset($this->params['method']);
-    $this->method = $this->CORS ? $this->params['method'] : \Request::server('REQUEST_METHOD');
+  public function selectMethod() {
+    switch ($this->method) {
+      case 'HEAD':
+      case 'GET':
+        if (isset($this->params[$this->identifier])) {
+          return $this->get();
+        } else {
+          return $this->index();
+        }
+        break;
+      case 'PUT':
+        return $this->update();
+        break;
+      case 'POST':
+        return $this->store();
+        break;
+      case 'DELETE':
+        return $this->delete();
+        break;
+    }
+  }
 
-    $this->params['content'] = \LockerRequest::getContent();
+  /**
+   * Get all of the input and files for the request and store them in params.
+   */
+  public function setParameters() {
+    parent::setParameters();
+    \LockerRequest::getParam('method', \Request::server('REQUEST_METHOD'));
   }
 
 }
