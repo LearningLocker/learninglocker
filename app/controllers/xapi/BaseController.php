@@ -5,40 +5,62 @@ use Controllers\API\BaseController as APIBaseController;
 
 class BaseController extends APIBaseController {
 
-  /**
-   * Current LRS based on Auth credentials
-   **/
+  // Current LRS based on Auth credentials.
   protected $lrs;
 
-  /**
-   * Filter parameters, HTTP method type
-   **/
+  // Filter parameters, HTTP method type.
   protected $params, $CORS, $method;
 
   /**
-   * Check request header for correct xAPI version
+   * Checks the request header for correct xAPI version.
    **/
-  public function checkVersion( $route, $request ){
-
-    //should be X-Experience-API-Version: 1.0.0 or 1.0.1 (can accept 1.0), reject everything else.
+  public function checkVersion() {
     $version = \LockerRequest::header('X-Experience-API-Version');
 
-    if( !isset($version) || ( $version < '1.0.0' || $version > '1.0.99' ) && $version != '1.0' ){
-      return $this->returnSuccessError( false, 'This is not an accepted version of xAPI.', '400' );
+    if (!isset($version) || substr($version, 0, 4) !== '1.0.') {
+      return $this->returnSuccessError(
+        false,
+        'This is not an accepted version of xAPI.',
+        '400'
+      );
     }
+  }
 
+  /**
+   * Selects a method to be called.
+   * @return mixed Result of the method.
+   */
+  public function selectMethod() {
+    switch ($this->method) {
+      case 'HEAD':
+      case 'GET':
+        if (\LockerRequest::hasParam($this->identifier)) {
+          return $this->show();
+        } else {
+          return $this->index();
+        }
+        break;
+      case 'PUT':
+        return $this->update();
+        break;
+      case 'POST':
+        return $this->store();
+        break;
+      case 'DELETE':
+        return $this->delete();
+        break;
+    }
   }
 
   /**
    * Get all of the input and files for the request and store them in params.
-   *
    */
-  public function setParameters(){
-    $this->params = \LockerRequest::all();
-    $this->CORS = isset($this->params['method']);
-    $this->method = $this->CORS ? $this->params['method'] : \Request::server('REQUEST_METHOD');
-
-    $this->params['content'] = \LockerRequest::getContent();
+  public function setParameters() {
+    parent::setParameters();
+    $this->method = \LockerRequest::getParam(
+      'method',
+      \Request::server('REQUEST_METHOD')
+    );
   }
 
 }
