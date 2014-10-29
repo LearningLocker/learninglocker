@@ -24,7 +24,7 @@ You may contribute to this project via [issues](/issues) and [pull request](/pul
 7. Commit and push your changes to Github.
 8. Create a [pull request](/pulls) on Github (ensuring that you follow the [guidelines](/contributing.md)).
 
-Note that Learning Locker is built upon the [Laravel](http://laravel.com/) PHP framework.
+Note that Learning Locker is built upon the [Laravel](http://laravel.com/) PHP framework. To learn more about the code structure, please view the [Laravel documentation](laravel.com/docs/).
 
 ### Testing
 You should try to ensure that `./vendor/bin/phpunit` runs without any errors before submitting a pull request.
