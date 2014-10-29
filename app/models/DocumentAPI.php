@@ -79,19 +79,15 @@ class DocumentAPI extends Eloquent {
       break;
 
       case "text/plain":
-        if( !$this->exists ){
+        if( !$this->exists || $method === 'PUT' ){
           $this->content = $content;
         } else {
-          if ($method === 'PUT') {
-            $this->content = $content;
-          } else {
-            \App::abort(400, sprintf('Cannot amend existing %s document with a string', $this->contentType) );
-          }
+          \App::abort(400, sprintf('Cannot amend existing %s document with a string', $this->contentType) );
         }
       break;
 
       default:
-        if( !$this->exists ){ // check we are adding a new document
+        if( !$this->exists || $method === 'PUT' ){ // check we are adding a new document
           //HANDLE FILE SAVES???
           $dir = $this->getContentDir();
 

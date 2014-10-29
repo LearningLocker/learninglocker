@@ -525,8 +525,9 @@ App::error(function(Exception $exception)
         'code'      =>  $code
     );
 
+
     if( Config::get('app.debug') ){
-      $error['trace'] = $exception->getTrace();
+      $error['trace'] = $exception->getTraceAsString();
     }
 
     return Response::json( $error, $code);
