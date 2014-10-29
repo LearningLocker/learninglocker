@@ -155,18 +155,38 @@ abstract class DocumentController extends BaseController {
   public function getPostContent($name){
     if (\Input::hasFile($name)) {
       $content = \Input::file($name);
-      $type = $content->getClientMimeType();
-    } else if (\LockerRequest::hasParam($name)) {
-      $content = \LockerRequest::getParam('content');
-      $type = is_object(json_decode($content)) ? 'application/json' : 'text/plain';
+      $contentType = $content->getClientMimeType();
+    } else if (\LockerRequest::getContent()) {
+      $content = \LockerRequest::getContent();
+
+      $contentType = \LockerRequest::header('Content-Type');
+      $isForm = $this->checkFormContentType($contentType);
+
+      if( !$contentType || $isForm ){
+        $contentType = is_object(json_decode($content)) ? 'application/json' : 'text/plain';
+      }
+      
     } else {
       \App::abort(400, sprintf('`%s` was not sent in this request', $name));
     }
 
     return [
       'content' => $content,
-      'contentType' => $type
+      'contentType' => $contentType
     ];
+  }
+
+  /**
+   * Determines if $contentType is a form.
+   * @param string $contentType
+   * @return boolean
+   */
+  private function checkFormContentType($contentType = '') {
+    if (!is_string($contentType)) return false;
+    return in_array(explode(';', $contentType)[0], [
+      'multipart/form-data',
+      'application/x-www-form-urlencoded'
+    ]);
   }
 
   /**

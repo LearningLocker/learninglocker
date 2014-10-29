@@ -103,7 +103,7 @@ class StatementPostTest extends TestCase
     ];
 
     $response = $this->_makeRequest($param, "POST", $auth);
-    //dd($response);
+
     $responseData = $response->getContent();
     $responseStatus = $response->getStatusCode();
 
