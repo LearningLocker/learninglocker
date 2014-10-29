@@ -6,7 +6,7 @@ class ReportTest extends TestCase {
   const STATEMENTS = 7;
 
   // Defines the data required by multiple tests.
-  protected $lrs;
+  protected $lrs, $report;
   protected $data = [
     'description' => 'Some description',
     'name' => '',
