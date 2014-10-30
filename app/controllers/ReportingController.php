@@ -76,7 +76,7 @@ class ReportingController extends \BaseController {
    * @return reporting view.
    */
   public function statements($lrsId, $reportId) {
-    return View::make('{$this->views}.statements', [
+    return View::make("{$this->views}.statements", [
       'lrs' => $this->lrs->find($lrsId), 
       'list' => $this->lrs->all(),
       'reporting_nav' => true,
