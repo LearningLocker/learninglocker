@@ -22,7 +22,7 @@ class EloquentReportRepository implements ReportRepository {
    * @return [Report] All of the reports.
    */
   public function all($lrs) {
-    return Helpers::replaceHtmlEntity(Report::where('lrs', $lrs)->get());
+    return Helpers::replaceHtmlEntity(Report::where('lrs', $lrs)->get()->toArray());
   }
 
   /**
