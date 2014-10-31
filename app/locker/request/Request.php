@@ -19,7 +19,13 @@ class Request {
     if ($this->params === null || count($this->params) < 1) {
       $requestParams = \Request::all();
       $payloadParams = $this->getPayloadParams();
-      $this->params = array_merge($requestParams, $payloadParams);
+
+      // Merges params if they are both arrays.
+      if (is_array($requestParams) && is_array($payloadParams)) {
+        $this->params = array_merge($requestParams, $payloadParams);
+      } else {
+        $this->params = $requestParams;
+      }
     }
     
     // Return the cached params.
@@ -42,17 +48,7 @@ class Request {
    * @return String user in the basic auth.
    */
   public function getUser() {
-    $user = \Request::getUser();
-
-    // If the password is set in the headers then return it.
-    if ($user) {
-      return $user;
-    }
-
-    // Else return it from the payload.
-    else {
-      return $this->getAuth()[self::authUser];
-    }
+    return \Request::getUser() ?: $this->getAuth()[self::authUser];
   }
 
   /**
@@ -60,17 +56,7 @@ class Request {
    * @return String password in the basic auth.
    */
   public function getPassword() {
-    $pass = \Request::getPassword();
-
-    // If the password is set in the headers then return it.
-    if ($pass) {
-      return $pass;
-    }
-
-    // Else return it from the payload.
-    else {
-      return $this->getAuth()[self::authPass];
-    }
+    return \Request::getPassword() ?: $this->getAuth()[self::authPass];
   }
 
   /**
@@ -83,7 +69,7 @@ class Request {
     $value = \Request::header($key);
 
     // If the key is set in the headers then return it.
-    if ($value) {
+    if (isset($value)) {
       return $value;
     }
 

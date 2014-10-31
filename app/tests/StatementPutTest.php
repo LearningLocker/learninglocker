@@ -53,9 +53,9 @@ class StatementPutTest extends TestCase
     $response = $this->_makeRequest($param, $auth);
     $responseData = $response->getData();
     $responseStatus = $response->getStatusCode();
-    $checkResponse = $responseStatus == 204 && empty($responseData);
 
-    $this->assertTrue($checkResponse);
+    $this->assertEquals(204, $responseStatus);
+    $this->assertEmpty($response->getData());
 
     // case: conflict nomatch
     $param['result'] = array();
@@ -102,9 +102,8 @@ class StatementPutTest extends TestCase
     $responseData = $response->getData();
     $responseStatus = $response->getStatusCode();
 
-    $checkResponse = $responseStatus == 204 && empty($responseData);
-
-    $this->assertTrue($checkResponse);
+    $this->assertEquals(204, $responseStatus);
+    $this->assertEmpty($response->getData());
   }
 
   public function tearDown()

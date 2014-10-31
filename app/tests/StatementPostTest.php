@@ -64,12 +64,12 @@ class StatementPostTest extends TestCase
 
     // Make sure response data for the get request
     $responseGet = $this->_makeRequest(array(), "GET", $auth);
-    $this->assertEquals($responseGet->getStatusCode(), 200);
+    $this->assertEquals(200, $responseGet->getStatusCode());
 
     // Make sure response data for the get request
     unset($param['result']);
     $responsePost = $this->_makeRequest($param, "POST", $auth);
-    $this->assertEquals($responsePost->getStatusCode(), 204);
+    $this->assertEquals(204, $responsePost->getStatusCode());
   }
 
   /**
@@ -103,11 +103,12 @@ class StatementPostTest extends TestCase
     ];
 
     $response = $this->_makeRequest($param, "POST", $auth);
-    $responseData = $response->getData();
-    $responseStatus = $response->getStatusCode();
-    $checkResponse = $responseStatus == 204 && empty($responseData);
 
-    $this->assertTrue($checkResponse);
+    $responseData = $response->getContent();
+    $responseStatus = $response->getStatusCode();
+
+    $this->assertEquals(204, $responseStatus);
+    $this->assertEmpty($response->getData());
   }
 
 }

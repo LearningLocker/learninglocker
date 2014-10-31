@@ -6,6 +6,7 @@ use Locker\Repository\Report\ReportRepository as Report;
 class ReportingController extends \BaseController {
 
   const statementKey = 'statement.';
+  protected $views = 'partials.reporting';
   protected $analytics, $lrs, $query, $report;
   protected static $segments = [
     'actors' => [
@@ -62,7 +63,7 @@ class ReportingController extends \BaseController {
     $lrs      = $this->lrs->find($id);
     $lrs_list = $this->lrs->all();
     $reports  = $this->report->all($id);
-    return View::make('partials.reporting.index', [
+    return View::make("{$this->views}.index", [
       'lrs' => $lrs, 
       'list' => $lrs_list,
       'reporting_nav' => true,
@@ -75,7 +76,7 @@ class ReportingController extends \BaseController {
    * @return reporting view.
    */
   public function statements($lrsId, $reportId) {
-    return View::make('partials.reporting.statements', [
+    return View::make("{$this->views}.statements", [
       'lrs' => $this->lrs->find($lrsId), 
       'list' => $this->lrs->all(),
       'reporting_nav' => true,

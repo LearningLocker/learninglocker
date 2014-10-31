@@ -107,60 +107,67 @@ class EloquentQueryRepository implements QueryRepository {
   public function timedGrouping( $lrs, $filters, $interval, $type='time' ){
 
     //set filters
-    $lrs_filter = array('lrs._id' => $lrs);
+    $lrs_filter = ['lrs._id' => $lrs];
 
     //if further filters passed, add them
     $match = array_merge( $lrs_filter, $filters );
 
     if( $type == 'time' ){
       if( !$interval ) $interval = '$dayOfYear';
-      $set_id = array( $interval => '$timestamp' );
+      $set_id = [ $interval => '$timestamp' ];
     }else{
       switch($type){
         case 'user': 
-          $set_id  = array('actor' => '$statement.actor');  
-          $project = array('$addToSet' => '$statement.actor');  
+          $set_id  = ['actor' => '$statement.actor'];  
+          $project = ['$addToSet' => '$statement.actor'];  
           break;
         case 'verb': 
-          $set_id  = array('verb' => '$statement.verb');   
-          $project = array('$addToSet' => '$statement.verb');    
+          $set_id  = ['verb' => '$statement.verb'];   
+          $project = ['$addToSet' => '$statement.verb'];    
           break;
         case 'activity': 
-          $set_id  = array('activity' => '$statement.object'); 
-          $project = array('$addToSet' => '$statement.object');
+          $set_id  = ['activity' => '$statement.object']; 
+          $project = ['$addToSet' => '$statement.object'];
           break;
       }
     }
 
     //construct mongo aggregation query
     if( $type == 'time' ){
-      $results = $this->db->statements->aggregate(
-        array('$match' => $match),
-        array(
-            '$group' => array(
-              '_id'   => $set_id,
-              'count' => array('$sum' => 1),
-              'date'  => array('$addToSet' => '$statement.timestamp')
-            )
-        ),
-        array('$sort'  => array('date' => 1)),
-        array('$project' => array('_id'   => 0, 'count' => 1, 'date'  => 1 ))
-      );
+      $results = $this->db->statements->aggregate([
+        '$match' => $match
+      ], [
+        '$group' => [
+          '_id'   => $set_id,
+          'count' => ['$sum' => 1],
+          'date'  => ['$addToSet' => '$statement.timestamp']
+        ]
+      ],
+      ['$sort'  => ['date' => 1]],
+      ['$project' => [
+        '_id' => 0,
+        'count' => 1,
+        'date'  => 1
+      ]]);
     }else{
-      $results = $this->db->statements->aggregate(
-        array('$match' => $match),
-        array(
-          '$group' => array(
-            '_id'   => $set_id, //, 'dayOfYear' => '$created_at'
-            'count' => array('$sum' => 1),
-            'dates' => array('$addToSet' => '$statement.timestamp'),
-            'data'  => $project
-          ),
-        ),
-        array('$unwind' => '$data'),
-        array('$sort' => array('count' => -1)),
-        array('$project' => array('_id' => 0, 'data' => 1, 'count' => 1, 'dates' => 1))
-      );
+      $results = $this->db->statements->aggregate([
+        '$match' => $match
+      ], [
+        '$group' => [
+          '_id'   => $set_id, //, 'dayOfYear' => '$created_at'
+          'count' => ['$sum' => 1],
+          'dates' => ['$addToSet' => '$statement.timestamp'],
+          'data'  => $project
+        ],
+      ],
+      ['$unwind' => '$data'],
+      ['$sort' => ['count' => -1]],
+      ['$project' => [
+        '_id' => 0,
+        'data' => 1,
+        'count' => 1,
+        'dates' => 1
+      ]]);
     }
 
     return $results;
