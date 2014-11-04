@@ -1,0 +1,27 @@
+{
+  "name": "learninglocker",
+  "homepage": "https://github.com/LearningLocker/learninglocker",
+  "authors": [
+    "Ryan Smith <0ryansmith1994@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "backbone.basicauth": "~0.4.0",
+    "backbone.marionette": "~2.2.2",
+    "beagle": "~1.0.3",
+    "FileSaver.js": "git://github.com/eligrey/FileSaver.js.git#765f1d90ae",
+    "jquery": "~2.1.1",
+    "morris.js": "~0.5.1",
+    "raphael": "~2.1.2",
+    "text": "git://github.com/requirejs/text.git#~2.0.12",
+    "typeahead.js": "~0.10.5",
+    "bootstrap": "~3.3.0"
+  }
+}

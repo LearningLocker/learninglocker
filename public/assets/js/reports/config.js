@@ -22,16 +22,16 @@ requirejs.config({
     }
   },
   paths: {
-    jquery: '//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min',
-    underscore: '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min',
-    backbone: '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
-    marionette: '//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.0.2/backbone.marionette.min',
-    text: '//cdnjs.cloudflare.com/ajax/libs/require-text/2.0.12/text.min',
-    beagle: '//cdn.rawgit.com/ht2/beagle/1.0.3/build/export',
-    basicauth: '//cdn.rawgit.com/fiznool/backbone.basicauth/master/backbone.basicauth',
-    typeahead: '//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.4/typeahead.bundle.min',
-    raphael: '//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min',
-    morris: '//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min'
+    jquery: '../bower_components/jquery/dist/jquery.min',
+    underscore: '../bower_components/underscore/underscore',
+    backbone: '../bower_components/backbone/backbone',
+    marionette: '../bower_components/backbone.marionette/lib/backbone.marionette.min',
+    text: '../bower_components/text/text',
+    beagle: '../bower_components/beagle/build/export',
+    basicauth: '../bower_components/backbone.basicauth/backbone.basicauth',
+    typeahead: '../bower_components/typeahead.js/dist/typeahead.jquery.min',
+    raphael: '../bower_components/raphael/raphael-min',
+    morris: '../bower_components/morris.js/morris.min'
   },
   packages: [
     {
