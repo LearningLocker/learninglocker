@@ -16,6 +16,7 @@
     "backbone.basicauth": "~0.4.0",
     "backbone.marionette": "~2.2.2",
     "beagle": "~1.0.3",
+    "FileSaver.js": "git://github.com/eligrey/FileSaver.js.git#765f1d90ae",
     "jquery": "~2.1.1",
     "morris.js": "~0.5.1",
     "raphael": "~2.1.2",
