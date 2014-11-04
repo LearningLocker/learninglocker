@@ -7,6 +7,7 @@ services:
   - mongodb
 
 install:
+  - npm install -g bower
   - composer install --prefer-source --no-interaction --dev
 
 before_script:
