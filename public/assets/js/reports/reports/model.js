@@ -33,8 +33,8 @@ define([
     _queryResponseMap: {
       'actor.mbox': 'actors',
       'verb.id': 'verbs',
-      'object.definition.type': 'activities',
-      'object.id': 'activityTypes',
+      'object.id': 'activities',
+      'object.definition.type': 'activityTypes',
       'context.contextActivities.parent.id': 'parents',
       'context.contextActivities.grouping.id': 'groups',
       'context.platform': 'platforms',

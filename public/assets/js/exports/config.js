@@ -1,17 +1,15 @@
 //the require library is configuring paths
 require.config({
   paths: {
-    jquery: '../libs/jquery/jquery.1.10.2',
-    underscore: '../libs/lodash/lodash',
-    backbone: '../libs/backbone/backbone.min',
-    marionette: '//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.0.2/backbone.marionette.min',
-    text: '//cdnjs.cloudflare.com/ajax/libs/require-text/2.0.12/text.min',
-    'backbone.wreqr': '../libs/backbone/backbone.wreqr',
-    'backbone.babysitter' : '../libs/backbone/backbone.babysitter',
-    'bootstrap': '../libs/bootstrap/bootstrap.min',
-    'typeahead': '../libs/typeahead/typeahead.min',
-    'basicauth': '../libs/backbone/backbone.basicauth',
-    'fileSaver': '../libs/fileSaver/fileSaver'
+    jquery: '../bower_components/jquery/dist/jquery.min',
+    underscore: '../bower_components/underscore/underscore',
+    backbone: '../bower_components/backbone/backbone',
+    marionette: '../bower_components/backbone.marionette/lib/backbone.marionette.min',
+    text: '../bower_components/text/text',
+    basicauth: '../bower_components/backbone.basicauth/backbone.basicauth',
+    typeahead: '../bower_components/typeahead.js/dist/typeahead.jquery.min',
+    bootstrap: '../bower_components/bootstrap/dist/js/bootstrap.min',
+    fileSaver: '../bower_components/FileSaver.js/FileSaver.min'
   },
   shim : {
     jquery : {
@@ -37,11 +35,11 @@ require.config({
       exports: 'Bootstrap'
     },
     typeahead: {
-      deps: ["jquery"],
-      exports: "Typeahead"
+      deps: ['jquery'],
+      exports: 'Typeahead'
     },
     fileSaver: {
-      exports: "fileSaver"
+      exports: 'fileSaver'
     }
   },
 });
