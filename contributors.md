@@ -1,5 +1,5 @@
 # Contributors
-> Learning Locker is an community effort, this page lists those who have been involved in its development.
+> Learning Locker is a community effort, this page lists those who have been involved in its development.
 
 ## Core Contributors
 - [HT2](http://ht2.co.uk)
