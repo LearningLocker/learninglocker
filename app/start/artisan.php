@@ -12,3 +12,4 @@
 */
 
 Artisan::add(new ConvertTimestamp);
+Artisan::add(new ReportMigrateCommand);
