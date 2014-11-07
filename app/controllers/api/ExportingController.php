@@ -85,42 +85,70 @@ class ExportingController extends BaseController {
     }
   }
 
+  private function export($export_id, $json = true) {
+    $export = $this->get($export_id);
+
+    // Get and check report.
+    $report = $this->report->find($export->report);
+    if (!$report) {
+      \App::abort(404, trans('exporting.errors.reportExistence'));
+    }
+
+    // Get and check query.
+    $query = $report->query == '' ? $report->query : [];
+
+    // Select statements.
+    $statements = $this->query->selectStatementDocs(
+      $this->lrs->_id,
+      \app\locker\helpers\Helpers::replaceHtmlEntity($query)
+    );
+
+    // Get and check fields.
+    if(!isset($export->fields)) {
+      \App::Abort(400, trans('exporting.errors.noFields'));
+    }
+
+    $exporter = $this->exporter;
+
+    // Maps results.
+    return function (callable $fn) use ($exporter, $statements, $export, $json) {
+      $count = $statements->count();
+      $chunk = 1000;
+      $taken = 0;
+
+      for ($taken = 0; $taken < $count; $taken += $chunk) {
+        $fn($exporter->mapFields(
+          $statements->skip($taken)->take($chunk)->get(),
+          $export->fields,
+          $json
+        ), $count, $chunk, $taken + $chunk, $export);
+      }
+    };
+  }
+
   /**
    * Shows the result of an export as JSON.
    * @param  id $export_id Identifier of the export to be run.
    * @param  json Determines if fields should be json.
    * @return json
    */
-  public function show($export_id, $json = true) {
-    $export = $this->get($export_id);
+  public function show($export_id) {
+    $take = $this->export($export_id, true);
 
-    // Get and check report.
-    $report = $this->report->find($export->report);
-    if( !$report ){
-      \App::abort(404, trans('exporting.errors.reportExistence'));
-    }
+    $headers = [
+      'Content-Type'=>'application/json'
+    ];
 
-    // Select statements.
-    $statements = $this->query->selectStatementDocs(
-      $this->lrs->_id,
-      \app\locker\helpers\Helpers::replaceHtmlEntity($report->query)
-    );
-
-    // Get and check fields.
-    if(is_null($export['fields'])) {
-      \App::Abort(400, trans('exporting.errors.noFields'));
-    }
-
-    // Filter and map results.
-    $filtered_results = $this->exporter->filter($statements, $export['fields']);
-    $mapped_results = $this->exporter->mapFields(
-      $filtered_results,
-      $export['fields'],
-      $json
-    );
-
-    // Return mapped results and json.
-    return $mapped_results;
+    return \Response::stream(function () use ($take) {
+      echo '[';
+      $take(function ($statements, $count, $chunk, $taken) {
+        echo substr(json_encode($statements), 1, -1);
+        echo $taken < $count ? ',' : '';
+        flush();
+        ob_flush();
+      });
+      echo ']';
+    }, 200, $headers);
   }
 
   /**
@@ -129,31 +157,40 @@ class ExportingController extends BaseController {
    * @return csv
    */
   public function showCSV($export_id) {
-    $csv_rows = [];
-
-    // Get mapped results.
-    $mapped_results = $this->show($export_id, false);
-
-    // Add fields.
-    $keys = array_keys($mapped_results[0]);
-    array_push($csv_rows, implode(',', $keys));
-
-    // Add each mapped result as a row.
-    foreach ($mapped_results as $result) {
-      $values = [];
-
-      foreach ($keys as $key) {
-        array_push($values, $result[$key]);
-      }
-
-      array_push($csv_rows, implode(',', $values));
-    }
-
     // Respond with CSV.
+    $take = $this->export($export_id, false);
+
     $headers = [
       'Content-Type' => 'text/csv'
     ];
-    return \Response::make(implode("\r\n", $csv_rows), 200, $headers);
+
+    return \Response::stream(function () use ($take) {
+      $take(function ($statements, $count, $chunk, $taken, $export) {
+        $csv_rows = [];
+        $keys = array_keys($statements[0]);
+
+        // Add headers.
+        if ($chunk === $taken) {
+          array_push($csv_rows, implode(',', $keys));
+        }
+
+        // Add each mapped result as a row.
+        foreach ($statements as $statement) {
+          $values = [];
+
+          foreach ($keys as $key) {
+            array_push($values, $statement[$key]);
+          }
+
+          // Adds commas between values (for columns);
+          array_push($csv_rows, implode(',', $values));
+        }
+
+        echo implode("\r\n", $csv_rows);
+        flush();
+        ob_flush();
+      });
+    }, 200, $headers);
   }
 
   /**
