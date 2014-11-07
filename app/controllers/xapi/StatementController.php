@@ -36,11 +36,13 @@ class StatementController extends BaseController {
     $this->getLrs();
 
     if (!($this->method === 'GET' && \LockerRequest::hasParam($this->identifier))) {
-      $this->checkVersion();
+      $result = $this->checkVersion();
+      if( !is_null($result)) return $result; 
     }
 
     if ($this->method !== 'POST' && $this->method !== 'PUT') {
-      $this->reject();
+      $result = $this->reject();
+      if( !is_null($result)) return $result; 
     }
   }
 
