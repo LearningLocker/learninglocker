@@ -95,7 +95,7 @@ class ExportingController extends BaseController {
     }
 
     // Get and check query.
-    $query = $report->query == '' ? $report->query : [];
+    $query = $report->query !== '' ? $report->query : [];
 
     // Select statements.
     $statements = $this->query->selectStatementDocs(
