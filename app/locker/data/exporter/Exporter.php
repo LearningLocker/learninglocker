@@ -49,14 +49,14 @@ class Exporter {
       $i += 1;
     }
 
-    if ($i >= $len) {
+    if ($i == $len) {
       if ($json) {
         return $object;
       } else {
-        return substr($this->quoteField(json_encode($object)), 3, -3);
+        return substr($this->quoteField(json_encode($object)), 2, -2);
       }
     } else {
-      return null;
+      return $json ? null : '""';
     }
   }
 
@@ -85,21 +85,5 @@ class Exporter {
     }
 
     return $mappedStatements;
-  }
-
-  /**
-   * Filters the statements.
-   * @param  Statement $statements The statement query to be used.
-   * @param  AssocArray $fields     The fields to be mapped.
-   * @return Array             The array of filtered statements.
-   */
-  public function filter($statements, $fields) {
-    $statementFields = [];
-
-    foreach ($fields as $field) {
-      array_push($statementFields, $field['from']);
-    }
-
-    return $statements->get();
   }
 }

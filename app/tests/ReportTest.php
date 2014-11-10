@@ -165,7 +165,6 @@ class ReportTest extends TestCase {
 
     // Checks that the correct number of statements are returned.
     $this->assertEquals(self::STATEMENTS, $content[0]['count']);
-    $this->assertEquals(self::STATEMENTS, count($content[0]['date']));
   }
 
   // View tests.

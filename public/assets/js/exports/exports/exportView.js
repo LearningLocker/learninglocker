@@ -51,7 +51,7 @@ define([
         alert(trans('exporting.errors.mustSave'));
       } else {
         this.model.downloadJSON().done(function (data) {
-          saveTextAs(JSON.stringify(data, null, 2), 'download.json');
+          saveAs(new Blob([JSON.stringify(data, null, 2)]), 'download.json');
         }).fail(function (jqXHR, status, error) {
           alert(jqXHR.responseJSON.message || error);
         });
@@ -63,7 +63,7 @@ define([
         alert(trans('exporting.errors.mustSave'));
       } else {
         this.model.downloadCSV().done(function (data) {
-          saveTextAs(data, 'download.csv');
+          saveAs(new Blob([data]), 'download.csv');
         }).fail(function (jqXHR, status, error) {
           alert(jqXHR.responseJSON.message || error);
         });
