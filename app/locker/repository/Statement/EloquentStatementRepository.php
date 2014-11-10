@@ -62,6 +62,11 @@ class EloquentStatementRepository implements StatementRepository {
 
     $statements = $this->statement->where('lrs._id', $lrs);
 
+    if (isset($parameters['activity'])) {
+      $statements->where('statement.object.id', $parameters['activity']);
+      unset($parameters['activity']);
+    }
+
     $this->addParameters( $statements, $parameters );
 
     $getStatements = $statements->get();
