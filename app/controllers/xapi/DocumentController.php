@@ -8,6 +8,9 @@ abstract class DocumentController extends BaseController {
   // Defines properties to be set to constructor parameters.
   protected $document;
 
+  // Defines properties to be set by the constructor.
+  protected $params, $method, $lrs;
+
   protected function getIndexData($additional = []) {
     return $this->checkParams(
       array_slice($this->required, 0, -1),
@@ -30,8 +33,7 @@ abstract class DocumentController extends BaseController {
    */
   public function __construct(Document $document){
     $this->document = $document;
-    $this->beforeFilter('@getLrs');
-    $this->beforeFilter('@setParameters');
+    parent::__construct();
   }
 
   public function index() {
@@ -43,7 +45,7 @@ abstract class DocumentController extends BaseController {
         'since' => ['string', 'timestamp']
       ])
     );
-    
+
     // Returns array of only the stateId values for each document.
     $ids = array_column($documents->toArray(), 'identId');
     return \Response::json($ids);
@@ -78,9 +80,9 @@ abstract class DocumentController extends BaseController {
     );
 
     if ($store) {
-      return \Response::json(['ok'], 204);
+      return \Response::json(['ok'], BaseController::NO_CONTENT);
     } else {
-      return \Response::json(['error'], 400);
+      return BaseController::errorResponse();
     }
   }
 
@@ -96,9 +98,9 @@ abstract class DocumentController extends BaseController {
    * Deletes a document.
    * @return Response
    */
-  public function delete(){
+  public function destroy(){
     if (!\LockerRequest::hasParam($this->identifier)) {
-      \App::abort(400, 'Multiple document DELETE not permitted');
+      return BaseController::errorResponse('Multiple document DELETE not permitted');
     }
     return $this->completeDelete();
   }
@@ -117,14 +119,14 @@ abstract class DocumentController extends BaseController {
       $data ?: $this->getShowData(),
       $singleDelete
     );
-    
+
     if ($success) {
       return \Response::json(['ok'], 204);
     } else {
-      return \Response::json(['error'], 400);
+      return BaseController::errorResponse();
     }
   }
-  
+
   /**
    * Retrieves attached file content
    * @param string $name Field name
@@ -136,8 +138,8 @@ abstract class DocumentController extends BaseController {
     } else {
       $contentType = \LockerRequest::header('Content-Type');
 
-      if(!isset($contentType)){
-        \App::abort(400, 'PUT requests must include a Content-Type header');
+      if (!isset($contentType)) {
+        return BaseController::errorResponse('PUT requests must include a Content-Type header');
       } else {
         return [
           'content' => \LockerRequest::getContent(),
@@ -165,9 +167,9 @@ abstract class DocumentController extends BaseController {
       if( !$contentType || $isForm ){
         $contentType = is_object(json_decode($content)) ? 'application/json' : 'text/plain';
       }
-      
+
     } else {
-      \App::abort(400, sprintf('`%s` was not sent in this request', $name));
+      App::abort(400, sprintf('`%s` was not sent in this request', $name));
     }
 
     return [
@@ -198,7 +200,7 @@ abstract class DocumentController extends BaseController {
     $document = $this->document->find($this->lrs->_id, $this->document_type, $data);
 
     if (!$document) {
-      return \Response::make('', 404);
+      return BaseController::errorResponse(null, 404);
     } else {
       $headers = [
         'Updated' => $document->updated_at->toISO8601String(),
@@ -220,7 +222,7 @@ abstract class DocumentController extends BaseController {
               $headers
             );
         }
-      } 
+      }
     }
   }
 

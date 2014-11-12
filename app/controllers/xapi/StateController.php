@@ -26,7 +26,7 @@ class StateController extends DocumentController {
    * @param  int  $id
    * @return Response
    */
-  public function delete(){
+  public function destroy(){
     $singleDelete = !\LockerRequest::hasParam($this->identifier);
 
     if ($singleDelete) {
