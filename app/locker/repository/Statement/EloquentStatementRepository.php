@@ -337,8 +337,7 @@ class EloquentStatementRepository implements StatementRepository {
           
           //look in object
           $query->where( function($query) use ($parameters) {
-              $query->where('statement.object.objectType', 'Activity')
-                    ->where('statement.object.id', $parameters['activity']);
+              $query->where('statement.object.id', $parameters['activity']);
           });
           
           //if related_activities is true, broaden filter
