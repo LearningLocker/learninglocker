@@ -28,11 +28,12 @@ class StatementController extends BaseController {
    * @return [Statement]
    */
   public function where() {
+    $limit = \LockerRequest::getParam('limit', 100);
     $filters = json_decode(
       \LockerRequest::getParam('filters'),
       true
     ) ?: [];
-    return \Response::json($this->query->where($this->lrs->_id, $filters)->get());
+    return \Response::json($this->query->where($this->lrs->_id, $filters)->paginate($limit));
   }
 
   /**
