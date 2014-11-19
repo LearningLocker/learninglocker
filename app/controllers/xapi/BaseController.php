@@ -5,16 +5,45 @@ use Controllers\API\BaseController as APIBaseController;
 
 class BaseController extends APIBaseController {
 
-  // Current LRS based on Auth credentials.
-  protected $lrs;
+  // Sets constants for status codes.
+  const OK = 200;
+  const NO_CONTENT = 204;
+  const NO_AUTH = 403;
+  const CONFLICT = 409;
 
-  // Filter parameters, HTTP method type.
-  protected $params, $CORS, $method;
+  // Defines properties to be set by the constructor.
+  protected $params, $method, $lrs;
+
+  /**
+   * Constructs a new xAPI controller.
+   */
+  public function __construct() {
+    $this->setMethod();
+    $this->getLrs();
+  }
+
+  /**
+   * Selects a method to be called.
+   * @return mixed Result of the method.
+   */
+  public function selectMethod() {
+    switch ($this->method) {
+      case 'HEAD':
+      case 'GET': return $this->get();
+      case 'PUT': return $this->update();
+      case 'POST': return $this->store();
+      case 'DELETE': return $this->destroy();
+    }
+  }
+
+  public function get() {
+    return \LockerRequest::hasParam($this->identifier) ? $this->show() : $this->index();
+  }
 
   /**
    * Checks the request header for correct xAPI version.
    **/
-  public function checkVersion() {
+  protected function checkVersion() {
     $version = \LockerRequest::header('X-Experience-API-Version');
 
     if (!isset($version) || substr($version, 0, 4) !== '1.0.') {
@@ -27,35 +56,9 @@ class BaseController extends APIBaseController {
   }
 
   /**
-   * Selects a method to be called.
-   * @return mixed Result of the method.
+   * Sets the method (to support CORS).
    */
-  public function selectMethod() {
-    switch ($this->method) {
-      case 'HEAD':
-      case 'GET':
-        if (\LockerRequest::hasParam($this->identifier)) {
-          return $this->show();
-        } else {
-          return $this->index();
-        }
-        break;
-      case 'PUT':
-        return $this->update();
-        break;
-      case 'POST':
-        return $this->store();
-        break;
-      case 'DELETE':
-        return $this->delete();
-        break;
-    }
-  }
-
-  /**
-   * Get all of the input and files for the request and store them in params.
-   */
-  public function setParameters() {
+  protected function setMethod() {
     parent::setParameters();
     $this->method = \LockerRequest::getParam(
       'method',
@@ -63,4 +66,16 @@ class BaseController extends APIBaseController {
     );
   }
 
+  /**
+   * Constructs a error response with a $message and optional $statusCode.
+   * @param string $message
+   * @param integer $statusCode
+   */
+  public static function errorResponse($message = '', $statusCode = 400) {
+    return \Response::json([
+      'error' => true, // @deprecated
+      'success' => false,
+      'message' => $message
+    ], $statusCode);
+  }
 }
