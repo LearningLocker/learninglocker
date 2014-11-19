@@ -439,6 +439,20 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
   
   Route::resource('site', 'Controllers\API\SiteController');
 
+  // Adds routes for statements.
+  Route::get('statements/where', [
+    'uses' => 'Controllers\API\StatementController@where'
+  ]);
+  Route::get('statements/aggregate', [
+    'uses' => 'Controllers\API\StatementController@aggregate'
+  ]);
+  Route::get('statements/aggregate/time', [
+    'uses' => 'Controllers\API\StatementController@aggregateTime'
+  ]);
+  Route::get('statements/aggregate/object', [
+    'uses' => 'Controllers\API\StatementController@aggregateObject'
+  ]);
+
 });
 
 /*
