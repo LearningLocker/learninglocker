@@ -1,31 +1,74 @@
 <?php namespace Controllers\API;
 
 use \Locker\Data\Analytics\AnalyticsInterface as Analytics;
+use \Locker\Repository\Query\QueryRepository as Query;
 
 class StatementController extends BaseController {
 
-  /**
-  * Analytics Interface
-  */
-  protected $analytics;
+  // Defines properties to be set to constructor parameters.
+  protected $activity, $query;
+
+  // Defines properties to be set by filters.
+  protected $params, $lrs;
 
   /**
-   * Filter parameters
-   **/
-  protected $params;
-
-
-  /**
-   * Construct
-   *
-   * @param StatementRepository $statement
+   * Constructs a new StatementController.
+   * @param Document $document
+   * @param Activity $activity
    */
-  public function __construct(Analytics $analytics){
-
+  public function __construct(Analytics $analytics, Query $query){
     $this->analytics = $analytics;
+    $this->query = $query;
     $this->beforeFilter('@setParameters');
     $this->beforeFilter('@getLrs');
+  }
 
+  /**
+   * Filters statements using the where method.
+   * @return [Statement]
+   */
+  public function where() {
+    $filters = json_decode(
+      \LockerRequest::getParam('filters'),
+      true
+    ) ?: [];
+    return \Response::json($this->query->where($this->lrs->_id, $filters)->get());
+  }
+
+  /**
+   * Filters statements using the aggregate method.
+   * @return Aggregate http://php.net/manual/en/mongocollection.aggregate.php#refsect1-mongocollection.aggregate-examples
+   */
+  public function aggregate() {
+    $pipeline = json_decode(
+      \LockerRequest::getParam('pipeline'),
+      true
+    ) ?: [['match' => []]];
+    return \Response::json($this->query->aggregate($this->lrs->_id, $pipeline)); 
+  }
+
+  /**
+   * Aggregates by time.
+   * @return Aggregate http://php.net/manual/en/mongocollection.aggregate.php#refsect1-mongocollection.aggregate-examples
+   */
+  public function aggregateTime() {
+    $match = json_decode(
+      \LockerRequest::getParam('match'),
+      true
+    ) ?: [];
+    return \Response::json($this->query->aggregateTime($this->lrs->_id, $match));
+  }
+
+  /**
+   * Aggregates by object.
+   * @return Aggregate http://php.net/manual/en/mongocollection.aggregate.php#refsect1-mongocollection.aggregate-examples
+   */
+  public function aggregateObject() {
+    $match = json_decode(
+      \LockerRequest::getParam('match'),
+      true
+    ) ?: [];
+    return \Response::json($this->query->aggregateObject($this->lrs->_id, $match));
   }
 
   /**
