@@ -339,9 +339,6 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
   });
 
   // Statement API.
-  Route::get('statements/grouped', array(
-    'uses' => 'Controllers\xAPI\StatementController@grouped',
-  ));
   Route::any('statements', [
     'uses' => 'Controllers\xAPI\StatementController@selectMethod'
   ]);
