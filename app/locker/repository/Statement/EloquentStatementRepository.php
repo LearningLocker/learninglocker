@@ -5,6 +5,7 @@ use Statement;
 use Locker\Repository\Activity\ActivityRepository as Activity;
 use Locker\Repository\Query\QueryRepository as Query;
 use Locker\Repository\Document\FileTypes;
+use Illuminate\Database\Eloquent\Builder as Builder;
 
 class EloquentStatementRepository implements StatementRepository {
 
@@ -26,6 +27,190 @@ class EloquentStatementRepository implements StatementRepository {
     $this->activity  = $activity;
     $this->query     = $query;
 
+  }
+
+  /**
+   * Gets the statement with the given $id from the lrs (with the $lrsId).
+   * @param UUID $lrsId
+   * @param UUID $id 
+   * @param boolean $voided determines if the statement is voided.
+   * @return Builder
+   */
+  public function show($lrsId, $id, $voided = false) {
+    return $this->query->where($lrsId, [
+      ['statement.id', '=', $id],
+      // ['voided', '=', $voided]
+    ]);
+  }
+
+  /**
+   * Gets statements from the lrs (with the $lrsId) that match the $filters.
+   * @param UUID $lrsId
+   * @param [StatementFilter] $filters
+   * @param [StatementFilter] $options
+   * @return Builder
+   */
+  public function index($lrsId, array $filters, array $options) {
+    $where = [];
+
+    // Adds filters that don't have options.
+    $where = $this->addFilter($where, $filters, 'statement.verb.id', 'verb');
+    $where = $this->addFilter($where, $filters, 'statement.context.registration', 'registration');
+    $where = $this->addFilter($where, $filters, 'statement.stored', 'since', '>');
+    $where = $this->addFilter($where, $filters, 'statement.stored', 'until', '<');
+
+    $statements = $this->query->where($lrsId, $where);
+
+    // Filters by activity.
+    $activity = isset($filters['activity']) ? $filters['activity']: null;
+    $statements = $this->addOptionFilter($statements, $activity, $options, 'related_activity', [
+      'statement.object.id'
+    ], [
+      'statement.context.contextActivities.parent.id',
+      'statement.context.contextActivities.grouping.id',
+      'statement.context.contextActivities.category.id',
+      'statement.context.contextActivities.other.id'
+    ]);
+
+    // Filters by agent.
+    $agent = isset($filters['agent']) ? json_decode($filters['agent'], true) : null;
+    $identifier = $this->getIdentifier($agent);
+    $agent = isset($agent) && isset($agent[$identifier]) ? $agent[$identifier] : null;
+    $statements = $this->addOptionFilter($statements, $agent, $options, 'related_agents', [
+      'statement.actor.'.$identifier,
+      'statement.object.'.$identifier
+    ], [
+      'statement.authority.'.$identifier,
+      'statement.context.instructor.'.$identifier,
+      'statement.context.team.'.$identifier
+    ]);
+
+    // Uses ordering.
+    if (isset($options['ascending']) && $options['ascending'] == 'true') {
+      $statements = $statements->orderBy('statement.stored', 'ASC');
+    } else {
+      $statements = $statements->orderBy('statement.stored', 'DESC');
+    }
+
+    return $statements;
+  }
+
+  public function getIdentifier($agent) {
+    if (isset($agent)) {
+      if (isset($agent['mbox'])) return 'mbox';
+      if (isset($agent['openid'])) return 'openid';
+      if (isset($agent['account'])) return 'account';
+    } else {
+      return 'actor';
+    }
+  }
+
+  public function addFilter(array $where, array $filters, $key, $filter, $operator = '=') {
+    if (isset($filters[$filter])) {
+      $where[] = [$key, $operator, $filters[$filter]];
+    }
+    return $where;
+  }
+
+  public function addOptionFilter(Builder $statements, $value, array $options, $option, array $specific, array $broad) {
+    if (!isset($value)) return $statements;
+
+    $keys = $specific;
+
+    if (isset($options[$option]) && $options[$option] == 'true') {
+      $keys = array_merge($keys, $broad);
+    }
+
+    return $this->orWhere($statements, $keys, $value);
+  }
+
+  public function orWhere(Builder $statements, array $keys, $value) {
+    return $statements->where(function (Builder $query) use ($keys, $value) {
+      foreach ($keys as $key) {
+        $query->orWhere($key, $value);
+      }
+    });
+  }
+
+  public function toCanonical(array $statements, array $langs) {
+    foreach ($statements as $index => $statement) {
+      $statements[$index]['statement'] = $this->getStatementCanonical($statement['statement'], $langs);
+    }
+    return $statements;
+  }
+
+  public function toIds(array $statements) {
+    foreach ($statements as $index => $statement) {
+      $statements[$index]['statement'] = $this->getStatementIds($statement['statement']);
+    }
+    return $statements;
+  }
+
+  public function canonicalise(array $langMap, array $langs) {
+    foreach ($langs as $lang) {
+      if (isset($langMap[$lang])) {
+        return $langMap[$lang];
+      }
+    }
+    return $langMap;
+  }
+
+  public function getStatementCanonical(array $statement, array $langs) {
+    if (isset($statement['object']['definition']['name'])) {
+      $statement['object']['definition']['name'] = $this->canonicalise(
+        $statement['object']['definition']['name'],
+        $langs
+      );
+    }
+    if (isset($statement['object']['definition']['description'])) {
+      $statement['object']['definition']['description'] = $this->canonicalise(
+        $statement['object']['definition']['description'],
+        $langs
+      );
+    }
+    return $statement;
+  }
+
+  /**
+   * Gets the identifier key of an $agent.
+   * @param Agent $actor
+   * @return string
+   */
+  private function getAgentIdentifier($actor) {
+    if (isset($actor['mbox'])) return 'mbox';
+    if (isset($actor['account'])) return 'account';
+    if (isset($actor['openid'])) return 'openid';
+    return null;
+  }
+
+  public function getStatementIds(array $statement) {
+    $actor = $statement['actor'];
+    
+    // Processes an anonymous group.
+    if (isset($actor['objectType']) && $actor['objectType'] === 'Group' && $this->getAgentIdentifier($actor) === null) {
+      $members = [];
+      foreach ($actor['members'] as $member) {
+        $identifier = $this->getAgentIdentifier($member);
+        $members[] = [
+          $identifier => $member[$identifier]
+        ];
+      }
+      $actor['members'] = $members;
+    } else {
+      $identifier = $this->getAgentIdentifier($actor);
+      $actor = [
+        $identifier => $actor[$identifier],
+        'objectType' => isset($actor['objectType']) ? $actor['objectType'] : 'Agent'
+      ];
+    }
+
+    $statement['actor'] = $actor;
+    $statement['object'] = [
+      'id' => $statement['object']['id'],
+      'objectType' => isset($statement['object']['objectType']) ? $statement['object']['objectType'] : 'Activity'
+    ];
+
+    return $statement;
   }
 
   /**
@@ -78,36 +263,6 @@ class EloquentStatementRepository implements StatementRepository {
 
   }
 
-  public function grouped($id, $parameters){
-
-    $type = isset($parameters['grouping']) ? strtolower($parameters['grouping']) : '';
-    
-    switch( $type ){
-      default:
-      case "time":
-        $interval = isset($parameters['interval']) ? $parameters['interval'] : "day";
-        $filters = isset($parameters['filters']) ? json_decode($parameters['filters'], true) : array();
-
-        //overwrite the LRS filter
-        $filters['lrs._id'] = $id;
-
-        $results = $this->query->timedGrouping( $filters, $interval );
-      break;
-      case "actor":
-        //@todo
-      break;
-      case "activity":
-        //@todo
-      break;
-      case "verb":
-        //@todo
-      break;
-    }
-
-    return $results;
-
-  }
-
   /**
    * Find a statement based on statementID
    * 
@@ -142,7 +297,7 @@ class EloquentStatementRepository implements StatementRepository {
    * @param array $lrs
    *
    **/
-  public function create( $statements, $lrs, $attachments='' ){
+  public function create(array $statements, $lrs, $attachments = ''){
 
     //Full tincan statement validation to make sure the statement conforms
     

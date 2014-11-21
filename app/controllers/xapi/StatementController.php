@@ -1,6 +1,7 @@
 <?php namespace Controllers\xAPI;
 
 use \Locker\Repository\Statement\StatementRepository as Statement;
+use \Locker\Repository\Query\QueryRepository as Query;
 use \App\Locker\Helpers\Attachments;
 
 class StatementController extends BaseController {
@@ -9,8 +10,11 @@ class StatementController extends BaseController {
   const STATEMENT_ID = 'statementId';
   const VOIDED_ID = 'voidedStatementId';
 
+  // Number of statements to return by default.
+  const DEFAULT_LIMIT = 100;
+
   // Defines properties to be set to constructor parameters.
-  protected $statement;
+  protected $statement, $query;
 
   // Defines properties to be set by the constructor.
   protected $params, $method, $lrs;
@@ -20,8 +24,9 @@ class StatementController extends BaseController {
    * Constructs a new StatementController.
    * @param StatementRepository $statement
    */
-  public function __construct(Statement $statement) {
+  public function __construct(Statement $statement, Query $query) {
     $this->statement = $statement;
+    $this->query = $query;
     parent::__construct();
   }
 
@@ -40,9 +45,9 @@ class StatementController extends BaseController {
 
     // Selects the correct method for getting.
     if ($statementId && !$voidedId) {
-      return $this->show($statementId);
+      return $this->show($statementId, false);
     } else if ($voidedId && !$statementId) {
-      return $this->show($voidedId);
+      return $this->show($voidedId, true);
     } else {
       return $this->index();
     }
@@ -117,16 +122,16 @@ class StatementController extends BaseController {
 
     // Returns a error if identifier is not present.
     if (!$statementId) {
-      return $this->sendResponse(['success' => 'noId']);
+      return BaseController::errorResponse('A statement ID is required to PUT.');
     }
 
     // Attempts to create the statement if `statementId` is present.
     $statement['id'] = $statementId;
-    $save = $this->statement->create([$statement], $this->lrs, '');
+    $save = $this->statement->create([$statement], $this->lrs);
 
     // Sends a response.
     if ($save['success'] == 'true') {
-      return $this->sendResponse(['success' => 'put']);
+      return \Response::json(['success'  => true], BaseController::NO_CONTENT);
     } else {
       return $this->sendResponse($save);
     }
@@ -134,52 +139,73 @@ class StatementController extends BaseController {
 
   /**
    * Gets an array of statements.
-   * @return Response
+   * https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#723-getstatements
+   * @return StatementResult
    */
   public function index() {
-    return $this->returnArray(
-      $this->statement->all( $this->lrs->_id, $this->params )->toArray(),
-      $this->params
-    );
-  }
+    // Gets the filters from the request.
+    $filters = [
+      'agent' => \LockerRequest::getParam('agent'),
+      'activity' => \LockerRequest::getParam('activity'),
+      'verb' => \LockerRequest::getParam('verb'),
+      'registration' => \LockerRequest::getParam('registration'),
+      'since' => \LockerRequest::getParam('since'),
+      'until' => \LockerRequest::getParam('until')
+    ];
 
-  public function grouped(){
-    return $this->returnArray(
-      $this->statement->grouped($this->lrs->_id, $this->params),
-      $this->params
+    // Gets the options/flags from the request.
+    $options = [
+      'related_activity' => \LockerRequest::getParam('related_activity', 'false'),
+      'related_agents' => \LockerRequest::getParam('related_agents', 'false'),
+      'ascending' => \LockerRequest::getParam('ascending', 'true'),
+      'format' => \LockerRequest::getParam('format', 'exact'),
+      'offset' => \LockerRequest::getParam('offset', 0),
+      'limit' => \LockerRequest::getParam('limit', self::DEFAULT_LIMIT)
+    ];
+
+    // Gets the $statements from the LRS (with the $lrsId) that match the $filters with the $options.
+    $statements = $this->statement->index(
+      $this->lrs->_id,
+      $filters,
+      $options
     );
+
+    $total = $statements->count();
+
+    // Gets the statements and uses offset and limit options.
+    $statements->skip((int) $options['offset']);
+    $statements->take((int) $options['limit']);
+    $statements = $statements->get()->toArray();
+
+    // Selects an output format.
+    if ($options['format'] === 'ids') {
+      $statements = $this->statement->toIds($statements);
+    } else if ($options['format'] === 'canonical') {
+      $langs = \Request::header('Accept-Language');
+      $langs = $langs !== '' ? explode(',', $langs) : [];
+      $statements = $this->statement->toCanonical($statements, $langs);
+    }
+
+    // Returns the StatementResult object.
+    return $this->makeStatementObject($statements, [
+      'total' => $total,
+      'offset' => $options['offset'],
+      'limit' => $options['limit']
+    ]);
   }
 
   /**
    * Gets the statement with the given $id.
+   * @param UUID $id 
+   * @param boolean $voided determines if the statement is voided.
    * @return Statement
    */
-  public function show($id) {
+  public function show($id, $voided = false) {
     // Runs filters.
     if ($result = $this->checkVersion()) return $result;
 
-    $statement = $this->statement->find($id);
-
-    // Returns the statement if the requester can access this statement.
-    if ($this->checkAccess($statement)) {
-      return $this->returnArray( array($statement->toArray()) );
-    } else {
-      return BaseController::errorResponse(
-        'You are not authorized to access this statement.',
-        BaseController::NO_AUTH
-      );
-    }
-
-  }
-
-  /**
-   * Determines if a $statement is in the current LRS.
-   * @param Statement $statement
-   * @return boolean `true` if the $statement is in the current LRS.
-   **/
-  public function checkAccess($statement) {
-    $statement_lrs = $statement['lrs']['_id'];
-    return $statement_lrs == $this->lrs->_id;
+    $statement = $this->statement->show($this->lrs->_id, $id, $voided);
+    return $statement->first()->toArray()['statement'];
   }
 
   /**
@@ -189,67 +215,77 @@ class StatementController extends BaseController {
    * @param array $debug Log for debgging information.
    * @return response
    **/
-  const DEFAULT_LIMIT = 100; // @todo make this configurable.
-  public function returnArray($statements=[], $params=[], $debug=[]) {
-    // Adds 'about resouce' information required by specification.
-    // Adds 'X-Experience-API-Version' for LL backwards compatibility.
-    // https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#77-about-resource
-    $array = [
-      'X-Experience-API-Version' => \Config::get('xapi.using_version'),
-      'version' => [\Config::get('xapi.using_version')]
-    ];
+  public function makeStatementObject(array $statements, array $options) {
+    // Merges options with default options.
+    $options = array_merge([
+      'total' => count($statements),
+      'offset' => 0,
+      'limit' => self::DEFAULT_LIMIT
+    ], $options);
 
     // Replaces '&46;' in keys with '.' in statements.
     // http://docs.learninglocker.net/docs/statements#quirks
-    $statements = $statements ?: [];
+    $statements = $statements ?: [];    
     foreach ($statements as &$s) {
       $s = \app\locker\helpers\Helpers::replaceHtmlEntity($s['statement']);
     }
 
-    $array['statements'] = $statements;
-    $array['total'] = $this->statement->count($this->lrs->_id, $this->params);
+    // Creates the statement result.
+    $statementResult = [
+      'X-Experience-API-Version' => \Config::get('xapi.using_version'),
+      'version' => [\Config::get('xapi.using_version')],
+      'total' => $options['total'],
+      'more' => $this->getMoreLink($options['total'], $options['limit'], $options['offset']),
+      'statements' => \app\locker\helpers\Helpers::replaceHtmlEntity($statements)
+    ];
 
-    // Calculates the next offset.
-    $limit = \LockerRequest::getParam('limit', self::DEFAULT_LIMIT);
-    $offset = \LockerRequest::getParam('offset', null);
-    $nextOffset = $offset ? $offset += $limit : $limit;
-
-    // Sets the `more` and `offset` url param.
-    if ($array['total'] > $nextOffset) {
-      // Get the current request URI.
-      $url = $_SERVER['REQUEST_URI'];
-
-      // Changes the offset if it does exist.
-      if ($offset) {
-        $url = str_replace(
-          'offset=' . $offset,
-          'offset=' . $nextOffset,
-          $url
-        );
-      }
-
-      // Adds the offset if it does not exist.
-      else {
-        // If there are already params then append otherwise start.
-        $url .= strpos($url, '?') !== False ? '&' : '?';
-        $url .= 'offset=' . $nextOffset;
-      }
-
-      // Sets the more link to the new url.
-      $array['more'] = $url;
-    } else {
-      $array['more'] = '';
-    }
-
-    $response = \Response::make($array, BaseController::OK);
-
-    // Sets 'X-Experience-API-Consistent-Through' header to the current date.
-    $current_date = \DateTime::createFromFormat('U.u', sprintf('%.4f', microtime(true)));
-    $current_date->setTimezone(new \DateTimeZone(\Config::get('app.timezone')));
-    $current_date = $current_date->format('Y-m-d\TH:i:s.uP');
-    $response->headers->set('X-Experience-API-Consistent-Through', $current_date);
+    // Creates the response.
+    $response = \Response::make($statementResult, BaseController::OK);
+    $response->headers->set(
+      'X-Experience-API-Consistent-Through',
+      $this->getConsistentThrough()
+    );
 
     return $response;
+  }
+
+  /**
+   * Calculates the consistent through xAPI header.
+   * @return string
+   */
+  private function getConsistentThrough() {
+    $current_date = \DateTime::createFromFormat('U.u', sprintf('%.4f', microtime(true)));
+    $current_date->setTimezone(new \DateTimeZone(\Config::get('app.timezone')));
+    return $current_date->format('Y-m-d\TH:i:s.uP');
+  }
+
+  /**
+   * Gets the more link.
+   * @param int $total the number of statements matching the filter.
+   * @param int $limit the number of statements to be returned.
+   * @param int $offset the number of statements to skip.
+   * @return URL
+   */
+  private function getMoreLink($total, $limit, $offset = 0) {
+    $nextOffset = $offset + $limit;
+
+    if ($total <= $nextOffset) return '';
+
+    // Get the current request URI.
+    $url = 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}/{$_SERVER['REQUEST_URI']}";
+
+    // Changes the offset if it does exist, otherwise it adds it.
+    if ($offset) {
+      return str_replace(
+        'offset=' . $offset,
+        'offset=' . $nextOffset,
+        $url
+      );
+    } else {
+      // If there are already params then append otherwise start.
+      $separator = strpos($url, '?') !== False ? '&' : '?';
+      return $url . $separator . 'offset=' . $nextOffset;
+    }
   }
 
   /**
@@ -265,10 +301,6 @@ class StatementController extends BaseController {
         return BaseController::errorResponse(null, BaseController::CONFLICT);
       case 'conflict-matches':
         return \Response::json([], BaseController::NO_CONTENT);
-      case 'put':
-        return \Response::json(['success'  => true], BaseController::NO_CONTENT);
-      case 'noId':
-        return BaseController::errorResponse('A statement ID is required to PUT.');
       case 'false':
         return BaseController::errorResponse(implode($outcome['message']));
     }
