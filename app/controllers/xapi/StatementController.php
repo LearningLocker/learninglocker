@@ -114,6 +114,7 @@ class StatementController extends BaseController {
 
     // Decodes the statement.
     $statement = json_decode(\LockerRequest::getContent(), true);
+
     $statementId = \LockerRequest::getParam(self::STATEMENT_ID);
 
     // Returns a error if identifier is not present.
@@ -141,8 +142,8 @@ class StatementController extends BaseController {
       'registration' => \LockerRequest::getParam('registration'),
       'since' => \LockerRequest::getParam('since'),
       'until' => \LockerRequest::getParam('until'),
-      'active' => true,
-      'voided' => false
+      'active' => \LockerRequest::getParam('active', 'true'),
+      'voided' => \LockerRequest::getParam('voided', 'false')
     ];
     
 
@@ -153,7 +154,7 @@ class StatementController extends BaseController {
       'ascending' => \LockerRequest::getParam('ascending', 'true'),
       'format' => \LockerRequest::getParam('format', 'exact'),
       'offset' => \LockerRequest::getParam('offset', 0),
-      'limit' => \LockerRequest::getParam('limit', Statement::DEFAULT_LIMIT)
+      'limit' => \LockerRequest::getParam('limit', null)
     ];
 
     // Gets the $statements from the LRS (with the $lrsId) that match the $filters with the $options.
@@ -217,7 +218,7 @@ class StatementController extends BaseController {
     $options = array_merge([
       'total' => count($statements),
       'offset' => 0,
-      'limit' => Statement::DEFAULT_LIMIT
+      'limit' => null
     ], $options);
 
     // Replaces '&46;' in keys with '.' in statements.

@@ -61,8 +61,8 @@ class EloquentStatementRepository implements StatementRepository {
       'registration' => null,
       'since' => null,
       'until' => null,
-      'active' => true,
-      'voided' => false
+      'active' => 'true',
+      'voided' => 'false'
     ], $filters);
 
     // Defaults options.
@@ -78,8 +78,8 @@ class EloquentStatementRepository implements StatementRepository {
     // Filters by date.
     if (isset($filters['since'])) $where[] = ['statement.stored', '>', $filters['since']];
     if (isset($filters['until'])) $where[] = ['statement.stored', '<', $filters['until']];
-    if (isset($filters['active'])) $where[] = ['active', '=', $filters['active']];
-    if (isset($filters['active'])) $where[] = ['voided', '=', $filters['voided']];
+    if (isset($filters['active'])) $where[] = ['active', '=', $filters['active'] === 'true'];
+    if (isset($filters['active'])) $where[] = ['voided', '=', $filters['voided'] === 'true'];
     $statements = $this->query->where($lrsId, $where);
 
     // Adds filters that don't have options.
