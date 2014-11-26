@@ -61,15 +61,15 @@ class EloquentStatementRepository implements StatementRepository {
       'registration' => null,
       'since' => null,
       'until' => null,
-      'active' => 'true',
-      'voided' => 'false'
+      'active' => true,
+      'voided' => false
     ], $filters);
 
     // Defaults options.
     $options = array_merge([
-      'related_activity' => 'false',
-      'related_agents' => 'false',
-      'ascending' => 'true',
+      'related_activity' => false,
+      'related_agents' => false,
+      'ascending' => true,
       'format' => 'exact',
       'offset' => 0,
       'limit' => self::DEFAULT_LIMIT
@@ -78,8 +78,8 @@ class EloquentStatementRepository implements StatementRepository {
     // Filters by date.
     if (isset($filters['since'])) $where[] = ['statement.stored', '>', $filters['since']];
     if (isset($filters['until'])) $where[] = ['statement.stored', '<', $filters['until']];
-    if (isset($filters['active'])) $where[] = ['active', '=', $filters['active'] === 'true'];
-    if (isset($filters['active'])) $where[] = ['voided', '=', $filters['voided'] === 'true'];
+    if (isset($filters['active'])) $where[] = ['active', '=', $filters['active']];
+    if (isset($filters['voided'])) $where[] = ['voided', '=', $filters['voided']];
     $statements = $this->query->where($lrsId, $where);
 
     // Adds filters that don't have options.
@@ -91,8 +91,7 @@ class EloquentStatementRepository implements StatementRepository {
     ]);
 
     // Filters by activity.
-    $activity = isset($filters['activity']) ? $filters['activity']: null;
-    $statements = $this->addOptionFilter($statements, $activity, $options['related_activity'], [
+    $statements = $this->addOptionFilter($statements, $filters['activity'], $options['related_activity'], [
       'statement.object.id'
     ], [
       'statement.context.contextActivities.parent.id',
@@ -102,7 +101,7 @@ class EloquentStatementRepository implements StatementRepository {
     ]);
 
     // Filters by agent.
-    $agent = isset($filters['agent']) ? json_decode($filters['agent'], true) : null;
+    $agent = $filters['agent'];
     $identifier = $this->getIdentifier($agent);
     $agent = isset($agent) && isset($agent[$identifier]) ? $agent[$identifier] : null;
     $statements = $this->addOptionFilter($statements, $agent, $options['related_agents'], [
@@ -115,7 +114,7 @@ class EloquentStatementRepository implements StatementRepository {
     ]);
 
     // Uses ordering.
-    if (isset($options['ascending']) && $options['ascending'] == 'true') {
+    if (isset($options['ascending']) && $options['ascending'] === true) {
       $statements = $statements->orderBy('statement.stored', 'ASC');
     } else {
       $statements = $statements->orderBy('statement.stored', 'DESC');
@@ -169,7 +168,7 @@ class EloquentStatementRepository implements StatementRepository {
   private function addOptionFilter(Builder $statements, $value, $option, array $specific, array $broad) {
     $keys = $specific;
 
-    if (isset($option) && $option == 'true') {
+    if (isset($option) && $option === true) {
       $keys = array_merge($keys, $broad);
     }
 
@@ -264,6 +263,7 @@ class EloquentStatementRepository implements StatementRepository {
     if (isset($actor['mbox'])) return 'mbox';
     if (isset($actor['account'])) return 'account';
     if (isset($actor['openid'])) return 'openid';
+    if (isset($actor['mbox_sha1sum'])) return 'mbox_sha1sum';
     return null;
   }
 
@@ -296,8 +296,9 @@ class EloquentStatementRepository implements StatementRepository {
 
     // Replace parts of the statements.
     $statement['actor'] = $actor;
+    $identifier = $this->getAgentIdentifier($statement['object']) ?: 'id';
     $statement['object'] = [
-      'id' => $statement['object']['id'],
+      $identifier => $statement['object'][$identifier],
       'objectType' => isset($statement['object']['objectType']) ? $statement['object']['objectType'] : 'Activity'
     ];
 
