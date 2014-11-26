@@ -97,11 +97,15 @@ class StatementController extends BaseController {
     }
 
     // Saves $statements with $attachments.
-    return $this->statement->create(
-      $statements,
-      $this->lrs,
-      $attachments
-    );
+    try {
+      return $this->statement->create(
+        $statements,
+        $this->lrs,
+        $attachments
+      );
+    } catch (\Exception $e) {
+      return BaseController::errorResponse($e->getMessage(), 400);
+    }
   }
 
   /**
@@ -145,7 +149,7 @@ class StatementController extends BaseController {
       'active' => \LockerRequest::getParam('active', 'true'),
       'voided' => \LockerRequest::getParam('voided', 'false')
     ];
-    
+
 
     // Gets the options/flags from the request.
     $options = [
@@ -190,7 +194,7 @@ class StatementController extends BaseController {
 
   /**
    * Gets the statement with the given $id.
-   * @param UUID $id 
+   * @param UUID $id
    * @param boolean $voided determines if the statement is voided.
    * @return Statement
    */
@@ -223,7 +227,7 @@ class StatementController extends BaseController {
 
     // Replaces '&46;' in keys with '.' in statements.
     // http://docs.learninglocker.net/docs/statements#quirks
-    $statements = $statements ?: [];    
+    $statements = $statements ?: [];
     foreach ($statements as &$s) {
       $s = \app\locker\helpers\Helpers::replaceHtmlEntity($s['statement']);
     }
