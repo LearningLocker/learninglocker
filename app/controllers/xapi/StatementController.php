@@ -128,6 +128,13 @@ class StatementController extends BaseController {
     return \Response::json(null, BaseController::NO_CONTENT);
   }
 
+  private function jsonParam($param, $default = null) {
+    $paramValue = \LockerRequest::getParam($param, $default);
+    $decoded = gettype($paramValue) === 'string' ? json_decode($paramValue, true) : $paramValue;
+    $value = isset($decoded) ? $decoded : $paramValue;
+    return $value;
+  }
+
   /**
    * Gets an array of statements.
    * https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#723-getstatements
@@ -136,25 +143,25 @@ class StatementController extends BaseController {
   public function index() {
     // Gets the filters from the request.
     $filters = [
-      'agent' => \LockerRequest::getParam('agent'),
-      'activity' => \LockerRequest::getParam('activity'),
-      'verb' => \LockerRequest::getParam('verb'),
-      'registration' => \LockerRequest::getParam('registration'),
-      'since' => \LockerRequest::getParam('since'),
-      'until' => \LockerRequest::getParam('until'),
-      'active' => \LockerRequest::getParam('active', 'true'),
-      'voided' => \LockerRequest::getParam('voided', 'false')
+      'agent' => $this->jsonParam('agent'),
+      'activity' => $this->jsonParam('activity'),
+      'verb' => $this->jsonParam('verb'),
+      'registration' => $this->jsonParam('registration'),
+      'since' => $this->jsonParam('since'),
+      'until' => $this->jsonParam('until'),
+      'active' => $this->jsonParam('active', true),
+      'voided' => $this->jsonParam('voided', false)
     ];
     
 
     // Gets the options/flags from the request.
     $options = [
-      'related_activity' => \LockerRequest::getParam('related_activity', 'false'),
-      'related_agents' => \LockerRequest::getParam('related_agents', 'false'),
-      'ascending' => \LockerRequest::getParam('ascending', 'true'),
-      'format' => \LockerRequest::getParam('format', 'exact'),
-      'offset' => \LockerRequest::getParam('offset', 0),
-      'limit' => \LockerRequest::getParam('limit', null)
+      'related_activity' => $this->jsonParam('related_activity', false),
+      'related_agents' => $this->jsonParam('related_agents', false),
+      'ascending' => $this->jsonParam('ascending', true),
+      'format' => $this->jsonParam('format', 'exact'),
+      'offset' => $this->jsonParam('offset', 0),
+      'limit' => $this->jsonParam('limit')
     ];
 
     // Gets the $statements from the LRS (with the $lrsId) that match the $filters with the $options.
