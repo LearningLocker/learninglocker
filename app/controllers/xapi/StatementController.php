@@ -10,9 +10,6 @@ class StatementController extends BaseController {
   const STATEMENT_ID = 'statementId';
   const VOIDED_ID = 'voidedStatementId';
 
-  // Number of statements to return by default.
-  const DEFAULT_LIMIT = 100;
-
   // Defines properties to be set to constructor parameters.
   protected $statement, $query;
 
@@ -156,7 +153,7 @@ class StatementController extends BaseController {
       'ascending' => \LockerRequest::getParam('ascending', 'true'),
       'format' => \LockerRequest::getParam('format', 'exact'),
       'offset' => \LockerRequest::getParam('offset', 0),
-      'limit' => \LockerRequest::getParam('limit', self::DEFAULT_LIMIT)
+      'limit' => \LockerRequest::getParam('limit', Statement::DEFAULT_LIMIT)
     ];
 
     // Gets the $statements from the LRS (with the $lrsId) that match the $filters with the $options.
@@ -220,7 +217,7 @@ class StatementController extends BaseController {
     $options = array_merge([
       'total' => count($statements),
       'offset' => 0,
-      'limit' => self::DEFAULT_LIMIT
+      'limit' => Statement::DEFAULT_LIMIT
     ], $options);
 
     // Replaces '&46;' in keys with '.' in statements.

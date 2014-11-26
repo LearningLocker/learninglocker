@@ -12,6 +12,9 @@ class EloquentStatementRepository implements StatementRepository {
   // Defines properties to be set to construtor parameters.
   protected $statement, $activity, $query;
 
+  // Number of statements to return by default.
+  const DEFAULT_LIMIT = 100;
+
   /**
    * Constructs a new EloquentStatementRepository.
    * @param Statement $statement
@@ -49,6 +52,28 @@ class EloquentStatementRepository implements StatementRepository {
    */
   public function index($lrsId, array $filters, array $options) {
     $where = [];
+
+    // Defaults filters.
+    $filters = array_merge([
+      'agent' => null,
+      'activity' => null,
+      'verb' => null,
+      'registration' => null,
+      'since' => null,
+      'until' => null,
+      'active' => true,
+      'voided' => false
+    ], $filters);
+
+    // Defaults options.
+    $options = array_merge([
+      'related_activity' => 'false',
+      'related_agents' => 'false',
+      'ascending' => 'true',
+      'format' => 'exact',
+      'offset' => 0,
+      'limit' => self::DEFAULT_LIMIT
+    ], $options);
 
     // Filters by date.
     if (isset($filters['since'])) $where[] = ['statement.stored', '>', $filters['since']];
