@@ -100,12 +100,11 @@ class StatementController extends BaseController {
     }
 
     // Saves $statements with $attachments.
-    return $this->sendResponse($this->statement->create(
+    return $this->statement->create(
       $statements,
       $this->lrs,
       $attachments
-    ));
-
+    );
   }
 
   /**
@@ -128,13 +127,7 @@ class StatementController extends BaseController {
     // Attempts to create the statement if `statementId` is present.
     $statement['id'] = $statementId;
     $save = $this->statement->create([$statement], $this->lrs);
-
-    // Sends a response.
-    if ($save['success'] == 'true') {
-      return \Response::json(['success'  => true], BaseController::NO_CONTENT);
-    } else {
-      return $this->sendResponse($save);
-    }
+    return \Response::json(null, BaseController::NO_CONTENT);
   }
 
   /**
@@ -150,8 +143,11 @@ class StatementController extends BaseController {
       'verb' => \LockerRequest::getParam('verb'),
       'registration' => \LockerRequest::getParam('registration'),
       'since' => \LockerRequest::getParam('since'),
-      'until' => \LockerRequest::getParam('until')
+      'until' => \LockerRequest::getParam('until'),
+      'active' => true,
+      'voided' => false
     ];
+    
 
     // Gets the options/flags from the request.
     $options = [
@@ -204,8 +200,12 @@ class StatementController extends BaseController {
     // Runs filters.
     if ($result = $this->checkVersion()) return $result;
 
-    $statement = $this->statement->show($this->lrs->_id, $id, $voided);
-    return $statement->first()->toArray()['statement'];
+    $statement = $this->statement->show($this->lrs->_id, $id, $voided)->first();
+    if ($statement) {
+      return $statement['statement'];
+    } else {
+      return \Response::json(null, 404);
+    }
   }
 
   /**
@@ -215,7 +215,7 @@ class StatementController extends BaseController {
    * @param array $debug Log for debgging information.
    * @return response
    **/
-  public function makeStatementObject(array $statements, array $options) {
+  private function makeStatementObject(array $statements, array $options) {
     // Merges options with default options.
     $options = array_merge([
       'total' => count($statements),
@@ -243,20 +243,10 @@ class StatementController extends BaseController {
     $response = \Response::make($statementResult, BaseController::OK);
     $response->headers->set(
       'X-Experience-API-Consistent-Through',
-      $this->getConsistentThrough()
+      $this->statement->getCurrentDate()
     );
 
     return $response;
-  }
-
-  /**
-   * Calculates the consistent through xAPI header.
-   * @return string
-   */
-  private function getConsistentThrough() {
-    $current_date = \DateTime::createFromFormat('U.u', sprintf('%.4f', microtime(true)));
-    $current_date->setTimezone(new \DateTimeZone(\Config::get('app.timezone')));
-    return $current_date->format('Y-m-d\TH:i:s.uP');
   }
 
   /**
@@ -293,7 +283,7 @@ class StatementController extends BaseController {
    * @param array $outcome.
    * @return Response.
    **/
-  public function sendResponse($outcome) {
+  private function sendResponse($outcome) {
     switch ($outcome['success']) {
       case 'true':
         return \Response::json($outcome['ids'], BaseController::OK);
@@ -310,7 +300,7 @@ class StatementController extends BaseController {
    * Checks params to comply with requirements.
    * https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#723-getstatements
    **/
-  public function validateIds() {
+  private function validateIds() {
     // Attempts to get IDs from the params.
     $statementId = \LockerRequest::getParam(self::STATEMENT_ID);
     $voidedId = \LockerRequest::getParam(self::VOIDED_ID);
