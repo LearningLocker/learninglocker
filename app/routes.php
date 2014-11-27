@@ -331,11 +331,9 @@ Route::get('data/xAPI/about', function() {
   ]);
 });
 
-Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), function(){
+Route::group( array('prefix' => 'data/xAPI', 'before'=>'auth.statement'), function(){
 
   Config::set('xapi.using_version', '1.0.1');
-
-  Route::options('/{extra}',  'Controllers\API\BaseController@CORSOptions')->where('extra', '(.*)');
 
   // Statement API.
   Route::get('statements/grouped', array(
@@ -382,8 +380,6 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
 Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(){
 
   Config::set('api.using_version', 'v1');
-
-  Route::options('/{extra}',  'Controllers\API\BaseController@CORSOptions')->where('extra', '(.*)');
 
   Route::get('/', function() {
     return Response::json( array('version' => Config::get('api.using_version')));
@@ -498,6 +494,12 @@ Route::get('secure-route', array('before' => 'oauth:basic', function(){
     return "oauth secured route ";
 }));
 
+//Add OPTIONS routes for all defined xAPI and api routes
+foreach( Route::getRoutes()->getIterator() as $route  ){
+  if( $route->getPrefix() === 'data/xAPI' || $route->getPrefix() === 'api/v1' ){
+    Route::options($route->getUri(),  'Controllers\API\BaseController@CORSOptions');
+  }
+}
 
 
 /*
