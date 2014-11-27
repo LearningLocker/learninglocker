@@ -30,11 +30,11 @@ class xAPIValidation {
   public function __construct(){}
 
   public function getErrors() {
-    return $errors;
+    return $this->errors;
   }
 
   public function getStatus() {
-    return $status;
+    return $this->status;
   }
 
   /**

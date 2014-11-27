@@ -621,14 +621,17 @@ class EloquentStatementRepository implements StatementRepository {
    **/
   private function storeAttachments( $attachments, $lrs ){
 
-    foreach( $attachments as $a ){
+    foreach( $attachments as $attachment ){
+      // Determines the delimiter.
+      $delim = "\n";
+      if (strpos($attachment, "\r".$delim) !== false) $delim = "\r".$delim;
 
       // Separate body contents from headers
-      $a = ltrim($a, "\n");
-      list($raw_headers, $body) = explode("\n\n", $a, 2);
+      $attachment = ltrim($attachment, $delim);
+      list($raw_headers, $body) = explode($delim.$delim, $attachment, 2);
 
       // Parse headers and separate so we can access
-      $raw_headers = explode("\n", $raw_headers);
+      $raw_headers = explode($delim, $raw_headers);
       $headers     = array();
       foreach ($raw_headers as $header) {
         list($name, $value) = explode(':', $header);

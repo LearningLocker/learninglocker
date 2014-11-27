@@ -52,20 +52,15 @@ class StatementController extends BaseController {
   }
 
   /**
-   * Stores (POSTs) a newly created statement in storage.
-   * @return Response
+   * Deals with multipart requests.
+   * @return ['content' => $content, 'attachments' => $attachments].
    */
-  public function store() {
-    // Validates request.
-    if ($result = $this->checkVersion()) return $result;
-
+  private function getParts() {
     $content = \LockerRequest::getContent();
-
-    // Gets the content type.
-    $types = explode(';', \LockerRequest::header('content-type'), 2);
+    $contentType = \LockerRequest::header('content-type');
+    $types = explode(';', $contentType, 2);
     $mimeType = count($types) >= 1 ? $types[0] : $types;
 
-    // Deals with physical attachments.
     if ($mimeType == 'multipart/mixed') {
       $components = Attachments::setAttachments($contentType, $content);
 
@@ -89,6 +84,41 @@ class StatementController extends BaseController {
     } else {
       $attachments = '';
     }
+
+    return [
+      'content' => $content,
+      'attachments' => $attachments
+    ];
+  }
+
+  private function checkContentType() {
+    $contentType = \LockerRequest::header('Content-Type');
+    if ($contentType === null) {
+      return BaseController::errorResponse('Missing Content-Type.', 400);
+    }
+
+    $validator = new \app\locker\statements\xAPIValidation();
+    $validator->checkTypes('Content-Type', $contentType, 'contentType', 'headers');
+    if ($validator->getStatus() !== 'passed') {
+      return BaseController::errorResponse(implode(',', $validator->getErrors()), 400);
+    }
+  }
+
+  /**
+   * Stores (POSTs) a newly created statement in storage.
+   * @return Response
+   */
+  public function store() {
+    // Validates request.
+    if ($result = $this->checkVersion()) return $result;
+    if ($result = $this->checkContentType()) return $result;
+    if (\LockerRequest::hasParam(self::STATEMENT_ID)) {
+      return BaseController::errorResponse('Statement ID parameter is invalid.', 400);
+    }
+
+    $parts = $this->getParts();
+    $content = $parts['content'];
+    $attachments = $parts['attachments'];
 
     $statements = json_decode($content, true);
 
@@ -116,9 +146,14 @@ class StatementController extends BaseController {
   public function update() {
     // Runs filters.
     if ($result = $this->checkVersion()) return $result;
+    if ($result = $this->checkContentType()) return $result;
+
+    $parts = $this->getParts();
+    $content = $parts['content'];
+    $attachments = $parts['attachments'];
 
     // Decodes the statement.
-    $statement = json_decode(\LockerRequest::getContent(), true);
+    $statement = json_decode($content, true);
 
     $statementId = \LockerRequest::getParam(self::STATEMENT_ID);
 
@@ -130,7 +165,7 @@ class StatementController extends BaseController {
     // Attempts to create the statement if `statementId` is present.
     $statement['id'] = $statementId;
     try {
-      $save = $this->statement->create([$statement], $this->lrs);
+      $save = $this->statement->create([$statement], $this->lrs, $attachments);
     } catch (\Exception $e) {
       return BaseController::errorResponse($e->getMessage(), 400);
     }
