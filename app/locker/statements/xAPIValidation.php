@@ -173,6 +173,25 @@ class xAPIValidation {
 
   }
 
+
+  /**
+   * Validate team.
+   * @requirements https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#context
+   *
+   * @param array $group
+   */
+  public function validateTeam($team, $groupLimit = null){
+    if ($team['objectType'] == 'Group') {
+      return $this->validateGroup($team, $groupLimit);
+    }
+    $this->setError(\Lang::get('xAPIValidation.errors.type', array(
+          'key' => $team['objectType'],
+          'type' => 'objectType',
+          'section' => 'team'
+        )));
+    return false;
+  }
+
   /**
    * Validate agent.
    * @requirements https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#actor
@@ -282,7 +301,11 @@ class xAPIValidation {
       case 'Agent': return $this->validateAgent($actor);
       case 'Group': return $this->validateGroup($actor, $groupLimit);
       default:
-        $this->setError('The actor\'s objectType must be Agent or Group');
+        $this->setError(\Lang::get('xAPIValidation.errors.type', array(
+          'key' => $actor['objectType'],
+          'type' => 'objectType',
+          'section' => 'actor'
+        )));
         return false;
     }
   }
@@ -366,6 +389,7 @@ class xAPIValidation {
           );
         break;
         case 'Agent':
+        case 'Group':
           $object_valid = $this->validateActor($object);
         break;
         default: // Activity.
@@ -388,7 +412,7 @@ class xAPIValidation {
                                     'description'   => array('lang_map'),
                                     'type'          => array('iri'),
                                     'moreInfo'      => array('irl'),
-                                    'extensions'    => array('array'),
+                                    'extensions'    => array('emptyArray'),
                                     'interactionType' => array('string'),
                                     'correctResponsesPattern' => array('array'),
                                     'choices'       => array('array'),
@@ -481,18 +505,24 @@ class xAPIValidation {
   public function validateContext( $context ){
 
     $valid_context_keys = array('registration'      => array('uuid',   false),
-                                'instructor'        => array('emptyArray',  false),
-                                'team'              => array('emptyArray',  false),
+                                'instructor'        => array('array',  false),
+                                'team'              => array('array',  false),
                                 'contextActivities' => array('emptyArray', false),
                                 'revision'          => array('string', false),
                                 'platform'          => array('string', false),
-                                'language'          => array('string', false),
+                                'language'          => array('lang', false),
                                 'statement'         => array('statementRef', false),
                                 'extensions'        => array('emptyArray',  false));
 
     //check all keys submitted are valid
     $this->checkParams($valid_context_keys, $context, 'context');
 
+    if ( isset($context['instructor'])) {
+      $this->validateActor($context['instructor']);
+    }
+    if ( isset($context['team'])) {
+      $this->validateTeam($context['team']);
+    }
     //check properties in contextActivies
     if( isset($context['contextActivities']) ){
 
@@ -510,30 +540,48 @@ class xAPIValidation {
       //While the contextActivity may be an object on input, it must be stored as an array - so
       //on each type we will check if an associative array has been passed and insert it into an array if needed
       if( isset($context['contextActivities']['parent']) ){
-        if( $this->isAssoc( $context['contextActivities']['parent'] ) ){
-          $this->statement['context']['contextActivities']['parent'] = array( $context['contextActivities']['parent'] );
-        }
+        $this->validateContextActivity($context['contextActivities']['parent'], 'parent');
       }
 
       if( isset($context['contextActivities']['grouping']) ){
-        if( $this->isAssoc( $context['contextActivities']['grouping'] ) ){
-          $this->statement['context']['contextActivities']['grouping'] = array( $context['contextActivities']['grouping'] );
-        }
+        $this->validateContextActivity($context['contextActivities']['grouping'], 'grouping');
       }
 
       if( isset($context['contextActivities']['category']) ){
-        if( $this->isAssoc( $context['contextActivities']['category'] ) ){
-            $this->statement['context']['contextActivities']['category'] = array( $context['contextActivities']['category'] );
-        }
+        $this->validateContextActivity($context['contextActivities']['category'], 'category');
       }
 
       if( isset($context['contextActivities']['other']) ){
-        if( $this->isAssoc( $context['contextActivities']['other'] ) ){
-          $this->statement['context']['contextActivities']['other'] = array( $context['contextActivities']['other'] );
-        }
+        $this->validateContextActivity($context['contextActivities']['other'], 'other');
       }
     }
 
+  }
+
+  /**
+   *
+   * Validate contextActivities. Optional.
+   * @requirements https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#4162-contextactivities-property
+   *
+   * @param array $contextactivity
+   * @param string $key
+   */
+  public function validateContextActivity($contextactivity, $key) {
+    if( $this->isAssoc( $contextactivity ) ){
+      $this->statement['context']['contextActivities'][$key] = array( $contextactivity );
+    }
+    foreach ($contextactivity as $object) {
+      if ($object['objectType'] == 'Activity') {
+        $this->validateObject($object);
+        return true;
+      }
+      $this->setError(\Lang::get('xAPIValidation.errors.type', array(
+          'key' => $object['objectType'],
+          'type' => 'objectType',
+          'section' => 'contextActivities'
+      )));
+    }
+    return false;
   }
 
   /**
@@ -611,7 +659,7 @@ class xAPIValidation {
     }
 
     //check format using http://www.pelagodesign.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
-    if (!preg_match('/^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/', $timestamp) > 0) {
+    if (!preg_match('/^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|((?!-0{2}(:0{2})?)([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?)?$/', $timestamp) > 0) {
       $this->setError(\Lang::get('xAPIValidation.errors.timestamp'));
       return false;
     }
@@ -989,6 +1037,15 @@ class xAPIValidation {
           ))
         );
       break;
+      case 'lang':
+        return $this->assertionCheck(
+          $this->validateLanguageCode($value),
+          \Lang::get('xAPIValidation.errors.lang', array(
+          'key' => $key,
+          'section' => $section
+          ))
+        );
+      break;
       case 'base64':
         return $this->assertionCheck(
           base64_encode(base64_decode($value)) === $value,
@@ -1117,23 +1174,35 @@ class xAPIValidation {
   }
 
   /**
-  * Regex to validate language map.
-  * Regex from https://github.com/fugu13/tincanschema/blob/master/tincan.schema.json
+  * Validate language map.
   *
-  * @param string $item
+  * @param array $item
   * @return boolean
   *
   */
   public function validateLanguageMap( $item ){
     foreach( $item as $k => $v ){
-      if( !preg_match('/^(([a-zA-Z]{2,8}((-[a-zA-Z]{3}){0,3})(-[a-zA-Z]{4})?((-[a-zA-Z]{2})|(-\d{3}))?(-[a-zA-Z\d]{4,8})*(-[a-zA-Z\d](-[a-zA-Z\d]{1,8})+)*)|x(-[a-zA-Z\d]{1,8})+|en-GB-oed|i-ami|i-bnn|i-default|i-enochian|i-hak|i-klingon|i-lux|i-mingo|i-navajo|i-pwn|i-tao|i-tsu|i-tay|sgn-BE-FR|sgn-BE-NL|sgn-CH-DE)$/iu', $k)){
+      if( !$this->validateLanguageCode( $k ) ){
         return false;
       }
     }
-
     return true;
   }
 
+  /**
+   * Regex to validate RFC 5646 language code
+   * Regex from https://github.com/fugu13/tincanschema/blob/master/tincan.schema.json
+   *
+   * @param string $item
+   * @return boolean
+   *
+   */
+  public function validateLanguageCode( $item ) {
+    if (preg_match('/^(([a-zA-Z]{2,8}((-[a-zA-Z]{3}){0,3})(-[a-zA-Z]{4})?((-[a-zA-Z]{2})|(-\d{3}))?(-[a-zA-Z\d]{4,8})*(-[a-zA-Z\d](-[a-zA-Z\d]{1,8})+)*)|x(-[a-zA-Z\d]{1,8})+|en-GB-oed|i-ami|i-bnn|i-default|i-enochian|i-hak|i-klingon|i-lux|i-mingo|i-navajo|i-pwn|i-tao|i-tsu|i-tay|sgn-BE-FR|sgn-BE-NL|sgn-CH-DE)$/iu', $item)){
+      return true;
+    }
+    return false;
+  }
   /**
    * Validate if a passed item is a valid UUID
    *
