@@ -128,7 +128,11 @@ class StatementController extends BaseController {
 
     // Attempts to create the statement if `statementId` is present.
     $statement['id'] = $statementId;
-    $save = $this->statement->create([$statement], $this->lrs);
+    try {
+      $save = $this->statement->create([$statement], $this->lrs);
+    } catch (\Exception $e) {
+      return BaseController::errorResponse($e->getMessage(), 400);
+    }
     return \Response::json(null, BaseController::NO_CONTENT);
   }
 
