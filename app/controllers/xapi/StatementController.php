@@ -35,6 +35,7 @@ class StatementController extends BaseController {
   public function get() {
     // Runs filters.
     if ($result = $this->validateIds()) return $result;
+    if ($result = $this->checkVersion()) return $result;
 
     // Attempts to get IDs from the params.
     $statementId = \LockerRequest::getParam(self::STATEMENT_ID);
@@ -173,11 +174,15 @@ class StatementController extends BaseController {
     ];
 
     // Gets the $statements from the LRS (with the $lrsId) that match the $filters with the $options.
-    $statements = $this->statement->index(
-      $this->lrs->_id,
-      $filters,
-      $options
-    );
+    try {
+      $statements = $this->statement->index(
+        $this->lrs->_id,
+        $filters,
+        $options
+      );
+    } catch (\Exception $e) {
+      return BaseController::errorResponse($e->getMessage(), 400);
+    }
 
     $total = $statements->count();
 

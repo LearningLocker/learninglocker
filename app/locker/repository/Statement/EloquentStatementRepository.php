@@ -103,6 +103,7 @@ class EloquentStatementRepository implements StatementRepository {
     // Filters by agent.
     $agent = $filters['agent'];
     $identifier = $this->getIdentifier($agent);
+    if (isset($agent) && !is_array($agent)) throw new \Exception('Invalid agent');
     $agent = isset($agent) && isset($agent[$identifier]) ? $agent[$identifier] : null;
     $statements = $this->addOptionFilter($statements, $agent, $options['related_agents'], [
       'statement.actor.'.$identifier,
