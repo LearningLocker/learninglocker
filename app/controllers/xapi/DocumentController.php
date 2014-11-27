@@ -37,6 +37,9 @@ abstract class DocumentController extends BaseController {
   }
 
   public function index() {
+    // Runs filters.
+    if ($result = $this->checkVersion()) return $result;
+
     // Gets all documents.
     $documents = $this->document->all(
       $this->lrs->_id,
@@ -56,6 +59,9 @@ abstract class DocumentController extends BaseController {
    * @return DocumentResponse
    */
   public function show() {
+    // Runs filters.
+    if ($result = $this->checkVersion()) return $result;
+
     return $this->documentResponse($this->getShowData());
   }
 
@@ -64,6 +70,9 @@ abstract class DocumentController extends BaseController {
    * @return Response
    */
   public function store() {
+    // Runs filters.
+    if ($result = $this->checkVersion()) return $result;
+
     // Checks and gets the data from the params.
     $data = $this->getShowData();
 
@@ -91,6 +100,9 @@ abstract class DocumentController extends BaseController {
    * @return Response
    */
   public function update() {
+    // Runs filters.
+    if ($result = $this->checkVersion()) return $result;
+
     return $this->store();
   }
 
@@ -99,6 +111,9 @@ abstract class DocumentController extends BaseController {
    * @return Response
    */
   public function destroy(){
+    // Runs filters.
+    if ($result = $this->checkVersion()) return $result;
+
     if (!\LockerRequest::hasParam($this->identifier)) {
       return BaseController::errorResponse('Multiple document DELETE not permitted');
     }
