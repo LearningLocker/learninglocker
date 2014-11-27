@@ -29,6 +29,14 @@ class xAPIValidation {
    */
   public function __construct(){}
 
+  public function getErrors() {
+    return $errors;
+  }
+
+  public function getStatus() {
+    return $status;
+  }
+
   /**
    * Validator
    *
