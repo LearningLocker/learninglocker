@@ -438,26 +438,32 @@ class EloquentStatementRepository implements StatementRepository {
    */
   private function isVoiding(Statement $statement) {
     return (
-      ($statement->statement['verb']['id'] !== 'http://adlnet.gov/expapi/verbs/voided') &&
+      ($statement->statement['verb']['id'] === 'http://adlnet.gov/expapi/verbs/voided') &&
       $this->isReferencing($statement)
     );
   }
 
-  private function voidStatements(array $statements, \Lrs $lrs) {
-    $unvoid = function (Statement $statement) use ($lrs) {
-      if ($statement->active === true) return $statement;
-      if (!$this->isVoiding($statement)) return $statement;
+  private function toggleVoid(Statement $statement, \Lrs $lrs) {
+    if ($statement->active === true) return $statement;
+    if (!$this->isVoiding($statement)) return $statement;
 
-      // Toggles voided $statement.
-      $reference = $this->query->where($lrs->_id, [
-        ['statement.id', '=', $statement->statement['object']['id']],
-        ['statement.object.objectType', '=', 'StatementRef']
-      ])->first();
+    // Toggles voided $statement.
+    $reference = $this->query->where($lrs->_id, [
+      ['statement.id', '=', $statement->statement['object']['id']]
+    ])->first();
+
+    if ($reference) {
       $reference->voided = !$reference->voided;
       if (!$reference->save()) throw new \Exception('Failed to toggle voided statement.');
-      $unvoid($reference);
+      $this->toggleVoid($reference, $lrs);
+    }
 
-      return $statement;
+    return $statement;
+  }
+
+  private function voidStatements(array $statements, \Lrs $lrs) {
+    $unvoid = function (Statement $statement) use ($lrs) {
+      return $this->toggleVoid($statement, $lrs);
     };
     return array_map($unvoid, $statements);
   }
