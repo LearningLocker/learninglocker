@@ -32,6 +32,9 @@ class ActivityController extends DocumentController {
    * @return Response
    **/
   public function full() {
+    // Runs filters.
+    if ($result = $this->checkVersion()) return $result;
+
     return \Response::json(
       $this->activity->getActivity(
         $this->getIndexData()[key($required)]

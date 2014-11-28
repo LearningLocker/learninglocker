@@ -27,7 +27,10 @@ class StateController extends DocumentController {
    * @return Response
    */
   public function destroy(){
-    $singleDelete = !\LockerRequest::hasParam($this->identifier);
+    // Runs filters.
+    if ($result = $this->checkVersion()) return $result;
+
+    $singleDelete = \LockerRequest::hasParam($this->identifier);
 
     if ($singleDelete) {
       $data = $this->getShowData();

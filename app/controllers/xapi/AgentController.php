@@ -21,6 +21,9 @@ class AgentController extends DocumentController {
    * @return Response
    **/
   public function search() {
+    // Runs filters.
+    if ($result = $this->checkVersion()) return $result;
+
     $agent = (array) $this->getShowData()[key($required)];
     $person = ['objectType' => 'Person'];
 
