@@ -172,18 +172,6 @@ class StatementController extends BaseController {
     return \Response::json(null, BaseController::NO_CONTENT);
   }
 
-  private function jsonParam($type, $param, $default = null) {
-    $paramValue = \LockerRequest::getParam($param, $default);
-    $decoded = gettype($paramValue) === 'string' ? json_decode($paramValue, true) : $paramValue;
-    $value = isset($decoded) ? $decoded : $paramValue;
-    if (isset($value)) {
-      $validator = new \app\locker\statements\xAPIValidation();
-      $validator->checkTypes($param, $value, $type, 'params');
-      if ($validator->getStatus() !== 'passed') throw new \Exception(implode(',', $validator->getErrors()));
-    }
-    return $value;
-  }
-
   /**
    * Gets an array of statements.
    * https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#723-getstatements
@@ -193,25 +181,25 @@ class StatementController extends BaseController {
     try {
       // Gets the filters from the request.
       $filters = [
-        'agent' => $this->jsonParam('array', 'agent'),
-        'activity' => $this->jsonParam('irl', 'activity'),
-        'verb' => $this->jsonParam('irl', 'verb'),
-        'registration' => $this->jsonParam('uuid', 'registration'),
-        'since' => $this->jsonParam('timestamp', 'since'),
-        'until' => $this->jsonParam('timestamp', 'until'),
-        'active' => $this->jsonParam('boolean', 'active', true),
-        'voided' => $this->jsonParam('boolean', 'voided', false)
+        'agent' => $this->validatedParam('array', 'agent'),
+        'activity' => $this->validatedParam('irl', 'activity'),
+        'verb' => $this->validatedParam('irl', 'verb'),
+        'registration' => $this->validatedParam('uuid', 'registration'),
+        'since' => $this->validatedParam('timestamp', 'since'),
+        'until' => $this->validatedParam('timestamp', 'until'),
+        'active' => $this->validatedParam('boolean', 'active', true),
+        'voided' => $this->validatedParam('boolean', 'voided', false)
       ];
 
 
       // Gets the options/flags from the request.
       $options = [
-        'related_activity' => $this->jsonParam('boolean', 'related_activity', false),
-        'related_agents' => $this->jsonParam('boolean', 'related_agents', false),
-        'ascending' => $this->jsonParam('boolean', 'ascending', true),
-        'format' => $this->jsonParam('string', 'format', 'exact'),
-        'offset' => $this->jsonParam('int', 'offset', 0),
-        'limit' => $this->jsonParam('int', 'limit')
+        'related_activity' => $this->validatedParam('boolean', 'related_activity', false),
+        'related_agents' => $this->validatedParam('boolean', 'related_agents', false),
+        'ascending' => $this->validatedParam('boolean', 'ascending', true),
+        'format' => $this->validatedParam('string', 'format', 'exact'),
+        'offset' => $this->validatedParam('int', 'offset', 0),
+        'limit' => $this->validatedParam('int', 'limit')
       ];
 
       // Gets the $statements from the LRS (with the $lrsId) that match the $filters with the $options.

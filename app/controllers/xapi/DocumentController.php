@@ -256,27 +256,24 @@ abstract class DocumentController extends BaseController {
     }
 
     // Checks required parameters.
-    foreach ($required as $name => &$expected_types) {
-      // Checks the parameter has been passed.
+    foreach ($required as $name => $expectedType) {
       if (!isset($data[$name])) {
-        \App::abort(400, 'Required parameter is missing - ' . $name);
-      } else if (!empty($expected_types)) {
-        $return_data[$name] = $this->checkTypes($name, $data[$name], $expected_types);
+        throw new \Exception('Required parameter is missing - ' . $name);
+      } else if ($expectedType !== null) {
+        $return_data[$name] = $this->requiredValue($name, $data[$name], $expectedType);
       } else {
         $return_data[$name] = $data[$name];
       }
     }
 
     // Checks optional parameters.
-    foreach ($optional as $name => &$expected_types) {
-      if (isset($data[$name])) {
-        $return_data[$name] = !empty($expected_types) ? $this->checkTypes(
-          $name,
-          $data[$name],
-          $expected_types
-        ) : $data[$name];
-      } else {
+    foreach ($optional as $name => $expectedType) {
+      if (!isset($data[$name])) {
         $return_data[$name] = null;
+      } else if ($expectedType !== null) {
+        $return_data[$name] = $this->optionalValue($name, $data[$name], $expectedType);
+      } else {
+        $return_data[$name] = $data[$name];
       }
     }
 
@@ -312,34 +309,21 @@ abstract class DocumentController extends BaseController {
     // Convert expected type string into array
     $expected_types = (is_string($expected_types)) ? [$expected_types] : $expected_types;
 
-    $type = gettype($value);
+    $validators = array_map(function ($expectedType) use ($name, $value) {
+      $validator = new \app\locker\statements\xAPIValidation();
+      $validator->checkTypes($name, $value, $expectedType, 'params');
+      return $this->jsonParam($expectedType, $value);
+    }, $expected_types);
 
-    // Returns an error if the type isn't an expected one.
-    if (!in_array($type, $expected_types)) {
+    $passes = array_filter($validators, function (\app\locker\statements\xAPIValidation $validator) {
+      return $validator->getStatus() === 'passed';
+    });
+
+    if (count($passes) < 1) {
       \App::abort(400, sprintf(
-        "`%s` is not an accepted type - expected %s - received %s",
+        "`%s` is not a %s",
         $name,
-        implode(',', $expected_types),
-        $type
-      ));
-    }
-
-    // Checks if we have requested a JSON parameter.
-    if (in_array('json', $expected_types)) {
-      $value = json_decode($value);
-      if (!is_object($value)) {
-        \App::abort(400, sprintf(
-          "`%s` is not an accepted type - expected a JSON formatted string",
-          $name
-        ));
-      }
-    }
-
-    // Checks if we have a timestamp paramater.
-    if (in_array('timestamp', $expected_types) && !$this->validateTimestamp($value)) {
-      \App::abort(400, sprintf(
-        "`%s` is not an accepted type - expected an ISO 8601 formatted timestamp",
-        $name
+        implode(',', $expected_types)
       ));
     }
 

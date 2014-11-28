@@ -190,8 +190,15 @@ class xAPIValidation {
         'account'      => array('array')
       ), $agent, 'actor'
     )) return false; // Invalid params.
+
+    // Validates objectType.
+    if (isset($agent['objectType']) && !in_array($agent['objectType'], ['Agent', 'Group'])) {
+      return false;
+    }
+
     // Validate identifier.
     if (!$this->validActorIdentifier($agent)) return false;
+
     return true; // Valid agent.
   }
 
@@ -723,7 +730,7 @@ class xAPIValidation {
     $count = $this->countIdentifiers($actor);
 
     // Must have one identifier.
-    if( $count > 1 || $count < 1){
+    if( $count !== 1){
       $this->setError(\Lang::get('xAPIValidation.errors.actor.one'));
       return false;
     }
@@ -884,6 +891,16 @@ class xAPIValidation {
   public function checkTypes($key, $value, $expected_type, $section ){
 
     switch($expected_type){
+      case 'agent':
+        return $this->assertionCheck(
+          $this->validateAgent($value),
+          \Lang::get('xAPIValidation.errors.type', array(
+            'key' => $key,
+            'section' => $section,
+            'type' => 'actorIdentifier'
+          ))
+        );
+      break;
       case 'string':
         return $this->assertionCheck(
           is_String($value),

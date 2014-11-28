@@ -57,6 +57,14 @@ Route::filter('auth.basic', function()
 | Login in once using key / secret to store statements or retrieve statements.
 |
 */
+function checkSecret(Jenssegers\Mongodb\Eloquent\Builder $clients, $secret) {
+  $client = $clients->first();
+  if ($client !== null && $client->api['basic_secret'] === $secret) {
+    return $client;
+  } else {
+    return null;
+  }
+}
 
 Route::filter('auth.statement', function(){
   //set passed credentials
@@ -67,28 +75,29 @@ Route::filter('auth.statement', function(){
 
   if( $method !== "OPTIONS" ){
 
-	//Note: this code is duplicated in Controllers\API\BaseController\GetLrs
+	  //Note: this code is duplicated in Controllers\API\BaseController\GetLrs
     //see if the lrs exists based on key and secret
-    $lrs = \Lrs::where('api.basic_key', $key)
-        ->where('api.basic_secret', $secret)
-        ->select('owner._id')->first();
-		
+    // $lrs = \Lrs::where('api.basic_key', $key)
+    //     ->where('api.basic_secret', $secret)
+    //     ->select('owner._id')->first();
+    $lrs = checkSecret(\Lrs::where('api.basic_key', $key), $secret);
 	
-	//if main credentials not matched, try the additional credentials
-	if ( $lrs == NULL ) {
-		$client = \Client::where('api.basic_key', $key)
-	    ->where('api.basic_secret', $secret)
-	    ->first();
-		if( $client != NULL ){
-			$lrs = \Lrs::find(  $client->lrs_id );
-		}
-		else {
-			return Response::json([
-        'error' => true,
-        'message' => 'Unauthorized request.'
-      ], 401); 
-		}
-	}
+  	//if main credentials not matched, try the additional credentials
+  	if ( $lrs == NULL ) {
+  		// $client = \Client::where('api.basic_key', $key)
+  	 //    ->where('api.basic_secret', $secret)
+  	 //    ->first();
+      $client = checkSecret(\Client::where('api.basic_key', $key), $secret); 
+  		if( $client != NULL ){
+  			$lrs = \Lrs::find(  $client->lrs_id );
+  		}
+  		else {
+  			return Response::json([
+          'error' => true,
+          'message' => 'Unauthorized request.'
+        ], 401); 
+  		}
+  	}
 
     //attempt login once
     if ( ! Auth::onceUsingId($lrs->owner['_id']) ) {
@@ -99,7 +108,6 @@ Route::filter('auth.statement', function(){
     }
     
   }
-
 });
 
 
