@@ -13,7 +13,7 @@ class StateController extends DocumentController {
   protected $required = [
     'activityId' => 'iri',
     'agent' => 'agent',
-    'stateId' => 'iri'
+    'stateId' => 'string'
   ];
   protected $optional = [
     'registration' => 'uuid'
