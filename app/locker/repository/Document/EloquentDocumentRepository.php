@@ -467,6 +467,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    * 
    */
   public function setQueryAgent( $query, $agent ){
+    $agent = (object) $agent;
 
     $agent_query = NULL;
 
@@ -490,6 +491,7 @@ class EloquentDocumentRepository implements DocumentRepository {
       $query->where( $agent_query['field'], $agent_query['value'] );
 
     } else if( isset($agent->account) ){ //else if there is an account
+      $agent->account = (object) $agent->account;
 
       if( isset($agent->account->homePage) && isset($agent->account->name ) ){
 

@@ -27,12 +27,16 @@ class BaseController extends APIBaseController {
    * @return mixed Result of the method.
    */
   public function selectMethod() {
-    switch ($this->method) {
-      case 'HEAD':
-      case 'GET': return $this->get();
-      case 'PUT': return $this->update();
-      case 'POST': return $this->store();
-      case 'DELETE': return $this->destroy();
+    try {
+      switch ($this->method) {
+        case 'HEAD':
+        case 'GET': return $this->get();
+        case 'PUT': return $this->update();
+        case 'POST': return $this->store();
+        case 'DELETE': return $this->destroy();
+      }
+    } catch (\Exception $e) {
+      return self::errorResponse($e->getMessage(), 400);
     }
   }
 
@@ -77,5 +81,41 @@ class BaseController extends APIBaseController {
       'success' => false,
       'message' => $message
     ], $statusCode);
+  }
+
+  protected function optionalValue($name, $value, $type) {
+    $decodedValue = $this->decodeValue($value);
+    if (isset($decodedValue)) $this->validateValue($name, $decodedValue, $type);
+    return $decodedValue;
+  }
+
+  protected function requiredValue($name, $value, $type) {
+    $decodedValue = $this->decodeValue($value);
+    if (isset($decodedValue)) {
+      $this->validateValue($name, $decodedValue, $type);
+    } else {
+      throw new \Exception('Required parameter is missing - ' . $name);
+    }
+    return $decodedValue;
+  }
+
+  protected function validatedParam($type, $param, $default = null) {
+    $paramValue = \LockerRequest::getParam($param, $default);
+    $value = $this->decodeValue($paramValue);
+    if (isset($value)) $this->validateValue($param, $value, $type);
+    return $value;
+  }
+
+  protected function decodeValue($value) {
+    $decoded = gettype($value) === 'string' ? json_decode($value, true) : $value;
+    return isset($decoded) ? $decoded : $value;
+  }
+
+  protected function validateValue($name, $value, $type) {
+    $validator = new \app\locker\statements\xAPIValidation();
+    $validator->checkTypes($name, $value, $type, 'params');
+    if ($validator->getStatus() !== 'passed') {
+      throw new \Exception(implode(',', $validator->getErrors()));
+    }
   }
 }
