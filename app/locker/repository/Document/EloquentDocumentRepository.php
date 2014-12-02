@@ -2,6 +2,7 @@
 
 use DocumentAPI;
 use Carbon\Carbon;
+use app\locker\helpers as Exceptions;
 
 class EloquentDocumentRepository implements DocumentRepository {
 
@@ -224,6 +225,13 @@ class EloquentDocumentRepository implements DocumentRepository {
 
     $existing_document = $this->findStateDoc( $lrs, $data['stateId'], $data['activityId'], $data['agent'], $data['registration'], true );
 
+    if ($method === 'PUT') $this->checkETag(
+      isset($existing_document->sha) ? $existing_document->sha : null,
+      $data['ifMatch'],
+      $data['ifNoneMatch'],
+      false
+    );
+
     if( !$existing_document ){
       $document                 = $this->documentapi;
 
@@ -309,6 +317,20 @@ class EloquentDocumentRepository implements DocumentRepository {
 
   }
 
+  private function checkETag($sha, $ifMatch, $ifNoneMatch, $noConflict = true) {
+    $ifMatch = isset($ifMatch) ? '"'.strtoupper($ifMatch).'"' : null;
+
+    if (isset($ifMatch) && $ifMatch !== $sha) {
+      throw new Exceptions\FailedPrecondition('Precondition (If-Match) failed.'); // 412.
+    } else if (isset($ifNoneMatch) && isset($sha) && $ifNoneMatch === '*') {
+      throw new Exceptions\FailedPrecondition('Precondition (If-None-Match) failed.'); // 412.
+    } else if ($noConflict && $sha !== null && !isset($ifNoneMatch) && !isset($ifMatch)) {
+      throw new Exceptions\Conflict('Check the current state of the resource then set the "If-Match" header with the current ETag to resolve the conflict.'); // 409.
+    } else {
+      return true;
+    }
+  }
+
 
   /**
    * Handle storing State documents
@@ -323,6 +345,12 @@ class EloquentDocumentRepository implements DocumentRepository {
   public function storeActivityDoc( $lrs, $data, $updated, $method ){
 
     $existing_document = $this->findActivityDoc( $lrs, $data['profileId'], $data['activityId'], true );
+
+    if ($method === 'PUT') $this->checkETag(
+      isset($existing_document->sha) ? $existing_document->sha : null,
+      $data['ifMatch'],
+      $data['ifNoneMatch']
+    );
 
     if( !$existing_document ){
       $document                 = $this->documentapi;
@@ -426,6 +454,12 @@ class EloquentDocumentRepository implements DocumentRepository {
 
     $existing_document = $this->findAgentDoc( $lrs, $data['profileId'], $data['agent'], true );
 
+    if ($method === 'PUT') $this->checkETag(
+      isset($existing_document->sha) ? $existing_document->sha : null,
+      $data['ifMatch'],
+      $data['ifNoneMatch']
+    );
+
     if( !$existing_document ){
       $document                 = $this->documentapi;
 
@@ -467,6 +501,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    * 
    */
   public function setQueryAgent( $query, $agent ){
+    $agent = (object) $agent;
 
     $agent_query = NULL;
 
@@ -490,6 +525,7 @@ class EloquentDocumentRepository implements DocumentRepository {
       $query->where( $agent_query['field'], $agent_query['value'] );
 
     } else if( isset($agent->account) ){ //else if there is an account
+      $agent->account = (object) $agent->account;
 
       if( isset($agent->account->homePage) && isset($agent->account->name ) ){
 

@@ -35,6 +35,7 @@ class StatementController extends BaseController {
   public function get() {
     // Runs filters.
     if ($result = $this->validateIds()) return $result;
+    if ($result = $this->checkVersion()) return $result;
 
     // Attempts to get IDs from the params.
     $statementId = \LockerRequest::getParam(self::STATEMENT_ID);
@@ -51,20 +52,15 @@ class StatementController extends BaseController {
   }
 
   /**
-   * Stores (POSTs) a newly created statement in storage.
-   * @return Response
+   * Deals with multipart requests.
+   * @return ['content' => $content, 'attachments' => $attachments].
    */
-  public function store() {
-    // Validates request.
-    if ($result = $this->checkVersion()) return $result;
-
+  private function getParts() {
     $content = \LockerRequest::getContent();
-
-    // Gets the content type.
-    $types = explode(';', \LockerRequest::header('content-type'), 2);
+    $contentType = \LockerRequest::header('content-type');
+    $types = explode(';', $contentType, 2);
     $mimeType = count($types) >= 1 ? $types[0] : $types;
 
-    // Deals with physical attachments.
     if ($mimeType == 'multipart/mixed') {
       $components = Attachments::setAttachments($contentType, $content);
 
@@ -88,6 +84,41 @@ class StatementController extends BaseController {
     } else {
       $attachments = '';
     }
+
+    return [
+      'content' => $content,
+      'attachments' => $attachments
+    ];
+  }
+
+  private function checkContentType() {
+    $contentType = \LockerRequest::header('Content-Type');
+    if ($contentType === null) {
+      return BaseController::errorResponse('Missing Content-Type.', 400);
+    }
+
+    $validator = new \app\locker\statements\xAPIValidation();
+    $validator->checkTypes('Content-Type', $contentType, 'contentType', 'headers');
+    if ($validator->getStatus() !== 'passed') {
+      return BaseController::errorResponse(implode(',', $validator->getErrors()), 400);
+    }
+  }
+
+  /**
+   * Stores (POSTs) a newly created statement in storage.
+   * @return Response
+   */
+  public function store() {
+    // Validates request.
+    if ($result = $this->checkVersion()) return $result;
+    if ($result = $this->checkContentType()) return $result;
+    if (\LockerRequest::hasParam(self::STATEMENT_ID)) {
+      return BaseController::errorResponse('Statement ID parameter is invalid.', 400);
+    }
+
+    $parts = $this->getParts();
+    $content = $parts['content'];
+    $attachments = $parts['attachments'];
 
     $statements = json_decode($content, true);
 
@@ -115,9 +146,14 @@ class StatementController extends BaseController {
   public function update() {
     // Runs filters.
     if ($result = $this->checkVersion()) return $result;
+    if ($result = $this->checkContentType()) return $result;
+
+    $parts = $this->getParts();
+    $content = $parts['content'];
+    $attachments = $parts['attachments'];
 
     // Decodes the statement.
-    $statement = json_decode(\LockerRequest::getContent(), true);
+    $statement = json_decode($content, true);
 
     $statementId = \LockerRequest::getParam(self::STATEMENT_ID);
 
@@ -128,15 +164,12 @@ class StatementController extends BaseController {
 
     // Attempts to create the statement if `statementId` is present.
     $statement['id'] = $statementId;
-    $save = $this->statement->create([$statement], $this->lrs);
+    try {
+      $save = $this->statement->create([$statement], $this->lrs, $attachments);
+    } catch (\Exception $e) {
+      return BaseController::errorResponse($e->getMessage(), 400);
+    }
     return \Response::json(null, BaseController::NO_CONTENT);
-  }
-
-  private function jsonParam($param, $default = null) {
-    $paramValue = \LockerRequest::getParam($param, $default);
-    $decoded = gettype($paramValue) === 'string' ? json_decode($paramValue, true) : $paramValue;
-    $value = isset($decoded) ? $decoded : $paramValue;
-    return $value;
   }
 
   /**
@@ -145,35 +178,39 @@ class StatementController extends BaseController {
    * @return StatementResult
    */
   public function index() {
-    // Gets the filters from the request.
-    $filters = [
-      'agent' => $this->jsonParam('agent'),
-      'activity' => $this->jsonParam('activity'),
-      'verb' => $this->jsonParam('verb'),
-      'registration' => $this->jsonParam('registration'),
-      'since' => $this->jsonParam('since'),
-      'until' => $this->jsonParam('until'),
-      'active' => $this->jsonParam('active', true),
-      'voided' => $this->jsonParam('voided', false)
-    ];
+    try {
+      // Gets the filters from the request.
+      $filters = [
+        'agent' => $this->validatedParam('agent', 'agent'),
+        'activity' => $this->validatedParam('irl', 'activity'),
+        'verb' => $this->validatedParam('irl', 'verb'),
+        'registration' => $this->validatedParam('uuid', 'registration'),
+        'since' => $this->validatedParam('timestamp', 'since'),
+        'until' => $this->validatedParam('timestamp', 'until'),
+        'active' => $this->validatedParam('boolean', 'active', true),
+        'voided' => $this->validatedParam('boolean', 'voided', false)
+      ];
 
 
-    // Gets the options/flags from the request.
-    $options = [
-      'related_activity' => $this->jsonParam('related_activity', false),
-      'related_agents' => $this->jsonParam('related_agents', false),
-      'ascending' => $this->jsonParam('ascending', true),
-      'format' => $this->jsonParam('format', 'exact'),
-      'offset' => $this->jsonParam('offset', 0),
-      'limit' => $this->jsonParam('limit')
-    ];
+      // Gets the options/flags from the request.
+      $options = [
+        'related_activity' => $this->validatedParam('boolean', 'related_activity', false),
+        'related_agents' => $this->validatedParam('boolean', 'related_agents', false),
+        'ascending' => $this->validatedParam('boolean', 'ascending', true),
+        'format' => $this->validatedParam('string', 'format', 'exact'),
+        'offset' => $this->validatedParam('int', 'offset', 0),
+        'limit' => $this->validatedParam('int', 'limit')
+      ];
 
-    // Gets the $statements from the LRS (with the $lrsId) that match the $filters with the $options.
-    $statements = $this->statement->index(
-      $this->lrs->_id,
-      $filters,
-      $options
-    );
+      // Gets the $statements from the LRS (with the $lrsId) that match the $filters with the $options.
+      $statements = $this->statement->index(
+        $this->lrs->_id,
+        $filters,
+        $options
+      );
+    } catch (\Exception $e) {
+      return BaseController::errorResponse($e->getMessage(), 400);
+    }
 
     $total = $statements->count();
 

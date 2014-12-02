@@ -30,7 +30,7 @@ class EloquentStatementRepository implements StatementRepository {
   /**
    * Gets the statement with the given $id from the lrs (with the $lrsId).
    * @param UUID $lrsId
-   * @param UUID $id 
+   * @param UUID $id
    * @param boolean $voided determines if the statement is voided.
    * @param boolean $active determines if the statement is active.
    * @return Builder
@@ -75,6 +75,13 @@ class EloquentStatementRepository implements StatementRepository {
       'limit' => self::DEFAULT_LIMIT
     ], $options);
 
+    // Checks params.
+    if ($options['offset'] < 0) throw new \Exception('`offset` must be a positive interger.');
+    if ($options['limit'] < 0) throw new \Exception('`limit` must be a positive interger.');
+    if (!in_array($options['format'], ['ids', 'exact', 'canonical'])) {
+      throw new \Exception('`format` must be `ids`, `exact` or `canonical`.');
+    }
+
     // Filters by date.
     if (isset($filters['since'])) $where[] = ['statement.stored', '>', $filters['since']];
     if (isset($filters['until'])) $where[] = ['statement.stored', '<', $filters['until']];
@@ -103,6 +110,7 @@ class EloquentStatementRepository implements StatementRepository {
     // Filters by agent.
     $agent = $filters['agent'];
     $identifier = $this->getIdentifier($agent);
+    if (isset($agent) && !is_array($agent)) throw new \Exception('Invalid agent');
     $agent = isset($agent) && isset($agent[$identifier]) ? $agent[$identifier] : null;
     $statements = $this->addOptionFilter($statements, $agent, $options['related_agents'], [
       'statement.actor.'.$identifier,
@@ -218,7 +226,7 @@ class EloquentStatementRepository implements StatementRepository {
 
   /**
    * Attempts to convert a $langMap to a single string using a relevant language from $langs.
-   * @param [LanguageMap] $langMap 
+   * @param [LanguageMap] $langMap
    * @param [Language] $langs
    * @return String/[LanguageMap]
    */
@@ -275,7 +283,7 @@ class EloquentStatementRepository implements StatementRepository {
    */
   private function getStatementIds(array $statement) {
     $actor = $statement['actor'];
-    
+
     // Processes an anonymous group or actor.
     if (isset($actor['objectType']) && $actor['objectType'] === 'Group' && $this->getAgentIdentifier($actor) === null) {
       $members = [];
@@ -410,13 +418,13 @@ class EloquentStatementRepository implements StatementRepository {
 
       // Finds the statement that it references.
       $reference = $this->query->where($lrs->_id, [
-        ['statement.id', '=', $statement->statement['object']['id']],
-        ['refs.id', '!=', $statement->statement['id']]
-      ])->whereNotIn('statement.id', $statement->refs)->first();
+        ['statement.id', '=', $statement->statement['object']['id']]
+      ])->first();
 
       // Updates the refs.
-      $statement->refs[] = $reference->statement;
-      array_merge($statement->refs, $reference->refs);
+      if ($reference) {
+        $statement->refs = array_push($reference->refs ?: [], $reference->statement);
+      }
       if (!$statement->save()) throw new \Exception('Failed to save statement reference.');
 
       return $statement;
@@ -438,26 +446,32 @@ class EloquentStatementRepository implements StatementRepository {
    */
   private function isVoiding(Statement $statement) {
     return (
-      ($statement->statement['verb']['id'] !== 'http://adlnet.gov/expapi/verbs/voided') &&
+      ($statement->statement['verb']['id'] === 'http://adlnet.gov/expapi/verbs/voided') &&
       $this->isReferencing($statement)
     );
   }
 
-  private function voidStatements(array $statements, \Lrs $lrs) {
-    $unvoid = function (Statement $statement) use ($lrs) {
-      if ($statement->active === true) return $statement;
-      if (!$this->isVoiding($statement)) return $statement;
+  private function toggleVoid(Statement $statement, \Lrs $lrs) {
+    if ($statement->active === true) return $statement;
+    if (!$this->isVoiding($statement)) return $statement;
 
-      // Toggles voided $statement.
-      $reference = $this->query->where($lrs->_id, [
-        ['statement.id', '=', $statement->statement['object']['id']],
-        ['statement.object.objectType', '=', 'StatementRef']
-      ])->first();
+    // Toggles voided $statement.
+    $reference = $this->query->where($lrs->_id, [
+      ['statement.id', '=', $statement->statement['object']['id']]
+    ])->first();
+
+    if ($reference) {
       $reference->voided = !$reference->voided;
       if (!$reference->save()) throw new \Exception('Failed to toggle voided statement.');
-      $unvoid($reference);
+      $this->toggleVoid($reference, $lrs);
+    }
 
-      return $statement;
+    return $statement;
+  }
+
+  private function voidStatements(array $statements, \Lrs $lrs) {
+    $unvoid = function (Statement $statement) use ($lrs) {
+      return $this->toggleVoid($statement, $lrs);
     };
     return array_map($unvoid, $statements);
   }
@@ -469,7 +483,7 @@ class EloquentStatementRepository implements StatementRepository {
       return $statement;
     }, $statements);
   }
-  
+
   /**
    * Creates $statements in the $lrs with $attachments.
    * @param [Statement] $statements
@@ -520,7 +534,7 @@ class EloquentStatementRepository implements StatementRepository {
       'stored' => ($currentDate = $this->getCurrentDate()),
       'timestamp' => $currentDate
     ], $statement);
-     
+
     // For now we store the latest submitted definition.
     // @todo this will change when we have a way to determine authority to edit.
     if( isset($statement['object']['definition'])){
@@ -588,7 +602,7 @@ class EloquentStatementRepository implements StatementRepository {
       ->where('lrs._id', $lrsId)
       ->where('statement.id', $statement['id'])
       ->first();
-    
+
     if ($existingModel) {
         $existingStatement = (array) $existingModel['statement'];
         unset($existingStatement['stored']);
@@ -597,7 +611,7 @@ class EloquentStatementRepository implements StatementRepository {
         array_multisort($statement);
         ksort($existingStatement);
         ksort($statement);
-    
+
         if ($existingStatement == $statement) {
           return $existingModel;
         } else {
@@ -614,18 +628,21 @@ class EloquentStatementRepository implements StatementRepository {
    **/
   private function storeAttachments( $attachments, $lrs ){
 
-    foreach( $attachments as $a ){
+    foreach( $attachments as $attachment ){
+      // Determines the delimiter.
+      $delim = "\n";
+      if (strpos($attachment, "\r".$delim) !== false) $delim = "\r".$delim;
 
       // Separate body contents from headers
-      $a = ltrim($a, "\n");
-      list($raw_headers, $body) = explode("\n\n", $a, 2);
+      $attachment = ltrim($attachment, $delim);
+      list($raw_headers, $body) = explode($delim.$delim, $attachment, 2);
 
       // Parse headers and separate so we can access
-      $raw_headers = explode("\n", $raw_headers);
+      $raw_headers = explode($delim, $raw_headers);
       $headers     = array();
       foreach ($raw_headers as $header) {
         list($name, $value) = explode(':', $header);
-        $headers[strtolower($name)] = ltrim($value, ' '); 
+        $headers[strtolower($name)] = ltrim($value, ' ');
       }
 
       //get the correct ext if valid
@@ -635,7 +652,7 @@ class EloquentStatementRepository implements StatementRepository {
       }
 
       $filename = str_random(12) . "." . $ext;
-      
+
       //create directory if it doesn't exist
       if (!\File::exists(base_path().'/uploads/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/')) {
         \File::makeDirectory(base_path().'/uploads/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/', 0775, true);
@@ -643,7 +660,7 @@ class EloquentStatementRepository implements StatementRepository {
 
       $destinationPath = base_path().'/uploads/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/';
 
-      $filename = $destinationPath.$filename; 
+      $filename = $destinationPath.$filename;
       $file = fopen( $filename, 'wb'); //opens the file for writing with a BINARY (b) fla
       $size = fwrite( $file, $body ); //write the data to the file
       fclose( $file );
@@ -673,7 +690,7 @@ class EloquentStatementRepository implements StatementRepository {
 
   public function grouped($id, $parameters){
     $type = isset($parameters['grouping']) ? strtolower($parameters['grouping']) : '';
-    
+
     switch ($type) {
       case "time":
         $interval = isset($parameters['interval']) ? $parameters['interval'] : "day";

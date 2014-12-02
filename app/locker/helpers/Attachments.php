@@ -16,7 +16,7 @@ class Attachments {
 
     $return     = array();
     $sha_hashes = array();
-    
+
     //grab boundary from content_type header - @todo not sure which way is better?
     preg_match('/boundary=(.*)$/', $content_type, $matches);
     //if no boundary, abort
@@ -29,27 +29,29 @@ class Attachments {
     $parts = array_slice(explode($boundary, $incoming_statement), 1);
     $data = array();
     $raw_headers = $body = '';
-    $count = 0;
 
     //loop through all parts on the body
-    foreach ($parts as $part) {
-
+    foreach ($parts as $count => $part) {
       // At the end of the file, break
-      if ($part == "--") break; 
+      if ($part == "--") break;
+
+      // Determines the delimiter.
+      $delim = "\n";
+      if (strpos($part, "\r".$delim) !== false) $delim = "\r".$delim;
 
       // Separate body contents from headers
-      $part = ltrim($part, "\n");
-      list($raw_headers, $body) = explode("\n\n", $part, 2);
+      $part = ltrim($part, $delim);
+      list($raw_headers, $body) = explode($delim.$delim, $part, 2);
 
       // Parse headers and separate so we can access
-      $raw_headers = explode("\n", $raw_headers);
+      $raw_headers = explode($delim, $raw_headers);
       $headers     = array();
       foreach ($raw_headers as $header) {
         list($name, $value) = explode(':', $header);
-        $headers[strtolower($name)] = ltrim($value, ' '); 
+        $headers[strtolower($name)] = ltrim($value, ' ');
       }
 
-      //the first part must be statements 
+      //the first part must be statements
       if( $count == 0 ){
         //this is part one, which must be statements
         if( $headers['content-type'] !== 'application/json' ){
@@ -72,7 +74,7 @@ class Attachments {
 
         //set body which will = statements
         $return['body'] = $body;
-          
+
       }else{
 
         //get the attachment type (Should this be required? @todo)
@@ -86,11 +88,11 @@ class Attachments {
         if( $ext === false ){
           \App::abort(400, 'This file type cannot be supported');
         }
-          
+
         //if content-transfer-encoding is not binary, reject attachment @todo
-        if( $headers['content-transfer-encoding'] !== 'binary' ){
-          \App::abort(400, 'This is the wrong encoding type');
-        }
+        // if( !isset($headers['content-transfer-encoding']) || $headers['content-transfer-encoding'] !== 'binary' ){
+        //   \App::abort(400, 'This is the wrong encoding type');
+        // }
 
         //check X-Experience-API-Hash is set, otherwise reject @todo
         if( !isset($headers['x-experience-api-hash']) || $headers['x-experience-api-hash'] == ''){
@@ -105,8 +107,6 @@ class Attachments {
         $return['attachments'][$count] = $part;
 
       }
-
-      $count++;
 
     }
 
