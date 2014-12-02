@@ -71,11 +71,6 @@ class xAPIValidation {
     $this->validateId();
     $this->validateStored();
 
-    //now validate a sub statement if one exists
-    if( !empty($this->subStatement) ){
-      $this->runValidation($this->subStatement);
-    }
-
     return array( 'status'    => $this->status,
                   'errors'    => $this->errors,
                   'statement' => $this->statement );
@@ -483,25 +478,46 @@ class xAPIValidation {
     }
 
     if( $object_type == 'SubStatement' ){
+      $this->validateSubStatement($object);
+    }
+  }
 
-      //remove "id", "stored", "version" or "authority" if exist
-      unset($object['id']);
-      unset($object['stored']);
-      unset($object['version']);
-      unset($object['authority']);
-      //unset($object['objectType']);
 
-      //check object type is not SubStatement as nesting is not permitted
-      if( $object['object']['objectType'] == 'SubStatement' ){
-        $this->setError( \Lang::get('xAPIValidation.errors.nesting') );
-        return false;
-      }
-
-      $this->subStatement = $object;
-
+  /**
+   * Validate Sub-Statement. Optional.
+   * @requirements https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#sub-statements
+   *
+   * @param array $statement
+   */
+  public function validateSubStatement($statement) {
+    //check object type is not SubStatement as nesting is not permitted
+    if( $statement['object']['objectType'] == 'SubStatement' ){
+      $this->setError( \Lang::get('xAPIValidation.errors.nesting') );
+      return false;
     }
 
+    $not_allowed = array('id', 'stored', 'version', 'authority');
+
+    foreach($not_allowed as $value) {
+      if (isset($statement[$value])) {
+        $this->setError( \Lang::get('xAPIValidation.errors.property', array('key' => $value, 'section' => 'SubStatement')) );
+        return false;
+      }
+    }
+    foreach( $statement as $k => $v ){
+      switch( $k ){
+        case 'actor':       $this->validateActor( $v );       break;
+        case 'verb':        $this->validateVerb( $v );        break;
+        case 'object':      $this->validateObject( $v );      break;
+        case 'context':     $this->validateContext( $v );     break;
+        case 'timestamp':   $this->validateTimestamp( $v );   break;
+        case 'result':      $this->validateResult( $v );      break;
+        case 'attachments': $this->validateAttachments( $v ); break;
+      }
+
+    }
   }
+
 
   /**
    * Validate context. Optional.
@@ -708,7 +724,7 @@ class xAPIValidation {
     $valid_attachment_keys = array('usageType'   => array('iri', true),
                                    'display'     => array('lang_map', true),
                                    'description' => array('lang_map', false),
-                                   'contentType' => array('contentType', false),
+                                   'contentType' => array('contentType', true),
                                    'length'      => array('int', true),
                                    'sha2'        => array('base64', true),
                                    'fileUrl'     => array('iri', false));
