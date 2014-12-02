@@ -24,9 +24,11 @@ class DocumentAPI extends Eloquent {
   private function putContent($content, $contentType) {
     switch ($contentType) {
       case 'application/json':
+        $this->setSha($this->content);
         $this->overwriteContent(json_decode($content, true));
         break;
       case 'text/plain':
+        $this->setSha($content);
         $this->overwriteContent($content);
         break;
       default: $this->saveDocument($content, $contentType);
@@ -60,17 +62,22 @@ class DocumentAPI extends Eloquent {
     }
   }
 
+  private function setSha($content) {
+    $this->sha = '"'.strtoupper(sha1($content)).'"';
+  }
+
   private function mergeJSONContent($content, $contentType) {
     if (!$this->isJSON($content)) {
       throw new \Exception(
         'JSON must contain an object at the top level.'
       );
-    } else if ($this->contentType !== $mimeType) {
+    } else if ($this->contentType !== $contentType) {
       throw new \Exception(
         'JSON document content may not be merged with that of another type'
       );
     }
     $this->content = array_merge($this->content, $content);
+    $this->setSha(json_encode($this->content));
   }
 
   private function overwriteContent($content) {
@@ -96,6 +103,7 @@ class DocumentAPI extends Eloquent {
     } 
 
     $this->content = $filename;
+    $this->setSha($content);
   }
 
 
@@ -120,7 +128,7 @@ class DocumentAPI extends Eloquent {
       $this->postContent($content, $mimeType);
     }
 
-    $this->contentType  = $mimeType;
+    $this->contentType = $mimeType;
 
   }
 

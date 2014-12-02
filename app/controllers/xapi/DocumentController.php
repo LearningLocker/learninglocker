@@ -81,9 +81,11 @@ abstract class DocumentController extends BaseController {
 
     // Gets the content from the request.
     $data['content_info'] = $this->getAttachedContent('content');
+    $data['ifMatch'] = \LockerRequest::header('If-Match');
+    $data['ifNoneMatch'] = \LockerRequest::header('If-None-Match');
 
     // Stores the document.
-    $store = $this->document->store(
+    $document = $this->document->store(
       $this->lrs->_id,
       $this->document_type,
       $data,
@@ -91,10 +93,12 @@ abstract class DocumentController extends BaseController {
       $this->method
     );
 
-    if ($store) {
-      return \Response::json(['ok'], BaseController::NO_CONTENT);
+    if ($document) {
+      return \Response::json(null, BaseController::NO_CONTENT, [
+        'ETag' => $document->sha
+      ]);
     } else {
-      return BaseController::errorResponse();
+      throw new \Exception('Could not store Document.');
     }
   }
 
@@ -218,7 +222,8 @@ abstract class DocumentController extends BaseController {
     } else {
       $headers = [
         'Updated' => $document->updated_at->toISO8601String(),
-        'Content-Type' => $document->contentType
+        'Content-Type' => $document->contentType,
+        'ETag' => $document->sha
       ];
 
       if( $this->method === 'HEAD' ){ //Only return headers

@@ -181,7 +181,7 @@ class StatementController extends BaseController {
     try {
       // Gets the filters from the request.
       $filters = [
-        'agent' => $this->validatedParam('array', 'agent'),
+        'agent' => $this->validatedParam('agent', 'agent'),
         'activity' => $this->validatedParam('irl', 'activity'),
         'verb' => $this->validatedParam('irl', 'verb'),
         'registration' => $this->validatedParam('uuid', 'registration'),

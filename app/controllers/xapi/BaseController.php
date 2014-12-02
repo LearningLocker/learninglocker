@@ -1,6 +1,7 @@
 <?php namespace Controllers\xAPI;
 
 use Illuminate\Routing\Controller;
+use app\locker\helpers as Exceptions;
 use Controllers\API\BaseController as APIBaseController;
 
 class BaseController extends APIBaseController {
@@ -35,6 +36,10 @@ class BaseController extends APIBaseController {
         case 'POST': return $this->store();
         case 'DELETE': return $this->destroy();
       }
+    } catch (Exceptions\Conflict $e) {
+      return self::errorResponse($e->getMessage(), 409);
+    } catch (Exceptions\FailedPrecondition $e) {
+      return self::errorResponse($e->getMessage(), 412);
     } catch (\Exception $e) {
       return self::errorResponse($e->getMessage(), 400);
     }
