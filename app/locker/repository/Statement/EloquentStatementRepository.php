@@ -532,7 +532,8 @@ class EloquentStatementRepository implements StatementRepository {
     // Uses defaults where possible.
     $statement = array_merge([
       'stored' => ($currentDate = $this->getCurrentDate()),
-      'timestamp' => $currentDate
+      'timestamp' => $currentDate,
+      'version' => '1.0.0'
     ], $statement);
 
     // For now we store the latest submitted definition.

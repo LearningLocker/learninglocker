@@ -248,7 +248,7 @@ class StatementController extends BaseController {
 
     $statement = $this->statement->show($this->lrs->_id, $id, $voided)->first();
     if ($statement) {
-      return $statement['statement'];
+      return \app\locker\helpers\Helpers::replaceHtmlEntity($statement['statement'], true);
     } else {
       return \Response::json(null, 404);
     }
@@ -273,7 +273,7 @@ class StatementController extends BaseController {
     // http://docs.learninglocker.net/docs/statements#quirks
     $statements = $statements ?: [];
     foreach ($statements as &$s) {
-      $s = \app\locker\helpers\Helpers::replaceHtmlEntity($s['statement']);
+      $s = $s['statement'];
     }
 
     // Creates the statement result.
@@ -282,7 +282,7 @@ class StatementController extends BaseController {
       'version' => [\Config::get('xapi.using_version')],
       'total' => $options['total'],
       'more' => $this->getMoreLink($options['total'], $options['limit'], $options['offset']),
-      'statements' => \app\locker\helpers\Helpers::replaceHtmlEntity($statements)
+      'statements' => \app\locker\helpers\Helpers::replaceHtmlEntity($statements, true)
     ];
 
     // Creates the response.

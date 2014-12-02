@@ -16,9 +16,9 @@ class Helpers {
   | multi-dimensional arrays (?) @todo check this out.
   |----------------------------------------------------------------------------
   */
-  static function replaceHtmlEntity( $array ){
+  static function replaceHtmlEntity( $array, $toArray = false ){
     
-    return json_decode(str_replace('&46;','.', json_encode($array)));
+    return json_decode(str_replace('&46;','.', json_encode($array)), $toArray);
 
   }
 
