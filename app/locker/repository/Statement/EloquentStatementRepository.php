@@ -75,6 +75,13 @@ class EloquentStatementRepository implements StatementRepository {
       'limit' => self::DEFAULT_LIMIT
     ], $options);
 
+    // Checks params.
+    if ($options['offset'] < 0) throw new \Exception('`offset` must be a positive interger.');
+    if ($options['limit'] < 0) throw new \Exception('`limit` must be a positive interger.');
+    if (!in_array($options['format'], ['ids', 'exact', 'canonical'])) {
+      throw new \Exception('`format` must be `ids`, `exact` or `canonical`.');
+    }
+
     // Filters by date.
     if (isset($filters['since'])) $where[] = ['statement.stored', '>', $filters['since']];
     if (isset($filters['until'])) $where[] = ['statement.stored', '<', $filters['until']];
