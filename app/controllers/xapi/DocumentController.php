@@ -11,6 +11,9 @@ abstract class DocumentController extends BaseController {
   // Defines properties to be set by the constructor.
   protected $params, $method, $lrs;
 
+  // Defines properties to be set by sub classes.
+  protected $identifier = '', $required = [], $optional = [], $document_type = '';
+
   protected function getIndexData($additional = []) {
     return $this->checkParams(
       array_slice($this->required, 0, -1),
@@ -151,16 +154,12 @@ abstract class DocumentController extends BaseController {
     if (\LockerRequest::hasParam('method') || $this->method === 'POST') {
       return $this->getPostContent($name);
     } else {
-      $contentType = \LockerRequest::header('Content-Type');
+      $contentType = \LockerRequest::header('Content-Type', 'text/plain');
 
-      if (!isset($contentType)) {
-        return BaseController::errorResponse('PUT requests must include a Content-Type header');
-      } else {
-        return [
-          'content' => \LockerRequest::getContent(),
-          'contentType' => $contentType
-        ];
-      }
+      return [
+        'content' => \LockerRequest::getContent(),
+        'contentType' => $contentType
+      ];
     }
   }
 
@@ -184,7 +183,7 @@ abstract class DocumentController extends BaseController {
       }
 
     } else {
-      App::abort(400, sprintf('`%s` was not sent in this request', $name));
+      \App::abort(400, sprintf('`%s` was not sent in this request', $name));
     }
 
     return [
