@@ -419,7 +419,7 @@ class xAPIValidation {
                                     'description'   => array('lang_map'),
                                     'type'          => array('iri'),
                                     'moreInfo'      => array('irl'),
-                                    'extensions'    => array('emptyArray'),
+                                    'extensions'    => array('extension'),
                                     'interactionType' => array('string'),
                                     'correctResponsesPattern' => array('array'),
                                     'choices'       => array('array'),
@@ -519,7 +519,7 @@ class xAPIValidation {
                                 'platform'          => array('string', false),
                                 'language'          => array('lang', false),
                                 'statement'         => array('statementRef', false),
-                                'extensions'        => array('emptyArray',  false));
+                                'extensions'        => array('extension',  false));
 
     //check all keys submitted are valid
     $this->checkParams($valid_context_keys, $context, 'context');
@@ -546,20 +546,10 @@ class xAPIValidation {
       //now check all property keys contain an array
       //While the contextActivity may be an object on input, it must be stored as an array - so
       //on each type we will check if an associative array has been passed and insert it into an array if needed
-      if( isset($context['contextActivities']['parent']) ){
-        $this->validateContextActivity($context['contextActivities']['parent'], 'parent');
-      }
-
-      if( isset($context['contextActivities']['grouping']) ){
-        $this->validateContextActivity($context['contextActivities']['grouping'], 'grouping');
-      }
-
-      if( isset($context['contextActivities']['category']) ){
-        $this->validateContextActivity($context['contextActivities']['category'], 'category');
-      }
-
-      if( isset($context['contextActivities']['other']) ){
-        $this->validateContextActivity($context['contextActivities']['other'], 'other');
+      foreach($valid_context_keys as $key => $value) {
+        if( isset($context['contextActivities'][$key]) ){
+          $this->validateContextActivity($context['contextActivities'][$key], $key);
+        }
       }
     }
 
@@ -578,7 +568,7 @@ class xAPIValidation {
       $this->statement['context']['contextActivities'][$key] = array( $contextactivity );
     }
     foreach ($contextactivity as $object) {
-      if ($object['objectType'] == 'Activity') {
+      if (!isset($object['objectType']) || $object['objectType'] == 'Activity') {
         $this->validateObject($object);
         return true;
       }
@@ -606,7 +596,7 @@ class xAPIValidation {
                           'completion'  => array('boolean', false),
                           'response'    => array('string',  false),
                           'duration'    => array('iso8601Duration', false),
-                          'extensions'  => array('emptyArray',   false));
+                          'extensions'  => array('extension',   false));
 
     //check all keys submitted are valid
     $this->checkParams($valid_keys, $result, 'result');
@@ -882,15 +872,13 @@ class xAPIValidation {
 
       //does key exist in data
       if( array_key_exists($key, $data) ){
-
-        //check data value is not null apart from in extensions
         if( $key != 'extensions' ){
           if( !$this->assertionCheck(!is_null($data[$key]),
-            \Lang::get('xAPIValidation.errors.null', array(
-              'key' => $key,
-              'section' => $section
-            ))
-          )) {
+          \Lang::get('xAPIValidation.errors.null', array(
+                'key' => $key,
+                'section' => $section
+              ))
+        )) {
             $valid = false;
           }
         }
@@ -1151,6 +1139,20 @@ class xAPIValidation {
           ))
         );
       break;
+      case 'extension':
+        if( $value != '' ){
+          return $this->assertionCheck(
+            $this->validateExtensions($value),
+            \Lang::get('xAPIValidation.errors.type', array(
+              'key' => $key,
+              'section' => $section,
+              'type' => 'array'
+            ))
+          );
+        } else {
+          return false;
+        }
+      break;
     }
 
   }
@@ -1190,6 +1192,24 @@ class xAPIValidation {
     return false;
   }
 
+  /**
+   * Validate extensions
+   *
+   * @param array $item
+   * @return boolean
+   *
+   */
+  public function validateExtensions( $item ) {
+    if (is_array($item)) {
+      foreach( $item as $k => $v ){
+        if( !$this->validateIRI( $k ) ){
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
   /**
   * Validate language map.
   *
