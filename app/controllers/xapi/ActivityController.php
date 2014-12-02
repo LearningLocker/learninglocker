@@ -12,7 +12,7 @@ class ActivityController extends DocumentController {
   // Overrides parent's properties.
   protected $identifier = 'profileId';
   protected $required = [
-    'agent' => 'string',
+    'activityId' => 'iri',
     'profileId' => 'string'
   ];
   protected $document_type = DocumentType::ACTIVITY;
