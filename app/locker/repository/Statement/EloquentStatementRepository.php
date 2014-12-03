@@ -67,9 +67,9 @@ class EloquentStatementRepository implements StatementRepository {
 
     // Defaults options.
     $options = array_merge([
-      'related_activity' => false,
+      'related_activities' => false,
       'related_agents' => false,
-      'ascending' => true,
+      'ascending' => false,
       'format' => 'exact',
       'offset' => 0,
       'limit' => self::DEFAULT_LIMIT
@@ -98,7 +98,7 @@ class EloquentStatementRepository implements StatementRepository {
     ]);
 
     // Filters by activity.
-    $statements = $this->addOptionFilter($statements, $filters['activity'], $options['related_activity'], [
+    $statements = $this->addOptionFilter($statements, $filters['activity'], $options['related_activities'], [
       'statement.object.id'
     ], [
       'statement.context.contextActivities.parent.id',
@@ -141,6 +141,7 @@ class EloquentStatementRepository implements StatementRepository {
       if (isset($agent['mbox'])) return 'mbox';
       if (isset($agent['openid'])) return 'openid';
       if (isset($agent['account'])) return 'account';
+      if (isset($agent['mbox_sha1sum'])) return 'mbox_sha1sum';
     } else {
       return 'actor';
     }

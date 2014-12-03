@@ -658,6 +658,16 @@ class xAPIValidation {
 
   }
 
+  private function validateISOTimestamp($timestamp) {
+    //check format using http://www.pelagodesign.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
+    if (!preg_match('/^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|((?!-0{2}(:0{2})?)([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?)?$/', $timestamp) > 0) {
+      $this->setError(\Lang::get('xAPIValidation.errors.timestamp'));
+      return false;
+    }
+
+    return true;
+  }
+
   /**
    * Validate timestamp.
    *
@@ -671,14 +681,7 @@ class xAPIValidation {
       return false; //no timestamp set
     }
 
-    //check format using http://www.pelagodesign.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
-    if (!preg_match('/^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|((?!-0{2}(:0{2})?)([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?)?$/', $timestamp) > 0) {
-      $this->setError(\Lang::get('xAPIValidation.errors.timestamp'));
-      return false;
-    }
-
-    return true;
-
+    return $this->validateISOTimestamp($timestamp);
   }
 
   /**
@@ -1026,6 +1029,16 @@ class xAPIValidation {
             'key' => $key,
             'section' => $section,
             'type' => 'timestamp'
+          ))
+        );
+      break;
+      case 'isoTimestamp':
+        return $this->assertionCheck(
+        $this->validateISOTimestamp($value),
+        \Lang::get('xAPIValidation.errors.type', array(
+          'key' => $key,
+          'section' => $section,
+          'type' => 'ISO 8601 timestamp'
           ))
         );
       break;
