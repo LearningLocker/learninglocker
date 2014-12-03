@@ -185,8 +185,8 @@ class StatementController extends BaseController {
         'activity' => $this->validatedParam('irl', 'activity'),
         'verb' => $this->validatedParam('irl', 'verb'),
         'registration' => $this->validatedParam('uuid', 'registration'),
-        'since' => $this->validatedParam('timestamp', 'since'),
-        'until' => $this->validatedParam('timestamp', 'until'),
+        'since' => $this->validatedParam('isoTimestamp', 'since'),
+        'until' => $this->validatedParam('isoTimestamp', 'until'),
         'active' => $this->validatedParam('boolean', 'active', true),
         'voided' => $this->validatedParam('boolean', 'voided', false)
       ];
@@ -194,9 +194,9 @@ class StatementController extends BaseController {
 
       // Gets the options/flags from the request.
       $options = [
-        'related_activity' => $this->validatedParam('boolean', 'related_activity', false),
+        'related_activities' => $this->validatedParam('boolean', 'related_activities', false),
         'related_agents' => $this->validatedParam('boolean', 'related_agents', false),
-        'ascending' => $this->validatedParam('boolean', 'ascending', true),
+        'ascending' => $this->validatedParam('boolean', 'ascending', false),
         'format' => $this->validatedParam('string', 'format', 'exact'),
         'offset' => $this->validatedParam('int', 'offset', 0),
         'limit' => $this->validatedParam('int', 'limit')
@@ -278,9 +278,6 @@ class StatementController extends BaseController {
 
     // Creates the statement result.
     $statementResult = [
-      'X-Experience-API-Version' => \Config::get('xapi.using_version'),
-      'version' => [\Config::get('xapi.using_version')],
-      'total' => $options['total'],
       'more' => $this->getMoreLink($options['total'], $options['limit'], $options['offset']),
       'statements' => \app\locker\helpers\Helpers::replaceHtmlEntity($statements, true)
     ];
