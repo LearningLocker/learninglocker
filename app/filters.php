@@ -57,16 +57,16 @@ Route::filter('auth.basic', function()
 | Login in once using key / secret to store statements or retrieve statements.
 |
 */
-function checkSecret(Jenssegers\Mongodb\Eloquent\Builder $clients, $secret) {
-  $client = $clients->first();
-  if ($client !== null && $client->api['basic_secret'] === $secret) {
-    return $client;
-  } else {
-    return null;
-  }
-}
-
 Route::filter('auth.statement', function(){
+  $checkClientSecret = function (Jenssegers\Mongodb\Eloquent\Builder $clients, $secret) {
+    $client = $clients->first();
+    if ($client !== null && $client->api['basic_secret'] === $secret) {
+      return $client;
+    } else {
+      return null;
+    }
+  };
+
   //set passed credentials
   $key    = LockerRequest::getUser();
   $secret = LockerRequest::getPassword();
@@ -80,14 +80,14 @@ Route::filter('auth.statement', function(){
     // $lrs = \Lrs::where('api.basic_key', $key)
     //     ->where('api.basic_secret', $secret)
     //     ->select('owner._id')->first();
-    $lrs = checkSecret(\Lrs::where('api.basic_key', $key), $secret);
-	
+    $lrs = $checkClientSecret(\Lrs::where('api.basic_key', $key), $secret);
+
   	//if main credentials not matched, try the additional credentials
   	if ( $lrs == NULL ) {
   		// $client = \Client::where('api.basic_key', $key)
   	 //    ->where('api.basic_secret', $secret)
   	 //    ->first();
-      $client = checkSecret(\Client::where('api.basic_key', $key), $secret); 
+      $client = checkClientSecret(\Client::where('api.basic_key', $key), $secret);
   		if( $client != NULL ){
   			$lrs = \Lrs::find(  $client->lrs_id );
   		}
@@ -95,7 +95,7 @@ Route::filter('auth.statement', function(){
   			return Response::json([
           'error' => true,
           'message' => 'Unauthorized request.'
-        ], 401); 
+        ], 401);
   		}
   	}
 
@@ -104,9 +104,9 @@ Route::filter('auth.statement', function(){
       return Response::json([
         'error' => true,
         'message' => 'Unauthorized request.'
-      ], 401); 
+      ], 401);
     }
-    
+
   }
 });
 
@@ -131,13 +131,13 @@ Route::filter('auth.super', function( $route, $request ){
 | LRS admin access
 |--------------------------------------------------------------------------
 |
-| Check the logged in user has admin privilages for current LRS. If not, 
-| then redirect to home page without a message. 
+| Check the logged in user has admin privilages for current LRS. If not,
+| then redirect to home page without a message.
 |
 */
 
 Route::filter('auth.admin', function( $route, $request ){
-  
+
   $lrs      = Lrs::find( $route->parameter('lrs') );
   $user     = Auth::user()->_id;
   $is_admin = false;
@@ -224,7 +224,7 @@ Route::filter('edit.lrs', function( $route, $request ){
 
   }else{
     return Redirect::to('/');
-  }  
+  }
 
 });
 
@@ -233,17 +233,17 @@ Route::filter('edit.lrs', function( $route, $request ){
 | Who can create a new LRS?
 |--------------------------------------------------------------------------
 |
-| Super admins can decide who is allowed to create new LRSs. Super, existing 
+| Super admins can decide who is allowed to create new LRSs. Super, existing
 | admins or everyone, including observers.
 |
 */
 
 Route::filter('create.lrs', function( $route, $request ){
-  
+
   $site       = Site::first();
   $allowed    = $site->create_lrs;
   $user_role  = \Auth::user()->role;
-  
+
   if( !in_array($user_role, $allowed) ){
     return Redirect::to('/');
   }
@@ -266,7 +266,7 @@ Route::filter('registration.status', function( $route, $request ){
 /*
 |---------------------------------------------------------------------------
 | Check the person deleting a user account, is allowed to.
-| 
+|
 | User's can delete their own account as can super admins
 |---------------------------------------------------------------------------
 */
