@@ -157,9 +157,10 @@ class EloquentStatementRepository implements StatementRepository {
   private function addFilter(Builder $statements, $value, array $keys) {
     if (!isset($value)) return $statements;
 
-    // Adds keys for sub statement.
+    // Adds keys for sub statement and statement references.
     foreach ($keys as $key) {
       $keys[] = 'statement.object.'.substr($key, 10);
+      $keys[] = 'refs'.substr($key, 10);
     }
 
     return $this->orWhere($statements, $value, $keys);
