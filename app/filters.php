@@ -1,5 +1,7 @@
 <?php
 
+use Locker\Repository\Lrs\EloquentLrsRepository as LrsRepository;
+
 /*
 |--------------------------------------------------------------------------
 | Application & Route Filters
@@ -58,14 +60,6 @@ Route::filter('auth.basic', function()
 |
 */
 Route::filter('auth.statement', function(){
-  $checkClientSecret = function (Jenssegers\Mongodb\Eloquent\Builder $clients, $secret) {
-    $client = $clients->first();
-    if ($client !== null && $client->api['basic_secret'] === $secret) {
-      return $client;
-    } else {
-      return null;
-    }
-  };
 
   //set passed credentials
   $key    = LockerRequest::getUser();
@@ -80,14 +74,14 @@ Route::filter('auth.statement', function(){
     // $lrs = \Lrs::where('api.basic_key', $key)
     //     ->where('api.basic_secret', $secret)
     //     ->select('owner._id')->first();
-    $lrs = $checkClientSecret(\Lrs::where('api.basic_key', $key), $secret);
+    $lrs = LrsRepository::checkSecret(\Lrs::where('api.basic_key', $key)->first(), $secret);
 
   	//if main credentials not matched, try the additional credentials
   	if ( $lrs == NULL ) {
   		// $client = \Client::where('api.basic_key', $key)
   	 //    ->where('api.basic_secret', $secret)
   	 //    ->first();
-      $client = checkClientSecret(\Client::where('api.basic_key', $key), $secret);
+      $client = LrsRepository::checkSecret(\Client::where('api.basic_key', $key)->first(), $secret);
   		if( $client != NULL ){
   			$lrs = \Lrs::find(  $client->lrs_id );
   		}
