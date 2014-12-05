@@ -52,7 +52,6 @@ class xAPIValidation {
     $this->statement = $statement;
 
     $this->getStarted( $statement );
-
     foreach( $statement as $k => $v ){
 
       switch( $k ){
@@ -526,7 +525,6 @@ class xAPIValidation {
    * @param array $content
    */
   public function validateContext( $context ){
-
     $valid_context_keys = array('registration'      => array('uuid',   false),
                                 'instructor'        => array('array',  false),
                                 'team'              => array('array',  false),
@@ -548,7 +546,6 @@ class xAPIValidation {
     }
     //check properties in contextActivies
     if( isset($context['contextActivities']) ){
-
       $valid_context_keys = array('parent'   => array('emptyArray'),
                                   'grouping' => array('emptyArray'),
                                   'category' => array('emptyArray'),
@@ -559,16 +556,12 @@ class xAPIValidation {
                          $context['contextActivities'],
                          'contextActivities');
 
-      //now check all property keys contain an array
-      //While the contextActivity may be an object on input, it must be stored as an array - so
-      //on each type we will check if an associative array has been passed and insert it into an array if needed
       foreach($valid_context_keys as $key => $value) {
         if( isset($context['contextActivities'][$key]) ){
           $this->validateContextActivity($context['contextActivities'][$key], $key);
         }
       }
     }
-
   }
 
   /**
@@ -580,19 +573,22 @@ class xAPIValidation {
    * @param string $key
    */
   public function validateContextActivity($contextactivity, $key) {
-    if( $this->isAssoc( $contextactivity ) ){
-      $this->statement['context']['contextActivities'][$key] = array( $contextactivity );
-    }
-    foreach ($contextactivity as $object) {
-      if (!isset($object['objectType']) || $object['objectType'] == 'Activity') {
-        $this->validateObject($object);
-        return true;
+    if (is_array($contextactivity)) {
+      foreach ($contextactivity as $object) {
+        if (!is_array($object)) {
+          $this->setError(\Lang::get('validation.array', array('attribute' => $key)));
+          return false;
+        }
+        if (!isset($object['objectType']) || $object['objectType'] == 'Activity') {
+          $this->validateObject($object);
+          return true;
+        }
+        $this->setError(\Lang::get('xAPIValidation.errors.type', array(
+            'key' => $object['objectType'],
+            'type' => 'objectType',
+            'section' => 'contextActivities'
+        )));
       }
-      $this->setError(\Lang::get('xAPIValidation.errors.type', array(
-          'key' => $object['objectType'],
-          'type' => 'objectType',
-          'section' => 'contextActivities'
-      )));
     }
     return false;
   }
