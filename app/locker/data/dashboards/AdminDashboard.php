@@ -116,19 +116,42 @@ class AdminDashboard extends \app\locker\data\BaseData {
    * @return $data json feed.
    *
    **/
-  public function getStatementNumbersByDate(){
-
-    $set_id = array( '$dayOfYear' => '$timestamp' );
+  public function getStatementNumbersByDate() {
+    $rangeStart = \Carbon\Carbon::now()->subMonth();
+    $rangeEnd = \Carbon\Carbon::now();
 
     $statements = $this->db->statements->aggregate(
-              array('$group' => array(
-                        '_id'   => $set_id,
-                        'count' => array('$sum' => 1),
-                        'date'  => array('$addToSet' => '$statement.timestamp'),
-                        'actor' => array('$addToSet' => '$statement.actor'))),
-              array('$sort'    => array('_id' => 1)),
-              array('$project' => array('count' => 1, 'date' => 1, 'actor' => 1))
-            );
+      [
+        '$match' => [
+          'timestamp'=> [
+            '$gte' => new \MongoDate($rangeStart->getTimestamp()),
+            '$lte' => new \MongoDate($rangeEnd->getTimestamp())
+          ]
+        ]
+      ], 
+      [
+        '$group' => [
+          '_id'   => [
+            'year' => ['$year' => '$timestamp'],
+            'month' => ['$month' => '$timestamp'],
+            'day' => ['$dayOfMonth' => '$timestamp']
+          ],
+          'count' => ['$sum' => 1],
+          'date'  => ['$addToSet' => '$statement.timestamp'],
+          'actor' => ['$addToSet' => '$statement.actor']
+        ]
+      ],
+      [
+        '$sort' => ['_id' => 1]
+      ], 
+      [
+        '$project' => [
+          'count' => 1, 
+          'date' => 1, 
+          'actor' => 1
+        ]
+      ]
+    );
 
     //set statements for graphing
     $data = array();
