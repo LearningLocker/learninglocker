@@ -368,8 +368,13 @@ class EloquentStatementRepository implements StatementRepository {
       $existingModel = $this->doesStatementIdExist($lrs->_id, $statement);
       if (!$existingModel) {
         $newModel = $this->makeStatement($statement, $lrs);
+
+        // Adds top-level properties to the new model (required for quicker queries).
         $newModel->active = false;
         $newModel->voided = false;
+        $newModel->timestamp = new \MongoDate(strtotime($vs['timestamp']));
+
+        // Saves the new model.
         if ($newModel->save()) {
           return $newModel;
         } else {
