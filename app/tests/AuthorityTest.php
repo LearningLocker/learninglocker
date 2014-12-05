@@ -32,7 +32,7 @@ class AuthorityTest extends TestCase
     $this->assertEquals($return['success'], true);
 
     $stmt_id = reset($return['ids']);
-    $obj_stmt = $this->statement->find($stmt_id);
+    $obj_stmt = $this->statement->show($stmt_id);
     $stmt_authority = $obj_stmt->statement['authority'];
     $this->assertTrue(!empty($stmt_authority));
 
@@ -40,7 +40,7 @@ class AuthorityTest extends TestCase
     $stmt['authority'] = $authority;
     $return = $this->createStatement($stmt, $this->lrs);
     $stmt_id = reset($return['ids']);
-    $obj_stmt = $this->statement->find($stmt_id);
+    $obj_stmt = $this->statement->show($stmt_id);
 
     $stmt_authority = $obj_stmt->statement['authority'];
     $this->assertEquals($authority, $stmt_authority);

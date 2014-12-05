@@ -33,7 +33,7 @@ class StatementContextTest extends TestCase
     $return = $this->createStatement($stmt, $this->lrs);
 
     $id = $return['ids'][0];
-    $saved_statement = $this->statement->find($id);
+    $saved_statement = $this->statement->show($id);
     // The parent must be array.
     $this->assertTrue(is_array($saved_statement['statement']['context']['contextActivities']['parent']));
   }

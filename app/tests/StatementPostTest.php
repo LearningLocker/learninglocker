@@ -32,7 +32,7 @@ class StatementPostTest extends TestCase
     $result = $this->createStatement($vs, $this->lrs);
 
     $statement = App::make('Locker\Repository\Statement\EloquentStatementRepository');
-    $createdStatement = $statement->find($result['ids'][0]);
+    $createdStatement = $statement->show($result['ids'][0]);
 
     $param = array(
       'actor' => $createdStatement->statement['actor'],
@@ -85,7 +85,7 @@ class StatementPostTest extends TestCase
     $result = $this->createStatement($vs, $this->lrs);
 
     $statement = App::make('Locker\Repository\Statement\EloquentStatementRepository');
-    $createdStatement = $statement->find($result['ids'][0]);
+    $createdStatement = $statement->show($result['ids'][0]);
 
     $param = [
       'actor' => $createdStatement->statement['actor'],
