@@ -542,7 +542,6 @@ class EloquentStatementRepository implements StatementRepository {
       'timestamp' => $currentDate,
       'version' => '1.0.0'
     ], $statement);
-
     // For now we store the latest submitted definition.
     // @todo this will change when we have a way to determine authority to edit.
     if( isset($statement['object']['definition'])){
@@ -558,6 +557,7 @@ class EloquentStatementRepository implements StatementRepository {
       '_id' => $lrs->_id,
       'name' => $lrs->title
     ];
+
     $newStatement['statement'] = $this->replaceFullStop($statement);
     return $newStatement;
   }
