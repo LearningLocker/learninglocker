@@ -13,43 +13,88 @@ define([
     template:'#lineGraph',
 
     initialize: function(){
-      
+      this.listenTo( this.model, 'sync', this.render );
     },
 
-    drawGraph: function(chartId, lineData) {
-
-      var avg   = lineData.stats.statement_avg;
-      var data  = lineData.stats.statement_graph;
-
-      var totals   = 'Statement total';
-      var learners = 'Learner total';
-
-      //split the json string
-      var details = data.split(' ');
-
-      //iterate, convert to object and push to category_data
-      var category_data = [];
-      $.each(details , function(i, val) {
-        category_data.push(jQuery.parseJSON( val ));
-      });
-        
-      Morris.Line({
-        element: chartId,
-        data: category_data,
-        xkey: 'y',
-        goals: [avg],
-        goalStrokeWidth: 2,
-        goalLineColors: ['#00cc00'],
-        barColors:['#354b59'],
-        ykeys: ['a', 'b'],
-        labels: [totals, learners]
-      });
-
+    events:{
+      'click #updateGraph' : 'startupdate'
     },
 
-    onShow: function(){
-      this.drawGraph('morrisLine', this.model.toJSON());
+    ui:{
+      'startDateInput':'#startDateInput', 
+      'endDateInput':'#endDateInput',
+      'morrisLine' : '#morrisLine'
     },
+
+    startupdate: function(e){
+      this.ui.morrisLine.css({height: "auto"});
+      this.ui.morrisLine.html('Loading...');
+      this.model.options.graphStartDate = this.ui.startDateInput.val();
+      this.model.options.graphEndDate = this.ui.endDateInput.val();
+      this.model.updateStats();
+    },
+
+    templateHelpers: function(){
+      var model = this.model;
+
+      return {
+        dates: function () {
+          return {
+            start : model.options.graphStartDate,
+            end : model.options.graphEndDate
+          };
+        }
+      };
+    },
+
+    drawGraph: function(chartElement) {
+      var chartId = chartElement.attr('id');
+
+      if( $('#'+chartId).length > 0 ){
+
+        var avg   = this.model.get("statement_avg");
+        var data  = this.model.get("statement_graph");
+
+        var totals   = 'Statement total';
+        var learners = 'Learner total';
+
+        if( data.length > 0 ){
+          //split the json string
+          var details = data.split(' ');
+
+          //iterate, convert to object and push to category_data
+          var category_data = [];
+          $.each(details , function(i, val) {
+            category_data.push($.parseJSON( val ));
+          });
+
+          this.ui.morrisLine.css({height: "350px"});
+          
+          Morris.Line({
+            element: chartId,
+            data: category_data,
+            xkey: 'y',
+            goals: [avg],
+            goalStrokeWidth: 2,
+            goalLineColors: ['#00cc00'],
+            barColors:['#354b59'],
+            ykeys: ['a', 'b'],
+            labels: [totals, learners]
+          });
+        }
+      }
+
+    },
+    redraw: function(){
+      this.drawGraph( this.ui.morrisLine );
+    },
+    onShow: function () {
+      console.log(this);
+      this.redraw();
+    },
+    onRender: function(){
+      this.redraw();
+    }
 
   });
 

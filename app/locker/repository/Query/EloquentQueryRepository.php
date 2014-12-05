@@ -53,7 +53,11 @@ class EloquentQueryRepository implements QueryRepository {
       '$match' => $match
     ], [
       '$group' => [
-        '_id'   => ['$dayOfYear' => '$timestamp'],
+        '_id'   => [
+          'year' => ['$year' => '$timestamp'],
+          'month' => ['$month' => '$timestamp'],
+          'day' => ['$dayOfMonth' => '$timestamp']
+        ],
         'count' => ['$sum' => 1],
         'date'  => ['$addToSet' => '$statement.timestamp']
       ]

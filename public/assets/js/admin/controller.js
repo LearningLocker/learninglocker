@@ -30,13 +30,13 @@ define([
     },
 
     //gets mapped to in AppRouter's appRoutes
-    index:function () {
+    index:function (graphStartDate, graphEndDate) {
 
       //find a better way to show loader
       App.layouts.main.mainRegion.show( new LoadingView );
 
       var stats = new StatsModel;
-      stats.fetch().then(function() {
+      stats.updateStats().then(function() {
 
         var statsView     = new Stats({ model: stats });
         var headerView    = new Header({ model: stats });

@@ -109,7 +109,12 @@ class SiteController extends BaseController {
    * @return Response
    **/
   public function getStats(){
-    $stats = new \app\locker\data\dashboards\AdminDashboard();
+    $startDate = \LockerRequest::getParam('graphStartDate');
+    $endDate = \LockerRequest::getParam('graphEndDate');
+
+    $startDate = !$startDate ? null : new \Carbon\Carbon($startDate);
+    $endDate = !$endDate ? null : new \Carbon\Carbon($endDate);
+    $stats = new \app\locker\data\dashboards\AdminDashboard($startDate, $endDate);
     return Response::json( $stats );
   }
 

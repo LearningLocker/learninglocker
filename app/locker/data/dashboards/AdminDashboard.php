@@ -1,17 +1,19 @@
 <?php namespace app\locker\data\dashboards;
 
+use App\Locker\Repository\Query\EloquentQueryRepository as Query;
+
 class AdminDashboard extends \app\locker\data\BaseData {
 
   public $stats;
   private $user;
 
-  public function __construct(){
+  public function __construct(\DateTime $startDate = null, \DateTime $endDate = null){
 
     $this->setDb();
 
     $this->user = \Auth::user(); //we might want to pass user in, for example when use the API
 
-    $this->setFullStats();
+    $this->setFullStats($startDate, $endDate);
 
   }
 
@@ -19,12 +21,12 @@ class AdminDashboard extends \app\locker\data\BaseData {
    * Set all stats array.
    *
    **/
-  public function setFullStats(){
+  public function setFullStats(\DateTime $startDate = null, \DateTime $endDate = null){
     $this->stats = array('statement_count' => $this->statementCount(),
                          'lrs_count'       => $this->lrsCount(),
                          'actor_count'     => $this->actorCount(),
                          'user_count'      => $this->userCount(),
-                         'statement_graph' => $this->getStatementNumbersByDate(),
+                         'statement_graph' => $this->getStatementNumbersByDate($startDate, $endDate),
                          'statement_avg'   => $this->statementAvgCount()
                         );
   }
@@ -116,16 +118,16 @@ class AdminDashboard extends \app\locker\data\BaseData {
    * @return $data json feed.
    *
    **/
-  public function getStatementNumbersByDate() {
-    $rangeStart = \Carbon\Carbon::now()->subMonth();
-    $rangeEnd = \Carbon\Carbon::now();
+  public function getStatementNumbersByDate(\DateTime $startDate = null, \DateTime $endDate = null) {
+    $startDate = $startDate ?: \Carbon\Carbon::now()->subMonths(4);
+    $endDate = $endDate ?: \Carbon\Carbon::now()->subMonths(3);
 
     $statements = $this->db->statements->aggregate(
       [
         '$match' => [
           'timestamp'=> [
-            '$gte' => new \MongoDate($rangeStart->getTimestamp()),
-            '$lte' => new \MongoDate($rangeEnd->getTimestamp())
+            '$gte' => new \MongoDate($startDate->getTimestamp()),
+            '$lte' => new \MongoDate($endDate->getTimestamp())
           ]
         ]
       ], 
