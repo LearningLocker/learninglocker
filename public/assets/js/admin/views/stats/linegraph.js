@@ -17,7 +17,7 @@ define([
     },
 
     events:{
-      'click #updateGraph' : 'startupdate'
+      'submit #dateRange' : 'startupdate'
     },
 
     ui:{
@@ -32,6 +32,7 @@ define([
       this.model.options.graphStartDate = this.ui.startDateInput.val();
       this.model.options.graphEndDate = this.ui.endDateInput.val();
       this.model.updateStats();
+      e.preventDefault();
     },
 
     templateHelpers: function(){

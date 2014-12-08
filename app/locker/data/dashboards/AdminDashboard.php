@@ -119,16 +119,21 @@ class AdminDashboard extends \app\locker\data\BaseData {
    *
    **/
   public function getStatementNumbersByDate(\DateTime $startDate = null, \DateTime $endDate = null) {
-    $startDate = $startDate ?: \Carbon\Carbon::now()->subMonths(4);
-    $endDate = $endDate ?: \Carbon\Carbon::now()->subMonths(3);
+    // If neither of the dates are set, default to the last 30 days.
+    if ($startDate === null && $endDate === null) {
+      $startDate = \Carbon\Carbon::now()->subMonth();
+      $endDate = \Carbon\Carbon::now();
+    }
+
+    // Create the timestamp filter.
+    $timestamp = [];
+    if ($startDate !== null) $timestamp['$gte'] = new \MongoDate($startDate->getTimestamp());
+    if ($endDate !== null) $timestamp['$lte'] = new \MongoDate($endDate->getTimestamp());
 
     $statements = $this->db->statements->aggregate(
       [
         '$match' => [
-          'timestamp'=> [
-            '$gte' => new \MongoDate($startDate->getTimestamp()),
-            '$lte' => new \MongoDate($endDate->getTimestamp())
-          ]
+          'timestamp'=> $timestamp
         ]
       ], 
       [

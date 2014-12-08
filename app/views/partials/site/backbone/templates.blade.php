@@ -191,9 +191,20 @@
 </script>
 
 <script id="lineGraph" type="text/template">
-  Since <input id="startDateInput" value="<%= dates().start %>"/>
-  Until <input id="endDateInput" value="<%= dates().end %>"/>
-  <button id="updateGraph">Update graph</button>
+  <form id="dateRange" class="form-inline" role="form">
+    <span class="input-group col-sm-4" style="display:inline-table">
+      <span class="input-group-addon">Since</span>
+      <input type="date" class="form-control" id="startDateInput" value="<%= dates().start %>" placeholder="YYYY/MM/DD"/>
+    </span>
+    <span class="input-group col-sm-4" style="display:inline-table">
+      <span class="input-group-addon">Until</span>
+      <input type="date" class="form-control" id="endDateInput" value="<%= dates().end %>" placeholder="YYYY/MM/DD"/>
+    </span>
+    <button type="submit" id="updateGraph" class="btn btn-default" style="vertical-align: top">
+      <span class="icon-refresh"></span> Update graph
+    </button>
+  </form>
+  
   <div class="row">
     <div class="col-xs-12 col-sm-12">
       <div class="panel panel-default">

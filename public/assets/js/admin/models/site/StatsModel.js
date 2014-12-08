@@ -2,14 +2,17 @@ define([
   'underscore',
   'backbone'
 ], function(_, Backbone) {
+  var end = new Date();
+  var start = new Date();
+  start.setMonth(end.getMonth() - 1);
   
   var StatsModel = Backbone.Model.extend({
     defaults:{
-      statement_graph: ""
+      statement_graph: ''
     },
     options:{
-      graphStartDate: "01-01-2014 00:00",
-      graphEndDate: "01-12-2014 23:59"
+      graphStartDate: start.toISOString().substr(0, 10),
+      graphEndDate: end.toISOString().substr(0, 10)
     },
     parse: function(response){
       return response.stats;
@@ -25,7 +28,7 @@ define([
       return this.fetch({
         data: {
           graphStartDate: this.options.graphStartDate,
-          graphEndDate: this.options.graphEndDate
+          graphEndDate: this.options.graphEndDate + ' 23:59'
         }
       });
     }
