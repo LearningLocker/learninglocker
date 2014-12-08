@@ -80,6 +80,15 @@
       {{ HTML::script('assets/js/placeholder.js') }}
     @show
 
+
+    @show
+
+    @section('script_bootload')
+    <script type="text/javascript">
+    window.LL = window.LL || {
+      siteroot: "{{ url() }}"
+    };
+    </script>
     @show
   </body>
 </html>

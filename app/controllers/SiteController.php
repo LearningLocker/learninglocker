@@ -55,7 +55,14 @@ class SiteController extends BaseController {
 
     $site  = $this->site->all();
     $list  = $this->lrs->all();
-    return View::make('partials.site.dashboard', array('site' => $site, 'list' => $list));
+    $admin_dashboard = new \app\locker\data\dashboards\AdminDashboard();
+
+    return View::make('partials.site.dashboard', array(
+      'site' => $site, 
+      'list' => $list,
+      'stats' => $admin_dashboard->getFullStats(),
+      'graph_data' => $admin_dashboard->getGraphData()
+    ));
 
   }
 
@@ -114,8 +121,27 @@ class SiteController extends BaseController {
 
     $startDate = !$startDate ? null : new \Carbon\Carbon($startDate);
     $endDate = !$endDate ? null : new \Carbon\Carbon($endDate);
-    $stats = new \app\locker\data\dashboards\AdminDashboard($startDate, $endDate);
+    $admin_dashboard = new \app\locker\data\dashboards\AdminDashboard();
+    $stats = $admin_dashboard->getFullStats();
+
     return Response::json( $stats );
+  }
+
+
+  /**
+   * Grab site stats
+   *
+   * @return Response
+   **/
+  public function getGraphData(){
+    $startDate = \LockerRequest::getParam('graphStartDate');
+    $endDate = \LockerRequest::getParam('graphEndDate');
+
+    $startDate = !$startDate ? null : new \Carbon\Carbon($startDate);
+    $endDate = !$endDate ? null : new \Carbon\Carbon($endDate);
+    $admin_dashboard = new \app\locker\data\dashboards\AdminDashboard();
+    $graph_data = $admin_dashboard->getGraphData($startDate, $endDate);
+    return Response::json( $graph_data );
   }
 
   /**

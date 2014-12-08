@@ -14,11 +14,19 @@
 Route::get('/', function(){
   if( Auth::check() ){
     $site = \Site::first();
+    
+    $admin_dashboard = new \app\locker\data\dashboards\AdminDashboard();
+    
     //if super admin, show site dashboard, otherwise show list of LRSs can access
     if( Auth::user()->role == 'super' ){
       $list = Lrs::all();
-      return View::make('partials.site.dashboard', 
-                  array('site' => $site, 'list' => $list, 'dash_nav' => true));
+      return View::make('partials.site.dashboard', array(
+        'site' => $site, 
+        'list' => $list, 
+        'stats' => $admin_dashboard->getFullStats(),
+        'graph_data' => $admin_dashboard->getGraphData(),
+        'dash_nav' => true
+      ));
     }else{
       $lrs = Lrs::where('users._id', \Auth::user()->_id)->get();
       return View::make('partials.lrs.list', array('lrs' => $lrs, 'list' => $lrs, 'site' => $site));
@@ -126,6 +134,9 @@ Route::get('site/apps', array(
 Route::get('site/stats', array(
   'uses' => 'SiteController@getStats',
 ));
+Route::get('site/graphdata', array(
+  'uses' => 'SiteController@getGraphData',
+));
 Route::get('site/lrs', array(
   'uses' => 'SiteController@lrs',
 ));
@@ -164,6 +175,9 @@ Route::get('lrs/{id}/users', array(
 ));
 Route::get('lrs/{id}/stats/{segment?}', array(
   'uses' => 'LrsController@getStats',
+));
+Route::get('lrs/{id}/graphdata', array(
+  'uses' => 'LrsController@getGraphData',
 ));
 Route::put('lrs/{id}/users/remove', array(
   'uses' => 'LrsController@usersRemove',

@@ -4,7 +4,7 @@ define([
 ], function(_, Backbone) {
   
   var SiteModel = Backbone.Model.extend({
-    urlRoot: 'site/settings',
+    urlRoot: window.LL.siteroot + '/site/settings',
     idAttribute: "_id"
   });
 

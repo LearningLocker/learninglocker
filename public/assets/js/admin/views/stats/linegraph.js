@@ -3,10 +3,9 @@ define([
   'underscore',
   'backbone',
   'marionette',
-  'models/site/StatsModel',
   'morris'
 
-], function($, _, Backbone, Marionette, StatsModel, Morris){
+], function($, _, Backbone, Marionette, Morris){
 
   var LineGraphView = Backbone.Marionette.ItemView.extend({
 
@@ -28,7 +27,8 @@ define([
 
     startupdate: function(e){
       this.ui.morrisLine.css({height: "auto"});
-      this.ui.morrisLine.html('<img src="assets/img/ajax-loader.gif"></img>');
+      var $img = $('<img/>').attr('src', window.LL.siteroot + "/assets/img/ajax-loader.gif" );
+      this.ui.morrisLine.html($img);
       this.model.options.graphStartDate = this.ui.startDateInput.val();
       this.model.options.graphEndDate = this.ui.endDateInput.val();
       this.model.updateStats();
@@ -53,7 +53,6 @@ define([
 
       if( $('#'+chartId).length > 0 ){
 
-        var avg   = this.model.get("statement_avg");
         var data  = this.model.get("statement_graph");
 
         var totals   = 'Statement total';
@@ -75,9 +74,6 @@ define([
             element: chartId,
             data: category_data,
             xkey: 'y',
-            goals: [avg],
-            goalStrokeWidth: 2,
-            goalLineColors: ['#00cc00'],
             barColors:['#354b59'],
             ykeys: ['a', 'b'],
             labels: [totals, learners]

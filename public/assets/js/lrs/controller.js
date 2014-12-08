@@ -5,20 +5,21 @@ define([
   'marionette',
   'app',
   'models/stats/TimelineModel',
+  'models/stats/GraphModel',
   'models/stats/ActivityModel',
   'models/stats/UserModel',
   'models/ReportModel',
   'collections/ActivityCollection',
   'collections/UserCollection',
   'collections/ReportCollection',
-  'views/stats/stats',
-  'views/stats/lineGraph',
+  '../admin/views/stats/stats',
+  '../admin/views/stats/linegraph',
   'views/loadingView',
-  'views/stats/header',
+  '../admin/views/stats/header',
   'views/activity/ActivityList',
   'views/actor/UserList',
   'views/report/ReportList'
-], function($, _, Backbone, Marionette, App, TimelineModel, ActivityModel, UserModel, ReportModel, ActivityCollection, UserCollection, 
+], function($, _, Backbone, Marionette, App, TimelineModel, GraphModel, ActivityModel, UserModel, ReportModel, ActivityCollection, UserCollection, 
     ReportCollection, Stats, LineGraph, LoadingView, Header, ActivityList, UserList, ReportList){
 
   var Controller = Backbone.Marionette.Controller.extend({
@@ -37,16 +38,16 @@ define([
       //find a better way to show loader
       App.layouts.dashboard.graphArea.show( new LoadingView );
 
-      var timeline = new TimelineModel;
-      timeline.updateStats().then(function() {
 
-        var headerView    = new Header({ model: timeline });
-        var lineGraphView = new LineGraph({ model: timeline });
-        
-        App.layouts.dashboard.headerArea.show( headerView );
-        App.layouts.dashboard.graphArea.show( lineGraphView );
-        
-      });
+      var timeline = new TimelineModel(window.LL.stats);
+      var graph_model = new GraphModel(window.LL.graph_data);
+
+      var headerView    = new Header({ model: timeline });
+      var lineGraphView = new LineGraph({ model: graph_model });
+      
+      App.layouts.dashboard.headerArea.show( headerView );
+      App.layouts.dashboard.graphArea.show( lineGraphView );
+      
 
       var activities = new ActivityCollection;
       activities.fetch().then(function() {

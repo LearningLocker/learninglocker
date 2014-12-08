@@ -13,6 +13,7 @@ define([
   'models/site/SiteModel',
   'views/site/settings',
   'models/site/StatsModel',
+  'models/site/GraphModel',
   'views/stats/stats',
   'views/stats/header',
   'views/stats/linegraph',
@@ -21,7 +22,7 @@ define([
   'views/users/addNew',
   'views/site/edit'
 ], function($, _, Backbone, Marionette, App, LrsCollection, LrsView, UsersCollection, UsersView,
-  OAuthAppsCollection, OAuthAppsView, SiteModel, Settings, StatsModel, Stats, Header, LineGraph, 
+  OAuthAppsCollection, OAuthAppsView, SiteModel, Settings, StatsModel, GraphModel, Stats, Header, LineGraph, 
   LoadingView, AddNewLrs, AddNewUser, EditSettings){
 
   var Controller = Backbone.Marionette.Controller.extend({
@@ -35,22 +36,21 @@ define([
       //find a better way to show loader
       App.layouts.main.mainRegion.show( new LoadingView );
 
-      var stats = new StatsModel;
-      stats.updateStats().then(function() {
+      var stats = new StatsModel(window.LL.stats);
+      var graph_model = new GraphModel(window.LL.graph_data);
 
-        var statsView     = new Stats({ model: stats });
-        var headerView    = new Header({ model: stats });
-        var lineGraphView = new LineGraph({ model: stats });
 
-        //add our dashboard layout to the main app region
-        App.layouts.main.mainRegion.show( App.layouts.dashboard );
+      var statsView     = new Stats({ model: stats });
+      var headerView    = new Header({ model: stats });
+      var lineGraphView = new LineGraph({ model: graph_model });
 
-        //set content areas. E.g this could become widgets?
-        App.layouts.dashboard.headerArea.show( headerView );
-        App.layouts.dashboard.graphArea.show( lineGraphView );
-        App.layouts.dashboard.contentArea.show( statsView );
+      //add our dashboard layout to the main app region
+      App.layouts.main.mainRegion.show( App.layouts.dashboard );
 
-      });
+      //set content areas. E.g this could become widgets?
+      App.layouts.dashboard.headerArea.show( headerView );
+      App.layouts.dashboard.graphArea.show( lineGraphView );
+      App.layouts.dashboard.contentArea.show( statsView );
 
     },
 

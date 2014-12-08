@@ -8,28 +8,16 @@ define([
   
   var StatsModel = Backbone.Model.extend({
     defaults:{
-      statement_graph: ''
+      statement_count: 0,
     },
-    urlRoot: 'site/stats',
-    options:{
-      graphStartDate: start.toISOString().substr(0, 10),
-      graphEndDate: end.toISOString().substr(0, 10)
-    },
+    urlRoot: window.LL.siteroot + '/site/stats',
     parse: function(response){
-      return response.stats;
+      return _.isUndefined(response.stats) ? response : response.stats;
     },
     initialize: function(data, options){
       this.options = _.extend( this.options, options );
     },
-    idAttribute: "_id",
-    updateStats: function(){
-      return this.fetch({
-        data: {
-          graphStartDate: this.options.graphStartDate,
-          graphEndDate: this.options.graphEndDate + ' 23:59'
-        }
-      });
-    }
+    idAttribute: "_id"
   });
 
   return StatsModel;

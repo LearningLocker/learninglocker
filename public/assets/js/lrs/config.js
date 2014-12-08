@@ -10,7 +10,8 @@ require.config({
     'backbone.babysitter' : '../libs/backbone/backbone.babysitter',
     'bootstrap': '../libs/bootstrap/bootstrap.min',
     'raphael': '../libs/morrisjs/raphael.min',
-    'morris': '../libs/morrisjs/morris.min'
+    'morris': '../libs/morrisjs/morris.min',
+    'admin' : '../admin'
   },
   shim : {
     jquery : {

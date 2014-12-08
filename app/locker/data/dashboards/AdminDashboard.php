@@ -4,31 +4,33 @@ use App\Locker\Repository\Query\EloquentQueryRepository as Query;
 
 class AdminDashboard extends \app\locker\data\BaseData {
 
-  public $stats;
   private $user;
 
-  public function __construct(\DateTime $startDate = null, \DateTime $endDate = null){
+  public function __construct(){
 
     $this->setDb();
 
     $this->user = \Auth::user(); //we might want to pass user in, for example when use the API
-
-    $this->setFullStats($startDate, $endDate);
-
   }
 
   /**
    * Set all stats array.
    *
    **/
-  public function setFullStats(\DateTime $startDate = null, \DateTime $endDate = null){
-    $this->stats = array('statement_count' => $this->statementCount(),
-                         'lrs_count'       => $this->lrsCount(),
-                         'actor_count'     => $this->actorCount(),
-                         'user_count'      => $this->userCount(),
-                         'statement_graph' => $this->getStatementNumbersByDate($startDate, $endDate),
-                         'statement_avg'   => $this->statementAvgCount()
-                        );
+  public function getFullStats(){
+    return array(
+      'statement_count' => $this->statementCount(),
+      'lrs_count'       => $this->lrsCount(),
+      'actor_count'     => $this->actorCount(),
+      'user_count'      => $this->userCount(),
+      'statement_avg'   => $this->statementAvgCount()
+    );
+  }
+
+  public function getGraphData(\DateTime $startDate = null, \DateTime $endDate = null) {
+    return [
+      'statement_graph' => $this->getStatementNumbersByDate($startDate, $endDate)
+    ];
   }
 
   /**

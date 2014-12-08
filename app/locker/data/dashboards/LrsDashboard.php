@@ -17,12 +17,18 @@ class LrsDashboard extends \app\locker\data\BaseData {
    * Set all stats array.
    *
    **/
-  public function setTimelineGraph(\DateTime $startDate = null, \DateTime $endDate = null){
-    return array('statement_count' => $this->statementCount(),
-                 'statement_avg'   => $this->statementAvgCount(),
-                 'actor_count'     => $this->actorCount(),
-                 'statement_graph' => $this->getStatementNumbersByDate($startDate, $endDate)
-                 );      
+  public function getStats(){
+    return array(
+      'statement_count' => $this->statementCount(),
+      'statement_avg'   => $this->statementAvgCount(),
+      'actor_count'     => $this->actorCount()
+    );      
+  }
+
+  public function getGraphData(\DateTime $startDate = null, \DateTime $endDate = null) {
+    return [
+      'statement_graph' => $this->getStatementNumbersByDate($startDate, $endDate)
+    ];
   }
 
   /**

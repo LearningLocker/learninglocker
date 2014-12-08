@@ -134,7 +134,7 @@
     <div class="col-xs-12 col-sm-12">
       <div class="panel panel-default">
         <div class="panel-body">
-          <div id="morrisLine">
+          <div id="morrisLine" class="text-center">
             <% if (statement_graph == null || statement_graph === '') { %>
                 No data.
             <% } %>
