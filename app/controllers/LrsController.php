@@ -158,7 +158,7 @@ class LrsController extends BaseController {
 
   public function getStats( $id, $segment = '' ){
 
-    $stats = new \app\locker\data\dashboards\LrsDashboard( $id );
+    $stats = new \app\locker\data\dashboards\LrsDashboard($id);
 
     switch( $segment ){
       case 'topActivities':
@@ -170,7 +170,12 @@ class LrsController extends BaseController {
         $get_stats = $get_stats['result'];
         break;
       default:
-        $get_stats = $stats->setTimelineGraph();
+      $startDate = \LockerRequest::getParam('graphStartDate');
+      $endDate = \LockerRequest::getParam('graphEndDate');
+
+      $startDate = !$startDate ? null : new \Carbon\Carbon($startDate);
+      $endDate = !$endDate ? null : new \Carbon\Carbon($endDate);
+        $get_stats = $stats->setTimelineGraph($startDate, $endDate);
         break;
     }
     return Response::json($get_stats);

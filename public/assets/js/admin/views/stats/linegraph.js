@@ -28,7 +28,7 @@ define([
 
     startupdate: function(e){
       this.ui.morrisLine.css({height: "auto"});
-      this.ui.morrisLine.html('Loading...');
+      this.ui.morrisLine.html('<img src="assets/img/ajax-loader.gif"></img>');
       this.model.options.graphStartDate = this.ui.startDateInput.val();
       this.model.options.graphEndDate = this.ui.endDateInput.val();
       this.model.updateStats();
@@ -90,7 +90,6 @@ define([
       this.drawGraph( this.ui.morrisLine );
     },
     onShow: function () {
-      console.log(this);
       this.redraw();
     },
     onRender: function(){

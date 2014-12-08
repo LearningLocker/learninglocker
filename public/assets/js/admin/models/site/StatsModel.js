@@ -10,6 +10,7 @@ define([
     defaults:{
       statement_graph: ''
     },
+    urlRoot: 'site/stats',
     options:{
       graphStartDate: start.toISOString().substr(0, 10),
       graphEndDate: end.toISOString().substr(0, 10)
@@ -19,9 +20,6 @@ define([
     },
     initialize: function(data, options){
       this.options = _.extend( this.options, options );
-    },
-    url: function(){
-      return 'site/stats';
     },
     idAttribute: "_id",
     updateStats: function(){

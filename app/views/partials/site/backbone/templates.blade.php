@@ -209,7 +209,11 @@
     <div class="col-xs-12 col-sm-12">
       <div class="panel panel-default">
         <div class="panel-body">
-          <div id="morrisLine"></div>
+          <div id="morrisLine">
+            <% if (statement_graph == null || statement_graph === '') { %>
+                No data.
+            <% } %>
+          </div>
         </div>
       </div>
     </div>

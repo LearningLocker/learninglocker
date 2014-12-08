@@ -38,7 +38,7 @@ define([
       App.layouts.dashboard.graphArea.show( new LoadingView );
 
       var timeline = new TimelineModel;
-      timeline.fetch().then(function() {
+      timeline.updateStats().then(function() {
 
         var headerView    = new Header({ model: timeline });
         var lineGraphView = new LineGraph({ model: timeline });

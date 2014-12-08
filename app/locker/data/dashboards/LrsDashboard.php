@@ -17,11 +17,11 @@ class LrsDashboard extends \app\locker\data\BaseData {
    * Set all stats array.
    *
    **/
-  public function setTimelineGraph(){
+  public function setTimelineGraph(\DateTime $startDate = null, \DateTime $endDate = null){
     return array('statement_count' => $this->statementCount(),
                  'statement_avg'   => $this->statementAvgCount(),
                  'actor_count'     => $this->actorCount(),
-                 'statement_graph' => $this->getStatementNumbersByDate()
+                 'statement_graph' => $this->getStatementNumbersByDate($startDate, $endDate)
                  );      
   }
 
@@ -147,22 +147,47 @@ class LrsDashboard extends \app\locker\data\BaseData {
    * @return $data json feed.
    *
    **/
-  public function getStatementNumbersByDate(){
+  public function getStatementNumbersByDate(\DateTime $startDate = null, \DateTime $endDate = null) {
+    // If neither of the dates are set, default to the last 30 days.
+    if ($startDate === null && $endDate === null) {
+      $startDate = \Carbon\Carbon::now()->subMonth();
+      $endDate = \Carbon\Carbon::now();
+    }
 
-    $set_id = array( '$dayOfYear' => '$timestamp' );
+    // Create the timestamp filter.
+    $timestamp = [];
+    if ($startDate !== null) $timestamp['$gte'] = new \MongoDate($startDate->getTimestamp());
+    if ($endDate !== null) $timestamp['$lte'] = new \MongoDate($endDate->getTimestamp());
 
     $statements = $this->db->statements->aggregate(
-      array('$match' => $this->getMatch( $this->lrs )),
-      array(
-        '$group' => array(
-          '_id'   => $set_id,
-          'count' => array('$sum' => 1),
-          'date'  => array('$addToSet' => '$statement.timestamp'),
-          'actor' => array('$addToSet' => '$statement.actor')
-        )
-      ),
-      array('$sort'    => array('_id' => 1)),
-      array('$project' => array('count' => 1, 'date' => 1, 'actor' => 1))
+      [
+        '$match' => [
+          'timestamp' => $timestamp,
+          'lrs._id' => $this->lrs
+        ]
+      ], 
+      [
+        '$group' => [
+          '_id'   => [
+            'year' => ['$year' => '$timestamp'],
+            'month' => ['$month' => '$timestamp'],
+            'day' => ['$dayOfMonth' => '$timestamp']
+          ],
+          'count' => ['$sum' => 1],
+          'date'  => ['$addToSet' => '$statement.timestamp'],
+          'actor' => ['$addToSet' => '$statement.actor']
+        ]
+      ],
+      [
+        '$sort' => ['_id' => 1]
+      ], 
+      [
+        '$project' => [
+          'count' => 1, 
+          'date' => 1, 
+          'actor' => 1
+        ]
+      ]
     );
 
     //set statements for graphing
