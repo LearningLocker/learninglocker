@@ -150,30 +150,46 @@ class LrsController extends BaseController {
 
     $lrs      = $this->lrs->find( $id );
     $lrs_list = $this->lrs->all();
-    return View::make('partials.lrs.dashboard', array('lrs'      => $lrs, 
-                                                      'list'     => $lrs_list,
-                                                      'dash_nav' => true));
+    $dashboard = new \app\locker\data\dashboards\LrsDashboard($id);
+    return View::make('partials.lrs.dashboard', array(
+      'lrs'      => $lrs, 
+      'list'     => $lrs_list,
+      'stats' => $dashboard->getStats(),
+      'graph_data' => $dashboard->getGraphData(),
+      'dash_nav' => true
+    ));
     
   }
 
   public function getStats( $id, $segment = '' ){
 
-    $stats = new \app\locker\data\dashboards\LrsDashboard( $id );
+    $dashboard = new \app\locker\data\dashboards\LrsDashboard($id);
 
     switch( $segment ){
       case 'topActivities':
-        $get_stats = $stats->getTopActivities( $id );
+        $get_stats = $dashboard->getTopActivities( $id );
         $get_stats = $get_stats['result'];
         break;
       case 'activeUsers':
-        $get_stats = $stats->getActiveUsers( $id );
+        $get_stats = $dashboard->getActiveUsers( $id );
         $get_stats = $get_stats['result'];
         break;
       default:
-        $get_stats = $stats->setTimelineGraph();
+        $get_stats = $dashboard->getStats();
         break;
     }
     return Response::json($get_stats);
+  }
+
+  public function getGraphData($id) {
+    $startDate = \LockerRequest::getParam('graphStartDate');
+    $endDate = \LockerRequest::getParam('graphEndDate');
+
+    $startDate = !$startDate ? null : new \Carbon\Carbon($startDate);
+    $endDate = !$endDate ? null : new \Carbon\Carbon($endDate);
+    $dashboard = new \app\locker\data\dashboards\LrsDashboard($id);
+    $graph_data = $dashboard->getGraphData($startDate, $endDate);
+    return Response::json( $graph_data );
   }
 
   /**

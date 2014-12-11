@@ -4,10 +4,9 @@ define([
   'backbone',
   'marionette',
   'app',
-  'models/site/StatsModel',
   'morris'
 
-], function($, _, Backbone, Marionette, App, StatsModel, Morris){
+], function($, _, Backbone, Marionette, App, Morris){
 
   var StatsView = Backbone.Marionette.ItemView.extend({
 
@@ -24,7 +23,6 @@ define([
 
     showLoading: function() {
       this.$el.addClass('loading');
-      alert(trans('site.hello'));
     },
 
   });
