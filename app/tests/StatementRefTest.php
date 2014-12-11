@@ -7,7 +7,7 @@ class StatementRefTest extends TestCase {
     Route::enableFilters();
 
     // Authentication as super user.
-    $user = User::firstOrCreate(['email' => 'quan@ll.com']);
+    $user = User::firstOrCreate(['email' => 'test@example.com']);
     Auth::login($user);
     $this->createLrs();
   }
