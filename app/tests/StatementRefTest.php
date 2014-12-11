@@ -50,19 +50,21 @@ class StatementRefTest extends TestCase {
 
   private function checkStatement($id, $expected_references = [], $expected_referrers = []) {
     $statement_repo = App::make('Locker\Repository\Statement\EloquentStatementRepository');
-    $statement = $statement_repo->find($this->generateUUID($id));
+    $uuid = $this->generateUUID($id);
+    $statement = $statement_repo->find($uuid);
 
     // Checks $expected_references.
-    $references = isset($statement->refs) ? $statement->refs : [];
-    $this->assertEmpty(array_diff($expected_references, array_map(function ($ref) {
+    $references = array_map(function ($ref) {
       return $ref->id;
-    }, $references)));
+    }, isset($statement->refs) ? $statement->refs : []);
+    $this->assertEmpty(array_diff($expected_references, $references));
 
     // Checks $expected_referrers.
-    $referrers = isset($statement->refBy) ? $statement->refBy : [];
-    $this->assertEmpty(array_diff($expected_referrers, array_map(function ($ref) {
-      return $ref->id;
-    }, $referrers)));
+    $referrers = (new \Statement)
+      ->where('statement.object.id', '=', $uuid)
+      ->where('statement.object.objectType', '=', 'StatementRef')
+      ->lists('statement.id');
+    $this->assertEmpty(array_diff($expected_referrers, $referrers));
   }
 
   private function generateUUID($id) {
