@@ -49,9 +49,8 @@ class StatementRefTest extends TestCase {
   }
 
   private function checkStatement($id, $expected_references = [], $expected_referrers = []) {
-    $statement_repo = App::make('Locker\Repository\Statement\EloquentStatementRepository');
     $uuid = $this->generateUUID($id);
-    $statement = $statement_repo->find($uuid);
+    $statement = (new \Statement)->where('statement.id', '=', $uuid);
 
     // Checks $expected_references.
     $references = array_map(function ($ref) {
