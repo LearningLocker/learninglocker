@@ -11,6 +11,7 @@ class EloquentStatementRepository implements StatementRepository {
 
   // Defines properties to be set to construtor parameters.
   protected $statement, $activity, $query;
+  protected $sent_ids = array();
 
   // Number of statements to return by default.
   const DEFAULT_LIMIT = 100;
@@ -343,47 +344,254 @@ class EloquentStatementRepository implements StatementRepository {
    * @param [Statement] $statements
    * @return [Statement] Valid statements.
    */
-  private function validateStatements(array $statements) {
+  private function validateStatements(array $statements, \Lrs $lrs) {
+    $statements = $this->removeDuplicateStatements($statements, $lrs);
     $authority = $this->constructAuthority();
+    $void_statements = array();
+
     foreach ($statements as $index => $statement) {
       $validator = $this->validateStatement($statement, $authority);
-
       if ($validator['status'] == 'failed') {
         throw new \Exception(implode(', ', $validator['errors']));
       } else {
         $statements[$index] = $validator['statement'];
+        if ($this->isVoiding($statement)) {
+          $void_references =  $validator['statement']['object']['id'];
+        }
       }
     }
+    if ($void_statements) {
+      $this->validateVoid($statements, $lrs, $void_statements);
+    }
     return $statements;
+  }
+
+  /**
+   * Check that all void reference ids exist in the database and are not themselves void statements
+   * @param array $statements
+   * @param Lrs $lrs
+   * @param array $references
+   * @throws \Exception
+   */
+  private function validateVoid(array $statements, \Lrs $lrs, array $references) {
+    $count = count($references);
+    $reference_count = $this->statement
+      ->where('lrs._id', $lrs->_id)
+      ->whereIn('statement.id', $references)
+      ->where('statement.verb.id', '<>', "http://adlnet.gov/expapi/verbs/voided")
+      ->count();
+    if ($reference_count != $count) {
+      throw new \Exception('Voiding invalid or nonexistant statement');
+    }
+  }
+
+  /**
+   * Remove duplicate statements and generate ids
+   *
+   * @param array $statements
+   * @param \Lrs $lrs
+   * @return array
+   */
+  private function removeDuplicateStatements(array $statements, \Lrs $lrs) {
+    $new_id_count = 0;
+    $new_statements = array();
+    $indexed_statements = array();
+    foreach($statements as $index => $statement) {
+      if (isset($statement['id'])) {
+        if (isset($this->sent_ids[$statement['id']])) {
+          // compare statements
+          if ($this->sent_ids[$statement['id']] == $statement) {
+            // remove exact duplicates
+            unset($statements[$index]);
+          } else {
+            \App::abort(409, 'Conflicts - `'.json_encode($statement).'` does not match `'.json_encode($this->sent_ids[$statement['id']]).'`.');
+          }
+        } else {
+          $this->sent_ids[$statement['id']] = $statement;
+          $indexed_statements[$statement['id']] = $statement;
+        }
+      } else {
+        $new_statements[] = $statement;
+      }
+    }
+
+    if (count($new_statements)) {
+      $new_statements = $this->assignIds($new_statements, $lrs);
+      $indexed_statements = array_merge($indexed_statements, $new_statements);
+    }
+
+    return $indexed_statements;
+  }
+
+  /**
+   * @param array $statements
+   * @param \Lrs $lrs
+   * @return array List of statements with assigned id
+   */
+  private function assignIds(array $statements, \Lrs $lrs) {
+    $indexed_statements = array();
+    $count = count($statements);
+    $uuids = $this->generateIds($count + 1);
+    $duplicates = $this->checkIdsExist($uuids, $lrs);
+    if ($duplicates) {
+      $uuids = array_diff($uuids, $duplicates);
+    }
+
+    while(count($uuids) < $count) {
+      $new_uuids = $this->generateIds($count - count($uuids));
+      $duplicates = $this->checkIdsExist($new_uuids, $lrs);
+      if ($duplicates) {
+        $new_uuids = array_diff($uuids, $duplicates);
+        $uuids = array_merge($new_uuids);
+      }
+    }
+
+    foreach($statements as $statement) {
+      $uuid = array_pop($uuids);
+      $statement['id'] = $uuid;
+      $indexed_statements[$uuid] = $statement;
+    }
+    return $indexed_statements;
+  }
+
+  /**
+   * Check lrs for list of statement ids, optional list of statements by id for comparison
+   *
+   * @param array $uuids
+   * @param \Lrs $lrs
+   * @param array $statements
+   * @return array List of duplicate ids
+   */
+  private function checkIdsExist(array $uuids, \Lrs $lrs, array $statements=null) {
+    $duplicates = array();
+
+
+    if ($uuids) {
+      $existingModels = $this->statement
+        ->where('lrs._id', $lrs->_id)
+        ->whereIn('statement.id', $uuids)
+        ->get();
+
+      if(!$existingModels->isEmpty()) {
+        foreach($existingModels as $existingModel) {
+          $existingStatement = (array) $existingModel['statement'];
+          $id = $existingStatement['id'];
+          $duplicates[] = $id;
+          if ($statements && isset($statements[$id])) {
+
+            $statement = $statements[$id];
+            unset($existingStatement['stored']);
+            if (!isset($statement['timestamp'])) unset($existingStatement['timestamp']);
+            array_multisort($existingStatement);
+            array_multisort($statement);
+            ksort($existingStatement);
+            ksort($statement);
+
+            if ($existingStatement != $statement) {
+              \App::abort(409, 'Conflicts - `'.json_encode($statement).'` does not match `'.json_encode($existingStatement).'`.');
+            }
+          }
+        }
+      }
+    }
+    return $duplicates;
+  }
+
+  /**
+   * Generate an array of uuids of size $count
+   *
+   * @param integer $count
+   * @return array List of uuids
+   */
+  private function generateIds($count) {
+    $uuids = array();
+    $validator = new \app\locker\statements\xAPIValidation();
+    $i = 1;
+    while ($i <= $count) {
+      $uuid = $validator->makeUUID();
+      if (isset($this->sent_ids[$uuid])) {
+        continue;
+      }
+      $i++;
+      $uuids[] = $uuid;
+    }
+
+    return $uuids;
   }
 
   /**
    * Create statements.
    * @param [Statement] $statements
    * @param Lrs $lrs
-   * @return [Statement]
+   * @return array list of statements
    */
   private function createStatements(array $statements, \Lrs $lrs) {
-    return array_map(function (array $statement) use ($lrs) {
-      $existingModel = $this->doesStatementIdExist($lrs->_id, $statement);
-      if (!$existingModel) {
+    if (count($this->sent_ids)) {
+      // check for duplicates from statements with pre-assigned ids
+      $this->checkIdsExist(array_keys($this->sent_ids), $lrs, $statements);
+    }
+
+    $statements = array_map(function (array $statement) use ($lrs) {
         $newModel = $this->makeStatement($statement, $lrs);
-
         // Adds top-level properties to the new model (required for quicker queries).
-        $newModel->active = false;
-        $newModel->voided = false;
-        $newModel->timestamp = new \MongoDate(strtotime($vs['timestamp']));
-
-        // Saves the new model.
-        if ($newModel->save()) {
-          return $newModel;
-        } else {
-          throw new \Exception('Failed to save.');
-        }
-      } else {
-        return $existingModel;
-      }
+        $newModel['active'] = false;
+        $newModel['voided'] = false;
+        $newModel['timestamp'] = new \MongoDate(strtotime($newModel['statement']['timestamp']));
+        return $newModel;
     }, $statements);
+    $this->statement->where('lrs._id', $lrs->id)->insert($statements);
+    return $statements;
+  }
+
+  /**
+   * Sets references
+   * @param array $statements
+   * @param \Lrs $lrs
+   * @return array list of statements with references
+   */
+  private function updateReferences(array $statements, \Lrs $lrs) {
+    foreach($statements as $id => $statement) {
+      if ($this->isReferencing($statement['statement'])) {
+        // Finds the statement that it references.
+        $refs = array();
+        $this->recursiveCheckReferences($statements, $lrs, $refs, $statement['statement']['object']['id']);
+        // Updates the refs.
+        if ($refs) {
+          $refs = array_values($refs);
+          $statements[$id]['refs'] = $refs;
+          $this->statement->where('lrs._id', $lrs->id)->where('statement.id', $id)->update(array('refs' => $refs));
+        }
+      }
+    }
+    $this->updateReferrers($statements, $lrs);
+    return $statements;
+  }
+
+  private function recursiveCheckReferences(array $statements, \Lrs $lrs, array &$refs, $id) {
+    // check if $id refers to a statement being inserted
+    if (isset($refs[$id])) {
+      return $refs;
+    }
+    if (isset($statements[$id])) {
+      $s = $statements[$id];
+      $refs[$id] = $s['statement'];
+      if ($this->isReferencing($s['statement'])) {
+        $s_id = $s['statement']['object']['id'];
+        $this->recursiveCheckReferences($statements, $lrs, $refs, $s_id);
+      }
+    } else {
+      $reference = $this->query->where($lrs->_id, [
+        ['statement.id', '=', $id]
+      ])->first();
+      if ($reference) {
+        $refs[$id] = $reference->statement;
+        if ($this->isReferencing($reference->statement)) {
+          $s_id = $reference->statement['object']['id'];
+          $this->recursiveCheckReferences($statements, $lrs, $refs, $s_id);
+        }
+      }
+    }
+    return $refs;
   }
 
   /**
@@ -392,57 +600,34 @@ class EloquentStatementRepository implements StatementRepository {
    * @return [Statement]
    */
   private function updateReferrers(array $statements, \Lrs $lrs) {
-    return array_map(function (Statement $statement) use ($lrs) {
-      if ($statement->active === true) return $statement;
+      if (count($this->sent_ids)) {
+        $referrers = $this->query->where($lrs->_id, [
+            ['statement.object.id', 'in', array_keys($statements)],
+            ['statement.object.objectType', '=', 'StatementRef'],
+        ])->get();
 
-      // Finds all statements ($referrers) that refer to this $statement.
-      $referrers = $this->query->where($lrs->_id, [
-        ['statement.object.id', '=', $statement->statement['id']],
-        ['statement.object.objectType', '=', 'StatementRef'],
-        ['refs.id', '!=', $statement->statement['id']]
-      ])->get();
-
-      // Updates the refs $referrers.
-      foreach ($referrers as $referrer) {
-        $referrer->refs[] = $statement->statement;
-        array_merge($referrer->refs, $statement->refs);
-        if (!$referrer->save()) throw new \Exception('Failed to save referrer.');
+        // Updates the refs $referrers.
+        foreach ($referrers as $referrer) {
+          $statement_id = $referrer['statement']['object']['id'];
+          $statement = $statements[$statement_id];
+          if ($statement['active'] == false) {
+            if (isset($statement['refs'])) {
+              $referrer->refs = array(array_merge($statement['statement'], $statement['refs']));
+            } else {
+              $referrer->refs = array($statement['statement']);
+            }
+            if (!$referrer->save()) throw new \Exception('Failed to save referrer.');
+          }
+        }
       }
-
-      return $statement;
-    }, $statements);
+    return $statements;
   }
 
-  /**
-   * Adds existing statement to refs in a referrer.
-   * @param [Statement] $statements
-   * @return [Statement]
-   */
-  private function addReferences(array $statements, \Lrs $lrs) {
-    return array_map(function (Statement $statement) use ($lrs) {
-      if ($statement->active === true) return $statement;
-      if (!$this->isReferencing($statement)) return $statement;
-
-      // Finds the statement that it references.
-      $reference = $this->query->where($lrs->_id, [
-        ['statement.id', '=', $statement->statement['object']['id']]
-      ])->first();
-
-      // Updates the refs.
-      if ($reference) {
-        $statement->refs = array_push($reference->refs ?: [], $reference->statement);
-      }
-      if (!$statement->save()) throw new \Exception('Failed to save statement reference.');
-
-      return $statement;
-    }, $statements);
-  }
-
-  private function isReferencing(Statement $statement) {
+  private function isReferencing(array $statement) {
     return (
-      isset($statement->statement['object']['id']) &&
-      isset($statement->statement['object']['objectType']) &&
-      $statement->statement['object']['objectType'] === 'StatementRef'
+      isset($statement['object']['id']) &&
+      isset($statement['object']['objectType']) &&
+      $statement['object']['objectType'] === 'StatementRef'
     );
   }
 
@@ -451,44 +636,35 @@ class EloquentStatementRepository implements StatementRepository {
    * @param Statement $statement
    * @return boolean
    */
-  private function isVoiding(Statement $statement) {
-    return (
-      ($statement->statement['verb']['id'] === 'http://adlnet.gov/expapi/verbs/voided') &&
-      $this->isReferencing($statement)
-    );
+  private function isVoiding(array $statement) {
+    if (($statement['verb']['id'] === 'http://adlnet.gov/expapi/verbs/voided') &&  $this->isReferencing($statement)) {
+      return true;
+    }
+    return false;
   }
 
-  private function toggleVoid(Statement $statement, \Lrs $lrs) {
-    if ($statement->active === true) return $statement;
-    if (!$this->isVoiding($statement)) return $statement;
-
-    // Toggles voided $statement.
+  private function voidStatement($statement, $lrs) {
+    if (!$this->isVoiding($statement['statement'])) return $statement;
     $reference = $this->query->where($lrs->_id, [
-      ['statement.id', '=', $statement->statement['object']['id']]
+        ['statement.id', '=', $statement['statement']['object']['id']]
     ])->first();
-
-    if ($reference) {
-      $reference->voided = !$reference->voided;
-      if (!$reference->save()) throw new \Exception('Failed to toggle voided statement.');
-      $this->toggleVoid($reference, $lrs);
+    $ref_array = $reference->toArray();
+    if ($this->isVoiding($ref_array['statement'])) {
+       throw new \Exception('Cannot void a voiding statement');
     }
-
+    $reference->voided = true;
+    if (!$reference->save()) throw new \Exception('Failed to void statement.');
     return $statement;
   }
 
   private function voidStatements(array $statements, \Lrs $lrs) {
-    $unvoid = function (Statement $statement) use ($lrs) {
-      return $this->toggleVoid($statement, $lrs);
-    };
-    return array_map($unvoid, $statements);
+    return array_map(function (array $statement) use ($lrs) {
+      return $this->voidStatement($statement, $lrs);
+    }, $statements);
   }
 
-  private function activateStatements(array $statements) {
-    return array_map(function (Statement $statement) {
-      $statement->active = true;
-      if (!$statement->save()) throw new \Exception('Failed to activate statement.');
-      return $statement;
-    }, $statements);
+  private function activateStatements(array $statements, \Lrs $lrs) {
+    $updated = $this->statement->where('lrs._id', $lrs->id)->whereIn('statement.id', array_keys($statements))->update(array('active' => true));
   }
 
   /**
@@ -499,21 +675,17 @@ class EloquentStatementRepository implements StatementRepository {
    * @return array create result (see makeCreateResult function)
    */
   public function create(array $statements, \Lrs $lrs, $attachments = '') {
-    $statements = $this->validateStatements($statements);
+    $statements = $this->validateStatements($statements, $lrs);
     $statements = $this->createStatements($statements, $lrs);
-    $statements = $this->updateReferrers($statements, $lrs);
-    $statements = $this->addReferences($statements, $lrs);
+    $statements = $this->updateReferences($statements, $lrs);
     $statements = $this->voidStatements($statements, $lrs);
-    $statements = $this->activateStatements($statements);
+    $this->activateStatements($statements, $lrs);
 
     // Stores the $attachments.
     if ($attachments != '') {
       $this->storeAttachments($attachments, $lrs->_id);
     }
-
-    return array_map(function (Statement $statement) {
-      return $statement->statement['id'];
-    }, $statements);
+    return array_keys($statements);
   }
 
   /**
@@ -537,6 +709,7 @@ class EloquentStatementRepository implements StatementRepository {
    */
   private function makeStatement(array $statement, \Lrs $lrs) {
     // Uses defaults where possible.
+
     $statement = array_merge([
       'stored' => ($currentDate = $this->getCurrentDate()),
       'timestamp' => $currentDate,
@@ -550,15 +723,13 @@ class EloquentStatementRepository implements StatementRepository {
         $statement['object']['definition']
       );
     }
-
     // Create a new statement model
-    $newStatement = new Statement;
     $newStatement['lrs'] = [
       '_id' => $lrs->_id,
       'name' => $lrs->title
     ];
-
     $newStatement['statement'] = $this->replaceFullStop($statement);
+
     return $newStatement;
   }
 

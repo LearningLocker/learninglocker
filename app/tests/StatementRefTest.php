@@ -22,7 +22,7 @@ class StatementRefTest extends TestCase {
     return $this->call('POST', '/data/xAPI/statements', [], [], $headers, $statements);
   }
 
-  protected function createStatement($statement) {
+  protected function generateStatement($statement) {
     return array_merge($statement, [
       'actor' => [
         'mbox' => 'mailto:test@example.com'
@@ -34,35 +34,49 @@ class StatementRefTest extends TestCase {
   }
 
   private function createReferenceStatement($reference_id, $statement = []) {
-    return $this->createStatement(array_merge($statement, [
+    return $this->generateStatement(array_merge($statement, [
       'object' => [
         'objectType' => 'StatementRef',
-        'id' => $reference_id
+        'id' => $this->generateUUID($reference_id)
       ]
     ]));
   }
 
   private function createIdStatement($id, $statement = []) {
-    return $this->createStatement(array_merge($statement, [
+    return $this->generateStatement(array_merge($statement, [
       'id' => $this->generateUUID($id)
     ]));
   }
 
   private function checkStatement($id, $expected_references = [], $expected_referrers = []) {
     $uuid = $this->generateUUID($id);
-    $statement = (new \Statement)->where('statement.id', '=', $uuid);
+    $statement = \Statement::where('lrs._id', $this->lrs->_id)->where('statement.id', '=', $uuid)->first();
+
+    //$queries = DB::getQueryLog();
+
+    $expected_references = array_map(function ($ref) {
+      return $this->generateUUID($ref);
+    }, $expected_references);
+
+    $expected_referrers = array_map(function ($ref) {
+      return $this->generateUUID($ref);
+    }, $expected_referrers);
 
     // Checks $expected_references.
     $references = array_map(function ($ref) {
-      return $ref->id;
+      return $ref['id'];
     }, isset($statement->refs) ? $statement->refs : []);
-    $this->assertEmpty(array_diff($expected_references, $references));
 
     // Checks $expected_referrers.
     $referrers = (new \Statement)
+      ->select('statement.id')
       ->where('statement.object.id', '=', $uuid)
       ->where('statement.object.objectType', '=', 'StatementRef')
-      ->lists('statement.id');
+      ->get()->toArray();
+    $referrers = array_map(function ($ref) {
+      return $ref['statement']['id'];
+    }, $referrers);
+
     $this->assertEmpty(array_diff($expected_referrers, $referrers));
   }
 
@@ -82,6 +96,10 @@ class StatementRefTest extends TestCase {
 
   public function testInsert2() {
     $this->sendStatements([
+      $this->createIdStatement('A', $this->createReferenceStatement('E'))
+    ]);
+
+    $this->sendStatements([
       $this->createIdStatement('C', $this->createReferenceStatement('A')),
       $this->createIdStatement('D', $this->createReferenceStatement('B'))
     ]);
@@ -93,6 +111,15 @@ class StatementRefTest extends TestCase {
 
   public function testInsert3() {
     $this->sendStatements([
+        $this->createIdStatement('A', $this->createReferenceStatement('E'))
+    ]);
+
+    $this->sendStatements([
+        $this->createIdStatement('C', $this->createReferenceStatement('A')),
+        $this->createIdStatement('D', $this->createReferenceStatement('B'))
+    ]);
+
+    $this->sendStatements([
       $this->createIdStatement('B', $this->createReferenceStatement('A'))
     ]);
 
@@ -103,6 +130,19 @@ class StatementRefTest extends TestCase {
   }
 
   public function testInsert4() {
+    $this->sendStatements([
+        $this->createIdStatement('A', $this->createReferenceStatement('E'))
+    ]);
+
+    $this->sendStatements([
+        $this->createIdStatement('C', $this->createReferenceStatement('A')),
+        $this->createIdStatement('D', $this->createReferenceStatement('B'))
+    ]);
+
+    $this->sendStatements([
+        $this->createIdStatement('B', $this->createReferenceStatement('A'))
+    ]);
+
     $this->sendStatements([
       $this->createIdStatement('E', $this->createReferenceStatement('D'))
     ]);

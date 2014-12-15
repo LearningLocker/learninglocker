@@ -2,7 +2,8 @@
 
 use DocumentAPI;
 use Carbon\Carbon;
-use app\locker\helpers as Exceptions;
+use app\locker\helpers\FailedPrecondition as FailedPrecondition;
+use app\locker\helpers\Conflict as Conflict;
 
 class EloquentDocumentRepository implements DocumentRepository {
 
@@ -51,11 +52,11 @@ class EloquentDocumentRepository implements DocumentRepository {
 
   /**
    * Find single document
-   * 
+   *
    * @param  Lrs $lrs
    * @param  String $documentType   The type of document
    * @param  Array $data
-   * 
+   *
    * @return DocumentAPI
    */
   public function find( $lrs, $documentType, $data, $get = true ){
@@ -78,13 +79,13 @@ class EloquentDocumentRepository implements DocumentRepository {
 
   /**
    * Store document
-   * 
+   *
    * @param  Lrs $lrs
    * @param  String $documentType   The type of document
    * @param  Array $data
    * @param  String $updated        ISO 8601 Timestamp
    * @param  String $method     HTTP Method used to send store request
-   * 
+   *
    * @return DocumentAPI  Returns the updated/created document
    */
   public function store( $lrs, $documentType, $data, $updated, $method ){
@@ -105,11 +106,11 @@ class EloquentDocumentRepository implements DocumentRepository {
 
   /**
    * Delete document(s)
-   * 
+   *
    * @param  Lrs $lrs
    * @param  String $documentType   The type of document
    * @param  Array $data
-   * 
+   *
    * @return DocumentAPI
    */
   public function delete( $lrs, $documentType, $data, $single_document ){
@@ -121,11 +122,11 @@ class EloquentDocumentRepository implements DocumentRepository {
     } else {
       $result = $this->all( $lrs, $documentType, $data, false );
     }
-    
+
     //Find all documents in this query that have files and delete them
     $documents = $result->get();
 
-    foreach( $documents as $doc ){ 
+    foreach( $documents as $doc ){
       if( $doc->contentType !== 'application/json' && $doc->contentType !== "text/plain" ){
         $path = $doc->getFilePath();
         if( file_exists($path) ){
@@ -146,14 +147,14 @@ class EloquentDocumentRepository implements DocumentRepository {
 
   /**
    * Find States
-   * 
-   * @param  Lrs $lrs          
+   *
+   * @param  Lrs $lrs
    * @param  String $activityId      IRI
-   * @param  Object $agent        
-   * @param  String $registration 
+   * @param  Object $agent
+   * @param  String $registration
    * @param  Timestamp $since        ISO 8601
    * @param  Boolean $get            Used to check if we return a collection or just the eloquent object
-   * 
+   *
    * @return Collection              A collection of DocumentAPIs
    */
   public function allStateDocs( $lrs,  $activityId, $agent, $registration, $since, $get ){
@@ -179,14 +180,14 @@ class EloquentDocumentRepository implements DocumentRepository {
 
   /**
    * Find single stateId
-   * 
-   * @param  Lrs $lrs          
-   * @param  string $stateId      
+   *
+   * @param  Lrs $lrs
+   * @param  string $stateId
    * @param  String $activityId      IRI
-   * @param  Object $agent        
-   * @param  String $registration 
+   * @param  Object $agent
+   * @param  String $registration
    * @param  Boolean $get            Used to check if we return a collection or just the eloquent object
-   * 
+   *
    * @return DocumentAPI
    */
   public function findStateDoc( $lrs, $stateId, $activityId, $agent, $registration, $get ){
@@ -213,12 +214,12 @@ class EloquentDocumentRepository implements DocumentRepository {
 
   /**
    * Handle storing State documents
-   * 
+   *
    * @param  Lrs $lrs
    * @param  Array $data        The required data for the state
    * @param  String $updated    ISO 8601 Timestamp
    * @param  String $method     HTTP Method used to send store request
-   * 
+   *
    * @return DocumentAPI        The document being created/updated
    */
   public function storeStateDoc( $lrs, $data, $updated, $method ){
@@ -236,7 +237,7 @@ class EloquentDocumentRepository implements DocumentRepository {
       $document                 = $this->documentapi;
 
       //LL vars
-      $document->lrs            = $lrs; //LL specific 
+      $document->lrs            = $lrs; //LL specific
       $document->documentType   = DocumentType::STATE; //LL specific
 
       //AP vars
@@ -266,12 +267,12 @@ class EloquentDocumentRepository implements DocumentRepository {
 
   /**
    * Find Activity documents
-   * 
-   * @param  Lrs $lrs          
+   *
+   * @param  Lrs $lrs
    * @param  String $activityId      IRI
    * @param  Timestamp $since        ISO 8601
    * @param  Boolean $get            Used to check if we return a collection or just the eloquent object
-   * 
+   *
    * @return Collection              A collection of DocumentAPIs
    */
   public function allActivityDocs( $lrs, $activityId, $since, $get ){
@@ -294,12 +295,12 @@ class EloquentDocumentRepository implements DocumentRepository {
 
   /**
    * Find single stateId
-   * 
-   * @param  Lrs $lrs          
-   * @param  string $stateId      
+   *
+   * @param  Lrs $lrs
+   * @param  string $stateId
    * @param  String $activityId      IRI
    * @param  Boolean $get            Used to check if we return a collection or just the eloquent object
-   * 
+   *
    * @return DocumentAPI
    */
   public function findActivityDoc( $lrs, $profileId, $activityId, $get ){
@@ -321,11 +322,11 @@ class EloquentDocumentRepository implements DocumentRepository {
     $ifMatch = isset($ifMatch) ? '"'.strtoupper($ifMatch).'"' : null;
 
     if (isset($ifMatch) && $ifMatch !== $sha) {
-      throw new Exceptions\FailedPrecondition('Precondition (If-Match) failed.'); // 412.
+      throw new FailedPrecondition('Precondition (If-Match) failed.'); // 412.
     } else if (isset($ifNoneMatch) && isset($sha) && $ifNoneMatch === '*') {
-      throw new Exceptions\FailedPrecondition('Precondition (If-None-Match) failed.'); // 412.
+      throw new FailedPrecondition('Precondition (If-None-Match) failed.'); // 412.
     } else if ($noConflict && $sha !== null && !isset($ifNoneMatch) && !isset($ifMatch)) {
-      throw new Exceptions\Conflict('Check the current state of the resource then set the "If-Match" header with the current ETag to resolve the conflict.'); // 409.
+      throw new Conflict('Check the current state of the resource then set the "If-Match" header with the current ETag to resolve the conflict.'); // 409.
     } else {
       return true;
     }
@@ -334,12 +335,12 @@ class EloquentDocumentRepository implements DocumentRepository {
 
   /**
    * Handle storing State documents
-   * 
+   *
    * @param  Lrs $lrs
    * @param  Array $data        The required data for the state
    * @param  String $updated    ISO 8601 Timestamp
    * @param  String $method     HTTP Method used to send store request
-   * 
+   *
    * @return DocumentAPI        The document being created/updated
    */
   public function storeActivityDoc( $lrs, $data, $updated, $method ){
@@ -356,7 +357,7 @@ class EloquentDocumentRepository implements DocumentRepository {
       $document                 = $this->documentapi;
 
       //LL vars
-      $document->lrs            = $lrs; //LL specific 
+      $document->lrs            = $lrs; //LL specific
       $document->documentType   = DocumentType::ACTIVITY; //LL specific
 
       //AP vars
@@ -385,12 +386,12 @@ class EloquentDocumentRepository implements DocumentRepository {
 
   /**
    * Find Agent documents
-   * 
-   * @param  Lrs $lrs          
+   *
+   * @param  Lrs $lrs
    * @param  Array $agent
    * @param  Timestamp $since        ISO 8601
    * @param  Boolean $get            Used to check if we return a collection or just the eloquent object
-   * 
+   *
    * @return Collection              A collection of DocumentAPIs
    */
   public function allAgentDocs( $lrs, $agent, $since, $get ){
@@ -415,12 +416,12 @@ class EloquentDocumentRepository implements DocumentRepository {
 
   /**
    * Find single profileId
-   * 
-   * @param  Lrs $lrs          
-   * @param  string $stateId      
-   * @param  Object $agent        
+   *
+   * @param  Lrs $lrs
+   * @param  string $stateId
+   * @param  Object $agent
    * @param  Boolean $get            Used to check if we return a collection or just the eloquent object
-   * 
+   *
    * @return DocumentAPI
    */
   public function findAgentDoc( $lrs, $profileId, $agent, $get ){
@@ -442,12 +443,12 @@ class EloquentDocumentRepository implements DocumentRepository {
 
   /**
    * Handle storing State documents
-   * 
+   *
    * @param  Lrs $lrs
    * @param  Array $data        The required data for the state
    * @param  String $updated    ISO 8601 Timestamp
    * @param  String $method     HTTP Method used to send store request
-   * 
+   *
    * @return DocumentAPI        The document being created/updated
    */
   public function storeAgentDoc( $lrs, $data, $updated, $method ){
@@ -464,7 +465,7 @@ class EloquentDocumentRepository implements DocumentRepository {
       $document                 = $this->documentapi;
 
       //LL vars
-      $document->lrs            = $lrs; //LL specific 
+      $document->lrs            = $lrs; //LL specific
       $document->documentType   = DocumentType::AGENT; //LL specific
 
       //AP vars
@@ -498,7 +499,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    * @param @agent  The agent json object
    *
    * @return $query
-   * 
+   *
    */
   public function setQueryAgent( $query, $agent ){
     $agent = (object) $agent;
@@ -549,10 +550,10 @@ class EloquentDocumentRepository implements DocumentRepository {
 
   /**
    * Unified method for filtering by registration, if provided
-   * 
+   *
    * @param Eloquent $query The query being filtered
    * @param string $registration The UUID associated with this state
-   * 
+   *
    * @return $query
    */
   public function setQueryRegistration( $query, $registration ){
@@ -567,10 +568,10 @@ class EloquentDocumentRepository implements DocumentRepository {
 
   /**
    * Unified method for filtering by stored date (since), if provided
-   * 
+   *
    * @param Eloquent $query The query being filtered
    * @param string $since The UUID associated with this state
-   * 
+   *
    * @return $query
    */
   public function setQuerySince($query, $since ){

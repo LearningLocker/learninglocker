@@ -1,4 +1,4 @@
-<?php namespace App\Locker\Helpers;
+<?php namespace app\locker\helpers;
 
 
 class Attachments {

@@ -2,7 +2,7 @@
 
 use \Locker\Repository\Statement\StatementRepository as Statement;
 use \Locker\Repository\Query\QueryRepository as Query;
-use \App\Locker\Helpers\Attachments;
+use \app\locker\helpers\Attachments as Attachments;
 
 class StatementController extends BaseController {
 

@@ -1,8 +1,9 @@
 <?php namespace Controllers\xAPI;
 
 use Illuminate\Routing\Controller;
-use app\locker\helpers as Exceptions;
 use Controllers\API\BaseController as APIBaseController;
+use app\locker\helpers\FailedPrecondition as FailedPrecondition;
+use app\locker\helpers\Conflict as Conflict;
 
 class BaseController extends APIBaseController {
 
@@ -36,9 +37,9 @@ class BaseController extends APIBaseController {
         case 'POST': return $this->store();
         case 'DELETE': return $this->destroy();
       }
-    } catch (Exceptions\Conflict $e) {
+    } catch (Conflict $e) {
       return self::errorResponse($e->getMessage(), 409);
-    } catch (Exceptions\FailedPrecondition $e) {
+    } catch (FailedPrecondition $e) {
       return self::errorResponse($e->getMessage(), 412);
     } catch (\Exception $e) {
       return self::errorResponse($e->getMessage(), 400);
