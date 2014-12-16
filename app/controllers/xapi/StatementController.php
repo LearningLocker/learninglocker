@@ -153,7 +153,7 @@ class StatementController extends BaseController {
     $attachments = $parts['attachments'];
 
     // Decodes the statement.
-    $statement = json_decode($content, true);
+    $statement = json_decode($content);
 
     $statementId = \LockerRequest::getParam(self::STATEMENT_ID);
 
@@ -163,7 +163,7 @@ class StatementController extends BaseController {
     }
 
     // Attempts to create the statement if `statementId` is present.
-    $statement['id'] = $statementId;
+    $statement->id = $statementId;
     try {
       $save = $this->statement->create([$statement], $this->lrs, $attachments);
     } catch (\Exception $e) {
