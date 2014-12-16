@@ -120,10 +120,10 @@ class StatementController extends BaseController {
     $content = $parts['content'];
     $attachments = $parts['attachments'];
 
-    $statements = json_decode($content, true);
+    $statements = json_decode($content);
 
     // Ensures that $statements is an array.
-    if (!is_array(json_decode($content))) {
+    if (!is_array($statements)) {
       $statements = [$statements];
     }
 

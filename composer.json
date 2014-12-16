@@ -29,6 +29,10 @@
     {
       "type": "vcs",
       "url": "git@github.com:LearningLocker/oauth2-server-laravel"
+    },
+    {
+      "type": "vcs",
+      "url": "../xapi"
     }
   ],
   "require": {
@@ -40,7 +44,8 @@
     "barryvdh/laravel-cors": "0.2.x",
     "lucadegasperi/oauth2-server-laravel": "1.0.x",
     "andywer/js-localization": "dev-master",
-    "philo/laravel-translate": "1.0.x"
+    "philo/laravel-translate": "1.0.x",
+    "xapi": "dev-master"
   },
   "require-dev": {
     "phpunit/phpunit": "4.1.*"
