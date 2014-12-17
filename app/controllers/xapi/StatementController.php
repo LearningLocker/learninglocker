@@ -248,7 +248,10 @@ class StatementController extends BaseController {
 
     $statement = $this->statement->show($this->lrs->_id, $id, $voided)->first();
     if ($statement) {
-      return \app\locker\helpers\Helpers::replaceHtmlEntity($statement['statement'], true);
+      $dotted_statement = \app\locker\helpers\Helpers::replaceHtmlEntity(
+        $statement->statement
+      );
+      return \Response::json($dotted_statement, 200);
     } else {
       return \Response::json(null, 404);
     }
@@ -272,14 +275,15 @@ class StatementController extends BaseController {
     // Replaces '&46;' in keys with '.' in statements.
     // http://docs.learninglocker.net/docs/statements#quirks
     $statements = $statements ?: [];
+    $statements = \app\locker\helpers\Helpers::replaceHtmlEntity($statements);
     foreach ($statements as &$s) {
-      $s = $s['statement'];
+      $s = $s->statement;
     }
 
     // Creates the statement result.
     $statementResult = [
       'more' => $this->getMoreLink($options['total'], $options['limit'], $options['offset']),
-      'statements' => \app\locker\helpers\Helpers::replaceHtmlEntity($statements, true)
+      'statements' => $statements
     ];
 
     // Creates the response.

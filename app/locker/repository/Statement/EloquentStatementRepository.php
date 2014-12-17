@@ -468,7 +468,6 @@ class EloquentStatementRepository implements StatementRepository {
   private function checkIdsExist(array $uuids, \Lrs $lrs, array $statements=null) {
     $duplicates = array();
 
-
     if ($uuids) {
       $existingModels = $this->statement
         ->where('lrs._id', $lrs->_id)
@@ -477,21 +476,25 @@ class EloquentStatementRepository implements StatementRepository {
 
       if(!$existingModels->isEmpty()) {
         foreach($existingModels as $existingModel) {
-          $existingStatement = (array) $existingModel['statement'];
+          $existingStatement = $existingModel->statement;
           $id = $existingStatement['id'];
           $duplicates[] = $id;
           if ($statements && isset($statements[$id])) {
 
             $statement = $statements[$id];
             unset($existingStatement['stored']);
-            if (!isset($statement['timestamp'])) unset($existingStatement['timestamp']);
+            if ($statement->getPropValue('timestamp') !== null) {
+              unset($existingStatement['timestamp']);
+            }
             array_multisort($existingStatement);
-            array_multisort($statement);
-            ksort($existingStatement);
-            ksort($statement);
 
-            if ($existingStatement != $statement) {
-              \App::abort(409, 'Conflicts - `'.json_encode($statement).'` does not match `'.json_encode($existingStatement).'`.');
+            $statement_arr = json_decode($statement->toJson(), true);
+            array_multisort($statement_arr);
+            ksort($existingStatement);
+            ksort($statement_arr);
+
+            if ($existingStatement != $statement_arr) {
+              \App::abort(409, 'Conflicts - `'.$statement->toJson().'` does not match `'.json_encode($existingStatement).'`.');
             }
           }
         }
@@ -593,7 +596,7 @@ class EloquentStatementRepository implements StatementRepository {
     if (isset($refs[$id])) {
       return $refs;
     }
-    die;
+    
     if (isset($statements[$id])) {
       $s = $statements[$id];
       $refs[$id] = $s->statement;
@@ -607,7 +610,7 @@ class EloquentStatementRepository implements StatementRepository {
       ])->first();
       if ($reference) {
         $refs[$id] = $reference->statement;
-        if ($this->isReferencing($reference->statement)) {
+        if ($this->isReferencing((object) $reference->statement)) {
           $s_id = $reference->statement['object']['id'];
           $this->recursiveCheckReferences($statements, $lrs, $refs, $s_id);
         }
