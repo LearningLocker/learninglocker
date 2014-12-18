@@ -135,7 +135,7 @@ class StatementController extends BaseController {
         $attachments
       );
     } catch (\Exception $e) {
-      return BaseController::errorResponse($e->getMessage(), 400);
+      return BaseController::errorResponse($e, 400);
     }
   }
 

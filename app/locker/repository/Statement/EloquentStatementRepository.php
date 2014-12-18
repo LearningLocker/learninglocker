@@ -546,7 +546,7 @@ class EloquentStatementRepository implements StatementRepository {
             $new_prop_key = str_replace('.', '&46;', $prop_key);
             $prop_value = $object->getProp($prop_key);
             $new_value = $replaceFullStop($prop_value, $replaceFullStop);
-            $object->setProp($prop_key, null);
+            $object->unsetProp($prop_key);
             $object->setProp($new_prop_key, $new_value);
           }
           return $object;
@@ -578,7 +578,7 @@ class EloquentStatementRepository implements StatementRepository {
         // Updates the refs.
         if ($refs) {
           $refs = array_values($refs);
-          $statements[$id]->refs = $refs;
+          $statements[$id]['refs'] = $refs;
           $this->statement
             ->where('lrs._id', $lrs->id)
             ->where('statement.id', $id)->update([
@@ -635,14 +635,12 @@ class EloquentStatementRepository implements StatementRepository {
         foreach ($referrers as $referrer) {
           $statement_id = $referrer['statement']['object']['id'];
           $statement = $statements[$statement_id];
-          if ($statement['active'] == false) {
-            if (isset($statement['refs'])) {
-              $referrer->refs = array(array_merge($statement['statement'], $statement['refs']));
-            } else {
-              $referrer->refs = array($statement['statement']);
-            }
-            if (!$referrer->save()) throw new \Exception('Failed to save referrer.');
+          if (isset($statement['refs'])) {
+            $referrer->refs = array(array_merge($statement['statement'], $statement['refs']));
+          } else {
+            $referrer->refs = array($statement['statement']);
           }
+          if (!$referrer->save()) throw new \Exception('Failed to save referrer.');
         }
       }
     return $statements;
@@ -662,7 +660,7 @@ class EloquentStatementRepository implements StatementRepository {
    * @return boolean
    */
   private function isVoiding(\stdClass $statement) {
-    if (($statement->verb->id === 'http://adlnet.gov/expapi/verbs/voided') &&  $this->isReferencing($statement)) {
+    if (($statement->verb->id === 'http://adlnet.gov/expapi/verbs/voided') && $this->isReferencing($statement)) {
       return true;
     }
     return false;
@@ -673,11 +671,11 @@ class EloquentStatementRepository implements StatementRepository {
     $reference = $this->query->where($lrs->_id, [
         ['statement.id', '=', $statement['statement']->object->id]
     ])->first();
-    $ref_array = $reference->toArray();
-    if ($this->isVoiding($ref_array['statement'])) {
+    $ref_statement = json_decode(json_encode($reference->statement));
+    if ($this->isVoiding($ref_statement)) {
        throw new \Exception('Cannot void a voiding statement');
     }
-    $reference['voided'] = true;
+    $reference->voided = true;
     if (!$reference->save()) throw new \Exception('Failed to void statement.');
     return $statement;
   }
