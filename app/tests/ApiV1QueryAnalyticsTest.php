@@ -15,7 +15,7 @@ class ApiV1QueryAnalyticsTest extends TestCase {
     // Creates testing statements.
     $vs = json_decode(file_get_contents(__DIR__ . '/Fixtures/Analytics.json'), true);
     $statement = App::make('Locker\Repository\Statement\EloquentStatementRepository');
-    $statement->create(array($vs), $this->lrs);
+    $statement->create([json_decode(json_encode($vs))], $this->lrs);
 
     $vs2 = $vs;
     $vs2['object']['definition']['type'] = 'http://activitystrea.ms/schema/2.0/badge';
