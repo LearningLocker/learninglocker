@@ -120,10 +120,10 @@ class StatementController extends BaseController {
     $content = $parts['content'];
     $attachments = $parts['attachments'];
 
-    $statements = json_decode($content, true);
+    $statements = json_decode($content);
 
     // Ensures that $statements is an array.
-    if (!is_array(json_decode($content))) {
+    if (!is_array($statements)) {
       $statements = [$statements];
     }
 
@@ -135,7 +135,7 @@ class StatementController extends BaseController {
         $attachments
       );
     } catch (\Exception $e) {
-      return BaseController::errorResponse($e->getMessage(), 400);
+      return BaseController::errorResponse($e, 400);
     }
   }
 
@@ -153,7 +153,7 @@ class StatementController extends BaseController {
     $attachments = $parts['attachments'];
 
     // Decodes the statement.
-    $statement = json_decode($content, true);
+    $statement = json_decode($content);
 
     $statementId = \LockerRequest::getParam(self::STATEMENT_ID);
 
@@ -163,7 +163,7 @@ class StatementController extends BaseController {
     }
 
     // Attempts to create the statement if `statementId` is present.
-    $statement['id'] = $statementId;
+    $statement->id = $statementId;
     try {
       $save = $this->statement->create([$statement], $this->lrs, $attachments);
     } catch (\Exception $e) {
@@ -199,7 +199,8 @@ class StatementController extends BaseController {
         'ascending' => $this->validatedParam('boolean', 'ascending', false),
         'format' => $this->validatedParam('string', 'format', 'exact'),
         'offset' => $this->validatedParam('int', 'offset', 0),
-        'limit' => $this->validatedParam('int', 'limit')
+        'limit' => $this->validatedParam('int', 'limit'),
+        'attachments' => $this->validatedParam('boolean', 'attachments', false)
       ];
 
       // Gets the $statements from the LRS (with the $lrsId) that match the $filters with the $options.
@@ -248,7 +249,10 @@ class StatementController extends BaseController {
 
     $statement = $this->statement->show($this->lrs->_id, $id, $voided)->first();
     if ($statement) {
-      return \app\locker\helpers\Helpers::replaceHtmlEntity($statement['statement'], true);
+      $dotted_statement = \app\locker\helpers\Helpers::replaceHtmlEntity(
+        $statement->statement
+      );
+      return \Response::json($dotted_statement, 200);
     } else {
       return \Response::json(null, 404);
     }
@@ -272,14 +276,15 @@ class StatementController extends BaseController {
     // Replaces '&46;' in keys with '.' in statements.
     // http://docs.learninglocker.net/docs/statements#quirks
     $statements = $statements ?: [];
+    $statements = \app\locker\helpers\Helpers::replaceHtmlEntity($statements);
     foreach ($statements as &$s) {
-      $s = $s['statement'];
+      $s = $s->statement;
     }
 
     // Creates the statement result.
     $statementResult = [
       'more' => $this->getMoreLink($options['total'], $options['limit'], $options['offset']),
-      'statements' => \app\locker\helpers\Helpers::replaceHtmlEntity($statements, true)
+      'statements' => $statements
     ];
 
     // Creates the response.

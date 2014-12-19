@@ -38,11 +38,11 @@ class BaseController extends APIBaseController {
         case 'DELETE': return $this->destroy();
       }
     } catch (Conflict $e) {
-      return self::errorResponse($e->getMessage(), 409);
+      return self::errorResponse($e, 409);
     } catch (FailedPrecondition $e) {
-      return self::errorResponse($e->getMessage(), 412);
+      return self::errorResponse($e, 412);
     } catch (\Exception $e) {
-      return self::errorResponse($e->getMessage(), 400);
+      return self::errorResponse($e, 400);
     }
   }
 
@@ -81,12 +81,20 @@ class BaseController extends APIBaseController {
    * @param string $message
    * @param integer $statusCode
    */
-  public static function errorResponse($message = '', $statusCode = 400) {
-    return \Response::json([
+  public static function errorResponse($e = '', $statusCode = 400) {
+    $json = [
       'error' => true, // @deprecated
-      'success' => false,
-      'message' => $message
-    ], $statusCode);
+      'success' => false
+    ];
+
+    if( $e instanceof Exception ){
+      $json['message'] = $e->getMessage();
+      $json['trace'] = $e->getTraceAsString();
+    } else {
+      $json['message'] = $e;
+    }
+
+    return \Response::json($json, $statusCode);
   }
 
   protected function optionalValue($name, $value, $type) {

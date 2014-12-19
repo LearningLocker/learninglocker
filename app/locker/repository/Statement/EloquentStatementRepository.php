@@ -331,7 +331,7 @@ class EloquentStatementRepository implements StatementRepository {
       return $client['authority'];
     } else {
       $site = \Site::first();
-      return [
+      return (object) [
         'name' => $site->name,
         'mbox' => 'mailto:' . $site->email,
         'objectType' => 'Agent'
@@ -347,16 +347,19 @@ class EloquentStatementRepository implements StatementRepository {
   private function validateStatements(array $statements, \Lrs $lrs) {
     $statements = $this->removeDuplicateStatements($statements, $lrs);
     $authority = $this->constructAuthority();
-    $void_statements = array();
+    $void_statements = [];
 
     foreach ($statements as $index => $statement) {
-      $validator = $this->validateStatement($statement, $authority);
-      if ($validator['status'] == 'failed') {
-        throw new \Exception(implode(', ', $validator['errors']));
+      $statement->setProp('authority', $authority);
+      $errors = array_map(function ($error) {
+        return (string) $error->addTrace('statement');
+      }, $statement->validate());
+
+      if (!empty($errors)) {
+        throw new \Exception(json_encode($errors));
       } else {
-        $statements[$index] = $validator['statement'];
-        if ($this->isVoiding($statement)) {
-          $void_references =  $validator['statement']['object']['id'];
+        if ($this->isVoiding($statement->getValue())) {
+          $void_statements[] = $statement->getPropValue('object.id');
         }
       }
     }
@@ -394,21 +397,22 @@ class EloquentStatementRepository implements StatementRepository {
    */
   private function removeDuplicateStatements(array $statements, \Lrs $lrs) {
     $new_id_count = 0;
-    $new_statements = array();
-    $indexed_statements = array();
+    $new_statements = [];
+    $indexed_statements = [];
     foreach($statements as $index => $statement) {
-      if (isset($statement['id'])) {
-        if (isset($this->sent_ids[$statement['id']])) {
+      $statement_id = $statement->getPropValue('id');
+      if ($statement_id !== null) {
+        if (isset($this->sent_ids[$statement_id])) {
           // compare statements
-          if ($this->sent_ids[$statement['id']] == $statement) {
+          if ($this->sent_ids[$statement_id] == $statement) {
             // remove exact duplicates
             unset($statements[$index]);
           } else {
-            \App::abort(409, 'Conflicts - `'.json_encode($statement).'` does not match `'.json_encode($this->sent_ids[$statement['id']]).'`.');
+            \App::abort(409, 'Conflicts - `'.$statement->toJson().'` does not match `'.json_encode($this->sent_ids[$statement_id]).'`.');
           }
         } else {
-          $this->sent_ids[$statement['id']] = $statement;
-          $indexed_statements[$statement['id']] = $statement;
+          $this->sent_ids[$statement_id] = $statement;
+          $indexed_statements[$statement_id] = $statement;
         }
       } else {
         $new_statements[] = $statement;
@@ -429,14 +433,13 @@ class EloquentStatementRepository implements StatementRepository {
    * @return array List of statements with assigned id
    */
   private function assignIds(array $statements, \Lrs $lrs) {
-    $indexed_statements = array();
+    $indexed_statements = [];
     $count = count($statements);
     $uuids = $this->generateIds($count + 1);
     $duplicates = $this->checkIdsExist($uuids, $lrs);
     if ($duplicates) {
       $uuids = array_diff($uuids, $duplicates);
     }
-
     while(count($uuids) < $count) {
       $new_uuids = $this->generateIds($count - count($uuids));
       $duplicates = $this->checkIdsExist($new_uuids, $lrs);
@@ -448,7 +451,7 @@ class EloquentStatementRepository implements StatementRepository {
 
     foreach($statements as $statement) {
       $uuid = array_pop($uuids);
-      $statement['id'] = $uuid;
+      $statement->setProp('id', $uuid);
       $indexed_statements[$uuid] = $statement;
     }
     return $indexed_statements;
@@ -465,7 +468,6 @@ class EloquentStatementRepository implements StatementRepository {
   private function checkIdsExist(array $uuids, \Lrs $lrs, array $statements=null) {
     $duplicates = array();
 
-
     if ($uuids) {
       $existingModels = $this->statement
         ->where('lrs._id', $lrs->_id)
@@ -474,21 +476,25 @@ class EloquentStatementRepository implements StatementRepository {
 
       if(!$existingModels->isEmpty()) {
         foreach($existingModels as $existingModel) {
-          $existingStatement = (array) $existingModel['statement'];
+          $existingStatement = $existingModel->statement;
           $id = $existingStatement['id'];
           $duplicates[] = $id;
           if ($statements && isset($statements[$id])) {
 
             $statement = $statements[$id];
             unset($existingStatement['stored']);
-            if (!isset($statement['timestamp'])) unset($existingStatement['timestamp']);
+            if ($statement->getPropValue('timestamp') !== null) {
+              unset($existingStatement['timestamp']);
+            }
             array_multisort($existingStatement);
-            array_multisort($statement);
-            ksort($existingStatement);
-            ksort($statement);
 
-            if ($existingStatement != $statement) {
-              \App::abort(409, 'Conflicts - `'.json_encode($statement).'` does not match `'.json_encode($existingStatement).'`.');
+            $statement_arr = json_decode($statement->toJson(), true);
+            array_multisort($statement_arr);
+            ksort($existingStatement);
+            ksort($statement_arr);
+
+            if ($existingStatement != $statement_arr) {
+              \App::abort(409, 'Conflicts - `'.$statement->toJson().'` does not match `'.json_encode($existingStatement).'`.');
             }
           }
         }
@@ -531,15 +537,29 @@ class EloquentStatementRepository implements StatementRepository {
       $this->checkIdsExist(array_keys($this->sent_ids), $lrs, $statements);
     }
 
-    $statements = array_map(function (array $statement) use ($lrs) {
-        $newModel = $this->makeStatement($statement, $lrs);
-        // Adds top-level properties to the new model (required for quicker queries).
-        $newModel['active'] = false;
-        $newModel['voided'] = false;
-        $newModel['timestamp'] = new \MongoDate(strtotime($newModel['statement']['timestamp']));
-        return $newModel;
+    // Replaces '.' in keys with '&46;'.
+    $statements = array_map(function (\Locker\XApi\Statement $statement) use ($lrs) {
+      $replaceFullStop = function ($object, $replaceFullStop) {
+        if ($object instanceof \Locker\XApi\Element) {
+          $prop_keys = array_keys(get_object_vars($object->getValue()));
+          foreach ($prop_keys as $prop_key) {
+            $new_prop_key = str_replace('.', '&46;', $prop_key);
+            $prop_value = $object->getProp($prop_key);
+            $new_value = $replaceFullStop($prop_value, $replaceFullStop);
+            $object->unsetProp($prop_key);
+            $object->setProp($new_prop_key, $new_value);
+          }
+          return $object;
+        } else {
+          return $object;
+        }
+      };
+      $replaceFullStop($statement, $replaceFullStop);
+
+      return $this->makeStatement($statement, $lrs);
     }, $statements);
-    $this->statement->where('lrs._id', $lrs->id)->insert($statements);
+
+    $this->statement->where('lrs._id', $lrs->id)->insert(array_values($statements));
     return $statements;
   }
 
@@ -553,13 +573,17 @@ class EloquentStatementRepository implements StatementRepository {
     foreach($statements as $id => $statement) {
       if ($this->isReferencing($statement['statement'])) {
         // Finds the statement that it references.
-        $refs = array();
-        $this->recursiveCheckReferences($statements, $lrs, $refs, $statement['statement']['object']['id']);
+        $refs = [];
+        $this->recursiveCheckReferences($statements, $lrs, $refs, $statement['statement']->object->id);
         // Updates the refs.
         if ($refs) {
           $refs = array_values($refs);
           $statements[$id]['refs'] = $refs;
-          $this->statement->where('lrs._id', $lrs->id)->where('statement.id', $id)->update(array('refs' => $refs));
+          $this->statement
+            ->where('lrs._id', $lrs->id)
+            ->where('statement.id', $id)->update([
+              'refs' => $refs
+            ]);
         }
       }
     }
@@ -572,11 +596,12 @@ class EloquentStatementRepository implements StatementRepository {
     if (isset($refs[$id])) {
       return $refs;
     }
+    
     if (isset($statements[$id])) {
       $s = $statements[$id];
-      $refs[$id] = $s['statement'];
-      if ($this->isReferencing($s['statement'])) {
-        $s_id = $s['statement']['object']['id'];
+      $refs[$id] = $s->statement;
+      if ($this->isReferencing($s->statement)) {
+        $s_id = $s->statement->getPropValue('object.id');
         $this->recursiveCheckReferences($statements, $lrs, $refs, $s_id);
       }
     } else {
@@ -585,7 +610,7 @@ class EloquentStatementRepository implements StatementRepository {
       ])->first();
       if ($reference) {
         $refs[$id] = $reference->statement;
-        if ($this->isReferencing($reference->statement)) {
+        if ($this->isReferencing((object) $reference->statement)) {
           $s_id = $reference->statement['object']['id'];
           $this->recursiveCheckReferences($statements, $lrs, $refs, $s_id);
         }
@@ -610,24 +635,22 @@ class EloquentStatementRepository implements StatementRepository {
         foreach ($referrers as $referrer) {
           $statement_id = $referrer['statement']['object']['id'];
           $statement = $statements[$statement_id];
-          if ($statement['active'] == false) {
-            if (isset($statement['refs'])) {
-              $referrer->refs = array(array_merge($statement['statement'], $statement['refs']));
-            } else {
-              $referrer->refs = array($statement['statement']);
-            }
-            if (!$referrer->save()) throw new \Exception('Failed to save referrer.');
+          if (isset($statement['refs'])) {
+            $referrer->refs = array(array_merge($statement['statement'], $statement['refs']));
+          } else {
+            $referrer->refs = array($statement['statement']);
           }
+          if (!$referrer->save()) throw new \Exception('Failed to save referrer.');
         }
       }
     return $statements;
   }
 
-  private function isReferencing(array $statement) {
+  private function isReferencing(\stdClass $statement) {
     return (
-      isset($statement['object']['id']) &&
-      isset($statement['object']['objectType']) &&
-      $statement['object']['objectType'] === 'StatementRef'
+      isset($statement->object->id) &&
+      isset($statement->object->objectType) &&
+      $statement->object->objectType === 'StatementRef'
     );
   }
 
@@ -636,8 +659,8 @@ class EloquentStatementRepository implements StatementRepository {
    * @param Statement $statement
    * @return boolean
    */
-  private function isVoiding(array $statement) {
-    if (($statement['verb']['id'] === 'http://adlnet.gov/expapi/verbs/voided') &&  $this->isReferencing($statement)) {
+  private function isVoiding(\stdClass $statement) {
+    if (($statement->verb->id === 'http://adlnet.gov/expapi/verbs/voided') && $this->isReferencing($statement)) {
       return true;
     }
     return false;
@@ -646,10 +669,10 @@ class EloquentStatementRepository implements StatementRepository {
   private function voidStatement($statement, $lrs) {
     if (!$this->isVoiding($statement['statement'])) return $statement;
     $reference = $this->query->where($lrs->_id, [
-        ['statement.id', '=', $statement['statement']['object']['id']]
+        ['statement.id', '=', $statement['statement']->object->id]
     ])->first();
-    $ref_array = $reference->toArray();
-    if ($this->isVoiding($ref_array['statement'])) {
+    $ref_statement = json_decode(json_encode($reference->statement));
+    if ($this->isVoiding($ref_statement)) {
        throw new \Exception('Cannot void a voiding statement');
     }
     $reference->voided = true;
@@ -675,6 +698,9 @@ class EloquentStatementRepository implements StatementRepository {
    * @return array create result (see makeCreateResult function)
    */
   public function create(array $statements, \Lrs $lrs, $attachments = '') {
+    $statements = array_map(function (\stdClass $statement) {
+      return new \Locker\XApi\Statement($statement);
+    }, $statements);
     $statements = $this->validateStatements($statements, $lrs);
     $statements = $this->createStatements($statements, $lrs);
     $statements = $this->updateReferences($statements, $lrs);
@@ -707,30 +733,33 @@ class EloquentStatementRepository implements StatementRepository {
    * @param LRS $lrs
    * @return Statement
    */
-  private function makeStatement(array $statement, \Lrs $lrs) {
+  private function makeStatement(\Locker\XApi\Statement $statement, \Lrs $lrs) {
     // Uses defaults where possible.
+    $currentDate = $this->getCurrentDate();
+    $statement->setProp('stored', $currentDate);
+    if ($statement->getPropValue('timestamp') === null) {
+      $statement->setProp('timestamp', $currentDate);
+    }
 
-    $statement = array_merge([
-      'stored' => ($currentDate = $this->getCurrentDate()),
-      'timestamp' => $currentDate,
-      'version' => '1.0.0'
-    ], $statement);
     // For now we store the latest submitted definition.
     // @todo this will change when we have a way to determine authority to edit.
-    if( isset($statement['object']['definition'])){
+    if ($statement->getPropValue('object.definition') !== null) {
       $this->activity->saveActivity(
-        $statement['object']['id'],
-        $statement['object']['definition']
+        $statement->getPropValue('object.id'),
+        $statement->getPropValue('object.definition')
       );
     }
     // Create a new statement model
-    $newStatement['lrs'] = [
-      '_id' => $lrs->_id,
-      'name' => $lrs->title
+    return [
+      'lrs' => [
+        '_id' => $lrs->_id,
+        'name' => $lrs->title
+      ],
+      'statement' => $statement->getValue(),
+      'active' => false,
+      'voided' => false,
+      'timestamp' => new \MongoDate(strtotime($statement->getPropValue('timestamp')))
     ];
-    $newStatement['statement'] = $this->replaceFullStop($statement);
-
-    return $newStatement;
   }
 
   /**

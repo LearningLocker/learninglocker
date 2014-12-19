@@ -10,14 +10,14 @@
   },
   "context": {
     "contextActivities": {
-      "parent": {
+      "parent": [{
         "id": "http://tincanapi.com/GolfExample_TCAPI",
         "objectType": "Activity"
-      },
-      "grouping": {
+      }],
+      "grouping": [{
         "id": "http://tincanapi.com/GolfExample_TCAPI",
         "objectType": "Activity"
-      }
+      }]
     }
   },
   "object": {
