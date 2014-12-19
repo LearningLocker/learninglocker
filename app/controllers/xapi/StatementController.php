@@ -199,7 +199,8 @@ class StatementController extends BaseController {
         'ascending' => $this->validatedParam('boolean', 'ascending', false),
         'format' => $this->validatedParam('string', 'format', 'exact'),
         'offset' => $this->validatedParam('int', 'offset', 0),
-        'limit' => $this->validatedParam('int', 'limit')
+        'limit' => $this->validatedParam('int', 'limit'),
+        'attachments' => $this->validatedParam('boolean', 'attachments', false)
       ];
 
       // Gets the $statements from the LRS (with the $lrsId) that match the $filters with the $options.
