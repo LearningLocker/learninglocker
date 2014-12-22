@@ -21,7 +21,7 @@ class ApiV1QueryAnalyticsTest extends TestCase {
     $vs2['object']['definition']['type'] = 'http://activitystrea.ms/schema/2.0/badge';
 
     $statement2 = App::make('Locker\Repository\Statement\EloquentStatementRepository');
-    $statement2->create(array($vs2), $this->lrs);
+    $statement2->create([json_decode(json_encode($vs2))], $this->lrs);
   }
 
   private function callResponse($params = [], $lrs) {

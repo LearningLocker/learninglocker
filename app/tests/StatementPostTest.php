@@ -32,7 +32,7 @@ class StatementPostTest extends TestCase
     $result = $this->createStatement($vs, $this->lrs);
 
     $statement = App::make('Locker\Repository\Statement\EloquentStatementRepository');
-    $createdStatement = $statement->show($result['ids'][0]);
+    $createdStatement = $statement->show($this->lrs->_id, $result[0])->first();
 
     $param = array(
       'actor' => $createdStatement->statement['actor'],
@@ -52,6 +52,7 @@ class StatementPostTest extends TestCase
     // case: conflict-matches
     /* @var $response Illuminate\Http\JsonResponse */
     $response = $this->_makeRequest($param, "POST", $auth);
+    echo json_encode($response->getData());die;
     $this->assertEquals(204, $response->getStatusCode());
     $this->assertEmpty($response->getData());
 
@@ -85,7 +86,7 @@ class StatementPostTest extends TestCase
     $result = $this->createStatement($vs, $this->lrs);
 
     $statement = App::make('Locker\Repository\Statement\EloquentStatementRepository');
-    $createdStatement = $statement->show($result['ids'][0]);
+    $createdStatement = $statement->show($this->lrs->_id, $result[0])->first();
 
     $param = [
       'actor' => $createdStatement->statement['actor'],
