@@ -40,12 +40,11 @@ class Helpers {
   */
   static function replaceFullStop( $array ){
 
-    $output = $array;
+    $output = [];
 
     if( !empty($array) ){
 
       foreach($array as $key => $value){
-
         if(is_array($value)){
           $new = Helpers::replaceFullStopInKeys( $key );
           $output[$new] = Helpers::replaceFullStop( $value );
