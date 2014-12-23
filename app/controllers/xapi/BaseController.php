@@ -87,7 +87,7 @@ class BaseController extends APIBaseController {
       'success' => false
     ];
 
-    if( $e instanceof Exception || $e instanceof Locker\XApi\Errors\Error ){
+    if( $e instanceof \Exception || $e instanceof \Locker\XApi\Errors\Error ){
       $json['message'] = $e->getMessage();
       $json['trace'] = $e->getTraceAsString();
     } else {
