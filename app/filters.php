@@ -72,15 +72,18 @@ Route::filter('auth.statement', function(){
     // Validates authorization header.
     $auth_validator = new app\locker\statements\xAPIValidation();
     $authorization = LockerRequest::header('Authorization');
-    $authorization = gettype($authorization) === 'string' ? substr($authorization, 6) : false;
-    $auth_validator->checkTypes('auth', $authorization, 'base64', 'headers');
+    if ($authorization !== null) {
+      $authorization = gettype($authorization) === 'string' ? substr($authorization, 6) : false;
+      $auth_validator->checkTypes('auth', $authorization, 'base64', 'headers');
 
-    if ($auth_validator->getStatus() === 'failed') {
-      return Response::json([
-        'error' => true,
-        'message' => $auth_validator->getErrors()
-      ], 400);
+      if ($auth_validator->getStatus() === 'failed') {
+        return Response::json([
+          'error' => true,
+          'message' => $auth_validator->getErrors()
+        ], 400);
+      }
     }
+    
 
 	  //Note: this code is duplicated in Controllers\API\BaseController\GetLrs
     //see if the lrs exists based on key and secret

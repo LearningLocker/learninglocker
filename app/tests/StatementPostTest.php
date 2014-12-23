@@ -52,25 +52,23 @@ class StatementPostTest extends TestCase
     // case: conflict-matches
     /* @var $response Illuminate\Http\JsonResponse */
     $response = $this->_makeRequest($param, "POST", $auth);
-    echo json_encode($response->getData());die;
-    $this->assertEquals(204, $response->getStatusCode());
-    $this->assertEmpty($response->getData());
+    $this->assertEquals(200, $response->getStatusCode());
 
     // case: conflict nomatch
-    $param['result'] = array();
+    $param['result'] = new \stdClass();
     $response = $this->_makeRequest($param, "POST", $auth);
     $responseData = $response->getData();
     $this->assertEquals(409, $response->getStatusCode());
     $this->assertTrue(property_exists($responseData, 'success') && !$responseData->success);
 
     // Make sure response data for the get request
-    $responseGet = $this->_makeRequest(array(), "GET", $auth);
+    $responseGet = $this->_makeRequest(new \stdClass(), "GET", $auth);
     $this->assertEquals(200, $responseGet->getStatusCode());
 
     // Make sure response data for the get request
     unset($param['result']);
     $responsePost = $this->_makeRequest($param, "POST", $auth);
-    $this->assertEquals(204, $responsePost->getStatusCode());
+    $this->assertEquals(200, $responsePost->getStatusCode());
   }
 
   /**
@@ -108,8 +106,7 @@ class StatementPostTest extends TestCase
     $responseData = $response->getContent();
     $responseStatus = $response->getStatusCode();
 
-    $this->assertEquals(204, $responseStatus);
-    $this->assertEmpty($response->getData());
+    $this->assertEquals(200, $responseStatus);
   }
 
 }

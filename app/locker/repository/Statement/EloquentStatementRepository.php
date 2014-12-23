@@ -6,6 +6,7 @@ use Locker\Repository\Activity\ActivityRepository as Activity;
 use Locker\Repository\Query\QueryRepository as Query;
 use Locker\Repository\Document\FileTypes;
 use Illuminate\Database\Eloquent\Builder as Builder;
+use app\locker\helpers\Conflict as Conflict;
 
 class EloquentStatementRepository implements StatementRepository {
 
@@ -403,13 +404,10 @@ class EloquentStatementRepository implements StatementRepository {
       $statement_id = $statement->getPropValue('id');
       if ($statement_id !== null) {
         if (isset($this->sent_ids[$statement_id])) {
-          // compare statements
-          if ($this->sent_ids[$statement_id] == $statement) {
-            // remove exact duplicates
-            unset($statements[$index]);
-          } else {
-            \App::abort(409, 'Conflicts - `'.$statement->toJson().'` does not match `'.json_encode($this->sent_ids[$statement_id]).'`.');
-          }
+          $sent_statement = json_encode($this->sent_ids[$statement_id]);
+          $current_statement = json_encode($statement);
+          $this->checkMatch($new_statement, $current_statement);
+          unset($statements[$index]);
         } else {
           $this->sent_ids[$statement_id] = $statement;
           $indexed_statements[$statement_id] = $statement;
@@ -457,6 +455,26 @@ class EloquentStatementRepository implements StatementRepository {
     return $indexed_statements;
   }
 
+  private function checkMatch($new_statement, $old_statement) {
+    $new_statement_obj = \Locker\XApi\Statement::createFromJson($new_statement);
+    $old_statement_obj = \Locker\XApi\Statement::createFromJson($old_statement);
+    $new_statement = json_decode($new_statement_obj->toJson(), true);
+    $old_statement = json_decode($old_statement_obj->toJson(), true);
+    array_multisort($new_statement);
+    array_multisort($old_statement);
+    ksort($new_statement);
+    ksort($old_statement);
+    unset($new_statement['stored']);
+    unset($old_statement['stored']);
+    if ($new_statement !== $old_statement) {
+      $new_statement = $new_statement_obj->toJson();
+      $old_statement = $old_statement_obj->toJson();
+      throw new Conflict(
+        "Conflicts\r\n`$new_statement`\r\n`$old_statement`."
+      );
+    };
+  }
+
   /**
    * Check lrs for list of statement ids, optional list of statements by id for comparison
    *
@@ -480,22 +498,8 @@ class EloquentStatementRepository implements StatementRepository {
           $id = $existingStatement['id'];
           $duplicates[] = $id;
           if ($statements && isset($statements[$id])) {
-
             $statement = $statements[$id];
-            unset($existingStatement['stored']);
-            if ($statement->getPropValue('timestamp') !== null) {
-              unset($existingStatement['timestamp']);
-            }
-            array_multisort($existingStatement);
-
-            $statement_arr = json_decode($statement->toJson(), true);
-            array_multisort($statement_arr);
-            ksort($existingStatement);
-            ksort($statement_arr);
-
-            if ($existingStatement != $statement_arr) {
-              \App::abort(409, 'Conflicts - `'.$statement->toJson().'` does not match `'.json_encode($existingStatement).'`.');
-            }
+            $this->checkMatch($statement->toJson(), json_encode($existingStatement));
           }
         }
       }
@@ -812,19 +816,9 @@ class EloquentStatementRepository implements StatementRepository {
       ->first();
 
     if ($existingModel) {
-        $existingStatement = (array) $existingModel['statement'];
-        unset($existingStatement['stored']);
-        if (!isset($statement['timestamp'])) unset($existingStatement['timestamp']);
-        array_multisort($existingStatement);
-        array_multisort($statement);
-        ksort($existingStatement);
-        ksort($statement);
-
-        if ($existingStatement == $statement) {
-          return $existingModel;
-        } else {
-          \App::abort(409, 'Conflicts - `'.json_encode($statement).'` does not match `'.json_encode($existingStatement).'`.');
-        }
+      $existingStatement = json_encode($existingModel->statement);
+      $this->checkMatch($existingStatement, json_encode($statement));
+      return $existingModel;
     }
 
     return null;

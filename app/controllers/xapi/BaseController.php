@@ -2,8 +2,8 @@
 
 use Illuminate\Routing\Controller;
 use Controllers\API\BaseController as APIBaseController;
-use app\locker\helpers\FailedPrecondition as FailedPrecondition;
-use app\locker\helpers\Conflict as Conflict;
+use \app\locker\helpers\FailedPrecondition as FailedPrecondition;
+use \app\locker\helpers\Conflict as Conflict;
 
 class BaseController extends APIBaseController {
 
@@ -87,7 +87,7 @@ class BaseController extends APIBaseController {
       'success' => false
     ];
 
-    if( $e instanceof Exception ){
+    if( $e instanceof Exception || $e instanceof Locker\XApi\Errors\Error ){
       $json['message'] = $e->getMessage();
       $json['trace'] = $e->getTraceAsString();
     } else {

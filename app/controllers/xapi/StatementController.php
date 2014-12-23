@@ -128,15 +128,11 @@ class StatementController extends BaseController {
     }
 
     // Saves $statements with $attachments.
-    try {
-      return $this->statement->create(
-        $statements,
-        $this->lrs,
-        $attachments
-      );
-    } catch (\Exception $e) {
-      return BaseController::errorResponse($e, 400);
-    }
+    return $this->statement->create(
+      $statements,
+      $this->lrs,
+      $attachments
+    );
   }
 
   /**
@@ -164,12 +160,8 @@ class StatementController extends BaseController {
 
     // Attempts to create the statement if `statementId` is present.
     $statement->id = $statementId;
-    try {
-      $save = $this->statement->create([$statement], $this->lrs, $attachments);
-    } catch (\Exception $e) {
-      return BaseController::errorResponse($e->getMessage(), 400);
-    }
-    return \Response::json(null, BaseController::NO_CONTENT);
+    $this->statement->create([$statement], $this->lrs, $attachments);
+    return \Response::make('', BaseController::NO_CONTENT);
   }
 
   /**
@@ -310,7 +302,9 @@ class StatementController extends BaseController {
     if ($total <= $nextOffset) return '';
 
     // Get the current request URI.
-    $url = 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}/{$_SERVER['REQUEST_URI']}";
+    $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
+    $uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+    $url = 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . "://$host/$uri";
 
     // Changes the offset if it does exist, otherwise it adds it.
     if ($offset) {
