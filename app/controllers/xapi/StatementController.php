@@ -122,6 +122,10 @@ class StatementController extends BaseController {
 
     $statements = json_decode($content);
 
+    if ($statements === null && $content != 'null' && $content != '') {
+      throw new \Exception('Invalid JSON');
+    }
+
     // Ensures that $statements is an array.
     if (!is_array($statements)) {
       $statements = [$statements];
@@ -150,6 +154,10 @@ class StatementController extends BaseController {
 
     // Decodes the statement.
     $statement = json_decode($content);
+
+    if ($statements === null && $content != 'null' && $content != '') {
+      throw new \Exception('Invalid JSON');
+    }
 
     $statementId = \LockerRequest::getParam(self::STATEMENT_ID);
 
