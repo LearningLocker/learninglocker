@@ -155,7 +155,7 @@ class StatementController extends BaseController {
     // Decodes the statement.
     $statement = json_decode($content);
 
-    if ($statements === null && $content != 'null' && $content != '') {
+    if ($statement === null && $content != 'null' && $content != '') {
       throw new \Exception('Invalid JSON');
     }
 
