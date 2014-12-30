@@ -53,7 +53,7 @@ define([
         this.model.downloadJSON().done(function (data) {
           saveAs(new Blob([JSON.stringify(data, null, 2)]), 'download.json');
         }).fail(function (jqXHR, status, error) {
-          alert(jqXHR.responseJSON.message || error);
+          alert((jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.message) || error);
         });
       }
     },
@@ -65,7 +65,7 @@ define([
         this.model.downloadCSV().done(function (data) {
           saveAs(new Blob([data]), 'download.csv');
         }).fail(function (jqXHR, status, error) {
-          alert(jqXHR.responseJSON.message || error);
+          alert((jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.message) || error);
         });
       }
     },
