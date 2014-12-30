@@ -39,6 +39,7 @@ class EloquentQueryRepository implements QueryRepository {
     $pipeline[0] = array_merge_recursive([
       '$match' => [self::LRS_ID_KEY => $lrsId]
     ], $pipeline[0]);
+
     return $this->db->statements->aggregate($pipeline);
   }
 
