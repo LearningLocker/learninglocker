@@ -91,7 +91,7 @@ class BaseController extends APIBaseController {
     ];
 
     if ($e instanceof ValidationException) {
-      $json['errors'] = $e->getErrors();
+      $json['message'] = $e->getErrors();
     } else if ($e instanceof \Exception || $e instanceof \Locker\XApi\Errors\Error) {
       $json['message'] = $e->getMessage();
       $json['trace'] = $e->getTraceAsString();
