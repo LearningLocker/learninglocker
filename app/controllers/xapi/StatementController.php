@@ -199,7 +199,7 @@ class StatementController extends BaseController {
         'ascending' => $this->validatedParam('boolean', 'ascending', false),
         'format' => $this->validatedParam('string', 'format', 'exact'),
         'offset' => $this->validatedParam('int', 'offset', 0),
-        'limit' => $this->validatedParam('int', 'limit'),
+        'limit' => $this->validatedParam('int', 'limit', 100),
         'attachments' => $this->validatedParam('boolean', 'attachments', false)
       ];
 
@@ -269,7 +269,7 @@ class StatementController extends BaseController {
     // Merges options with default options.
     $options = array_merge([
       'total' => count($statements),
-      'offset' => 0,
+      'offset' => null,
       'limit' => null
     ], $options);
 
@@ -304,8 +304,8 @@ class StatementController extends BaseController {
    * @param int $offset the number of statements to skip.
    * @return URL
    */
-  private function getMoreLink($total, $limit, $offset = 0) {
-    $nextOffset = $offset + $limit;
+  private function getMoreLink($total, $limit, $offset = null) {
+    $nextOffset = ($offset ?: 0) + $limit;
 
     if ($total <= $nextOffset) return '';
 
@@ -315,7 +315,7 @@ class StatementController extends BaseController {
     $url = 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . "://$host/$uri";
 
     // Changes the offset if it does exist, otherwise it adds it.
-    if ($offset) {
+    if ($offset !== null) {
       return str_replace(
         'offset=' . $offset,
         'offset=' . $nextOffset,
