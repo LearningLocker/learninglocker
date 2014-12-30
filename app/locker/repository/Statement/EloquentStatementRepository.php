@@ -7,6 +7,7 @@ use Locker\Repository\Query\QueryRepository as Query;
 use Locker\Repository\Document\FileTypes;
 use Illuminate\Database\Eloquent\Builder as Builder;
 use app\locker\helpers\Conflict as Conflict;
+use app\locker\helpers\ValidationException as ValidationException;
 
 class EloquentStatementRepository implements StatementRepository {
 
@@ -357,7 +358,7 @@ class EloquentStatementRepository implements StatementRepository {
       }, $statement->validate());
 
       if (!empty($errors)) {
-        throw new \Exception(json_encode($errors));
+        throw new ValidationException($errors);
       } else {
         if ($this->isVoiding($statement->getValue())) {
           $void_statements[] = $statement->getPropValue('object.id');

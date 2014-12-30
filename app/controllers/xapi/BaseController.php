@@ -4,6 +4,7 @@ use Illuminate\Routing\Controller;
 use Controllers\API\BaseController as APIBaseController;
 use \app\locker\helpers\FailedPrecondition as FailedPrecondition;
 use \app\locker\helpers\Conflict as Conflict;
+use \app\locker\helpers\ValidationException as ValidationException;
 
 class BaseController extends APIBaseController {
 
@@ -37,6 +38,8 @@ class BaseController extends APIBaseController {
         case 'POST': return $this->store();
         case 'DELETE': return $this->destroy();
       }
+    } catch (ValidationException $e) {
+      return self::errorResponse($e, 400);
     } catch (Conflict $e) {
       return self::errorResponse($e, 409);
     } catch (FailedPrecondition $e) {
@@ -87,7 +90,9 @@ class BaseController extends APIBaseController {
       'success' => false
     ];
 
-    if( $e instanceof \Exception || $e instanceof \Locker\XApi\Errors\Error ){
+    if ($e instanceof ValidationException) {
+      $json['errors'] = $e->getErrors();
+    } else if ($e instanceof \Exception || $e instanceof \Locker\XApi\Errors\Error) {
       $json['message'] = $e->getMessage();
       $json['trace'] = $e->getTraceAsString();
     } else {
