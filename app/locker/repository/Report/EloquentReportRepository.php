@@ -100,7 +100,7 @@ class EloquentReportRepository implements ReportRepository {
     return (new \Locker\Repository\Query\EloquentQueryRepository)->where(
       $report->lrs,
       Helpers::replaceHtmlEntity($report->where)
-    )->orderBy('statement.stored', 'DESC')->select('statement')->paginate(20);
+    )->orderBy('statement.stored', 'DESC');
   }
 
 }

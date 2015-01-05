@@ -85,23 +85,16 @@ class ExportingController extends BaseController {
     }
   }
 
-  private function export($export_id, $json = true) {
+  private function mapExport($export_id, $json = true) {
     $export = $this->get($export_id);
 
     // Get and check report.
-    $report = $this->report->find($export->report);
-    if (!$report) {
+    if (!$this->report->find($export->report)) {
       \App::abort(404, trans('exporting.errors.reportExistence'));
     }
 
-    // Get and check query.
-    $query = $report->query !== '' ? $report->query : [];
-
     // Select statements.
-    $statements = $this->query->selectStatementDocs(
-      $this->lrs->_id,
-      \app\locker\helpers\Helpers::replaceHtmlEntity($query)
-    );
+    $statements = $this->report->statements($export->report);
 
     // Get and check fields.
     if(!isset($export->fields)) {
@@ -133,7 +126,7 @@ class ExportingController extends BaseController {
    * @return json
    */
   public function show($export_id) {
-    $take = $this->export($export_id, true);
+    $take = $this->mapExport($export_id, true);
 
     $headers = [
       'Content-Type'=>'application/json'
@@ -158,7 +151,7 @@ class ExportingController extends BaseController {
    */
   public function showCSV($export_id) {
     // Respond with CSV.
-    $take = $this->export($export_id, false);
+    $take = $this->mapExport($export_id, false);
 
     $headers = [
       'Content-Type' => 'text/csv'
