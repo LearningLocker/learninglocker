@@ -574,7 +574,7 @@ class EloquentStatementRepository implements StatementRepository {
    * @param \Lrs $lrs
    * @return array list of statements with references
    */
-  private function updateReferences(array $statements, \Lrs $lrs) {
+  public function updateReferences(array $statements, \Lrs $lrs) {
     foreach($statements as $id => $statement) {
       if ($this->isReferencing($statement['statement'])) {
         // Finds the statement that it references.
@@ -685,13 +685,13 @@ class EloquentStatementRepository implements StatementRepository {
     return $statement;
   }
 
-  private function voidStatements(array $statements, \Lrs $lrs) {
+  public function voidStatements(array $statements, \Lrs $lrs) {
     return array_map(function (array $statement) use ($lrs) {
       return $this->voidStatement($statement, $lrs);
     }, $statements);
   }
 
-  private function activateStatements(array $statements, \Lrs $lrs) {
+  public function activateStatements(array $statements, \Lrs $lrs) {
     $updated = $this->statement->where('lrs._id', $lrs->id)->whereIn('statement.id', array_keys($statements))->update(array('active' => true));
   }
 
