@@ -630,24 +630,24 @@ class EloquentStatementRepository implements StatementRepository {
    * @return [Statement]
    */
   private function updateReferrers(array $statements, \Lrs $lrs) {
-      if (count($this->sent_ids)) {
-        $referrers = $this->query->where($lrs->_id, [
-            ['statement.object.id', 'in', array_keys($statements)],
-            ['statement.object.objectType', '=', 'StatementRef'],
-        ])->get();
+    if (count($this->sent_ids)) {
+      $referrers = $this->query->where($lrs->_id, [
+          ['statement.object.id', 'in', array_keys($statements)],
+          ['statement.object.objectType', '=', 'StatementRef'],
+      ])->get();
 
-        // Updates the refs $referrers.
-        foreach ($referrers as $referrer) {
-          $statement_id = $referrer['statement']['object']['id'];
-          $statement = $statements[$statement_id];
-          if (isset($statement['refs'])) {
-            $referrer->refs = array(array_merge($statement['statement'], $statement['refs']));
-          } else {
-            $referrer->refs = array($statement['statement']);
-          }
-          if (!$referrer->save()) throw new \Exception('Failed to save referrer.');
+      // Updates the refs $referrers.
+      foreach ($referrers as $referrer) {
+        $statement_id = $referrer['statement']['object']['id'];
+        $statement = $statements[$statement_id];
+        if (isset($statement['refs'])) {
+          $referrer->refs = array(array_merge($statement['statement'], $statement['refs']));
+        } else {
+          $referrer->refs = array($statement['statement']);
         }
+        if (!$referrer->save()) throw new \Exception('Failed to save referrer.');
       }
+    }
     return $statements;
   }
 
