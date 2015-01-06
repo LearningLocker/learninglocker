@@ -37,20 +37,31 @@ class StatementMigrateCommand extends Command {
   public function fire() {
     $lrs_collection = (new Lrs)->get();
 
+    // Remove all inactive statements.
+    Statement::where('active', '=', false)->delete();
+
+    // Migrates the statements for each LRS.
     foreach ($lrs_collection as $lrs) {
-      Statement::where('lrs._id', $lrs->_id)->chunk(1000, function ($statements) use ($lrs) {
-        $repo = App::make('Locker\Repository\Statement\EloquentStatementRepository');
-        $statements = json_decode($statements->toJSON());
-        $statements = array_map(function ($statement) {
-          $statement->voided = $statement->voided ?: false;
-          $statement->active = $statement->active ?: true;
+      Statement::where('lrs._id', $lrs->_id)->chunk(500, function ($statements) use ($lrs) {
+        $statements_array = [];
+
+        // Sets `active` and `voided` properties.
+        // Ensures that statement is an associative array.
+        $statements = $statements->each(function ($statement) {
+          $statement->voided = isset($statement->voided) ? $statement->voided : false;
+          $statement->active = isset($statement->active) ? $statement->active : true;
           $statement->save();
-          return (array) $statement;
-        }, $statements);
-        $repo->updateReferences($statements, $lrs);
-        $repo->voidStatements($statements, $lrs);
-        $repo->activateStatements($statements, $lrs);
-        $this->info('Migrated ' . count($statements) . ' statements.');
+          $statements_array[] = (array) json_decode($statement->toJSON());
+        });
+
+        // Uses the repository to migrate the statements.
+        $repo = App::make('Locker\Repository\Statement\EloquentStatementRepository');
+        $repo->updateReferences($statements_array, $lrs);
+        $repo->voidStatements($statements_array, $lrs);
+
+        // Outputs status.
+        $statement_count = $statements->count();
+        $this->info("Migrated $statement_count statements in `{$lrs->title}`.");
       });
     }
 
