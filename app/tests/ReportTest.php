@@ -12,10 +12,10 @@ class ReportTest extends TestCase {
     'name' => '',
     'query' => [
       'statement.actor.mbox' => [
-        "mailto:duy.nguyen@go1.com.au"
+        'mailto:duy.nguyen@go1.com.au'
       ],
       'statement.verb.id' => [
-        "http://adlnet.gov/expapi/verbs/experienced"
+        'http://adlnet.gov/expapi/verbs/experienced'
       ]
     ],
   ];

@@ -93,7 +93,9 @@ class ReportController extends BaseController {
    * @return [Statement] the statements selected by the report.
    */
   public function run($id) {
-    return \Response::json($this->report->statements($id));
+    return \Response::json(
+      $this->report->statements($id)->lists('statement')
+    );
   }
 
   /**
