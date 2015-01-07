@@ -15,7 +15,7 @@ mixin labelledRadio(name, suffix, label)
 
 mixin bool(id)
   .form-group.scaled
-    button.btn.btn-xs.btn-danger.pull-right(id=id + '-clear')
+    button.btn.btn-xs.btn-danger.pull-right(id=id + '-clear' data-toggle="tooltip" data-placement="bottom" title="Clear the filter")
       i.icon.icon-trash!= " <%= trans('reporting.clear') %>"
     b!= "<%= trans('reporting.booleans." + id + "') %>"
     form
@@ -26,10 +26,10 @@ mixin scaled(id)
   .form-group.scaled
     != "<%= trans('reporting.scales." + id + "') %>"
     .pull-right
-      input(type="number" id=id + "-min" style="width:50px;" value!="<%= (query['statement.result.score." + id + "'] && query['statement.result.score." + id + "'][1]) || null %>")
+      input(type="number" data-toggle="tooltip" data-placement="bottom" title="Enter the start of the range" id=id + "-min" style="width:50px;" value!="<%= (query['statement.result.score." + id + "'] && query['statement.result.score." + id + "'][1]) || null %>")
       span!= " <%= trans('reporting.to') %>"
-      input(type="number" id=id + "-max" style="width:50px;" value!="<%= (query['statement.result.score." + id + "'] && query['statement.result.score." + id + "'][2]) || null %>")
-      button.btn.btn-xs.btn-danger.pull-right(id=id + '-clear')
+      input(type="number" data-toggle="tooltip" data-placement="bottom" title="Enter the end of the range" id=id + "-max" style="width:50px;" value!="<%= (query['statement.result.score." + id + "'] && query['statement.result.score." + id + "'][2]) || null %>")
+      button.btn.btn-xs.btn-danger.pull-right(id=id + '-clear' data-toggle="tooltip" data-placement="bottom" title="Clear the range")
         i.icon.icon-trash!= " <%= trans('reporting.clear') %>"
 
 .row
@@ -64,7 +64,7 @@ mixin scaled(id)
         .row
           .col-md-6
             label(for='since')!= "<%= trans('reporting.dates.since') %>"
-            input#since.form-control(type='date', value!='<%= since %>')
+            input#since.form-control(type='date', value!='<%= since %>' data-toggle="tooltip" data-placement="bottom" title="Enter the date to filter since")
           .col-md-6
             label(for='until')!= "<%= trans('reporting.dates.until') %>"
-            input#until.form-control(type='date', value!='<%= until %>')
+            input#until.form-control(type='date', value!='<%= until %>' data-toggle="tooltip" data-placement="bottom" title="Enter the date to filter until")
