@@ -1,15 +1,15 @@
-a#save.btn.btn-primary(data-toggle="tooltip" data-placement="bottom" title="Save the report")
+a#save.btn.btn-primary(data-toggle="tooltip" data-placement="top" title="Save the report")
   i.icon.icon-save
   != " <%= trans('site.save') %>"
 = '\n'
-a#graph(href!='#<%= _id %>/graph' data-toggle="tooltip" data-placement="bottom" title="Click to view the report graph").btn.btn-success
+a#graph(href!='#<%= _id %>/graph' data-toggle="tooltip" data-placement="top" title="Click to view the report graph").btn.btn-success
   i.icon.icon-signal
   != " <%= trans('reporting.graph') %>"
 = '\n'
-a#statements(href!='reporting/<%= _id %>/statements' data-toggle="tooltip" data-placement="bottom" title="Click to view the report statements").btn.btn-success
+a#statements(href!='reporting/<%= _id %>/statements' data-toggle="tooltip" data-placement="top" title="Click to view the report statements").btn.btn-success
   i.icon.icon-eye-open
   != " <%= trans('statements.statements') %>"
 = '\n'
-a#cancel(href!='#' data-toggle="tooltip" data-placement="bottom" title="Click to go back to reports without saving").btn.btn-danger
+a#cancel(href!='#' data-toggle="tooltip" data-placement="top" title="Click to go back to reports without saving").btn.btn-danger
   i.icon.icon-remove
   != " <%= trans('site.cancel') %>"

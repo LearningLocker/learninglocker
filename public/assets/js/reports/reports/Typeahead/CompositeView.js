@@ -22,6 +22,7 @@ define([
     _initHelperEvents: locker.CompositeView.prototype._initHelperEvents,
     _initializeTemplate: locker.ItemView.prototype._initializeTemplate,
     childViewContainer: locker.CompositeView.prototype.childViewContainer,
-    events: locker.CompositeView.prototype.events
+    events: locker.CompositeView.prototype.events,
+    onRender: locker.CompositeView.prototype.onRender
   });
 });

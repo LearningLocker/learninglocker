@@ -109,7 +109,7 @@ define([
       this.ui.successFalse.prop('checked', success === false ? true : undefined);
 
       // Calls parent.
-      return locker.LayoutView.prototype.onShow.call(this, options);
+      return locker.LayoutView.prototype.onRender.call(this, options);
     },
     relations: {
       actors: typeaheadHelpers.view('actors', typeaheadHelpers.displayActor),
