@@ -48,7 +48,8 @@ mixin scaled(id)
         i.icon.icon-trash!= " <%= trans('reporting.clear') %>"
 
 - var help = function (type, key, requirement) {
--   return '<p>To add an ' + type + ' click the (green) “Add ' + type + '” button (below the list you’d like to add to - which may be empty at this point). This will add a new entry to the list, you can then type the ' + requirement + ' (' + key + ') you’re searchng for in the text box.</p><p>To remove an ' + type + ' click the (red) minus icon next to the ' + type + '. Then select “OK” in the message that pops up.</p><p>If you don\'t want to filter any ' + type + 's out, remove all of the ' + type + 's.</p>';
+-   var plural = type[type.length - 1] === 'y' ? type.slice(0, -1) + 'ies' : type + 's';
+-   return '<p>To add an ' + type + ' click the (green) “Add ' + type + '” button (below the list you’d like to add to - which may be empty at this point). This will add a new entry to the list, you can then type the ' + requirement + ' (' + key + ') you’re searchng for in the text box.</p><p>To remove an ' + type + ' click the (red) minus icon next to the ' + type + '. Then select “OK” in the message that pops up.</p><p>If you don\'t want to filter any ' + plural + ' out, remove all of the ' + plural + '.</p>';
 - }
 
 .row
@@ -62,12 +63,12 @@ mixin scaled(id)
       .col-md-6: +panel("<%= trans('reporting.headings.types') %>", 'activityTypes', 'How do I filter by activity types?', help('activity type', 'statement.object.definition.type', 'activity type\'s url identifier'))
     +tab-pane('context')
       .row
-        .col-md-6: +panel("<%= trans('reporting.headings.parents') %>", 'parents', 'How do I filter by parent activities?', help('parent activity', 'statement.context.contextActivities.parent.id', 'verb\'s name'))
-        .col-md-6: +panel("<%= trans('reporting.headings.groups') %>", 'groups', 'How do I filter by grouping activities?', help('grouping activity', 'statement.context.contextActivities.grouping.id', 'verb\'s name'))
+        .col-md-6: +panel("<%= trans('reporting.headings.parents') %>", 'parents', 'How do I filter by parent activities?', help('parent activity', 'statement.context.contextActivities.parent.id', 'parent activity\'s name'))
+        .col-md-6: +panel("<%= trans('reporting.headings.groups') %>", 'groups', 'How do I filter by grouping activities?', help('grouping activity', 'statement.context.contextActivities.grouping.id', 'grouping activity\'s name'))
       .row
-        .col-md-4: +panel("<%= trans('reporting.headings.platforms') %>", 'platforms', 'How do I filter by platforms?', help('platform', 'statement.context.platform', 'verb\'s name'))
-        .col-md-4: +panel("<%= trans('reporting.headings.instructors') %>", 'instructors', 'How do I filter by instructors?', help('instructor', 'statement.context.instructor', 'verb\'s name'))
-        .col-md-4: +panel("<%= trans('reporting.headings.languages') %>", 'languages', 'How do I filter by languages?', help('language', 'statement.context.language', 'verb\'s name'))
+        .col-md-4: +panel("<%= trans('reporting.headings.platforms') %>", 'platforms', 'How do I filter by platforms?', help('platform', 'statement.context.platform', 'platform\'s name'))
+        .col-md-4: +panel("<%= trans('reporting.headings.instructors') %>", 'instructors', 'How do I filter by instructors?', help('instructor', 'statement.context.instructor', 'instructor\'s name'))
+        .col-md-4: +panel("<%= trans('reporting.headings.languages') %>", 'languages', 'How do I filter by languages?', help('language', 'statement.context.language', 'language\'s name'))
     +tab-pane('result')
       .col-md-6: +panel("<%= trans('reporting.headings.scales') %>", 'Scaled', 'How do I filter by scales?', '<p>You can set a min (left-most box) and/or a max (right-most box) for each of the scales. You can filter by maximum (max - statement.result.score.max), minimum (min - statement.result.score.min), the actual mark (raw - statement.result.score.raw), and the percentage of the raw mark in relation to the max mark (scaled - statement.result.score.scaled). Change the min and max by entering a number into the boxes, you can remove these filters by clicking the (red) “Clear” button next to the score.</p>')
         +scaled('scaled')
