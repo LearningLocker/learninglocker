@@ -31,6 +31,9 @@ define([
     // Defines callbacks for helper events.
     add: function () {
       this.collection.create({}, {wait: true});
+    },
+    onRender: function () {
+      this.$el.find('[data-toggle="tooltip"]').tooltip();
     }
   });
 });

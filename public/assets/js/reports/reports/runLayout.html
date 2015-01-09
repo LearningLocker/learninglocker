@@ -1,6 +1,6 @@
 <!-- Breadcrumbs. -->
 <ol class="breadcrumb">
-  <li><a href="#"><%= trans('statements.reporting') %></a></li>
+  <li><a href="#" data-toggle="tooltip" data-placement="bottom" title="View all of the reports for this LRS"><%= trans('statements.reporting') %></a></li>
   <li class="active"><%= name %></li>
 </ol>
 
@@ -8,4 +8,4 @@
 
 <!-- Buttons. -->
 <a id="edit" href="#<%= _id %>/edit" class="btn btn-info"><i class="icon icon-pencil"></i> <%= trans('site.edit') %></a>
-<a id="statements" href="reporting/<%= _id %>/statements" class="btn btn-success"><i class="icon icon-eye-open"></i> <%= trans('statements.statements') %></a>
+<a id="statements" href="reporting/<%= _id %>/statements" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="View a list of statements that match this report"><i class="icon icon-eye-open"></i> <%= trans('statements.statements') %></a>

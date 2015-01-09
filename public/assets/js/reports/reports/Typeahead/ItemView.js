@@ -45,6 +45,7 @@ define([
         'typeahead:autocompleted',
         trigger
       );
+      return locker.ItemView.prototype.onRender.apply(this, Array.prototype.slice.call(arguments));
     },
     changeValue: function(e) {
       var changes = {};
