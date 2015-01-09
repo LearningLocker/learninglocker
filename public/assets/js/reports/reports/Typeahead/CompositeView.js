@@ -15,7 +15,13 @@ define([
 
     // Defines helper event.
     add: function () {
-      this.collection.add({value: ''});
+      this.collection.add({value: ''}, this.templateHelpers());
+    },
+    templateHelpers: function () {
+      return {
+        tip: this.tip,
+        type: this.type
+      };
     },
 
     // Adds locker helper methods.

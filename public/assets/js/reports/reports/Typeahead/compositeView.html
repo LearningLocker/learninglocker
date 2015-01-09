@@ -1,7 +1,7 @@
 <table class="table table-striped table-bordered">
   <thead>
     <tr>
-      <th><%= trans('site.value') %></th>
+      <th><%= type || trans('site.value') %></th>
       <th><%= trans('site.delete') %></th>
     </tr>
   </thead>
@@ -9,4 +9,4 @@
 </table>
 
 <!-- Buttons.-->
-<a id="add" class="btn btn-success" data-toggle="tooltip" data-placement="bottom" title="Click to add a value"><i class="icon icon-plus"></i> <%= trans('site.add') %></a>
+<a id="add" class="btn btn-success"><i class="icon icon-plus"></i> <%= trans('site.add') %> <%= type %></a>
