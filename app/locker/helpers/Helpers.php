@@ -8,17 +8,17 @@
  **/
 
 class Helpers {
-  
+
   /*
   |----------------------------------------------------------------------------
-  | scan array and replace &46; with . (This is a result of . being 
-  | reserved in Mongo) convert array to json as this is faster for 
+  | scan array and replace &46; with . (This is a result of . being
+  | reserved in Mongo) convert array to json as this is faster for
   | multi-dimensional arrays (?) @todo check this out.
   |----------------------------------------------------------------------------
   */
-  static function replaceHtmlEntity( $array ){
-    
-    return json_decode(str_replace('&46;','.', json_encode($array)));
+  static function replaceHtmlEntity( $array, $toArray = false ){
+
+    return json_decode(str_replace('&46;','.', json_encode($array)), $toArray);
 
   }
 
@@ -30,7 +30,7 @@ class Helpers {
   static function replaceFullStopInKeys( $string ){
 
     return str_replace('.', '&46;', $string);
-    
+
   }
 
   /*
@@ -40,12 +40,11 @@ class Helpers {
   */
   static function replaceFullStop( $array ){
 
-    $output = '';
+    $output = [];
 
     if( !empty($array) ){
 
       foreach($array as $key => $value){
-
         if(is_array($value)){
           $new = Helpers::replaceFullStopInKeys( $key );
           $output[$new] = Helpers::replaceFullStop( $value );

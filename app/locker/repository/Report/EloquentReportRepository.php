@@ -97,11 +97,10 @@ class EloquentReportRepository implements ReportRepository {
 
   public function statements($id) {
     $report = $this->find($id);
-    return (new \Locker\Repository\Query\EloquentQueryRepository)->selectStatements(
+    return (new \Locker\Repository\Query\EloquentQueryRepository)->where(
       $report->lrs,
-      Helpers::replaceHtmlEntity($report->query),
-      false
-    );
+      Helpers::replaceHtmlEntity($report->where)
+    )->orderBy('statement.stored', 'DESC');
   }
 
 }

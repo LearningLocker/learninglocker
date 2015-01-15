@@ -29,10 +29,10 @@ class StatementVersionTest extends TestCase
 
         $return = $this->createStatement($statement, $this->lrs);
 
-        $id = reset($return['ids']);
+        $id = reset($return);
 
         /* @var $saved_statement Statement */
-        $saved_statement = App::make('Locker\Repository\Statement\EloquentStatementRepository')->find($id);
+        $saved_statement = App::make('Locker\Repository\Statement\EloquentStatementRepository')->show($this->lrs->_id, $id)->first();
         $this->assertTrue(isset($saved_statement->statement['version']), 'There is no version provided');
         $this->assertEquals('1.0.0', $saved_statement->statement['version']);
     }

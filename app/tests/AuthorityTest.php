@@ -29,18 +29,18 @@ class AuthorityTest extends TestCase
     $authority = $stmt['authority'];
     unset($stmt['authority']);
     $return = $this->createStatement($stmt, $this->lrs);
-    $this->assertEquals($return['success'], true);
+    $this->assertEquals(gettype($return), 'array');
 
-    $stmt_id = reset($return['ids']);
-    $obj_stmt = $this->statement->find($stmt_id);
+    $stmt_id = reset($return);
+    $obj_stmt = $this->statement->show($this->lrs->_id, $stmt_id)->first();
     $stmt_authority = $obj_stmt->statement['authority'];
     $this->assertTrue(!empty($stmt_authority));
 
     // Ensure authority stored in db is same value with statment send to LRS
     $stmt['authority'] = $authority;
     $return = $this->createStatement($stmt, $this->lrs);
-    $stmt_id = reset($return['ids']);
-    $obj_stmt = $this->statement->find($stmt_id);
+    $stmt_id = reset($return);
+    $obj_stmt = $this->statement->show($this->lrs->_id, $stmt_id)->first();
 
     $stmt_authority = $obj_stmt->statement['authority'];
     $this->assertEquals($authority, $stmt_authority);

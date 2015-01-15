@@ -44,6 +44,9 @@ define([
     onShow: function () {
       this._showRelations();
     },
+    onRender: function () {
+      this.$el.find('[data-toggle="tooltip"]').tooltip();
+    },
 
     // Defines callbacks for helper events.
     trash: ItemView.prototype.trash,

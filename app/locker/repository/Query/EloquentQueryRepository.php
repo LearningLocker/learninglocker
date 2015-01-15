@@ -36,9 +36,14 @@ class EloquentQueryRepository implements QueryRepository {
    * @return [Aggregate] http://php.net/manual/en/mongocollection.aggregate.php#refsect1-mongocollection.aggregate-examples
    */
   public function aggregate($lrsId, array $pipeline) {
+    if (strpos(json_encode($pipeline), '$out') !== false) {
+      return;
+    }
+
     $pipeline[0] = array_merge_recursive([
       '$match' => [self::LRS_ID_KEY => $lrsId]
     ], $pipeline[0]);
+
     return $this->db->statements->aggregate($pipeline);
   }
 

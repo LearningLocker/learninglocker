@@ -2,6 +2,9 @@
 
 use Illuminate\Routing\Controller;
 use Controllers\API\BaseController as APIBaseController;
+use \app\locker\helpers\FailedPrecondition as FailedPrecondition;
+use \app\locker\helpers\Conflict as Conflict;
+use \app\locker\helpers\ValidationException as ValidationException;
 
 class BaseController extends APIBaseController {
 
@@ -27,12 +30,22 @@ class BaseController extends APIBaseController {
    * @return mixed Result of the method.
    */
   public function selectMethod() {
-    switch ($this->method) {
-      case 'HEAD':
-      case 'GET': return $this->get();
-      case 'PUT': return $this->update();
-      case 'POST': return $this->store();
-      case 'DELETE': return $this->destroy();
+    try {
+      switch ($this->method) {
+        case 'HEAD':
+        case 'GET': return $this->get();
+        case 'PUT': return $this->update();
+        case 'POST': return $this->store();
+        case 'DELETE': return $this->destroy();
+      }
+    } catch (ValidationException $e) {
+      return self::errorResponse($e, 400);
+    } catch (Conflict $e) {
+      return self::errorResponse($e, 409);
+    } catch (FailedPrecondition $e) {
+      return self::errorResponse($e, 412);
+    } catch (\Exception $e) {
+      return self::errorResponse($e, 400);
     }
   }
 
@@ -71,11 +84,57 @@ class BaseController extends APIBaseController {
    * @param string $message
    * @param integer $statusCode
    */
-  public static function errorResponse($message = '', $statusCode = 400) {
-    return \Response::json([
+  public static function errorResponse($e = '', $statusCode = 400) {
+    $json = [
       'error' => true, // @deprecated
-      'success' => false,
-      'message' => $message
-    ], $statusCode);
+      'success' => false
+    ];
+
+    if ($e instanceof ValidationException) {
+      $json['message'] = $e->getErrors();
+    } else if ($e instanceof \Exception || $e instanceof \Locker\XApi\Errors\Error) {
+      $json['message'] = $e->getMessage();
+      $json['trace'] = $e->getTraceAsString();
+    } else {
+      $json['message'] = $e;
+    }
+
+    return \Response::json($json, $statusCode);
+  }
+
+  protected function optionalValue($name, $value, $type) {
+    $decodedValue = $this->decodeValue($value);
+    if (isset($decodedValue)) $this->validateValue($name, $decodedValue, $type);
+    return $decodedValue;
+  }
+
+  protected function requiredValue($name, $value, $type) {
+    $decodedValue = $this->decodeValue($value);
+    if (isset($decodedValue)) {
+      $this->validateValue($name, $decodedValue, $type);
+    } else {
+      throw new \Exception('Required parameter is missing - ' . $name);
+    }
+    return $decodedValue;
+  }
+
+  protected function validatedParam($type, $param, $default = null) {
+    $paramValue = \LockerRequest::getParam($param, $default);
+    $value = $this->decodeValue($paramValue);
+    if (isset($value)) $this->validateValue($param, $value, $type);
+    return $value;
+  }
+
+  protected function decodeValue($value) {
+    $decoded = gettype($value) === 'string' ? json_decode($value, true) : $value;
+    return isset($decoded) ? $decoded : $value;
+  }
+
+  protected function validateValue($name, $value, $type) {
+    $validator = new \app\locker\statements\xAPIValidation();
+    $validator->checkTypes($name, $value, $type, 'params');
+    if ($validator->getStatus() !== 'passed') {
+      throw new \Exception(implode(',', $validator->getErrors()));
+    }
   }
 }

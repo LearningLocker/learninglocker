@@ -27,13 +27,13 @@ class StatementContextTest extends TestCase
       'id' => 'http://tincanapi.com/GolfExample_TCAPI',
       'objectType' => 'Activity'
     ];
-    $contextActivities = ['parent' => $parent]; // $parent should be an array not an object.
+    $contextActivities = ['parent' => [$parent]]; // $parent should be an array not an object.
     $stmt['context']['contextActivities'] = $contextActivities;
 
     $return = $this->createStatement($stmt, $this->lrs);
 
-    $id = $return['ids'][0];
-    $saved_statement = $this->statement->find($id);
+    $id = $return[0];
+    $saved_statement = $this->statement->show($this->lrs->_id, $id)->first();
     // The parent must be array.
     $this->assertTrue(is_array($saved_statement['statement']['context']['contextActivities']['parent']));
   }

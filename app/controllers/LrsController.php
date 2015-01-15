@@ -211,8 +211,10 @@ class LrsController extends BaseController {
    * @return View
    */
   public function statements( $id ){
-
-    $statements = $this->statement->statements($id);
+    $statements = $this->statement->index($id, [], [
+      'ascending' => false,
+      'limit' => $this->statement->count($id)
+    ])->paginate(15);
     $lrs        = $this->lrs->find( $id );
     $lrs_list   = $this->lrs->all();
     return View::make('partials.statements.list', 

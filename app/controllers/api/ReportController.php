@@ -42,7 +42,7 @@ class ReportController extends BaseController {
     } catch (Exception $exception) {
       return \Response::json([
         'success' => false,
-        'errors' => $this->report->$validator->errors(),
+        'errors' => $this->report->validator->errors(),
         'message' => $exception->getMessage()
       ], 400);
     }
@@ -70,7 +70,7 @@ class ReportController extends BaseController {
     } catch (Exception $exception) {
       return \Response::json([
         'success' => false,
-        'errors' => $this->report->$validator->errors(),
+        'errors' => $this->report->validator->errors(),
         'message' => $exception->getMessage()
       ], 400);
     }
@@ -93,7 +93,9 @@ class ReportController extends BaseController {
    * @return [Statement] the statements selected by the report.
    */
   public function run($id) {
-    return \Response::json($this->report->statements($id));
+    return \Response::json(
+      $this->report->statements($id)->lists('statement')
+    );
   }
 
   /**
@@ -103,16 +105,16 @@ class ReportController extends BaseController {
    */
   public function graph($id) {
     $report = $this->report->find($id);
-    $data = $this->analytics->analytics($report->lrs, $report->filter);
+    $data = $this->query->aggregateTime($report->lrs, $report->match);
 
-    if ($data['success'] == false) {
+    if ($data['ok'] === false) {
       return \Response::json([
         'success' => false,
         'message' => \Lang::get('apps.no_data')
       ], 400);
     }
 
-    return \Response::json($data['data']['result']);
+    return \Response::json($data['result']);
   }
 
 }

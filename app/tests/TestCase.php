@@ -26,7 +26,7 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
     //if first user, create site object
     if (\User::count() == 1) {
       $site = new \Site;
-      $site->name = '';
+      $site->name = 'Test';
       $site->description = '';
       $site->email = $user->email;
       $site->lang = 'en-US';
@@ -83,46 +83,46 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
   {
     $siteAttrs = \Site::first();
 
-    return array(
-      'actor' => array(
+    return [
+      'actor' => [
         'objectType' => 'Agent',
         'mbox' => 'mailto:duy.nguyen@go1.com.au',
         'name' => 'duynguyen'
-      ),
-      'verb' => array(
+      ],
+      'verb' => [
         "id" => "http://adlnet.gov/expapi/verbs/experienced",
-        "display" => array("und" => "experienced")
-      ),
-      'context' => array(
-        "contextActivities" => array(
-          "parent" => array(
+        "display" => ["und" => "experienced"]
+      ],
+      'context' => [
+        "contextActivities" => [
+          "parent" => [[
             "id" => "http://tincanapi.com/GolfExample_TCAPI",
             "objectType" => "Activity"
-          ),
-          "grouping" => array(
+          ]],
+          "grouping" => [[
             "id" => "http://tincanapi.com/GolfExample_TCAPI",
             "objectType" => "Activity"
-          )
-        )
-      ),
-      "object" => array(
+          ]]
+        ]
+      ],
+      "object" => [
         "id" => "http://tincanapi.com/GolfExample_TCAPI/Playing/Scoring.html",
         "objectType" => "Activity",
-        "definition" => array(
-          "name" => array(
+        "definition" => [
+          "name" => [
             "en-US" => "Scoring"
-          ),
-          "description" => array(
+          ],
+          "description" => [
             "en-US" => "An overview of how to score a round of golf."
-          )
-        )
-      ),
-      "authority" => array(
+          ]
+        ]
+      ],
+      "authority" => [
         "name" => $siteAttrs->name,
         "mbox" => "mailto:" . $siteAttrs->email,
         "objectType" => "Agent"
-      ),
-    );
+      ],
+    ];
   }
 
   /**
@@ -134,7 +134,7 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
   protected function createStatement($statement, $lrs)
   {
     return App::make('Locker\Repository\Statement\EloquentStatementRepository')
-      ->create([$statement], $lrs);
+      ->create([json_decode(json_encode($statement))], $lrs);
   }
 
   /**

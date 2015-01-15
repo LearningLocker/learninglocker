@@ -193,8 +193,8 @@ Route::get('lrs/{id}/users/invite', array(
 Route::get('lrs/{id}/api', array(
   'uses' => 'LrsController@api',
 ));
-Route::post('lrs/{id}/apikey', array( 
-  'before' => 'csrf', 
+Route::post('lrs/{id}/apikey', array(
+  'before' => 'csrf',
   'uses'   => 'LrsController@editCredentials'
 ));
 
@@ -232,13 +232,13 @@ Route::get('lrs/{lrs_id}/client/{id}/edit', array(
 ));
 
 Route::post('lrs/{id}/client/create', array(
-  'before' => 'csrf', 
+  'before' => 'csrf',
   'uses' => 'ClientController@create',
   'as' => 'client.create'
 ));
 
 Route::put('lrs/{lrs_id}/client/{id}/update', array(
-  'before' => 'csrf', 
+  'before' => 'csrf',
   'uses' => 'ClientController@update',
   'as' => 'client.update'
 ));
@@ -270,7 +270,7 @@ Route::get('lrs/{id}/reporting/typeahead/{segment}/{query}', array(
 Route::resource('users', 'UserController');
 Route::put('users/update/password/{id}', array(
   'as'     => 'users.password',
-  'before' => 'csrf', 
+  'before' => 'csrf',
   'uses'   => 'PasswordController@updatePassword'
 ));
 Route::put('users/update/role/{id}/{role}', array(
@@ -283,7 +283,7 @@ Route::get('users/{id}/add/password', array(
 ));
 Route::put('users/{id}/add/password', array(
   'as'     => 'users.addPassword',
-  'before' => 'csrf', 
+  'before' => 'csrf',
   'uses'   => 'PasswordController@addPassword'
 ));
 
@@ -338,19 +338,16 @@ Route::get('about', array(function(){
 |------------------------------------------------------------------
 */
 
+Route::get('data/xAPI/about', function() {
+  return Response::json([
+    'X-Experience-API-Version'=>Config::get('xapi.using_version'),
+    'version' => [\Config::get('xapi.using_version')]
+  ]);
+});
 
-Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), function(){
+Route::group( array('prefix' => 'data/xAPI', 'before'=>'auth.statement'), function(){
 
   Config::set('xapi.using_version', '1.0.1');
-
-  Route::options('/{extra}',  'Controllers\API\BaseController@CORSOptions')->where('extra', '(.*)');
-
-  Route::get('/about', function() {
-    return Response::json([
-      'X-Experience-API-Version'=>Config::get('xapi.using_version'),
-      'version' => [\Config::get('xapi.using_version')]
-    ]);
-  });
 
   // Statement API.
   Route::get('statements/grouped', array(
@@ -379,8 +376,8 @@ Route::group( array('prefix' => 'data/xAPI/', 'before'=>'auth.statement'), funct
   // State API.
   Route::any('activities/state', [
     'uses' => 'Controllers\xAPI\StateController@selectMethod'
-  ]); 
-  
+  ]);
+
   //Basic Request API
   Route::post('Basic/request', array(
     'uses' => 'Controllers\xAPI\BasicRequestController@store',
@@ -398,8 +395,6 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
 
   Config::set('api.using_version', 'v1');
 
-  Route::options('/{extra}',  'Controllers\API\BaseController@CORSOptions')->where('extra', '(.*)');
-
   Route::get('/', function() {
     return Response::json( array('version' => Config::get('api.using_version')));
   });
@@ -412,7 +407,7 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
   Route::get('query/{section}', array(
     'uses' => 'Controllers\API\AnalyticsController@getSection'
   ));
-  
+
   Route::get('exports/{export_id}/show', array(
     'uses' => 'Controllers\API\ExportingController@show'
   ));
@@ -450,7 +445,7 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
     'uses' => 'Controllers\API\ReportController@graph'
   ));
 
-  
+
   Route::resource('site', 'Controllers\API\SiteController');
 
   // Adds routes for statements.
@@ -486,13 +481,13 @@ Route::get('oauth/authorize', array('before' => 'check-authorization-params|auth
   $params = Session::get('authorize-params');
   $params['user_id'] = Auth::user()->id;
   $app_details = \OAuthApp::where('client_id', $params['client_id'] )->first();
-  return View::make('partials.oauth.forms.authorization-form', array('params'      => $params, 
+  return View::make('partials.oauth.forms.authorization-form', array('params'      => $params,
                                                                      'app_details' => $app_details));
 
 }));
 
 Route::post('oauth/authorize', array('before' => 'check-authorization-params|auth|csrf', function(){
-  
+
   $params = Session::get('authorize-params');
   $params['user_id'] = Auth::user()->id;
 
@@ -513,6 +508,12 @@ Route::get('secure-route', array('before' => 'oauth:basic', function(){
     return "oauth secured route ";
 }));
 
+//Add OPTIONS routes for all defined xAPI and api routes
+foreach( Route::getRoutes()->getIterator() as $route  ){
+  if( $route->getPrefix() === 'data/xAPI' || $route->getPrefix() === 'api/v1' ){
+    Route::options($route->getUri(),  'Controllers\API\BaseController@CORSOptions');
+  }
+}
 
 
 /*
@@ -539,7 +540,7 @@ App::error(function(Exception $exception)
 {
 
   Log::error($exception);
-  
+
   if (method_exists($exception, 'getStatusCode')) {
     $code = $exception->getStatusCode();
   } else {

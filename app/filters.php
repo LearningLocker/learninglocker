@@ -1,5 +1,7 @@
 <?php
 
+use Locker\Repository\Lrs\EloquentLrsRepository as LrsRepository;
+
 /*
 |--------------------------------------------------------------------------
 | Application & Route Filters
@@ -57,8 +59,8 @@ Route::filter('auth.basic', function()
 | Login in once using key / secret to store statements or retrieve statements.
 |
 */
-
 Route::filter('auth.statement', function(){
+
   //set passed credentials
   $key    = LockerRequest::getUser();
   $secret = LockerRequest::getPassword();
@@ -67,39 +69,55 @@ Route::filter('auth.statement', function(){
 
   if( $method !== "OPTIONS" ){
 
-	//Note: this code is duplicated in Controllers\API\BaseController\GetLrs
+    // Validates authorization header.
+    $auth_validator = new app\locker\statements\xAPIValidation();
+    $authorization = LockerRequest::header('Authorization');
+    if ($authorization !== null) {
+      $authorization = gettype($authorization) === 'string' ? substr($authorization, 6) : false;
+      $auth_validator->checkTypes('auth', $authorization, 'base64', 'headers');
+
+      if ($auth_validator->getStatus() === 'failed') {
+        return Response::json([
+          'error' => true,
+          'message' => $auth_validator->getErrors()
+        ], 400);
+      }
+    }
+    
+
+	  //Note: this code is duplicated in Controllers\API\BaseController\GetLrs
     //see if the lrs exists based on key and secret
-    $lrs = \Lrs::where('api.basic_key', $key)
-        ->where('api.basic_secret', $secret)
-        ->select('owner._id')->first();
-		
-	
-	//if main credentials not matched, try the additional credentials
-	if ( $lrs == NULL ) {
-		$client = \Client::where('api.basic_key', $key)
-	    ->where('api.basic_secret', $secret)
-	    ->first();
-		if( $client != NULL ){
-			$lrs = \Lrs::find(  $client->lrs_id );
-		}
-		else {
-			return Response::json([
-        'error' => true,
-        'message' => 'Unauthorized request.'
-      ], 401); 
-		}
-	}
+    // $lrs = \Lrs::where('api.basic_key', $key)
+    //     ->where('api.basic_secret', $secret)
+    //     ->select('owner._id')->first();
+    $lrs = LrsRepository::checkSecret(\Lrs::where('api.basic_key', $key)->first(), $secret);
+
+  	//if main credentials not matched, try the additional credentials
+  	if ( $lrs == NULL ) {
+  		// $client = \Client::where('api.basic_key', $key)
+  	 //    ->where('api.basic_secret', $secret)
+  	 //    ->first();
+      $client = LrsRepository::checkSecret(\Client::where('api.basic_key', $key)->first(), $secret);
+  		if( $client != NULL ){
+  			$lrs = \Lrs::find(  $client->lrs_id );
+  		}
+  		else {
+  			return Response::json([
+          'error' => true,
+          'message' => 'Unauthorized request.'
+        ], 401);
+  		}
+  	}
 
     //attempt login once
     if ( ! Auth::onceUsingId($lrs->owner['_id']) ) {
       return Response::json([
         'error' => true,
         'message' => 'Unauthorized request.'
-      ], 401); 
+      ], 401);
     }
-    
-  }
 
+  }
 });
 
 
@@ -123,13 +141,13 @@ Route::filter('auth.super', function( $route, $request ){
 | LRS admin access
 |--------------------------------------------------------------------------
 |
-| Check the logged in user has admin privilages for current LRS. If not, 
-| then redirect to home page without a message. 
+| Check the logged in user has admin privilages for current LRS. If not,
+| then redirect to home page without a message.
 |
 */
 
 Route::filter('auth.admin', function( $route, $request ){
-  
+
   $lrs      = Lrs::find( $route->parameter('lrs') );
   $user     = Auth::user()->_id;
   $is_admin = false;
@@ -216,7 +234,7 @@ Route::filter('edit.lrs', function( $route, $request ){
 
   }else{
     return Redirect::to('/');
-  }  
+  }
 
 });
 
@@ -225,17 +243,17 @@ Route::filter('edit.lrs', function( $route, $request ){
 | Who can create a new LRS?
 |--------------------------------------------------------------------------
 |
-| Super admins can decide who is allowed to create new LRSs. Super, existing 
+| Super admins can decide who is allowed to create new LRSs. Super, existing
 | admins or everyone, including observers.
 |
 */
 
 Route::filter('create.lrs', function( $route, $request ){
-  
+
   $site       = Site::first();
   $allowed    = $site->create_lrs;
   $user_role  = \Auth::user()->role;
-  
+
   if( !in_array($user_role, $allowed) ){
     return Redirect::to('/');
   }
@@ -258,7 +276,7 @@ Route::filter('registration.status', function( $route, $request ){
 /*
 |---------------------------------------------------------------------------
 | Check the person deleting a user account, is allowed to.
-| 
+|
 | User's can delete their own account as can super admins
 |---------------------------------------------------------------------------
 */

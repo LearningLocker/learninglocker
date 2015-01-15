@@ -19,9 +19,9 @@ class StatementTest extends TestCase {
     $vs = $this->defaultStatment();
     
     $statement = App::make('Locker\Repository\Statement\EloquentStatementRepository');
-    $result = $statement->create(array($vs), $this->lrs);
+    $result = $statement->create([json_decode(json_encode($vs))], $this->lrs);
     
-    $this->assertTrue($result['success']);
+    $this->assertTrue(is_array($result));
   }
 
 }
