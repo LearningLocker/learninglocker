@@ -80,7 +80,7 @@ class ReportingController extends \BaseController {
       'lrs' => $this->lrs->find($lrsId), 
       'list' => $this->lrs->all(),
       'reporting_nav' => true,
-      'statements' => $this->report->statements($reportId),
+      'statements' => $this->report->statements($reportId)->select('statement')->paginate(20),
       'report' => $this->report->find($reportId)
     ]);
   }

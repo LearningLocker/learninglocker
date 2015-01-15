@@ -42,6 +42,9 @@ define([
 
       changes[prop] = e.currentTarget.value;
       this.model.save(changes);
+    },
+    onRender: function () {
+      this.$el.find('[data-toggle="tooltip"]').tooltip();
     }
   });
 });

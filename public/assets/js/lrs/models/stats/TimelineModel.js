@@ -1,16 +1,15 @@
 define([
   'underscore',
   'backbone',
-  'app'
-], function(_, Backbone, App) {
-  
-  var TimelineModel = Backbone.Model.extend({
+  'app',
+  '../../../admin/models/site/StatsModel'
+], function(_, Backbone, App, StatsModel ) {
 
-    //urlRoot: '../lrs/' + App.lrs_id + '/stats',
+
+  var TimelineModel = StatsModel.extend({
     urlRoot: function(){
-      return '../lrs/' + App.lrs_id + '/stats';
-    },
-    idAttribute: "_id"
+      return window.LL.siteroot + '/lrs/' + App.lrs_id + '/stats';
+    }
   });
 
   return TimelineModel;

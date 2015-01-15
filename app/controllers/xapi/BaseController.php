@@ -2,19 +2,61 @@
 
 use Illuminate\Routing\Controller;
 use Controllers\API\BaseController as APIBaseController;
+use \app\locker\helpers\FailedPrecondition as FailedPrecondition;
+use \app\locker\helpers\Conflict as Conflict;
+use \app\locker\helpers\ValidationException as ValidationException;
 
 class BaseController extends APIBaseController {
 
-  // Current LRS based on Auth credentials.
-  protected $lrs;
+  // Sets constants for status codes.
+  const OK = 200;
+  const NO_CONTENT = 204;
+  const NO_AUTH = 403;
+  const CONFLICT = 409;
 
-  // Filter parameters, HTTP method type.
-  protected $params, $CORS, $method;
+  // Defines properties to be set by the constructor.
+  protected $params, $method, $lrs;
+
+  /**
+   * Constructs a new xAPI controller.
+   */
+  public function __construct() {
+    $this->setMethod();
+    $this->getLrs();
+  }
+
+  /**
+   * Selects a method to be called.
+   * @return mixed Result of the method.
+   */
+  public function selectMethod() {
+    try {
+      switch ($this->method) {
+        case 'HEAD':
+        case 'GET': return $this->get();
+        case 'PUT': return $this->update();
+        case 'POST': return $this->store();
+        case 'DELETE': return $this->destroy();
+      }
+    } catch (ValidationException $e) {
+      return self::errorResponse($e, 400);
+    } catch (Conflict $e) {
+      return self::errorResponse($e, 409);
+    } catch (FailedPrecondition $e) {
+      return self::errorResponse($e, 412);
+    } catch (\Exception $e) {
+      return self::errorResponse($e, 400);
+    }
+  }
+
+  public function get() {
+    return \LockerRequest::hasParam($this->identifier) ? $this->show() : $this->index();
+  }
 
   /**
    * Checks the request header for correct xAPI version.
    **/
-  public function checkVersion() {
+  protected function checkVersion() {
     $version = \LockerRequest::header('X-Experience-API-Version');
 
     if (!isset($version) || substr($version, 0, 4) !== '1.0.') {
@@ -27,35 +69,9 @@ class BaseController extends APIBaseController {
   }
 
   /**
-   * Selects a method to be called.
-   * @return mixed Result of the method.
+   * Sets the method (to support CORS).
    */
-  public function selectMethod() {
-    switch ($this->method) {
-      case 'HEAD':
-      case 'GET':
-        if (\LockerRequest::hasParam($this->identifier)) {
-          return $this->show();
-        } else {
-          return $this->index();
-        }
-        break;
-      case 'PUT':
-        return $this->update();
-        break;
-      case 'POST':
-        return $this->store();
-        break;
-      case 'DELETE':
-        return $this->delete();
-        break;
-    }
-  }
-
-  /**
-   * Get all of the input and files for the request and store them in params.
-   */
-  public function setParameters() {
+  protected function setMethod() {
     parent::setParameters();
     $this->method = \LockerRequest::getParam(
       'method',
@@ -63,4 +79,62 @@ class BaseController extends APIBaseController {
     );
   }
 
+  /**
+   * Constructs a error response with a $message and optional $statusCode.
+   * @param string $message
+   * @param integer $statusCode
+   */
+  public static function errorResponse($e = '', $statusCode = 400) {
+    $json = [
+      'error' => true, // @deprecated
+      'success' => false
+    ];
+
+    if ($e instanceof ValidationException) {
+      $json['message'] = $e->getErrors();
+    } else if ($e instanceof \Exception || $e instanceof \Locker\XApi\Errors\Error) {
+      $json['message'] = $e->getMessage();
+      $json['trace'] = $e->getTraceAsString();
+    } else {
+      $json['message'] = $e;
+    }
+
+    return \Response::json($json, $statusCode);
+  }
+
+  protected function optionalValue($name, $value, $type) {
+    $decodedValue = $this->decodeValue($value);
+    if (isset($decodedValue)) $this->validateValue($name, $decodedValue, $type);
+    return $decodedValue;
+  }
+
+  protected function requiredValue($name, $value, $type) {
+    $decodedValue = $this->decodeValue($value);
+    if (isset($decodedValue)) {
+      $this->validateValue($name, $decodedValue, $type);
+    } else {
+      throw new \Exception('Required parameter is missing - ' . $name);
+    }
+    return $decodedValue;
+  }
+
+  protected function validatedParam($type, $param, $default = null) {
+    $paramValue = \LockerRequest::getParam($param, $default);
+    $value = $this->decodeValue($paramValue);
+    if (isset($value)) $this->validateValue($param, $value, $type);
+    return $value;
+  }
+
+  protected function decodeValue($value) {
+    $decoded = gettype($value) === 'string' ? json_decode($value, true) : $value;
+    return isset($decoded) ? $decoded : $value;
+  }
+
+  protected function validateValue($name, $value, $type) {
+    $validator = new \app\locker\statements\xAPIValidation();
+    $validator->checkTypes($name, $value, $type, 'params');
+    if ($validator->getStatus() !== 'passed') {
+      throw new \Exception(implode(',', $validator->getErrors()));
+    }
+  }
 }

@@ -18,12 +18,12 @@ You may contribute to this project via [issues](/issues) and [pull request](/pul
 
 ### Getting Started
 1. Install Learning Locker's [requirements](http://docs.learninglocker.net/requirements/).
-1. [Install and setup](http://docs.learninglocker.net/installation/) Learning Locker.
-4. Change the code.
-5. [Test](#testing) your code. See [testing](#testing) below for more information.
-6. Repeat from Step 4 or continue to step 7.
-7. Commit and push your changes to Github.
-8. Create a [pull request](/pulls) on Github (ensuring that you follow the [guidelines](/contributing.md)).
+2. [Install and setup](http://docs.learninglocker.net/installation/) Learning Locker.
+3. Change the code.
+4. [Test](#testing) your code. See [testing](#testing) below for more information.
+5. Repeat from Step 3 or continue to step 6.
+6. Commit and push your changes to Github.
+7. Create a [pull request](/pulls) on Github (ensuring that you follow the [guidelines](/contributing.md)).
 
 Note that Learning Locker is built upon the [Laravel](http://laravel.com/) PHP framework. To learn more about the code structure, please view the [Laravel documentation](laravel.com/docs/).
 

@@ -7,7 +7,7 @@ define([
   var UserModel = Backbone.Model.extend({
     //urlRoot: '../lrs/' + App.lrs_id + '/stats/activeUsers',
     urlRoot: function(){
-      return '../lrs/' + App.lrs_id + '/stats/activeUsers';
+      return window.LL.siteroot + '/lrs/' + App.lrs_id + '/stats/activeUsers';
     },
     idAttribute: "_id"
   });

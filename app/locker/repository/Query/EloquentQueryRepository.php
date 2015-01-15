@@ -2,10 +2,101 @@
 
 class EloquentQueryRepository implements QueryRepository {
 
+  const LRS_ID_KEY = 'lrs._id';
   protected $db;
 
   public function __construct(){
     $this->db = \DB::getMongoDB();
+  }
+
+  /**
+   * Gets all statements in the LRS (with the $lrsId) that match the $filters.
+   * @param string $lrsId
+   * @param [mixed] $filters
+   * @return Illuminate\Database\Eloquent\Builder
+   */
+  public function where($lrsId, array $filters) {
+    $statements = \Statement::where(self::LRS_ID_KEY, $lrsId);
+
+    foreach ($filters as $filter) {
+      switch ($filter[1]) {
+        case 'in': $statements->whereIn($filter[0], $filter[2]); break;
+        case 'between': $statements->whereBetween($filter[0], [$filter[2], $filter[3]]); break;
+        default: $statements->where($filter[0], $filter[1], $filter[2]);
+      }
+    }
+
+    return $statements;
+  }
+
+  /**
+   * Aggregates the statements in the LRS (with the $lrsId) with the $pipeline.
+   * @param string $lrsId
+   * @param [mixed] $pipeline
+   * @return [Aggregate] http://php.net/manual/en/mongocollection.aggregate.php#refsect1-mongocollection.aggregate-examples
+   */
+  public function aggregate($lrsId, array $pipeline) {
+    if (strpos(json_encode($pipeline), '$out') !== false) {
+      return;
+    }
+
+    $pipeline[0] = array_merge_recursive([
+      '$match' => [self::LRS_ID_KEY => $lrsId]
+    ], $pipeline[0]);
+
+    return $this->db->statements->aggregate($pipeline);
+  }
+
+  /**
+   * Aggregates statements in the LRS (with the $lrsId) that $match into a timed group.
+   * @param string $lrsId
+   * @param [mixed] $match
+   * @return [Aggregate] http://php.net/manual/en/mongocollection.aggregate.php#refsect1-mongocollection.aggregate-examples
+   */
+  public function aggregateTime($lrsId, array $match) {
+    return $this->aggregate($lrsId, [[
+      '$match' => $match
+    ], [
+      '$group' => [
+        '_id'   => [
+          'year' => ['$year' => '$timestamp'],
+          'month' => ['$month' => '$timestamp'],
+          'day' => ['$dayOfMonth' => '$timestamp']
+        ],
+        'count' => ['$sum' => 1],
+        'date'  => ['$addToSet' => '$statement.timestamp']
+      ]
+    ],
+    ['$sort'  => ['date' => 1]],
+    ['$project' => [
+      '_id' => 0,
+      'count' => 1,
+      'date'  => 1
+    ]]]);
+  }
+
+  /**
+   * Aggregates statements in the LRS (with the $lrsId) that $match into a object group.
+   * @param string $lrsId
+   * @param [mixed] $match
+   * @return [Aggregate] http://php.net/manual/en/mongocollection.aggregate.php#refsect1-mongocollection.aggregate-examples
+   */
+  public function aggregateObject($lrsId, array $match) {
+    return $this->aggregate($lrsId, [[
+      '$match' => $match
+    ], [
+      '$group' => [
+        '_id'   => '',
+        'data'  => ['$addToSet' => ''],
+        'count' => ['$sum' => 1],
+      ]
+    ], [
+      '$project' => [
+        '_id' => 0,
+        'data' => 1,
+        'count' => 1
+      ]
+    ]]);
   }
 
   /**

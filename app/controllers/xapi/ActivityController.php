@@ -12,7 +12,7 @@ class ActivityController extends DocumentController {
   // Overrides parent's properties.
   protected $identifier = 'profileId';
   protected $required = [
-    'agent' => ['string', 'json'],
+    'activityId' => 'iri',
     'profileId' => 'string'
   ];
   protected $document_type = DocumentType::ACTIVITY;
@@ -32,6 +32,9 @@ class ActivityController extends DocumentController {
    * @return Response
    **/
   public function full() {
+    // Runs filters.
+    if ($result = $this->checkVersion()) return $result;
+
     return \Response::json(
       $this->activity->getActivity(
         $this->getIndexData()[key($required)]

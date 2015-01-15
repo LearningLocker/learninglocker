@@ -14,6 +14,11 @@
       "name": "James Mullaney",
       "email": "james@ht2.co.uk",
       "role": "Developer"
+    },
+    {
+      "name": "Ryan Smith",
+      "email": "ryansmith@boun.cr",
+      "role": "Developer"
     }
   ],
   "name": "learninglocker/learninglocker",
@@ -35,7 +40,8 @@
     "barryvdh/laravel-cors": "0.2.x",
     "lucadegasperi/oauth2-server-laravel": "1.0.x",
     "andywer/js-localization": "dev-master",
-    "philo/laravel-translate": "1.0.x"
+    "philo/laravel-translate": "1.0.x",
+    "learninglocker/statementfactory": "dev-master"
   },
   "require-dev": {
     "phpunit/phpunit": "4.1.*"

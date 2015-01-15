@@ -32,7 +32,7 @@ class StatementPutTest extends TestCase
     $result = $this->createStatement($vs, $this->lrs);
 
     $statement = App::make('Locker\Repository\Statement\EloquentStatementRepository');
-    $createdStatement = $statement->find($result['ids'][0]);
+    $createdStatement = $statement->show($this->lrs->_id, $result[0])->first();
 
     $param = array(
       'actor' => $createdStatement->statement['actor'],
@@ -51,20 +51,18 @@ class StatementPutTest extends TestCase
 
     // case: conflict-matches
     $response = $this->_makeRequest($param, $auth);
-    $responseData = $response->getData();
+    $responseData = method_exists($response, 'getData');
     $responseStatus = $response->getStatusCode();
 
     $this->assertEquals(204, $responseStatus);
-    $this->assertEmpty($response->getData());
+    $this->assertEquals(false, $responseData);
 
     // case: conflict nomatch
-    $param['result'] = array();
+    $param['result'] = new \stdClass();
     $response = $this->_makeRequest($param, $auth);
-    $responseData = $response->getData();
     $responseStatus = $response->getStatusCode();
-    $checkResponse = $responseStatus == 409 && property_exists($responseData, 'success') && !$responseData->success;
 
-    $this->assertTrue($checkResponse);
+    $this->assertEquals(409, $responseStatus);
   }
 
   /**
@@ -80,7 +78,7 @@ class StatementPutTest extends TestCase
     $result = $this->createStatement($vs, $this->lrs);
 
     $statement = App::make('Locker\Repository\Statement\EloquentStatementRepository');
-    $createdStatement = $statement->find($result['ids'][0]);
+    $createdStatement = $statement->show($this->lrs->_id, $result[0])->first();
 
     $param = [
       'actor' => $createdStatement->statement['actor'],
@@ -99,11 +97,11 @@ class StatementPutTest extends TestCase
     ];
 
     $response = $this->_makeRequest($param, $auth);
-    $responseData = $response->getData();
+    $responseData = method_exists($response, 'getData');
     $responseStatus = $response->getStatusCode();
 
     $this->assertEquals(204, $responseStatus);
-    $this->assertEmpty($response->getData());
+    $this->assertEquals(false, $responseData);
   }
 
   public function tearDown()

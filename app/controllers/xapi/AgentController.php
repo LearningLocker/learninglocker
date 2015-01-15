@@ -11,7 +11,7 @@ class AgentController extends DocumentController {
   // Overrides parent's properties.
   protected $identifier = 'profileId';
   protected $required = [
-    'agent' => ['string', 'json'],
+    'agent' => 'agent',
     'profileId' => 'string'
   ];
   protected $document_type = DocumentType::AGENT;
@@ -21,6 +21,9 @@ class AgentController extends DocumentController {
    * @return Response
    **/
   public function search() {
+    // Runs filters.
+    if ($result = $this->checkVersion()) return $result;
+
     $agent = (array) $this->getShowData()[key($required)];
     $person = ['objectType' => 'Person'];
 
