@@ -823,6 +823,8 @@ class xAPIValidation {
    *
    **/
   public function makeUUID(){
+    mt_srand(crc32(serialize([microtime(true), $_SERVER['REMOTE_ADDR'], 'ETC'])));
+
     return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
       // 32 bits for "time_low"
       mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
