@@ -666,12 +666,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/LearningLocker/StatementFactory.git",
-                "reference": "9ca35bebb181249f1f3ed40a9d149f9b74b53c7d"
+                "reference": "458ac530d6f2ce5ef4534e6268ee57ba70f5c68f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LearningLocker/StatementFactory/zipball/9ca35bebb181249f1f3ed40a9d149f9b74b53c7d",
-                "reference": "9ca35bebb181249f1f3ed40a9d149f9b74b53c7d",
+                "url": "https://api.github.com/repos/LearningLocker/StatementFactory/zipball/458ac530d6f2ce5ef4534e6268ee57ba70f5c68f",
+                "reference": "458ac530d6f2ce5ef4534e6268ee57ba70f5c68f",
                 "shasum": ""
             },
             "type": "library",
@@ -691,7 +691,7 @@
                 }
             ],
             "description": "Learning Locker's classes for xAPI.",
-            "time": "2014-12-30 11:36:32"
+            "time": "2015-01-16 14:56:11"
         },
         {
             "name": "lucadegasperi/oauth2-server-laravel",
