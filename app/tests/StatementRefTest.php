@@ -83,7 +83,7 @@ class StatementRefTest extends TestCase {
   private function generateUUID($id) {
     $len = strlen($id);
     $start = str_repeat('0', 8 - $len);
-    return $id . $start . '-0000-0000-0000-000000000000';
+    return $id . $start . '-0000-0000-b000-000000000000';
   }
 
   public function testInsert1() {
