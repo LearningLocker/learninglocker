@@ -27,10 +27,18 @@
       <script src="{{ URL() }}vendors/html5shiv.js"></script>
       <![endif]-->
     @show
-    
+
   </head>
 
   <body>
+
+    @section('script_bootload')
+    <script type="text/javascript">
+    window.LL = window.LL || {
+      siteroot: "{{ url() }}"
+    };
+    </script>
+    @show
 
     <!-- navbar -->
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -71,13 +79,6 @@
     </div>
 
     @section('footer')
-    @section('script_bootload')
-    <script type="text/javascript">
-    window.LL = window.LL || {
-      siteroot: "{{ url() }}"
-    };
-    </script>
-    @show
 
     <!-- required scripts -->
     @section('scripts')
