@@ -11,12 +11,12 @@ class StateController extends DocumentController {
   // Overrides parent's properties.
   protected $identifier = 'stateId';
   protected $required = [
-    'activityId' => 'string',
-    'agent' => ['string', 'json'],
+    'activityId' => 'iri',
+    'agent' => 'agent',
     'stateId' => 'string'
   ];
   protected $optional = [
-    'registration' => 'string'
+    'registration' => 'uuid'
   ];
   protected $document_type = DocumentType::STATE;
 
@@ -26,8 +26,11 @@ class StateController extends DocumentController {
    * @param  int  $id
    * @return Response
    */
-  public function delete(){
-    $singleDelete = !\LockerRequest::hasParam($this->identifier);
+  public function destroy(){
+    // Runs filters.
+    if ($result = $this->checkVersion()) return $result;
+
+    $singleDelete = \LockerRequest::hasParam($this->identifier);
 
     if ($singleDelete) {
       $data = $this->getShowData();

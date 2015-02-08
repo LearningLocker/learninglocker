@@ -42,6 +42,6 @@ requirejs.config({
   ]
 });
 
-require(['./app'], function(App) {
+require(['./app', 'jquery'], function(App) {
   return App.start();
 });

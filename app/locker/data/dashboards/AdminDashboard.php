@@ -1,8 +1,9 @@
 <?php namespace app\locker\data\dashboards;
 
+use App\Locker\Repository\Query\EloquentQueryRepository as Query;
+
 class AdminDashboard extends \app\locker\data\BaseData {
 
-  public $stats;
   private $user;
 
   public function __construct(){
@@ -10,23 +11,26 @@ class AdminDashboard extends \app\locker\data\BaseData {
     $this->setDb();
 
     $this->user = \Auth::user(); //we might want to pass user in, for example when use the API
-
-    $this->setFullStats();
-
   }
 
   /**
    * Set all stats array.
    *
    **/
-  public function setFullStats(){
-    $this->stats = array('statement_count' => $this->statementCount(),
-                         'lrs_count'       => $this->lrsCount(),
-                         'actor_count'     => $this->actorCount(),
-                         'user_count'      => $this->userCount(),
-                         'statement_graph' => $this->getStatementNumbersByDate(),
-                         'statement_avg'   => $this->statementAvgCount()
-                        );
+  public function getFullStats(){
+    return array(
+      'statement_count' => $this->statementCount(),
+      'lrs_count'       => $this->lrsCount(),
+      'actor_count'     => $this->actorCount(),
+      'user_count'      => $this->userCount(),
+      'statement_avg'   => $this->statementAvgCount()
+    );
+  }
+
+  public function getGraphData(\DateTime $startDate = null, \DateTime $endDate = null) {
+    return [
+      'statement_graph' => $this->getStatementNumbersByDate($startDate, $endDate)
+    ];
   }
 
   /**
@@ -116,19 +120,47 @@ class AdminDashboard extends \app\locker\data\BaseData {
    * @return $data json feed.
    *
    **/
-  public function getStatementNumbersByDate(){
+  public function getStatementNumbersByDate(\DateTime $startDate = null, \DateTime $endDate = null) {
+    // If neither of the dates are set, default to the last 30 days.
+    if ($startDate === null && $endDate === null) {
+      $startDate = \Carbon\Carbon::now()->subMonth();
+      $endDate = \Carbon\Carbon::now();
+    }
 
-    $set_id = array( '$dayOfYear' => '$timestamp' );
+    // Create the timestamp filter.
+    $timestamp = [];
+    if ($startDate !== null) $timestamp['$gte'] = new \MongoDate($startDate->getTimestamp());
+    if ($endDate !== null) $timestamp['$lte'] = new \MongoDate($endDate->getTimestamp());
 
     $statements = $this->db->statements->aggregate(
-              array('$group' => array(
-                        '_id'   => $set_id,
-                        'count' => array('$sum' => 1),
-                        'date'  => array('$addToSet' => '$statement.timestamp'),
-                        'actor' => array('$addToSet' => '$statement.actor'))),
-              array('$sort'    => array('_id' => 1)),
-              array('$project' => array('count' => 1, 'date' => 1, 'actor' => 1))
-            );
+      [
+        '$match' => [
+          'timestamp'=> $timestamp
+        ]
+      ], 
+      [
+        '$group' => [
+          '_id'   => [
+            'year' => ['$year' => '$timestamp'],
+            'month' => ['$month' => '$timestamp'],
+            'day' => ['$dayOfMonth' => '$timestamp']
+          ],
+          'count' => ['$sum' => 1],
+          'date'  => ['$addToSet' => '$statement.timestamp'],
+          'actor' => ['$addToSet' => '$statement.actor']
+        ]
+      ],
+      [
+        '$sort' => ['_id' => 1]
+      ], 
+      [
+        '$project' => [
+          'count' => 1, 
+          'date' => 1, 
+          'actor' => 1
+        ]
+      ]
+    );
 
     //set statements for graphing
     $data = array();

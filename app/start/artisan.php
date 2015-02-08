@@ -12,3 +12,5 @@
 */
 
 Artisan::add(new ConvertTimestamp);
+Artisan::add(new ReportMigrateCommand);
+Artisan::add(new StatementMigrateCommand);

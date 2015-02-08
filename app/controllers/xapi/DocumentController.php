@@ -8,6 +8,12 @@ abstract class DocumentController extends BaseController {
   // Defines properties to be set to constructor parameters.
   protected $document;
 
+  // Defines properties to be set by the constructor.
+  protected $params, $method, $lrs;
+
+  // Defines properties to be set by sub classes.
+  protected $identifier = '', $required = [], $optional = [], $document_type = '';
+
   protected function getIndexData($additional = []) {
     return $this->checkParams(
       array_slice($this->required, 0, -1),
@@ -30,11 +36,13 @@ abstract class DocumentController extends BaseController {
    */
   public function __construct(Document $document){
     $this->document = $document;
-    $this->beforeFilter('@getLrs');
-    $this->beforeFilter('@setParameters');
+    parent::__construct();
   }
 
   public function index() {
+    // Runs filters.
+    if ($result = $this->checkVersion()) return $result;
+
     // Gets all documents.
     $documents = $this->document->all(
       $this->lrs->_id,
@@ -43,7 +51,7 @@ abstract class DocumentController extends BaseController {
         'since' => ['string', 'timestamp']
       ])
     );
-    
+
     // Returns array of only the stateId values for each document.
     $ids = array_column($documents->toArray(), 'identId');
     return \Response::json($ids);
@@ -54,6 +62,9 @@ abstract class DocumentController extends BaseController {
    * @return DocumentResponse
    */
   public function show() {
+    // Runs filters.
+    if ($result = $this->checkVersion()) return $result;
+
     return $this->documentResponse($this->getShowData());
   }
 
@@ -62,14 +73,19 @@ abstract class DocumentController extends BaseController {
    * @return Response
    */
   public function store() {
+    // Runs filters.
+    if ($result = $this->checkVersion()) return $result;
+
     // Checks and gets the data from the params.
     $data = $this->getShowData();
 
     // Gets the content from the request.
     $data['content_info'] = $this->getAttachedContent('content');
+    $data['ifMatch'] = \LockerRequest::header('If-Match');
+    $data['ifNoneMatch'] = \LockerRequest::header('If-None-Match');
 
     // Stores the document.
-    $store = $this->document->store(
+    $document = $this->document->store(
       $this->lrs->_id,
       $this->document_type,
       $data,
@@ -77,10 +93,12 @@ abstract class DocumentController extends BaseController {
       $this->method
     );
 
-    if ($store) {
-      return \Response::json(['ok'], 204);
+    if ($document) {
+      return \Response::json(null, BaseController::NO_CONTENT, [
+        'ETag' => $document->sha
+      ]);
     } else {
-      return \Response::json(['error'], 400);
+      throw new \Exception('Could not store Document.');
     }
   }
 
@@ -89,6 +107,9 @@ abstract class DocumentController extends BaseController {
    * @return Response
    */
   public function update() {
+    // Runs filters.
+    if ($result = $this->checkVersion()) return $result;
+
     return $this->store();
   }
 
@@ -96,9 +117,12 @@ abstract class DocumentController extends BaseController {
    * Deletes a document.
    * @return Response
    */
-  public function delete(){
+  public function destroy(){
+    // Runs filters.
+    if ($result = $this->checkVersion()) return $result;
+
     if (!\LockerRequest::hasParam($this->identifier)) {
-      \App::abort(400, 'Multiple document DELETE not permitted');
+      return BaseController::errorResponse('Multiple document DELETE not permitted');
     }
     return $this->completeDelete();
   }
@@ -117,14 +141,14 @@ abstract class DocumentController extends BaseController {
       $data ?: $this->getShowData(),
       $singleDelete
     );
-    
+
     if ($success) {
       return \Response::json(['ok'], 204);
     } else {
-      return \Response::json(['error'], 400);
+      return BaseController::errorResponse();
     }
   }
-  
+
   /**
    * Retrieves attached file content
    * @param string $name Field name
@@ -134,16 +158,12 @@ abstract class DocumentController extends BaseController {
     if (\LockerRequest::hasParam('method') || $this->method === 'POST') {
       return $this->getPostContent($name);
     } else {
-      $contentType = \LockerRequest::header('Content-Type');
+      $contentType = \LockerRequest::header('Content-Type', 'text/plain');
 
-      if(!isset($contentType)){
-        \App::abort(400, 'PUT requests must include a Content-Type header');
-      } else {
-        return [
-          'content' => \LockerRequest::getContent(),
-          'contentType' => $contentType
-        ];
-      }
+      return [
+        'content' => \LockerRequest::getContent(),
+        'contentType' => $contentType
+      ];
     }
   }
 
@@ -165,7 +185,7 @@ abstract class DocumentController extends BaseController {
       if( !$contentType || $isForm ){
         $contentType = is_object(json_decode($content)) ? 'application/json' : 'text/plain';
       }
-      
+
     } else {
       \App::abort(400, sprintf('`%s` was not sent in this request', $name));
     }
@@ -198,11 +218,12 @@ abstract class DocumentController extends BaseController {
     $document = $this->document->find($this->lrs->_id, $this->document_type, $data);
 
     if (!$document) {
-      return \Response::make('', 404);
+      return BaseController::errorResponse(null, 404);
     } else {
       $headers = [
         'Updated' => $document->updated_at->toISO8601String(),
-        'Content-Type' => $document->contentType
+        'Content-Type' => $document->contentType,
+        'ETag' => $document->sha
       ];
 
       if( $this->method === 'HEAD' ){ //Only return headers
@@ -220,7 +241,7 @@ abstract class DocumentController extends BaseController {
               $headers
             );
         }
-      } 
+      }
     }
   }
 
@@ -239,27 +260,24 @@ abstract class DocumentController extends BaseController {
     }
 
     // Checks required parameters.
-    foreach ($required as $name => &$expected_types) {
-      // Checks the parameter has been passed.
+    foreach ($required as $name => $expectedType) {
       if (!isset($data[$name])) {
-        \App::abort(400, 'Required parameter is missing - ' . $name);
-      } else if (!empty($expected_types)) {
-        $return_data[$name] = $this->checkTypes($name, $data[$name], $expected_types);
+        throw new \Exception('Required parameter is missing - ' . $name);
+      } else if ($expectedType !== null) {
+        $return_data[$name] = $this->requiredValue($name, $data[$name], $expectedType);
       } else {
         $return_data[$name] = $data[$name];
       }
     }
 
     // Checks optional parameters.
-    foreach ($optional as $name => &$expected_types) {
-      if (isset($data[$name])) {
-        $return_data[$name] = !empty($expected_types) ? $this->checkTypes(
-          $name,
-          $data[$name],
-          $expected_types
-        ) : $data[$name];
-      } else {
+    foreach ($optional as $name => $expectedType) {
+      if (!isset($data[$name])) {
         $return_data[$name] = null;
+      } else if ($expectedType !== null) {
+        $return_data[$name] = $this->optionalValue($name, $data[$name], $expectedType);
+      } else {
+        $return_data[$name] = $data[$name];
       }
     }
 
@@ -295,34 +313,21 @@ abstract class DocumentController extends BaseController {
     // Convert expected type string into array
     $expected_types = (is_string($expected_types)) ? [$expected_types] : $expected_types;
 
-    $type = gettype($value);
+    $validators = array_map(function ($expectedType) use ($name, $value) {
+      $validator = new \app\locker\statements\xAPIValidation();
+      $validator->checkTypes($name, $value, $expectedType, 'params');
+      return $this->jsonParam($expectedType, $value);
+    }, $expected_types);
 
-    // Returns an error if the type isn't an expected one.
-    if (!in_array($type, $expected_types)) {
+    $passes = array_filter($validators, function (\app\locker\statements\xAPIValidation $validator) {
+      return $validator->getStatus() === 'passed';
+    });
+
+    if (count($passes) < 1) {
       \App::abort(400, sprintf(
-        "`%s` is not an accepted type - expected %s - received %s",
+        "`%s` is not a %s",
         $name,
-        implode(',', $expected_types),
-        $type
-      ));
-    }
-
-    // Checks if we have requested a JSON parameter.
-    if (in_array('json', $expected_types)) {
-      $value = json_decode($value);
-      if (!is_object($value)) {
-        \App::abort(400, sprintf(
-          "`%s` is not an accepted type - expected a JSON formatted string",
-          $name
-        ));
-      }
-    }
-
-    // Checks if we have a timestamp paramater.
-    if (in_array('timestamp', $expected_types) && !$this->validateTimestamp($value)) {
-      \App::abort(400, sprintf(
-        "`%s` is not an accepted type - expected an ISO 8601 formatted timestamp",
-        $name
+        implode(',', $expected_types)
       ));
     }
 

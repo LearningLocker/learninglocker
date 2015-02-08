@@ -27,10 +27,18 @@
       <script src="{{ URL() }}vendors/html5shiv.js"></script>
       <![endif]-->
     @show
-    
+
   </head>
 
   <body>
+
+    @section('script_bootload')
+    <script type="text/javascript">
+    window.LL = window.LL || {
+      siteroot: "{{ url() }}"
+    };
+    </script>
+    @show
 
     <!-- navbar -->
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -79,7 +87,6 @@
       {{ HTML::script('assets/js/respond.min.js') }}
       {{ HTML::script('assets/js/placeholder.js') }}
     @show
-
     @show
   </body>
 </html>

@@ -24,6 +24,58 @@ class Report extends Eloquent {
     return $filter;
   }
 
+  public function getMatchAttribute() {
+    $reportArr = $this->toArray();
+    $match = [];
+    $query = isset($reportArr['query']) ? (array) $reportArr['query'] : null;
+
+    if (is_array($query) && count($query) > 0 && !isset($query[0])) {
+      foreach ($query as $key => $value) {
+        $match[$key] = ['$in' => $value];
+      }
+    }
+
+    $since = isset($reportArr['since']) ? $reportArr['since'] : null;
+    $until = isset($reportArr['until']) ? $reportArr['until'] : null;
+
+    if ($since || $until) {
+      $match['statement.timestamp'] = [];
+    }
+    if ($since) {
+      $match['statement.timestamp']['$gte'] = $since;
+    }
+    if ($until) {
+      $match['statement.timestamp']['$lte'] = $until;
+    }
+
+    return $match;
+  }
+
+  public function getWhereAttribute() {
+    $reportArr = $this->toArray();
+    $wheres = [];
+    $query = isset($reportArr['query']) ? (array) $reportArr['query'] : null;
+
+    if (is_array($query) && count($query) > 0 && !isset($query[0])) {
+      $wheres = array_map(function ($key) use ($query) {
+        return [$key, 'in', $query[$key]];
+      }, array_keys($query));
+    }
+
+    $since = isset($reportArr['since']) ? $reportArr['since'] : null;
+    $until = isset($reportArr['until']) ? $reportArr['until'] : null;
+
+    if ($since && $until) {
+      $wheres[] = ['statement.timestamp', 'between', $since, $until];
+    } else if ($since) {
+      $wheres[] = ['statement.timestamp', '>=', $since];
+    } else if ($until) {
+      $wheres[] = ['statement.timestamp', '<=', $until];
+    }
+
+    return $wheres;
+  }
+
   public function toArray() {
     return (array) \app\locker\helpers\Helpers::replaceHtmlEntity(parent::toArray());
   }

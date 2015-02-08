@@ -30,14 +30,14 @@ class EmailController extends BaseController {
 
     $user = $this->user->find( $id );
     return View::make('partials.users.email')->with('user', $user)->with('email_nav',true);
-    
+
   }
 
   /**
    * Resend the verification email
    **/
   public function resendEmail(){
-    
+
     $exists = DB::table('users')
               ->where('_id', Auth::user()->_id)
               ->where('email', Input::get('email'))
@@ -58,7 +58,7 @@ class EmailController extends BaseController {
 
     $message = $this->user->verifyEmail( $token );
     return Redirect::to('/')->with('success', $message);
-   
+
   }
 
   /**
@@ -73,9 +73,13 @@ class EmailController extends BaseController {
               ->where('token', $token)
               ->pluck('email');
     $user = \User::where('email', $email)->first();
+    if (!isset($user->_id)) \App::abort(404, 'This token cannot be found or has expired.');
     Auth::loginUsingId($user->_id);
+    \DB::table('user_tokens')
+      ->where('token', $token)
+      ->delete();
     return Redirect::to('/users/'. $user->_id . '/add/password');
-   
+
   }
 
 

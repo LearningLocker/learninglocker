@@ -3,10 +3,9 @@ define([
   'underscore',
   'backbone',
   'marionette',
-  'models/site/StatsModel',
   'morris'
 
-], function($, _, Backbone, Marionette, StatsModel, Morris){
+], function($, _, Backbone, Marionette, Morris){
 
   var HeaderView = Backbone.Marionette.ItemView.extend({
 

@@ -2,14 +2,11 @@
 
 interface StatementRepository {
 
-	public function all($id,$parameters);
-
-	public function find($id);
-
-	public function create($statement, $lrs, $attachment);
-
-	public function statements($id);
-
-  public function count($lrs);
+  public function index($lrsId, array $filters, array $options);
+  public function show($lrsId, $id, $voided);
+  public function toCanonical(array $statements, array $langs);
+  public function toIds(array $statements);
+  public function getCurrentDate();
+  public function create(array $statements, \Lrs $lrs, $attachment);
 
 }

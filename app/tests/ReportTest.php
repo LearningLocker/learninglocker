@@ -12,10 +12,10 @@ class ReportTest extends TestCase {
     'name' => '',
     'query' => [
       'statement.actor.mbox' => [
-        "mailto:duy.nguyen@go1.com.au"
+        'mailto:duy.nguyen@go1.com.au'
       ],
       'statement.verb.id' => [
-        "http://adlnet.gov/expapi/verbs/experienced"
+        'http://adlnet.gov/expapi/verbs/experienced'
       ]
     ],
   ];
@@ -165,7 +165,6 @@ class ReportTest extends TestCase {
 
     // Checks that the correct number of statements are returned.
     $this->assertEquals(self::STATEMENTS, $content[0]['count']);
-    $this->assertEquals(self::STATEMENTS, count($content[0]['date']));
   }
 
   // View tests.

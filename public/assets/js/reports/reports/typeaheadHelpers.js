@@ -8,7 +8,7 @@ define([
       var id = item.id;
       var value = null;
 
-      // Return a human-readable value if the browsers defines languages.
+      // Return a human-readable value if the browser defines languages.
       if (navigator.languages instanceof Array) {
         value = navigator.languages.map(function (lang) {
           return item.definition && item.definition.name && item.definition.name[lang];
@@ -41,8 +41,11 @@ define([
     var id = actor.mbox || actor.account.href || actor.openId
     return actor.name + ' (' + id + ')';
   };
-  var view = function (segment, display) {
+  var view = function (segment, type, tip, display) {
+    // Where do I define `tip` here?
     return CompositeView.extend({
+      tip: tip,
+      type: type,
       childView: ItemView.extend({
         typeaheadUrl: 'reporting/typeahead/' + segment,
         _getTypeaheadKeys: getKeys(display)
