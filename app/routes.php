@@ -354,7 +354,8 @@ Route::group( array('prefix' => 'data/xAPI', 'before'=>'auth.statement'), functi
     'uses' => 'Controllers\xAPI\StatementController@grouped',
   ));
   Route::any('statements', [
-    'uses' => 'Controllers\xAPI\StatementController@selectMethod'
+    'uses' => 'Controllers\xAPI\StatementController@selectMethod',
+    'as' => 'xapi.statement'
   ]);
 
   // Agent API.
