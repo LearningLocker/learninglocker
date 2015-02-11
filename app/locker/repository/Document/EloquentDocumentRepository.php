@@ -226,13 +226,6 @@ class EloquentDocumentRepository implements DocumentRepository {
 
     $existing_document = $this->findStateDoc( $lrs, $data['stateId'], $data['activityId'], $data['agent'], $data['registration'], true );
 
-    if ($method === 'PUT') $this->checkETag(
-      isset($existing_document->sha) ? $existing_document->sha : null,
-      $data['ifMatch'],
-      $data['ifNoneMatch'],
-      false
-    );
-
     if( !$existing_document ){
       $document                 = $this->documentapi;
 
