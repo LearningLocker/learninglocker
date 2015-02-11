@@ -37,7 +37,7 @@ class ActivityController extends DocumentController {
 
     return \Response::json(
       $this->activity->getActivity(
-        $this->getIndexData()[key($required)]
+        $this->getIndexData()[key($this->required)]
       )
     );
   }
