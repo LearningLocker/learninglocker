@@ -305,8 +305,6 @@ class StatementController extends BaseController {
      * @return String A URL that can be used to get more statements for the given request parameters.
      */
     private function getMoreLink($total, $limit, $offset) {
-      $no_offset = $offset === null;
-
       // Uses defaults.
       $total = $total ?: 0;
       $limit = $limit ?: 100;
@@ -321,7 +319,7 @@ class StatementController extends BaseController {
       $statement_route = \URL::route('xapi.statement', [], false);
       $current_url = $query ? $statement_route.'?'.$query : $statement_route;
 
-      if (!$no_offset) {
+      if (strpos($query, "offset=$offset") !== false) {
         return str_replace(
           'offset=' . $offset,
           'offset=' . $next_offset,
