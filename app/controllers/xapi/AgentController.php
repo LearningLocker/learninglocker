@@ -24,15 +24,24 @@ class AgentController extends DocumentController {
     // Runs filters.
     if ($result = $this->checkVersion()) return $result;
 
-    $agent = (array) $this->getShowData()[key($required)];
-    $person = ['objectType' => 'Person'];
+    $agent = (array) $this->getIndexData()[key($this->required)];
+    $agents = $this->document->all(
+      $this->lrs->_id,
+      $this->document_type,
+      $this->getIndexData([
+        'since' => ['string', 'timestamp']
+      ])
+    )->toArray();
+    $agents = array_column($agents, 'agent');
 
-    $keys = ['name', 'mbox', 'mbox_sha1sum', 'openid', 'account'];
-    foreach ($keys as $key) {
-      if (isset($agent[$key])) {
-        $person[$key] = [$agent[$key]];
-      }
-    }
+    $person = (object) [
+      'objectType' => 'Person',
+      'name' => array_unique(array_column($agents, 'name')),
+      'mbox' => array_unique(array_column($agents, 'mbox')),
+      'mbox_sha1sum' => array_unique(array_column($agents, 'mbox_sha1sum')),
+      'openid' => array_unique(array_column($agents, 'openid')),
+      'account' => array_unique(array_column($agents, 'account'))
+    ];
 
     return \Response::json($person);
   }
