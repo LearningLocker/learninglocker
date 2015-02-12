@@ -8,10 +8,11 @@ require.config({
     marionette: "../libs/backbone/backbone.marionette",
     'backbone.wreqr': '../libs/backbone/backbone.wreqr',
     'backbone.babysitter' : '../libs/backbone/backbone.babysitter',
-    'bootstrap': '../libs/bootstrap/bootstrap.min',
-    'raphael': '../libs/morrisjs/raphael.min',
-    'morris': '../libs/morrisjs/morris.min',
-    'admin' : '../admin'
+    bootstrap: '../libs/bootstrap/bootstrap.min',
+    raphael: '../libs/morrisjs/raphael.min',
+    morris: '../libs/morrisjs/morris.min',
+    admin : '../admin',
+    basicauth: '../bower_components/backbone.basicauth/backbone.basicauth'
   },
   shim : {
     jquery : {
@@ -36,6 +37,10 @@ require.config({
       deps: ["jquery"],
       exports: "Bootstrap"
     },
+    basicauth : {
+      deps : ['jquery', 'underscore', 'backbone'],
+      exports : 'BasicAuth'
+    }
   },
 });
 

@@ -2,6 +2,12 @@
 
 @section('head')
   @parent
+  <script>
+    window.lrs = {
+      key: '{{ $lrs->api['basic_key']}}',
+      secret: '{{ $lrs->api['basic_secret'] }}'
+    };
+  </script>
   <!-- load in one page application with requirejs -->
   <script data-main="{{ URL() }}/assets/js/lrs/config" src="{{ URL() }}/assets/js/libs/require/require.js"></script>
 @stop
