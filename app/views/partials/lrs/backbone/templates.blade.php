@@ -100,18 +100,15 @@
 <script id="userListView" type="text/template">
   <span class="badge"><%= count %></span>
   <b>Name</b>:
-  <% if( name.length > 1 ){ %>
-  <% _.each(name, function(n) { %>  
-        <%= n %>, 
-  <% }); %>
-  <% }else{ %>
-  <%= name  %>
-  <% } %>
-  <br /><b>Email</b>: <%= _id.substr(7) %>
+  <%= names.length > 0 ? names.join(', ') : 'Unknown' %></br>
+  <%= _id.mbox != null ? '<b>Email:</b> ' + _id.mbox : '' %>
+  <%= _id.mbox_sha1sum != null ? '<b>Email:</b> ' + _id.mbox_sha1sum : '' %>
+  <%= _id.openid != null ? '<b>OpenID:</b> ' + _id.openid : '' %>
+  <%= _id.account != null ? '<b>Account:</b> ' + _id.account.homePage + _id.account.name : '' %>
 </script>
 
 <script id="userList" type="text/template">
-  <div id="active">
+  <div id="active" style="overflow-wrap: break-word">
   </div>
 </script>
 
