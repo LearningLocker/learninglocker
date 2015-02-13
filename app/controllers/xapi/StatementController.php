@@ -298,35 +298,38 @@ class StatementController extends BaseController {
   }
 
   /**
-   * Gets the more link.
-   * @param int $total the number of statements matching the filter.
-   * @param int $limit the number of statements to be returned.
-   * @param int $offset the number of statements to skip.
-   * @return URL
-   */
-  private function getMoreLink($total, $limit, $offset = null) {
-    $nextOffset = ($offset ?: 0) + $limit;
+     * Constructs the "more link" for a statement response.
+     * @param Integer $total Number of statements that can be returned for the given request parameters.
+     * @param Integer $limit Number of statements to be outputted in the response.
+     * @param Integer $offset Number of statements being skipped.
+     * @return String A URL that can be used to get more statements for the given request parameters.
+     */
+    private function getMoreLink($total, $limit, $offset) {
+      // Uses defaults.
+      $total = $total ?: 0;
+      $limit = $limit ?: 100;
+      $offset = $offset ?: 0;
 
-    if ($total <= $nextOffset) return '';
+      // Calculates the $next_offset.
+      $next_offset = $offset + $limit;
+      if ($total <= $next_offset) return '';
 
-    // Get the current request URI.
-    $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
-    $uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
-    $url = 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . "://$host/$uri";
+      // Changes (when defined) or appends (when undefined) offset.
+      $query = \Request::getQueryString();
+      $statement_route = \URL::route('xapi.statement', [], false);
+      $current_url = $query ? $statement_route.'?'.$query : $statement_route;
 
-    // Changes the offset if it does exist, otherwise it adds it.
-    if ($offset !== null) {
-      return str_replace(
-        'offset=' . $offset,
-        'offset=' . $nextOffset,
-        $url
-      );
-    } else {
-      // If there are already params then append otherwise start.
-      $separator = strpos($url, '?') !== False ? '&' : '?';
-      return $url . $separator . 'offset=' . $nextOffset;
+      if (strpos($query, "offset=$offset") !== false) {
+        return str_replace(
+          'offset=' . $offset,
+          'offset=' . $next_offset,
+          $current_url
+        );
+      } else {
+        $separator = strpos($current_url, '?') !== False ? '&' : '?';
+        return $current_url . $separator . 'offset=' . $next_offset;
+      }
     }
-  }
 
   /**
    * Sets and sends back the approriate response for the $outcome.

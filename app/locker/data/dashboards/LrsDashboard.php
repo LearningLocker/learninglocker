@@ -137,9 +137,8 @@ class LrsDashboard extends \app\locker\data\BaseData {
     $match = $this->getMatch( $this->lrs ); 
     return $this->db->statements->aggregate(
                 array('$match' => $match),
-                array('$group' => array('_id'   => '$statement.actor.mbox',
-                      'name'   => array('$addToSet' => '$statement.actor.name'),
-                      'mbox'   => array('$addToSet' => '$statement.actor.mbox'),
+                array('$group' => array('_id'   => '$statement.actor',
+                      'names'   => array('$addToSet' => '$statement.actor.name'),
                       'count'  => array('$sum' => 1))),
                 array('$sort'  => array('count' => -1)),
                 array('$limit' => 5)

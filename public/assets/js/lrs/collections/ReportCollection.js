@@ -2,14 +2,19 @@ define([
   'underscore',
   'backbone',
   'models/ReportModel',
-  'app'
+  'app',
+  'basicauth'
 ], function( _, Backbone, ReportModel, App){
 
   var ReportCollection = Backbone.Collection.extend({
     model: ReportModel,
     url: function(){
-      return '../lrs/' + App.lrs_id + '/reporting/getReports';
+      return '../api/v1/reports';
     },
+    credentials: {
+      username: window.lrs.key,
+      password: window.lrs.secret
+    }
   });
 
   return ReportCollection;
