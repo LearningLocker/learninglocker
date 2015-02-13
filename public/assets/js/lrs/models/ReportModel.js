@@ -1,12 +1,17 @@
 define([
   'underscore',
   'backbone',
-  'app'
+  'app',
+  'basicauth'
 ], function(_, Backbone, App) {
   
   var ReportModel = Backbone.Model.extend({
     urlRoot: function(){
-      return '../lrs/' + App.lrs_id + '/reporting/getReports';
+      return '../api/v1/reports';
+    },
+    credentials: {
+      username: window.lrs.key,
+      password: window.lrs.secret
     },
     idAttribute: "_id"
   });

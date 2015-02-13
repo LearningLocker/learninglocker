@@ -76,7 +76,7 @@
 </script>
 
 <script id="reportListView" type="text/template">
-  <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/reporting/show/<%= _id %>"><%= name %></a>
+  <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/reporting#<%= _id %>/graph"><%= name %></a>
 </script>
 
 <script id="activityList" type="text/template">
