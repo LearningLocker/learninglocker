@@ -115,14 +115,35 @@ class EloquentStatementRepository implements StatementRepository {
     $identifier = $this->getIdentifier($agent);
     if (isset($agent) && !is_array($agent)) throw new \Exception('Invalid agent');
     $agent = isset($agent) && isset($agent[$identifier]) ? $agent[$identifier] : null;
-    $statements = $this->addOptionFilter($statements, $agent, $options['related_agents'], [
-      'statement.actor.'.$identifier,
-      'statement.object.'.$identifier
-    ], [
-      'statement.authority.'.$identifier,
-      'statement.context.instructor.'.$identifier,
-      'statement.context.team.'.$identifier
-    ]);
+
+    // Fixes https://github.com/LearningLocker/learninglocker/issues/519.
+    if ($identifier === 'account') {
+      $statements = $this->addOptionFilter($statements, $agent['name'], $options['related_agents'], [
+        'statement.actor.'.$identifier.'.name',
+        'statement.object.'.$identifier.'.name'
+      ], [
+        'statement.authority.'.$identifier.'.name',
+        'statement.context.instructor.'.$identifier.'.name',
+        'statement.context.team.'.$identifier.'.name'
+      ]);
+      $statements = $this->addOptionFilter($statements, $agent['homePage'], $options['related_agents'], [
+        'statement.actor.'.$identifier.'.homePage',
+        'statement.object.'.$identifier.'.homePage'
+      ], [
+        'statement.authority.'.$identifier.'.homePage',
+        'statement.context.instructor.'.$identifier.'.homePage',
+        'statement.context.team.'.$identifier.'.homePage'
+      ]);
+    } else {
+      $statements = $this->addOptionFilter($statements, $agent, $options['related_agents'], [
+        'statement.actor.'.$identifier,
+        'statement.object.'.$identifier
+      ], [
+        'statement.authority.'.$identifier,
+        'statement.context.instructor.'.$identifier,
+        'statement.context.team.'.$identifier
+      ]);
+    }
 
     // Uses ordering.
     if (isset($options['ascending']) && $options['ascending'] === true) {
