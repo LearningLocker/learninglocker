@@ -33,12 +33,15 @@
   <a id="graph" data-toggle="tooltip" data-placement="top" title="View a graph of statements that match this report" href="{{ route('reporting.index', [$report->lrs]) }}#{{$report->_id}}/graph" class="btn btn-success"><i class="icon icon-signal"></i> {{ Lang::get('reporting.graph') }}</a>
 @stop
 
-@section('scripts')
+@section('footer')
   @parent
-  <script type="text/javascript">
-    $(function () {
-      $('[data-toggle="tooltip"]').tooltip();
-    });
-  </script>
+  @section('scripts')
+    @parent
+    <script type="text/javascript">
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+      });
+    </script>
+  @show
 @show
 
