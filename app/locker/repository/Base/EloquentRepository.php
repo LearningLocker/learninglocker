@@ -9,7 +9,7 @@ abstract class EloquentRepository implements Repository {
   abstract protected function constructStore(Model $model, array $data, array $opts);
 
   /**
-   * Constructs a query restricted to the given authority.
+   * Constructs a query restricted by the given options.
    * @param [String => Mixed] $opts
    * @return \Jenssegers\Mongodb\Eloquent\Builder
    */
