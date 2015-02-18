@@ -22,3 +22,12 @@ class ValidationException extends \Exception {
 }
 class FailedPrecondition extends \Exception {}
 class Conflict extends \Exception {}
+
+class NotFound extends \Exception {
+  public function __construct($id, $class) {
+    parent::__construct(trans('api.errors.not_found', [
+      'id' => $id,
+      'class' => $class
+    ]));
+  }
+}
