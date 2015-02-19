@@ -175,7 +175,8 @@ class ExportingController extends BaseController {
           $values = [];
 
           foreach ($keys as $key) {
-            array_push($values, $statement[$key]);
+            // Decode unicode characters
+            array_push($values, json_decode('[' . $statement[$key] . ']', true)[0]);
           }
 
           // Adds commas between values (for columns);
