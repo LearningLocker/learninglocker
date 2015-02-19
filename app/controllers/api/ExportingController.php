@@ -165,6 +165,9 @@ class ExportingController extends BaseController {
         // Add headers.
         if ($chunk === $taken) {
           array_push($csv_rows, implode(',', $keys));
+        } else {
+          // Add a newline for next chunk.
+          echo "\r\n";
         }
 
         // Add each mapped result as a row.
