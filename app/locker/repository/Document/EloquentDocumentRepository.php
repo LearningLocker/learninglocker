@@ -312,7 +312,7 @@ class EloquentDocumentRepository implements DocumentRepository {
   }
 
   private function checkETag($sha, $ifMatch, $ifNoneMatch, $noConflict = true) {
-    $ifMatch = isset($ifMatch) ? '"'.strtoupper($ifMatch).'"' : null;
+    $ifMatch = isset($ifMatch) ? strtoupper($ifMatch) : null;
 
     if (isset($ifMatch) && $ifMatch !== $sha) {
       throw new FailedPrecondition('Precondition (If-Match) failed.'); // 412.
