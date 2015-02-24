@@ -351,7 +351,7 @@ class EloquentStatementRepository implements StatementRepository {
       ->first();
 
     if ($client != null && isset($client['authority'])) {
-      return $client['authority'];
+      return json_decode(json_encode($client['authority']));
     } else {
       $site = \Site::first();
       return (object) [
