@@ -177,6 +177,9 @@ class ExportingController extends BaseController {
         // Add headers.
         if ($chunk === $taken) {
           array_push($csv_rows, implode(',', $keys));
+        } else {
+          // Add a newline for next chunk.
+          echo "\r\n";
         }
 
         // Add each mapped result as a row.
@@ -184,7 +187,8 @@ class ExportingController extends BaseController {
           $values = [];
 
           foreach ($keys as $key) {
-            array_push($values, $statement[$key]);
+            // Decode unicode characters
+            array_push($values, json_decode('[' . $statement[$key] . ']', true)[0]);
           }
 
           // Adds commas between values (for columns);
