@@ -37,11 +37,12 @@ class EloquentClientRepository implements ClientRepository {
     $client              = new Client;
     $client->api         = array('basic_key'    => \app\locker\helpers\Helpers::getRandomValue(),
                               'basic_secret' => \app\locker\helpers\Helpers::getRandomValue());
-	$client->lrs_id = $input['lrs_id'];
-	
-	$client->authority = array(
-		'name' => '' 
-	);
+  	$client->lrs_id = $input['lrs_id'];
+
+  	$client->authority = array(
+  		'name' => 'client',
+      'mbox' => 'mailto:hello@learninglocker.net'
+  	);
 
     $client->save() ? $result = $client : $return = false;
 
@@ -50,53 +51,60 @@ class EloquentClientRepository implements ClientRepository {
       \Event::fire('user.create_client', array('user' => $user, 'client' => $client));
 
     return $result;
-    
+
   }
 
   public function update($id, $input){
 
     $client = $this->find($id);
-	
-	$authority = $client->authority;
-	
+
+	  $authority = $client->authority;
+
     $authority['name'] = $input['name'];
-	
-	//clear all previously saved ifis
-	unset ($authority['mbox']);
-	unset ($authority['mbox_sha1sum']);
-	unset ($authority['openid']);
-	unset ($authority['account']);
-	
-	switch ($input['ifi']) {
-		case 'mbox' :
-			$authority['mbox'] = 'mailto:'.$input['mbox'];
-			break;
-		case 'mbox_sha1sum' :
-			$authority['mbox_sha1sum'] = $input['mbox_sha1sum'];
-			break;
-		case 'openid' :
-			$authority['openid'] = $input['openid'];
-			break;
-		case 'account':
-			$authority['account'] = array(
-				'name' => $input['account_name'],
-				'homePage' => $input['account_homePage']
-			);
-			break;		
-	}
-	
-	$client->authority = $authority;
-	
+
+  	//clear all previously saved ifis
+  	unset ($authority['mbox']);
+  	unset ($authority['mbox_sha1sum']);
+  	unset ($authority['openid']);
+  	unset ($authority['account']);
+
+  	switch ($input['ifi']) {
+  		case 'mbox' :
+  			$authority['mbox'] = 'mailto:'.$input['mbox'];
+  			break;
+  		case 'mbox_sha1sum' :
+  			$authority['mbox_sha1sum'] = $input['mbox_sha1sum'];
+  			break;
+  		case 'openid' :
+  			$authority['openid'] = $input['openid'];
+  			break;
+  		case 'account':
+  			$authority['account'] = array(
+  				'name' => $input['account_name'],
+  				'homePage' => $input['account_homePage']
+  			);
+  			break;
+  	}
+
+    $errors = \Locker\XApi\Actor::createFromJson(json_encode($authority))->validate();
+    if (count($errors) > 0) {
+      throw new \Exception(json_encode(array_map(function ($error) {
+        return (string) $error->addTrace('authority');
+      }, $errors));
+    }
+
+  	$client->authority = $authority;
+
     $client->description = $input['description'];
-   
+
     $client->save();
-      
+
     return $client;
 
   }
 
   public function delete($id){
-    
+
     $client = $this->find($id);
 
     return $client->delete();
