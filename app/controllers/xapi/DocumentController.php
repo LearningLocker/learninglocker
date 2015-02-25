@@ -95,7 +95,7 @@ abstract class DocumentController extends BaseController {
 
     if ($document) {
       return \Response::json(null, BaseController::NO_CONTENT, [
-        'ETag' => $document->sha
+        'ETag' => '"'.$document->sha.'"'
       ]);
     } else {
       throw new \Exception('Could not store Document.');
@@ -223,7 +223,7 @@ abstract class DocumentController extends BaseController {
       $headers = [
         'Updated' => $document->updated_at->toISO8601String(),
         'Content-Type' => $document->contentType,
-        'ETag' => $document->sha
+        'ETag' => '"'.$document->sha.'"'
       ];
 
       if( $this->method === 'HEAD' ){ //Only return headers
