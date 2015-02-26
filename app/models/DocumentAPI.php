@@ -24,7 +24,7 @@ class DocumentAPI extends Eloquent {
   private function putContent($content, $contentType) {
     switch ($contentType) {
       case 'application/json':
-        $encoded_content = gettype($this->content) === 'string' ? $this->content : json_encode($this->content);
+        $encoded_content = gettype($content) === 'string' ? $content : json_encode($content);
         $this->setSha($encoded_content);
         $this->overwriteContent(json_decode($encoded_content, true));
         break;
@@ -64,7 +64,7 @@ class DocumentAPI extends Eloquent {
   }
 
   private function setSha($content) {
-    $this->sha = '"'.strtoupper(sha1($content)).'"';
+    $this->sha = strtoupper(sha1($content));
   }
 
   private function mergeJSONContent($content, $contentType) {
