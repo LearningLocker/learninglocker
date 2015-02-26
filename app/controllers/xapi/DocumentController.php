@@ -83,6 +83,8 @@ abstract class DocumentController extends BaseController {
     $data['content_info'] = $this->getAttachedContent('content');
     $data['ifMatch'] = \LockerRequest::header('If-Match');
     $data['ifNoneMatch'] = \LockerRequest::header('If-None-Match');
+    $data['ifMatch'] = isset($data['ifMatch']) ? trim($data['ifMatch'], '"') : null;
+    $data['ifNoneMatch'] = isset($data['ifNoneMatch']) ? trim($data['ifNoneMatch'], '"') : null;
 
     // Stores the document.
     $document = $this->document->store(
