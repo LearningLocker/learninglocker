@@ -3,6 +3,7 @@
 use \Locker\Data\Exporter\Exporter as Exporter;
 use \Locker\Repository\Report\Repository as Report;
 use \Locker\Repository\Export\Repository as Export;
+use \Response as IlluminateResponse;
 use \Helpers\Exceptions\NotFound as NotFoundException;
 
 class Exports extends Resources {
@@ -60,7 +61,7 @@ class Exports extends Resources {
         'Content-Type'=>'application/json'
       ];
 
-      return \Response::stream(function () use ($take) {
+      return IlluminateResponse::stream(function () use ($take) {
         echo '[';
         $take(function ($statements, $count, $chunk, $taken) {
           echo substr(json_encode($statements), 1, -1);
@@ -89,7 +90,7 @@ class Exports extends Resources {
         'Content-Type' => 'text/csv'
       ];
 
-      return \Response::stream(function () use ($take) {
+      return IlluminateResponse::stream(function () use ($take) {
         $take(function ($statements, $count, $chunk, $taken, $export) {
           $csv_rows = [];
           $keys = array_keys($statements[0]);
