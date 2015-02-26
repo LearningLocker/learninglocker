@@ -409,23 +409,23 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
     'uses' => 'Controllers\API\AnalyticsController@getSection'
   ));
 
-  Route::resource('exports', 'Controllers\API\ExportingController');
+  Route::resource('exports', 'Controllers\API\Exports');
 
-  Route::get('exports/{export_id}/show', array(
-    'uses' => 'Controllers\API\ExportingController@showJSON'
+  Route::get('exports/{id}/show', array(
+    'uses' => 'Controllers\API\Exports@showJSON'
   ));
 
-  Route::get('exports/{export_id}/show/csv', array(
-    'uses' => 'Controllers\API\ExportingController@showCSV'
+  Route::get('exports/{id}/show/csv', array(
+    'uses' => 'Controllers\API\Exports@showCSV'
   ));
 
   // Adds routes for reports.
-  Route::resource('reports', 'Controllers\API\ReportController');
+  Route::resource('reports', 'Controllers\API\Reports');
   Route::get('reports/{id}/run', array(
-    'uses' => 'Controllers\API\ReportController@run'
+    'uses' => 'Controllers\API\Reports@run'
   ));
   Route::get('reports/{id}/graph', array(
-    'uses' => 'Controllers\API\ReportController@graph'
+    'uses' => 'Controllers\API\Reports@graph'
   ));
 
 
