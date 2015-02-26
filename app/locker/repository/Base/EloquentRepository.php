@@ -52,7 +52,7 @@ abstract class EloquentRepository implements Repository {
    * @return Boolean
    */
   public function destroy($id, array $opts) {
-    return $this->format($this->show($id, $opts)->delete());
+    return $this->show($id, $opts)->delete();
   }
 
   /**
