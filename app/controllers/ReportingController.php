@@ -1,7 +1,7 @@
 <?php
 
 use Locker\Repository\Lrs\LrsRepository as Lrs;
-use Locker\Repository\Report\ReportRepository as Report;
+use Locker\Repository\Report\Repository as Report;
 
 class ReportingController extends \BaseController {
 
@@ -62,7 +62,9 @@ class ReportingController extends \BaseController {
   public function index($id){
     $lrs      = $this->lrs->find($id);
     $lrs_list = $this->lrs->all();
-    $reports  = $this->report->all($id);
+    $reports  = $this->report->index([
+      'lrs_id' => $id
+    ]);
     return View::make("{$this->views}.index", [
       'lrs' => $lrs, 
       'list' => $lrs_list,
@@ -80,8 +82,12 @@ class ReportingController extends \BaseController {
       'lrs' => $this->lrs->find($lrsId), 
       'list' => $this->lrs->all(),
       'reporting_nav' => true,
-      'statements' => $this->report->statements($reportId)->select('statement')->paginate(20),
-      'report' => $this->report->find($reportId)
+      'statements' => $this->report->statements($reportId, [
+        'lrs_id' => $lrsId
+      ])->select('statement')->paginate(20),
+      'report' => $this->report->show($reportId, [
+        'lrs_id' => $lrsId
+      ])
     ]);
   }
 

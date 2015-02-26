@@ -140,9 +140,8 @@ class ReportTest extends TestCase {
   public function testDestroy() {
     $response = $this->requestAPI('DELETE', $this->report->_id);
     $content = json_decode($response->getContent(), true);
-    $this->assertEquals([
-      'success' => true
-    ], $content);
+    $this->assertEquals(null, $content);
+    $this->assertEquals(204, $response->getStatusCode());
   }
 
   /**
