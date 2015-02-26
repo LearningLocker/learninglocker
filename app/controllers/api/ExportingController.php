@@ -1,9 +1,9 @@
 <?php namespace Controllers\API;
 
 use Locker\Data\Exporter\Exporter as Exporter;
-use Locker\Repository\Query\QueryRepository as Query;
 use Locker\Repository\Report\ReportRepository as Report;
-use Locker\Repository\Export\ExportRepository as Export;
+use Locker\Repository\Export\Repository as Export;
+use \Helpers\Exceptions\NotFound as NotFoundException;
 
 class ExportingController extends BaseController {
 
@@ -12,7 +12,7 @@ class ExportingController extends BaseController {
    **/
   protected $params;
 
-  protected $exporter, $query, $report, $export;
+  protected $exporter, $report, $export;
 
 
   /**
@@ -20,10 +20,9 @@ class ExportingController extends BaseController {
    *
    * @param StatementRepository $statement
    */
-  public function __construct( Exporter $exporter, Query $query, Report $report, Export $export ) {
+  public function __construct( Exporter $exporter, Report $report, Export $export ) {
 
     $this->exporter = $exporter;
-    $this->query = $query;
     $this->report = $report;
     $this->export = $export;
     $this->beforeFilter('@setParameters');
@@ -35,8 +34,10 @@ class ExportingController extends BaseController {
    * Gets all exports.
    * @return Array of Exports
    */
-  public function getAll() {
-    return $this->export->all($this->lrs->_id);
+  public function index() {
+    return \Response::json($this->export->index([
+      'lrs_id' => $this->lrs->_id
+    ]), 200);
   }
 
   /**
@@ -44,14 +45,13 @@ class ExportingController extends BaseController {
    * @param  id $export_id Identifier of the export to be retrieved.
    * @return Export The retrieved export.
    */
-  public function get($export_id) {
-    $export = $this->export->find($export_id);
-    if ($export['exists']) {
-      return $export;
-    } else {
-      \App::abort(404, trans('exporting.errors.notFound', [
-        'exportId' => $export_id
-      ]));
+  public function show($export_id) {
+    try {
+      return \Response::json($this->export->show($export_id, [
+        'lrs_id' => $this->lrs->_id
+      ]), 200);
+    } catch (NotFoundException $ex) {
+      \App::abort(404, $ex->message);
     }
   }
 
@@ -59,8 +59,10 @@ class ExportingController extends BaseController {
    * Creates an export.
    * @return id Identifer of the created export.
    */
-  public function create() {
-    return $this->export->create($this->params);
+  public function store() {
+    return \Response::json($this->export->store($this->params, [
+      'lrs_id' => $this->lrs->_id
+    ]), 200);
   }
 
   /**
@@ -69,7 +71,13 @@ class ExportingController extends BaseController {
    * @return boolean Success of the update.
    */
   public function update($export_id) {
-    return $this->export->update($export_id, $this->params);
+    try {
+      return \Response::json($this->export->update($export_id, $this->params, [
+        'lrs_id' => $this->lrs->_id
+      ]), 200);
+    } catch (NotFoundException $ex) {
+      \App::abort(404, $ex->message);
+    }
   }
 
   /**
@@ -78,15 +86,19 @@ class ExportingController extends BaseController {
    * @return boolean Success of the deletion.
    */
   public function destroy($export_id) {
-    if ($this->export->delete($this->get($export_id))) {
-      \Response::json(['ok'], 204);
-    } else {
-      \App::abort(500, trans('exporting.errors.delete'));
+    try{
+      return \Response::json($this->export->destroy($export_id, [
+        'lrs_id' => $this->lrs->_id
+      ]), 204);
+    } catch (NotFoundException $ex) {
+      \App::abort(404, $ex->message);
     }
   }
 
   private function mapExport($export_id, $json = true) {
-    $export = $this->get($export_id);
+    $export = $this->export->show($export_id, [
+      'lrs_id' => $this->lrs->_id
+    ]);
 
     // Get and check report.
     if (!$this->report->find($export->report)) {
@@ -125,7 +137,7 @@ class ExportingController extends BaseController {
    * @param  json Determines if fields should be json.
    * @return json
    */
-  public function show($export_id) {
+  public function showJSON($export_id) {
     $take = $this->mapExport($export_id, true);
 
     $headers = [
@@ -165,6 +177,9 @@ class ExportingController extends BaseController {
         // Add headers.
         if ($chunk === $taken) {
           array_push($csv_rows, implode(',', $keys));
+        } else {
+          // Add a newline for next chunk.
+          echo "\r\n";
         }
 
         // Add each mapped result as a row.
@@ -172,7 +187,8 @@ class ExportingController extends BaseController {
           $values = [];
 
           foreach ($keys as $key) {
-            array_push($values, $statement[$key]);
+            // Decode unicode characters
+            array_push($values, json_decode('[' . $statement[$key] . ']', true)[0]);
           }
 
           // Adds commas between values (for columns);
@@ -184,27 +200,5 @@ class ExportingController extends BaseController {
         ob_flush();
       });
     }, 200, $headers);
-  }
-
-  /**
-   * Loop through saved report query and decode any url's
-   *
-   **/
-  public function decodeURL($array){
-
-    $output = '';
-
-    if( !empty($array) ){
-      foreach($array as $key => $value){
-        if(is_array($value)){
-          $output[$key] = $this->decodeURL( $value );
-        }else{
-          $output[$key] = urldecode($value);
-        }
-      }
-    }
-
-    return $output;
-
   }
 }

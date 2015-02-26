@@ -47,8 +47,8 @@ class RepositoryServiceProvider extends ServiceProvider {
       'Locker\Repository\Report\EloquentReportRepository'
     );
     $this->app->bind(
-      'Locker\Repository\Export\ExportRepository',
-      'Locker\Repository\Export\EloquentExportRepository'
+      'Locker\Repository\Export\Repository',
+      'Locker\Repository\Export\EloquentRepository'
     );
   }
 

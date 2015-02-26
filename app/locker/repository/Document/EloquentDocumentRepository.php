@@ -226,11 +226,13 @@ class EloquentDocumentRepository implements DocumentRepository {
 
     $existing_document = $this->findStateDoc( $lrs, $data['stateId'], $data['activityId'], $data['agent'], $data['registration'], true );
 
-    if ($method === 'PUT') $this->checkETag(
+    if ($method === 'PUT' && (
+      $data['ifMatch'] !== null ||
+      $data['ifNoneMatch'] !== null
+    )) $this->checkETag(
       isset($existing_document->sha) ? $existing_document->sha : null,
       $data['ifMatch'],
-      $data['ifNoneMatch'],
-      false
+      $data['ifNoneMatch']
     );
 
     if( !$existing_document ){
@@ -318,14 +320,14 @@ class EloquentDocumentRepository implements DocumentRepository {
 
   }
 
-  private function checkETag($sha, $ifMatch, $ifNoneMatch, $noConflict = true) {
-    $ifMatch = isset($ifMatch) ? '"'.strtoupper($ifMatch).'"' : null;
+  private function checkETag($sha, $ifMatch, $ifNoneMatch) {
+    $ifMatch = isset($ifMatch) ? strtoupper($ifMatch) : null;
 
     if (isset($ifMatch) && $ifMatch !== $sha) {
       throw new FailedPrecondition('Precondition (If-Match) failed.'); // 412.
     } else if (isset($ifNoneMatch) && isset($sha) && $ifNoneMatch === '*') {
       throw new FailedPrecondition('Precondition (If-None-Match) failed.'); // 412.
-    } else if ($noConflict && $sha !== null && !isset($ifNoneMatch) && !isset($ifMatch)) {
+    } else if ($sha !== null && !isset($ifNoneMatch) && !isset($ifMatch)) {
       throw new Conflict('Check the current state of the resource then set the "If-Match" header with the current ETag to resolve the conflict.'); // 409.
     } else {
       return true;

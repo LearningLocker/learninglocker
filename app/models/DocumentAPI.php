@@ -15,7 +15,7 @@ class DocumentAPI extends Eloquent {
   /**
    * Returns true if $array is associative.
    * @param Array $array
-   * @return boolean      
+   * @return boolean
    */
   private function isJSON($array) {
     return is_array($array) && array_keys($array) !== range(0, count($array) - 1);
@@ -24,8 +24,9 @@ class DocumentAPI extends Eloquent {
   private function putContent($content, $contentType) {
     switch ($contentType) {
       case 'application/json':
-        $this->setSha($this->content);
-        $this->overwriteContent(json_decode($content, true));
+        $encoded_content = gettype($content) === 'string' ? $content : json_encode($content);
+        $this->setSha($encoded_content);
+        $this->overwriteContent(json_decode($encoded_content, true));
         break;
       case 'text/plain':
         $this->setSha($content);
@@ -63,7 +64,7 @@ class DocumentAPI extends Eloquent {
   }
 
   private function setSha($content) {
-    $this->sha = '"'.strtoupper(sha1($content)).'"';
+    $this->sha = strtoupper(sha1($content));
   }
 
   private function mergeJSONContent($content, $contentType) {
@@ -94,13 +95,13 @@ class DocumentAPI extends Eloquent {
       $content->move($dir, $filename);
     } else {
       $ext = array_search($contentType, FileTypes::getMap());
-      
+
       $filename = time().'_'.mt_rand(0,1000).($ext !== false ? '.'.$ext : '');
 
       $size = file_put_contents($dir.$filename, $content);
 
       if ($size === false) throw new \Exception('There was an issue saving the content');
-    } 
+    }
 
     $this->content = $filename;
     $this->setSha($content);
