@@ -1,13 +1,13 @@
 <?php namespace Tests\API;
-use \Illuminate\Http\ResponseTrait as Response;
+use \Illuminate\Http\JsonResponse as JsonResponse;
 
 abstract class ResourceTestCase extends TestCase {
   static protected $model_class = '...';
   protected $data = [];
   protected $model = null;
 
-  public function __construct() {
-    parent::__construct();
+  public function setup() {
+    parent::setup();
     $this->data = $this->constructData($this->data);
     $this->model = $this->createModel($this->data);
   }
@@ -24,62 +24,67 @@ abstract class ResourceTestCase extends TestCase {
   }
 
   public function testIndex() {
-    $response = $this->requestAPI();
-    $content = $this->getResponseContent($response);
+    $response = $this->requestAPI('GET', static::$endpoint);
+    $content = $this->getContentFromResponse($response);
     $model = $this->getModelFromContent($content[0]);
 
     // Checks that the response is correct.
-    $this->assertEquals(1, count($content));
-    $this->assertEquals($this->data, $model);
-    $this->assertEquals(200, $response->getStatusCode());
+    $this->assertEquals(1, count($content), 'Incorrect number of models returned.');
+    $this->assertEquals($this->data, $model, 'Incorrect model data returned.');
+    $this->assertEquals(200, $response->getStatusCode(), 'Incorrect status code.');
   }
 
   public function testStore() {
-    $response = $this->requestAPI('POST', '', json_encode($this->data));
+    $response = $this->requestAPI('POST', static::$endpoint, json_encode($this->data));
     $model = $this->getModelFromResponse($response);
 
     // Checks that the response is correct.
-    $this->assertEquals($this->data, $model);
-    $this->assertEquals(200, $response->getStatusCode());
+    $this->assertEquals($this->data, $model, 'Incorrect model data returned.');
+    $this->assertEquals(200, $response->getStatusCode(), 'Incorrect status code.');
   }
 
   public function testUpdate() {
     $data = array_merge($this->data, $this->update);
-    $response = $this->requestAPI('PUT', $this->model->_id, json_encode($data));
+    $response = $this->requestAPI('PUT', static::$endpoint.'/'.$this->model->_id, json_encode($data));
     $model = $this->getModelFromResponse($response);
 
     // Checks that the response is correct.
-    $this->assertEquals($data, $model);
-    $this->assertEquals(200, $response->getStatusCode());
+    $this->assertEquals($data, $model, 'Incorrect model data returned.');
+    $this->assertEquals(200, $response->getStatusCode(), 'Incorrect status code.');
   }
 
   public function testShow() {
-    $response = $this->requestAPI('GET', $this->model->_id);
+    $response = $this->requestAPI('GET', static::$endpoint.'/'.$this->model->_id);
     $model = $this->getModelFromResponse($response);
 
     // Checks that the response is correct.
-    $this->assertEquals($this->data, $model);
-    $this->assertEquals(200, $response->getStatusCode());
+    $this->assertEquals($this->data, $model, 'Incorrect model data returned.');
+    $this->assertEquals(200, $response->getStatusCode(), 'Incorrect status code.');
   }
 
   public function testDestroy() {
-    $response = $this->requestAPI('DELETE', $this->model->_id);
-    $model = $this->getModelFromResponse($response);
+    $response = $this->requestAPI('DELETE', static::$endpoint.'/'.$this->model->_id);
+    $content = $this->getContentFromResponse($response);
 
     // Checks that the response is correct.
-    $this->assertEquals(null, $model);
-    $this->assertEquals(204, $response->getStatusCode());
+    $this->assertEquals(null, $content, 'Incorrect data returned.');
+    $this->assertEquals(204, $response->getStatusCode(), 'Incorrect status code.');
   }
 
-  private function getModelFromResponse(Response $response) {
-    return $this->getModelFromContent($this->getContentFromResponse());
+  private function getModelFromResponse(JsonResponse $response) {
+    return $this->getModelFromContent($this->getContentFromResponse($response));
   }
 
   protected function getModelFromContent(array $content) {
     return $content;
   }
 
-  protected function getContentFromResponse(Response $response) {
+  protected function getContentFromResponse(JsonResponse $response) {
     return json_decode($response->getContent(), true);
+  }
+
+  public function tearDown() {
+    parent::tearDown();
+    $this->model->delete();
   }
 }

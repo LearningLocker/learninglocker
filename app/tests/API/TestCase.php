@@ -6,6 +6,7 @@ use \Site as Site;
 use \Lrs as Lrs;
 use \Auth as Auth;
 use \Route as Route;
+use \Statement as Statement;
 
 abstract class TestCase extends Base {
   static protected $endpoint = '/api/v1/...';
@@ -13,11 +14,12 @@ abstract class TestCase extends Base {
   protected $user = null;
   protected $lrs = null;
 
-  public function __construct() {
-    parent::__construct();
+  public function setup() {
+    parent::setup();
     $this->user = $this->createUser();
+    Auth::login($this->user);
     $this->lrs = $this->createLRS();
-    $this->createStatements(); // Should this be in setup?
+    $this->createStatements();
   }
 
   public function createApplication() {
@@ -49,7 +51,7 @@ abstract class TestCase extends Base {
 
   protected function createLRS() {
     $lrs = new Lrs([
-      'title' => 'Test LRS',
+      'title' => 'TestLRS',
       'api' => [
         'basic_key' => Helpers::getRandomValue(),
         'basic_secret' => Helpers::getRandomValue()
@@ -75,8 +77,8 @@ abstract class TestCase extends Base {
 
   protected function createStatements() {
     $statement = $this->getStatement();
-    for ($i = 0; i < static::$statements; $i += 1) {
-      $this->requestAPI('POST', 'data/xapi/statements', $statement);
+    for ($i = 0; $i < static::$statements; $i += 1) {
+      $response = $this->requestAPI('POST', '/data/xAPI/statements', $statement);
     }
   }
 
@@ -88,14 +90,19 @@ abstract class TestCase extends Base {
   }
 
   protected function requestAPI($method = 'GET', $url = '', $content = '') {
-    $url = static::$endpoint . ($url === '' ? '' : '/') . $url;
     $headers = $this->getHeaders($this->lrs->api);
     Route::enableFilters();
-    return $this->call($method, $url, [], [], $headers, $content);
+    return $this->call($method, $url, ['X-Experience-API-Version' => '1.0.1'], [], $headers, $content);
   }
 
   protected function getStatement() {
-    return file_get_contents('../Fixtures/statement.json');
+    return file_get_contents(__DIR__ . '/../Fixtures/statement.json');
   }
 
+  public function tearDown() {
+    parent::tearDown();
+    Statement::where('lrs._id', $this->lrs->_id)->delete();
+    $this->lrs->delete();
+    $this->user->delete();
+  }
 }
