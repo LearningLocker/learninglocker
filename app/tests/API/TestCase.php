@@ -100,9 +100,9 @@ abstract class TestCase extends Base {
   }
 
   public function tearDown() {
-    parent::tearDown();
     Statement::where('lrs._id', $this->lrs->_id)->delete();
     $this->lrs->delete();
     $this->user->delete();
+    parent::tearDown();
   }
 }

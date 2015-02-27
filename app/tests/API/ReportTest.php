@@ -14,13 +14,6 @@ class ReportTest extends ResourceTestCase {
     'name' => 'Test updated report'
   ];
 
-  protected function getModelFromContent(array $content) {
-    unset($content['_id']);
-    unset($content['created_at']);
-    unset($content['updated_at']);
-    return $content;
-  }
-
   public function testRun() {
     $response = $this->requestAPI('GET', static::$endpoint.'/'."{$this->model->_id}/run");
     $content = $this->getContentFromResponse($response);
@@ -34,7 +27,7 @@ class ReportTest extends ResourceTestCase {
     $response = $this->requestAPI('GET', static::$endpoint.'/'."{$this->model->_id}/graph");
     $content = $this->getContentFromResponse($response);
 
-    // Checks that the correct number of statements are returned.
+    // Checks that the response is correct.
     $this->assertEquals(true, isset($content[0]['count']), 'Incorrectly formed content.');
     $this->assertEquals(self::$statements, $content[0]['count'], 'Incorrect amount of statements.');
     $this->assertEquals(200, $response->getStatusCode(), 'Incorrect status code.');

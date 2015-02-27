@@ -76,6 +76,9 @@ abstract class ResourceTestCase extends TestCase {
   }
 
   protected function getModelFromContent(array $content) {
+    unset($content['_id']);
+    unset($content['created_at']);
+    unset($content['updated_at']);
     return $content;
   }
 
@@ -84,7 +87,7 @@ abstract class ResourceTestCase extends TestCase {
   }
 
   public function tearDown() {
-    parent::tearDown();
     $this->model->delete();
+    parent::tearDown();
   }
 }
