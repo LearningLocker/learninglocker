@@ -7,12 +7,11 @@ abstract class ResourceTestCase extends TestCase {
   protected $model = null;
 
   public function setup() {
-    echo "setup</br>\r\n";
+    echo "ResourceTestCase setup starting\r\n";
     parent::setup();
-    echo "model</br>\r\n";
     $this->data = $this->constructData($this->data);
-    echo "model</br>\r\n";
     $this->model = $this->createModel($this->data);
+    echo "ResourceTestCase setup starting\r\n";
   }
 
   protected function constructData($data) {
@@ -21,7 +20,7 @@ abstract class ResourceTestCase extends TestCase {
   }
 
   protected function createModel($data) {
-    echo json_encode($data)."</br>\r\n";
+    echo json_encode($data)."\r\n";
     $model = new static::$model_class($data);
     $model->save();
     return $model;
@@ -91,9 +90,9 @@ abstract class ResourceTestCase extends TestCase {
   }
 
   public function tearDown() {
-    echo get_class($this)."</br>\r\n";
-    echo static::$model_class."</br>\r\n";
-    echo gettype($this->model)."</br>\r\n";die;
+    echo get_class($this)."\r\n";
+    echo static::$model_class."\r\n";
+    echo gettype($this->model)."\r\n";die;
     $this->model->delete();
     parent::tearDown();
   }

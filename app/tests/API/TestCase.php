@@ -15,11 +15,13 @@ abstract class TestCase extends Base {
   protected $lrs = null;
 
   public function setup() {
+    echo "TestCase setup starting\r\n";
     parent::setup();
     $this->user = $this->createUser();
     Auth::login($this->user);
     $this->lrs = $this->createLRS();
     $this->createStatements();
+    echo "TestCase setup ending\r\n";
   }
 
   public function createApplication() {
