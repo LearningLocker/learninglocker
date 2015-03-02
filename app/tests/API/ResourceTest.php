@@ -8,7 +8,9 @@ abstract class ResourceTestCase extends TestCase {
 
   public function setup() {
     parent::setup();
+    echo "model</br>\r\n";
     $this->data = $this->constructData($this->data);
+    echo "model</br>\r\n";
     $this->model = $this->createModel($this->data);
   }
 
