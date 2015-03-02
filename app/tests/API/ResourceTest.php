@@ -18,6 +18,7 @@ abstract class ResourceTestCase extends TestCase {
   }
 
   protected function createModel($data) {
+    echo json_encode($data)."</br>\r\n";
     $model = new static::$model_class($data);
     $model->save();
     return $model;
@@ -87,8 +88,8 @@ abstract class ResourceTestCase extends TestCase {
   }
 
   public function tearDown() {
-    echo get_class($this);
-    echo static::$model_class;
+    echo get_class($this)."</br>\r\n";
+    echo static::$model_class."</br>\r\n";
     echo gettype($this->model)."</br>\r\n";die;
     $this->model->delete();
     parent::tearDown();
