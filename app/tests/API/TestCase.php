@@ -35,10 +35,12 @@ abstract class TestCase extends Base {
   }
 
   protected function createUser() {
+    echo "TestCase starting createUser\r\n";
     $user = User::firstOrCreate(['email' => 'test@example.com']);
 
     // If first user, create site object
     if (User::count() === 1) {
+      echo "TestCase newSite\r\n";
       $site = new Site([
         'name' => 'Test Site',
         'email' => $user->email,
@@ -52,6 +54,7 @@ abstract class TestCase extends Base {
       $site->save();
     }
 
+    echo "TestCase ending createUser\r\n";
     return $user;
   }
 
