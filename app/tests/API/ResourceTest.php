@@ -87,7 +87,7 @@ abstract class ResourceTestCase extends TestCase {
   }
 
   public function tearDown() {
-    echo gettype($this->model)."</br>\r\n";
+    echo gettype($this->model)."</br>\r\n";die;
     $this->model->delete();
     parent::tearDown();
   }
