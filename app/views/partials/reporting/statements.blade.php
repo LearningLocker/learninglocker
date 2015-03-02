@@ -35,13 +35,9 @@
 
 @section('footer')
   @parent
-  @section('scripts')
-    @parent
-    <script type="text/javascript">
-      $(function () {
-        $('[data-toggle="tooltip"]').tooltip();
-      });
-    </script>
-  @show
-@show
-
+  <script type="text/javascript">
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
+@stop
