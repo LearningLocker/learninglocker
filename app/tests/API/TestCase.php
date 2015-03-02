@@ -15,17 +15,11 @@ abstract class TestCase extends Base {
   protected $lrs = null;
 
   public function setup() {
-    echo "TestCase setup starting\r\n";
     parent::setup();
-    echo "TestCase createUser\r\n";
     $this->user = $this->createUser();
-    echo "TestCase login\r\n";
     Auth::login($this->user);
-    echo "TestCase createLRS\r\n";
     $this->lrs = $this->createLRS();
-    echo "TestCase create statements\r\n";
     $this->createStatements();
-    echo "TestCase setup ending\r\n";
   }
 
   public function createApplication() {
@@ -35,12 +29,10 @@ abstract class TestCase extends Base {
   }
 
   protected function createUser() {
-    echo "TestCase starting createUser\r\n";
     $user = User::firstOrCreate(['email' => 'test@example.com']);
 
     // If first user, create site object
     if (User::count() === 1) {
-      echo "TestCase newSite\r\n";
       $site = new Site([
         'name' => 'Test Site',
         'email' => $user->email,
@@ -53,8 +45,6 @@ abstract class TestCase extends Base {
       ]);
       $site->save();
     }
-
-    echo "TestCase ending createUser\r\n";
     return $user;
   }
 
