@@ -40,5 +40,4 @@
       $('[data-toggle="tooltip"]').tooltip();
     });
   </script>
-@show
-
+@stop
