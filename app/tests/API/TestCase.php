@@ -17,9 +17,13 @@ abstract class TestCase extends Base {
   public function setup() {
     echo "TestCase setup starting\r\n";
     parent::setup();
+    echo "TestCase createUser\r\n";
     $this->user = $this->createUser();
+    echo "TestCase login\r\n";
     Auth::login($this->user);
+    echo "TestCase createLRS\r\n";
     $this->lrs = $this->createLRS();
+    echo "TestCase create statements\r\n";
     $this->createStatements();
     echo "TestCase setup ending\r\n";
   }
