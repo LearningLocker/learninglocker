@@ -90,7 +90,7 @@ class EloquentClientRepository implements ClientRepository {
     if (count($errors) > 0) {
       throw new \Exception(json_encode(array_map(function ($error) {
         return (string) $error->addTrace('authority');
-      }, $errors));
+      }, $errors)));
     }
 
   	$client->authority = $authority;
