@@ -109,7 +109,7 @@ class Exports extends Resources {
 
             foreach ($keys as $key) {
               // Decode unicode characters
-              array_push($values, json_decode('[' . $statement[$key] . ']', true)[0]);
+              array_push($values, $statement[$key]);
             }
 
             // Adds commas between values (for columns);
