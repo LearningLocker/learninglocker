@@ -183,7 +183,6 @@ class EloquentStatementRepository implements StatementRepository {
 
     // Adds keys for sub statement and statement references.
     foreach ($keys as $key) {
-      $keys[] = 'statement.object.'.substr($key, 10);
       $keys[] = 'refs'.substr($key, 10);
     }
 
@@ -194,16 +193,21 @@ class EloquentStatementRepository implements StatementRepository {
    * Filters $statements with an options.
    * @param Builder $statements Statements to be filtered.
    * @param mixed $value Value to match against $keys.
-   * @param boolean $option
-   * @param array $specific Keys to be search regardless of $option.
-   * @param array $broad Addtional keys to be searched when $option is true.
+   * @param boolean $use_broad
+   * @param array $specific Keys to be search regardless of $use_broad.
+   * @param array $broad Addtional keys to be searched when $use_broad is true.
    * @return Builder
    */
-  private function addOptionFilter(Builder $statements, $value, $option, array $specific, array $broad) {
+  private function addOptionFilter(Builder $statements, $value, $use_broad, array $specific, array $broad) {
     $keys = $specific;
 
-    if (isset($option) && $option === true) {
+    if ($use_broad === true) {
       $keys = array_merge($keys, $broad);
+
+      // Adds keys for sub statement.
+      foreach ($keys as $key) {
+        $keys[] = 'statement.object.'.substr($key, 10);
+      }
     }
 
     return $this->addFilter($statements, $value, $keys);
