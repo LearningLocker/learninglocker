@@ -82,6 +82,7 @@ define([
       var addNewLrs = new AddNewLrs;
       var lrsCol = new LrsCollection;
       lrsCol.fetch().then(function() {
+        lrsCol.sort();debugger;
         var lrsView = new LrsView({ collection: lrsCol });
         App.actionRegion.show( addNewLrs );
         App.layouts.main.mainRegion.show( lrsView );
