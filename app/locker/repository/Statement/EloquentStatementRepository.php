@@ -183,7 +183,7 @@ class EloquentStatementRepository implements StatementRepository {
 
     // Adds keys for sub statement and statement references.
     foreach ($keys as $key) {
-      $keys[] = 'refs'.substr($key, 10);
+      $keys[] = 'refs.'.substr($key, 10);
     }
 
     return $this->orWhere($statements, $value, $keys);
@@ -225,6 +225,7 @@ class EloquentStatementRepository implements StatementRepository {
       foreach ($keys as $key) {
         $query->orWhere($key, $value);
       }
+      return $query;
     });
   }
 
