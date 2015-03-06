@@ -86,7 +86,7 @@ class LrsController extends BaseController {
     $s = $this->lrs->create( $data );
 
     if($s){
-      return Redirect::to('/lrs')->with('success', Lang::get('lrs.created'));
+      return Redirect::to('/site#lrs')->with('success', Lang::get('lrs.created'));
     }
 
     return Redirect::back()
