@@ -6,7 +6,10 @@ define([
 
   var LrsCollection = Backbone.Collection.extend({
     model: LrsModel,
-    url: 'site/lrs'
+    url: 'site/lrs',
+    comparator: function (model) {
+      return model.get('title');
+    }
   });
 
   return LrsCollection;

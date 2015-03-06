@@ -9,7 +9,7 @@ abstract class EloquentRepository implements Repository {
   abstract protected function constructStore(Model $model, array $data, array $opts);
 
   /**
-   * Constructs a query restricted to the given authority.
+   * Constructs a query restricted by the given options.
    * @param [String => Mixed] $opts
    * @return \Jenssegers\Mongodb\Eloquent\Builder
    */
@@ -23,7 +23,9 @@ abstract class EloquentRepository implements Repository {
    * @return [Model]
    */
   public function index(array $opts) {
-    return $this->where($opts)->get();
+    return $this->where($opts)->get()->each(function (Model $model) {
+      return $this->format($model);
+    });
   }
 
   /**
@@ -40,7 +42,7 @@ abstract class EloquentRepository implements Repository {
 
     if ($model === null) throw new NotFoundException($id, $this->model);
 
-    return $model;
+    return $this->format($model);
   }
 
   /**
@@ -62,7 +64,7 @@ abstract class EloquentRepository implements Repository {
   public function store(array $data, array $opts) {
     $model = $this->constructStore((new $this->model), $data, $opts);
     $model->save();
-    return $model;
+    return $this->format($model);
   }
 
   /**
@@ -75,6 +77,15 @@ abstract class EloquentRepository implements Repository {
   public function update($id, array $data, array $opts) {
     $model = $this->constructUpdate($this->show($id, $opts), $data, $opts);
     $model->save();
+    return $this->format($model);
+  }
+
+  /**
+   * Formats the model(s) before returning.
+   * @param Model $model
+   * @return Model
+   */
+  protected function format(Model $model) {
     return $model;
   }
 }
