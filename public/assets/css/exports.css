@@ -24,3 +24,30 @@ input[type='text'] {
 input#typeahead-value {
   width: 100%;
 }
+
+@-webkit-keyframes demo {
+  0% {
+    background-color: Yellow;
+    opacity:1;
+  }
+  22% {
+    background-color: Yellow;
+  }
+  77% {
+    background-color: Yellow;
+  }
+  100% {
+    background-color: #FFFFFF;
+  }
+}
+
+.flash {
+  -webkit-animation-name: demo;
+  -webkit-animation-duration: 1000ms;
+  -webkit-animation-iteration-count: 1;
+  -webkit-animation-timing-function: linear;
+  -moz-animation-name: demo;
+  -moz-animation-duration: 1000ms;
+  -moz-animation-iteration-count: 1;
+  -moz-animation-timing-function: linear;
+}
