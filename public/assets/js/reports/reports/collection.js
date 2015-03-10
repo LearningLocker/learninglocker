@@ -9,6 +9,9 @@ define([
     credentials: {
       username: window.lrs.key,
       password: window.lrs.secret
+    },
+    comparator: function (model) {
+      return model.get('created_at');
     }
   });
 });
