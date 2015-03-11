@@ -6,6 +6,7 @@ define([
   return Marionette.ItemView.extend({
     template: _.template(template),
     tagName:'tr',
+    className: 'flash',
     events: {
       'click #delete': 'delete'
     },
