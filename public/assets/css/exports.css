@@ -25,29 +25,31 @@ input#typeahead-value {
   width: 100%;
 }
 
-@-webkit-keyframes demo {
-  0% {
-    background-color: Yellow;
-    opacity:1;
-  }
-  22% {
-    background-color: Yellow;
-  }
-  77% {
-    background-color: Yellow;
-  }
-  100% {
-    background-color: #FFFFFF;
-  }
+@-webkit-keyframes fadeIt {
+  0%   { background-color: inherit; }
+  50%  { background-color: yellow; }
+  100% { background-color: inherit; }
+}
+@-moz-keyframes fadeIt {
+  0%   { background-color: inherit; }
+  50%  { background-color: yellow; }
+  100% { background-color: inherit; }
+}
+@-o-keyframes fadeIt {
+  0%   { background-color: inherit; }
+  50%  { background-color: yellow; }
+  100% { background-color: inherit; }
+}
+@keyframes fadeIt {
+  0%   { background-color: inherit; }
+  50%  { background-color: yellow; }
+  100% { background-color: inherit; }
 }
 
 .flash {
-  -webkit-animation-name: demo;
-  -webkit-animation-duration: 1000ms;
-  -webkit-animation-iteration-count: 1;
-  -webkit-animation-timing-function: linear;
-  -moz-animation-name: demo;
-  -moz-animation-duration: 1000ms;
-  -moz-animation-iteration-count: 1;
-  -moz-animation-timing-function: linear;
+  background-image:none !important;
+  -webkit-animation: fadeIt 1.5s ease-in-out;
+  -moz-animation: fadeIt 1.5s ease-in-out;
+  -o-animation: fadeIt 1.5s ease-in-out;
+  animation: fadeIt 1.5s ease-in-out;
 }
