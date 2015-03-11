@@ -2,6 +2,7 @@
 
 use \Illuminate\Database\Eloquent\Model as Model;
 use \Locker\Repository\Base\EloquentRepository as BaseRepository;
+use \Locker\Repository\Report\EloquentRepository as ReportRepository;
 use \Locker\XApi\Helpers as XAPIHelpers;
 
 class EloquentRepository extends BaseRepository implements Repository {
@@ -13,6 +14,7 @@ class EloquentRepository extends BaseRepository implements Repository {
     'fields' => [],
     'report' => '' // @todo Deprecate this property so that exports can be used without a report.
   ];
+  protected $first = true; // Used by export method.
 
   /**
    * Validates data.
@@ -72,5 +74,49 @@ class EloquentRepository extends BaseRepository implements Repository {
     if (isset($data['report'])) $model->report = $data['report'];
 
     return $model;
+  }
+
+  private function getField($object, $field) {
+    $keys = explode('.', $field);
+    $len = count($keys);
+    $i = 0;
+
+    while ($i < $len && isset($object[$keys[$i]])) {
+      $object = $object[$keys[$i]];
+      $i += 1;
+    }
+
+    if ($i == $len) {
+      return $object;
+    } else {
+      return null
+    }
+  }
+
+  private function mapFields($statement, array $fields) {
+    $mappedStatement = [];
+
+    foreach ($fields as $field) {
+      if (!is_null($field['to'])) {
+        $mappedStatement[$field['to']] = 
+          !is_null($field['from']) ?
+          $this->getField($statement, $field['from']) :
+          null;
+      }
+    }
+
+    return $mappedStatement;
+  }
+
+  protected function export(Model $model, array $opts) {
+    $statements = (new ReportRepository)->statements($model->report, $opts);
+
+    $this->first = true;
+    $statements->chunk(1000, function (array $statements) use ($model, $opts) {
+      array_map(function ($statement) use ($model, $opts) {
+        $this->first ? $this->first = false : $next();
+        $stream($this->mapFields($statement, $model->fields));
+      }, $statements);
+    });
   }
 }
