@@ -51,7 +51,7 @@ return array(
     ],
     'booleans' => [
       'success' => 'Success',
-      'complete' => 'Complete'
+      'completion' => 'Complete'
     ],
     'dates' => [
       'intro' => 'You can select a since date, until date or both to filter results between two dates.',

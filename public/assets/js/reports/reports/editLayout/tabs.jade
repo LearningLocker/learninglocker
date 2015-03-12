@@ -77,7 +77,7 @@ mixin scaled(id)
         +scaled('max')
       .col-md-6: +panel("<%= trans('reporting.headings.completion') %>", 'success-complete', 'How do I filter by success/completion?', '<p>Success (statement.result.success) may determine whether a learner was successful in passing a test. Setting this filter to true will return all the statements that show a successful pass and false will do the opposite. You can remove this filter by clicking the (red) “Clear” button next to success.</p><p>Complete (statement.result.completion) may determine whether a learner completed a test. Setting this filter to true will return all the statements that show a completed test and false will do the opposite. You can remove this filter by clicking the (red) “Clear” button next to success.</p>')
         +bool('success')
-        +bool('complete')
+        +bool('completion')
     +tab-pane('dates')
       +panel("<%= trans('reporting.headings.dates') %>", 'dates', 'How do I filter by dates?', 'Select a since and/or until date which will determine the date (statement.timestamp) range you’re interested in. Statements that were not made during your date range will not be returned (unless it meets certain conditions regarding statement refs).')
         p!= "<%= trans('reporting.dates.intro') %>"
