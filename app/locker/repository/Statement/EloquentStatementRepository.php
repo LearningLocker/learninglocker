@@ -883,11 +883,11 @@ class EloquentStatementRepository implements StatementRepository {
       $filename = str_random(12) . "." . $ext;
 
       //create directory if it doesn't exist
-      if (!\File::exists(base_path().'/uploads/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/')) {
-        \File::makeDirectory(base_path().'/uploads/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/', 0775, true);
+      if (!\File::exists(getenv('LOCAL_FILESTORE').'/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/')) {
+        \File::makeDirectory(getenv('LOCAL_FILESTORE').'/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/', 0775, true);
       }
 
-      $destinationPath = base_path().'/uploads/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/';
+      $destinationPath = getenv('LOCAL_FILESTORE').'/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/';
 
       $filename = $destinationPath.$filename;
       $file = fopen( $filename, 'wb'); //opens the file for writing with a BINARY (b) fla
