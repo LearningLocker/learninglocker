@@ -49,7 +49,7 @@ define([
       }.bind(this));
     },
     _mapResponseToQuery: function () {
-      var query = {};
+      var query = this.get('query');
       Object.keys(this._queryResponseMap).forEach(function (queryKey) {
         var responseKey = this._queryResponseMap[queryKey];
         var newValue = this.get(responseKey).map(function (model) {
@@ -73,7 +73,7 @@ define([
     },
     _initializeRelations: function (response, empty) {
       // Maps query relations to response.
-      if (!empty && response.query) {
+      if (!empty && response.query != false && response.query != null) {
         this._mapQueryToResponse(response.query, response);
       } else {
         response.query = {};
