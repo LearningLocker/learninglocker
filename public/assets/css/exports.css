@@ -24,3 +24,32 @@ input[type='text'] {
 input#typeahead-value {
   width: 100%;
 }
+
+@-webkit-keyframes fadeIt {
+  0%   { background-color: inherit; }
+  50%  { background-color: yellow; }
+  100% { background-color: inherit; }
+}
+@-moz-keyframes fadeIt {
+  0%   { background-color: inherit; }
+  50%  { background-color: yellow; }
+  100% { background-color: inherit; }
+}
+@-o-keyframes fadeIt {
+  0%   { background-color: inherit; }
+  50%  { background-color: yellow; }
+  100% { background-color: inherit; }
+}
+@keyframes fadeIt {
+  0%   { background-color: inherit; }
+  50%  { background-color: yellow; }
+  100% { background-color: inherit; }
+}
+
+.flash {
+  background-image:none !important;
+  -webkit-animation: fadeIt 1.5s ease-in-out;
+  -moz-animation: fadeIt 1.5s ease-in-out;
+  -o-animation: fadeIt 1.5s ease-in-out;
+  animation: fadeIt 1.5s ease-in-out;
+}

@@ -183,8 +183,7 @@ class EloquentStatementRepository implements StatementRepository {
 
     // Adds keys for sub statement and statement references.
     foreach ($keys as $key) {
-      $keys[] = 'statement.object.'.substr($key, 10);
-      $keys[] = 'refs'.substr($key, 10);
+      $keys[] = 'refs.'.substr($key, 10);
     }
 
     return $this->orWhere($statements, $value, $keys);
@@ -194,16 +193,21 @@ class EloquentStatementRepository implements StatementRepository {
    * Filters $statements with an options.
    * @param Builder $statements Statements to be filtered.
    * @param mixed $value Value to match against $keys.
-   * @param boolean $option
-   * @param array $specific Keys to be search regardless of $option.
-   * @param array $broad Addtional keys to be searched when $option is true.
+   * @param boolean $use_broad
+   * @param array $specific Keys to be search regardless of $use_broad.
+   * @param array $broad Addtional keys to be searched when $use_broad is true.
    * @return Builder
    */
-  private function addOptionFilter(Builder $statements, $value, $option, array $specific, array $broad) {
+  private function addOptionFilter(Builder $statements, $value, $use_broad, array $specific, array $broad) {
     $keys = $specific;
 
-    if (isset($option) && $option === true) {
+    if ($use_broad === true) {
       $keys = array_merge($keys, $broad);
+
+      // Adds keys for sub statement.
+      foreach ($keys as $key) {
+        $keys[] = 'statement.object.'.substr($key, 10);
+      }
     }
 
     return $this->addFilter($statements, $value, $keys);
@@ -221,6 +225,7 @@ class EloquentStatementRepository implements StatementRepository {
       foreach ($keys as $key) {
         $query->orWhere($key, $value);
       }
+      return $query;
     });
   }
 
@@ -878,11 +883,11 @@ class EloquentStatementRepository implements StatementRepository {
       $filename = str_random(12) . "." . $ext;
 
       //create directory if it doesn't exist
-      if (!\File::exists(base_path().'/uploads/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/')) {
-        \File::makeDirectory(base_path().'/uploads/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/', 0775, true);
+      if (!\File::exists(getenv('LOCAL_FILESTORE').'/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/')) {
+        \File::makeDirectory(getenv('LOCAL_FILESTORE').'/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/', 0775, true);
       }
 
-      $destinationPath = base_path().'/uploads/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/';
+      $destinationPath = getenv('LOCAL_FILESTORE').'/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/';
 
       $filename = $destinationPath.$filename;
       $file = fopen( $filename, 'wb'); //opens the file for writing with a BINARY (b) fla
