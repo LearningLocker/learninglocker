@@ -57,9 +57,16 @@ class Report extends Eloquent {
     $query = isset($reportArr['query']) ? (array) $reportArr['query'] : null;
 
     if (is_array($query) && count($query) > 0 && !isset($query[0])) {
-      $wheres = array_map(function ($key) use ($query) {
-        return [$key, 'in', $query[$key]];
-      }, array_keys($query));
+      $actorQuery = array('statement.actor.account.name', 'statement.actor.mbox', 'statement.actor.openId', 'statement.actor.mbox_sha1sum');
+      $actorArray = [];
+      foreach (array_keys($query) as $key) {
+        if (in_array($key, $actorQuery)) {
+          array_push($actorArray, [$key, $query[$key]]);
+        } else {
+          array_push($wheres, [$key, 'in', $query[$key]]);
+        }
+      }
+      array_push($wheres, ['orArray', 'or', $actorArray]);
     }
 
     $since = isset($reportArr['since']) ? $reportArr['since'] : null;

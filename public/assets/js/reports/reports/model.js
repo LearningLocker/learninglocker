@@ -44,30 +44,91 @@ define([
     _mapQueryToResponse: function (query, response) {
       Object.keys(this._queryResponseMap).forEach(function (queryKey) {
         var responseKey = this._queryResponseMap[queryKey];
-        queryKey = 'statement.' + queryKey;
-        response[responseKey] = query[queryKey];
+        if (responseKey == 'actors') {
+            var actorValues = ['actor.mbox', 'actor.account.name', 'actor.openId', 'actor.mbox_sha1sum'];
+            var consolidatedActors = [];
+            for (var i = 0; i < actorValues.length; i++) {
+                queryKey = 'statement.' + actorValues[i];
+                if (typeof query[queryKey] !== "undefined") {
+                    var tempArray = [];
+                    var label = '';
+                    switch (actorValues[i]) {
+                        case 'actor.mbox':          label = ''; break;
+                        case 'actor.account.name':  label = 'account:'; break;
+                        case 'actor.openId':        label = 'openId:'; break;
+                        case 'actor.mbox_sha1sum':  label = 'mbox_sha1sum:'; break;
+                    }
+                    for(var j = 0; j < query[queryKey].length; j++) {
+                        tempArray.push(label+query[queryKey][j]);
+                    }
+                    consolidatedActors = consolidatedActors.concat(tempArray);
+                }
+            }
+            response[responseKey] = consolidatedActors;
+        } else {
+            queryKey = 'statement.' + queryKey;
+            response[responseKey] = query[queryKey];
+        }
       }.bind(this));
     },
     _mapResponseToQuery: function () {
       var query = this.get('query');
       Object.keys(this._queryResponseMap).forEach(function (queryKey) {
         var responseKey = this._queryResponseMap[queryKey];
-        var newValue = this.get(responseKey).map(function (model) {
-          var value = model.get('value');
+        var newValue = '';
+        if (responseKey == 'actors') {
+            //consolidate actor query values by type of IFI
+            var combined = {'account':[], 'openId':[], 'mbox_sha1sum':[], 'mailto':[]};
+            this.get(responseKey).map(function (model) {
+                var value = model.get('value');
+                var intermediateValue = '';
 
-          // Sets value to the full value if there is no identifier in brackets.
-          if (value.indexOf('(') === -1) {
-            value = value;
-          }
+                if (value.indexOf('(') === -1) {
+                    intermediateValue = value;
+                } else {
+                    intermediateValue =  value.split('(').pop().slice(0, -1);
+                }
 
-          // Sets value to the identifier from between brackets if it exists.
-          else {
-            value =  value.split('(').pop().slice(0, -1);
-          }
+                var whichId = intermediateValue.split(':').shift();
 
-          return value;
-        });
-        query['statement.' + queryKey] = newValue.length > 0 ? newValue : undefined;
+                switch (whichId) {
+                    case 'account':         combined.account.push(intermediateValue.slice(8,intermediateValue.length)); break;
+                    case 'openId':          combined.account.push(intermediateValue.slice(7,intermediateValue.length)); break;
+                    case 'mbox_sha1sum':    combined.account.push(intermediateValue.slice(13,intermediateValue.length)); break;
+                    case 'mailto':          combined.mailto.push(intermediateValue); break
+                }
+            });
+
+            //put the consolidated actor IFIs into query, to be combined in backend model
+            for (var prop in combined) {
+                if (combined[prop].length > 0) {
+                    switch (prop) {
+                        case 'account':         query['statement.actor.account.name'] = combined[prop]; break;
+                        case 'mailto':          query['statement.actor.mbox'] = combined[prop]; break;
+                        case 'openId':          query['statement.actor.openId'] = combined[prop]; break;
+                        case 'mbox_sha1sum':    query['statement.actor.mbox_sha1sum'] = combined[prop]; break;
+                    }
+                }
+            }
+        } else {
+            newValue = this.get(responseKey).map(function (model) {
+              var value = model.get('value');
+
+              // Sets value to the full value if there is no identifier in brackets.
+              if (value.indexOf('(') === -1) {
+                value = value;
+              }
+
+              // Sets value to the identifier from between brackets if it exists.
+              else {
+                value =  value.split('(').pop().slice(0, -1);
+              }
+
+              return value;
+            });
+            query['statement.' + queryKey] = newValue.length > 0 ? newValue : undefined;
+        }
+
       }.bind(this));
       this.set({query: query});
     },
