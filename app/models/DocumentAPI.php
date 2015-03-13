@@ -7,6 +7,7 @@
 use Jenssegers\Mongodb\Model as Eloquent;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Locker\Repository\Document\FileTypes;
+use \App\Locker\Helpers\Helpers as Helpers;
 
 class DocumentAPI extends Eloquent {
   protected $collection = 'documentapi';
@@ -134,7 +135,7 @@ class DocumentAPI extends Eloquent {
   }
 
   public function getContentDir(){
-    $dir = getenv('LOCAL_FILESTORE').'/'.$this->lrs.'/documents/';
+    $dir = Helpers::getEnvVar('LOCAL_FILESTORE').'/'.$this->lrs.'/documents/';
     if( !file_exists($dir) ){
       mkdir( $dir, 0774, true );
     }

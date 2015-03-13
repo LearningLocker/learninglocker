@@ -8,6 +8,7 @@ use Locker\Repository\Document\FileTypes;
 use Illuminate\Database\Eloquent\Builder as Builder;
 use app\locker\helpers\Conflict as Conflict;
 use app\locker\helpers\ValidationException as ValidationException;
+use \App\Locker\Helpers\Helpers as Helpers;
 
 class EloquentStatementRepository implements StatementRepository {
 
@@ -883,11 +884,11 @@ class EloquentStatementRepository implements StatementRepository {
       $filename = str_random(12) . "." . $ext;
 
       //create directory if it doesn't exist
-      if (!\File::exists(getenv('LOCAL_FILESTORE').'/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/')) {
-        \File::makeDirectory(getenv('LOCAL_FILESTORE').'/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/', 0775, true);
+      if (!\File::exists(Helpers::getEnvVar('LOCAL_FILESTORE').'/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/')) {
+        \File::makeDirectory(Helpers::getEnvVar('LOCAL_FILESTORE').'/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/', 0775, true);
       }
 
-      $destinationPath = getenv('LOCAL_FILESTORE').'/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/';
+      $destinationPath = Helpers::getEnvVar('LOCAL_FILESTORE').'/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/';
 
       $filename = $destinationPath.$filename;
       $file = fopen( $filename, 'wb'); //opens the file for writing with a BINARY (b) fla
