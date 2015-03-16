@@ -8,7 +8,7 @@ use Locker\Repository\Document\FileTypes;
 use Illuminate\Database\Eloquent\Builder as Builder;
 use app\locker\helpers\Conflict as Conflict;
 use app\locker\helpers\ValidationException as ValidationException;
-use \App\Locker\Helpers\Helpers as Helpers;
+use \app\locker\helpers\Helpers as Helpers;
 
 class EloquentStatementRepository implements StatementRepository {
 

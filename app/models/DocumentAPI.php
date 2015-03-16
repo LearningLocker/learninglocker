@@ -7,7 +7,7 @@
 use Jenssegers\Mongodb\Model as Eloquent;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Locker\Repository\Document\FileTypes;
-use \App\Locker\Helpers\Helpers as Helpers;
+use \app\locker\helpers\Helpers as Helpers;
 
 class DocumentAPI extends Eloquent {
   protected $collection = 'documentapi';
