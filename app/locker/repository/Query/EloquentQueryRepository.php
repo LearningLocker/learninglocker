@@ -24,7 +24,7 @@ class EloquentQueryRepository implements QueryRepository {
         case 'between': $statements->whereBetween($filter[0], [$filter[2], $filter[3]]); break;
         case 'or':
                 if (!empty($filter[2]) && is_array($filter[2])) {
-                    $statements->orWhere(function($query) use ($filter) {
+                    $statements->where(function($query) use ($filter) {
                         foreach ($filter[2] as $value) {
                             foreach ($value[1] as $subVal) {
                                 $query->orWhere($value[0], $subVal);
