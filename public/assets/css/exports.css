@@ -27,22 +27,22 @@ input#typeahead-value {
 
 @-webkit-keyframes fadeIt {
   0%   { background-color: inherit; }
-  50%  { background-color: #5cb85c; }
+  50%  { background-color: #9AE472; }
   100% { background-color: inherit; }
 }
 @-moz-keyframes fadeIt {
   0%   { background-color: inherit; }
-  50%  { background-color: #5cb85c; }
+  50%  { background-color: #9AE472; }
   100% { background-color: inherit; }
 }
 @-o-keyframes fadeIt {
   0%   { background-color: inherit; }
-  50%  { background-color: #5cb85c; }
+  50%  { background-color: #9AE472; }
   100% { background-color: inherit; }
 }
 @keyframes fadeIt {
   0%   { background-color: inherit; }
-  50%  { background-color: #5cb85c; }
+  50%  { background-color: #9AE472; }
   100% { background-color: inherit; }
 }
 
