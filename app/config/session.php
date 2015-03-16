@@ -1,5 +1,7 @@
 <?php
 
+use \app\locker\helpers\Helpers as Helpers;
+
 return array(
 
 	/*
@@ -44,7 +46,7 @@ return array(
 	|
 	*/
 
-	'files' => getenv('SESSION_FILESTORE'),
+	'files' => Helpers::getEnvVar('SESSION_FILESTORE'),
 
 	/*
 	|--------------------------------------------------------------------------
