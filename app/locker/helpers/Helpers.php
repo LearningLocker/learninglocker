@@ -116,4 +116,14 @@ class Helpers {
       }
     }
   }
+static function getEnvVar($var) {
+  $value = getenv($var);
+  if ($value === false) {
+    $defaults = include base_path() . '/.env.php';
+    $value = $defaults[$var];
+  }
+    
+    return $value;
+  }
+  
 }
