@@ -75,22 +75,21 @@ define([
       var query = this.get('query');
       Object.keys(this._queryResponseMap).forEach(function (queryKey) {
         var responseKey = this._queryResponseMap[queryKey];
-        var newValue = '';
         if (responseKey == 'actors') {
             //consolidate actor query values by type of IFI
             var combined = {'account':[], 'openId':[], 'mbox_sha1sum':[], 'mailto':[]};
             this.get(responseKey).map(function (model) {
                 var value = model.get('value');
                 var intermediateValue = '';
-
+                
                 if (value.indexOf('(') === -1) {
                     intermediateValue = value;
                 } else {
                     intermediateValue =  value.split('(').pop().slice(0, -1);
                 }
-
+                
                 var whichId = intermediateValue.split(':').shift();
-
+                
                 switch (whichId) {
                     case 'account':         combined.account.push(intermediateValue.slice(8,intermediateValue.length)); break;
                     case 'openId':          combined.account.push(intermediateValue.slice(7,intermediateValue.length)); break;
@@ -102,16 +101,25 @@ define([
             //put the consolidated actor IFIs into query, to be combined in backend model
             for (var prop in combined) {
                 if (combined[prop].length > 0) {
+                    //if it has something to put in
                     switch (prop) {
                         case 'account':         query['statement.actor.account.name'] = combined[prop]; break;
                         case 'mailto':          query['statement.actor.mbox'] = combined[prop]; break;
                         case 'openId':          query['statement.actor.openId'] = combined[prop]; break;
                         case 'mbox_sha1sum':    query['statement.actor.mbox_sha1sum'] = combined[prop]; break;
                     }
+                } else {
+                    //since nothing to add, make undefined
+                    switch (prop) {
+                        case 'account':         query['statement.actor.account.name'] = undefined; break;
+                        case 'mailto':          query['statement.actor.mbox'] = undefined; break;
+                        case 'openId':          query['statement.actor.openId'] = undefined; break;
+                        case 'mbox_sha1sum':    query['statement.actor.mbox_sha1sum'] = undefined; break;
+                    }
                 }
             }
         } else {
-            newValue = this.get(responseKey).map(function (model) {
+            var newValue = this.get(responseKey).map(function (model) {
               var value = model.get('value');
 
               // Sets value to the full value if there is no identifier in brackets.
