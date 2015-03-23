@@ -5,7 +5,7 @@
       <select class="form-control sidebar-select" onchange="javascript:location.href = this.value;">
           <option></option>
         <optgroup label="List">
-          <option value="{{ URL() }}/lrs">{{ Lang::get('lrs.home') }}</option>
+          <option value="{{ URL() }}/site#lrs">{{ Lang::get('lrs.home') }}</option>
         </optgroup>
         <optgroup label="Available LRSs">
           @if( isset($list) )
