@@ -1,6 +1,6 @@
 <?php namespace Locker\Repository\Base;
 
-use \Helpers\Exceptions\NotFound as NotFoundException;
+use \Locker\Helpers\Exceptions\NotFound as NotFoundException;
 use \Illuminate\Database\Eloquent\Model as Model;
 
 abstract class EloquentRepository implements Repository {

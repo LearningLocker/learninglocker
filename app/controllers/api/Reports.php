@@ -28,13 +28,9 @@ class Reports extends Resources {
    * @return [Statement] Statements selected by the report.
    */
   public function run($id) {
-    try {
-      return IlluminateResponse::json(
-        $this->repo->statements($id, $this->getOptions())->lists('statement')
-      );
-    } catch (NotFoundException $ex) {
-      return $this->errorResponse($ex, 404);
-    }
+    return IlluminateResponse::json(
+      $this->repo->statements($id, $this->getOptions())->lists('statement')
+    );
   }
 
   /**
@@ -43,13 +39,9 @@ class Reports extends Resources {
    * @return [Statement] Statements selected by the report.
    */
   public function graph($id) {
-    try {
-      $report = $this->repo->show($id, $this->getOptions());
-      $data = $this->query->aggregateTime($report->lrs, $report->match);
-      return IlluminateResponse::json($data['result']);
-    } catch (NotFoundException $ex) {
-      return $this->errorResponse($ex, 404);
-    }
+    $report = $this->repo->show($id, $this->getOptions());
+    $data = $this->query->aggregateTime($report->lrs, $report->match);
+    return IlluminateResponse::json($data['result']);
   }
 
 }
