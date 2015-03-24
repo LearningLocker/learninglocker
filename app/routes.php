@@ -521,7 +521,8 @@ App::missing(function($exception){
 
 App::error(function(Exception $exception) {
   Log::error($exception);
-  $code = method_exists($exception, 'getCode') ? $exception->getCode() : 500;
+  $code = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 0;
+  $code = $code === 0 && method_exists($exception, 'getCode') ? $exception->getCode() : 0;
   $code = $code === 0 ? 500 : $code;
 
   if (Request::segment(1) == "data" || Request::segment(1) == "api") {
