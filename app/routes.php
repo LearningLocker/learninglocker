@@ -412,11 +412,11 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
   Route::resource('exports', 'Controllers\API\Exports');
 
   Route::get('exports/{id}/show', array(
-    'uses' => 'Controllers\API\Exports@showJSON'
+    'uses' => 'Controllers\API\Exports@showJson'
   ));
 
   Route::get('exports/{id}/show/csv', array(
-    'uses' => 'Controllers\API\Exports@showCSV'
+    'uses' => 'Controllers\API\Exports@showCsv'
   ));
 
   // Adds routes for reports.
