@@ -44,7 +44,7 @@ class Exports extends Resources {
           }
         ]));
         echo ']';
-      }, 200);
+      }, 200, ['Content-Type'=>'application/json']);
     } catch (NotFoundException $ex) {
       return $this->errorResponse($ex, 404);
     }
@@ -78,7 +78,7 @@ class Exports extends Resources {
             }, $obj));
           }
         ]));
-      }, 200);
+      }, 200, ['Content-Type'=>'text/csv']);
     } catch (NotFoundException $ex) {
       return $this->errorResponse($ex, 404);
     }

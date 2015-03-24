@@ -51,7 +51,7 @@ define([
         alert(trans('exporting.errors.mustSave'));
       } else {
         this.model.downloadJSON().done(function (data) {
-          saveAs(new Blob([JSON.stringify(JSON.parse(data), null, 2)]), 'download.json');
+          saveAs(new Blob([JSON.stringify(data, null, 2)]), 'download.json');
         }).fail(function (jqXHR, status, error) {
           alert((jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.message) || error);
         });
