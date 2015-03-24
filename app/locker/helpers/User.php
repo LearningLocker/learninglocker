@@ -1,4 +1,4 @@
-<?php namespace app\locker\helpers;
+<?php namespace Locker\Helpers;
 
 class User {
 
@@ -72,7 +72,7 @@ class User {
           $lrs = \Lrs::find( $data['lrs'] );
 
           //is the user already a member of the LRS?
-          $isMember = \app\locker\helpers\Lrs::isMember($lrs->_id, $user->_id);
+          $isMember = \Locker\Helpers\Lrs::isMember($lrs->_id, $user->_id);
 
           //if lrs exists and user is not a member, add them
           if( $lrs && !$isMember){

@@ -4,7 +4,7 @@ use \Illuminate\Database\Eloquent\Model as Model;
 use \Locker\Repository\Base\EloquentRepository as BaseRepository;
 use \Locker\Repository\Query\EloquentQueryRepository as QueryRepository;
 use \Locker\XApi\Helpers as XAPIHelpers;
-use \App\Locker\Helpers\Helpers as Helpers;
+use \Locker\Helpers\Helpers as Helpers;
 
 class EloquentRepository extends BaseRepository implements Repository {
 

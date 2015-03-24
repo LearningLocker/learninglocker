@@ -11,7 +11,7 @@
 |
 */
 
-use \app\locker\helpers\Helpers as Helpers;
+use \Locker\Helpers\Helpers as Helpers;
 
 $app = new Illuminate\Foundation\Application;
 

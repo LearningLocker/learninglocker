@@ -283,7 +283,7 @@ Route::filter('registration.status', function( $route, $request ){
 
 Route::filter('user.delete', function( $route, $request ){
   $user = $route->parameter('users');
-  if( \Auth::user()->_id != $user && !\app\locker\helpers\Access::isRole('super') ){
+  if( \Auth::user()->_id != $user && !\Locker\Helpers\Access::isRole('super') ){
     return Redirect::to('/');
   }
 });

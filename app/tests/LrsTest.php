@@ -24,21 +24,21 @@ class LrsTest extends TestCase
     // Test title required.
     $values = array(
       'title' => '',
-      'description' => \app\locker\helpers\Helpers::getRandomValue(),
-      'api' => array('basic_key' => \app\locker\helpers\Helpers::getRandomValue(),
-        'basic_secret' => \app\locker\helpers\Helpers::getRandomValue())
+      'description' => \Locker\Helpers\Helpers::getRandomValue(),
+      'api' => array('basic_key' => \Locker\Helpers\Helpers::getRandomValue(),
+        'basic_secret' => \Locker\Helpers\Helpers::getRandomValue())
     );
     $validator = $lrs->validate($values);
     $this->assertTrue($validator->fails());
     $this->assertFalse($validator->passes());
 
-    $values['title'] = \app\locker\helpers\Helpers::getRandomValue();
+    $values['title'] = \Locker\Helpers\Helpers::getRandomValue();
     $validator = $lrs->validate($values);
     $this->assertTrue($validator->passes());
 
     // Validate auth_service
 
-    $values['auth_service_url'] = 'http://' . \app\locker\helpers\Helpers::getRandomValue() . '.adurolms.com';
+    $values['auth_service_url'] = 'http://' . \Locker\Helpers\Helpers::getRandomValue() . '.adurolms.com';
     $validator = $lrs->validate($values);
     $this->assertTrue($validator->passes());
 
@@ -55,7 +55,7 @@ class LrsTest extends TestCase
     $this->assertEquals($db_lrs->_id, $lrs->_id);
 
     // Edit lrs
-    $title = \app\locker\helpers\Helpers::getRandomValue();
+    $title = \Locker\Helpers\Helpers::getRandomValue();
     $db_lrs->title = $title;
     $db_lrs->save();
     $this->assertEquals($db_lrs->title, $title);

@@ -41,8 +41,8 @@ class EloquentOAuthAppRepository implements OAuthAppRepository {
     $app->website     = $input['website'];
     $app->callbackurl = $input['callback'];
     $app->rules       = $input['rules'];
-    $app->client_id   = \app\locker\helpers\Helpers::getRandomValue();
-    $app->secret      = \app\locker\helpers\Helpers::getRandomValue();
+    $app->client_id   = \Locker\Helpers\Helpers::getRandomValue();
+    $app->secret      = \Locker\Helpers\Helpers::getRandomValue();
     $app->organisation = array('name'    => $input['organisation'] ? $input['organisation'] : '',
                                'website' => $input['org_url'] ? $input['org_url'] : '');
     $app->owner       = array('_id'   => $user->_id,

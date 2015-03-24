@@ -2,9 +2,9 @@
 
 use Illuminate\Routing\Controller;
 use Controllers\API\BaseController as APIBaseController;
-use \app\locker\helpers\FailedPrecondition as FailedPrecondition;
-use \app\locker\helpers\Conflict as Conflict;
-use \app\locker\helpers\ValidationException as ValidationException;
+use \Locker\Helpers\Exceptions\FailedPrecondition as FailedPrecondition;
+use \Locker\Helpers\Exceptions\Conflict as Conflict;
+use \Locker\Helpers\Exceptions\ValidationException as ValidationException;
 
 class BaseController extends APIBaseController {
 
