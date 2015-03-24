@@ -196,7 +196,7 @@ class SiteController extends BaseController {
    *
    **/
   public function inviteUsers(){
-    $invite = \app\locker\helpers\User::inviteUser( Input::all() );
+    $invite = \Locker\Helpers\User::inviteUser( Input::all() );
     return Redirect::back()->with('success', Lang::get('users.invite.invited'));
   }
 

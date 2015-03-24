@@ -2,7 +2,6 @@
 
 use \LockerRequest as LockerRequest;
 use \Response as IlluminateResponse;
-use \Helpers\Exceptions\NotFoundException as NotFoundException;
 
 class Resources extends BaseController {
 
@@ -33,17 +32,6 @@ class Resources extends BaseController {
   }
 
   /**
-   * Constructs an error response.
-   * @return \Illuminate\Http\JsonResponse Response containing the exception details.
-   */
-  protected function errorResponse(Exception $exception, $code = 400, $headers = []) {
-    return IlluminateResponse::json([
-      'message' => $exception->getMessage(),
-      'trace' => Config::get('app.debug') ? $exception->getTrace() : trans('api.info.trace')
-    ], $code, $headers);
-  }
-
-  /**
    * Gets all models.
    * @return [Model]
    */
@@ -65,11 +53,7 @@ class Resources extends BaseController {
    * @return Model
    */
   public function show($id) {
-    try {
-      return IlluminateResponse::json($this->repo->show($id, $this->getOptions()), 200);
-    } catch (NotFoundException $ex) {
-      return $this->errorResponse($ex, 404);
-    }
+    return IlluminateResponse::json($this->repo->show($id, $this->getOptions()), 200);
   }
 
   /**
@@ -78,11 +62,7 @@ class Resources extends BaseController {
    * @return Model
    */
   public function update($id) {
-    try {
-      return IlluminateResponse::json($this->repo->update($id, $this->getData(), $this->getOptions()), 200);
-    } catch (NotFoundException $ex) {
-      return $this->errorResponse($ex, 404);
-    }
+    return IlluminateResponse::json($this->repo->update($id, $this->getData(), $this->getOptions()), 200);
   }
 
   /**
@@ -91,10 +71,6 @@ class Resources extends BaseController {
    * @return Boolean
    */
   public function destroy($id) {
-    try{
-      return IlluminateResponse::json($this->repo->destroy($id, $this->getOptions()), 204);
-    } catch (NotFoundException $ex) {
-      return $this->errorResponse($ex, 404);
-    }
+    return IlluminateResponse::json($this->repo->destroy($id, $this->getOptions()), 204);
   }
 }

@@ -1,14 +1,14 @@
 <?php namespace Locker\Repository\Statement;
 
-use DateTime;
-use Statement;
-use Locker\Repository\Activity\ActivityRepository as Activity;
-use Locker\Repository\Query\QueryRepository as Query;
-use Locker\Repository\Document\FileTypes;
-use Illuminate\Database\Eloquent\Builder as Builder;
-use app\locker\helpers\Conflict as Conflict;
-use app\locker\helpers\ValidationException as ValidationException;
-use \app\locker\helpers\Helpers as Helpers;
+use \DateTime;
+use \Statement;
+use \Locker\Repository\Activity\ActivityRepository as Activity;
+use \Locker\Repository\Query\QueryRepository as Query;
+use \Locker\Repository\Document\FileTypes;
+use \Illuminate\Database\Eloquent\Builder as Builder;
+use \Locker\Helpers\Exceptions\Conflict as Conflict;
+use \Locker\Helpers\Exceptions\ValidationException as ValidationException;
+use \Locker\Helpers\Helpers as Helpers;
 
 class EloquentStatementRepository implements StatementRepository {
 
@@ -825,7 +825,7 @@ class EloquentStatementRepository implements StatementRepository {
    * @return Statement
    */
   private function replaceFullStop(array $statement){
-    return \app\locker\helpers\Helpers::replaceFullStop($statement);
+    return \Locker\Helpers\Helpers::replaceFullStop($statement);
   }
 
   /**

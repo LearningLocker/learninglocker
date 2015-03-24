@@ -263,8 +263,8 @@ class LrsController extends BaseController {
 
     $lrs = $this->lrs->find( $id );
 
-    $lrs->api  = array('basic_key'    => \app\locker\helpers\Helpers::getRandomValue(),
-                       'basic_secret' => \app\locker\helpers\Helpers::getRandomValue());
+    $lrs->api  = array('basic_key'    => \Locker\Helpers\Helpers::getRandomValue(),
+                       'basic_secret' => \Locker\Helpers\Helpers::getRandomValue());
 
     if( $lrs->save() ){
       $message_type = 'success';

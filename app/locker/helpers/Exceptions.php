@@ -1,4 +1,4 @@
-<?php namespace app\locker\helpers;
+<?php namespace Locker\Helpers\Exceptions;
 
 class ValidationException extends \Exception {
   protected $errors = [];

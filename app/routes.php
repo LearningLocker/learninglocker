@@ -519,9 +519,7 @@ App::missing(function($exception){
   }
 });
 
-App::error(function(Exception $exception)
-{
-
+App::error(function(Exception $exception) {
   Log::error($exception);
 
   if (method_exists($exception, 'getStatusCode')) {
@@ -531,16 +529,16 @@ App::error(function(Exception $exception)
   }
 
   if( Request::segment(1) == "data" || Request::segment(1) == "api" ){
-    $error = array(
-        'error'     =>  true,
-        'message'   =>  $exception->getMessage(),
-        'code'      =>  $code
-    );
+    $codes = [
+      'Locker\Helpers\Exceptions\NotFound' => 404
+    ];
 
-
-    if( Config::get('app.debug') ){
-      $error['trace'] = $exception->getTraceAsString();
-    }
+    $error = [
+      'error' => true,
+      'message' => $exception->getMessage(),
+      'code' => isset($codes[get_class($exception)]) ? $codes[get_class($exception)] : 500,
+      'trace' => Config::get('app.debug') ? $exception->getTrace() : trans('api.info.trace')
+    ];
 
     return Response::json( $error, $code);
   } else {

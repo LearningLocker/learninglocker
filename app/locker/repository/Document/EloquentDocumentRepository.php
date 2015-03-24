@@ -2,8 +2,8 @@
 
 use DocumentAPI;
 use Carbon\Carbon;
-use app\locker\helpers\FailedPrecondition as FailedPrecondition;
-use app\locker\helpers\Conflict as Conflict;
+use \Locker\Helpers\Exceptions\FailedPrecondition as FailedPrecondition;
+use \Locker\Helpers\Exceptions\Conflict as Conflict;
 
 class EloquentDocumentRepository implements DocumentRepository {
 

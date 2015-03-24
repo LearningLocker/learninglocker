@@ -1,4 +1,4 @@
-<?php namespace app\locker\helpers;
+<?php namespace Locker\Helpers;
 
 /**
  * Some handy static function for isolated tasks.

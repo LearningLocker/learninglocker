@@ -170,7 +170,7 @@ class StatementDisplay {
   private function setAvatar( $mbox ){
 
     if( isset($mbox) ){
-      $avatar =  \app\locker\helpers\Helpers::getGravatar( substr($mbox, 7), '20');
+      $avatar =  \Locker\Helpers\Helpers::getGravatar( substr($mbox, 7), '20');
       $avatar = '<img src="'.$avatar.'" alt="User gravatar" />';
     }else{
       $avatar = '';

@@ -2,7 +2,7 @@
 
 use \Locker\Repository\Statement\StatementRepository as Statement;
 use \Locker\Repository\Query\QueryRepository as Query;
-use \app\locker\helpers\Attachments as Attachments;
+use \Locker\Helpers\Attachments as Attachments;
 
 class StatementController extends BaseController {
 
@@ -249,7 +249,7 @@ class StatementController extends BaseController {
 
     $statement = $this->statement->show($this->lrs->_id, $id, $voided)->first();
     if ($statement) {
-      $dotted_statement = \app\locker\helpers\Helpers::replaceHtmlEntity(
+      $dotted_statement = \Locker\Helpers\Helpers::replaceHtmlEntity(
         $statement->statement
       );
       return \Response::json($dotted_statement, 200);
@@ -276,7 +276,7 @@ class StatementController extends BaseController {
     // Replaces '&46;' in keys with '.' in statements.
     // http://docs.learninglocker.net/docs/statements#quirks
     $statements = $statements ?: [];
-    $statements = \app\locker\helpers\Helpers::replaceHtmlEntity($statements);
+    $statements = \Locker\Helpers\Helpers::replaceHtmlEntity($statements);
     foreach ($statements as &$s) {
       $s = $s->statement;
     }

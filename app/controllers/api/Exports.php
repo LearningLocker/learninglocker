@@ -29,25 +29,21 @@ class Exports extends Resources {
    * @return StreamedResponse.
    */
   public function showJson($id) {
-    try {
-      $opts = $this->getOptions();
-      $model = $this->repo->show($id, $opts);
+    $opts = $this->getOptions();
+    $model = $this->repo->show($id, $opts);
 
-      return IlluminateResponse::stream(function () use ($model, $opts) {
-        echo '[';
-        $this->repo->export($model, array_merge($opts, [
-          'next' => function () {
-            echo ',';flush();ob_flush();
-          },
-          'stream' => function ($obj) {
-            echo json_encode($obj);
-          }
-        ]));
-        echo ']';
-      }, 200, ['Content-Type'=>'application/json']);
-    } catch (NotFoundException $ex) {
-      return $this->errorResponse($ex, 404);
-    }
+    return IlluminateResponse::stream(function () use ($model, $opts) {
+      echo '[';
+      $this->repo->export($model, array_merge($opts, [
+        'next' => function () {
+          echo ',';flush();ob_flush();
+        },
+        'stream' => function ($obj) {
+          echo json_encode($obj);
+        }
+      ]));
+      echo ']';
+    }, 200, ['Content-Type'=>'application/json']);
   }
 
   /**
@@ -56,32 +52,28 @@ class Exports extends Resources {
    * @return StreamedResponse.
    */
   public function showCsv($id) {
-    try {
-      $opts = $this->getOptions();
-      $model = $this->repo->show($id, $opts);
+    $opts = $this->getOptions();
+    $model = $this->repo->show($id, $opts);
 
-      return IlluminateResponse::stream(function () use ($model, $opts) {
-        // Outputs the field names (column headers).
-        echo implode(',', array_map(function ($field) {
-          return $field['to'];
-        }, $model->fields))."\n";
+    return IlluminateResponse::stream(function () use ($model, $opts) {
+      // Outputs the field names (column headers).
+      echo implode(',', array_map(function ($field) {
+        return $field['to'];
+      }, $model->fields))."\n";
 
-        // Outputs the statements (rows).
-        $this->repo->export($model, array_merge($opts, [
-          'next' => function () {
-            echo "\n";flush();ob_flush();
-          },
-          'stream' => function ($obj) {
-            // Outputs the field values (column values).
-            echo implode(',', array_map(function ($value) {
-              return $this->quoteCSV($value);flush();ob_flush();
-            }, $obj));
-          }
-        ]));
-      }, 200, ['Content-Type'=>'text/csv']);
-    } catch (NotFoundException $ex) {
-      return $this->errorResponse($ex, 404);
-    }
+      // Outputs the statements (rows).
+      $this->repo->export($model, array_merge($opts, [
+        'next' => function () {
+          echo "\n";flush();ob_flush();
+        },
+        'stream' => function ($obj) {
+          // Outputs the field values (column values).
+          echo implode(',', array_map(function ($value) {
+            return $this->quoteCSV($value);flush();ob_flush();
+          }, $obj));
+        }
+      ]));
+    }, 200, ['Content-Type'=>'text/csv']);
   }
 
   /**

@@ -77,7 +77,7 @@ class Report extends Eloquent {
   }
 
   public function toArray() {
-    return (array) \app\locker\helpers\Helpers::replaceHtmlEntity(parent::toArray());
+    return (array) \Locker\Helpers\Helpers::replaceHtmlEntity(parent::toArray());
   }
 
 }
