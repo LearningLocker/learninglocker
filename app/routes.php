@@ -521,26 +521,16 @@ App::missing(function($exception){
 
 App::error(function(Exception $exception) {
   Log::error($exception);
+  $code = method_exists($exception, 'getCode') ? $exception->getCode() : 500;
+  $code = $code === 0 ? 500 : $code;
 
-  if (method_exists($exception, 'getStatusCode')) {
-    $code = $exception->getStatusCode();
-  } else {
-    $code = 500;
-  }
-
-  if( Request::segment(1) == "data" || Request::segment(1) == "api" ){
-    $codes = [
-      'Locker\Helpers\Exceptions\NotFound' => 404
-    ];
-
-    $error = [
+  if (Request::segment(1) == "data" || Request::segment(1) == "api") {
+    return Response::json([
       'error' => true,
       'message' => $exception->getMessage(),
-      'code' => isset($codes[get_class($exception)]) ? $codes[get_class($exception)] : 500,
+      'code' => $code,
       'trace' => Config::get('app.debug') ? $exception->getTrace() : trans('api.info.trace')
-    ];
-
-    return Response::json( $error, $code);
+    ], $code);
   } else {
     echo "Status: ".$code." Error: ".$exception->getMessage();
   }
