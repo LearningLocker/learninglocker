@@ -56,10 +56,11 @@ class StatementPostTest extends TestCase
 
     // case: conflict nomatch
     $param['result'] = new \stdClass();
-    $response = $this->_makeRequest($param, "POST", $auth);
-    $responseData = $response->getData();
-    $this->assertEquals(409, $response->getStatusCode());
-    $this->assertTrue(property_exists($responseData, 'success') && !$responseData->success);
+    try {
+      $response = $this->_makeRequest($param, "POST", $auth);
+    } catch (\Exception $ex) {
+      $this->assertEquals(409, $ex->getCode());
+    }
 
     // Make sure response data for the get request
     $responseGet = $this->_makeRequest(new \stdClass(), "GET", $auth);

@@ -77,13 +77,10 @@ Route::filter('auth.statement', function(){
       $auth_validator->checkTypes('auth', $authorization, 'base64', 'headers');
 
       if ($auth_validator->getStatus() === 'failed') {
-        return Response::json([
-          'error' => true,
-          'message' => $auth_validator->getErrors()
-        ], 400);
+        throw new \Locker\Helpers\Exceptions\ValidationException($auth_validator->getErrors());
       }
     }
-    
+
 
 	  //Note: this code is duplicated in Controllers\API\BaseController\GetLrs
     //see if the lrs exists based on key and secret
@@ -102,19 +99,13 @@ Route::filter('auth.statement', function(){
   			$lrs = \Lrs::find(  $client->lrs_id );
   		}
   		else {
-  			return Response::json([
-          'error' => true,
-          'message' => 'Unauthorized request.'
-        ], 401);
+        throw new \Exception('Unauthorized request.', 401);
   		}
   	}
 
     //attempt login once
     if ( ! Auth::onceUsingId($lrs->owner['_id']) ) {
-      return Response::json([
-        'error' => true,
-        'message' => 'Unauthorized request.'
-      ], 401);
+      throw new \Exception('Unauthorized request.', 401);
     }
 
   }

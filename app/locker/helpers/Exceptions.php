@@ -13,7 +13,7 @@ class ValidationException extends \Exception {
     $errors = array_map(function ($error) {
       return (string) $error;
     }, $errors);
-    parent::_construct(json_encode($errors), 400);
+    parent::__construct(json_encode($errors), 400);
   }
 
   public function getErrors() {

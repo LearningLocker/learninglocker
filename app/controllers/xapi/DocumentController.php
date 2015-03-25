@@ -124,7 +124,7 @@ abstract class DocumentController extends BaseController {
     if ($result = $this->checkVersion()) return $result;
 
     if (!\LockerRequest::hasParam($this->identifier)) {
-      return BaseController::errorResponse('Multiple document DELETE not permitted');
+      throw new \Exception('Multiple document DELETE not permitted', 400);
     }
     return $this->completeDelete();
   }
@@ -145,9 +145,9 @@ abstract class DocumentController extends BaseController {
     );
 
     if ($success) {
-      return \Response::json(['ok'], 204);
+      return \Response::json(null, 204);
     } else {
-      return BaseController::errorResponse();
+      throw new \Exception('Could not delete.', 400);
     }
   }
 
@@ -220,7 +220,7 @@ abstract class DocumentController extends BaseController {
     $document = $this->document->find($this->lrs->_id, $this->document_type, $data);
 
     if (!$document) {
-      return BaseController::errorResponse(null, 404);
+      throw new \Locker\Helpers\Exceptions\NotFound($data[$this->identifier], $this->document_type);
     } else {
       $headers = [
         'Updated' => $document->updated_at->toISO8601String(),

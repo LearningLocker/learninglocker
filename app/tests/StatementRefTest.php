@@ -64,6 +64,7 @@ class StatementRefTest extends TestCase {
 
     // Checks $expected_references.
     $references = array_map(function ($ref) {
+      \Log::info('ref', $ref);
       return $ref['id'];
     }, isset($statement->refs) ? $statement->refs : []);
 

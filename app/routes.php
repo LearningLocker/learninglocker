@@ -528,7 +528,8 @@ App::error(function(Exception $exception) {
   if (Request::segment(1) == "data" || Request::segment(1) == "api") {
     return Response::json([
       'error' => true,
-      'message' => $exception->getMessage(),
+      'success' => false,
+      'message' => method_exists($exception, 'getErrors') ? $exception->getErrors() : $exception->getMessage(),
       'code' => $code,
       'trace' => Config::get('app.debug') ? $exception->getTrace() : trans('api.info.trace')
     ], $code);

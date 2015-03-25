@@ -59,10 +59,11 @@ class StatementPutTest extends TestCase
 
     // case: conflict nomatch
     $param['result'] = new \stdClass();
-    $response = $this->_makeRequest($param, $auth);
-    $responseStatus = $response->getStatusCode();
-
-    $this->assertEquals(409, $responseStatus);
+    try {
+      $response = $this->_makeRequest($param, $auth);
+    } catch (\Exception $ex) {
+      $this->assertEquals(409, $ex->getCode());
+    }
   }
 
   /**

@@ -628,7 +628,7 @@ class EloquentStatementRepository implements StatementRepository {
     if (isset($refs[$id])) {
       return $refs;
     }
-    
+
     if (isset($statements[$id])) {
       $s = $statements[$id];
       $refs[$id] = $s->statement;
@@ -668,9 +668,9 @@ class EloquentStatementRepository implements StatementRepository {
         $statement_id = $referrer['statement']['object']['id'];
         $statement = $statements[$statement_id];
         if (isset($statement['refs'])) {
-          $referrer->refs = array(array_merge($statement['statement'], $statement['refs']));
+          $referrer->refs = array_merge([$statement['statement']], $statement['refs']);
         } else {
-          $referrer->refs = array($statement['statement']);
+          $referrer->refs = [$statement['statement']];
         }
         if (!$referrer->save()) throw new \Exception('Failed to save referrer.');
       }

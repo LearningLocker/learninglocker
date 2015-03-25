@@ -30,22 +30,12 @@ class BaseController extends APIBaseController {
    * @return mixed Result of the method.
    */
   public function selectMethod() {
-    try {
-      switch ($this->method) {
-        case 'HEAD':
-        case 'GET': return $this->get();
-        case 'PUT': return $this->update();
-        case 'POST': return $this->store();
-        case 'DELETE': return $this->destroy();
-      }
-    } catch (ValidationException $e) {
-      return self::errorResponse($e, 400);
-    } catch (Conflict $e) {
-      return self::errorResponse($e, 409);
-    } catch (FailedPrecondition $e) {
-      return self::errorResponse($e, 412);
-    } catch (\Exception $e) {
-      return self::errorResponse($e, 400);
+    switch ($this->method) {
+      case 'HEAD':
+      case 'GET': return $this->get();
+      case 'PUT': return $this->update();
+      case 'POST': return $this->store();
+      case 'DELETE': return $this->destroy();
     }
   }
 
@@ -77,29 +67,6 @@ class BaseController extends APIBaseController {
       'method',
       \Request::server('REQUEST_METHOD')
     );
-  }
-
-  /**
-   * Constructs a error response with a $message and optional $statusCode.
-   * @param string $message
-   * @param integer $statusCode
-   */
-  public static function errorResponse($e = '', $statusCode = 400) {
-    $json = [
-      'error' => true, // @deprecated
-      'success' => false
-    ];
-
-    if ($e instanceof ValidationException) {
-      $json['message'] = $e->getErrors();
-    } else if ($e instanceof \Exception || $e instanceof \Locker\XApi\Errors\Error) {
-      $json['message'] = $e->getMessage();
-      $json['trace'] = $e->getTraceAsString();
-    } else {
-      $json['message'] = $e;
-    }
-
-    return \Response::json($json, $statusCode);
   }
 
   protected function optionalValue($name, $value, $type) {
@@ -134,7 +101,7 @@ class BaseController extends APIBaseController {
     $validator = new \app\locker\statements\xAPIValidation();
     $validator->checkTypes($name, $value, $type, 'params');
     if ($validator->getStatus() !== 'passed') {
-      throw new \Exception(implode(',', $validator->getErrors()));
+      throw new \Exception(implode(',', $validator->getErrors()), 400);
     }
   }
 }
