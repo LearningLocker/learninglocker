@@ -30,12 +30,17 @@ class BaseController extends APIBaseController {
    * @return mixed Result of the method.
    */
   public function selectMethod() {
-    switch ($this->method) {
-      case 'HEAD':
-      case 'GET': return $this->get();
-      case 'PUT': return $this->update();
-      case 'POST': return $this->store();
-      case 'DELETE': return $this->destroy();
+    try {
+      switch ($this->method) {
+        case 'HEAD':
+        case 'GET': return $this->get();
+        case 'PUT': return $this->update();
+        case 'POST': return $this->store();
+        case 'DELETE': return $this->destroy();
+      }
+    } catch (\Exception $ex) {
+      $code = $ex->getCode();
+      throw new \Exception($ex->getMessage(), $code === 500 || $code === 0 ? 400 : $code, $ex);
     }
   }
 
