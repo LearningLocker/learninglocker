@@ -13,21 +13,31 @@ class ValidationException extends \Exception {
     $errors = array_map(function ($error) {
       return (string) $error;
     }, $errors);
-    $this->message = json_encode($errors);
+    parent::_construct(json_encode($errors), 400);
   }
 
   public function getErrors() {
     return $this->errors;
   }
 }
-class FailedPrecondition extends \Exception {}
-class Conflict extends \Exception {}
+
+class FailedPrecondition extends \Exception {
+  public function __construct($message) {
+    parent::__construct($message, 412);
+  }
+}
+
+class Conflict extends \Exception {
+  public function __construct($message) {
+    parent::__construct($message, 409);
+  }
+}
 
 class NotFound extends \Exception {
   public function __construct($id, $class) {
     parent::__construct(trans('api.errors.not_found', [
       'id' => $id,
       'class' => $class
-    ]));
+    ]), 404);
   }
 }

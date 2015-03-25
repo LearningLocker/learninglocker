@@ -14,15 +14,15 @@
 Route::get('/', function(){
   if( Auth::check() ){
     $site = \Site::first();
-    
+
     $admin_dashboard = new \app\locker\data\dashboards\AdminDashboard();
-    
+
     //if super admin, show site dashboard, otherwise show list of LRSs can access
     if( Auth::user()->role == 'super' ){
       $list = Lrs::all();
       return View::make('partials.site.dashboard', array(
-        'site' => $site, 
-        'list' => $list, 
+        'site' => $site,
+        'list' => $list,
         'stats' => $admin_dashboard->getFullStats(),
         'graph_data' => $admin_dashboard->getGraphData(),
         'dash_nav' => true
@@ -522,7 +522,7 @@ App::missing(function($exception){
 App::error(function(Exception $exception) {
   Log::error($exception);
   $code = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 0;
-  $code = $code === 0 && method_exists($exception, 'getCode') ? $exception->getCode() : 0;
+  $code = $code === 0 && method_exists($exception, 'getCode') ? $exception->getCode() : $code;
   $code = $code === 0 ? 500 : $code;
 
   if (Request::segment(1) == "data" || Request::segment(1) == "api") {
