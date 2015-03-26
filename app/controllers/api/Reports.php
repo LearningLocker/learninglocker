@@ -2,7 +2,6 @@
 
 use \Locker\Repository\Query\QueryRepository as Query;
 use \Locker\Repository\Report\Repository as Report;
-use \Locker\Data\Analytics\AnalyticsInterface as Analytics;
 use \Response as IlluminateResponse;
 
 class Reports extends Resources {
@@ -13,11 +12,10 @@ class Reports extends Resources {
    * @param Query $query Injected query repository.
    * @param Analytics $analytics Injected analytics repository.
    */
-  public function __construct(Report $report, Query $query, Analytics $analytics) {
+  public function __construct(Report $report, Query $query) {
     parent::__construct();
     $this->repo = $report;
     $this->query = $query;
-    $this->analytics = $analytics;
   }
 
 
