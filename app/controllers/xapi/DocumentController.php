@@ -35,9 +35,9 @@ abstract class DocumentController extends BaseController {
    * Construct a new DocumentController.
    * @param DocumentRepository $document
    */
-  public function __construct(Document $document){
-    $this->document = $document;
+  public function __construct(Document $document) {
     parent::__construct();
+    $this->document = $document;
   }
 
   public function index() {

@@ -23,9 +23,9 @@ class StatementController extends BaseController {
    * @param StatementRepository $statement
    */
   public function __construct(Statement $statement, Query $query) {
+    parent::__construct();
     $this->statement = $statement;
     $this->query = $query;
-    parent::__construct();
   }
 
   /**

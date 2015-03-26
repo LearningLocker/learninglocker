@@ -3,25 +3,7 @@
 use \LockerRequest as LockerRequest;
 use \Response as IlluminateResponse;
 
-class Resources extends BaseController {
-
-  /**
-   * Constructs a new resource controller.
-   */
-  public function __construct() {
-    $this->beforeFilter('@setParameters');
-    $this->beforeFilter('@getLrs');
-  }
-
-  /**
-   * Gets the options from the request.
-   * @return [String => Mixed]
-   */
-  protected function getOptions() {
-    return [
-      'lrs_id' => $this->lrs->_id
-    ];
-  }
+abstract class Resources extends Base {
 
   /**
    * Gets the data from the request.

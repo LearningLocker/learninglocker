@@ -14,10 +14,10 @@ class Reports extends Resources {
    * @param Analytics $analytics Injected analytics repository.
    */
   public function __construct(Report $report, Query $query, Analytics $analytics) {
+    parent::__construct();
     $this->repo = $report;
     $this->query = $query;
     $this->analytics = $analytics;
-    parent::__construct();
   }
 
 

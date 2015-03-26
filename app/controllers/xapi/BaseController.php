@@ -1,7 +1,7 @@
 <?php namespace Controllers\xAPI;
 
 use \Illuminate\Routing\Controller;
-use \Controllers\API\BaseController as APIBaseController;
+use \Controllers\API\Base as APIBaseController;
 use \app\locker\statements\xAPIValidation as XApiValidator;
 use \Locker\Helpers\Exceptions as Exceptions;
 
@@ -20,8 +20,17 @@ class BaseController extends APIBaseController {
    * Constructs a new xAPI controller.
    */
   public function __construct() {
+    parent::__construct();
     $this->setMethod();
-    $this->getLrs();
+  }
+
+  /**
+   * Get all of the input and files for the request and store them in params.
+   *
+   */
+  public function setParameters(){
+    $this->params = \LockerRequest::all();
+    $this->params['content'] = \LockerRequest::getContent();
   }
 
   /**
@@ -54,11 +63,7 @@ class BaseController extends APIBaseController {
     $version = \LockerRequest::header('X-Experience-API-Version');
 
     if (!isset($version) || substr($version, 0, 4) !== '1.0.') {
-      return $this->returnSuccessError(
-        false,
-        'This is not an accepted version of xAPI.',
-        '400'
-      );
+      throw new Exceptions\Exception('This is not an accepted version of xAPI.');
     }
   }
 
@@ -66,7 +71,7 @@ class BaseController extends APIBaseController {
    * Sets the method (to support CORS).
    */
   protected function setMethod() {
-    parent::setParameters();
+    $this->setParameters();
     $this->method = \LockerRequest::getParam(
       'method',
       \Request::server('REQUEST_METHOD')
