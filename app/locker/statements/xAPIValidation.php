@@ -863,11 +863,12 @@ class xAPIValidation {
 
     $valid = true;
 
-    if( empty($data) ){
+    if( empty($data) || !is_array($data) ){
       return false;
     }
 
     //first check to see if the data contains invalid keys
+
     $check_keys = array_diff_key($data, $requirements);
 
     //if there are foriegn keys, set required error message

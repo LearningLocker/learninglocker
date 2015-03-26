@@ -1,7 +1,8 @@
 <?php namespace Controllers\xAPI;
 
 use \Locker\Repository\Document\DocumentRepository as Document;
-use Carbon\Carbon;
+use \Carbon\Carbon;
+use \Locker\Helpers\Exceptions as Exceptions;
 
 abstract class DocumentController extends BaseController {
 
@@ -100,7 +101,7 @@ abstract class DocumentController extends BaseController {
         'ETag' => '"'.$document->sha.'"'
       ]);
     } else {
-      throw new \Exception('Could not store Document.');
+      throw new Exceptions\Exception('Could not store Document.');
     }
   }
 
@@ -124,7 +125,7 @@ abstract class DocumentController extends BaseController {
     if ($result = $this->checkVersion()) return $result;
 
     if (!\LockerRequest::hasParam($this->identifier)) {
-      return BaseController::errorResponse('Multiple document DELETE not permitted');
+      throw new Exceptions\Exception('Multiple document DELETE not permitted');
     }
     return $this->completeDelete();
   }
@@ -145,9 +146,9 @@ abstract class DocumentController extends BaseController {
     );
 
     if ($success) {
-      return \Response::json(['ok'], 204);
+      return \Response::json(null, 204);
     } else {
-      return BaseController::errorResponse();
+      throw new Exceptions\Exception('Could not delete.');
     }
   }
 
@@ -220,7 +221,7 @@ abstract class DocumentController extends BaseController {
     $document = $this->document->find($this->lrs->_id, $this->document_type, $data);
 
     if (!$document) {
-      return BaseController::errorResponse(null, 404);
+      throw new Exceptions\NotFound($data[$this->identifier], $this->document_type);
     } else {
       $headers = [
         'Updated' => $document->updated_at->toISO8601String(),
@@ -264,7 +265,7 @@ abstract class DocumentController extends BaseController {
     // Checks required parameters.
     foreach ($required as $name => $expectedType) {
       if (!isset($data[$name])) {
-        throw new \Exception('Required parameter is missing - ' . $name);
+        throw new Exceptions\Exception('Required parameter is missing - ' . $name);
       } else if ($expectedType !== null) {
         $return_data[$name] = $this->requiredValue($name, $data[$name], $expectedType);
       } else {

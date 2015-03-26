@@ -4,7 +4,6 @@ use \Locker\Repository\Query\QueryRepository as Query;
 use \Locker\Repository\Report\Repository as Report;
 use \Locker\Data\Analytics\AnalyticsInterface as Analytics;
 use \Response as IlluminateResponse;
-use \Helpers\Exceptions\NotFound as NotFoundException;
 
 class Reports extends Resources {
 

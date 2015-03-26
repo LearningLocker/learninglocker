@@ -4,7 +4,6 @@ use \Locker\Data\Exporter\Exporter as Exporter;
 use \Locker\Repository\Report\Repository as Report;
 use \Locker\Repository\Export\Repository as Export;
 use \Response as IlluminateResponse;
-use \Helpers\Exceptions\NotFound as NotFoundException;
 
 class Exports extends Resources {
   const CSV_DELIMITER = ',';

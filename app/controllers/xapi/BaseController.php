@@ -1,10 +1,9 @@
 <?php namespace Controllers\xAPI;
 
-use Illuminate\Routing\Controller;
-use Controllers\API\BaseController as APIBaseController;
-use \Locker\Helpers\Exceptions\FailedPrecondition as FailedPrecondition;
-use \Locker\Helpers\Exceptions\Conflict as Conflict;
-use \Locker\Helpers\Exceptions\ValidationException as ValidationException;
+use \Illuminate\Routing\Controller;
+use \Controllers\API\BaseController as APIBaseController;
+use \app\locker\statements\xAPIValidation as XApiValidator;
+use \Locker\Helpers\Exceptions as Exceptions;
 
 class BaseController extends APIBaseController {
 
@@ -38,14 +37,9 @@ class BaseController extends APIBaseController {
         case 'POST': return $this->store();
         case 'DELETE': return $this->destroy();
       }
-    } catch (ValidationException $e) {
-      return self::errorResponse($e, 400);
-    } catch (Conflict $e) {
-      return self::errorResponse($e, 409);
-    } catch (FailedPrecondition $e) {
-      return self::errorResponse($e, 412);
-    } catch (\Exception $e) {
-      return self::errorResponse($e, 400);
+    } catch (\Exception $ex) {
+      $code = method_exists($ex, 'getStatusCode') ? $ex->getStatusCode() : 400;
+      throw new Exceptions\Exception($ex->getMessage(), $code, $ex);
     }
   }
 
@@ -79,29 +73,6 @@ class BaseController extends APIBaseController {
     );
   }
 
-  /**
-   * Constructs a error response with a $message and optional $statusCode.
-   * @param string $message
-   * @param integer $statusCode
-   */
-  public static function errorResponse($e = '', $statusCode = 400) {
-    $json = [
-      'error' => true, // @deprecated
-      'success' => false
-    ];
-
-    if ($e instanceof ValidationException) {
-      $json['message'] = $e->getErrors();
-    } else if ($e instanceof \Exception || $e instanceof \Locker\XApi\Errors\Error) {
-      $json['message'] = $e->getMessage();
-      $json['trace'] = $e->getTraceAsString();
-    } else {
-      $json['message'] = $e;
-    }
-
-    return \Response::json($json, $statusCode);
-  }
-
   protected function optionalValue($name, $value, $type) {
     $decodedValue = $this->decodeValue($value);
     if (isset($decodedValue)) $this->validateValue($name, $decodedValue, $type);
@@ -113,7 +84,7 @@ class BaseController extends APIBaseController {
     if (isset($decodedValue)) {
       $this->validateValue($name, $decodedValue, $type);
     } else {
-      throw new \Exception('Required parameter is missing - ' . $name);
+      throw new Exceptions\Exception('Required parameter is missing - ' . $name);
     }
     return $decodedValue;
   }
@@ -131,10 +102,10 @@ class BaseController extends APIBaseController {
   }
 
   protected function validateValue($name, $value, $type) {
-    $validator = new \app\locker\statements\xAPIValidation();
+    $validator = new XApiValidator();
     $validator->checkTypes($name, $value, $type, 'params');
     if ($validator->getStatus() !== 'passed') {
-      throw new \Exception(implode(',', $validator->getErrors()));
+      throw new Exceptions\Exception(implode(',', $validator->getErrors()));
     }
   }
 }

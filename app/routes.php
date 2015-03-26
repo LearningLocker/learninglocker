@@ -14,15 +14,15 @@
 Route::get('/', function(){
   if( Auth::check() ){
     $site = \Site::first();
-    
+
     $admin_dashboard = new \app\locker\data\dashboards\AdminDashboard();
-    
+
     //if super admin, show site dashboard, otherwise show list of LRSs can access
     if( Auth::user()->role == 'super' ){
       $list = Lrs::all();
       return View::make('partials.site.dashboard', array(
-        'site' => $site, 
-        'list' => $list, 
+        'site' => $site,
+        'list' => $list,
         'stats' => $admin_dashboard->getFullStats(),
         'graph_data' => $admin_dashboard->getGraphData(),
         'dash_nav' => true
@@ -521,26 +521,16 @@ App::missing(function($exception){
 
 App::error(function(Exception $exception) {
   Log::error($exception);
+  $code = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 500;
 
-  if (method_exists($exception, 'getStatusCode')) {
-    $code = $exception->getStatusCode();
-  } else {
-    $code = 500;
-  }
-
-  if( Request::segment(1) == "data" || Request::segment(1) == "api" ){
-    $codes = [
-      'Locker\Helpers\Exceptions\NotFound' => 404
-    ];
-
-    $error = [
+  if (Request::segment(1) == "data" || Request::segment(1) == "api") {
+    return Response::json([
       'error' => true,
-      'message' => $exception->getMessage(),
-      'code' => isset($codes[get_class($exception)]) ? $codes[get_class($exception)] : 500,
+      'success' => false,
+      'message' => method_exists($exception, 'getErrors') ? $exception->getErrors() : $exception->getMessage(),
+      'code' => $code,
       'trace' => Config::get('app.debug') ? $exception->getTrace() : trans('api.info.trace')
-    ];
-
-    return Response::json( $error, $code);
+    ], $code);
   } else {
     echo "Status: ".$code." Error: ".$exception->getMessage();
   }
