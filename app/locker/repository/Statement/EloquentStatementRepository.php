@@ -6,8 +6,7 @@ use \Locker\Repository\Activity\ActivityRepository as Activity;
 use \Locker\Repository\Query\QueryRepository as Query;
 use \Locker\Repository\Document\FileTypes;
 use \Illuminate\Database\Eloquent\Builder as Builder;
-use \Locker\Helpers\Exceptions\Conflict as Conflict;
-use \Locker\Helpers\Exceptions\ValidationException as ValidationException;
+use \Locker\Helpers\Exceptions as Exceptions;
 use \Locker\Helpers\Helpers as Helpers;
 
 class EloquentStatementRepository implements StatementRepository {
@@ -385,7 +384,7 @@ class EloquentStatementRepository implements StatementRepository {
       }, $statement->validate());
 
       if (!empty($errors)) {
-        throw new ValidationException($errors);
+        throw new Exceptions\Validation($errors);
       } else {
         if ($this->isVoiding($statement->getValue())) {
           $void_statements[] = $statement->getPropValue('object.id');
@@ -497,7 +496,7 @@ class EloquentStatementRepository implements StatementRepository {
     if ($new_statement !== $old_statement) {
       $new_statement = $new_statement_obj->toJson();
       $old_statement = $old_statement_obj->toJson();
-      throw new Conflict(
+      throw new Exceptions\Conflict(
         "Conflicts\r\n`$new_statement`\r\n`$old_statement`."
       );
     };

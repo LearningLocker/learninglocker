@@ -1,6 +1,17 @@
 <?php namespace Locker\Helpers\Exceptions;
 
-class ValidationException extends \Exception {
+class Exception extends \Exception {
+  public function __construct($message = '', $status_code = 400, $ex = null) {
+    $this->status_code = $status_code;
+    parent::__construct($message, 0, $ex);
+  }
+
+  public function getStatusCode() {
+    return $this->status_code;
+  }
+}
+
+class Validation extends Exception {
   protected $errors = [];
 
   /**
@@ -21,19 +32,19 @@ class ValidationException extends \Exception {
   }
 }
 
-class FailedPrecondition extends \Exception {
+class FailedPrecondition extends Exception {
   public function __construct($message) {
     parent::__construct($message, 412);
   }
 }
 
-class Conflict extends \Exception {
+class Conflict extends Exception {
   public function __construct($message) {
     parent::__construct($message, 409);
   }
 }
 
-class NotFound extends \Exception {
+class NotFound extends Exception {
   public function __construct($id, $class) {
     parent::__construct(trans('api.errors.not_found', [
       'id' => $id,

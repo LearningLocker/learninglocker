@@ -59,7 +59,8 @@ class StatementPostTest extends TestCase
     try {
       $response = $this->_makeRequest($param, "POST", $auth);
     } catch (\Exception $ex) {
-      $this->assertEquals(409, $ex->getCode());
+      $this->assertEquals(true, method_exists($ex, 'getStatusCode'));
+      $this->assertEquals(409, $ex->getStatusCode());
     }
 
     // Make sure response data for the get request

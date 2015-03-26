@@ -62,7 +62,8 @@ class StatementPutTest extends TestCase
     try {
       $response = $this->_makeRequest($param, $auth);
     } catch (\Exception $ex) {
-      $this->assertEquals(409, $ex->getCode());
+      $this->assertEquals(true, method_exists($ex, 'getStatusCode'));
+      $this->assertEquals(409, $ex->getStatusCode());
     }
   }
 

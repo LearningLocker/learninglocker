@@ -1,6 +1,8 @@
 <?php
 
-use Locker\Repository\Lrs\EloquentLrsRepository as LrsRepository;
+use \Locker\Repository\Lrs\EloquentLrsRepository as LrsRepository;
+use \app\locker\statements\xAPIValidation as XApiValidator;
+use \Locker\Helpers\Exceptions as Exceptions;
 
 /*
 |--------------------------------------------------------------------------
@@ -70,14 +72,14 @@ Route::filter('auth.statement', function(){
   if( $method !== "OPTIONS" ){
 
     // Validates authorization header.
-    $auth_validator = new app\locker\statements\xAPIValidation();
+    $auth_validator = new XApiValidator();
     $authorization = LockerRequest::header('Authorization');
     if ($authorization !== null) {
       $authorization = gettype($authorization) === 'string' ? substr($authorization, 6) : false;
       $auth_validator->checkTypes('auth', $authorization, 'base64', 'headers');
 
       if ($auth_validator->getStatus() === 'failed') {
-        throw new \Locker\Helpers\Exceptions\ValidationException($auth_validator->getErrors());
+        throw new Exceptions\Validation($auth_validator->getErrors());
       }
     }
 
@@ -99,13 +101,13 @@ Route::filter('auth.statement', function(){
   			$lrs = \Lrs::find(  $client->lrs_id );
   		}
   		else {
-        throw new \Exception('Unauthorized request.', 401);
+        throw new Exceptions\Exception('Unauthorized request.', 401);
   		}
   	}
 
     //attempt login once
     if ( ! Auth::onceUsingId($lrs->owner['_id']) ) {
-      throw new \Exception('Unauthorized request.', 401);
+      throw new Exceptions\Exception('Unauthorized request.', 401);
     }
 
   }

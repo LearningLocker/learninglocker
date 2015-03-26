@@ -1,10 +1,9 @@
 <?php namespace Controllers\xAPI;
 
-use Illuminate\Routing\Controller;
-use Controllers\API\BaseController as APIBaseController;
-use \Locker\Helpers\Exceptions\FailedPrecondition as FailedPrecondition;
-use \Locker\Helpers\Exceptions\Conflict as Conflict;
-use \Locker\Helpers\Exceptions\ValidationException as ValidationException;
+use \Illuminate\Routing\Controller;
+use \Controllers\API\BaseController as APIBaseController;
+use \app\locker\statements\xAPIValidation as XApiValidator;
+use \Locker\Helpers\Exceptions as Exceptions;
 
 class BaseController extends APIBaseController {
 
@@ -39,8 +38,8 @@ class BaseController extends APIBaseController {
         case 'DELETE': return $this->destroy();
       }
     } catch (\Exception $ex) {
-      $code = $ex->getCode();
-      throw new \Exception($ex->getMessage(), $code === 500 || $code === 0 ? 400 : $code, $ex);
+      $code = method_exists($ex, 'getStatusCode') ? $ex->getStatusCode() : 400;
+      throw new Exceptions\Exception($ex->getMessage(), $code, $ex);
     }
   }
 
@@ -85,7 +84,7 @@ class BaseController extends APIBaseController {
     if (isset($decodedValue)) {
       $this->validateValue($name, $decodedValue, $type);
     } else {
-      throw new \Exception('Required parameter is missing - ' . $name);
+      throw new Exceptions\Exception('Required parameter is missing - ' . $name);
     }
     return $decodedValue;
   }
@@ -103,10 +102,10 @@ class BaseController extends APIBaseController {
   }
 
   protected function validateValue($name, $value, $type) {
-    $validator = new \app\locker\statements\xAPIValidation();
+    $validator = new XApiValidator();
     $validator->checkTypes($name, $value, $type, 'params');
     if ($validator->getStatus() !== 'passed') {
-      throw new \Exception(implode(',', $validator->getErrors()), 400);
+      throw new Exceptions\Exception(implode(',', $validator->getErrors()));
     }
   }
 }

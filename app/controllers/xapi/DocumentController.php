@@ -1,7 +1,8 @@
 <?php namespace Controllers\xAPI;
 
 use \Locker\Repository\Document\DocumentRepository as Document;
-use Carbon\Carbon;
+use \Carbon\Carbon;
+use \Locker\Helpers\Exceptions as Exceptions;
 
 abstract class DocumentController extends BaseController {
 
@@ -220,7 +221,7 @@ abstract class DocumentController extends BaseController {
     $document = $this->document->find($this->lrs->_id, $this->document_type, $data);
 
     if (!$document) {
-      throw new \Locker\Helpers\Exceptions\NotFound($data[$this->identifier], $this->document_type);
+      throw new Exceptions\NotFound($data[$this->identifier], $this->document_type);
     } else {
       $headers = [
         'Updated' => $document->updated_at->toISO8601String(),

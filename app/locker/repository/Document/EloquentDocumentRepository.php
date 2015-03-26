@@ -1,9 +1,8 @@
 <?php namespace Locker\Repository\Document;
 
-use DocumentAPI;
-use Carbon\Carbon;
-use \Locker\Helpers\Exceptions\FailedPrecondition as FailedPrecondition;
-use \Locker\Helpers\Exceptions\Conflict as Conflict;
+use \DocumentAPI;
+use \Carbon\Carbon;
+use \Locker\Helpers\Exceptions as Exceptions;
 
 class EloquentDocumentRepository implements DocumentRepository {
 
@@ -324,11 +323,11 @@ class EloquentDocumentRepository implements DocumentRepository {
     $ifMatch = isset($ifMatch) ? strtoupper($ifMatch) : null;
 
     if (isset($ifMatch) && $ifMatch !== $sha) {
-      throw new FailedPrecondition('Precondition (If-Match) failed.'); // 412.
+      throw new Exceptions\FailedPrecondition('Precondition (If-Match) failed.'); // 412.
     } else if (isset($ifNoneMatch) && isset($sha) && $ifNoneMatch === '*') {
-      throw new FailedPrecondition('Precondition (If-None-Match) failed.'); // 412.
+      throw new Exceptions\FailedPrecondition('Precondition (If-None-Match) failed.'); // 412.
     } else if ($sha !== null && !isset($ifNoneMatch) && !isset($ifMatch)) {
-      throw new Conflict('Check the current state of the resource then set the "If-Match" header with the current ETag to resolve the conflict.'); // 409.
+      throw new Exceptions\Conflict('Check the current state of the resource then set the "If-Match" header with the current ETag to resolve the conflict.'); // 409.
     } else {
       return true;
     }

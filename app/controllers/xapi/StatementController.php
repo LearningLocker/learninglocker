@@ -3,6 +3,7 @@
 use \Locker\Repository\Statement\StatementRepository as Statement;
 use \Locker\Repository\Query\QueryRepository as Query;
 use \Locker\Helpers\Attachments as Attachments;
+use \Locker\Helpers\Exceptions as Exceptions;
 
 class StatementController extends BaseController {
 
@@ -245,7 +246,7 @@ class StatementController extends BaseController {
       );
       return \Response::json($dotted_statement, 200);
     } else {
-      throw new \Locker\Helpers\Exceptions\NotFound($id, 'Statement');
+      throw new Exceptions\NotFound($id, 'Statement');
     }
   }
 
