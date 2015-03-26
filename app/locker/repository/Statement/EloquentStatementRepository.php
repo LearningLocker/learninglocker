@@ -79,10 +79,10 @@ class EloquentStatementRepository implements StatementRepository {
     ], $options);
 
     // Checks params.
-    if ($options['offset'] < 0) throw new \Exception('`offset` must be a positive interger.');
-    if ($options['limit'] < 0) throw new \Exception('`limit` must be a positive interger.');
+    if ($options['offset'] < 0) throw new Exceptions\Exception('`offset` must be a positive interger.');
+    if ($options['limit'] < 0) throw new Exceptions\Exception('`limit` must be a positive interger.');
     if (!in_array($options['format'], ['ids', 'exact', 'canonical'])) {
-      throw new \Exception('`format` must be `ids`, `exact` or `canonical`.');
+      throw new Exceptions\Exception('`format` must be `ids`, `exact` or `canonical`.');
     }
 
     // Filters by date.
@@ -113,7 +113,7 @@ class EloquentStatementRepository implements StatementRepository {
     // Filters by agent.
     $agent = $filters['agent'];
     $identifier = $this->getIdentifier($agent);
-    if (isset($agent) && !is_array($agent)) throw new \Exception('Invalid agent');
+    if (isset($agent) && !is_array($agent)) throw new Exceptions\Exception('Invalid agent');
     $agent = isset($agent) && isset($agent[$identifier]) ? $agent[$identifier] : null;
 
     // Fixes https://github.com/LearningLocker/learninglocker/issues/519.
@@ -412,7 +412,7 @@ class EloquentStatementRepository implements StatementRepository {
       ->where('statement.verb.id', '<>', "http://adlnet.gov/expapi/verbs/voided")
       ->count();
     if ($reference_count != $count) {
-      throw new \Exception('Voiding invalid or nonexistant statement');
+      throw new Exceptions\Exception('Voiding invalid or nonexistant statement');
     }
   }
 
@@ -671,7 +671,7 @@ class EloquentStatementRepository implements StatementRepository {
         } else {
           $referrer->refs = [$statement['statement']];
         }
-        if (!$referrer->save()) throw new \Exception('Failed to save referrer.');
+        if (!$referrer->save()) throw new Exceptions\Exception('Failed to save referrer.');
       }
     }
     return $statements;
@@ -704,10 +704,10 @@ class EloquentStatementRepository implements StatementRepository {
     ])->first();
     $ref_statement = json_decode(json_encode($reference->statement));
     if ($this->isVoiding($ref_statement)) {
-       throw new \Exception('Cannot void a voiding statement');
+       throw new Exceptions\Exception('Cannot void a voiding statement');
     }
     $reference->voided = true;
-    if (!$reference->save()) throw new \Exception('Failed to void statement.');
+    if (!$reference->save()) throw new Exceptions\Exception('Failed to void statement.');
     return $statement;
   }
 

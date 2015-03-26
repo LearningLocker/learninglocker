@@ -101,7 +101,7 @@ abstract class DocumentController extends BaseController {
         'ETag' => '"'.$document->sha.'"'
       ]);
     } else {
-      throw new \Exception('Could not store Document.');
+      throw new Exceptions\Exception('Could not store Document.');
     }
   }
 
@@ -125,7 +125,7 @@ abstract class DocumentController extends BaseController {
     if ($result = $this->checkVersion()) return $result;
 
     if (!\LockerRequest::hasParam($this->identifier)) {
-      throw new \Exception('Multiple document DELETE not permitted', 400);
+      throw new Exceptions\Exception('Multiple document DELETE not permitted');
     }
     return $this->completeDelete();
   }
@@ -148,7 +148,7 @@ abstract class DocumentController extends BaseController {
     if ($success) {
       return \Response::json(null, 204);
     } else {
-      throw new \Exception('Could not delete.', 400);
+      throw new Exceptions\Exception('Could not delete.');
     }
   }
 
@@ -265,7 +265,7 @@ abstract class DocumentController extends BaseController {
     // Checks required parameters.
     foreach ($required as $name => $expectedType) {
       if (!isset($data[$name])) {
-        throw new \Exception('Required parameter is missing - ' . $name);
+        throw new Exceptions\Exception('Required parameter is missing - ' . $name);
       } else if ($expectedType !== null) {
         $return_data[$name] = $this->requiredValue($name, $data[$name], $expectedType);
       } else {

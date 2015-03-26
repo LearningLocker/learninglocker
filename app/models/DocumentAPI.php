@@ -8,6 +8,7 @@ use Jenssegers\Mongodb\Model as Eloquent;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Locker\Repository\Document\FileTypes;
 use \Locker\Helpers\Helpers as Helpers;
+use \Locker\Helpers\Exceptions as Exceptions;
 
 class DocumentAPI extends Eloquent {
   protected $collection = 'documentapi';
@@ -38,7 +39,7 @@ class DocumentAPI extends Eloquent {
   }
 
   private function ammendmentError() {
-    return new \Exception(
+    return new Exceptions\Exception(
       "Cannot amend existing {$this->contentType} document with a string"
     );
   }
@@ -49,11 +50,11 @@ class DocumentAPI extends Eloquent {
       $decoded_content = json_decode($content, true);
       //Check existing content type and incoming content type are both application/json
       if ( $this->contentType !== 'application/json' || $contentType !== 'application/json' ) {
-        throw new \Exception('Both existing content type and incoming content type must be application/json');
+        throw new Exceptions\Exception('Both existing content type and incoming content type must be application/json');
       }
       //Check existing content and incoming content are both JSON
       if ( !$this->isJSON($this->content) || !$this->isJSON($decoded_content)  ) {
-        throw new \Exception('Both existing content and incoming content must be parsable as JSON in order to use POST');
+        throw new Exceptions\Exception('Both existing content and incoming content must be parsable as JSON in order to use POST');
       }
 
       //Merge JSON
@@ -70,11 +71,11 @@ class DocumentAPI extends Eloquent {
 
   private function mergeJSONContent($content, $contentType) {
     if (!$this->isJSON($content)) {
-      throw new \Exception(
+      throw new Exceptions\Exception(
         'JSON must contain an object at the top level.'
       );
     } else if ($this->contentType !== $contentType) {
-      throw new \Exception(
+      throw new Exceptions\Exception(
         'JSON document content may not be merged with that of another type'
       );
     }
@@ -101,7 +102,7 @@ class DocumentAPI extends Eloquent {
 
       $size = file_put_contents($dir.$filename, $content);
 
-      if ($size === false) throw new \Exception('There was an issue saving the content');
+      if ($size === false) throw new Exceptions\Exception('There was an issue saving the content');
     }
 
     $this->content = $filename;

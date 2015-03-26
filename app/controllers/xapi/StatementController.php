@@ -67,12 +67,12 @@ class StatementController extends BaseController {
 
       // Returns 'formatting' error.
       if (empty($components)) {
-        throw new \Exception('There is a problem with the formatting of your submitted content.', 400);
+        throw new Exceptions\Exception('There is a problem with the formatting of your submitted content.');
       }
 
       // Returns 'no attachment' error.
       if (!isset($components['attachments'])) {
-        throw new \Exception('There were no attachments.', 400);
+        throw new Exceptions\Exception('There were no attachments.');
       }
 
       $content = $components['body'];
@@ -90,13 +90,13 @@ class StatementController extends BaseController {
   private function checkContentType() {
     $contentType = \LockerRequest::header('Content-Type');
     if ($contentType === null) {
-      throw new \Exception('Missing Content-Type.', 400);
+      throw new Exceptions\Exception('Missing Content-Type.');
     }
 
     $validator = new \app\locker\statements\xAPIValidation();
     $validator->checkTypes('Content-Type', $contentType, 'contentType', 'headers');
     if ($validator->getStatus() !== 'passed') {
-      throw new \Exception(implode(',', $validator->getErrors()), 400);
+      throw new Exceptions\Exception(implode(',', $validator->getErrors()));
     }
   }
 
@@ -109,7 +109,7 @@ class StatementController extends BaseController {
     if ($result = $this->checkVersion()) return $result;
     if ($result = $this->checkContentType()) return $result;
     if (\LockerRequest::hasParam(self::STATEMENT_ID)) {
-      throw new \Exception('Statement ID parameter is invalid.', 400);
+      throw new Exceptions\Exception('Statement ID parameter is invalid.');
     }
 
     $parts = $this->getParts();
@@ -119,7 +119,7 @@ class StatementController extends BaseController {
     $statements = json_decode($content);
 
     if ($statements === null && $content != 'null' && $content != '') {
-      throw new \Exception('Invalid JSON', 400);
+      throw new Exceptions\Exception('Invalid JSON');
     }
 
     // Ensures that $statements is an array.
@@ -152,14 +152,14 @@ class StatementController extends BaseController {
     $statement = json_decode($content);
 
     if ($statement === null && $content != 'null' && $content != '') {
-      throw new \Exception('Invalid JSON', 400);
+      throw new Exceptions\Exception('Invalid JSON');
     }
 
     $statementId = \LockerRequest::getParam(self::STATEMENT_ID);
 
     // Returns a error if identifier is not present.
     if (!$statementId) {
-      throw new \Exception('A statement ID is required to PUT.', 400);
+      throw new Exceptions\Exception('A statement ID is required to PUT.');
     }
 
     // Attempts to create the statement if `statementId` is present.
@@ -334,8 +334,8 @@ class StatementController extends BaseController {
 
     // Returns an error if both `statementId` and `voidedId` are set.
     if ($statementId && $voidedId) {
-      throw new \Exception(
-        'You can\'t request based on both`' . self::STATEMENT_ID . '` and `' . self::VOIDED_ID . '`', 400
+      throw new Exceptions\Exception(
+        'You can\'t request based on both`' . self::STATEMENT_ID . '` and `' . self::VOIDED_ID . '`'
       );
     }
 
@@ -346,8 +346,8 @@ class StatementController extends BaseController {
       // Returns an error if a $key is not an allowed param.
       foreach ($this->params as $key => $value) {
         if (!in_array($key, $allowedParams)) {
-          throw new \Exception(
-            'When using `' . self::STATEMENT_ID . '` or `' . self::VOIDED_ID . '`, the only other parameters allowed are `attachments` and/or `format`.', 400
+          throw new Exceptions\Exception(
+            'When using `' . self::STATEMENT_ID . '` or `' . self::VOIDED_ID . '`, the only other parameters allowed are `attachments` and/or `format`.'
           );
         }
       }
