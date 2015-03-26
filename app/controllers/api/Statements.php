@@ -1,26 +1,21 @@
 <?php namespace Controllers\API;
 
-use \Locker\Data\Analytics\AnalyticsInterface as Analytics;
-use \Locker\Repository\Query\QueryRepository as Query;
+use \Locker\Data\Analytics\AnalyticsInterface as AnalyticsData;
+use \Locker\Repository\Query\QueryRepository as QueryRepository;
+use \Locker\Helpers\Exceptions as Exceptions;
 
-class StatementController extends BaseController {
-
-  // Defines properties to be set to constructor parameters.
+class Statements extends Base {
   protected $activity, $query;
-
-  // Defines properties to be set by filters.
-  protected $params, $lrs;
 
   /**
    * Constructs a new StatementController.
    * @param Document $document
    * @param Activity $activity
    */
-  public function __construct(Analytics $analytics, Query $query){
+  public function __construct(AnalyticsData $analytics, QueryRepository $query) {
+    parent::__construct();
     $this->analytics = $analytics;
     $this->query = $query;
-    $this->beforeFilter('@setParameters');
-    $this->beforeFilter('@getLrs');
   }
 
   /**
@@ -74,29 +69,23 @@ class StatementController extends BaseController {
 
   /**
    * Return raw statements based on filter
-   *
    * @param Object $options
-   * @return Json  $results
-   *
+   * @return Json $results
    **/
   public function index(){
+    $section = json_decode(LockerRequest::getParam('sections', '[]'));
 
-    //were statement sections passed?
-    if( isset( $this->params['sections'] ) ){
-      $section = json_decode( $this->params['sections'], true);
-      $section = $section;
-    }else{
-      $section = [];
+    $data = $this->analytics->analytics(
+      $this->lrs->_id,
+      LockerRequest::getParams(),
+      'statements',
+      $section
+    );
+
+    if ($data['success'] == false) {
+      throw new Exceptions\Exception(trans('apps.no_data'));
     }
 
-    $data = $this->analytics->analytics( $this->lrs->_id, $this->params, 'statements', $section );
-
-    if( $data['success'] == false ){
-      return $this->returnSuccessError( false, \Lang::get('apps.no_data'), 400 );
-    }
-
-    return $this->returnJson( $data['data'] );
-
+    return $this->returnJson($data['data']);
   }
-
 }

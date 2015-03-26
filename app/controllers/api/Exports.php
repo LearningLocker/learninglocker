@@ -16,10 +16,10 @@ class Exports extends Resources {
    * @param Export $export Injected export repository.
    */
   public function __construct(Exporter $exporter, Report $report, Export $export) {
+    parent::__construct();
     $this->exporter = $exporter;
     $this->report = $report;
     $this->repo = $export;
-    parent::__construct();
   }
 
   /**

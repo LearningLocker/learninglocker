@@ -400,13 +400,10 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
     return Response::json( array('version' => Config::get('api.using_version')));
   });
   Route::get('query/analytics', array(
-    'uses' => 'Controllers\API\AnalyticsController@index'
+    'uses' => 'Controllers\API\Analytics@index'
   ));
   Route::get('query/statements', array(
     'uses' => 'Controllers\API\StatementController@index'
-  ));
-  Route::get('query/{section}', array(
-    'uses' => 'Controllers\API\AnalyticsController@getSection'
   ));
 
   Route::resource('exports', 'Controllers\API\Exports');
@@ -494,7 +491,7 @@ Route::get('secure-route', array('before' => 'oauth:basic', function(){
 //Add OPTIONS routes for all defined xAPI and api routes
 foreach( Route::getRoutes()->getIterator() as $route  ){
   if( $route->getPrefix() === 'data/xAPI' || $route->getPrefix() === 'api/v1' ){
-    Route::options($route->getUri(),  'Controllers\API\BaseController@CORSOptions');
+    Route::options($route->getUri(), 'Controllers\API\Base@CORSOptions');
   }
 }
 
