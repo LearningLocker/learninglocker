@@ -222,11 +222,30 @@ class StatementController extends BaseController {
     }
 
     // Returns the StatementResult object.
-    return $this->makeStatementObject($statements, [
+    $statement_result = json_encode($this->makeStatementObject($statements, [
       'total' => $total,
       'offset' => $options['offset'],
       'limit' => $options['limit']
-    ]);
+    ]));
+
+    if ($options['attachments'] === true) {
+      $boundary = 'abcABC0123\'()+_,-./:=?';
+      $content_type = 'multipart/mixed; boundary='.$boundary;
+      $statement_result = "Content-Type:application/json\r\n\r\n".$statement_result;
+      $body = "--$boundary\r\n".implode(
+        "\r\n--$boundary\r\n",
+        array_merge([$statement_result], $this->statement->getAttachments($statements, $this->lrs->_id))
+      )."\r\n--$boundary--";
+    } else {
+      $content_type = 'application/json;';
+      $body = $statement_result;
+    }
+
+    // Creates the response.
+    return \Response::make($body, BaseController::OK, [
+      'Content-Type' => $content_type,
+      'X-Experience-API-Consistent-Through' => $this->statement->getCurrentDate()
+    ]);;
   }
 
   /**
@@ -274,19 +293,12 @@ class StatementController extends BaseController {
     }
 
     // Creates the statement result.
-    $statementResult = [
+    $statement_result = [
       'more' => $this->getMoreLink($options['total'], $options['limit'], $options['offset']),
       'statements' => $statements
     ];
 
-    // Creates the response.
-    $response = \Response::make($statementResult, BaseController::OK);
-    $response->headers->set(
-      'X-Experience-API-Consistent-Through',
-      $this->statement->getCurrentDate()
-    );
-
-    return $response;
+    return $statement_result;
   }
 
   /**
