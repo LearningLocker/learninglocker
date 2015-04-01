@@ -42,12 +42,12 @@ define([
     var pre = '';
     if (typeof actor.mbox !== "undefined") {
       id = actor.mbox;
-    } else if (typeof actor.account.name !== "undefined") {
+    } else if (typeof actor.account !== "undefined" && typof actor.account.name !== "undefined") {
       id = actor.account.name;
       pre = 'account:';
-    } else if (typeof actor.openId !== "undefined") {
-      id = actor.openId;
-      pre = 'openId:';
+    } else if (typeof actor.openid !== "undefined") {
+      id = actor.openid;
+      pre = 'openid:';
     } else if (typeof actor.mbox_sha1sum !== "undefined") {
       id = actor.mbox_sha1sum;
       pre = 'mbox_sha1sum:';

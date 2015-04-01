@@ -57,7 +57,7 @@ class Report extends Eloquent {
     $query = isset($reportArr['query']) ? (array) $reportArr['query'] : null;
 
     if (is_array($query) && count($query) > 0 && !isset($query[0])) {
-      $actorQuery = array('statement.actor.account.name', 'statement.actor.mbox', 'statement.actor.openId', 'statement.actor.mbox_sha1sum');
+      $actorQuery = [ 'statement.actor.account.name', 'statement.actor.mbox', 'statement.actor.openid', 'statement.actor.mbox_sha1sum' ];
       $actorArray = [];
       foreach (array_keys($query) as $key) {
         if (in_array($key, $actorQuery)) {

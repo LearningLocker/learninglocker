@@ -44,26 +44,26 @@ define([
     _mapQueryToResponse: function (query, response) {
       Object.keys(this._queryResponseMap).forEach(function (queryKey) {
         var responseKey = this._queryResponseMap[queryKey];
-        if (responseKey == 'actors') {
-            var actorValues = ['actor.mbox', 'actor.account.name', 'actor.openId', 'actor.mbox_sha1sum'];
+        if (responseKey === 'actors') {
+            var actorValues = ['actor.mbox', 'actor.account.name', 'actor.openid', 'actor.mbox_sha1sum'];
             var consolidatedActors = [];
-            for (var i = 0; i < actorValues.length; i++) {
-                queryKey = 'statement.' + actorValues[i];
+            actorValues.forEach(function(value,index, originalArray) {
+                queryKey = 'statement.' + value;
                 if (typeof query[queryKey] !== "undefined") {
                     var tempArray = [];
                     var label = '';
-                    switch (actorValues[i]) {
+                    switch (value) {
                         case 'actor.mbox':          label = ''; break;
                         case 'actor.account.name':  label = 'account:'; break;
-                        case 'actor.openId':        label = 'openId:'; break;
+                        case 'actor.openid':        label = 'openid:'; break;
                         case 'actor.mbox_sha1sum':  label = 'mbox_sha1sum:'; break;
                     }
-                    for(var j = 0; j < query[queryKey].length; j++) {
-                        tempArray.push(label+query[queryKey][j]);
-                    }
+                    query[queryKey].forEach(function(val, ind, orgArr) {
+                        tempArray.push(label + query[queryKey][ind]);
+                    });
                     consolidatedActors = consolidatedActors.concat(tempArray);
                 }
-            }
+            });
             response[responseKey] = consolidatedActors;
         } else {
             queryKey = 'statement.' + queryKey;
@@ -77,7 +77,7 @@ define([
         var responseKey = this._queryResponseMap[queryKey];
         if (responseKey == 'actors') {
             //consolidate actor query values by type of IFI
-            var combined = {'account':[], 'openId':[], 'mbox_sha1sum':[], 'mailto':[]};
+            var combined = {'account':[], 'openid':[], 'mbox_sha1sum':[], 'mailto':[]};
             this.get(responseKey).map(function (model) {
                 var value = model.get('value');
                 var intermediateValue = '';
@@ -91,33 +91,45 @@ define([
                 var whichId = intermediateValue.split(':').shift();
                 
                 switch (whichId) {
-                    case 'account':         combined.account.push(intermediateValue.slice(8,intermediateValue.length)); break;
-                    case 'openId':          combined.account.push(intermediateValue.slice(7,intermediateValue.length)); break;
-                    case 'mbox_sha1sum':    combined.account.push(intermediateValue.slice(13,intermediateValue.length)); break;
-                    case 'mailto':          combined.mailto.push(intermediateValue); break
+                    case 'account':
+                        combined.account.push(
+                            intermediateValue.slice(8,intermediateValue.length)
+                        );
+                        break;
+                    case 'openid':
+                        combined.openid.push(
+                            intermediateValue.slice(7,intermediateValue.length)
+                        );
+                        break;
+                    case 'mbox_sha1sum':
+                        combined.mbox_sha1sum.push(
+                            intermediateValue.slice(13,intermediateValue.length)
+                        );
+                        break;
+                    case 'mailto':
+                        combined.mailto.push(intermediateValue); 
+                        break
                 }
             });
 
             //put the consolidated actor IFIs into query, to be combined in backend model
-            for (var prop in combined) {
-                if (combined[prop].length > 0) {
-                    //if it has something to put in
-                    switch (prop) {
-                        case 'account':         query['statement.actor.account.name'] = combined[prop]; break;
-                        case 'mailto':          query['statement.actor.mbox'] = combined[prop]; break;
-                        case 'openId':          query['statement.actor.openId'] = combined[prop]; break;
-                        case 'mbox_sha1sum':    query['statement.actor.mbox_sha1sum'] = combined[prop]; break;
+            Object.keys(combined).forEach(function(value, index, originalArray) {
+                if (combined[value].length > 0) {
+                    switch (value) {
+                        case 'account':         query['statement.actor.account.name'] = combined[value]; break;
+                        case 'mailto':          query['statement.actor.mbox'] = combined[value]; break;
+                        case 'openid':          query['statement.actor.openid'] = combined[value]; break;
+                        case 'mbox_sha1sum':    query['statement.actor.mbox_sha1sum'] = combined[value]; break;
                     }
                 } else {
-                    //since nothing to add, make undefined
-                    switch (prop) {
+                    switch (value) {
                         case 'account':         query['statement.actor.account.name'] = undefined; break;
                         case 'mailto':          query['statement.actor.mbox'] = undefined; break;
-                        case 'openId':          query['statement.actor.openId'] = undefined; break;
+                        case 'openid':          query['statement.actor.openid'] = undefined; break;
                         case 'mbox_sha1sum':    query['statement.actor.mbox_sha1sum'] = undefined; break;
                     }
                 }
-            }
+            });
         } else {
             var newValue = this.get(responseKey).map(function (model) {
               var value = model.get('value');
