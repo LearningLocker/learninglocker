@@ -16,5 +16,4 @@ class StatementIdIndex extends Migration {
       $table->dropIndex(['statement.id', 'lrs._id']);
     });
 	}
-
 }

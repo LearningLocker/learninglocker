@@ -95,7 +95,7 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
       if( !empty($data) ){
         foreach( $data as &$s ){
           if( isset($s['statement']) ){
-            $s['statement'] = \app\locker\helpers\Helpers::replaceHtmlEntity( $s['statement'] );
+            $s['statement'] = \Locker\Helpers\Helpers::replaceHtmlEntity( $s['statement'] );
           }
         }
       }

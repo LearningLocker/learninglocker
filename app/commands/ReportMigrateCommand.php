@@ -37,7 +37,7 @@ class ReportMigrateCommand extends Command {
         $value = array_map('urldecode', $value);
       }
 
-      $new = app\locker\helpers\Helpers::replaceFullStopInKeys($key);
+      $new = \Locker\Helpers\Helpers::replaceFullStopInKeys($key);
       $output[$new] = $value;
     }
 

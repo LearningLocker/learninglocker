@@ -1,14 +1,13 @@
 <?php namespace Locker\Repository\Statement;
 
-use DateTime;
-use Statement;
-use Locker\Repository\Activity\ActivityRepository as Activity;
-use Locker\Repository\Query\QueryRepository as Query;
-use Locker\Repository\Document\FileTypes;
-use Illuminate\Database\Eloquent\Builder as Builder;
-use app\locker\helpers\Conflict as Conflict;
-use app\locker\helpers\ValidationException as ValidationException;
-use \app\locker\helpers\Helpers as Helpers;
+use \DateTime;
+use \Statement;
+use \Locker\Repository\Activity\ActivityRepository as Activity;
+use \Locker\Repository\Query\QueryRepository as Query;
+use \Locker\Repository\Document\FileTypes;
+use \Illuminate\Database\Eloquent\Builder as Builder;
+use \Locker\Helpers\Exceptions as Exceptions;
+use \Locker\Helpers\Helpers as Helpers;
 
 class EloquentStatementRepository implements StatementRepository {
 
@@ -80,10 +79,10 @@ class EloquentStatementRepository implements StatementRepository {
     ], $options);
 
     // Checks params.
-    if ($options['offset'] < 0) throw new \Exception('`offset` must be a positive interger.');
-    if ($options['limit'] < 0) throw new \Exception('`limit` must be a positive interger.');
+    if ($options['offset'] < 0) throw new Exceptions\Exception('`offset` must be a positive interger.');
+    if ($options['limit'] < 0) throw new Exceptions\Exception('`limit` must be a positive interger.');
     if (!in_array($options['format'], ['ids', 'exact', 'canonical'])) {
-      throw new \Exception('`format` must be `ids`, `exact` or `canonical`.');
+      throw new Exceptions\Exception('`format` must be `ids`, `exact` or `canonical`.');
     }
 
     // Filters by date.
@@ -114,7 +113,7 @@ class EloquentStatementRepository implements StatementRepository {
     // Filters by agent.
     $agent = $filters['agent'];
     $identifier = $this->getIdentifier($agent);
-    if (isset($agent) && !is_array($agent)) throw new \Exception('Invalid agent');
+    if (isset($agent) && !is_array($agent)) throw new Exceptions\Exception('Invalid agent');
     $agent = isset($agent) && isset($agent[$identifier]) ? $agent[$identifier] : null;
 
     // Fixes https://github.com/LearningLocker/learninglocker/issues/519.
@@ -385,7 +384,7 @@ class EloquentStatementRepository implements StatementRepository {
       }, $statement->validate());
 
       if (!empty($errors)) {
-        throw new ValidationException($errors);
+        throw new Exceptions\Validation($errors);
       } else {
         if ($this->isVoiding($statement->getValue())) {
           $void_statements[] = $statement->getPropValue('object.id');
@@ -413,7 +412,7 @@ class EloquentStatementRepository implements StatementRepository {
       ->where('statement.verb.id', '<>', "http://adlnet.gov/expapi/verbs/voided")
       ->count();
     if ($reference_count != $count) {
-      throw new \Exception('Voiding invalid or nonexistant statement');
+      throw new Exceptions\Exception('Voiding invalid or nonexistant statement');
     }
   }
 
@@ -497,7 +496,7 @@ class EloquentStatementRepository implements StatementRepository {
     if ($new_statement !== $old_statement) {
       $new_statement = $new_statement_obj->toJson();
       $old_statement = $old_statement_obj->toJson();
-      throw new Conflict(
+      throw new Exceptions\Conflict(
         "Conflicts\r\n`$new_statement`\r\n`$old_statement`."
       );
     };
@@ -628,7 +627,7 @@ class EloquentStatementRepository implements StatementRepository {
     if (isset($refs[$id])) {
       return $refs;
     }
-    
+
     if (isset($statements[$id])) {
       $s = $statements[$id];
       $refs[$id] = $s->statement;
@@ -668,11 +667,11 @@ class EloquentStatementRepository implements StatementRepository {
         $statement_id = $referrer['statement']['object']['id'];
         $statement = $statements[$statement_id];
         if (isset($statement['refs'])) {
-          $referrer->refs = array(array_merge($statement['statement'], $statement['refs']));
+          $referrer->refs = array_merge([$statement['statement']], $statement['refs']);
         } else {
-          $referrer->refs = array($statement['statement']);
+          $referrer->refs = [$statement['statement']];
         }
-        if (!$referrer->save()) throw new \Exception('Failed to save referrer.');
+        if (!$referrer->save()) throw new Exceptions\Exception('Failed to save referrer.');
       }
     }
     return $statements;
@@ -705,10 +704,10 @@ class EloquentStatementRepository implements StatementRepository {
     ])->first();
     $ref_statement = json_decode(json_encode($reference->statement));
     if ($this->isVoiding($ref_statement)) {
-       throw new \Exception('Cannot void a voiding statement');
+       throw new Exceptions\Exception('Cannot void a voiding statement');
     }
     $reference->voided = true;
-    if (!$reference->save()) throw new \Exception('Failed to void statement.');
+    if (!$reference->save()) throw new Exceptions\Exception('Failed to void statement.');
     return $statement;
   }
 
@@ -825,7 +824,7 @@ class EloquentStatementRepository implements StatementRepository {
    * @return Statement
    */
   private function replaceFullStop(array $statement){
-    return \app\locker\helpers\Helpers::replaceFullStop($statement);
+    return \Locker\Helpers\Helpers::replaceFullStop($statement);
   }
 
   /**
@@ -852,13 +851,34 @@ class EloquentStatementRepository implements StatementRepository {
     return null;
   }
 
+  public function getAttachments($statements, $lrs) {
+    $destination_path = Helpers::getEnvVar('LOCAL_FILESTORE').'/'.$lrs.'/attachments/';
+    $attachments = [];
+
+    foreach ($statements as $statement) {
+      $statement = $statement['statement'];
+      $attachments = array_merge($attachments, array_map(function ($attachment) use ($destination_path) {
+        $ext = array_search($attachment['contentType'], FileTypes::getMap());
+        $filename = $attachment['sha2'].'.'.$ext;
+        return (
+          'Content-Type:'.$attachment['contentType']."\r\n".
+          'Content-Transfer-Encoding:binary'."\r\n".
+          'X-Experience-API-Hash:'.$attachment['sha2'].
+          "\r\n\r\n".
+          file_get_contents($destination_path.$filename)
+        );
+      }, isset($statement['attachments']) ? $statement['attachments'] : []));
+    }
+
+    return $attachments;
+  }
+
   /**
    * Store any attachments
    *
    **/
   private function storeAttachments( $attachments, $lrs ){
-
-    foreach( $attachments as $attachment ){
+    foreach ($attachments as $attachment) {
       // Determines the delimiter.
       $delim = "\n";
       if (strpos($attachment, "\r".$delim) !== false) $delim = "\r".$delim;
@@ -869,35 +889,34 @@ class EloquentStatementRepository implements StatementRepository {
 
       // Parse headers and separate so we can access
       $raw_headers = explode($delim, $raw_headers);
-      $headers     = array();
+      $headers = [];
       foreach ($raw_headers as $header) {
         list($name, $value) = explode(':', $header);
         $headers[strtolower($name)] = ltrim($value, ' ');
       }
 
       //get the correct ext if valid
-      $ext = array_search( $headers['content-type'], FileTypes::getMap() );
-      if( $ext === false ){
-        \App::abort(400, 'This file type cannot be supported');
-      }
+      $ext = array_search($headers['content-type'], FileTypes::getMap());
+      if ($ext === false)  throw new Exceptions\Exception(
+        'This file type cannot be supported'
+      );
 
-      $filename = str_random(12) . "." . $ext;
+      $destination_path = Helpers::getEnvVar('LOCAL_FILESTORE').'/'.$lrs.'/attachments/';
+      $filename = $headers['x-experience-api-hash'];
 
       //create directory if it doesn't exist
-      if (!\File::exists(Helpers::getEnvVar('LOCAL_FILESTORE').'/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/')) {
-        \File::makeDirectory(Helpers::getEnvVar('LOCAL_FILESTORE').'/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/', 0775, true);
+      if (!\File::exists($destination_path)) {
+        \File::makeDirectory($destination_path, 0775, true);
       }
 
-      $destinationPath = Helpers::getEnvVar('LOCAL_FILESTORE').'/'.$lrs.'/attachments/' . $headers['x-experience-api-hash'] . '/';
+      $filename = $destination_path.$filename.'.'.$ext;
+      $file = fopen($filename, 'wb'); //opens the file for writing with a BINARY (b) fla
+      $size = fwrite($file, $body); //write the data to the file
+      fclose($file);
 
-      $filename = $destinationPath.$filename;
-      $file = fopen( $filename, 'wb'); //opens the file for writing with a BINARY (b) fla
-      $size = fwrite( $file, $body ); //write the data to the file
-      fclose( $file );
-
-      if( $size === false ){
-        \App::abort( 400, 'There was an issue saving the attachment');
-      }
+      if($size === false) throw new Exceptions\Exception(
+        'There was an issue saving the attachment'
+      );
     }
 
   }

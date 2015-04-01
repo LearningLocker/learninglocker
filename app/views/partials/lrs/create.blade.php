@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('sidebar')
-  @if( app\locker\helpers\Access::isRole('super') )
+  @if( \Locker\Helpers\Access::isRole('super') )
     @include('partials.site.sidebars.admin')
   @else
     @include('layouts.sidebars.blank')

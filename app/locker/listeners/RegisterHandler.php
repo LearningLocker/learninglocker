@@ -57,7 +57,7 @@ class RegisterHandler {
   }
 
   private function sendEmail( $user ){
-    \app\locker\helpers\User::sendEmailValidation( $user );
+    \Locker\Helpers\User::sendEmailValidation( $user );
   }
 
 }

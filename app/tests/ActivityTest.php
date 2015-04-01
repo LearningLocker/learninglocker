@@ -7,14 +7,14 @@ class ActivityTest extends TestCase {
    */
   public function testActivityCRUD() {
     $activity = new Activity;
-    $activity->_id = \app\locker\helpers\Helpers::getRandomValue();
+    $activity->_id = \Locker\Helpers\Helpers::getRandomValue();
     $activity->definition = array(
-      'type' => \app\locker\helpers\Helpers::getRandomValue(),
+      'type' => \Locker\Helpers\Helpers::getRandomValue(),
       'name' => array(
-        'en-US' => \app\locker\helpers\Helpers::getRandomValue()
+        'en-US' => \Locker\Helpers\Helpers::getRandomValue()
       ),
       'description' => array(
-        'en-US' => \app\locker\helpers\Helpers::getRandomValue()
+        'en-US' => \Locker\Helpers\Helpers::getRandomValue()
       )
     );
     $result = $activity->save();

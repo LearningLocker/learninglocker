@@ -2,7 +2,8 @@
 
 use \Locker\Repository\Statement\StatementRepository as Statement;
 use \Locker\Repository\Query\QueryRepository as Query;
-use \app\locker\helpers\Attachments as Attachments;
+use \Locker\Helpers\Attachments as Attachments;
+use \Locker\Helpers\Exceptions as Exceptions;
 
 class StatementController extends BaseController {
 
@@ -22,9 +23,9 @@ class StatementController extends BaseController {
    * @param StatementRepository $statement
    */
   public function __construct(Statement $statement, Query $query) {
+    parent::__construct();
     $this->statement = $statement;
     $this->query = $query;
-    parent::__construct();
   }
 
   /**
@@ -66,17 +67,12 @@ class StatementController extends BaseController {
 
       // Returns 'formatting' error.
       if (empty($components)) {
-        return BaseController::errorResponse(
-          'There is a problem with the formatting of your submitted content.'
-        );
+        throw new Exceptions\Exception('There is a problem with the formatting of your submitted content.');
       }
 
       // Returns 'no attachment' error.
       if (!isset($components['attachments'])) {
-        return BaseController::errorResponse(
-          'There were no attachments.',
-          BaseController::NO_AUTH
-        );
+        throw new Exceptions\Exception('There were no attachments.');
       }
 
       $content = $components['body'];
@@ -94,13 +90,13 @@ class StatementController extends BaseController {
   private function checkContentType() {
     $contentType = \LockerRequest::header('Content-Type');
     if ($contentType === null) {
-      return BaseController::errorResponse('Missing Content-Type.', 400);
+      throw new Exceptions\Exception('Missing Content-Type.');
     }
 
     $validator = new \app\locker\statements\xAPIValidation();
     $validator->checkTypes('Content-Type', $contentType, 'contentType', 'headers');
     if ($validator->getStatus() !== 'passed') {
-      return BaseController::errorResponse(implode(',', $validator->getErrors()), 400);
+      throw new Exceptions\Exception(implode(',', $validator->getErrors()));
     }
   }
 
@@ -113,7 +109,7 @@ class StatementController extends BaseController {
     if ($result = $this->checkVersion()) return $result;
     if ($result = $this->checkContentType()) return $result;
     if (\LockerRequest::hasParam(self::STATEMENT_ID)) {
-      return BaseController::errorResponse('Statement ID parameter is invalid.', 400);
+      throw new Exceptions\Exception('Statement ID parameter is invalid.');
     }
 
     $parts = $this->getParts();
@@ -123,7 +119,7 @@ class StatementController extends BaseController {
     $statements = json_decode($content);
 
     if ($statements === null && $content != 'null' && $content != '') {
-      throw new \Exception('Invalid JSON');
+      throw new Exceptions\Exception('Invalid JSON');
     }
 
     // Ensures that $statements is an array.
@@ -156,20 +152,20 @@ class StatementController extends BaseController {
     $statement = json_decode($content);
 
     if ($statement === null && $content != 'null' && $content != '') {
-      throw new \Exception('Invalid JSON');
+      throw new Exceptions\Exception('Invalid JSON');
     }
 
     $statementId = \LockerRequest::getParam(self::STATEMENT_ID);
 
     // Returns a error if identifier is not present.
     if (!$statementId) {
-      return BaseController::errorResponse('A statement ID is required to PUT.');
+      throw new Exceptions\Exception('A statement ID is required to PUT.');
     }
 
     // Attempts to create the statement if `statementId` is present.
     $statement->id = $statementId;
     $this->statement->create([$statement], $this->lrs, $attachments);
-    return \Response::make('', BaseController::NO_CONTENT);
+    return \Response::make('', 204);
   }
 
   /**
@@ -178,40 +174,36 @@ class StatementController extends BaseController {
    * @return StatementResult
    */
   public function index() {
-    try {
-      // Gets the filters from the request.
-      $filters = [
-        'agent' => $this->validatedParam('agent', 'agent'),
-        'activity' => $this->validatedParam('irl', 'activity'),
-        'verb' => $this->validatedParam('irl', 'verb'),
-        'registration' => $this->validatedParam('uuid', 'registration'),
-        'since' => $this->validatedParam('isoTimestamp', 'since'),
-        'until' => $this->validatedParam('isoTimestamp', 'until'),
-        'active' => $this->validatedParam('boolean', 'active', true),
-        'voided' => $this->validatedParam('boolean', 'voided', false)
-      ];
+    // Gets the filters from the request.
+    $filters = [
+      'agent' => $this->validatedParam('agent', 'agent'),
+      'activity' => $this->validatedParam('irl', 'activity'),
+      'verb' => $this->validatedParam('irl', 'verb'),
+      'registration' => $this->validatedParam('uuid', 'registration'),
+      'since' => $this->validatedParam('isoTimestamp', 'since'),
+      'until' => $this->validatedParam('isoTimestamp', 'until'),
+      'active' => $this->validatedParam('boolean', 'active', true),
+      'voided' => $this->validatedParam('boolean', 'voided', false)
+    ];
 
 
-      // Gets the options/flags from the request.
-      $options = [
-        'related_activities' => $this->validatedParam('boolean', 'related_activities', false),
-        'related_agents' => $this->validatedParam('boolean', 'related_agents', false),
-        'ascending' => $this->validatedParam('boolean', 'ascending', false),
-        'format' => $this->validatedParam('string', 'format', 'exact'),
-        'offset' => $this->validatedParam('int', 'offset', 0),
-        'limit' => $this->validatedParam('int', 'limit', 100),
-        'attachments' => $this->validatedParam('boolean', 'attachments', false)
-      ];
+    // Gets the options/flags from the request.
+    $options = [
+      'related_activities' => $this->validatedParam('boolean', 'related_activities', false),
+      'related_agents' => $this->validatedParam('boolean', 'related_agents', false),
+      'ascending' => $this->validatedParam('boolean', 'ascending', false),
+      'format' => $this->validatedParam('string', 'format', 'exact'),
+      'offset' => $this->validatedParam('int', 'offset', 0),
+      'limit' => $this->validatedParam('int', 'limit', 100),
+      'attachments' => $this->validatedParam('boolean', 'attachments', false)
+    ];
 
-      // Gets the $statements from the LRS (with the $lrsId) that match the $filters with the $options.
-      $statements = $this->statement->index(
-        $this->lrs->_id,
-        $filters,
-        $options
-      );
-    } catch (\Exception $e) {
-      return BaseController::errorResponse($e->getMessage(), 400);
-    }
+    // Gets the $statements from the LRS (with the $lrsId) that match the $filters with the $options.
+    $statements = $this->statement->index(
+      $this->lrs->_id,
+      $filters,
+      $options
+    );
 
     $total = $statements->count();
 
@@ -230,11 +222,30 @@ class StatementController extends BaseController {
     }
 
     // Returns the StatementResult object.
-    return $this->makeStatementObject($statements, [
+    $statement_result = json_encode($this->makeStatementObject($statements, [
       'total' => $total,
       'offset' => $options['offset'],
       'limit' => $options['limit']
-    ]);
+    ]));
+
+    if ($options['attachments'] === true) {
+      $boundary = 'abcABC0123\'()+_,-./:=?';
+      $content_type = 'multipart/mixed; boundary='.$boundary;
+      $statement_result = "Content-Type:application/json\r\n\r\n".$statement_result;
+      $body = "--$boundary\r\n".implode(
+        "\r\n--$boundary\r\n",
+        array_merge([$statement_result], $this->statement->getAttachments($statements, $this->lrs->_id))
+      )."\r\n--$boundary--";
+    } else {
+      $content_type = 'application/json;';
+      $body = $statement_result;
+    }
+
+    // Creates the response.
+    return \Response::make($body, BaseController::OK, [
+      'Content-Type' => $content_type,
+      'X-Experience-API-Consistent-Through' => $this->statement->getCurrentDate()
+    ]);;
   }
 
   /**
@@ -249,12 +260,12 @@ class StatementController extends BaseController {
 
     $statement = $this->statement->show($this->lrs->_id, $id, $voided)->first();
     if ($statement) {
-      $dotted_statement = \app\locker\helpers\Helpers::replaceHtmlEntity(
+      $dotted_statement = \Locker\Helpers\Helpers::replaceHtmlEntity(
         $statement->statement
       );
       return \Response::json($dotted_statement, 200);
     } else {
-      return \Response::json(null, 404);
+      throw new Exceptions\NotFound($id, 'Statement');
     }
   }
 
@@ -276,76 +287,51 @@ class StatementController extends BaseController {
     // Replaces '&46;' in keys with '.' in statements.
     // http://docs.learninglocker.net/docs/statements#quirks
     $statements = $statements ?: [];
-    $statements = \app\locker\helpers\Helpers::replaceHtmlEntity($statements);
+    $statements = \Locker\Helpers\Helpers::replaceHtmlEntity($statements);
     foreach ($statements as &$s) {
       $s = $s->statement;
     }
 
     // Creates the statement result.
-    $statementResult = [
+    $statement_result = [
       'more' => $this->getMoreLink($options['total'], $options['limit'], $options['offset']),
       'statements' => $statements
     ];
 
-    // Creates the response.
-    $response = \Response::make($statementResult, BaseController::OK);
-    $response->headers->set(
-      'X-Experience-API-Consistent-Through',
-      $this->statement->getCurrentDate()
-    );
-
-    return $response;
+    return $statement_result;
   }
 
   /**
-     * Constructs the "more link" for a statement response.
-     * @param Integer $total Number of statements that can be returned for the given request parameters.
-     * @param Integer $limit Number of statements to be outputted in the response.
-     * @param Integer $offset Number of statements being skipped.
-     * @return String A URL that can be used to get more statements for the given request parameters.
-     */
-    private function getMoreLink($total, $limit, $offset) {
-      // Uses defaults.
-      $total = $total ?: 0;
-      $limit = $limit ?: 100;
-      $offset = $offset ?: 0;
+   * Constructs the "more link" for a statement response.
+   * @param Integer $total Number of statements that can be returned for the given request parameters.
+   * @param Integer $limit Number of statements to be outputted in the response.
+   * @param Integer $offset Number of statements being skipped.
+   * @return String A URL that can be used to get more statements for the given request parameters.
+   */
+  private function getMoreLink($total, $limit, $offset) {
+    // Uses defaults.
+    $total = $total ?: 0;
+    $limit = $limit ?: 100;
+    $offset = $offset ?: 0;
 
-      // Calculates the $next_offset.
-      $next_offset = $offset + $limit;
-      if ($total <= $next_offset) return '';
+    // Calculates the $next_offset.
+    $next_offset = $offset + $limit;
+    if ($total <= $next_offset) return '';
 
-      // Changes (when defined) or appends (when undefined) offset.
-      $query = \Request::getQueryString();
-      $statement_route = \URL::route('xapi.statement', [], false);
-      $current_url = $query ? $statement_route.'?'.$query : $statement_route;
+    // Changes (when defined) or appends (when undefined) offset.
+    $query = \Request::getQueryString();
+    $statement_route = \URL::route('xapi.statement', [], false);
+    $current_url = $query ? $statement_route.'?'.$query : $statement_route;
 
-      if (strpos($query, "offset=$offset") !== false) {
-        return str_replace(
-          'offset=' . $offset,
-          'offset=' . $next_offset,
-          $current_url
-        );
-      } else {
-        $separator = strpos($current_url, '?') !== False ? '&' : '?';
-        return $current_url . $separator . 'offset=' . $next_offset;
-      }
-    }
-
-  /**
-   * Sets and sends back the approriate response for the $outcome.
-   * @param array $outcome.
-   * @return Response.
-   **/
-  private function sendResponse($outcome) {
-    switch ($outcome['success']) {
-      case 'true':
-        return \Response::json($outcome['ids'], BaseController::OK);
-      case 'conflict-nomatch':
-        return BaseController::errorResponse(null, BaseController::CONFLICT);
-      case 'conflict-matches':
-        return \Response::json([], BaseController::NO_CONTENT);
-      case 'false':
-        return BaseController::errorResponse(implode($outcome['message']));
+    if (strpos($query, "offset=$offset") !== false) {
+      return str_replace(
+        'offset=' . $offset,
+        'offset=' . $next_offset,
+        $current_url
+      );
+    } else {
+      $separator = strpos($current_url, '?') !== False ? '&' : '?';
+      return $current_url . $separator . 'offset=' . $next_offset;
     }
   }
 
@@ -360,7 +346,7 @@ class StatementController extends BaseController {
 
     // Returns an error if both `statementId` and `voidedId` are set.
     if ($statementId && $voidedId) {
-      return BaseController::errorResponse(
+      throw new Exceptions\Exception(
         'You can\'t request based on both`' . self::STATEMENT_ID . '` and `' . self::VOIDED_ID . '`'
       );
     }
@@ -372,7 +358,7 @@ class StatementController extends BaseController {
       // Returns an error if a $key is not an allowed param.
       foreach ($this->params as $key => $value) {
         if (!in_array($key, $allowedParams)) {
-          return BaseController::errorResponse(
+          throw new Exceptions\Exception(
             'When using `' . self::STATEMENT_ID . '` or `' . self::VOIDED_ID . '`, the only other parameters allowed are `attachments` and/or `format`.'
           );
         }

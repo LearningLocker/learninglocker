@@ -2,9 +2,7 @@
 
 use \Locker\Repository\Query\QueryRepository as Query;
 use \Locker\Repository\Report\Repository as Report;
-use \Locker\Data\Analytics\AnalyticsInterface as Analytics;
 use \Response as IlluminateResponse;
-use \Helpers\Exceptions\NotFound as NotFoundException;
 
 class Reports extends Resources {
 
@@ -14,11 +12,10 @@ class Reports extends Resources {
    * @param Query $query Injected query repository.
    * @param Analytics $analytics Injected analytics repository.
    */
-  public function __construct(Report $report, Query $query, Analytics $analytics) {
+  public function __construct(Report $report, Query $query) {
+    parent::__construct();
     $this->repo = $report;
     $this->query = $query;
-    $this->analytics = $analytics;
-    parent::__construct();
   }
 
 
@@ -28,13 +25,9 @@ class Reports extends Resources {
    * @return [Statement] Statements selected by the report.
    */
   public function run($id) {
-    try {
-      return IlluminateResponse::json(
-        $this->repo->statements($id, $this->getOptions())->lists('statement')
-      );
-    } catch (NotFoundException $ex) {
-      return $this->errorResponse($ex, 404);
-    }
+    return IlluminateResponse::json(
+      $this->repo->statements($id, $this->getOptions())->lists('statement')
+    );
   }
 
   /**
@@ -43,13 +36,9 @@ class Reports extends Resources {
    * @return [Statement] Statements selected by the report.
    */
   public function graph($id) {
-    try {
-      $report = $this->repo->show($id, $this->getOptions());
-      $data = $this->query->aggregateTime($report->lrs, $report->match);
-      return IlluminateResponse::json($data['result']);
-    } catch (NotFoundException $ex) {
-      return $this->errorResponse($ex, 404);
-    }
+    $report = $this->repo->show($id, $this->getOptions());
+    $data = $this->query->aggregateTime($report->lrs, $report->match);
+    return IlluminateResponse::json($data['result']);
   }
 
 }

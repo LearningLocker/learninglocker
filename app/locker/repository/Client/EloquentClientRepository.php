@@ -1,6 +1,7 @@
 <?php namespace Locker\Repository\Client;
 
-use Client;
+use \Locker\Helpers\Exceptions as Exceptions;
+use \Client;
 
 class EloquentClientRepository implements ClientRepository {
 
@@ -35,8 +36,8 @@ class EloquentClientRepository implements ClientRepository {
 
     $user             = \Auth::user();
     $client              = new Client;
-    $client->api         = array('basic_key'    => \app\locker\helpers\Helpers::getRandomValue(),
-                              'basic_secret' => \app\locker\helpers\Helpers::getRandomValue());
+    $client->api         = array('basic_key'    => \Locker\Helpers\Helpers::getRandomValue(),
+                              'basic_secret' => \Locker\Helpers\Helpers::getRandomValue());
   	$client->lrs_id = $input['lrs_id'];
 
   	$client->authority = array(
@@ -88,9 +89,9 @@ class EloquentClientRepository implements ClientRepository {
 
     $errors = \Locker\XApi\Actor::createFromJson(json_encode($authority))->validate();
     if (count($errors) > 0) {
-      throw new \Exception(json_encode(array_map(function ($error) {
+      throw new Exceptions\Validation(array_map(function ($error) {
         return (string) $error->addTrace('authority');
-      }, $errors)));
+      }, $errors));
     }
 
   	$client->authority = $authority;

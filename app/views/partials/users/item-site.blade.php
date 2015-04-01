@@ -1,6 +1,6 @@
 <?php
 //grab gravatar if available
-$grav_url = \app\locker\helpers\Helpers::getGravatar( $user->email, '50');
+$grav_url = \Locker\Helpers\Helpers::getGravatar( $user->email, '50');
 
 ?>
 <div class='user-list clearfix'>

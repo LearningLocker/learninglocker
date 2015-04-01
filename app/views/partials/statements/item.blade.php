@@ -5,7 +5,7 @@
   $json = $statement;
   
   if( isset($statement['actor']['mbox']) ){
-    $avatar = \app\locker\helpers\Helpers::getGravatar( substr($statement['actor']['mbox'], 7), '20');
+    $avatar = \Locker\Helpers\Helpers::getGravatar( substr($statement['actor']['mbox'], 7), '20');
   }else{
     $avatar = 'http://placehold.it/20X20';
   }
@@ -95,7 +95,7 @@
       <small>| {{ $stored->diffForHumans() }} ({{ $stored->toDayDateTimeString() }})</small>
 
       <div class="full-statement state-{{ $statement['id'] }}" style="display:none;">
-        <?php $statement = \app\locker\helpers\Helpers::replaceHtmlEntity( $json ); ?>
+        <?php $statement = \Locker\Helpers\Helpers::replaceHtmlEntity( $json ); ?>
         <pre>{{{ json_encode($statement,JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}}</pre>
       </div>
 

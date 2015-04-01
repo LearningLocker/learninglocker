@@ -21,7 +21,7 @@ class EloquentUserRepository implements UserRepository {
     $get_users = $this->all();
     //if it is the first user, give all three roles, else, go with observer
     if( count($get_users) == 0 ){
-      $role = 'super'; //\app\locker\helpers\Access::roles();
+      $role = 'super'; //\Locker\Helpers\Access::roles();
     }else{
       $role = 'observer';
     }

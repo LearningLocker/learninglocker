@@ -1,6 +1,6 @@
 <?php namespace Locker\Repository\Base;
 
-use \Helpers\Exceptions\NotFound as NotFoundException;
+use \Locker\Helpers\Exceptions as Exceptions;
 use \Illuminate\Database\Eloquent\Model as Model;
 
 abstract class EloquentRepository implements Repository {
@@ -40,7 +40,7 @@ abstract class EloquentRepository implements Repository {
       ->where('_id', $id)
       ->first();
 
-    if ($model === null) throw new NotFoundException($id, $this->model);
+    if ($model === null) throw new Exceptions\NotFound($id, $this->model);
 
     return $this->format($model);
   }
