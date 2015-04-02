@@ -36,10 +36,10 @@
     "jenssegers/mongodb": "1.4.x",
     "davejamesmiller/laravel-breadcrumbs": "2.2.x",
     "way/generators": "2.6.x",
-    "rhumsaa/array_column": "~1.1",
+    "ramsey/array_column": "1.1.x",
     "barryvdh/laravel-cors": "0.2.x",
     "lucadegasperi/oauth2-server-laravel": "1.0.x",
-    "andywer/js-localization": "dev-master",
+    "andywer/js-localization": "dev-laravel-4.2",
     "philo/laravel-translate": "1.0.x",
     "learninglocker/statementfactory": "0.0.x"
   },
