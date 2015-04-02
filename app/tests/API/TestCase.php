@@ -1,5 +1,5 @@
 <?php namespace Tests\API;
-use \App\Locker\Helpers\Helpers as Helpers;
+use \Locker\Helpers\Helpers as Helpers;
 use \Illuminate\Foundation\Testing\TestCase as Base;
 use \User as User;
 use \Site as Site;

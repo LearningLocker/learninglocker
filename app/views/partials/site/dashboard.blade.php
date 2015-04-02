@@ -1,12 +1,5 @@
 @extends('layouts.master')
 
-@section('head')
-  @parent
-  <!-- load in one page application with requirejs -->
-  <script data-main="{{ URL() }}/assets/js/admin/config" src="{{ URL() }}/assets/js/libs/require/require.js"></script>
-    
-@stop
-
 @section('sidebar')
   @include('partials.site.sidebars.admin')
 @stop
@@ -31,6 +24,9 @@
 
 @section('script_bootload')
   @parent
+
+  <!-- load in one page application with requirejs -->
+  <script data-main="{{ URL() }}/assets/js/admin/config" src="{{ URL() }}/assets/js/libs/require/require.js"></script>
  
   <script type='text/javascript'>
     window.LL.stats = {{ json_encode( $stats ) }};

@@ -87,7 +87,7 @@ abstract class ResourceTestCase extends TestCase {
   }
 
   public function tearDown() {
-    $this->model->delete();
+    //$this->model->delete();
     parent::tearDown();
   }
 }

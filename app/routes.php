@@ -14,15 +14,15 @@
 Route::get('/', function(){
   if( Auth::check() ){
     $site = \Site::first();
-    
+
     $admin_dashboard = new \app\locker\data\dashboards\AdminDashboard();
-    
+
     //if super admin, show site dashboard, otherwise show list of LRSs can access
     if( Auth::user()->role == 'super' ){
       $list = Lrs::all();
       return View::make('partials.site.dashboard', array(
-        'site' => $site, 
-        'list' => $list, 
+        'site' => $site,
+        'list' => $list,
         'stats' => $admin_dashboard->getFullStats(),
         'graph_data' => $admin_dashboard->getGraphData(),
         'dash_nav' => true
@@ -400,23 +400,20 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
     return Response::json( array('version' => Config::get('api.using_version')));
   });
   Route::get('query/analytics', array(
-    'uses' => 'Controllers\API\AnalyticsController@index'
+    'uses' => 'Controllers\API\Analytics@index'
   ));
   Route::get('query/statements', array(
     'uses' => 'Controllers\API\StatementController@index'
-  ));
-  Route::get('query/{section}', array(
-    'uses' => 'Controllers\API\AnalyticsController@getSection'
   ));
 
   Route::resource('exports', 'Controllers\API\Exports');
 
   Route::get('exports/{id}/show', array(
-    'uses' => 'Controllers\API\Exports@showJSON'
+    'uses' => 'Controllers\API\Exports@showJson'
   ));
 
   Route::get('exports/{id}/show/csv', array(
-    'uses' => 'Controllers\API\Exports@showCSV'
+    'uses' => 'Controllers\API\Exports@showCsv'
   ));
 
   // Adds routes for reports.
@@ -494,7 +491,7 @@ Route::get('secure-route', array('before' => 'oauth:basic', function(){
 //Add OPTIONS routes for all defined xAPI and api routes
 foreach( Route::getRoutes()->getIterator() as $route  ){
   if( $route->getPrefix() === 'data/xAPI' || $route->getPrefix() === 'api/v1' ){
-    Route::options($route->getUri(),  'Controllers\API\BaseController@CORSOptions');
+    Route::options($route->getUri(), 'Controllers\API\Base@CORSOptions');
   }
 }
 
@@ -519,30 +516,18 @@ App::missing(function($exception){
   }
 });
 
-App::error(function(Exception $exception)
-{
-
+App::error(function(Exception $exception) {
   Log::error($exception);
+  $code = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 500;
 
-  if (method_exists($exception, 'getStatusCode')) {
-    $code = $exception->getStatusCode();
-  } else {
-    $code = 500;
-  }
-
-  if( Request::segment(1) == "data" || Request::segment(1) == "api" ){
-    $error = array(
-        'error'     =>  true,
-        'message'   =>  $exception->getMessage(),
-        'code'      =>  $code
-    );
-
-
-    if( Config::get('app.debug') ){
-      $error['trace'] = $exception->getTraceAsString();
-    }
-
-    return Response::json( $error, $code);
+  if (Request::segment(1) == "data" || Request::segment(1) == "api") {
+    return Response::json([
+      'error' => true,
+      'success' => false,
+      'message' => method_exists($exception, 'getErrors') ? $exception->getErrors() : $exception->getMessage(),
+      'code' => $code,
+      'trace' => Config::get('app.debug') ? $exception->getTrace() : trans('api.info.trace')
+    ], $code);
   } else {
     echo "Status: ".$code." Error: ".$exception->getMessage();
   }

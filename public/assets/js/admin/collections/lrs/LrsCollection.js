@@ -8,7 +8,7 @@ define([
     model: LrsModel,
     url: 'site/lrs',
     comparator: function (model) {
-      return model.get('title');
+      return model.get('title').toLowerCase();
     }
   });
 

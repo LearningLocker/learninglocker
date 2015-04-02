@@ -1,6 +1,6 @@
 <?php
 
-use \app\locker\helpers\Helpers as Helpers;
+use \Locker\Helpers\Helpers as Helpers;
 
 return array(
 

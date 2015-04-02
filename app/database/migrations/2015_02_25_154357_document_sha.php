@@ -11,10 +11,10 @@ class DocumentSha extends Migration {
         $document->sha = trim($document->sha, '"');
         $document->save();
       }
-      echo(count($documents) . ' converted.');
+      echo(count($documents) . ' converted.').PHP_EOL;
     });
 
-    echo('All finished, hopefully!');
+    echo('All finished, hopefully!').PHP_EOL;
 	}
 
 	public function down() {
@@ -23,10 +23,10 @@ class DocumentSha extends Migration {
         $document->sha = '"'.trim($document->sha, '"').'"';
         $document->save();
       }
-      echo(count($documents) . ' converted.');
+      echo(count($documents) . ' converted.').PHP_EOL;
     });
 
-    echo('All finished, hopefully!');
+    echo('All finished, hopefully!').PHP_EOL;
 	}
 }
 

@@ -5,7 +5,7 @@
       <select class="form-control sidebar-select" onchange="javascript:location.href = this.value;">
           <option></option>
         <optgroup label="List">
-          <option value="{{ URL() }}/lrs">{{ Lang::get('lrs.home') }}</option>
+          <option value="{{ URL() }}/site#lrs">{{ Lang::get('lrs.home') }}</option>
         </optgroup>
         <optgroup label="Available LRSs">
           @if( isset($list) )
@@ -39,7 +39,7 @@
       </a>
     </li>
   </ul>
-  @if ( app\locker\helpers\Lrs::lrsOwner($lrs->_id) || app\locker\helpers\Lrs::lrsEdit($lrs) )
+  @if ( \Locker\Helpers\Lrs::lrsOwner($lrs->_id) || \Locker\Helpers\Lrs::lrsEdit($lrs) )
     <h4>{{ Lang::get('site.settings') }}</h4>
     <ul class="nav nav-sidebar">
       <li class="@if ( isset($account_nav) ) active @endif">

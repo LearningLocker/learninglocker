@@ -1,6 +1,6 @@
 <?php
 
-use \app\locker\helpers\Helpers as helpers;
+use \Locker\Helpers\Helpers as helpers;
 
 class TestCase extends Illuminate\Foundation\Testing\TestCase
 {

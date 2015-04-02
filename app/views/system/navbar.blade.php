@@ -1,5 +1,5 @@
 <ul class="nav navbar-nav navbar-right">
-  @if ( \app\locker\helpers\Access::isRole('super') )
+  @if ( \Locker\Helpers\Access::isRole('super') )
   <li><a href="{{ URL() }}"><i class="icon icon-dashboard"></i> {{ trans('site.admin_dash') }}</a></li>
   @endif
   <li class="dropdown">
@@ -14,8 +14,8 @@
       @endif
       <li class="divider"></li>
       <li class="dropdown-header">{{ trans('site.navbar.other') }}</li>
-      <li><a href="{{ URL() }}/lrs">{{ trans('site.navbar.lrs_home') }}</a></li>
-      @if( app\locker\helpers\Lrs::lrsCanCreate() )
+      <li><a href="{{ URL() }}/site#lrs">{{ trans('site.navbar.lrs_home') }}</a></li>
+      @if( \Locker\Helpers\Lrs::lrsCanCreate() )
         <li><a href="{{ URL() }}/lrs/create">{{ trans('lrs.create') }}</a></li>
       @endif
     </ul>
