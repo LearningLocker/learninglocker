@@ -31,7 +31,11 @@ class Report extends Eloquent {
 
     if (is_array($query) && count($query) > 0 && !isset($query[0])) {
       foreach ($query as $key => $value) {
-        $match[$key] = ['$in' => $value];
+        if (is_array($value)) {
+          $match[$key] = ['$in' => $value];
+        } else {
+          $match[$key] = $value;
+        }
       }
     }
 
@@ -55,8 +59,24 @@ class Report extends Eloquent {
     $reportArr = $this->toArray();
     $wheres = [];
     $query = isset($reportArr['query']) ? (array) $reportArr['query'] : null;
+    $actorQuery = [ 'statement.actor.account.name', 'statement.actor.mbox', 'statement.actor.openid', 'statement.actor.mbox_sha1sum' ];
+    $actorArray = [];
 
     if (is_array($query) && count($query) > 0 && !isset($query[0])) {
+      foreach (array_keys($query) as $key) {
+        if (in_array($key, $actorQuery)) {
+          array_push($actorArray, [$key, $query[$key]]);
+        } else {
+          if (is_array($query[$key])) {
+            array_push($wheres, [$key, 'in', $query[$key]]);
+          } else {
+            array_push($wheres, [$key, '=', $query[$key]]);
+          }
+        }
+
+      }
+/*
+$<<<<<<< HEAD
       $actorQuery = [ 'statement.actor.account.name', 'statement.actor.mbox', 'statement.actor.openid', 'statement.actor.mbox_sha1sum' ];
       $actorArray = [];
       foreach (array_keys($query) as $key) {
@@ -67,6 +87,16 @@ class Report extends Eloquent {
         }
       }
       array_push($wheres, ['orArray', 'or', $actorArray]);
+=======
+      $wheres = array_map(function ($key) use ($query) {
+        if (is_array($query[$key])) {
+          return [$key, 'in', $query[$key]];
+        } else {
+          return [$key, '=', $query[$key]];
+        }
+      }, array_keys($query));
+>>>>>>> upstream/develop
+*/
     }
 
     $since = isset($reportArr['since']) ? $reportArr['since'] : null;
