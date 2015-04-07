@@ -1,118 +1,64 @@
 <?php namespace Locker\Data\Analytics;
 
-use \Locker\Repository\Query\QueryRepository as Query;
+use \Locker\Repository\Query\QueryRepository as QueryRepo;
+use \Locker\Helpers\Exceptions as Exceptions;
 
 class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface {
 
-  /**
-   * Query Repository Interface
-   **/
   protected $query;
 
   /**
-   * Construct
-   *
-   * @param Locker\Repository\Data\QueryRepository $query
-   *
+   * @param QueryRepo $query
    */
-  public function __construct( Query $query ){
-
-    //get the LRS connected to this query
+  public function __construct(QueryRepo $query) {
     $this->query = $query;
+  }
 
+  private function getOption(array $options, $key, $default = null, callable $modifier = null) {
+    $modifier = $modifier !== null ? $modifier : function ($val) { return $val; };
+    return isset($options[$key]) ? $modifier($options[$key]) : $default;
+  }
+
+  private function getDateOption(array $options, $key, $default = '') {
+    return $this->getOption($options, $key, $default, function ($val) {
+      return $this->setMongoDate($val);
+    });
   }
 
   /**
-   * Get analytic data.
-   *
+   * Gets analytic data.
    * @param string $lrs 
    * @param object $options
-   * @param string $return | This is the return value expected. Analytics or raw statements.
-   * @param array  $sections | If the $return value is statements, what section(s) of statements. Default = all.
-   *
    * @return array
-   *
    **/
-  public function analytics( $lrs, $options, $return='timedGrouping', $sections=[] ){
+  public function analytics($lrs, $options) {
+    // Decode filter option.
+    $filter = $this->getOption($options, 'filter', [], function ($val) {
+      return json_decode($val, true);
+    });
 
-    $since = $until = '';
+    $type = $this->setType(
+      $this->getOption($options, 'type', 'time')
+    );
 
-    //grab the filter object and decode
-    if( isset($options['filter']) ){
-      $filter = json_decode( $options['filter'], true );
-    }else{
-      $filter = array();
-    }
+    $interval = $this->getOption($options, 'interval', $this->setInterval(), function ($val) {
+      return $this->setInterval($val);
+    });
 
-    //parse filter and check for conditions if not $return = statements
-    //as returning statement does not use mongodb aggregation
-    if( $return != 'statements' ){
-      $filter = $this->setFilter( $filter );
-    }
-
-    //set type if passed
-    if( isset( $options['type'] ) ){
-      $type = $this->setType( $options['type'] );
-    }else{
-      $type = $this->setType( 'time' ); //time is default
-    }
-
-    //set interval if passed
-    if( isset( $options['interval'] ) ){
-      $interval = $this->setInterval( $options['interval'] );
-    }else{
-      $interval = $this->setInterval();
-    }
-
-    //set since
-    if( isset( $options['since'] ) ){
-      $since = $this->setMongoDate( $options['since'] );
-    }
-
-    //set until
-    if( isset( $options['until'] ) ){
-      $until = $this->setMongoDate( $options['until'] );
-    }
-
-    //build MongoDate if since and / or until submitted
+    // Constructs date filtering.
+    $since = $this->getDateOption($options, 'since');
+    $until = $this->getDateOption($options, 'until');
     $dates = $this->buildDates($since, $until);
 
-    //set filters
-    if( !empty($dates) ){
-      $filters = array_merge( $dates, $filter );
-    }else{
-      $filters = $filter;
+    $filters = empty($dates) ? $filter : array_merge($dates, $filter);
+
+    $data = $this->query->timedGrouping($lrs, $filters, $interval, $type);
+    $data = $data ? $data : ['result' => null];
+
+    if (isset($data['errmsg'])) {
+      throw new Exceptions\Exception(trans('apps.no_data'));
     }
-
-    //get the data
-
-    //timedGrouping or statements?
-    if( $return == 'statements' ){
-      $data = $this->query->selectStatements( $lrs, $filters, true, $sections );
-
-      //replace replace &46; in keys with . 
-      //see http://docs.learninglocker.net/docs/statements#quirks for more info
-      if( !empty($data) ){
-        foreach( $data as &$s ){
-          if( isset($s['statement']) ){
-            $s['statement'] = \Locker\Helpers\Helpers::replaceHtmlEntity( $s['statement'] );
-          }
-        }
-      }
-
-    }else{
-      $data = $this->query->timedGrouping( $lrs, $filters, $interval, $type );
-    }
-    
-    if ( !$data ) {
-      $data = [];
-    }
-
-    if( isset($data['errmsg']) ){
-      return array('success' => false, 'message' => $data['errmsg'] );
-    }
-    return array('success' => true, 'data' => $data);
-
+    return $data['result'];
   }
 
   /**

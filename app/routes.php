@@ -402,9 +402,6 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
   Route::get('query/analytics', array(
     'uses' => 'Controllers\API\Analytics@index'
   ));
-  Route::get('query/statements', array(
-    'uses' => 'Controllers\API\StatementController@index'
-  ));
 
   Route::resource('exports', 'Controllers\API\Exports');
 
