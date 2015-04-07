@@ -2,7 +2,6 @@
 
 use Locker\Repository\Lrs\LrsRepository as Lrs;
 use Locker\Repository\Statement\StatementRepository as Statement;
-use Locker\Data\Analytics\AnalyticsInterface;
 
 class LrsController extends BaseController {
 
@@ -10,11 +9,6 @@ class LrsController extends BaseController {
   * Lrs 
   */
   protected $lrs;
-
-  /**
-  * Analytics
-  */
-  protected $analytics;
 
   /**
    * Statements
@@ -26,14 +20,12 @@ class LrsController extends BaseController {
    * Construct
    *
    * @param Locker\Repository\Lrs\LrsRepository
-   * @param Locker\Data\AnalyticsInterface
    * @param Locker\Repository\StatementRepository
    *
    */
-  public function __construct(Lrs $lrs, AnalyticsInterface $analytics, Statement $statement){
+  public function __construct(Lrs $lrs, Statement $statement){
 
     $this->lrs       = $lrs;
-    $this->analytics = $analytics;
     $this->statement = $statement;
 
     $this->beforeFilter('auth');
