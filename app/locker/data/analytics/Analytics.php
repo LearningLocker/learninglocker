@@ -27,20 +27,22 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
 
   /**
    * Gets analytic data.
-   * @param string $lrs 
-   * @param object $options
-   * @return array
+   * @param String $lrs_id Id of the LRS.
+   * @param [String => Mixed] $options
+   * @return [[String => Mixed]]
    **/
-  public function analytics($lrs, $options) {
+  public function analytics($lrs_id, $options) {
     // Decode filter option.
-    $filter = $this->getOption($options, 'filter', [], function ($val) {
+    $filter = $this->setFilter($this->getOption($options, 'filter', [], function ($val) {
       return json_decode($val, true);
-    });
+    }));
 
+    // Gets the type option.
     $type = $this->setType(
       $this->getOption($options, 'type', 'time')
     );
 
+    // Gets the interval option.
     $interval = $this->getOption($options, 'interval', $this->setInterval(), function ($val) {
       return $this->setInterval($val);
     });
@@ -49,95 +51,17 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
     $since = $this->getDateOption($options, 'since');
     $until = $this->getDateOption($options, 'until');
     $dates = $this->buildDates($since, $until);
-
     $filters = empty($dates) ? $filter : array_merge($dates, $filter);
 
-    $data = $this->query->timedGrouping($lrs, $filters, $interval, $type);
+    // Gets the filtered data.
+    $data = $this->query->timedGrouping($lrs_id, $filters, $interval, $type);
     $data = $data ? $data : ['result' => null];
 
+    // Attempts to return the filtered data.
     if (isset($data['errmsg'])) {
       throw new Exceptions\Exception(trans('apps.no_data'));
     }
     return $data['result'];
-  }
-
-  /**
-   * Named routes that focus on specific sections e.g agents, verbs,
-   * activites, results, courses, badges
-   *
-   * @param string $section
-   * @param object $filter
-   * @param object $filter
-   *
-   * @return array
-   *
-   **/
-  public function section( $lrs, $section, $filter, $returnFields='' ){
-
-    if( !$section = $this->setSection( $section ) ){
-      return array('success' => false);
-    }
-
-    //grab the filter object and decode
-    if( isset($filter) && !empty($filter) ){
-      $filter = json_decode( $filter, true );
-    }else{
-      $filter=array();
-    }
-
-    //if section is courses or badges, add appropriate filter for the $match pipe
-    switch( $section ){
-      case 'courses': 
-        $filter = array_merge( $filter, array('statement.context.contextActivities.grouping.type' => 'http://adlnet.gov/expapi/activities/course'));
-        break;
-      case 'badges': 
-        $filter = array_merge( $filter, array('statement.object.definition.type' => 'http://activitystrea.ms/schema/1.0/badge'));
-        break;
-    }
-
-    //grab returnFields and decode
-    if( $returnFields != '' ){
-      $returnFields = json_decode( $returnFields, true );
-    }
-
-    //parse over the filter and check for conditions
-    $filter = $this->setFilter( $filter );
-
-    $data = $this->query->objectGrouping( $lrs, $section, $filter, $returnFields );
-
-    return array('success' => true, 'data' => $data);
-
-  }
-
-  /**
-   * Set section.
-   *
-   * @param string $section The route section
-   * @return boolean
-   *
-   **/
-  private function setSection( $section ){
-    switch( $section ){
-      case 'agents': 
-        return '$actor'; 
-        break;
-      case 'verbs': 
-        return '$verb'; 
-        break;
-      case 'activities': 
-        return '$object'; 
-        break;
-      case 'results': 
-        return '$result'; 
-        break;
-      case 'courses': 
-        return true; 
-        break;
-      case 'badges': 
-        return true; 
-        break;
-    }
-    return false;
   }
 
   /**
@@ -220,72 +144,76 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
 
   /**
    * Turn submitted date into MongoDate object
-   *
+   * @param String $date A string representation of the date.
    * @return MongoDate object
-   *
    **/
-  private function setMongoDate( $date ){
+  private function setMongoDate($date) {
     return new \MongoDate(strtotime($date));
   }
 
   /**
-   * Build $match dates for Mongo aggregation
-   *
+   * Build $match dates for Mongo aggregation.
    * @param string $since
    * @param string $until
-   *
-   * @return array $dates
-   *
+   * @return [String => [String => Mixed]]
    **/
-  private function buildDates($since='', $until=''){
-    if( $since != '' && $until != ''){
-      $dates = array( 'timestamp' => array( '$gte' => $since, '$lte' => $until));
-    }elseif( $since != '' ){
-      $dates = array( 'timestamp' => array( '$gte' => $since ));
-    }elseif( $until != '' ){
-      $dates = array( 'timestamp' => array( '$lte' => $until));
-    }else{
-      $dates = array();
+  private function buildDates($since = '', $until = '') {
+    $dates = [];
+
+    if ($since !== '' || $until !== '') {
+      $timestamp = [];
+      if ($since !== '') {
+        $timestamp['$gte'] = $since;
+      }
+      if ($until !== '') {
+        $timestamp['$lte'] = $until;
+      }
+      $dates = ['timestamp' => $timestamp];
     }
+
     return $dates;
   }
 
   /**
-   * Based on the submitted interval - return Mongo specific
-   * identifier.
-   *
-   * @param string $interval
-   * @return string $identifier
+   * Gets and validates the Mongo interval.
+   * @param String $interval
+   * @return String Mongo interval (Defaults to '$dayOfYear').
    *
    **/
-  private function setInterval( $interval='' ){    
-    switch( $interval ){
-      case 'day'        : return '$dayOfYear';  break;
-      case 'dayOfMonth' : return '$dayOfMonth'; break;
-      case 'dayOfWeek'  : return '$dayOfWeek';  break;
-      case 'week'       : return '$week';       break;
-      case 'hour'       : return '$hour';       break;
-      case 'month'      : return '$month';      break;
-      case 'year'       : return '$year';       break;
-      default: return '$dayOfYear';
+  private function setInterval($interval = '') {
+    $interval = $interval === '' ? 'day' : $interval;
+
+    // Defines the acceptable intervals and their Mongo counterpart.
+    $intervals = [
+      'day' => '$dayOfYear',
+      'dayOfMonth' => '$dayOfMonth',
+      'dayOfWeek' => '$dayOfWeek',
+      'week' => '$week',
+      'hour' => '$hour',
+      'month' => '$month',
+      'year' => '$year'
+    ];
+
+    // Validates the interval.
+    if (!isset($intervals[$interval])) {
+      throw new Exceptions\Exception("'$interval' is not a valid `interval`.");
     }
+
+    return $intervals[$interval];
   }
 
   /**
-   * Based on the submitted type - verify it is valid
-   *
-   * @param string $type
-   * @return $type - default is time
-   *
+   * Gets and validates the type.
+   * @param String $type
+   * @return String (Defaults to 'time').
    **/
-  private function setType( $type ){
-    switch( $type ){
-      case 'time'     : return $type; break;
-      case 'user'     : return $type; break;
-      case 'verb'     : return $type; break;
-      case 'activity' : return $type; break;
+  private function setType($type = '') {
+    // Validates the type.
+    if (in_array($type, ['time', 'user', 'verb', 'activity', ''])) {
+      throw new Exceptions\Exception("'$type' is not a valid `type`.");
     }
-    return 'time';
+
+    return $type === '' ? 'time' : $type;
   }
 
 }
