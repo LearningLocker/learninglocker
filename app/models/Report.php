@@ -32,6 +32,11 @@ class Report extends Eloquent {
     if (is_array($query) && count($query) > 0 && !isset($query[0])) {
       foreach ($query as $key => $value) {
         $match[$key] = ['$in' => $value];
+        if (is_array($value)) {
+          $match[$key] = ['$in' => $value];
+        } else {
+          $match[$key] = $value;
+        }
       }
     }
 
@@ -58,7 +63,11 @@ class Report extends Eloquent {
 
     if (is_array($query) && count($query) > 0 && !isset($query[0])) {
       $wheres = array_map(function ($key) use ($query) {
-        return [$key, 'in', $query[$key]];
+        if (is_array($query[$key])) {
+          return [$key, 'in', $query[$key]];
+        } else {
+          return [$key, '=', $query[$key]];
+        }
       }, array_keys($query));
     }
 
