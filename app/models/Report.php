@@ -31,7 +31,6 @@ class Report extends Eloquent {
 
     if (is_array($query) && count($query) > 0 && !isset($query[0])) {
       foreach ($query as $key => $value) {
-        $match[$key] = ['$in' => $value];
         if (is_array($value)) {
           $match[$key] = ['$in' => $value];
         } else {
