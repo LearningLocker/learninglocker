@@ -74,14 +74,9 @@ class Statements extends Base {
     $data = $this->analytics->statements(
       $this->lrs->_id,
       LockerRequest::getParams(),
-      'statements',
       $section
     );
 
-    if ($data['success'] == false) {
-      throw new Exceptions\Exception(trans('apps.no_data'));
-    }
-
-    return $this->returnJson($data['data']);
+    return $this->returnJson($data);
   }
 }

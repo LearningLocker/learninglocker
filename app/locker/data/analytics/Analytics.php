@@ -72,7 +72,7 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
     if (isset($data['errmsg'])) {
       throw new Exceptions\Exception($data['errmsg']);
     }
-    return $data;
+    return Helpers::replaceHtmlEntity($data);;
   }
 
   /**
