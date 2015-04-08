@@ -1,9 +1,6 @@
 <?php namespace Locker\Data\Analytics;
 
 interface AnalyticsInterface {
-
-  public function analytics( $lrs, $options );
-
-  public function section( $lrs, $section, $filter, $returnFields );
-
+  public function timedGrouping($lrs, array $options);
+  public function statements($lrs, array $options, array $sections);
 }
