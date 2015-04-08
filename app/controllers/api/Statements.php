@@ -1,6 +1,5 @@
 <?php namespace Controllers\API;
 
-use \Locker\Data\Analytics\AnalyticsInterface as AnalyticsData;
 use \Locker\Repository\Query\QueryRepository as QueryRepository;
 use \Locker\Helpers\Exceptions as Exceptions;
 
@@ -9,12 +8,9 @@ class Statements extends Base {
 
   /**
    * Constructs a new StatementController.
-   * @param Document $document
-   * @param Activity $activity
    */
-  public function __construct(AnalyticsData $analytics, QueryRepository $query) {
+  public function __construct(QueryRepository $query) {
     parent::__construct();
-    $this->analytics = $analytics;
     $this->query = $query;
   }
 
@@ -40,7 +36,7 @@ class Statements extends Base {
       \LockerRequest::getParam('pipeline'),
       true
     ) ?: [['match' => []]];
-    return \Response::json($this->query->aggregate($this->lrs->_id, $pipeline)); 
+    return \Response::json($this->query->aggregate($this->lrs->_id, $pipeline));
   }
 
   /**
@@ -75,17 +71,12 @@ class Statements extends Base {
   public function index(){
     $section = json_decode(LockerRequest::getParam('sections', '[]'));
 
-    $data = $this->analytics->analytics(
+    $data = $this->analytics->statements(
       $this->lrs->_id,
       LockerRequest::getParams(),
-      'statements',
       $section
     );
 
-    if ($data['success'] == false) {
-      throw new Exceptions\Exception(trans('apps.no_data'));
-    }
-
-    return $this->returnJson($data['data']);
+    return $this->returnJson($data);
   }
 }
