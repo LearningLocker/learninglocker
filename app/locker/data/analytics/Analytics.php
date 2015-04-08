@@ -14,11 +14,26 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
     $this->query = $query;
   }
 
+  /**
+   * Gets a option from options.
+   * @param [String => Mixed] $options
+   * @param String $key Name of the option.
+   * @param Mixed $default Default value if option isn't defined. Defaults to null.
+   * @param Callable $modifier A function to modify the option value if defined. Defaults to null.
+   * @return MongoDate
+   */
   private function getOption(array $options, $key, $default = null, callable $modifier = null) {
     $modifier = $modifier !== null ? $modifier : function ($val) { return $val; };
     return isset($options[$key]) ? $modifier($options[$key]) : $default;
   }
 
+  /**
+   * Gets a date option from options.
+   * @param [String => Mixed] $options
+   * @param String $key Name of the option.
+   * @param Mixed $default Default value if option isn't defined. Defaults to ''.
+   * @return MongoDate
+   */
   private function getDateOption(array $options, $key, $default = '') {
     return $this->getOption($options, $key, $default, function ($val) {
       return $this->setMongoDate($val);
@@ -26,16 +41,51 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
   }
 
   /**
-   * Gets analytic data.
+   * Adds date filters from $options to $filters.
+   * @param [String => Mixed] $options
+   * @param [String => Mixed] $filters
+   * @return [String => Mixed]
+   */
+  private function addDateFilters(array $options, array $filters) {
+    $since = $this->getDateOption($options, 'since');
+    $until = $this->getDateOption($options, 'until');
+    $dates = $this->buildDates($since, $until);
+    $filters = empty($dates) ? $filters : array_merge($dates, $filters);
+    return $filters;
+  }
+
+  /**
+   * Gets statements.
+   * @param String $lrs_id Id of the LRS.
+   * @param [String => Mixed] $options
+   * @param [String] $sections Parts of the statement to be retrieved. Defaults to all.
+   * @return [[String => Mixed]]
+   **/
+  public function statements($lrs_id, array $options, array $sections = null) {
+    $sections = $sections ?: [];
+    $filters = $this->addDateFilters($options, $this->constructFilter($options));
+
+    // Gets the filtered data.
+    $data = $this->query->selectStatements($lrs, $filters, true, $sections);
+
+    // Attempts to return the filtered data.
+    if (isset($data['errmsg'])) {
+      throw new Exceptions\Exception($data['errmsg']);
+    }
+    return $data;
+  }
+
+  /**
+   * Gets timed grouping of statements.
    * @param String $lrs_id Id of the LRS.
    * @param [String => Mixed] $options
    * @return [[String => Mixed]]
    **/
-  public function analytics($lrs_id, $options) {
-    // Decode filter option.
-    $filter = $this->setFilter($this->getOption($options, 'filter', [], function ($val) {
-      return json_decode($val, true);
-    }));
+  public function timedGrouping($lrs_id, array $options) {
+    $filters = $this->addDateFilters(
+      $options,
+      $this->setFilter($this->constructFilter($options))
+    );
 
     // Gets the type option.
     $type = $this->setType(
@@ -47,94 +97,92 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
       return $this->setInterval($val);
     });
 
-    // Constructs date filtering.
-    $since = $this->getDateOption($options, 'since');
-    $until = $this->getDateOption($options, 'until');
-    $dates = $this->buildDates($since, $until);
-    $filters = empty($dates) ? $filter : array_merge($dates, $filter);
-
     // Gets the filtered data.
     $data = $this->query->timedGrouping($lrs_id, $filters, $interval, $type);
     $data = $data ? $data : ['result' => null];
 
     // Attempts to return the filtered data.
     if (isset($data['errmsg'])) {
-      throw new Exceptions\Exception(trans('apps.no_data'));
+      throw new Exceptions\Exception($data['errmsg']);
     }
     return $data['result'];
+  }
+
+  private function constructFilter($options) {
+    // Decode filter option.
+    $filter = $this->getOption($options, 'filter', [], function ($val) {
+      return json_decode($val, true);
+    });
+
+    return $filter;
   }
 
   /**
    * Check the filters passed to see if it contains any where criteria.
    *
-   * Formats include: 
-   * key => value - where key equals value 
+   * Formats include:
+   * key => value - where key equals value
    * key => array(foo, bar) - where key equals foo AND bar
    * key => array(array(foo,bar)) - where key equals foo OR bar
    * key => array(array(foo,bar), hello) - where key equals foo OR bar AND hello
    *
    * If there are no $in criteria (we can tell based on whether values = array)
-   * then we only need to pass to mongo query as a single array as $and is implied. 
+   * then we only need to pass to mongo query as a single array as $and is implied.
    * However, if multiple criteria, we need to include $and hence the dual
    * approach here.
    *
-   * @param  array $options
-   * @return array $filter 
-   *
+   * @param [String => Mixed] $options
+   * @return [String => Mixed] $filter
    **/
-  private function setFilter( $options ){
-
+  private function setFilter(array $options) {
     $use_and = false;
-    $filter  = array();
-    $set_in  = array();
-    $set_inbetween = array();
+    $filter  = [];
+    $set_in  = [];
+    $set_inbetween = [];
 
-    if( $options ){
-      //loop through submitted filters
-      foreach( $options as $key => $value ){
-        //if any value is an array, it containes multiple elements so requires $and
-        if( is_array($value) ){
+    if ($options) {
+      foreach ($options as $key => $value) {
+        // Multiple elements so require '$and'.
+        if (is_array($value)) {
           $use_and = true;
         }
 
       }
 
-      if( !$use_and ){
-        foreach( $options as $key => $value ){
+      if (!$use_and) {
+        foreach ($options as $key => $value) {
           $filter[$key] = $value;
         }
-      }else{
-        foreach( $options as $key => $value ){
-          $in_statement = array();
-          //loop through this value to check for nested array
-          if( is_array($value) && sizeof($value) > 0 ){
-            //is it an in request, or a between two values request?
-            if( $value[0] == '<>' ){
-              $set_inbetween[$key] = array('$gte' => (int) $value[1], '$lte' => (int) $value[2]);
-            }else{
-              foreach( $value as $v ){
+      } else {
+        foreach ($options as $key => $value) {
+          $in_statement = [];
+
+          if (is_array($value) && count($value) > 0) {
+            // Uses between ('<>') or in filter.
+            if ($value[0] == '<>') {
+              $set_inbetween[$key] = ['$gte' => (int) $value[1], '$lte' => (int) $value[2]];
+            } else {
+              foreach ($value as $v) {
                 $in_statement[] = $v;
               }
-              $set_in[] = array($key => array('$in' => $in_statement));
+              $set_in[] = [$key => ['$in' => $in_statement]];
             }
-          }else{
-            //if not an array or an empty array, set key/value
-            $set_in[] = array( $key => $value );
+          } else {
+            $set_in[] = [$key => $value];
           }
-        
-        }
-        //we need to use Mongo $and for this type of statement.
-        if( !empty($set_in) ){
-          $filter = array('$and' => $set_in );
+
         }
 
-        //now merge and and between if available
-        if( !empty($filter) && !empty($set_inbetween) ){
+        // Use Mongo $and for this type of statement.
+        if (!empty($set_in)) {
+          $filter = ['$and' => $set_in];
+        }
+
+        // Merges `and` and `between` if available.
+        if (!empty($filter) && !empty($set_inbetween)) {
           $filter = array_merge($filter, $set_inbetween);
-        }elseif( !empty($set_inbetween) ){
-          $filter = $set_inbetween; //just use in_between
-        }else{
-          //do nothing
+        } elseif (!empty($set_inbetween)) {
+          $filter = $set_inbetween;
         }
       }
     }
@@ -209,7 +257,7 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
    **/
   private function setType($type = '') {
     // Validates the type.
-    if (in_array($type, ['time', 'user', 'verb', 'activity', ''])) {
+    if (!in_array($type, ['time', 'user', 'verb', 'activity', ''])) {
       throw new Exceptions\Exception("'$type' is not a valid `type`.");
     }
 

@@ -1,3 +1,4 @@
+
 <?php
 
 /*
@@ -402,6 +403,9 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
   Route::get('query/analytics', array(
     'uses' => 'Controllers\API\Analytics@index'
   ));
+  Route::get('query/statements', array(
+    'uses' => 'Controllers\API\Statements@index'
+  ));
 
   Route::resource('exports', 'Controllers\API\Exports');
 
@@ -422,21 +426,18 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
     'uses' => 'Controllers\API\Reports@graph'
   ));
 
-
-  Route::resource('site', 'Controllers\API\SiteController');
-
   // Adds routes for statements.
   Route::get('statements/where', [
-    'uses' => 'Controllers\API\StatementController@where'
+    'uses' => 'Controllers\API\Statements@where'
   ]);
   Route::get('statements/aggregate', [
-    'uses' => 'Controllers\API\StatementController@aggregate'
+    'uses' => 'Controllers\API\Statements@aggregate'
   ]);
   Route::get('statements/aggregate/time', [
-    'uses' => 'Controllers\API\StatementController@aggregateTime'
+    'uses' => 'Controllers\API\Statements@aggregateTime'
   ]);
   Route::get('statements/aggregate/object', [
-    'uses' => 'Controllers\API\StatementController@aggregateObject'
+    'uses' => 'Controllers\API\Statements@aggregateObject'
   ]);
 
 });

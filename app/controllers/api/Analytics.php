@@ -17,7 +17,7 @@ class Analytics extends Base {
 
   // http://docs.learninglocker.net/analytics_api/
   public function index() {
-    $data = $this->analytics->analytics($this->lrs->_id, LockerRequest::getParams());
+    $data = $this->analytics->timedGrouping($this->lrs->_id, LockerRequest::getParams());
     return $this->returnJson($data);
   }
 }
