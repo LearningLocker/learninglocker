@@ -32,10 +32,12 @@ class Statements extends Base {
    * @return Aggregate http://php.net/manual/en/mongocollection.aggregate.php#refsect1-mongocollection.aggregate-examples
    */
   public function aggregate() {
+    \Log::info(\Input::all());
+    \Log::info(\LockerRequest::getParam('pipeline'));
     $pipeline = json_decode(
       \LockerRequest::getParam('pipeline'),
       true
-    ) ?: [['match' => []]];
+    ) ?: [['$match' => ['active' => true]]];
     return \Response::json($this->query->aggregate($this->lrs->_id, $pipeline));
   }
 

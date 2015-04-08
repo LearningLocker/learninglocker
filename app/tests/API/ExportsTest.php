@@ -1,7 +1,7 @@
 <?php namespace Tests\API;
 use \Report as Report;
 
-class ExportTest extends ResourceTestCase {
+class ExportsTest extends ResourcesTestCase {
   static protected $endpoint = '/api/v1/exports';
   static protected $model_class = '\Export';
   protected $data = [

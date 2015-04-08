@@ -17,6 +17,7 @@ class Request {
   public function getParams() {
     // If no params were cached, get them.
     if ($this->params === null || count($this->params) < 1) {
+      \Log::info(\Input::all());
       $requestParams = \Request::all();
       $payloadParams = $this->getPayloadParams();
 
@@ -27,7 +28,7 @@ class Request {
         $this->params = $requestParams;
       }
     }
-    
+
     // Return the cached params.
     return $this->params;
   }
@@ -138,7 +139,7 @@ class Request {
       $auth = explode(' ', $this->getParam(self::authParam));
       $decoded = base64_decode($auth[1]);
       $auth_parts = explode(':', $decoded);
-      
+
       $result[self::authUser] = $auth_parts[0];
       $result[self::authPass] = $auth_parts[1];
     }
