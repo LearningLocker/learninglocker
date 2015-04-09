@@ -1,6 +1,6 @@
 <?php
 
-use \Locker\Repository\Lrs\EloquentLrsRepository as LrsRepository;
+use \Locker\Repository\Lrs\EloquentRepository as LrsRepo;
 use \app\locker\statements\xAPIValidation as XApiValidator;
 use \Locker\Helpers\Exceptions as Exceptions;
 
@@ -89,14 +89,14 @@ Route::filter('auth.statement', function(){
     // $lrs = \Lrs::where('api.basic_key', $key)
     //     ->where('api.basic_secret', $secret)
     //     ->select('owner._id')->first();
-    $lrs = LrsRepository::checkSecret(\Lrs::where('api.basic_key', $key)->first(), $secret);
+    $lrs = (new LrsRepo)->checkSecret(\Lrs::where('api.basic_key', $key)->first(), $secret);
 
   	//if main credentials not matched, try the additional credentials
   	if ( $lrs == NULL ) {
   		// $client = \Client::where('api.basic_key', $key)
   	 //    ->where('api.basic_secret', $secret)
   	 //    ->first();
-      $client = LrsRepository::checkSecret(\Client::where('api.basic_key', $key)->first(), $secret);
+      $client = (new LrsRepo)->checkSecret(\Client::where('api.basic_key', $key)->first(), $secret);
   		if( $client != NULL ){
   			$lrs = \Lrs::find(  $client->lrs_id );
   		}
