@@ -2,7 +2,6 @@
 
 use \Locker\Repository\Lrs\Repository as LrsRepo;
 use \Locker\Repository\Statement\StatementRepository as StatementRepo;
-use \Locker\Data\Analytics\AnalyticsInterface as AnalyticsData;
 
 class LrsController extends BaseController {
 
@@ -11,12 +10,10 @@ class LrsController extends BaseController {
   /**
    * Constructs a new LrsController.
    * @param LrsRepo $lrs
-   * @param AnalyticsData $analytics
    * @param StatementRepo $statement
    */
-  public function __construct(LrsRepo $lrs, AnalyticsData $analytics, StatementRepo $statement){
+  public function __construct(LrsRepo $lrs, StatementRepo $statement){
     $this->lrs = $lrs;
-    $this->analytics = $analytics;
     $this->statement = $statement;
 
     // Defines filters.
@@ -279,5 +276,4 @@ class LrsController extends BaseController {
     $change = $this->lrs->changeRole($lrs_id, $user, $role);
     return Response::json(['success' => true]);
   }
-
 }
