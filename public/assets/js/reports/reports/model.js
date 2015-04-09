@@ -45,21 +45,25 @@ define([
       Object.keys(this._queryResponseMap).forEach(function (queryKey) {
         var responseKey = this._queryResponseMap[queryKey];
         if (responseKey === 'actors') {
-            var actorValues = ['actor.mbox', 'actor.account.name', 'actor.openid', 'actor.mbox_sha1sum'];
+            var actorValues = ['actor.mbox', 'actor.account', 'actor.openid', 'actor.mbox_sha1sum'];
             var consolidatedActors = [];
             actorValues.forEach(function(value,index, originalArray) {
                 queryKey = 'statement.' + value;
                 if (typeof query[queryKey] !== "undefined") {
                     var tempArray = [];
-                    var label = '';
+                    var queryLabel = '';
                     switch (value) {
-                        case 'actor.mbox':          label = ''; break;
-                        case 'actor.account.name':  label = 'account:'; break;
-                        case 'actor.openid':        label = 'openid:'; break;
-                        case 'actor.mbox_sha1sum':  label = 'mbox_sha1sum:'; break;
+                        case 'actor.mbox':          queryLabel = ''; break;
+                        case 'actor.account':       queryLabel = 'account:'; break;
+                        case 'actor.openid':        queryLabel = 'openid:'; break;
+                        case 'actor.mbox_sha1sum':  queryLabel = 'mbox_sha1sum:'; break;
                     }
                     query[queryKey].forEach(function(val, ind, orgArr) {
-                        tempArray.push(label + query[queryKey][ind]);
+                        if (queryKey === 'statement.actor.account') {
+                            tempArray.push(queryLabel + val.homePage + ' / ' + val.name);
+                        } else {
+                            tempArray.push(queryLabel + query[queryKey][ind]);
+                        }
                     });
                     consolidatedActors = consolidatedActors.concat(tempArray);
                 }
@@ -92,8 +96,13 @@ define([
                 
                 switch (whichId) {
                     case 'account':
+                        //now for account, we need to split it into json object.
+                        intermediateValue = intermediateValue.slice(8,intermediateValue.length).split(" / ");
+                        var homePage = intermediateValue.shift();
+                        var name = intermediateValue.pop();
+                        var obj = {homePage:homePage, name:name};
                         combined.account.push(
-                            intermediateValue.slice(8,intermediateValue.length)
+                            obj
                         );
                         break;
                     case 'openid':
@@ -116,14 +125,14 @@ define([
             Object.keys(combined).forEach(function(value, index, originalArray) {
                 if (combined[value].length > 0) {
                     switch (value) {
-                        case 'account':         query['statement.actor.account.name'] = combined[value]; break;
+                        case 'account':         query['statement.actor.account'] = combined[value]; break;
                         case 'mailto':          query['statement.actor.mbox'] = combined[value]; break;
                         case 'openid':          query['statement.actor.openid'] = combined[value]; break;
                         case 'mbox_sha1sum':    query['statement.actor.mbox_sha1sum'] = combined[value]; break;
                     }
                 } else {
                     switch (value) {
-                        case 'account':         query['statement.actor.account.name'] = undefined; break;
+                        case 'account':         query['statement.actor.account'] = undefined; break;
                         case 'mailto':          query['statement.actor.mbox'] = undefined; break;
                         case 'openid':          query['statement.actor.openid'] = undefined; break;
                         case 'mbox_sha1sum':    query['statement.actor.mbox_sha1sum'] = undefined; break;

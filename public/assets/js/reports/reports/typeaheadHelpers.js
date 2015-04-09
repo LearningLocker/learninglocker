@@ -42,8 +42,8 @@ define([
     var pre = '';
     if (typeof actor.mbox !== "undefined") {
       id = actor.mbox;
-    } else if (typeof actor.account !== "undefined" && typof actor.account.name !== "undefined") {
-      id = actor.account.name;
+    } else if (typeof actor.account !== "undefined" && typeof actor.account.name !== "undefined" && typeof actor.account.homePage !=== "undefined") {
+      id = actor.account.homePage + ' / ' + actor.account.name;
       pre = 'account:';
     } else if (typeof actor.openid !== "undefined") {
       id = actor.openid;
