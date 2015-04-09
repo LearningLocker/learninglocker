@@ -42,7 +42,7 @@ define([
     var pre = '';
     if (typeof actor.mbox !== "undefined") {
       id = actor.mbox;
-    } else if (typeof actor.account !== "undefined" && typeof actor.account.name !== "undefined" && typeof actor.account.homePage !=== "undefined") {
+    } else if (typeof actor.account !== "undefined" && typeof actor.account.name !== "undefined" && typeof actor.account.homePage !== "undefined") {
       id = actor.account.homePage + ' / ' + actor.account.name;
       pre = 'account:';
     } else if (typeof actor.openid !== "undefined") {
