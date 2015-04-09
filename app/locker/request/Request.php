@@ -16,8 +16,7 @@ class Request {
    */
   public function getParams() {
     // If no params were cached, get them.
-    if ($this->params === null || count($this->params) < 1) {
-      \Log::info(\Input::all());
+    if ($this->params === null || count($this->params) < 1 || \App::environment() === 'testing') {
       $requestParams = \Request::all();
       $payloadParams = $this->getPayloadParams();
 

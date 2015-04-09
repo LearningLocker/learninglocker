@@ -89,9 +89,10 @@ abstract class TestCase extends Base {
   }
 
   protected function requestAPI($method = 'GET', $url = '', $content = '') {
-    $headers = $this->getHeaders($this->lrs->api);
+    $server = $this->getHeaders($this->lrs->api);
+    $server['HTTP_X-Experience-API-Version'] = '1.0.1';
     Route::enableFilters();
-    return $this->call($method, $url, ['X-Experience-API-Version' => '1.0.1'], [], $headers, $content);
+    return $this->call($method, $url, [], [], $server, $content);
   }
 
   protected function getStatement() {

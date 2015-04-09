@@ -14,11 +14,9 @@ class StatementsTest extends TestCase {
   }
 
   protected function requestStatementsAPI($method = 'GET', $url = '', $params = []) {
-    $headers = $this->getHeaders($this->lrs->api);
+    $server = $this->getHeaders($this->lrs->api);
     Route::enableFilters();
-    return $this->call($method, $url.'?'.http_build_query($params), [
-      'X-Experience-API-Version' => '1.0.1'
-    ], [], $headers, '');
+    return $this->call($method, $url, $params, [], $server, '');
   }
 
   public function testAggregate() {
