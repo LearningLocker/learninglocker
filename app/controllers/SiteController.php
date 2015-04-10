@@ -119,14 +119,12 @@ class SiteController extends BaseController {
    */
   public function lrs(){
     $opts = ['user' => \Auth::user()];
-    $lrs = $this->lrs->index($opts);
-    if ($lrs) {
-      foreach ($lrs as $l) {
-        $l->statement_total = $this->statement->count($l->_id);
-      }
-    }
-    return Response::json($lrs);
-   
+    $lrss = $this->lrs->index($opts);
+
+    return Response::json(array_map(function ($lrs) {
+      $lrs->statement_total = $this->statement->count($lrs->_id);
+      return $lrs;
+    }, $lrss));
   }
 
   public function apps() {
