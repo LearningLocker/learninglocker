@@ -1,45 +1,35 @@
 <?php
 
-use Locker\Repository\Statement\StatementRepository as Statement;
-use Locker\Repository\Lrs\LrsRepository as Lrs;
+use Locker\Repository\Statement\StatementRepository as StatementRepo;
+use Locker\Repository\Lrs\LrsRepository as LrsRepo;
 
 class StatementController extends BaseController {
 
-  /**
-  * Statement
-  */
-  protected $statement;
-
-  /**
-  * Lrs 
-  */
-  protected $lrs;
+  protected $statement, $lrs;
 
   /**
    * Construct
-   *
-   * @param StatementRepository $statement
    */
-  public function __construct( Statement $statement, Lrs $lrs ){
-
+  public function __construct(StatementRepo $statement, LrsRepo $lrs) {
     $this->statement = $statement;
-    $this->lrs       = $lrs;
+    $this->lrs = $lrs;
 
     $this->beforeFilter('auth');
     $this->beforeFilter('csrf', array('only' => 'store'));
     $this->beforeFilter('@checkCanSubmit', array('only' => 'store'));
-
   }
 
   /**
    * Show the form for creating a new resource.
-   *
    * @return View
    */
-  public function create( $id ){
-    $lrs = $this->lrs->find( $id );
-    return View::make('partials.statements.create', array('lrs'           => $lrs,
-                                                          'statement_nav' => true));
+  public function create($lrs_id) {
+    $opts = ['user' => \Auth::user()];
+    $lrs = $this->lrs->show($lrs_id, $opts);
+    return \View::make('partials.statements.create', [
+      'lrs' => $lrs,
+      'statement_nav' => true
+    ]);
   }
 
   /**
@@ -51,10 +41,10 @@ class StatementController extends BaseController {
    * @return Response
    */
   public function store(){
+    $input = \Input::all();
 
-    $input = Input::all();
-
-    $lrs = $this->lrs->find( $input['lrs'] );
+    $opts = ['user' => \Auth::user()];
+    $lrs = $this->lrs->show($input['lrs'], $opts);
 
     //remove lrs and _token from Input
     unset( $input['lrs'] );
@@ -80,9 +70,9 @@ class StatementController extends BaseController {
    * Can current user submit statements to this LRS?
    **/
   public function checkCanSubmit( $route, $request ){
-
-    $user      = \Auth::user();
-    $lrs       = $this->lrs->find( Input::get('lrs') );
+    $user = \Auth::user();
+    $opts = ['user' => $user];
+    $lrs = $this->lrs->show(Input::get('lrs'), $opts);
     $get_users = array();
 
     if( $lrs ){

@@ -7,7 +7,7 @@ use \Config as Config;
 use \Request as Request;
 use \Route as Route;
 use \DB as DB;
-use \Locker\Repository\Lrs\EloquentLrsRepository as LrsRepository;
+use \Locker\Repository\Lrs\EloquentRepository as LrsRepository;
 use \Lrs as Lrs;
 use \Client as Client;
 
@@ -52,11 +52,11 @@ class Base extends Controller {
   public function getLrs() {
     $key = LockerRequest::getUser();
     $secret = LockerRequest::getPassword();
-    $lrs = LrsRepository::checkSecret(Lrs::where('api.basic_key', $key)->first(), $secret);
+    $lrs = (new LrsRepository)->checkSecret(Lrs::where('api.basic_key', $key)->first(), $secret);
 
     //if main credentials not matched, try the additional credentials
     if ($lrs == null) {
-      $client = LrsRepository::checkSecret(Client::where('api.basic_key', $key)->first(), $secret);
+      $client = (new LrsRepository)->checkSecret(Client::where('api.basic_key', $key)->first(), $secret);
 
       if ($client != null) {
         $lrs = Lrs::find($client->lrs_id);

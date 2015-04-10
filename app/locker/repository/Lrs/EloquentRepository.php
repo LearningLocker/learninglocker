@@ -1,0 +1,167 @@
+<?php namespace Locker\Repository\Lrs;
+
+use \Illuminate\Database\Eloquent\Model as Model;
+use \Locker\Repository\Base\EloquentRepository as BaseRepository;
+use \Locker\XApi\Helpers as XAPIHelpers;
+use \Locker\Helpers\Helpers as Helpers;
+use \Event as Event;
+use \Statement as StatementModel;
+
+class EloquentRepository extends BaseRepository implements Repository {
+  protected $model = '\Lrs';
+  protected $defaults = [
+    'title' => 'New LRS',
+    'description' => ''
+  ];
+
+  /**
+   * Constructs a query restricted by the given options.
+   * @param [String => Mixed] $opts
+   * @return \Jenssegers\Mongodb\Eloquent\Builder
+   */
+  protected function where(array $opts) {
+    return (new $this->model);
+  }
+
+  /**
+   * Validates data.
+   * @param [String => Mixed] $data Properties to be changed on the model.
+   * @throws \Exception
+   */
+  protected function validateData(array $data) {
+    if (isset($data['title'])) XAPIHelpers::checkType('title', 'string', $data['title']);
+    if (isset($data['description'])) XAPIHelpers::checkType('description', 'string', $data['description']);
+    if (isset($data['api'])) XAPIHelpers::checkType('api', 'array', $data['api']);
+    if (isset($data['api']['basic_key'])) XAPIHelpers::checkType('api.basic_key', 'string', $data['api']['basic_key']);
+    if (isset($data['api']['basic_secret'])) XAPIHelpers::checkType('api.basic_secret', 'string', $data['api']['basic_secret']);
+    if (isset($data['owner'])) XAPIHelpers::checkType('owner', 'array', $data['owner']);
+    if (isset($data['owner']['_id'])) XAPIHelpers::checkType('owner._id', 'string', $data['owner']['_id']);
+    if (isset($data['users'])) XAPIHelpers::checkType('users', 'array', $data['users']);
+
+    // Validate users.
+    foreach ($data['users'] as $key => $field) {
+      XAPIHelpers::checkType("fields.$key", 'array', $field);
+      if (isset($field['_id'])) XAPIHelpers::checkType("fields.$key._id", 'string', $field['_id']);
+      if (isset($field['email'])) XAPIHelpers::checkType("fields.$key.email", 'string', $field['email']);
+      if (isset($field['name'])) XAPIHelpers::checkType("fields.$key.name", 'string', $field['name']);
+      if (isset($field['role'])) XAPIHelpers::checkType("fields.$key.role", 'string', $field['role']);
+    }
+  }
+
+  /**
+   * Constructs a store.
+   * @param Model $model Model to be stored.
+   * @param [String => Mixed] $data Properties to be used on the model.
+   * @param [String => Mixed] $opts
+   * @return Model
+   */
+  protected function constructStore(Model $model, array $data, array $opts) {
+    \Auth::user();
+    // Merges and validates data with defaults.
+    $data = array_merge(array_merge($this->defaults, $data), [
+      'api' => [
+        'basic_key' => Helpers::getRandomValue(),
+        'basic_secret' => Helpers::getRandomValue()
+      ],
+      'owner' => [['_id'] => $opts['user']->_id],
+      'users' => [[
+        '_id'   => $opts['user']->_id,
+        'email' => $opts['user']->email,
+        'name'  => $opts['user']->name,
+        'role'  => 'admin'
+      ]]
+    ]);
+    $this->validateData($data);
+
+    // Sets properties on model.
+    $model->title = $data['title'];
+    $model->description = $data['description'];
+    $model->api = $data['api'];
+    $model->owner = $data['owner'];
+    $model->users = $data['users'];
+
+    Event::fire('user.create_lrs', array('user' => $user));
+
+    return $model;
+  }
+
+  /**
+   * Constructs a update.
+   * @param Model $model Model to be updated.
+   * @param [String => Mixed] $data Properties to be changed on the model.
+   * @param [String => Mixed] $opts
+   * @return Model
+   */
+  protected function constructUpdate(Model $model, array $data, array $opts) {
+    $this->validateData($data);
+
+    // Sets properties on model.
+    if (isset($data['title'])) $model->title = $data['title'];
+    if (isset($data['description'])) $model->description = $data['description'];
+
+    return $model;
+  }
+
+  /**
+   * Gets all of the available models with the options.
+   * @param [String => Mixed] $opts
+   * @return [Model]
+   */
+  public function index(array $opts) {
+    if ($opts['user']->role === 'super') {
+      return parent::index($opts);
+    }
+
+    $query = $this->where('users._id', $opts['user']->_id)->remember(10);
+    return $query->get()->each(function (Model $model) {
+      return $this->format($model);
+    });
+  }
+
+  /**
+   * Destroys the model with the given ID and options.
+   * @param String $id ID to match.
+   * @param [String => Mixed] $opts
+   * @return Boolean
+   */
+  public function destroy($id, array $opts) {
+    StatementModel::where('lrs._id', $id)->delete();
+    return parent::destroy($id, $opts);
+  }
+
+  public function removeUser($id, $user_id) {
+    return $this->where('_id', $id)->pull('users', ['_id' => $user_id]);
+  }
+
+  public function getLrsOwned($user_id) {
+    return $this->where('owner._id', $user_id)->select('title')->get()->toArray();
+  }
+
+  public function getLrsMember($user_id) {
+    return $this->where('users._id', $user_id)->select('title')->get()->toArray();
+  }
+
+  public function changeRole($id, $user_id, $role) {
+    $lrs = $this->show($id, []);
+    $lrs->users = array_map(function ($user) use ($user_id, $role) {
+      $user['role'] = $user['_id'] === $user_id ? $role : $user['role'];
+      return $user;
+    }, $lrs->users);
+    return $lrs->save();
+  }
+
+  /**
+   * Checks that the secret matches.
+   * Also used to authenticate client users.
+   * @param Illuminate\Database\Eloquent\Model $client
+   * @param string $secret
+   * @return Illuminate\Database\Eloquent\Model
+   */
+  public function checkSecret($client, $secret) {
+    if ($client !== null && $client->api['basic_secret'] === $secret) {
+      return $client;
+    } else {
+      return null;
+    }
+  }
+}

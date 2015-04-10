@@ -1,169 +1,152 @@
 <?php
 
-use Locker\Repository\Lrs\LrsRepository as Lrs;
-use Locker\Repository\Statement\StatementRepository as Statement;
+use \Locker\Repository\Lrs\Repository as LrsRepo;
+use \Locker\Repository\Statement\StatementRepository as StatementRepo;
 
 class LrsController extends BaseController {
 
-  /**
-  * Lrs 
-  */
-  protected $lrs;
+  protected $lrs, $analytics, $statements;
 
   /**
-   * Statements
-   **/
-  protected $statements;
-
-
-  /**
-   * Construct
-   *
-   * @param Locker\Repository\Lrs\LrsRepository
-   * @param Locker\Repository\StatementRepository
-   *
+   * Constructs a new LrsController.
+   * @param LrsRepo $lrs
+   * @param StatementRepo $statement
    */
-  public function __construct(Lrs $lrs, Statement $statement){
-
-    $this->lrs       = $lrs;
+  public function __construct(LrsRepo $lrs, StatementRepo $statement){
+    $this->lrs = $lrs;
     $this->statement = $statement;
 
+    // Defines filters.
     $this->beforeFilter('auth');
-    $this->beforeFilter('csrf', array('only' => array('store', 'update', 'destroy', 'editCredentials', 'usersRemove', 'changeRole')));
-    $this->beforeFilter('auth.lrs', array('except' => array('index','create','store'))); //check user can access LRS.
-    $this->beforeFilter('edit.lrs', array('only' => array('edit','update','endpoint', 
-                                                          'users', 'usersRemove', 'inviteUsersForm',
-                                                          'changeRole', 'api', 'editCredentials'))); //check user can edit LRS.
-    $this->beforeFilter('create.lrs', array('only' => array('create','store'))); //Allowed to create an LRS?
+    $this->beforeFilter('csrf', ['only' => [
+      'store', 'update', 'destroy', 'editCredentials', 'usersRemove', 'changeRole'
+    ]]);
+    $this->beforeFilter('auth.lrs', ['except' => ['index','create','store']]); //check user can access LRS.
+    $this->beforeFilter('edit.lrs', ['only' => [
+      'edit','update','endpoint',
+      'users', 'usersRemove', 'inviteUsersForm',
+      'changeRole', 'api', 'editCredentials'
+    ]]); //check user can edit LRS.
+    $this->beforeFilter('create.lrs', ['only' => ['create','store']]); //Allowed to create an LRS?
+  }
 
+  private function getLrs($lrs_id) {
+    $opts = ['user' => \Auth::user()];
+    return [
+      'lrs' => $this->lrs->show($lrs_id, $opts),
+      'list' => $this->lrs->index($opts)
+    ];
   }
 
   /**
    * Display a listing of LRSs available for user.
-   *
    * @return View
    */
-  public function index(){
-    $lrs = $this->lrs->all();
-    return View::make('partials.lrs.list', array('lrs' => $lrs, 'list' => $lrs));
+  public function index() {
+    $opts = ['user' => \Auth::user()];
+    $lrs = $this->lrs->index($opts);
+    return \View::make('partials.lrs.list', ['lrs' => $lrs, 'list' => $lrs]);
   }
 
   /**
    * Show the form for creating a new resource.
-   *
    * @return View
    */
-  public function create(){
-    //has the user verified their email address?
-    $verified = Auth::user()->verified;
-    return View::make('partials.lrs.create', array('verified' => $verified));
+  public function create() {
+    $verified = \Auth::user()->verified;
+    return \View::make('partials.lrs.create', ['verified' => $verified]);
   }
 
   /**
    * Store a newly created resource in storage.
-   *
    * @return View
    */
-  public function store(){
-
-    $data = Input::all();
+  public function store() {
+    $data = \Input::all();
 
     //lrs input validation
     $rules['title']        = 'required';
     $rules['description']  = '';       
-    $validator = Validator::make($data, $rules);
-    if ($validator->fails()) return Redirect::back()->withErrors($validator);
+    $validator = \Validator::make($data, $rules);
+    if ($validator->fails()) return \Redirect::back()->withErrors($validator);
 
     // Store lrs
-    $s = $this->lrs->create( $data );
+    $opts = ['user' => \Auth::user()];
+    $s = $this->lrs->store($data, $opts);
 
     if($s){
-      return Redirect::to('/site#lrs')->with('success', Lang::get('lrs.created'));
+      return \Redirect::to('/site#lrs')->with('success', trans('lrs.created'));
     }
 
-    return Redirect::back()
+    return \Redirect::back()
       ->withInput()
-      ->with('error', Lang::get('create_problem'));
+      ->with('error', trans('create_problem'));
   }
 
   /**
    * Show the form for editing the specified resource.
-   *
-   * @param  int  $id
+   * @param String $lrs_id
    * @return View
    */
-  public function edit( $id ){
-
-    $lrs      = $this->lrs->find( $id );
-    $lrs_list = $this->lrs->all();
-    return View::make('partials.lrs.edit', array('account_nav' => true, 
-                                                 'lrs'         => $lrs, 
-                                                 'list'        => $lrs_list));
-
+  public function edit($lrs_id) {
+    return \View::make('partials.lrs.edit', array_merge($this->getLrs($lrs_id), [
+      'account_nav' => true
+    ]));
   }
 
   /**
    * Update the specified resource in storage.
-   *
-   * @param  int  $id
+   * @param String $lrs_id
    * @return View
    */
-  public function update($id){
-
-    $data = Input::all();
+  public function update($lrs_id){
+    $data = \Input::all();
 
     //lrs input validation
-    $rules['title']        = 'required';      
-    $validator = Validator::make($data, $rules);
-    if ($validator->fails()) return Redirect::back()->withErrors($validator);
+    $rules['title'] = 'required';      
+    $validator = \Validator::make($data, $rules);
+    if ($validator->fails()) {
+      return \Redirect::back()->withErrors($validator);
+    };
 
-    $l = $this->lrs->update( $id, Input::all() );
+    $opts = ['user' => \Auth::user()];
+    $l = $this->lrs->update($lrs_id, $data);
 
-    if($l){
-      return Redirect::back()->with('success', Lang::get('lrs.updated'));
+    if ($l) {
+      return \Redirect::back()->with('success', trans('lrs.updated'));
     }
 
-    return Redirect::back()
-          ->withInput()
-          ->withErrors($this->lrs->errors());
-
+    return \Redirect::back()
+      ->withInput()
+      ->withErrors($this->lrs->errors());
   }
 
   /**
    * Display the specified resource.
-   *
    * This is a temp hack until the single page app for 
    * analytics is ready. v1.0 stable.
-   *
-   * @param  int  $id
+   * @param String $lrs_id
    * @return View
    */
-  public function show( $id ){
-
-    $lrs      = $this->lrs->find( $id );
-    $lrs_list = $this->lrs->all();
-    $dashboard = new \app\locker\data\dashboards\LrsDashboard($id);
-    return View::make('partials.lrs.dashboard', array(
-      'lrs'      => $lrs, 
-      'list'     => $lrs_list,
+  public function show($lrs_id) {
+    $dashboard = new \app\locker\data\dashboards\LrsDashboard($lrs_id);
+    return View::make('partials.lrs.dashboard', array_merge($this->getLrs($lrs_id), [
       'stats' => $dashboard->getStats(),
       'graph_data' => $dashboard->getGraphData(),
       'dash_nav' => true
-    ));
-    
+    ]));
   }
 
-  public function getStats( $id, $segment = '' ){
+  public function getStats($lrs_id, $segment = '') {
+    $dashboard = new \app\locker\data\dashboards\LrsDashboard($lrs_id);
 
-    $dashboard = new \app\locker\data\dashboards\LrsDashboard($id);
-
-    switch( $segment ){
+    switch ($segment) {
       case 'topActivities':
-        $get_stats = $dashboard->getTopActivities( $id );
+        $get_stats = $dashboard->getTopActivities($lrs_id);
         $get_stats = $get_stats['result'];
         break;
       case 'activeUsers':
-        $get_stats = $dashboard->getActiveUsers( $id );
+        $get_stats = $dashboard->getActiveUsers($lrs_id);
         $get_stats = $get_stats['result'];
         break;
       default:
@@ -173,137 +156,124 @@ class LrsController extends BaseController {
     return Response::json($get_stats);
   }
 
-  public function getGraphData($id) {
+  public function getGraphData($lrs_id) {
     $startDate = \LockerRequest::getParam('graphStartDate');
     $endDate = \LockerRequest::getParam('graphEndDate');
 
     $startDate = !$startDate ? null : new \Carbon\Carbon($startDate);
     $endDate = !$endDate ? null : new \Carbon\Carbon($endDate);
-    $dashboard = new \app\locker\data\dashboards\LrsDashboard($id);
+    $dashboard = new \app\locker\data\dashboards\LrsDashboard($lrs_id);
     $graph_data = $dashboard->getGraphData($startDate, $endDate);
-    return Response::json( $graph_data );
+    return Response::json($graph_data);
   }
 
   /**
    * Remove the specified resource from storage.
-   *
-   * @param  int  $id
+   * @param String $lrs_id
    * @return View
    */
-  public function destroy($id){
-
-    $this->lrs->delete($id);
-    return Response::json(array('success'=>200, 'message'=>'deleted'));
-
+  public function destroy($lrs_id){
+    $opts = ['user' => \Auth::user()];
+    $this->lrs->destroy($lrs_id, $opts);
+    return Response::json([
+      'success' => 200,
+      'message' => 'deleted'
+    ]);
   }
 
   /**
    * Display statements for this LRS
-   *
+   * @param String $lrs_id
    * @return View
    */
-  public function statements( $id ){
-    $statements = $this->statement->index($id, [], [
+  public function statements($lrs_id){
+    $statements = $this->statement->index($lrs_id, [], [
       'ascending' => false,
-      'limit' => $this->statement->count($id)
+      'limit' => $this->statement->count($lrs_id)
     ])->paginate(15);
-    $lrs        = $this->lrs->find( $id );
-    $lrs_list   = $this->lrs->all();
-    return View::make('partials.statements.list', 
-                  array('statements'    => $statements,
-                        'lrs'           => $lrs,
-                        'list'          => $lrs_list,
-                        'statement_nav' => true));
 
+    return View::make('partials.statements.list', array_merge($this->getLrs($lrs_id), [
+      'statements' => $statements,
+      'statement_nav' => true
+    ]));
   }
 
   /**
    * Display the endpoint view.
-   *
+   * @param String $lrs_id
    * @return View
    */
-  public function endpoint( $id ){
-
-    $lrs    = $this->lrs->find( $id );
-    $lrs_list = $this->lrs->all();
-    return View::make('partials.lrs.endpoint', array('lrs'          => $lrs, 
-                                                     'endpoint_nav' => true,
-                                                     'list'         => $lrs_list));
-
+  public function endpoint($lrs_id) {
+    return View::make('partials.lrs.endpoint', array_merge($this->getLrs($lrs_id), [
+      'endpoint_nav' => true
+    ]));
   }
 
   /**
    * Display the api view.
-   *
+   * @param String $lrs_id
    * @return View
    */
-  public function api( $id ){
-
-    $lrs      = $this->lrs->find( $id );
-    $lrs_list = $this->lrs->all();
-    return View::make('partials.lrs.api', array('lrs'     => $lrs, 
-                                                'api_nav' => true,
-                                                'list'    => $lrs_list));
-
+  public function api($lrs_id) {
+    return View::make('partials.lrs.api', array_merge($this->getLrs($lrs_id), [
+      'api_nav' => true
+    ]));
   }
 
   /**
    * Generate a new key and secret for basic auth
    *
    **/
-  public function editCredentials( $id ){
+  public function editCredentials( $lrs_id ){
+    $opts = ['user' => \Auth::user()];
+    $lrs = $this->lrs->show($lrs_id);
 
-    $lrs = $this->lrs->find( $id );
+    $lrs->api  = [
+      'basic_key' => \Locker\Helpers\Helpers::getRandomValue(),
+      'basic_secret' => \Locker\Helpers\Helpers::getRandomValue()
+    ];
 
-    $lrs->api  = array('basic_key'    => \Locker\Helpers\Helpers::getRandomValue(),
-                       'basic_secret' => \Locker\Helpers\Helpers::getRandomValue());
-
-    if( $lrs->save() ){
+    if ($lrs->save()) {
       $message_type = 'success';
-      $message      = Lang::get('update_key');
-    }else{
+      $message = trans('update_key');
+    } else {
       $message_type = 'error';
-      $message      = Lang::get('update_key_error');
+      $message = trans('update_key_error');
     }
     
     return Redirect::back()->with($message_type, $message);
-    
   }
 
   /**
    * Display users with access to this lrs.
-   *
+   * @param String $lrs_id
    * @return View
    */
-  public function users( $id ){
-
-    $lrs      = $this->lrs->find( $id );
-    $lrs_list = $this->lrs->all();
-    return View::make('partials.users.list', array('lrs'      => $lrs, 
-                                                   'users'    => $lrs->users,
-                                                   'list'     => $lrs_list,
-                                                   'user_nav' => true));
+  public function users($lrs_id) {
+    $opts = $this->getLrs($lrs_id);
+    return View::make('partials.users.list', array_merge($opts, [ 
+      'users'    => $opts['lrs']->users,
+      'user_nav' => true
+    ]));
 
   }
 
-  public function inviteUsersForm( $id ){
-    $lrs      = $this->lrs->find( $id );
-    $lrs_list = $this->lrs->all();
-    return View::make('partials.lrs.invite', array('lrs'      => $lrs, 
-                                                   'users'    => $lrs->users,
-                                                   'list'     => $lrs_list,
-                                                   'user_nav' => true));
+  public function inviteUsersForm($lrs_id) {
+    $opts = $this->getLrs($lrs_id);
+    return View::make('partials.lrs.invite', array_merge($opts, [ 
+      'users'    => $opts['lrs']->users,
+      'user_nav' => true
+    ]));
 
   }
 
-  public function usersRemove( $id ){
-    $lrs = $this->lrs->removeUser( $id, Input::get('user') );
-    return Redirect::back()->with('success', Lang::get('lrs.remove_user'));
+  public function usersRemove($lrs_id) {
+    $lrs = $this->lrs->removeUser($lrs_id, Input::get('user'));
+    return Redirect::back()->with('success', trans('lrs.remove_user'));
   }
 
-  public function changeRole( $id, $user, $role ){
-    $change = $this->lrs->changeRole( $id, $user, $role );
-    return Response::json(array('success' => true));
+  public function changeRole($lrs_id, $user, $role) {
+    $change = $this->lrs->changeRole($lrs_id, $user, $role);
+    return Response::json(['success' => true]);
   }
-
 }
