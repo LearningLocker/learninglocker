@@ -1,7 +1,7 @@
 <?php
 
 use Locker\Repository\User\UserRepository as User;
-use Locker\Repository\Lrs\LrsRepository as Lrs;
+use Locker\Repository\Lrs\Repository as Lrs;
 
 class UserController extends BaseController {
 

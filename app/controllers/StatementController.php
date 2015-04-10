@@ -1,7 +1,7 @@
 <?php
 
 use Locker\Repository\Statement\StatementRepository as StatementRepo;
-use Locker\Repository\Lrs\LrsRepository as LrsRepo;
+use Locker\Repository\Lrs\Repository as LrsRepo;
 
 class StatementController extends BaseController {
 

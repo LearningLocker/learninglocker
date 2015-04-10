@@ -1,6 +1,6 @@
 <?php
 
-use Locker\Repository\Lrs\LrsRepository as LrsRepo;
+use Locker\Repository\Lrs\Repository as LrsRepo;
 use Locker\Repository\Report\Repository as ReportRepo;
 
 class ReportingController extends \BaseController {
