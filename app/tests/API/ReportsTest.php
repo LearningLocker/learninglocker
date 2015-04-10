@@ -1,6 +1,6 @@
 <?php namespace Tests\API;
 
-class ReportTest extends ResourceTestCase {
+class ReportsTest extends ResourcesTestCase {
   static protected $endpoint = '/api/v1/reports';
   static protected $model_class = '\Report';
   protected $data = [

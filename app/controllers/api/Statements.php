@@ -35,7 +35,7 @@ class Statements extends Base {
     $pipeline = json_decode(
       \LockerRequest::getParam('pipeline'),
       true
-    ) ?: [['match' => []]];
+    ) ?: [['$match' => ['active' => true]]];
     return \Response::json($this->query->aggregate($this->lrs->_id, $pipeline));
   }
 

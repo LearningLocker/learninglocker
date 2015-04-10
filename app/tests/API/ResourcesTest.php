@@ -1,7 +1,7 @@
 <?php namespace Tests\API;
 use \Illuminate\Http\JsonResponse as JsonResponse;
 
-abstract class ResourceTestCase extends TestCase {
+abstract class ResourcesTestCase extends TestCase {
   static protected $model_class = '...';
   protected $data = [];
   protected $model = null;
