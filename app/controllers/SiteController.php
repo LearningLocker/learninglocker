@@ -1,40 +1,18 @@
 <?php
 
-use Locker\Repository\Site\SiteRepository as Site;
-use Locker\Repository\Lrs\LrsRepository as Lrs;
-use Locker\Repository\Statement\StatementRepository as Statement;
-use Locker\Repository\User\UserRepository as User;
+use Locker\Repository\Site\SiteRepository as SiteRepo;
+use Locker\Repository\Lrs\Repository as LrsRepo;
+use Locker\Repository\Statement\StatementRepository as StatementRepo;
+use Locker\Repository\User\UserRepository as UserRepo;
 
 class SiteController extends BaseController {
 
-  /**
-  * Site
-  */
-  protected $site;
+  protected $site, $lrs, $user, $statement;
 
   /**
-   * Lrs
-   **/
-  protected $lrs;
-
-  /**
-   * $user
-   **/
-  protected $user;
-
-  /**
-   * Statements
-   **/
-  protected $statement;
-
-
-  /**
-   * Construct
-   *
-   * @param Site $site
+   * Constructs a new SiteController.
    */
-  public function __construct(Site $site, Lrs $lrs, User $user, Statement $statement){
-
+  public function __construct(SiteRepo $site, LrsRepo $lrs, UserRepo $user, StatementRepo $statement){
     $this->site = $site;
     $this->lrs  = $lrs;
     $this->statement  = $statement;
@@ -43,7 +21,6 @@ class SiteController extends BaseController {
     $this->beforeFilter('auth');
     $this->beforeFilter('auth.super', array('except' => array('inviteUsers')));
     $this->beforeFilter('csrf', array('only' => array('update', 'verifyUser', 'inviteUsers'))); 
-
   }
 
   /**
@@ -52,70 +29,63 @@ class SiteController extends BaseController {
    * @return View
    */
   public function index(){
-
     $site  = $this->site->all();
-    $list  = $this->lrs->all();
+    $opts = ['user' => \Auth::user()];
+    $list  = $this->lrs->index($opts);
     $admin_dashboard = new \app\locker\data\dashboards\AdminDashboard();
 
-    return View::make('partials.site.dashboard', array(
+    return View::make('partials.site.dashboard', [
       'site' => $site, 
       'list' => $list,
       'stats' => $admin_dashboard->getFullStats(),
       'graph_data' => $admin_dashboard->getGraphData()
-    ));
+    ]);
 
   }
 
   /**
    * Show the form for editing the specified resource.
-   *
-   * @param  int  $id
+   * @param String $id
    * @return View
    */
-  public function edit( $id ){
-
-    $site = $this->site->find( $id );
-    return View::make('partials.site.edit', array('site'         => $site, 
-                                                  'settings_nav' => true));
-
+  public function edit($id){
+    $site = $this->site->find($id);
+    return View::make('partials.site.edit', [
+      'site' => $site, 
+      'settings_nav' => true
+    ]);
   }
 
   /**
    * Update the specified resource in storage.
-   *
-   * @param  int  $id
+   * @param String $id
    * @return View
    */
-  public function update($id){
+  public function update($id) {
+    $s = $this->site->update($id, Input::all());
 
-    // Update site details
-    $s = $this->site->update( $id, Input::all() );
-
-    if($s){
-      return Redirect::back()->with('success', Lang::get('site.updated'));
+    if ($s) {
+      return Redirect::back()->with('success', trans('site.updated'));
     }
 
     return Redirect::back()
       ->withInput()
       ->withErrors($user->errors());
-
   }
 
   /**
    * Display the super admin settings.
-   *
    * @return Response
    */
-  public function settings(){
-    return Response::json( $this->site->all() );
+  public function settings() {
+    return Response::json($this->site->all());
   }
 
   /**
    * Grab site stats
-   *
    * @return Response
    **/
-  public function getStats(){
+  public function getStats() {
     $startDate = \LockerRequest::getParam('graphStartDate');
     $endDate = \LockerRequest::getParam('graphEndDate');
 
@@ -124,13 +94,12 @@ class SiteController extends BaseController {
     $admin_dashboard = new \app\locker\data\dashboards\AdminDashboard();
     $stats = $admin_dashboard->getFullStats();
 
-    return Response::json( $stats );
+    return Response::json($stats);
   }
 
 
   /**
    * Grab site stats
-   *
    * @return Response
    **/
   public function getGraphData(){
@@ -141,71 +110,62 @@ class SiteController extends BaseController {
     $endDate = !$endDate ? null : new \Carbon\Carbon($endDate);
     $admin_dashboard = new \app\locker\data\dashboards\AdminDashboard();
     $graph_data = $admin_dashboard->getGraphData($startDate, $endDate);
-    return Response::json( $graph_data );
+    return Response::json($graph_data);
   }
 
   /**
    * Display the super admin lrs view.
-   *
    * @return Response
    */
   public function lrs(){
+    $opts = ['user' => \Auth::user()];
+    $lrss = $this->lrs->index($opts);
 
-    $lrs = $this->lrs->all();
-    if( $lrs ){
-      foreach( $lrs as $l ){
-        $l->statement_total = $this->statement->count($l->_id);
-      }
-    }
-    return Response::json( $lrs );
-   
+    return Response::json(array_map(function ($lrs) {
+      $lrs->statement_total = $this->statement->count($lrs->_id);
+      return $lrs;
+    }, $lrss));
   }
 
-  public function apps(){
+  public function apps() {
     return OAuthApp::all();
   }
 
   /**
    * Display the super admin user list view.
-   *
    * @return Response
    */
-  public function users(){
-
-    $users = $this->user->all();
-    foreach($users as &$u){
-      $u->lrs_owned  = $this->lrs->getLrsOwned( $u->_id );
-      $u->lrs_member = $this->lrs->getLrsMember( $u->_id );
-    }
-    return Response::json( $users );
-
+  public function users() {
+    return Response::json(array_map(function ($user) {
+      $user->lrs_owned  = $this->lrs->getLrsOwned($user->_id);
+      $user->lrs_member = $this->lrs->getLrsMember($user->_id);
+    }, $this->user->all()));
   }
 
   /**
    * Display the invite user page
-   *
    * @return Response
    */
-  public function inviteUsersForm(){
-    return View::make('partials.site.invite', array('users_nav'  => true, 
-                                                    'admin_dash' => true));
+  public function inviteUsersForm() {
+    return View::make('partials.site.invite', [
+      'users_nav' => true, 
+      'admin_dash' => true
+    ]);
   }
 
   /**
    * Invite in the users
-   *
    **/
-  public function inviteUsers(){
-    $invite = \Locker\Helpers\User::inviteUser( Input::all() );
-    return Redirect::back()->with('success', Lang::get('users.invite.invited'));
+  public function inviteUsers() {
+    $invite = \Locker\Helpers\User::inviteUser(Input::all());
+    return Redirect::back()->with('success', trans('users.invite.invited'));
   }
 
   /**
    * Verify a user.
    **/
-  public function verifyUser($id){
+  public function verifyUser($id) {
     $verify = $this->site->verifyUser($id);
     return Response::json($verify);
   }
-
 }

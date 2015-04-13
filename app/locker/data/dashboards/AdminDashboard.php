@@ -60,7 +60,7 @@ class AdminDashboard extends \app\locker\data\BaseData {
    *
    **/
   public function actorCount(){
-    return count( \Statement::distinct('statement.actor.mbox')->remember(5)->get() );
+    return \Statement::distinct('statement.actor.mbox')->remember(5)->count();
   }
 
   /**

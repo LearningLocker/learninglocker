@@ -1,19 +1,11 @@
 <?php
 
 use Locker\Repository\User\UserRepository as User;
-use Locker\Repository\Lrs\LrsRepository as Lrs;
+use Locker\Repository\Lrs\Repository as Lrs;
 
 class UserController extends BaseController {
 
-  /**
-  * User
-  */
-  protected $user;
-
-  /**
-   * Lrs
-   **/
-  protected $lrs;
+  protected $user, $lrs;
 
 
   /**
@@ -22,38 +14,30 @@ class UserController extends BaseController {
    * @param User $user
    */
   public function __construct(User $user, Lrs $lrs){
-
     $this->user = $user;
-    $this->lrs  = $lrs;
-    $this->logged_in_user = Auth::user();
+    $this->lrs = $lrs;
+    $this->logged_in_user = \Auth::user();
 
-    $this->beforeFilter('auth', array('except' => array('verifyEmail')));
-    $this->beforeFilter('csrf', array('only' => array('update','updateRole', 'destroy')));
-    $this->beforeFilter('user.delete', array('only' => 'destroy'));
-    $this->beforeFilter('auth.super', array('only' => array('updateRole','index')));
-    
+    $this->beforeFilter('auth', ['except' => ['verifyEmail']]);
+    $this->beforeFilter('csrf', ['only' => ['update','updateRole', 'destroy']]);
+    $this->beforeFilter('user.delete', ['only' => 'destroy']);
+    $this->beforeFilter('auth.super', ['only' => ['updateRole','index']]);
   }
 
   /**
    * Display a listing of users.
-   *
    * @return View
    */
-  public function index(){
-
-    return View::make('index', array( 'users' => $this->user->all() ));
-
+  public function index() {
+    return \View::make('index', ['users' => $this->user->all()]);
   }
 
   /**
    * Show the form for creating a new resource.
-   *
    * @return View
    */
-  public function create(){
-    
-    return View::make('register.index');
-
+  public function create() {
+    return \View::make('register.index');
   }
 
   /**
@@ -62,12 +46,11 @@ class UserController extends BaseController {
    * @param  int  $id
    * @return View
    */
-  public function edit( $id ){
-
-    return View::make('partials.users.edit')
-         ->with( 'user', $this->user->find( $id ) )
-         ->with( 'list', $this->lrs->all() );
-
+  public function edit($id) {
+    $opts = ['user' => \Auth::user()];
+    return \View::make('partials.users.edit')
+      ->with('user', $this->user->find($id))
+      ->with('list', $this->lrs->index($opts));
   }
 
   /**
@@ -77,8 +60,7 @@ class UserController extends BaseController {
    * @return View
    */
   public function update( $id ){
-
-    $data = Input::all();
+    $data = \Input::all();
 
     //if email being changed, verify new one, otherwise ignore
     if( $data['email'] != Auth::user()->email ){

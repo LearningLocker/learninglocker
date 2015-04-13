@@ -1,103 +1,76 @@
 <?php
 
-use Locker\Repository\User\UserRepository as User;
-use Locker\Repository\Lrs\LrsRepository as Lrs;
-use Locker\Repository\Client\ClientRepository as Client; 
+use Locker\Repository\User\UserRepository as UserRepo;
+use Locker\Repository\Lrs\Repository as LrsRepo;
+use Locker\Repository\Client\ClientRepository as ClientRepo; 
 
 class ClientController extends BaseController {
 
-  /**
-  * User
-  */
-  protected $user;
-
-  /**
-   * Lrs
-   **/
-  protected $lrs;
+  protected $user, $lrs, $client;
   
   /**
-   * Client
-   **/
-  protected $client;
-  
-
-  /**
-   * Construct
-   *
-   * @param User $user
-   * @param Lrs $lrs
-   * @param Client $client
+   * Constructs a new ClientController.
+   * @param UserRepo $user
+   * @param LrsRepo $lrs
+   * @param ClientRepo $client
    */
-  public function __construct(User $user, Lrs $lrs, Client $client){
-
+  public function __construct(UserRepo $user, LrsRepo $lrs, ClientRepo $client) {
     $this->user = $user;
-    $this->lrs  = $lrs;
-	$this->client  = $client;
-    $this->logged_in_user = Auth::user();
-    
+    $this->lrs = $lrs;
+	  $this->client = $client;
   }
   
   /**
-   * Load the manage clients page
-   *
-   * @param  int  $id
+   * Load the manage clients page.
+   * @param String $lrs_id
    * @return View
    */
-  public function manage($id){
-  	
-     $lrs    = $this->lrs->find( $id );
-     $lrs_list = $this->lrs->all(); 
-	
-	 $clients = \Client::where('lrs_id', $lrs->id)->get();
-	 	  
-	 
-     return View::make('partials.client.manage', array('clients'    => $clients,
-						                        'lrs'           => $lrs,
-						                        'list'          => $lrs_list
-												));
+  public function manage($lrs_id) {
+    $opts = ['user' => \Auth::user()];
+    $lrs = $this->lrs->show($lrs_id, $opts);
+    $lrs_list = $this->lrs->index($opts); 
+	  $clients = \Client::where('lrs_id', $lrs->id)->get();
+    return View::make('partials.client.manage', [
+      'clients' => $clients,
+      'lrs' => $lrs,
+      'list' => $lrs_list
+		]);
   }
   
    /**
-   * Load the manage clients page
-   *
-   * @param  int  $lrs_id
-   * @param  int  $id
+   * Load the manage clients page.
+   * @param String $lrs_id
+   * @param String $id
    * @return View
    */
-  public function edit($lrs_id, $id){
-  	
-     $lrs    = $this->lrs->find( $lrs_id );
-     $lrs_list = $this->lrs->all(); 
-	
-	 $client = $this->client->find( $id );
-	 	  
-	 
-     return View::make('partials.client.edit', array('client'    => $client,
-						                        'lrs'           => $lrs,
-						                        'list'          => $lrs_list
-												));
+  public function edit($lrs_id, $id) {
+    $opts = ['user' => \Auth::user()];
+    $lrs = $this->lrs->show($lrs_id, $opts);
+    $lrs_list = $this->lrs->index($opts); 
+	  $client = $this->client->find($id);
+	 	return View::make('partials.client.edit', [
+      'client' => $client,
+      'lrs' => $lrs,
+      'list' => $lrs_list
+		]);
   }
   
-    /**
-   * Create a new client
-   *
-   * @param  int  $id
+  /**
+   * Create a new client.
+   * @param String $id
    * @return View
-   **/
-
-  public function create($id){
-
-	$lrs = $this->lrs->find( $id );
+   */
+  public function create($id) {
+    $opts = ['user' => \Auth::user()];
+    $lrs = $this->lrs->show($lrs_id, $opts);
+	  $data = ['lrs_id' => $lrs->id];
 	
-	$data = array('lrs_id' => $lrs->id);
-	
-    if( $this->client->create( $data ) ){
+    if ($this->client->create($data)) {
       $message_type = 'success';
-      $message      = Lang::get('update_key');
-    }else{
+      $message = trans('update_key');
+    } else {
       $message_type = 'error';
-      $message      = Lang::get('update_key_error');
+      $message = trans('update_key_error');
     }
     
     return Redirect::back()->with($message_type, $message);
@@ -105,54 +78,36 @@ class ClientController extends BaseController {
 
   /**
    * Update the specified resource in storage.
-   *
-   * @param  int  $id
+   * @param String $lrs_id Id of the LRS.
+   * @param String $id Id of the client.
    * @return View
    */
   public function update($lrs_id, $id){
-
-    /*$data = Input::all();
-
-    //TODO :client input validation This may be able to re-use some of the statement validator
-    $rules['title']        = 'required|alpha_spaces';
-    $rules['description']  = 'alpha_spaces';       
-    $validator = Validator::make($data, $rules);
-    if ($validator->fails()) return Redirect::back()->withErrors($validator);
-	 */
-
-	 
-	//{{ URL() }}/lrs/{{ $lrs->_id }}/client/manage#{{ $client->_id }} 
-	
-    if($this->client->update( $id, Input::all() )){
-      return Redirect::to('/lrs/'.$lrs_id.'/client/manage#'.$id)->with('success', Lang::get('lrs.client.updated'));
+    if ($this->client->update($id, Input::all())) {
+      $redirect_url = '/lrs/'.$lrs_id.'/client/manage#'.$id;
+      return Redirect::to($redirect_url)->with('success', trans('lrs.client.updated'));
     }
 
     return Redirect::back()
-          ->withInput()
-          ->withErrors($this->client->errors());
-
+      ->withInput()
+      ->withErrors($this->client->errors());
   }
-
 
   /**
    * Remove the specified resource from storage.
-   *
-   * @param  int  $lrs_id
-   * @param  int  $id
+   * @param String $lrs_id
+   * @param String $id
    * @return View
    */
   public function destroy($lrs_id, $id){
-
-	if( $this->client->delete($id) ){
+	  if ($this->client->delete($id)) {
       $message_type = 'success';
-      $message      = Lang::get('delete_client_success');
-    }else{
+      $message = trans('delete_client_success');
+    } else {
       $message_type = 'error';
-      $message      = Lang::get('delete_client_error');
+      $message = trans('delete_client_error');
     }
 	
-   return Redirect::back()->with($message_type, $message);
-
+    return Redirect::back()->with($message_type, $message);
   }
-
 }

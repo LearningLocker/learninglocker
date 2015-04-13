@@ -97,13 +97,13 @@ class EloquentQueryRepository implements QueryRepository {
       '$match' => $match
     ], [
       '$group' => [
-        '_id'   => '',
-        'data'  => ['$addToSet' => ''],
+        '_id'   => '$statement.object.id',
+        'data'  => ['$addToSet' => '$statement'],
         'count' => ['$sum' => 1],
       ]
     ], [
       '$project' => [
-        '_id' => 0,
+        '_id' => 1,
         'data' => 1,
         'count' => 1
       ]

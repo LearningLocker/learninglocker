@@ -18,8 +18,12 @@ class Report extends Eloquent {
     $filter = [];
 
     if (isset($reportArr['query'])) $filter['filter'] = json_encode($reportArr['query']);
-    if (isset($reportArr['since'])) $filter['since'] = $reportArr['since'];
-    if (isset($reportArr['until'])) $filter['until'] = $reportArr['until'];
+    if (isset($reportArr['since'])) {
+      $filter['since'] = (new \Carbon\Carbon($reportArr['since']))->toIso8601String();
+    }
+    if (isset($reportArr['until'])) {
+      $filter['until'] = (new \Carbon\Carbon($reportArr['until']))->toIso8601String();
+    }
 
     return $filter;
   }
@@ -49,8 +53,8 @@ class Report extends Eloquent {
       }
     }
 
-    $since = isset($reportArr['since']) ? $reportArr['since'] : null;
-    $until = isset($reportArr['until']) ? $reportArr['until'] : null;
+    $since = isset($reportArr['since']) ? (new \Carbon\Carbon($reportArr['since']))->toIso8601String() : null;
+    $until = isset($reportArr['until']) ? (new \Carbon\Carbon($reportArr['until']))->toIso8601String() : null;
 
     if ($since || $until) {
       $match['statement.timestamp'] = [];
@@ -87,8 +91,8 @@ class Report extends Eloquent {
       array_push($wheres, ['orArray', 'or', $actorArray]);
     }
 
-    $since = isset($reportArr['since']) ? $reportArr['since'] : null;
-    $until = isset($reportArr['until']) ? $reportArr['until'] : null;
+    $since = isset($reportArr['since']) ? (new \Carbon\Carbon($reportArr['since']))->toIso8601String() : null;
+    $until = isset($reportArr['until']) ? (new \Carbon\Carbon($reportArr['until']))->toIso8601String() : null;
 
     if ($since && $until) {
       $wheres[] = ['statement.timestamp', 'between', $since, $until];

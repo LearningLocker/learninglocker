@@ -19,7 +19,7 @@ define([
     },
     templateHelpers: function () {
       return {
-        tip: this.tip,
+        example: this.example,
         type: this.type
       };
     },

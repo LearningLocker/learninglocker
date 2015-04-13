@@ -54,10 +54,9 @@ define([
     }
     return actor.name + ' (' + pre + id + ')';
   };
-  var view = function (segment, type, tip, display) {
-    // Where do I define `tip` here?
+  var view = function (segment, type, example, display) {
     return CompositeView.extend({
-      tip: tip,
+      example: example,
       type: type,
       childView: ItemView.extend({
         typeaheadUrl: 'reporting/typeahead/' + segment,

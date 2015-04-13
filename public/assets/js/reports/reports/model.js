@@ -140,7 +140,7 @@ define([
                 }
             });
         } else {
-            var newValue = this.get(responseKey).map(function (model) {
+            var newValue = (this.get(responseKey) || []).map(function (model) {
               var value = model.get('value');
 
               // Sets value to the full value if there is no identifier in brackets.
@@ -159,7 +159,7 @@ define([
         }
 
       }.bind(this));
-      this.set({query: query});
+      this.set('query', query);
     },
     _initializeRelations: function (response, empty) {
       // Maps query relations to response.
@@ -174,13 +174,14 @@ define([
 
       return response;
     },
-    sync: function (method, model, options) {
-      if (method === 'update') {
-        this._mapResponseToQuery();
-        return locker.Model.prototype.sync.call(this, method, model, options);
-      } else {
-        return locker.Model.prototype.sync.call(this, method, model, options);
-      }
+    save: function (attrs, opts) {
+      opts || (opts = {});
+      this._mapResponseToQuery();
+
+      attrs = _.clone(this.attributes);
+      opts.data = JSON.stringify(attrs);
+
+      return Backbone.Model.prototype.save.call(this, attrs, opts);
     }
   });
 });

@@ -1,6 +1,6 @@
 <?php namespace Tests\API;
 
-class ReportTest extends ResourceTestCase {
+class ReportsTest extends ResourcesTestCase {
   static protected $endpoint = '/api/v1/reports';
   static protected $model_class = '\Report';
   protected $data = [
@@ -8,7 +8,9 @@ class ReportTest extends ResourceTestCase {
     'description' => 'Test report description',
     'query' => [
       'statement.actor.mbox' => ['mailto:test@example.com']
-    ]
+    ],
+    'since' => null,
+    'until' => null
   ];
   protected $update = [
     'name' => 'Test updated report'
