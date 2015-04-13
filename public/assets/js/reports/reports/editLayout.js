@@ -35,9 +35,9 @@ define([
   };
   var changeDate = function (field) {
     return function (e) {
-      var changes = {};
-      changes[field] = e.currentTarget.value === '' ? undefined : new Date(e.currentTarget.value);
-      this.model.set(changes);
+      this.model.set(field,
+        e.currentTarget.value === '' ? undefined : e.currentTarget.value
+      );
       e.stopPropagation();
     };
   };

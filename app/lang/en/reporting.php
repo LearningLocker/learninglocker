@@ -56,7 +56,7 @@ return array(
     'dates' => [
       'intro' => 'You can select a since date, until date or both to filter results between two dates.',
       'since' => 'From (Since)',
-      'until' => 'From (Until)'
+      'until' => 'To (Until)'
     ],
     'placeholders' => [
       'name' => 'Name your report',

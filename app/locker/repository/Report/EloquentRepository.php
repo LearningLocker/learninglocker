@@ -24,6 +24,8 @@ class EloquentRepository extends BaseRepository implements Repository {
     if (isset($data['name'])) XAPIHelpers::checkType('name', 'string', $data['name']);
     if (isset($data['description'])) XAPIHelpers::checkType('description', 'string', $data['description']);
     if (isset($data['query'])) XAPIHelpers::checkType('query', 'array', $data['query']);
+    if (isset($data['since'])) XAPIHelpers::checkType('since', 'string', $data['since']);
+    if (isset($data['until'])) XAPIHelpers::checkType('until', 'string', $data['until']);
   }
 
   protected function format(Model $model) {
@@ -48,6 +50,8 @@ class EloquentRepository extends BaseRepository implements Repository {
     $model->description = $data['description'];
     $model->lrs = $opts['lrs_id'];
     $model->query = Helpers::replaceFullStop($data['query']);
+    $model->since = $data['since'];
+    $model->until = $data['until'];
 
     return $model;
   }
@@ -66,6 +70,8 @@ class EloquentRepository extends BaseRepository implements Repository {
     if (isset($data['name'])) $model->name = $data['name'];
     if (isset($data['description'])) $model->description = $data['description'];
     if (isset($data['query'])) $model->query = Helpers::replaceFullStop($data['query']);
+    if (isset($data['since'])) $model->since = $data['since'];
+    if (isset($data['until'])) $model->until = $data['until'];
 
     return $model;
   }
