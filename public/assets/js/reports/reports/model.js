@@ -82,7 +82,7 @@ define([
         if (responseKey == 'actors') {
             //consolidate actor query values by type of IFI
             var combined = {'account':[], 'openid':[], 'mbox_sha1sum':[], 'mailto':[]};
-            this.get(responseKey).map(function (model) {
+            (this.get(responseKey) || []).map(function (model) {
                 var value = model.get('value');
                 var intermediateValue = '';
                 
