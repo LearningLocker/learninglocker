@@ -8,7 +8,9 @@ class ReportsTest extends ResourcesTestCase {
     'description' => 'Test report description',
     'query' => [
       'statement.actor.mbox' => ['mailto:test@example.com']
-    ]
+    ],
+    'since' => null,
+    'until' => null
   ];
   protected $update = [
     'name' => 'Test updated report'
