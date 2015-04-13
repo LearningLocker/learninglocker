@@ -12,7 +12,9 @@ class EloquentRepository extends BaseRepository implements Repository {
   protected $defaults = [
     'name' => 'New report',
     'description' => '',
-    'query' => []
+    'query' => [],
+    'since' => null,
+    'until' => null
   ];
 
   /**
