@@ -10,12 +10,6 @@ return array(
     'create'  => 'Create report',
     'view'    => 'View report',
     'deleted' => 'That report has been deleted',
-    'who'     => 'Who',
-    'did'     => 'Did',
-    'what'    => 'What',
-    'where'   => 'Where',
-    'when'    => 'When',
-    'with_result' => 'With result',
     'related' => 'Related statements',
     'clear'   => 'Clear',
     'save'    => 'Save',
@@ -28,6 +22,14 @@ return array(
     'view_stats' => 'View statements',
     'graph' => 'Graph',
     'to' => 'to',
+    'tabs' => [
+      'actor' => 'Who?',
+      'verb' => 'Did what?',
+      'activity' => 'To what?',
+      'context' => 'In what?',
+      'result' => 'With what?',
+      'dates' => 'When?'
+    ],
     'headings' => [
       'info' => 'Report information',
       'learners' => 'Select learners',
@@ -56,7 +58,7 @@ return array(
     'dates' => [
       'intro' => 'You can select a since date, until date or both to filter results between two dates.',
       'since' => 'From (Since)',
-      'until' => 'From (Until)'
+      'until' => 'To (Until)'
     ],
     'placeholders' => [
       'name' => 'Name your report',
