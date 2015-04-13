@@ -1,15 +1,16 @@
-mixin tab(id, key, icon, tip, active)
+mixin tab(id, icon, tip, active)
   .col-xs-6.col-sm-2(data-toggle="tooltip" data-placement="bottom" title=tip)
     a(href='#' + id, data-toggle='tab')
       .explore-option(class=active ? ['active'] : [])
         span
           i.icon(class=['icon-' + icon])
-        != "<%= trans('reporting." + key + "') %>"
+        != "<%= trans('reporting.tabs." + id + "') %>"
+        
 
 .row
-  +tab('actor', 'who', 'user', 'This category lets you filter by actors (in most cases the user who performed the action - for example "Bob" completed maths quiz).', true)
-  +tab('verb', 'did', 'star', 'This category lets you filter by verbs (in most cases the action that occurred - for example Bob "completed" maths quiz)')
-  +tab('activity', 'what', 'question', 'This category lets you filter by objects (for example Bob completed "maths quiz")')
-  +tab('context', 'where', 'sitemap', 'This category lets you filter in terms of the context (for example Bob completed maths quiz "on www.example.com")')
-  +tab('result', 'with_result', 'bar-chart', 'This category lets you filter by score, success, or completion (for example Bob completed maths quiz "with a score of 10 out of 50")')
-  +tab('dates', 'when', 'calendar', 'This category lets you filter by when the statement was made (for example Bob completed maths quiz "at 12pm last Tuesday"')
+  +tab('actor', 'user', 'Filters by learners (i.e. "Bob").', true)
+  +tab('verb', 'star', 'Filters by verbs (i.e. "completed").')
+  +tab('activity', 'question', 'Filters by objects (like a maths quiz).')
+  +tab('context', 'sitemap', 'Filters by the context (for example Bob completed maths quiz on "www.example.com").')
+  +tab('result', 'bar-chart', 'Filters by score, success, or completion.')
+  +tab('dates', 'calendar', 'Filters by when activities were done.')

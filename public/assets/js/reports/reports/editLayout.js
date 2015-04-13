@@ -112,18 +112,18 @@ define([
       return locker.LayoutView.prototype.onRender.call(this, options);
     },
     relations: {
-      actors: typeaheadHelpers.view('actors', 'Actor', 'Search for the actor by typing their name (i.e. "Bob")', typeaheadHelpers.displayActor),
-      verbs: typeaheadHelpers.view('verbs', 'Verb', 'Search for the verb by typing it&#39;s name here (i.e. "completed")', function (item) {
+      actors: typeaheadHelpers.view('actors', 'Actor', 'Start typing name e.g. Bob', typeaheadHelpers.displayActor),
+      verbs: typeaheadHelpers.view('verbs', 'Verb', 'Start typing verb e.g. completed', function (item) {
         var id = item.id
         return item.display['en-GB'] + ' (' + id + ')';
       }),
-      activities: typeaheadHelpers.view('activities', 'Activity', 'Search for the activity by typing it&#39;s url identifier (i.e. "www.example.com/activity/1")'),
-      activityTypes: typeaheadHelpers.view('activityTypes', 'Activity Type', 'Search for the activity type by typing it&#39;s url identifier (i.e. "www.example.com/activity-type/1")', typeaheadHelpers.displayItem),
-      parents: typeaheadHelpers.view('parents', 'Parent Activity', 'Search for the activity by typing it&#39;s url identifier (i.e. "www.example.com/activity/1")'),
-      groups: typeaheadHelpers.view('grouping', 'Grouping Activity', 'Search for the activity by typing it&#39;s url identifier (i.e. "www.example.com/activity/1")'),
-      platforms: typeaheadHelpers.view('platforms', 'Platform', 'Search for the platform by typing it&#39;s name (i.e. "Curatr")', typeaheadHelpers.displayItem),
-      instructors: typeaheadHelpers.view('instructors', 'Instructor', 'Search for the instructor by typing their name (i.e. "Bob")', typeaheadHelpers.displayActor),
-      languages: typeaheadHelpers.view('languages', 'Language', 'Search for the language by typing it here (i.e. "English")', typeaheadHelpers.displayItem)
+      activities: typeaheadHelpers.view('activities', 'Activity URL', 'www.example.com/quiz/1'),
+      activityTypes: typeaheadHelpers.view('activityTypes', 'Activity Type URL', 'www.example.com/activity-type/course', typeaheadHelpers.displayItem),
+      parents: typeaheadHelpers.view('parents', 'Parent Activity URL', 'www.example.com/quiz/1'),
+      groups: typeaheadHelpers.view('grouping', 'Grouping Activity URL', 'www.example.com/course/1'),
+      platforms: typeaheadHelpers.view('platforms', 'Platform', 'Curatr', typeaheadHelpers.displayItem),
+      instructors: typeaheadHelpers.view('instructors', 'Instructor', 'Bob', typeaheadHelpers.displayActor),
+      languages: typeaheadHelpers.view('languages', 'Language', 'en-GB', typeaheadHelpers.displayItem)
     }
   });
 });
