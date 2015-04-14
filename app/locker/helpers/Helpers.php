@@ -1,5 +1,9 @@
 <?php namespace Locker\Helpers;
 
+use \Locker\XApi\Atom as XAPIAtom;
+use \Locker\XApi\Errors\Error as XAPIError;
+
+
 /**
  * Some handy static function for isolated tasks.
  *
@@ -116,14 +120,41 @@ class Helpers {
       }
     }
   }
-static function getEnvVar($var) {
-  $value = getenv($var);
-  if ($value === false) {
-    $defaults = include base_path() . '/.env.php';
-    $value = $defaults[$var];
-  }
+
+  static function getEnvVar($var) {
+    $value = getenv($var);
+    if ($value === false) {
+      $defaults = include base_path() . '/.env.php';
+      $value = $defaults[$var];
+    }
     
     return $value;
   }
   
+  /**
+   * Determines which identifier is currently in use in the given actor.
+   * @param \stdClass $actor.
+   * @return String|null Identifier in use.
+   */
+  static function getAgentIdentifier(\stdClass $actor) {
+    if (isset($actor->mbox)) return 'mbox';
+    if (isset($actor->account)) return 'account';
+    if (isset($actor->openid)) return 'openid';
+    if (isset($actor->mbox_sha1sum)) return 'mbox_sha1sum';
+    return null;
+  }
+
+  /**
+   * Validates a XAPIAtom.
+   * @param XAPIAtom $atom Atom to be validated.
+   * @param String $trace Where the atom has came from (i.e. request parameter name).
+   */
+  static function validateAtom(XAPIAtom $atom, $trace = null) {
+    $errors = $atom->validate();
+    if (count($errors) > 0) {
+      throw new Exceptions\Validation(array_map(function (XAPIError $error) use ($trace) {
+        return (string) ($trace === null ? $error : $error->addTrace($trace));
+      }, $errors)));
+    }
+  }
 }
