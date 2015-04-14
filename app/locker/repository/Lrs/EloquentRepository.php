@@ -56,14 +56,13 @@ class EloquentRepository extends BaseRepository implements Repository {
    * @return Model
    */
   protected function constructStore(Model $model, array $data, array $opts) {
-    \Auth::user();
     // Merges and validates data with defaults.
     $data = array_merge(array_merge($this->defaults, $data), [
       'api' => [
         'basic_key' => Helpers::getRandomValue(),
         'basic_secret' => Helpers::getRandomValue()
       ],
-      'owner' => [['_id'] => $opts['user']->_id],
+      'owner' => ['_id' => $opts['user']->_id],
       'users' => [[
         '_id'   => $opts['user']->_id,
         'email' => $opts['user']->email,
@@ -80,7 +79,7 @@ class EloquentRepository extends BaseRepository implements Repository {
     $model->owner = $data['owner'];
     $model->users = $data['users'];
 
-    Event::fire('user.create_lrs', array('user' => $user));
+    Event::fire('user.create_lrs', ['user' => $opts['user']]);
 
     return $model;
   }
@@ -109,13 +108,25 @@ class EloquentRepository extends BaseRepository implements Repository {
    */
   public function index(array $opts) {
     if ($opts['user']->role === 'super') {
-      return parent::index($opts);
+      $query = $this->where($opts);
+    } else {
+      $query = $this->where('users._id', $opts['user']->_id)->remember(10);
     }
 
-    $query = $this->where('users._id', $opts['user']->_id)->remember(10);
-    return $query->get()->each(function (Model $model) {
+    $obj_result = $query->get()->sortBy(function (Model $model) {
+      return strtolower($model->title);
+    })->each(function (Model $model) {
       return $this->format($model);
     });
+
+    // Annoying hack to convert stupid Laravel collection object to an array
+    // WITHOUT converting the models to associative arrays!!!
+    $result = [];
+    foreach ($obj_result->getIterator() as $model) {
+      $result[] = $model;
+    }
+
+    return $result;
   }
 
   /**
