@@ -17,7 +17,7 @@ Please see our [documentation](http://docs.learninglocker.net) for installation,
 You may contribute to this project via [issues](/issues) and [pull request](/pulls), however, please see the [guidelines](/contributing.md) before doing so. You can also contribute by updating our [documentation](https://github.com/LearningLocker/docs). More information about how you can get involved can be found on the [Learning Locker website](http://learninglocker.net/community/get-involved/). You can see our list of contributors in our [contributors.md file](/contributors.md).
 
 ### Getting Started
-1. Install Learning Locker's [requirements](http://docs.learninglocker.net/requirements/).
+1. Install Learning Locker's [requirements](http://docs.learninglocker.net/installation/#requirements).
 2. [Install and setup](http://docs.learninglocker.net/installation/) Learning Locker.
 3. Change the code.
 4. [Test](#testing) your code. See [testing](#testing) below for more information.
