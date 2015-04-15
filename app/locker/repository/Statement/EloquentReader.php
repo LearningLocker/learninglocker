@@ -9,6 +9,6 @@ abstract class EloquentReader {
    * @return \Jenssegers\Mongodb\Eloquent\Builder
    */
   protected function where(array $opts) {
-    return (new $this->model)->where('lrs', $opts['lrs_id']);
+    return (new $this->model)->where('lrs._id', $opts['lrs_id']);
   }
 }

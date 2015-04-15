@@ -140,4 +140,17 @@ class IndexOptionsTest extends Base {
     }
   }
 
+  public function testGetOpts() {
+    try {
+      $start_opts = $this->test_opts;
+      $end_opts = new IndexOptions($start_opts);
+
+      foreach ($start_opts as $key => $val) {
+        $this->assertEquals($val, $end_opts->getOpt($key));
+      }
+    } catch (\Exception $ex) {
+      $this->assertEquals(false, true, $ex->getMessage());
+    }
+  }
+
 }

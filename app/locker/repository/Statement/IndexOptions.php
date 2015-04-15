@@ -12,7 +12,7 @@ class IndexOptions {
   }
 
   public function getOpt($opt) {
-    return $options[$opt];
+    return $this->options[$opt];
   }
 
   /**

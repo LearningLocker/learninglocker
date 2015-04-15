@@ -14,22 +14,17 @@ interface IndexerInterface {
 
 class EloquentIndexer extends EloquentReader implements IndexerInterface {
 
+  public function __construct() {
+    $this->formatter = new Formatter();
+  }
+
   /**
    * Gets all of the available models with the options.
    * @param IndexOptions $opts
    * @return [Model]
    */
   public function index(IndexOptions $opts) {
-    return $this->where($opts);
-  }
-
-  /**
-   * Constructs a query restricted by the given options.
-   * @param IndexOptions $opts
-   * @return Builder
-   */
-  protected function where(IndexOptions $opts) {
-    $builder = parent::where($opts->options);
+    $builder = $this->where($opts->options);
 
     return $this->constructFilterOpts($builder, $opts, [
       'agent' => function ($value, $builder, IndexOptions $opts) {
@@ -100,7 +95,7 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
   private function constructFilterOpts(Builder $builder, IndexOptions $opts, array $builders) {
     foreach ($builders as $opt => $opt_builder) {
       $opt_value = $opts->getOpt($opt);
-      $builder = $opt_value === null ? $builder : $opt_builder($opt_value, $opt_builder, $opts);
+      $builder = $opt_value === null ? $builder : $opt_builder($opt_value, $builder, $opts);
     }
     return $builder;
   }
@@ -115,16 +110,16 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
     // Determines the formatter to be used.
     $format = $opts->getOpt('format');
     if ($format === 'exact') {
-      $formatter = function ($model, $opts) {
-        return $model;
+      $formatter = function ($statement, $opts) {
+        return $statement;
       };
     } else if ($format === 'ids') {
-      $formatter = function ($model, $opts) {
-        return $this->formatter->identityStatement($model);
+      $formatter = function ($statement, $opts) {
+        return $this->formatter->identityStatement($statement);
       };
     } else if ($format === 'canonical') {
-      $formatter = function ($model, $opts) {
-        return $this->formatter->canonicalStatement($model, $opts['langs']);
+      $formatter = function ($statement, $opts) {
+        return $this->formatter->canonicalStatement($statement, $opts['langs']);
       };
     } else {
       throw new Exceptions\Exception("`$format` is not a valid format.");
@@ -132,11 +127,12 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
 
     // Returns the models.
     return $builder
-      ->offset($opts->getOpt('offset'))
-      ->limit($opts->getOpt('limit'))
+      ->orderBy('statement.stored', $opts->getOpt('ascending'))
+      ->skip($opts->getOpt('offset'))
+      ->take($opts->getOpt('limit'))
       ->get()
-      ->each(function (Model $model) use ($opts) {
-        return $formatter($model, $opts);
+      ->map(function (Model $model) use ($opts, $formatter) {
+        return $formatter($model->statement, $opts);
       });
   }
 
