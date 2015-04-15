@@ -1,6 +1,7 @@
 <?php namespace Locker\Repository\Statement;
 
 use \Locker\Helpers\Helpers as Helpers;
+use \Locker\Helpers\Exceptions as Exceptions;
 
 class IndexOptions {
   public $options = [];
@@ -19,12 +20,40 @@ class IndexOptions {
    */
   private function validate() {
     $opts = $this->options;
+
+    // Validates types.
+    $this->validateOpt($opts, 'agent', 'Agent');
+    $this->validateOpt($opts, 'activity', 'IRI');
+    $this->validateOpt($opts, 'verb', 'IRI');
+    $this->validateOpt($opts, 'registration', 'UUID');
+    $this->validateOpt($opts, 'since', 'Timestamp');
+    $this->validateOpt($opts, 'until', 'Timestamp');
+    $this->validateOpt($opts, 'active', 'Boolean');
+    $this->validateOpt($opts, 'voided', 'Boolean');
+    $this->validateOpt($opts, 'related_activities', 'Boolean');
+    $this->validateOpt($opts, 'related_agents', 'Boolean');
+    $this->validateOpt($opts, 'ascending', 'Boolean');
+    $this->validateOpt($opts, 'format', 'String');
+    $this->validateOpt($opts, 'offset', 'Integer');
+    $this->validateOpt($opts, 'limit', 'Integer');
+    $this->validateOpt($opts, 'langs', 'Collection');
+    $this->validateOpt($opts, 'attachments', 'Boolean');
+    $this->validateOpt($opts, 'lrs_id', 'String');
+
+    // Validates values.
+    if (!isset($opts['lrs_id'])) throw new Exceptions\Exception('`lrs_id` must be set.');
     if ($opts['offset'] < 0) throw new Exceptions\Exception('`offset` must be a positive interger.');
     if ($opts['limit'] < 1) throw new Exceptions\Exception('`limit` must be a positive interger.');
-    XApiHelpers::checkType('related_activities', 'boolean', $opts['related_agents']);
-    XApiHelpers::checkType('related_activities', 'boolean', $opts['related_activities']);
-    XApiHelpers::checkType('attachments', 'boolean', $opts['attachments']);
-    XApiHelpers::checkType('ascending', 'boolean', $opts['ascending']);
+    if (!in_array($opts['format'], ['exact', 'canonical', 'ids'])) {
+      throw new Exceptions\Exception('`format` must be "exact", "canonical", or "ids".');
+    }
+  }
+
+  private function validateOpt($opts, $opt, $type) {
+    $class = '\Locker\XApi\\'.$type;
+    if (isset($opts[$opt])) {
+      Helpers::validateAtom(new $class($opts[$opt]));
+    }
   }
 
   /**
