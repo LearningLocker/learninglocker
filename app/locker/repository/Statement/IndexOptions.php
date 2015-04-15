@@ -21,10 +21,10 @@ class IndexOptions {
     $opts = $this->options;
     if ($opts['offset'] < 0) throw new Exceptions\Exception('`offset` must be a positive interger.');
     if ($opts['limit'] < 1) throw new Exceptions\Exception('`limit` must be a positive interger.');
-    XApiHelpers::checkType('related_activities', 'boolean', $opts['related_agents']));
-    XApiHelpers::checkType('related_activities', 'boolean', $opts['related_activities']));
-    XApiHelpers::checkType('attachments', 'boolean', $opts['attachments']));
-    XApiHelpers::checkType('ascending', 'boolean', $opts['ascending']));
+    XApiHelpers::checkType('related_activities', 'boolean', $opts['related_agents']);
+    XApiHelpers::checkType('related_activities', 'boolean', $opts['related_activities']);
+    XApiHelpers::checkType('attachments', 'boolean', $opts['attachments']);
+    XApiHelpers::checkType('ascending', 'boolean', $opts['ascending']);
   }
 
   /**
