@@ -127,10 +127,10 @@ class Helpers {
       $defaults = include base_path() . '/.env.php';
       $value = $defaults[$var];
     }
-    
+
     return $value;
   }
-  
+
   /**
    * Determines which identifier is currently in use in the given actor.
    * @param \stdClass $actor.
@@ -154,7 +154,7 @@ class Helpers {
     if (count($errors) > 0) {
       throw new Exceptions\Validation(array_map(function (XAPIError $error) use ($trace) {
         return (string) ($trace === null ? $error : $error->addTrace($trace));
-      }, $errors)));
+      }, $errors));
     }
   }
 }
