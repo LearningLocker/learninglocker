@@ -21,7 +21,7 @@ class EloquentShower extends EloquentReader implements ShowerInterface {
    */
   public function show($id, array $opts) {
     $opts = $this->mergeDefaultOptions($opts);
-    $model = $this->query->where($opts)
+    $model = $this->where($opts)
       ->where('statement.id', $id)
       ->where('voided', $opts['voided'])
       ->where('active', $opts['active'])
