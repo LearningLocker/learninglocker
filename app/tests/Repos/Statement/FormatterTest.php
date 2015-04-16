@@ -1,4 +1,4 @@
-<?php namespace Tests\Repos;
+<?php namespace Tests\Repos\Statement;
 
 use \Illuminate\Foundation\Testing\TestCase as Base;
 use \Locker\Repository\Statement\Formatter as Formatter;

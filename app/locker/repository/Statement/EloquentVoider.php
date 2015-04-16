@@ -3,7 +3,7 @@
 use \Illuminate\Database\Eloquent\Model as Model;
 
 interface VoiderInterface {
-  public function voidStatements(array $statements, array $opts);
+  public function voidStatements(array $statements, StoreOptions $opts);
 }
 
 class EloquentVoider extends EloquentLinker implements VoiderInterface {
@@ -11,9 +11,9 @@ class EloquentVoider extends EloquentLinker implements VoiderInterface {
   /**
    * Voids statements that need to be voided.
    * @param [\stdClass] $statements
-   * @param [String => Mixed] $opts
+   * @param StoreOptions $opts
    */
-  public function voidStatements(array $statements, array $opts) {
+  public function voidStatements(array $statements, StoreOptions $opts) {
     return array_map(function (\stdClass $voider) use ($opts) {
       return $this->voidStatement($voider, $opts);
     }, $statements);
@@ -22,9 +22,9 @@ class EloquentVoider extends EloquentLinker implements VoiderInterface {
   /**
    * Voids a statement if it needs to be voided.
    * @param \stdClass $voider
-   * @param [String => Mixed] $opts
+   * @param StoreOptions $opts
    */
-  private function voidStatement(\stdClass $voider, array $opts) {
+  private function voidStatement(\stdClass $voider, StoreOptions $opts) {
     if (!$this->isVoiding($voider)) return;
 
     $voided = $this->where($opts)

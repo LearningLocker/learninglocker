@@ -3,7 +3,7 @@
 use \Illuminate\Database\Eloquent\Model as Model;
 
 interface LinkerInterface {
-  public function updateReferences(array $statements, array $opts);
+  public function updateReferences(array $statements, StoreOptions $opts);
 }
 
 class EloquentLinker extends EloquentReader implements LinkerInterface {
@@ -14,9 +14,9 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
   /**
    * Updates statement references.
    * @param [\stdClass] $statements
-   * @param [String => Mixed] $opts
+   * @param StoreOptions $opts
    */
-  public function updateReferences(array $statements, array $opts) {
+  public function updateReferences(array $statements, StoreOptions $opts) {
     $this->to_update = array_map(function (\stdClass $statement) use ($opts) {
       return $this->getModel($statement, $opts);
     }, $statements);
@@ -41,10 +41,10 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
   /**
    * Gets the statement as an associative array from the database.
    * @param \stdClass $statement
-   * @param [String => Mixed] $opts
+   * @param StoreOptions $opts
    * @return [Model]
    */
-  private function getModel(\stdClass $statement, array $opts) {
+  private function getModel(\stdClass $statement, StoreOptions $opts) {
     $statement_id = $statement->id;
     $model = $this->where($opts)
       ->where('statement.id', $statement_id)
@@ -56,10 +56,10 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * Goes up the reference chain until it reaches the top then goes down setting references.
    * @param Model $model
    * @param [String] $visited IDs of statements visisted in the current chain (avoids infinite loop).
-   * @param [String => Mixed] $opts
+   * @param StoreOptions $opts
    * @return [Model]
    */
-  private function upLink(Model $model, array $visited, array $opts) {
+  private function upLink(Model $model, array $visited, StoreOptions $opts) {
     if (in_array($model->statement->id, $visited)) return [];
     $visited[] = $model->statement->id;
     $up_refs = $this->upRefs($model, $opts);
@@ -77,10 +77,10 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * Goes down the reference chain setting references (refs).
    * @param Model $model
    * @param [String] $visited IDs of statements visisted in the current chain (avoids infinite loop).
-   * @param [String => Mixed] $opts
+   * @param StoreOptions $opts
    * @return [Model]
    */
-  private function downLink(Model $model, array $visited, array $opts) {
+  private function downLink(Model $model, array $visited, StoreOptions $opts) {
     if (in_array($model, $visited)) {
       return array_slice($visited, array_search($model, $visited));
     }
@@ -100,10 +100,10 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
   /**
    * Gets the statements referencing the given statement.
    * @param Model $model
-   * @param [String => Mixed] $opts
+   * @param StoreOptions $opts
    * @return [Model]
    */
-  private function upRefs(Model $model, array $opts) {
+  private function upRefs(Model $model, StoreOptions $opts) {
     return $this->where($opts)
       ->where('statement.object.id', $model->statement->id)
       ->where('statement.object.objectType', 'StatementRef')
@@ -113,10 +113,10 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
   /**
    * Gets the statement referred to by the given statement.
    * @param Model $model
-   * @param [String => Mixed] $opts
+   * @param StoreOptions $opts
    * @return Model
    */
-  private function downRef(Model $model, array $opts) {
+  private function downRef(Model $model, StoreOptions $opts) {
     if (!$this->isReferencing($model)) return null;
     return $this->where($opts)
       ->where('statement.id', $model->statement->object->id)
@@ -127,7 +127,7 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * Updates the refs for the given statement.
    * @param Model $model
    * @param [[String => mixed]] $refs Statements that are referenced by the given statement.
-   * @param [String => Mixed] $opts
+   * @param StoreOptions $opts
    */
   private function setRefs(Model $model, array $refs) {
     $model->refs = array_map(function ($ref) {

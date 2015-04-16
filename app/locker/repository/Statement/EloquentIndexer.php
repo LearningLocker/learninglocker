@@ -14,6 +14,8 @@ interface IndexerInterface {
 
 class EloquentIndexer extends EloquentReader implements IndexerInterface {
 
+  protected $formatter;
+
   public function __construct() {
     $this->formatter = new Formatter();
   }
@@ -24,7 +26,7 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
    * @return [Model]
    */
   public function index(IndexOptions $opts) {
-    $builder = $this->where($opts->options);
+    $builder = $this->where($opts);
 
     return $this->constructFilterOpts($builder, $opts, [
       'agent' => function ($value, $builder, IndexOptions $opts) {
@@ -119,7 +121,7 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
       };
     } else if ($format === 'canonical') {
       $formatter = function ($statement, $opts) {
-        return $this->formatter->canonicalStatement($statement, $opts['langs']);
+        return $this->formatter->canonicalStatement($statement, $opts->getOpt('langs'));
       };
     } else {
       throw new Exceptions\Exception("`$format` is not a valid format.");
