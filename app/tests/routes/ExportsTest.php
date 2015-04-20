@@ -1,5 +1,4 @@
-<?php namespace Tests\API;
-use \Report as Report;
+<?php namespace Tests\Routes;
 
 class ExportsTest extends ResourcesTestCase {
   static protected $endpoint = '/api/v1/exports';
@@ -22,7 +21,7 @@ class ExportsTest extends ResourcesTestCase {
   }
 
   protected function createReport() {
-    $model = new Report([
+    $model = new \Report([
       'name' => 'Test report',
       'description' => 'Test report description',
       'query' => [
@@ -35,7 +34,7 @@ class ExportsTest extends ResourcesTestCase {
   }
 
   public function testJson() {
-    $response = $this->requestAPI('GET', static::$endpoint.'/'."{$this->model->_id}/show");
+    $response = $this->requestResource('GET', static::$endpoint.'/'."{$this->model->_id}/show");
     $content = $response->getContent();
 
     // Checks that the response is correct.
@@ -43,7 +42,7 @@ class ExportsTest extends ResourcesTestCase {
   }
 
   public function testCsv() {
-    $response = $this->requestAPI('GET', static::$endpoint.'/'."{$this->model->_id}/show/csv");
+    $response = $this->requestResource('GET', static::$endpoint.'/'."{$this->model->_id}/show/csv");
     $content = $response->getContent();
 
     // Checks that the response is correct.

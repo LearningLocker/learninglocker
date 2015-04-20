@@ -1,4 +1,4 @@
-<?php namespace Tests\API;
+<?php namespace Tests\Routes;
 
 class ReportsTest extends ResourcesTestCase {
   static protected $endpoint = '/api/v1/reports';
@@ -17,21 +17,21 @@ class ReportsTest extends ResourcesTestCase {
   ];
 
   public function testRun() {
-    $response = $this->requestAPI('GET', static::$endpoint.'/'."{$this->model->_id}/run");
+    $response = $this->requestResource('GET', static::$endpoint.'/'."{$this->model->_id}/run");
     $content = $this->getContentFromResponse($response);
 
     // Checks that the response is correct.
-    $this->assertEquals(self::$statements, count($content), 'Incorrect amount of statements.');
-    $this->assertEquals(200, $response->getStatusCode(), 'Incorrect status code.');
+    $this->assertEquals(count($this->statements), count($content));
+    $this->assertEquals(200, $response->getStatusCode());
   }
 
   public function testGraph() {
-    $response = $this->requestAPI('GET', static::$endpoint.'/'."{$this->model->_id}/graph");
+    $response = $this->requestResource('GET', static::$endpoint.'/'."{$this->model->_id}/graph");
     $content = $this->getContentFromResponse($response);
 
     // Checks that the response is correct.
-    $this->assertEquals(true, isset($content[0]['count']), 'Incorrectly formed content.');
-    $this->assertEquals(self::$statements, $content[0]['count'], 'Incorrect amount of statements.');
-    $this->assertEquals(200, $response->getStatusCode(), 'Incorrect status code.');
+    $this->assertEquals(true, isset($content[0]['count']));
+    $this->assertEquals(count($this->statements), $content[0]['count']);
+    $this->assertEquals(200, $response->getStatusCode());
   }
 }

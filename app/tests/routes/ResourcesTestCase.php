@@ -1,7 +1,10 @@
-<?php namespace Tests\API;
+<?php namespace Tests\Routes;
+use \Tests\StatementsTestCase as StatementsTestCase;
 use \Illuminate\Http\JsonResponse as JsonResponse;
 
-abstract class ResourcesTestCase extends TestCase {
+abstract class ResourcesTestCase extends StatementsTestCase {
+  use RouteTestTrait;
+
   static protected $model_class = '...';
   protected $data = [];
   protected $model = null;
@@ -23,8 +26,13 @@ abstract class ResourcesTestCase extends TestCase {
     return $model;
   }
 
+  protected function requestResource($method = 'GET', $uri = '', $content = '') {
+    $params = [];
+    return $this->request($method, $uri, $params, $this->getServer($this->lrs), $content);
+  }
+
   public function testIndex() {
-    $response = $this->requestAPI('GET', static::$endpoint);
+    $response = $this->requestResource('GET', static::$endpoint);
     $content = $this->getContentFromResponse($response);
     $model = $this->getModelFromContent($content[0]);
 
@@ -35,7 +43,7 @@ abstract class ResourcesTestCase extends TestCase {
   }
 
   public function testStore() {
-    $response = $this->requestAPI('POST', static::$endpoint, json_encode($this->data));
+    $response = $this->requestResource('POST', static::$endpoint, json_encode($this->data));
     $model = $this->getModelFromResponse($response);
 
     // Checks that the response is correct.
@@ -45,7 +53,7 @@ abstract class ResourcesTestCase extends TestCase {
 
   public function testUpdate() {
     $data = array_merge($this->data, $this->update);
-    $response = $this->requestAPI('PUT', static::$endpoint.'/'.$this->model->_id, json_encode($data));
+    $response = $this->requestResource('PUT', static::$endpoint.'/'.$this->model->_id, json_encode($data));
     $model = $this->getModelFromResponse($response);
 
     // Checks that the response is correct.
@@ -54,7 +62,7 @@ abstract class ResourcesTestCase extends TestCase {
   }
 
   public function testShow() {
-    $response = $this->requestAPI('GET', static::$endpoint.'/'.$this->model->_id);
+    $response = $this->requestResource('GET', static::$endpoint.'/'.$this->model->_id);
     $model = $this->getModelFromResponse($response);
 
     // Checks that the response is correct.
@@ -63,7 +71,7 @@ abstract class ResourcesTestCase extends TestCase {
   }
 
   public function testDestroy() {
-    $response = $this->requestAPI('DELETE', static::$endpoint.'/'.$this->model->_id);
+    $response = $this->requestResource('DELETE', static::$endpoint.'/'.$this->model->_id);
     $content = $this->getContentFromResponse($response);
 
     // Checks that the response is correct.
@@ -87,7 +95,7 @@ abstract class ResourcesTestCase extends TestCase {
   }
 
   public function tearDown() {
-    //$this->model->delete();
+    $this->model->delete();
     parent::tearDown();
   }
 }
