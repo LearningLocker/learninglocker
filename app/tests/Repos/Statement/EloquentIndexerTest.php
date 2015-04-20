@@ -31,12 +31,11 @@ class EloquentIndexerTest extends EloquentTest {
     $this->assertEquals('Illuminate\Database\Eloquent\Collection', get_class($result));
     $this->assertEquals(count($this->statements), $result->count());
     $result->each(function ($statement) {
-      $this->assertEquals(true, is_array($statement));
-      $this->assertEquals(true, isset($statement['id']));
-      $this->assertEquals(true, is_string($statement['id']));
-      $expected_statement = $this->getStatement()['statement'];
-      $expected_statement->id = $statement['id'];
-      $this->assertEquals(json_encode($expected_statement), json_encode($statement));
+      $this->assertEquals(true, is_object($statement));
+      $this->assertEquals(true, isset($statement->id));
+      $this->assertEquals(true, is_string($statement->id));
+      $expected_statement = $this->statements[0]->statement;
+      $this->assertStatementMatch($expected_statement, $statement);
     });
   }
 
@@ -49,5 +48,10 @@ class EloquentIndexerTest extends EloquentTest {
 
     $this->assertEquals(true, is_int($result));
     $this->assertEquals(count($this->statements), $result);
+  }
+
+  protected function assertStatementMatch(\stdClass $statement_a, \stdClass $statement_b) {
+    unset($statement_b->version);
+    $this->assertEquals(true, $statement_a == $statement_b);
   }
 }
