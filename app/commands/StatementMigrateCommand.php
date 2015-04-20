@@ -55,7 +55,7 @@ class StatementMigrateCommand extends Command {
         });
 
         // Uses the repository to migrate the statements.
-        $repo = App::make('Locker\Repository\Statement\EloquentStatementRepository');
+        $repo = App::make('Locker\Repository\Statement\EloquentVoider');
         $repo->updateReferences($statements_array, $lrs);
         $repo->voidStatements($statements_array, $lrs);
 

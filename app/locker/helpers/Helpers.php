@@ -184,4 +184,19 @@ class Helpers {
     $current_date->setTimezone(new \DateTimeZone(\Config::get('app.timezone')));
     return $current_date->format('Y-m-d\TH:i:s.uP');
   }
+
+  /**
+   * Gets the CORS headers.
+   * @return [String => Mixed] CORS headers.
+   */
+  static function getCORSHeaders() {
+    return [
+      'Access-Control-Allow-Origin' => \Request::root(),
+      'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers' => 'Origin, Content-Type, Accept, Authorization, X-Requested-With, X-Experience-API-Version, X-Experience-API-Consistent-Through, Updated',
+      'Access-Control-Allow-Credentials' => 'true',
+      'X-Experience-API-Consistent-Through' => Helpers::getCurrentDate(),
+      'X-Experience-API-Version' => '1.0.1'
+    ];
+  }
 }
