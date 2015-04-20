@@ -25,15 +25,6 @@ class EloquentShower extends EloquentReader implements ShowerInterface {
 
     if ($model === null) throw new Exceptions\NotFound($id, $this->model);
 
-    return $this->format($model);
-  }
-
-  /**
-   * Formats the model before returning.
-   * @param Model $model
-   * @return Model
-   */
-  public function format(Model $model) {
-    return json_decode(json_encode($model->statement));
+    return $this->formatModel($model);
   }
 }

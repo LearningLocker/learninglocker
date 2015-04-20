@@ -1,6 +1,7 @@
 <?php namespace Locker\Repository\Statement;
 
 use \Illuminate\Database\Eloquent\Model as Model;
+use \Illuminate\Database\Eloquent\Collection as Collection;
 
 interface LinkerInterface {
   public function updateReferences(array $statements, StoreOptions $opts);
@@ -9,7 +10,7 @@ interface LinkerInterface {
 class EloquentLinker extends EloquentReader implements LinkerInterface {
 
   private $to_update = [];
-  private $downed = [];
+  private $downed = null;
 
   /**
    * Updates statement references.
@@ -17,8 +18,9 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * @param StoreOptions $opts
    */
   public function updateReferences(array $statements, StoreOptions $opts) {
+    $this->downed = new Collection();
     $this->to_update = array_map(function (\stdClass $statement) use ($opts) {
-      return $this->getModel($statement, $opts);
+      return $this->getModel($statement->id, $opts);
     }, $statements);
 
     while (count($this->to_update) > 0) {
@@ -31,24 +33,24 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * @param \stdClass $statement
    * @return Boolean
    */
-  private function isReferencing(Model $statement) {
+  private function isReferencing(\stdClass $statement) {
     return (
-      isset($model->statement->object->objectType) &&
-      $model->statement->object->objectType === 'StatementRef'
+      isset($statement->object->objectType) &&
+      $statement->object->objectType === 'StatementRef'
     );
   }
 
   /**
    * Gets the statement as an associative array from the database.
-   * @param \stdClass $statement
+   * @param String $statement_id Statement's UUID.
    * @param StoreOptions $opts
    * @return [Model]
    */
-  private function getModel(\stdClass $statement, StoreOptions $opts) {
-    $statement_id = $statement->id;
+  private function getModel($statement_id, StoreOptions $opts) {
     $model = $this->where($opts)
       ->where('statement.id', $statement_id)
       ->first();
+      
     return $model;
   }
 
@@ -60,13 +62,15 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * @return [Model]
    */
   private function upLink(Model $model, array $visited, StoreOptions $opts) {
-    if (in_array($model->statement->id, $visited)) return [];
-    $visited[] = $model->statement->id;
-    $up_refs = $this->upRefs($model, $opts);
+    $statement = $this->formatModel($model);
+    if (in_array($statement->id, $visited)) return [];
+    $visited[] = $statement->id;
+    $up_refs = $this->upRefs($statement, $opts);
     if ($up_refs->count() > 0) {
-      return $up_refs->map(function ($up_ref) use ($opts, $visited) {
-        if (in_array($up_ref, $this->downed)) return;
-        $this->downed = array_merge($this->downed, $this->upLink($up_ref, $visited, $opts));
+      return $up_refs->each(function ($up_ref) use ($opts, $visited) {
+        if ($this->downed->has($up_ref->_id)) return;
+        $this->downed->merge($this->upLink($up_ref, $visited, $opts));
+        return $up_ref;
       })->values();
     } else {
       return $this->downLink($model, [], $opts);
@@ -81,14 +85,15 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * @return [Model]
    */
   private function downLink(Model $model, array $visited, StoreOptions $opts) {
+    $statement = $this->formatModel($model);
     if (in_array($model, $visited)) {
       return array_slice($visited, array_search($model, $visited));
     }
     $visited[] = $model;
-    $down_ref = $this->downRef($model, $opts);
+    $down_ref = $this->downRef($statement, $opts);
     if ($down_ref !== null) {
       $refs = $this->downLink($down_ref, $visited, $opts);
-      $this->setRefs($model, $refs, $opts);
+      $this->setRefs($statement, $refs, $opts);
       $this->unQueue($model);
       return array_merge([$model], $refs);
     } else {
@@ -99,41 +104,43 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
 
   /**
    * Gets the statements referencing the given statement.
-   * @param Model $model
+   * @param \stdClass $statement
    * @param StoreOptions $opts
-   * @return [Model]
+   * @return [\stdClass]
    */
-  private function upRefs(Model $model, StoreOptions $opts) {
+  private function upRefs(\stdClass $statement, StoreOptions $opts) {
     return $this->where($opts)
-      ->where('statement.object.id', $model->statement->id)
+      ->where('statement.object.id', $statement->id)
       ->where('statement.object.objectType', 'StatementRef')
       ->get();
   }
 
   /**
    * Gets the statement referred to by the given statement.
-   * @param Model $model
+   * @param \stdClass $statement
    * @param StoreOptions $opts
    * @return Model
    */
-  private function downRef(Model $model, StoreOptions $opts) {
-    if (!$this->isReferencing($model)) return null;
-    return $this->where($opts)
-      ->where('statement.id', $model->statement->object->id)
-      ->first();
+  private function downRef(\stdClass $statement, StoreOptions $opts) {
+    if (!$this->isReferencing($statement)) return null;
+    return $this->getModel($statement->object->id, $opts);
   }
 
   /**
    * Updates the refs for the given statement.
-   * @param Model $model
-   * @param [[String => mixed]] $refs Statements that are referenced by the given statement.
+   * @param \stdClass $statement
+   * @param [\stdClass] $refs Statements that are referenced by the given statement.
    * @param StoreOptions $opts
    */
-  private function setRefs(Model $model, array $refs) {
-    $model->refs = array_map(function ($ref) {
-      return $ref->statement;
-    }, $refs);
-    $model->save();
+  private function setRefs(\stdClass $statement, array $refs, StoreOptions $opts) {
+    $this->where($opts)
+      ->where('statement.id', $statement->id)
+      ->update([
+        'refs' => array_map(function ($ref) {
+          if (get_class($ref) === 'stdClass') \Log::info(json_encode($ref));
+          return $ref->statement;
+        }, $refs)
+      ]);
   }
 
   /**

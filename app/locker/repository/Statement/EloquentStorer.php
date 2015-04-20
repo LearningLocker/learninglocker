@@ -64,7 +64,7 @@ class EloquentStorer extends EloquentReader implements Storer {
       // Validates statement.
       $constructed_statement = new XAPIStatement($statement);
       Helpers::validateAtom($constructed_statement, 'statement');
-      $statement = $constructed_statement->toValue();
+      $statement = $constructed_statement->getValue();
 
       // Adds $statement to $constructed.
       if (isset($constructed[$statement->id])) {

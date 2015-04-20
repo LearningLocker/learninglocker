@@ -4,6 +4,7 @@ interface Repository {
   public function store(array $statements, array $attachments, array $opts);
   public function index(array $opts);
   public function show($id, array $opts);
+  public function getAttachments(array $statements, array $opts);
 }
 
 class EloquentRepository implements Repository {
@@ -15,6 +16,7 @@ class EloquentRepository implements Repository {
     $this->storer = new EloquentStorer();
     $this->indexer = new EloquentIndexer();
     $this->shower = new EloquentShower();
+    $this->attacher = new FileAttacher();
   }
 
   /**
@@ -31,14 +33,15 @@ class EloquentRepository implements Repository {
   /**
    * Gets all of the available models with the options.
    * @param [String => Mixed] $opts
-   * @return [[\stdClass], Int] Array containing the statements and count.
+   * @return [[\stdClass], Int, [String => Mixed]] Array containing the statements, count, and opts.
    */
   public function index(array $opts) {
     $opts = new IndexOptions($opts);
     $builder = $this->indexer->index($opts);
     return [
       $this->indexer->format($builder, $opts),
-      $this->indexer->count($builder, $opts)
+      $this->indexer->count($builder, $opts),
+      $opts->options
     ];
   }
 
@@ -50,5 +53,15 @@ class EloquentRepository implements Repository {
    */
   public function show($id, array $opts) {
     return $this->shower->show($id, new ShowOptions($opts));
+  }
+
+  /**
+   * Gets the attachments for the given statements and options.
+   * @param [\stdClass] $statements
+   * @param [String => Mixed] $opts
+   * @return [\stdClass]
+   */
+  public function getAttachments(array $statements, array $opts) {
+    return $this->attacher->index($statements, new IndexOptions($opts));
   }
 }

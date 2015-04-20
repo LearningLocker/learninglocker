@@ -35,8 +35,7 @@ class EloquentInserter extends EloquentReader implements Inserter {
       ->first();
 
     if ($duplicate === null) return;
-    $duplicate =json_decode(json_encode($duplicate->statement));
-    $this->compareForConflict($statement, $duplicate);
+    $this->compareForConflict($statement, $this->formatModel($duplicate));
   }
 
   /**
@@ -47,13 +46,11 @@ class EloquentInserter extends EloquentReader implements Inserter {
    * @throws Exceptions\Conflict
    */
   private function compareForConflict(\stdClass $statement_x, \stdClass $statement_y) {
-    $encoded_x = json_encode($statement_x);
-    $encoded_y = json_encode($statement_y);
-    $decoded_x = $this->decodeStatementMatch($encoded_x);
-    $decoded_y = $this->decodeStatementMatch($encoded_y);
-    if ($decoded_x !== $decoded_y) {
+    $matchable_x = $this->matchableStatement($statement_x);
+    $matchable_y = $this->matchableStatement($statement_y);
+    if ($matchable_x != $matchable_y) {
       throw new Exceptions\Conflict(
-        "Conflicts\r\n`$encoded_x`\r\n`$encoded_y`."
+        "Conflicts\r\n`{json_encode($statement_x)}`\r\n`{json_encode($statement_y)}`."
       );
     };
   }
@@ -61,16 +58,14 @@ class EloquentInserter extends EloquentReader implements Inserter {
   /**
    * Decodes the encoded statement.
    * Removes properties not necessary for matching.
-   * @param String $encoded_statement
-   * @return [String => Mixed] $decoded_statement
+   * @param \stdClass $statement
+   * @return \stdClass $statement
    */
-  private function decodeStatementMatch($encoded_statement) {
-    $decoded_statement = json_decode($encoded_x, true);
-    array_multisort($decoded_statement);
-    ksort($decoded_statement);
-    unset($decoded_statement['stored']);
-    unset($decoded_statement['authority']);
-    return $decoded_statement;
+  private function matchableStatement(\stdClass $statement) {
+    $statement = json_decode(json_encode($statement));
+    unset($statement->stored);
+    unset($statement->authority);
+    return $statement;
   }
 
   /**
@@ -85,7 +80,7 @@ class EloquentInserter extends EloquentReader implements Inserter {
       'statement' => $statement,
       'active' => false,
       'voided' => false,
-      'timestamp' => new MongoDate(strtotime($statement->timestamp))
+      'timestamp' => new \MongoDate(strtotime($statement->timestamp))
     ];
   }
 

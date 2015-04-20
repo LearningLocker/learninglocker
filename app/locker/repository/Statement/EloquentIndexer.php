@@ -134,7 +134,7 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
       ->take($opts->getOpt('limit'))
       ->get()
       ->map(function (Model $model) use ($opts, $formatter) {
-        return $formatter($model->statement, $opts);
+        return $formatter($this->formatModel($model), $opts);
       });
   }
 

@@ -27,12 +27,10 @@ class EloquentVoider extends EloquentLinker implements VoiderInterface {
   private function voidStatement(\stdClass $voider, StoreOptions $opts) {
     if (!$this->isVoiding($voider)) return;
 
-    $voided = $this->where($opts)
-      ->where('statement.id', $voider->object->id)
-      ->first();
+    $voided = $this->getModel($voider->object->id, $opts);
 
     if ($voided !== null) {
-      if ($this->isVoidinging($voided->statement)) throw new \Exception(trans(
+      if ($this->isVoidinging($this->formatModel($voided))) throw new \Exception(trans(
         'xapi.errors.void_voider'
       ));
 
