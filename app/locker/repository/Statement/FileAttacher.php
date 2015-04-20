@@ -13,7 +13,9 @@ class FileAttacher {
    */
   public function store(array $attachments, StoreOptions $opts) {
     $dir = $this->getDir($opts);
-    if (!is_dir($dir)) mkdir($dir, null, true);
+    if (!is_dir($dir) && count($attachments > 0)) {
+      mkdir($dir, null, true);
+    }
 
     foreach ($attachments as $attachment) {
       $ext = $this->getExt($attachment->content_type);
