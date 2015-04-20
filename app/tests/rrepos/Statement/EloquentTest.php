@@ -38,7 +38,7 @@ abstract class EloquentTest extends Base {
 
   protected function getStatement() {
     return [
-      'statement' => json_decode(file_get_contents(__DIR__ . '../../../Fixtures/statement.json')),
+      'statement' => json_decode(file_get_contents(__DIR__ . '../../../fixtures/statement.json')),
       'active' => true,
       'voided' => false,
       'refs' => [],

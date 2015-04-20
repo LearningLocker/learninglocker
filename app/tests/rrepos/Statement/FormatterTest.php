@@ -21,7 +21,7 @@ class FormatterTest extends Base {
   }
 
   public function testIdentityStatements() {
-    $statement = json_decode(file_get_contents(__DIR__ . '/../../Fixtures/Repos/StatementFormatter1.json'));
+    $statement = json_decode(file_get_contents(__DIR__ . '/../../fixtures/Repos/StatementFormatter1.json'));
     $formatted = $this->formatter->identityStatement($this->cloneObj($statement));
 
     $this->assertEquals(true, is_object($formatted));
@@ -54,7 +54,7 @@ class FormatterTest extends Base {
   }
 
   public function testCanonicalStatements() {
-    $statement = json_decode(file_get_contents(__DIR__ . '/../../Fixtures/Repos/StatementFormatter1.json'));
+    $statement = json_decode(file_get_contents(__DIR__ . '/../../fixtures/Repos/StatementFormatter1.json'));
     $formatted = $this->formatter->canonicalStatement($this->cloneObj($statement), ['en-GB']);
 
     $this->assertEquals(true, is_object($formatted));
