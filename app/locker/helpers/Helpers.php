@@ -154,7 +154,7 @@ class Helpers {
     if (count($errors) > 0) {
       throw new Exceptions\Validation(array_map(function (XAPIError $error) use ($trace) {
         return (string) ($trace === null ? $error : $error->addTrace($trace));
-      }, $errors)));
+      }, $errors));
     }
   }
 }
