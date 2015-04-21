@@ -36,22 +36,22 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
         return $this->matchActivity($value, $builder, $opts);
       },
       'verb' => function ($value, $builder, IndexOptions $opts) {
-        return $this->addWhere($builder, 'statement.verb.id', $value);
+        return $this->addWhere($builder, 'verb.id', $value);
       },
       'registration' => function ($value, $builder, IndexOptions $opts) {
-        return $this->addWhere($builder, 'statement.context.registration', $value);
+        return $this->addWhere($builder, 'context.registration', $value);
       },
       'since' => function ($value, $builder, IndexOptions $opts) {
-        return $this->addWhere($builder, 'statement.timestamp', $value);
+        return $this->addWhere($builder, 'timestamp', $value);
       },
       'until' => function ($value, $builder, IndexOptions $opts) {
-        return $this->addWhere($builder, 'statement.timestamp', $value);
+        return $this->addWhere($builder, 'timestamp', $value);
       },
       'active' => function ($value, $builder, IndexOptions $opts) {
-        return $this->addWhere($builder, 'active', $value);
+        return $builder->where('active', $value);
       },
       'voided' => function ($value, $builder, IndexOptions $opts) {
-        return $this->addWhere($builder, 'voided', $value);
+        return $builder->where('voided', $value);
       }
     ]);
   }
@@ -66,7 +66,7 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
   private function addWhere(Builder $builder, $key, $value) {
     return $builder->where(function ($query) use ($key, $value) {
       return $query
-        ->orWhere($key, $value)
+        ->orWhere('statement.'.$key, $value)
         ->orWhere('refs.'.$key, $value);
     });
   }
@@ -128,14 +128,14 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
     }
 
     // Returns the models.
-    return $builder
+    return json_decode($builder
       ->orderBy('statement.stored', $opts->getOpt('ascending'))
       ->skip($opts->getOpt('offset'))
       ->take($opts->getOpt('limit'))
       ->get()
       ->map(function (Model $model) use ($opts, $formatter) {
         return $formatter($this->formatModel($model), $opts);
-      });
+      }));
   }
 
   /**
@@ -149,13 +149,13 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
     $id_val = $agent->{$id_key};
 
     return $builder->where(function ($query) use ($id_val, $opts) {
-      $keys = ["statement.actor.$id_key", "statement.object.$id_key"];
+      $keys = ["actor.$id_key", "object.$id_key"];
 
       if ($opts->getOpt('related_agents') === true) {
         $keys = array_merge($keys, [
-          "statement.authority.$id_key",
-          "statement.context.instructor.$id_key",
-          "statement.context.team.$id_key"
+          "authority.$id_key",
+          "context.instructor.$id_key",
+          "context.team.$id_key"
         ]);
       }
 
@@ -171,14 +171,14 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
    */
   private function matchActivity($activity, Builder $builder, IndexOptions $options) {
     return $builder->where(function ($query) use ($activity, $opts) {
-      $keys = ['statement.object.id'];
+      $keys = ['object.id'];
 
       if ($opts->getOpt('related_activities') === true) {
         $keys = array_merge($keys, [
-          'statement.context.contextActivities.parent.id',
-          'statement.context.contextActivities.grouping.id',
-          'statement.context.contextActivities.category.id',
-          'statement.context.contextActivities.other.id'
+          'context.contextActivities.parent.id',
+          'context.contextActivities.grouping.id',
+          'context.contextActivities.category.id',
+          'context.contextActivities.other.id'
         ]);
       }
 

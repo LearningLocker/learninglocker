@@ -18,6 +18,8 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * @param StoreOptions $opts
    */
   public function updateReferences(array $statements, StoreOptions $opts) {
+    $this->voider = strpos(json_encode($statements), 'voided') !== false;
+    if ($this->voider) \Log::info('updateReferences');
     $this->downed = new Collection();
     $this->to_update = array_map(function (\stdClass $statement) use ($opts) {
       return $this->getModel($statement->id, $opts);
@@ -33,7 +35,8 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * @param \stdClass $statement
    * @return Boolean
    */
-  private function isReferencing(\stdClass $statement) {
+  protected function isReferencing(\stdClass $statement) {
+    if ($this->voider) \Log::info('isReferencing');
     return (
       isset($statement->object->objectType) &&
       $statement->object->objectType === 'StatementRef'
@@ -46,7 +49,8 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * @param StoreOptions $opts
    * @return [Model]
    */
-  private function getModel($statement_id, StoreOptions $opts) {
+  protected function getModel($statement_id, StoreOptions $opts) {
+    if ($this->voider) \Log::info('getModel');
     $model = $this->where($opts)
       ->where('statement.id', $statement_id)
       ->first();
@@ -62,6 +66,7 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * @return [Model]
    */
   private function upLink(Model $model, array $visited, StoreOptions $opts) {
+    if ($this->voider) \Log::info('upLink');
     $statement = $this->formatModel($model);
     if (in_array($statement->id, $visited)) return [];
     $visited[] = $statement->id;
@@ -85,6 +90,7 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * @return [Model]
    */
   private function downLink(Model $model, array $visited, StoreOptions $opts) {
+    if ($this->voider) \Log::info('downLink');
     $statement = $this->formatModel($model);
     if (in_array($model, $visited)) {
       return array_slice($visited, array_search($model, $visited));
@@ -109,6 +115,7 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * @return [\stdClass]
    */
   private function upRefs(\stdClass $statement, StoreOptions $opts) {
+    if ($this->voider) \Log::info('upRefs');
     return $this->where($opts)
       ->where('statement.object.id', $statement->id)
       ->where('statement.object.objectType', 'StatementRef')
@@ -122,6 +129,7 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * @return Model
    */
   private function downRef(\stdClass $statement, StoreOptions $opts) {
+    if ($this->voider) \Log::info('downRef');
     if (!$this->isReferencing($statement)) return null;
     return $this->getModel($statement->object->id, $opts);
   }
@@ -133,11 +141,11 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * @param StoreOptions $opts
    */
   private function setRefs(\stdClass $statement, array $refs, StoreOptions $opts) {
+    if ($this->voider) \Log::info('setRefs');
     $this->where($opts)
       ->where('statement.id', $statement->id)
       ->update([
         'refs' => array_map(function ($ref) {
-          if (get_class($ref) === 'stdClass') \Log::info(json_encode($ref));
           return $ref->statement;
         }, $refs)
       ]);
@@ -148,6 +156,7 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * @param Model $model
    */
   private function unQueue(Model $model) {
+    if ($this->voider) \Log::info('unQueue');
     $updated_index = array_search($model, $this->to_update);
     if ($updated_index !== false) {
       array_splice($this->to_update, $updated_index, 1);

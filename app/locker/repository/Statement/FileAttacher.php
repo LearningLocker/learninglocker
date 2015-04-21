@@ -9,15 +9,20 @@ class FileAttacher {
   /**
    * Stores attachments with the given options.
    * @param [\stdClass] $attachments
+   * @param [String] $hashes
    * @param StoreOptions $opts
    */
-  public function store(array $attachments, StoreOptions $opts) {
+  public function store(array $attachments, array $hashes, StoreOptions $opts) {
     $dir = $this->getDir($opts);
     if (!is_dir($dir) && count($attachments > 0)) {
       mkdir($dir, null, true);
     }
 
     foreach ($attachments as $attachment) {
+      if (!in_array($attachment->hash, $hashes)) throw new Exceptions\Exception(
+        'Attachment hash does not exist in given statements'
+      );
+
       $ext = $this->getExt($attachment->content_type);
       if ($ext === false) throw new Exceptions\Exception(
         'This file type cannot be supported'

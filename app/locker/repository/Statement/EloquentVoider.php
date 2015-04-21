@@ -1,5 +1,6 @@
 <?php namespace Locker\Repository\Statement;
 
+use \Locker\Helpers\Exceptions as Exceptions;
 use \Illuminate\Database\Eloquent\Model as Model;
 
 interface VoiderInterface {
@@ -30,14 +31,14 @@ class EloquentVoider extends EloquentLinker implements VoiderInterface {
     $voided = $this->getModel($voider->object->id, $opts);
 
     if ($voided !== null) {
-      if ($this->isVoidinging($this->formatModel($voided))) throw new \Exception(trans(
+      if ($this->isVoiding($this->formatModel($voided))) throw new Exceptions\Exception(trans(
         'xapi.errors.void_voider'
       ));
 
       $voided->voided = true;
       $voided->save();
     } else {
-      throw new \Exception(trans(
+      throw new Exceptions\Exception(trans(
         'xapi.errors.void_null'
       ));
     }
@@ -45,13 +46,13 @@ class EloquentVoider extends EloquentLinker implements VoiderInterface {
 
   /**
    * Determines if a statement is a voiding statement.
-   * @param \stdClass $voider
+   * @param \stdClass $statement
    * @return Boolean
    */
-  private function isVoiding(\stdClass $voider) {
+  private function isVoiding(\stdClass $statement) {
     return (
-      isset($voider->object->id) &&
-      $voider->object->id === 'http://adlnet.gov/expapi/verbs/voided' &&
+      isset($statement->verb->id) &&
+      $statement->verb->id === 'http://adlnet.gov/expapi/verbs/voided' &&
       $this->isReferencing($statement)
     );
   }

@@ -37,7 +37,7 @@ class IndexOptions extends Options {
     'format' => 'String',
     'offset' => 'Integer',
     'limit' => 'Integer',
-    'langs' => 'Collection',
+    'langs' => ['Language'],
     'attachments' => 'Boolean',
     'lrs_id' => 'String'
   ];

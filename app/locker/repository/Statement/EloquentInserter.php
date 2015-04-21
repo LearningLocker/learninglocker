@@ -32,6 +32,7 @@ class EloquentInserter extends EloquentReader implements Inserter {
   private function checkForConflict(\stdClass $statement, StoreOptions $opts) {
     $duplicate = $this->where($opts)
       ->where('statement.id', $statement->id)
+      ->where('active', true)
       ->first();
 
     if ($duplicate === null) return;

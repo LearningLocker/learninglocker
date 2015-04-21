@@ -514,7 +514,7 @@ App::missing(function($exception){
 });
 
 App::error(function(Exception $exception) {
-  Log::error($exception);
+  //Log::error($exception);
   $code = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 500;
 
   if (Request::segment(1) == "data" || Request::segment(1) == "api") {

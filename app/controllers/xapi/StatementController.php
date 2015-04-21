@@ -3,6 +3,7 @@
 use \Locker\Repository\Statement\Repository as Statement;
 use \Locker\Helpers\Attachments as Attachments;
 use \Locker\Helpers\Exceptions as Exceptions;
+use \Locker\Helpers\Helpers as Helpers;
 
 class StatementController extends BaseController {
 
@@ -23,7 +24,7 @@ class StatementController extends BaseController {
    */
   public function __construct(Statement $statement) {
     parent::__construct();
-    $this->statement = $statement;
+    $this->statements = $statement;
     $this->index_controller = new StatementIndexController($statement);
     $this->store_controller = new StatementStoreController($statement);
   }
@@ -59,7 +60,7 @@ class StatementController extends BaseController {
   public function update() {
     // Runs filters.
     if ($result = $this->checkVersion()) return $result;
-    $this->store_controller->update($this->lrs->_id);
+    return $this->store_controller->update($this->lrs->_id);
   }
 
   /**
@@ -69,7 +70,7 @@ class StatementController extends BaseController {
   public function store() {
     // Runs filters.
     if ($result = $this->checkVersion()) return $result;
-    $this->store_controller->store($this->lrs->_id);
+    return $this->store_controller->store($this->lrs->_id);
   }
 
   /**
