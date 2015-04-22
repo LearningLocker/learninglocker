@@ -136,10 +136,11 @@ class SiteController extends BaseController {
    * @return Response
    */
   public function users() {
-    return Response::json(array_map(function ($user) {
+    return Response::json($this->user->all()->map(function ($user) {
       $user->lrs_owned  = $this->lrs->getLrsOwned($user->_id);
       $user->lrs_member = $this->lrs->getLrsMember($user->_id);
-    }, $this->user->all()));
+      return $user;
+    }));
   }
 
   /**

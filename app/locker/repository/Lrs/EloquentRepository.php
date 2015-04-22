@@ -110,7 +110,7 @@ class EloquentRepository extends BaseRepository implements Repository {
     if ($opts['user']->role === 'super') {
       $query = $this->where($opts);
     } else {
-      $query = $this->where('users._id', $opts['user']->_id)->remember(10);
+      $query = $this->where([])->where('users._id', $opts['user']->_id)->remember(10);
     }
 
     $obj_result = $query->get()->sortBy(function (Model $model) {
@@ -141,15 +141,15 @@ class EloquentRepository extends BaseRepository implements Repository {
   }
 
   public function removeUser($id, $user_id) {
-    return $this->where('_id', $id)->pull('users', ['_id' => $user_id]);
+    return $this->where([])->where('_id', $id)->pull('users', ['_id' => $user_id]);
   }
 
   public function getLrsOwned($user_id) {
-    return $this->where('owner._id', $user_id)->select('title')->get()->toArray();
+    return $this->where([])->where('owner._id', $user_id)->select('title')->get()->toArray();
   }
 
   public function getLrsMember($user_id) {
-    return $this->where('users._id', $user_id)->select('title')->get()->toArray();
+    return $this->where([])->where('users._id', $user_id)->select('title')->get()->toArray();
   }
 
   public function changeRole($id, $user_id, $role) {
