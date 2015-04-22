@@ -1,13 +1,14 @@
 <?php namespace Locker\Repository\Statement;
 
 use \Locker\Helpers\Exceptions as Exceptions;
+use \Locker\Helpers\Helpers as Helpers;
 
 interface Inserter {
   public function insert(array $statements, StoreOptions $opts);
 }
 
 class EloquentInserter extends EloquentReader implements Inserter {
-  
+
   /**
    * Inserts statements with the given options.
    * @param [\stdClass] $statements
@@ -78,7 +79,7 @@ class EloquentInserter extends EloquentReader implements Inserter {
   private function constructModel(\stdClass $statement, StoreOptions $opts) {
     return [
       'lrs' => ['_id' => $opts->getOpt('lrs_id')],
-      'statement' => $statement,
+      'statement' => Helpers::replaceFullStop(json_decode(json_encode($statement), true)),
       'active' => false,
       'voided' => false,
       'timestamp' => new \MongoDate(strtotime($statement->timestamp))

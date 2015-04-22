@@ -23,7 +23,7 @@ class IndexOptions extends Options {
     'attachments' => false
   ];
   protected $types = [
-    'agent' => 'Agent',
+    'agent' => 'Actor',
     'activity' => 'IRI',
     'verb' => 'IRI',
     'registration' => 'UUID',

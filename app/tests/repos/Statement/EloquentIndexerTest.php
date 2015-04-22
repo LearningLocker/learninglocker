@@ -27,16 +27,15 @@ class EloquentIndexerTest extends EloquentTest {
     $result = $this->indexer->index($opts);
     $result = $this->indexer->format($result, $opts);
 
-    $this->assertEquals(true, is_object($result));
-    $this->assertEquals('Illuminate\Database\Eloquent\Collection', get_class($result));
-    $this->assertEquals(count($this->statements), $result->count());
-    $result->each(function ($statement) {
+    $this->assertEquals(true, is_array($result));
+    $this->assertEquals(count($this->statements), count($result));
+    foreach ($result as $statement) {
       $this->assertEquals(true, is_object($statement));
       $this->assertEquals(true, isset($statement->id));
       $this->assertEquals(true, is_string($statement->id));
       $expected_statement = $this->statements[0]->statement;
       $this->assertStatementMatch($expected_statement, $statement);
-    });
+    }
   }
 
   public function testCount() {

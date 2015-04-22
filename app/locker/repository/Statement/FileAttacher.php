@@ -14,7 +14,7 @@ class FileAttacher {
    */
   public function store(array $attachments, array $hashes, StoreOptions $opts) {
     $dir = $this->getDir($opts);
-    if (!is_dir($dir) && count($attachments > 0)) {
+    if (!is_dir($dir) && count($attachments > 0) && !empty($attachments)) {
       mkdir($dir, null, true);
     }
 

@@ -32,11 +32,20 @@ class StatementIndexController {
       return explode(';', $lang)[0];
     }, $langs);
 
+    // Gets the params.
+    $params = LockerRequest::all();
+    if (isset($params['agent'])) {
+      $decoded_agent = json_decode($params['agent']);
+      if ($decoded_agent !== null) {
+        $params['agent'] = $decoded_agent;
+      }
+    }
+
     // Gets an index of the statements with the given options.
     list($statements, $count, $opts) = $this->statements->index(array_merge([
       'lrs_id' => $lrs_id,
       'langs' => $langs
-    ], LockerRequest::all()));
+    ], $params));
 
     // Defines the content type and body of the response.
     if ($opts['attachments'] === true) {

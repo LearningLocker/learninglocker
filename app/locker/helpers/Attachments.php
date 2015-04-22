@@ -14,7 +14,7 @@ class Attachments {
    *
    **/
   static function setAttachments($content_type, $content) {
-    $return = [];
+    $return = ['body' => '', 'attachments' => []];
     $sha_hashes = [];
     $boundary = static::getBoundary($content_type);
 

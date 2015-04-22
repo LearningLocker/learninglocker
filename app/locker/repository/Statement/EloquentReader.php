@@ -1,6 +1,7 @@
 <?php namespace Locker\Repository\Statement;
 
 use \Illuminate\Database\Eloquent\Model as Model;
+use \Locker\Helpers\Helpers as Helpers;
 
 abstract class EloquentReader {
   protected $model = '\Statement';
@@ -20,6 +21,6 @@ abstract class EloquentReader {
    * @return \stdClass
    */
   protected function formatModel(Model $model) {
-    return json_decode(json_encode($model->statement));
+    return Helpers::replaceHTMLEntity($model->statement);
   }
 }

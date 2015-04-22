@@ -2,6 +2,7 @@
 
 use \Illuminate\Database\Eloquent\Model as Model;
 use \Illuminate\Database\Eloquent\Collection as Collection;
+use \Locker\Helpers\Helpers as Helpers;
 
 interface LinkerInterface {
   public function updateReferences(array $statements, StoreOptions $opts);
@@ -51,7 +52,7 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
     $model = $this->where($opts)
       ->where('statement.id', $statement_id)
       ->first();
-      
+
     return $model;
   }
 
@@ -134,18 +135,13 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * @param StoreOptions $opts
    */
   private function setRefs(\stdClass $statement, array $refs, StoreOptions $opts) {
-    if ($this->voider) \Log::info('$statement', [$statement]);
-    if ($this->voider) \Log::info('$refs', [$refs]);
-    if ($this->voider) \Log::info('$opts', [$opts]);
-    if ($this->voider) \Log::info('start setRefs');
     $this->where($opts)
       ->where('statement.id', $statement->id)
       ->update([
         'refs' => array_map(function ($ref) {
-          return $ref->statement;
+          return Helpers::replaceFullStop(json_decode(json_encode($ref->statement), true));
         }, $refs)
       ]);
-    if ($this->voider) \Log::info('end setRefs');
   }
 
   /**

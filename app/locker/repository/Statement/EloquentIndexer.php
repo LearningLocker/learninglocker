@@ -42,10 +42,10 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
         return $this->addWhere($builder, 'context.registration', $value);
       },
       'since' => function ($value, $builder, IndexOptions $opts) {
-        return $this->addWhere($builder, 'timestamp', $value);
+        return $this->addWhere($builder, 'stored', $value, '>');
       },
       'until' => function ($value, $builder, IndexOptions $opts) {
-        return $this->addWhere($builder, 'timestamp', $value);
+        return $this->addWhere($builder, 'stored', $value, '<=');
       },
       'active' => function ($value, $builder, IndexOptions $opts) {
         return $builder->where('active', $value);
@@ -63,11 +63,11 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
    * @param Mixed $value
    * @return Builder
    */
-  private function addWhere(Builder $builder, $key, $value) {
-    return $builder->where(function ($query) use ($key, $value) {
+  private function addWhere(Builder $builder, $key, $value, $op = '=') {
+    return $builder->where(function ($query) use ($key, $value, $op) {
       return $query
-        ->orWhere('statement.'.$key, $value)
-        ->orWhere('refs.'.$key, $value);
+        ->orWhere('statement.'.$key, $op, $value)
+        ->orWhere('refs.'.$key, $op, $value);
     });
   }
 
@@ -81,7 +81,11 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
   private function addWheres(Builder $builder, array $keys, $value) {
     return $builder->where(function ($query) use ($keys, $value) {
       foreach ($keys as $key) {
-        $query = $this->addWhere($query, $key, $value);
+        $query->orWhere(function ($query) use ($key, $value) {
+          return $query
+            ->orWhere('statement.'.$key, $value)
+            ->orWhere('refs.'.$key, $value);
+        });
       }
       return $query;
     });
@@ -129,7 +133,7 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
 
     // Returns the models.
     return json_decode($builder
-      ->orderBy('statement.stored', $opts->getOpt('ascending'))
+      ->orderBy('statement.stored', $opts->getOpt('ascending') ? 'ASC' : 'DESC')
       ->skip($opts->getOpt('offset'))
       ->take($opts->getOpt('limit'))
       ->get()
@@ -141,15 +145,15 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
   /**
    * Constructs a Mongo match using the given agent and options.
    * @param String $agent Agent to be matched.
-   * @param IndexOptions $options Index options.
+   * @param IndexOptions $opts Index options.
    * @return Builder
    */
-  private function matchAgent($agent, Builder $builder, IndexOptions $options) {
+  private function matchAgent($agent, Builder $builder, IndexOptions $opts) {
     $id_key = Helpers::getAgentIdentifier($agent);
     $id_val = $agent->{$id_key};
 
-    return $builder->where(function ($query) use ($id_val, $opts) {
-      $keys = ["actor.$id_key", "object.$id_key"];
+    return $builder->where(function ($query) use ($id_key, $id_val, $builder, $opts) {
+      $keys = ["actor.$id_key", "actor.members.$id_key", "object.$id_key"];
 
       if ($opts->getOpt('related_agents') === true) {
         $keys = array_merge($keys, [
@@ -159,18 +163,18 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
         ]);
       }
 
-      $query = $this->addWheres($keys);
+      $query = $this->addWheres($builder, $keys, $id_val);
     });
   }
 
   /**
    * Constructs a Mongo match using the given activity and options.
    * @param String $activity Activity to be matched.
-   * @param IndexOptions $options Index options.
+   * @param IndexOptions $opts Index options.
    * @return Builder
    */
-  private function matchActivity($activity, Builder $builder, IndexOptions $options) {
-    return $builder->where(function ($query) use ($activity, $opts) {
+  private function matchActivity($activity, Builder $builder, IndexOptions $opts) {
+    return $builder->where(function ($query) use ($activity, $builder, $opts) {
       $keys = ['object.id'];
 
       if ($opts->getOpt('related_activities') === true) {
@@ -182,7 +186,7 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
         ]);
       }
 
-      $query = $this->addWheres($keys);
+      $query = $this->addWheres($builder, $keys, $activity);
     });
   }
 
