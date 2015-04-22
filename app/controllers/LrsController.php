@@ -2,6 +2,8 @@
 
 use \Locker\Repository\Lrs\Repository as LrsRepo;
 use \Locker\Repository\Statement\Repository as StatementRepo;
+use \Locker\Repository\Statement\EloquentIndexer as StatementIndexer;
+use \Locker\Repository\Statement\IndexOptions as IndexOptions;
 
 class LrsController extends BaseController {
 
@@ -66,7 +68,7 @@ class LrsController extends BaseController {
 
     //lrs input validation
     $rules['title']        = 'required';
-    $rules['description']  = '';       
+    $rules['description']  = '';
     $validator = \Validator::make($data, $rules);
     if ($validator->fails()) return \Redirect::back()->withErrors($validator);
 
@@ -103,7 +105,7 @@ class LrsController extends BaseController {
     $data = \Input::all();
 
     //lrs input validation
-    $rules['title'] = 'required';      
+    $rules['title'] = 'required';
     $validator = \Validator::make($data, $rules);
     if ($validator->fails()) {
       return \Redirect::back()->withErrors($validator);
@@ -123,7 +125,7 @@ class LrsController extends BaseController {
 
   /**
    * Display the specified resource.
-   * This is a temp hack until the single page app for 
+   * This is a temp hack until the single page app for
    * analytics is ready. v1.0 stable.
    * @param String $lrs_id
    * @return View
@@ -187,10 +189,13 @@ class LrsController extends BaseController {
    * @return View
    */
   public function statements($lrs_id){
-    $statements = $this->statement->index($lrs_id, [], [
+    $statements = (new StatementIndexer)->index(new IndexOptions([
+      'lrs_id' => $lrs_id,
       'ascending' => false,
-      'limit' => $this->statement->count($lrs_id)
-    ])->paginate(15);
+      'limit' => $this->statement->count([
+        'lrs_id' => $lrs_id
+      ])
+    ]))->paginate(15);
 
     return View::make('partials.statements.list', array_merge($this->getLrs($lrs_id), [
       'statements' => $statements,
@@ -240,7 +245,7 @@ class LrsController extends BaseController {
       $message_type = 'error';
       $message = trans('update_key_error');
     }
-    
+
     return Redirect::back()->with($message_type, $message);
   }
 
@@ -251,7 +256,7 @@ class LrsController extends BaseController {
    */
   public function users($lrs_id) {
     $opts = $this->getLrs($lrs_id);
-    return View::make('partials.users.list', array_merge($opts, [ 
+    return View::make('partials.users.list', array_merge($opts, [
       'users'    => $opts['lrs']->users,
       'user_nav' => true
     ]));
@@ -260,7 +265,7 @@ class LrsController extends BaseController {
 
   public function inviteUsersForm($lrs_id) {
     $opts = $this->getLrs($lrs_id);
-    return View::make('partials.lrs.invite', array_merge($opts, [ 
+    return View::make('partials.lrs.invite', array_merge($opts, [
       'users'    => $opts['lrs']->users,
       'user_nav' => true
     ]));

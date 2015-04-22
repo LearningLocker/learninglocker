@@ -5,6 +5,7 @@ interface Repository {
   public function index(array $opts);
   public function show($id, array $opts);
   public function getAttachments(array $statements, array $opts);
+  public function count(array $opts);
 }
 
 class EloquentRepository implements Repository {
@@ -63,5 +64,16 @@ class EloquentRepository implements Repository {
    */
   public function getAttachments(array $statements, array $opts) {
     return $this->attacher->index($statements, new IndexOptions($opts));
+  }
+
+  /**
+   * Gets a count of all the statements available with the given options.
+   * @param [String => Mixed] $opts
+   * @return Int
+   */
+  public function count(array $opts) {
+    $opts = new IndexOptions($opts);
+    $builder = $this->indexer->index($opts);
+    return $this->indexer->count($builder, $opts);
   }
 }
