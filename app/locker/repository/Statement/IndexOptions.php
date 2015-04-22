@@ -1,30 +1,64 @@
 <?php namespace Locker\Repository\Statement;
 
 use \Locker\Helpers\Helpers as Helpers;
+use \Locker\Helpers\Exceptions as Exceptions;
 
-class IndexOptions {
-  public $options = [];
-
-  public function __construct(array $opts) {
-    $this->options = $this->mergeDefaults($opts);
-    $this->validate();
-  }
-
-  public function getOpt($opt) {
-    return $options[$opt];
-  }
+class IndexOptions extends Options {
+  protected $defaults = [
+    'agent' => null,
+    'activity' => null,
+    'verb' => null,
+    'registration' => null,
+    'since' => null,
+    'until' => null,
+    'active' => true,
+    'voided' => false,
+    'related_activities' => false,
+    'related_agents' => false,
+    'ascending' => false,
+    'format' => 'exact',
+    'offset' => 0,
+    'limit' => 0,
+    'langs' => [],
+    'attachments' => false
+  ];
+  protected $types = [
+    'agent' => 'Actor',
+    'activity' => 'IRI',
+    'verb' => 'IRI',
+    'registration' => 'UUID',
+    'since' => 'Timestamp',
+    'until' => 'Timestamp',
+    'active' => 'Boolean',
+    'voided' => 'Boolean',
+    'related_activities' => 'Boolean',
+    'related_agents' => 'Boolean',
+    'ascending' => 'Boolean',
+    'format' => 'String',
+    'offset' => 'Integer',
+    'limit' => 'Integer',
+    'langs' => ['Language'],
+    'attachments' => 'Boolean',
+    'lrs_id' => 'String'
+  ];
 
   /**
    * Validates the given options as index options.
+   * @param [String => Mixed] $opts
+   * @return [String => Mixed]
    */
-  private function validate() {
-    $opts = $this->options;
+  protected function validate($opts) {
+    $opts = parent::validate($opts);
+
+    // Validates values.
+    if (!isset($opts['lrs_id'])) throw new Exceptions\Exception('`lrs_id` must be set.');
     if ($opts['offset'] < 0) throw new Exceptions\Exception('`offset` must be a positive interger.');
     if ($opts['limit'] < 1) throw new Exceptions\Exception('`limit` must be a positive interger.');
-    XApiHelpers::checkType('related_activities', 'boolean', $opts['related_agents']));
-    XApiHelpers::checkType('related_activities', 'boolean', $opts['related_activities']));
-    XApiHelpers::checkType('attachments', 'boolean', $opts['attachments']));
-    XApiHelpers::checkType('ascending', 'boolean', $opts['ascending']));
+    if (!in_array($opts['format'], ['exact', 'canonical', 'ids'])) {
+      throw new Exceptions\Exception('`format` must be "exact", "canonical", or "ids".');
+    }
+
+    return $opts;
   }
 
   /**
@@ -32,60 +66,21 @@ class IndexOptions {
    * @param [String => mixed] $opts Index options.
    * @return [String => mixed]
    */
-  private function mergeDefaults(array $opts) {
+  protected function mergeDefaults(array $opts) {
     // Merges with defaults.
-    $options = array_merge([
-      'agent' => null,
-      'activity' => null,
-      'verb' => null,
-      'registration' => null,
-      'since' => null,
-      'until' => null,
-      'active' => true,
-      'voided' => false,
-      'related_activities' => false,
-      'related_agents' => false,
-      'ascending' => false,
-      'format' => 'exact',
-      'offset' => 0,
-      'limit' => 0,
-      'langs' => [],
-      'attachments' => false
-    ], $opts);
+    $opts = parent::mergeDefaults($opts);
 
     // Converts types.
-    $options['active'] = $this->convertToBoolean($options['active']);
-    $options['voided'] = $this->convertToBoolean($options['voided']);
-    $options['related_agents'] = $this->convertToBoolean($options['related_agents']);
-    $options['related_activities'] = $this->convertToBoolean($options['related_activities']);
-    $options['attachments'] = $this->convertToBoolean($options['attachments']);
-    $options['ascending'] = $this->convertToBoolean($options['ascending']);
-    $options['limit'] = $this->convertToInt($options['limit']);
-    $options['offset'] = $this->convertToInt($options['offset']);
+    $opts['active'] = $this->convertToBoolean($opts['active']);
+    $opts['voided'] = $this->convertToBoolean($opts['voided']);
+    $opts['related_agents'] = $this->convertToBoolean($opts['related_agents']);
+    $opts['related_activities'] = $this->convertToBoolean($opts['related_activities']);
+    $opts['attachments'] = $this->convertToBoolean($opts['attachments']);
+    $opts['ascending'] = $this->convertToBoolean($opts['ascending']);
+    $opts['limit'] = $this->convertToInt($opts['limit']);
+    $opts['offset'] = $this->convertToInt($opts['offset']);
 
-    if ($options['limit'] === 0) $options['limit'] = 100;
-    return $options;
-  }
-
-  /**
-   * Converts the given value to a Boolean if it can be.
-   * @param mixed $value
-   * @return Boolean|mixed Returns the value unchanged if it can't be converted.
-   */
-  private function convertToBoolean($value) {
-    if (is_string($value)) $value = strtolower($value);
-    if ($value === 'true') return true;
-    if ($value === 'false') return false;
-    return $value;
-  }
-
-  /**
-   * Converts the given value to a Integer if it can be.
-   * @param mixed $value
-   * @return Integer|mixed Returns the value unchanged if it can't be converted.
-   */
-  private function convertToInt($value) {
-    $converted_value = (int) $value;
-    return ($value !== (string) $converted_value) ? $value : $converted_value;
+    if ($opts['limit'] === 0) $opts['limit'] = 100;
+    return $opts;
   }
 }

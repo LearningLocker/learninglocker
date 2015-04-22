@@ -127,10 +127,10 @@ class Helpers {
       $defaults = include base_path() . '/.env.php';
       $value = $defaults[$var];
     }
-    
+
     return $value;
   }
-  
+
   /**
    * Determines which identifier is currently in use in the given actor.
    * @param \stdClass $actor.
@@ -154,7 +154,49 @@ class Helpers {
     if (count($errors) > 0) {
       throw new Exceptions\Validation(array_map(function (XAPIError $error) use ($trace) {
         return (string) ($trace === null ? $error : $error->addTrace($trace));
-      }, $errors)));
+      }, $errors));
     }
+  }
+
+  /**
+   * Makes a new UUID.
+   * @return String Generated UUID.
+   */
+  static function makeUUID() {
+    $remote_addr = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'LL';
+    mt_srand(crc32(serialize([microtime(true), $remote_addr, 'ETC'])));
+
+    return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+      mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+      mt_rand(0, 0xffff),
+      mt_rand(0, 0x0fff) | 0x4000,
+      mt_rand(0, 0x3fff) | 0x8000,
+      mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+    );
+  }
+
+  /**
+   * Gets the current date and time in ISO format using the current timezone.
+   * @return String Current ISO date and time.
+   */
+  static function getCurrentDate() {
+    $current_date = \DateTime::createFromFormat('U.u', sprintf('%.4f', microtime(true)));
+    $current_date->setTimezone(new \DateTimeZone(\Config::get('app.timezone')));
+    return $current_date->format('Y-m-d\TH:i:s.uP');
+  }
+
+  /**
+   * Gets the CORS headers.
+   * @return [String => Mixed] CORS headers.
+   */
+  static function getCORSHeaders() {
+    return [
+      'Access-Control-Allow-Origin' => \Request::root(),
+      'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers' => 'Origin, Content-Type, Accept, Authorization, X-Requested-With, X-Experience-API-Version, X-Experience-API-Consistent-Through, Updated',
+      'Access-Control-Allow-Credentials' => 'true',
+      'X-Experience-API-Consistent-Through' => Helpers::getCurrentDate(),
+      'X-Experience-API-Version' => '1.0.1'
+    ];
   }
 }

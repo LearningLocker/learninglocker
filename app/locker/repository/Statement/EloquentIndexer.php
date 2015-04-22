@@ -1,68 +1,202 @@
 <?php namespace Locker\Repository\Statement;
 
 use \Locker\Helpers\Exceptions as Exceptions;
+use \Locker\Helpers\Helpers as Helpers;
 use \Locker\XApi\Helpers as XApiHelpers;
 use \Jenssegers\Mongodb\Eloquent\Builder as Builder;
 use \Illuminate\Database\Eloquent\Model as Model;
 
-class EloquentIndexer extends EloquentReader {
+interface IndexerInterface {
+  public function index(IndexOptions $opts);
+  public function format(Builder $builder, IndexOptions $opts);
+  public function count(Builder $builder, IndexOptions $opts);
+}
+
+class EloquentIndexer extends EloquentReader implements IndexerInterface {
+
+  protected $formatter;
+
+  public function __construct() {
+    $this->formatter = new Formatter();
+  }
 
   /**
    * Gets all of the available models with the options.
-   * @param [String => Mixed] $opts
+   * @param IndexOptions $opts
    * @return [Model]
    */
-  public function index(array $opts) {
-    $opts = new IndexOptions($opts);
-    return $this->where($opts);
-  }
-
-  protected function where(IndexOptions $opts) {
-    $builder = $this->where($opts->options);
+  public function index(IndexOptions $opts) {
+    $builder = $this->where($opts);
 
     return $this->constructFilterOpts($builder, $opts, [
-      'agent' => function ($agent, IndexOptions $opts) {
-        Helpers::validateAtom(\Locker\XApi\Agent::createFromJSON($agent));
-        return $this->matchAgent($agent, $options);
+      'agent' => function ($value, $builder, IndexOptions $opts) {
+        return $this->matchAgent($value, $builder, $opts);
+      },
+      'activity' => function ($value, $builder, IndexOptions $opts) {
+        return $this->matchActivity($value, $builder, $opts);
+      },
+      'verb' => function ($value, $builder, IndexOptions $opts) {
+        return $this->addWhere($builder, 'verb.id', $value);
+      },
+      'registration' => function ($value, $builder, IndexOptions $opts) {
+        return $this->addWhere($builder, 'context.registration', $value);
+      },
+      'since' => function ($value, $builder, IndexOptions $opts) {
+        return $this->addWhere($builder, 'stored', $value, '>');
+      },
+      'until' => function ($value, $builder, IndexOptions $opts) {
+        return $this->addWhere($builder, 'stored', $value, '<=');
+      },
+      'active' => function ($value, $builder, IndexOptions $opts) {
+        return $builder->where('active', $value);
+      },
+      'voided' => function ($value, $builder, IndexOptions $opts) {
+        return $builder->where('voided', $value);
       }
     ]);
   }
 
   /**
+   * Adds where to builder.
+   * @param Builder $builder
+   * @param String $key
+   * @param Mixed $value
+   * @return Builder
+   */
+  private function addWhere(Builder $builder, $key, $value, $op = '=') {
+    return $builder->where(function ($query) use ($key, $value, $op) {
+      return $query
+        ->orWhere('statement.'.$key, $op, $value)
+        ->orWhere('refs.'.$key, $op, $value);
+    });
+  }
+
+  /**
+   * Adds wheres to builder.
+   * @param Builder $builder
+   * @param [String] $keys
+   * @param Mixed $value
+   * @return Builder
+   */
+  private function addWheres(Builder $builder, array $keys, $value) {
+    return $builder->where(function ($query) use ($keys, $value) {
+      foreach ($keys as $key) {
+        $query->orWhere(function ($query) use ($key, $value) {
+          return $query
+            ->orWhere('statement.'.$key, $value)
+            ->orWhere('refs.'.$key, $value);
+        });
+      }
+      return $query;
+    });
+  }
+
+  /**
+   * Extends a given Builder using the given options and option builders.
+   * @param Builder $builder
+   * @param IndexOptions $opts.
+   * @param [String => Callable] $builders Option builders.
+   * @return Builder
+   */
+  private function constructFilterOpts(Builder $builder, IndexOptions $opts, array $builders) {
+    foreach ($builders as $opt => $opt_builder) {
+      $opt_value = $opts->getOpt($opt);
+      $builder = $opt_value === null ? $builder : $opt_builder($opt_value, $builder, $opts);
+    }
+    return $builder;
+  }
+
+  /**
    * Formats statements.
    * @param Builder $builder
-   * @param [String => Mixed] $opts
+   * @param IndexOptions $opts
    * @return [Model] Formatted statements.
    */
-  public function format(Builder $builder, array $opts) {
-    if ($opts['format'] === 'exact') {
-      $formatter = function ($model, $opts) {
-        return $model;
+  public function format(Builder $builder, IndexOptions $opts) {
+    // Determines the formatter to be used.
+    $format = $opts->getOpt('format');
+    if ($format === 'exact') {
+      $formatter = function ($statement, $opts) {
+        return $statement;
       };
-    } else if ($opts['format'] === 'ids') {
-      $formatter = function ($model, $opts) {
-        return $this->formatter->identityStatement($model);
+    } else if ($format === 'ids') {
+      $formatter = function ($statement, $opts) {
+        return $this->formatter->identityStatement($statement);
       };
-    } else if ($opts['format'] === 'canonical') {
-      $formatter = function ($model, $opts) {
-        return $this->formatter->canonicalStatement($model, $opts['langs']);
+    } else if ($format === 'canonical') {
+      $formatter = function ($statement, $opts) {
+        return $this->formatter->canonicalStatement($statement, $opts->getOpt('langs'));
       };
     } else {
-      throw new Exceptions\Exception("`$opts['format']` is not a valid format.");
+      throw new Exceptions\Exception("`$format` is not a valid format.");
     }
 
-    return $builder->get()->each(function (Model $model) use ($opts) {
-      return $formatter($model, $opts);
+    // Returns the models.
+    return json_decode($builder
+      ->orderBy('statement.stored', $opts->getOpt('ascending') ? 'ASC' : 'DESC')
+      ->skip($opts->getOpt('offset'))
+      ->take($opts->getOpt('limit'))
+      ->get()
+      ->map(function (Model $model) use ($opts, $formatter) {
+        return $formatter($this->formatModel($model), $opts);
+      }));
+  }
+
+  /**
+   * Constructs a Mongo match using the given agent and options.
+   * @param String $agent Agent to be matched.
+   * @param IndexOptions $opts Index options.
+   * @return Builder
+   */
+  private function matchAgent($agent, Builder $builder, IndexOptions $opts) {
+    $id_key = Helpers::getAgentIdentifier($agent);
+    $id_val = $agent->{$id_key};
+
+    return $builder->where(function ($query) use ($id_key, $id_val, $builder, $opts) {
+      $keys = ["actor.$id_key", "actor.members.$id_key", "object.$id_key"];
+
+      if ($opts->getOpt('related_agents') === true) {
+        $keys = array_merge($keys, [
+          "authority.$id_key",
+          "context.instructor.$id_key",
+          "context.team.$id_key"
+        ]);
+      }
+
+      $query = $this->addWheres($builder, $keys, $id_val);
+    });
+  }
+
+  /**
+   * Constructs a Mongo match using the given activity and options.
+   * @param String $activity Activity to be matched.
+   * @param IndexOptions $opts Index options.
+   * @return Builder
+   */
+  private function matchActivity($activity, Builder $builder, IndexOptions $opts) {
+    return $builder->where(function ($query) use ($activity, $builder, $opts) {
+      $keys = ['object.id'];
+
+      if ($opts->getOpt('related_activities') === true) {
+        $keys = array_merge($keys, [
+          'context.contextActivities.parent.id',
+          'context.contextActivities.grouping.id',
+          'context.contextActivities.category.id',
+          'context.contextActivities.other.id'
+        ]);
+      }
+
+      $query = $this->addWheres($builder, $keys, $activity);
     });
   }
 
   /**
    * Counts statements.
    * @param Builder $builder
-   * @param [String => Mixed] $opts
+   * @param IndexOptions $opts
    * @return Int Number of statements in Builder.
    */
-  public function count(Builder $builder, array $opts) {
+  public function count(Builder $builder, IndexOptions $opts) {
     return $builder->count();
   }
 }
