@@ -9,7 +9,7 @@ interface Storer {
 
 class EloquentStorer extends EloquentReader implements Storer {
 
-  protected $inserter, $linker, $voider, $attacher;
+  protected $inserter, $linker, $voider, $attacher, $hashes;
 
   public function __construct() {
     $this->inserter = new EloquentInserter();
@@ -27,15 +27,14 @@ class EloquentStorer extends EloquentReader implements Storer {
    */
   public function store(array $statements, array $attachments, StoreOptions $opts) {
     $id_statements = $this->constructValidStatements($statements, $opts);
-    $ids = array_keys($statements);
+    $ids = array_keys($id_statements);
     $statements = array_values($id_statements);
 
     $this->inserter->insert($statements, $opts);
     $this->linker->updateReferences($statements, $opts);
     $this->voider->voidStatements($statements, $opts);
-
+    $this->attacher->store($attachments, $this->hashes, $opts);
     $this->activateStatements($ids, $opts);
-    $this->attacher->store($attachments, $opts);
 
     return $ids;
   }
@@ -48,6 +47,7 @@ class EloquentStorer extends EloquentReader implements Storer {
    */
   private function constructValidStatements(array $statements, StoreOptions $opts) {
     $constructed = [];
+    $this->hashes = [];
 
     foreach ($statements as $statement) {
       $statement->authority = $opts->getOpt('authority');
@@ -65,6 +65,12 @@ class EloquentStorer extends EloquentReader implements Storer {
       $constructed_statement = new XAPIStatement($statement);
       Helpers::validateAtom($constructed_statement, 'statement');
       $statement = $constructed_statement->getValue();
+
+      // Gets attachment hashes.
+      $attachments = !isset($statement->attachments) ? [] : $statement->attachments;
+      foreach ($attachments as $attachment) {
+        $this->hashes[] = $attachment->sha2;
+      }
 
       // Adds $statement to $constructed.
       if (isset($constructed[$statement->id])) {

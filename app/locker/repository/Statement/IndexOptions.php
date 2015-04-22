@@ -23,7 +23,7 @@ class IndexOptions extends Options {
     'attachments' => false
   ];
   protected $types = [
-    'agent' => 'Agent',
+    'agent' => 'Actor',
     'activity' => 'IRI',
     'verb' => 'IRI',
     'registration' => 'UUID',
@@ -37,7 +37,7 @@ class IndexOptions extends Options {
     'format' => 'String',
     'offset' => 'Integer',
     'limit' => 'Integer',
-    'langs' => 'Collection',
+    'langs' => ['Language'],
     'attachments' => 'Boolean',
     'lrs_id' => 'String'
   ];

@@ -25,11 +25,27 @@ class StatementIndexController {
    * @return Response
    */
   public function index($lrs_id) {
+    // Gets the acceptable languages.
+    $langs = LockerRequest::header('Accept-Language', []);
+    $langs = is_array($langs) ? $langs : explode(',', $langs);
+    $langs = array_map(function ($lang) {
+      return explode(';', $lang)[0];
+    }, $langs);
+
+    // Gets the params.
+    $params = LockerRequest::all();
+    if (isset($params['agent'])) {
+      $decoded_agent = json_decode($params['agent']);
+      if ($decoded_agent !== null) {
+        $params['agent'] = $decoded_agent;
+      }
+    }
+
     // Gets an index of the statements with the given options.
     list($statements, $count, $opts) = $this->statements->index(array_merge([
       'lrs_id' => $lrs_id,
-      'langs' => LockerRequest::header('Accept-Language', [])
-    ], LockerRequest::all()));
+      'langs' => $langs
+    ], $params));
 
     // Defines the content type and body of the response.
     if ($opts['attachments'] === true) {
@@ -64,7 +80,7 @@ class StatementIndexController {
 
     // Creates the statement result.
     $statement_result = (object) [
-      'more' => $this->getMoreLink($count, $options['limit'], $options['offset']),
+      'more' => $this->getMoreLink($count, $opts['limit'], $opts['offset']),
       'statements' => $statements
     ];
 
@@ -101,7 +117,7 @@ class StatementIndexController {
   private function getMoreLink($count, $limit, $offset) {
     // Calculates the $next_offset.
     $next_offset = $offset + $limit;
-    if ($total <= $next_offset) return '';
+    if ($count <= $next_offset) return '';
 
     // Changes (when defined) or appends (when undefined) offset.
     $query = \Request::getQueryString();

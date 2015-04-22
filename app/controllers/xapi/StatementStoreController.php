@@ -59,8 +59,6 @@ class StatementStoreController {
    * @return Response
    */
   public function store($lrs_id) {
-    Helpers::validateAtom(new XApiImt(LockerRequest::header('Content-Type')));
-
     if (LockerRequest::hasParam(StatementController::STATEMENT_ID)) {
       throw new Exceptions\Exception('Statement ID parameter is invalid.');
     }
@@ -73,9 +71,7 @@ class StatementStoreController {
    * @param String $lrs_id
    * @return Response
    */
-  protected function update($lrs_id) {
-    Helpers::validateAtom(new XApiImt(LockerRequest::header('Content-Type')));
-
+  public function update($lrs_id) {
     $this->createStatements($lrs_id, function ($statements) {
       $statement_id = \LockerRequest::getParam(StatementController::STATEMENT_ID);
 
@@ -99,14 +95,18 @@ class StatementStoreController {
    * @return AssocArray Result of storing the statements.
    */
   private function createStatements($lrs_id, Callable $modifier = null) {
+    Helpers::validateAtom(new XApiImt(LockerRequest::header('Content-Type')));
+
     // Gets parts of the request.
     $parts = $this->getParts();
     $content = $parts['content'];
 
     // Decodes $statements from $content.
     $statements = json_decode($content);
-    if ($statements === null && $content != 'null' && $content != '') {
+    if ($statements === null && $content !== '') {
       throw new Exceptions\Exception('Invalid JSON');
+    } else if ($statements === null) {
+      $statements = [];
     }
 
     // Ensures that $statements is an array.

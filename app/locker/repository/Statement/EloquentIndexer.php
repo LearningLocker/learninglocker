@@ -36,22 +36,22 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
         return $this->matchActivity($value, $builder, $opts);
       },
       'verb' => function ($value, $builder, IndexOptions $opts) {
-        return $this->addWhere($builder, 'statement.verb.id', $value);
+        return $this->addWhere($builder, 'verb.id', $value);
       },
       'registration' => function ($value, $builder, IndexOptions $opts) {
-        return $this->addWhere($builder, 'statement.context.registration', $value);
+        return $this->addWhere($builder, 'context.registration', $value);
       },
       'since' => function ($value, $builder, IndexOptions $opts) {
-        return $this->addWhere($builder, 'statement.timestamp', $value);
+        return $this->addWhere($builder, 'stored', $value, '>');
       },
       'until' => function ($value, $builder, IndexOptions $opts) {
-        return $this->addWhere($builder, 'statement.timestamp', $value);
+        return $this->addWhere($builder, 'stored', $value, '<=');
       },
       'active' => function ($value, $builder, IndexOptions $opts) {
-        return $this->addWhere($builder, 'active', $value);
+        return $builder->where('active', $value);
       },
       'voided' => function ($value, $builder, IndexOptions $opts) {
-        return $this->addWhere($builder, 'voided', $value);
+        return $builder->where('voided', $value);
       }
     ]);
   }
@@ -63,11 +63,11 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
    * @param Mixed $value
    * @return Builder
    */
-  private function addWhere(Builder $builder, $key, $value) {
-    return $builder->where(function ($query) use ($key, $value) {
+  private function addWhere(Builder $builder, $key, $value, $op = '=') {
+    return $builder->where(function ($query) use ($key, $value, $op) {
       return $query
-        ->orWhere($key, $value)
-        ->orWhere('refs.'.$key, $value);
+        ->orWhere('statement.'.$key, $op, $value)
+        ->orWhere('refs.'.$key, $op, $value);
     });
   }
 
@@ -81,7 +81,11 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
   private function addWheres(Builder $builder, array $keys, $value) {
     return $builder->where(function ($query) use ($keys, $value) {
       foreach ($keys as $key) {
-        $query = $this->addWhere($query, $key, $value);
+        $query->orWhere(function ($query) use ($key, $value) {
+          return $query
+            ->orWhere('statement.'.$key, $value)
+            ->orWhere('refs.'.$key, $value);
+        });
       }
       return $query;
     });
@@ -128,61 +132,61 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
     }
 
     // Returns the models.
-    return $builder
-      ->orderBy('statement.stored', $opts->getOpt('ascending'))
+    return json_decode($builder
+      ->orderBy('statement.stored', $opts->getOpt('ascending') ? 'ASC' : 'DESC')
       ->skip($opts->getOpt('offset'))
       ->take($opts->getOpt('limit'))
       ->get()
       ->map(function (Model $model) use ($opts, $formatter) {
         return $formatter($this->formatModel($model), $opts);
-      });
+      }));
   }
 
   /**
    * Constructs a Mongo match using the given agent and options.
    * @param String $agent Agent to be matched.
-   * @param IndexOptions $options Index options.
+   * @param IndexOptions $opts Index options.
    * @return Builder
    */
-  private function matchAgent($agent, Builder $builder, IndexOptions $options) {
+  private function matchAgent($agent, Builder $builder, IndexOptions $opts) {
     $id_key = Helpers::getAgentIdentifier($agent);
     $id_val = $agent->{$id_key};
 
-    return $builder->where(function ($query) use ($id_val, $opts) {
-      $keys = ["statement.actor.$id_key", "statement.object.$id_key"];
+    return $builder->where(function ($query) use ($id_key, $id_val, $builder, $opts) {
+      $keys = ["actor.$id_key", "actor.members.$id_key", "object.$id_key"];
 
       if ($opts->getOpt('related_agents') === true) {
         $keys = array_merge($keys, [
-          "statement.authority.$id_key",
-          "statement.context.instructor.$id_key",
-          "statement.context.team.$id_key"
+          "authority.$id_key",
+          "context.instructor.$id_key",
+          "context.team.$id_key"
         ]);
       }
 
-      $query = $this->addWheres($keys);
+      $query = $this->addWheres($builder, $keys, $id_val);
     });
   }
 
   /**
    * Constructs a Mongo match using the given activity and options.
    * @param String $activity Activity to be matched.
-   * @param IndexOptions $options Index options.
+   * @param IndexOptions $opts Index options.
    * @return Builder
    */
-  private function matchActivity($activity, Builder $builder, IndexOptions $options) {
-    return $builder->where(function ($query) use ($activity, $opts) {
-      $keys = ['statement.object.id'];
+  private function matchActivity($activity, Builder $builder, IndexOptions $opts) {
+    return $builder->where(function ($query) use ($activity, $builder, $opts) {
+      $keys = ['object.id'];
 
       if ($opts->getOpt('related_activities') === true) {
         $keys = array_merge($keys, [
-          'statement.context.contextActivities.parent.id',
-          'statement.context.contextActivities.grouping.id',
-          'statement.context.contextActivities.category.id',
-          'statement.context.contextActivities.other.id'
+          'context.contextActivities.parent.id',
+          'context.contextActivities.grouping.id',
+          'context.contextActivities.category.id',
+          'context.contextActivities.other.id'
         ]);
       }
 
-      $query = $this->addWheres($keys);
+      $query = $this->addWheres($builder, $keys, $activity);
     });
   }
 

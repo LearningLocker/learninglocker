@@ -61,7 +61,12 @@ class StatementRefTest extends StatementsTestCase {
       return $ref['statement']['id'];
     }, $referrers);
 
-    $this->assertEmpty(array_diff($expected_referrers, $referrers));
+    $diff = array_diff($expected_referrers, $referrers);
+    $this->assertEquals(true, empty($diff) || count($diff) === 0,
+      json_encode($diff).
+      json_encode($expected_referrers).
+      json_encode($referrers)
+    );
   }
 
   private function generateUUID($id) {

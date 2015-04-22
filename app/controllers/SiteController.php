@@ -20,7 +20,7 @@ class SiteController extends BaseController {
 
     $this->beforeFilter('auth');
     $this->beforeFilter('auth.super', array('except' => array('inviteUsers')));
-    $this->beforeFilter('csrf', array('only' => array('update', 'verifyUser', 'inviteUsers'))); 
+    $this->beforeFilter('csrf', array('only' => array('update', 'verifyUser', 'inviteUsers')));
   }
 
   /**
@@ -35,7 +35,7 @@ class SiteController extends BaseController {
     $admin_dashboard = new \app\locker\data\dashboards\AdminDashboard();
 
     return View::make('partials.site.dashboard', [
-      'site' => $site, 
+      'site' => $site,
       'list' => $list,
       'stats' => $admin_dashboard->getFullStats(),
       'graph_data' => $admin_dashboard->getGraphData()
@@ -51,7 +51,7 @@ class SiteController extends BaseController {
   public function edit($id){
     $site = $this->site->find($id);
     return View::make('partials.site.edit', [
-      'site' => $site, 
+      'site' => $site,
       'settings_nav' => true
     ]);
   }
@@ -122,7 +122,7 @@ class SiteController extends BaseController {
     $lrss = $this->lrs->index($opts);
 
     return Response::json(array_map(function ($lrs) {
-      $lrs->statement_total = $this->statement->count($lrs->_id);
+      $lrs->statement_total = $this->statement->count(['lrs_id' => $lrs->_id]);
       return $lrs;
     }, $lrss));
   }
@@ -148,7 +148,7 @@ class SiteController extends BaseController {
    */
   public function inviteUsersForm() {
     return View::make('partials.site.invite', [
-      'users_nav' => true, 
+      'users_nav' => true,
       'admin_dash' => true
     ]);
   }

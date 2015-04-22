@@ -2,6 +2,7 @@
 
 use \Illuminate\Database\Eloquent\Model as Model;
 use \Illuminate\Database\Eloquent\Collection as Collection;
+use \Locker\Helpers\Helpers as Helpers;
 
 interface LinkerInterface {
   public function updateReferences(array $statements, StoreOptions $opts);
@@ -18,6 +19,7 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * @param StoreOptions $opts
    */
   public function updateReferences(array $statements, StoreOptions $opts) {
+    $this->voider = strpos(json_encode($statements), 'voided') !== false;
     $this->downed = new Collection();
     $this->to_update = array_map(function (\stdClass $statement) use ($opts) {
       return $this->getModel($statement->id, $opts);
@@ -33,7 +35,7 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * @param \stdClass $statement
    * @return Boolean
    */
-  private function isReferencing(\stdClass $statement) {
+  protected function isReferencing(\stdClass $statement) {
     return (
       isset($statement->object->objectType) &&
       $statement->object->objectType === 'StatementRef'
@@ -46,11 +48,11 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * @param StoreOptions $opts
    * @return [Model]
    */
-  private function getModel($statement_id, StoreOptions $opts) {
+  protected function getModel($statement_id, StoreOptions $opts) {
     $model = $this->where($opts)
       ->where('statement.id', $statement_id)
       ->first();
-      
+
     return $model;
   }
 
@@ -137,8 +139,7 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
       ->where('statement.id', $statement->id)
       ->update([
         'refs' => array_map(function ($ref) {
-          if (get_class($ref) === 'stdClass') \Log::info(json_encode($ref));
-          return $ref->statement;
+          return Helpers::replaceFullStop(json_decode(json_encode($ref->statement), true));
         }, $refs)
       ]);
   }
