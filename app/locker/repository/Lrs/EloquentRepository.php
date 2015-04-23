@@ -36,15 +36,17 @@ class EloquentRepository extends BaseRepository implements Repository {
     if (isset($data['api']['basic_secret'])) XAPIHelpers::checkType('api.basic_secret', 'string', $data['api']['basic_secret']);
     if (isset($data['owner'])) XAPIHelpers::checkType('owner', 'array', $data['owner']);
     if (isset($data['owner']['_id'])) XAPIHelpers::checkType('owner._id', 'string', $data['owner']['_id']);
-    if (isset($data['users'])) XAPIHelpers::checkType('users', 'array', $data['users']);
 
     // Validate users.
-    foreach ($data['users'] as $key => $field) {
-      XAPIHelpers::checkType("fields.$key", 'array', $field);
-      if (isset($field['_id'])) XAPIHelpers::checkType("fields.$key._id", 'string', $field['_id']);
-      if (isset($field['email'])) XAPIHelpers::checkType("fields.$key.email", 'string', $field['email']);
-      if (isset($field['name'])) XAPIHelpers::checkType("fields.$key.name", 'string', $field['name']);
-      if (isset($field['role'])) XAPIHelpers::checkType("fields.$key.role", 'string', $field['role']);
+    if (isset($data['users'])) {
+      XAPIHelpers::checkType('users', 'array', $data['users']);
+      foreach ($data['users'] as $key => $field) {
+        XAPIHelpers::checkType("fields.$key", 'array', $field);
+        if (isset($field['_id'])) XAPIHelpers::checkType("fields.$key._id", 'string', $field['_id']);
+        if (isset($field['email'])) XAPIHelpers::checkType("fields.$key.email", 'string', $field['email']);
+        if (isset($field['name'])) XAPIHelpers::checkType("fields.$key.name", 'string', $field['name']);
+        if (isset($field['role'])) XAPIHelpers::checkType("fields.$key.role", 'string', $field['role']);
+      }
     }
   }
 

@@ -112,7 +112,7 @@ class LrsController extends BaseController {
     };
 
     $opts = ['user' => \Auth::user()];
-    $l = $this->lrs->update($lrs_id, $data);
+    $l = $this->lrs->update($lrs_id, $data, []);
 
     if ($l) {
       return \Redirect::back()->with('success', trans('lrs.updated'));
