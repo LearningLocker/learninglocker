@@ -13,7 +13,7 @@ class CreateOauthClientScopesTable extends Migration
      */
     public function up()
     {
-        $this->schema()->create('oauth_client_scopes', function (Blueprint $table) {
+        Schema::connection('mysql')->create('oauth_client_scopes', function (Blueprint $table) {
             $table->increments('id');
             $table->string('client_id', 40);
             $table->string('scope_id', 40);
@@ -40,10 +40,10 @@ class CreateOauthClientScopesTable extends Migration
      */
     public function down()
     {
-        $this->schema()->table('oauth_client_scopes', function (Blueprint $table) {
+        Schema::connection('mysql')->table('oauth_client_scopes', function (Blueprint $table) {
             $table->dropForeign('oauth_client_scopes_client_id_foreign');
             $table->dropForeign('oauth_client_scopes_scope_id_foreign');
         });
-        $this->schema()->drop('oauth_client_scopes');
+        Schema::connection('mysql')->drop('oauth_client_scopes');
     }
 }

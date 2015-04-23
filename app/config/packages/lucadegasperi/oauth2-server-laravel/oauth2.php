@@ -11,7 +11,7 @@ return [
     | when set to default, it uses whatever connection you specified in your laravel db config.
     |
     */
-    'database' => 'default',
+    'database' => 'mysql',
 
     /*
     |--------------------------------------------------------------------------
@@ -75,7 +75,10 @@ return [
     */
 
     'grant_types' => [
-
+      'client_credentials' => [
+        'class' => '\League\OAuth2\Server\Grant\ClientCredentialsGrant',
+        'access_token_ttl' => 3600
+      ]
     ],
 
     /*

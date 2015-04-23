@@ -13,11 +13,11 @@ class CreateOauthScopesTable extends Migration
      */
     public function up()
     {
-        $this->schema()->create('oauth_scopes', function (Blueprint $table) {
-            $table->string('id', 40)->primary();
+        Schema::connection('mysql')->create('oauth_scopes', function (Blueprint $table) {
+            $table->string('id', 40);
             $table->string('description');
-
             $table->timestamps();
+            $table->primary('id');
         });
     }
 
@@ -28,6 +28,6 @@ class CreateOauthScopesTable extends Migration
      */
     public function down()
     {
-        $this->schema()->drop('oauth_scopes');
+        Schema::connection('mysql')->drop('oauth_scopes');
     }
 }

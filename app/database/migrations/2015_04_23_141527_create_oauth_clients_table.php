@@ -13,8 +13,9 @@ class CreateOauthClientsTable extends Migration
      */
     public function up()
     {
-        $this->schema()->create('oauth_clients', function (BluePrint $table) {
-            $table->string('id', 40)->primary();
+        Schema::connection('mysql')->create('oauth_clients', function (BluePrint $table) {
+            $table->string('id', 40);
+            $table->primary('id');
             $table->string('secret', 40);
             $table->string('name');
             $table->timestamps();
@@ -30,6 +31,6 @@ class CreateOauthClientsTable extends Migration
      */
     public function down()
     {
-        $this->schema()->drop('oauth_clients');
+        Schema::connection('mysql')->drop('oauth_clients');
     }
 }
