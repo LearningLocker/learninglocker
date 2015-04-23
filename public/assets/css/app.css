@@ -210,6 +210,11 @@ table.break-words td, table.break-words th {
 	max-width: 100%;
 }
 
+.list-group-item a {
+  white-space: pre;
+  word-wrap: break-word;
+}
+
 /* Bootstrap extensions (note: looks like we're not using LESS?)
 --------------------------------------------------------------*/
 @media(max-width: 480px){
