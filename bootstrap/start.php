@@ -30,7 +30,7 @@ $app = new Illuminate\Foundation\Application;
 $env = $app->detectEnvironment(function () use ($app) {
   // Attempts to set the environment using the hostname (env => hostname).
   $env = Helpers::getEnvironment([
-    'local' => ['your-machine-host-name']
+    'local' => [gethostname()] // Change this if you don't want to use the local config.
   ], gethostname());
   if ($env) return $env;
 

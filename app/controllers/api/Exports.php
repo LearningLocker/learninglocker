@@ -1,7 +1,5 @@
 <?php namespace Controllers\API;
 
-use \Locker\Data\Exporter\Exporter as Exporter;
-use \Locker\Repository\Report\Repository as Report;
 use \Locker\Repository\Export\Repository as Export;
 use \Response as IlluminateResponse;
 
@@ -11,14 +9,11 @@ class Exports extends Resources {
 
   /**
    * Constructs a new Exporting Controller.
-   * @param Exporter $exporter Injected export handler.
    * @param Report $report Injected report repository.
    * @param Export $export Injected export repository.
    */
-  public function __construct(Exporter $exporter, Report $report, Export $export) {
+  public function __construct(Export $export) {
     parent::__construct();
-    $this->exporter = $exporter;
-    $this->report = $report;
     $this->repo = $export;
   }
 

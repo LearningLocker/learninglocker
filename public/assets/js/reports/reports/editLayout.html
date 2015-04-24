@@ -13,23 +13,23 @@
   </div>
 </div>
 <div class="row">
-  <div data-toggle="tooltip" data-placement="bottom" title="This category lets you filter by actors (in most cases the user who performed the action - for example &quot;Bob&quot; completed maths quiz)." class="col-xs-6 col-sm-2"><a href="#actor" data-toggle="tab">
-      <div class="explore-option active"><span><i class="icon icon-user"></i></span><%= trans('reporting.who') %>
+  <div data-toggle="tooltip" data-placement="bottom" title="Filters by learners (i.e. &quot;Bob&quot;)." class="col-xs-6 col-sm-2"><a href="#actor" data-toggle="tab">
+      <div class="explore-option active"><span><i class="icon icon-user"></i></span><%= trans('reporting.tabs.actor') %>
       </div></a></div>
-  <div data-toggle="tooltip" data-placement="bottom" title="This category lets you filter by verbs (in most cases the action that occurred - for example Bob &quot;completed&quot; maths quiz)" class="col-xs-6 col-sm-2"><a href="#verb" data-toggle="tab">
-      <div class="explore-option"><span><i class="icon icon-star"></i></span><%= trans('reporting.did') %>
+  <div data-toggle="tooltip" data-placement="bottom" title="Filters by verbs (i.e. &quot;completed&quot;)." class="col-xs-6 col-sm-2"><a href="#verb" data-toggle="tab">
+      <div class="explore-option"><span><i class="icon icon-star"></i></span><%= trans('reporting.tabs.verb') %>
       </div></a></div>
-  <div data-toggle="tooltip" data-placement="bottom" title="This category lets you filter by objects (for example Bob completed &quot;maths quiz&quot;)" class="col-xs-6 col-sm-2"><a href="#activity" data-toggle="tab">
-      <div class="explore-option"><span><i class="icon icon-question"></i></span><%= trans('reporting.what') %>
+  <div data-toggle="tooltip" data-placement="bottom" title="Filters by objects (like a maths quiz)." class="col-xs-6 col-sm-2"><a href="#activity" data-toggle="tab">
+      <div class="explore-option"><span><i class="icon icon-question"></i></span><%= trans('reporting.tabs.activity') %>
       </div></a></div>
-  <div data-toggle="tooltip" data-placement="bottom" title="This category lets you filter in terms of the context (for example Bob completed maths quiz &quot;on www.example.com&quot;)" class="col-xs-6 col-sm-2"><a href="#context" data-toggle="tab">
-      <div class="explore-option"><span><i class="icon icon-sitemap"></i></span><%= trans('reporting.where') %>
+  <div data-toggle="tooltip" data-placement="bottom" title="Filters by the context (for example Bob completed maths quiz on &quot;www.example.com&quot;)." class="col-xs-6 col-sm-2"><a href="#context" data-toggle="tab">
+      <div class="explore-option"><span><i class="icon icon-sitemap"></i></span><%= trans('reporting.tabs.context') %>
       </div></a></div>
-  <div data-toggle="tooltip" data-placement="bottom" title="This category lets you filter by score, success, or completion (for example Bob completed maths quiz &quot;with a score of 10 out of 50&quot;)" class="col-xs-6 col-sm-2"><a href="#result" data-toggle="tab">
-      <div class="explore-option"><span><i class="icon icon-bar-chart"></i></span><%= trans('reporting.with_result') %>
+  <div data-toggle="tooltip" data-placement="bottom" title="Filters by score, success, or completion." class="col-xs-6 col-sm-2"><a href="#result" data-toggle="tab">
+      <div class="explore-option"><span><i class="icon icon-bar-chart"></i></span><%= trans('reporting.tabs.result') %>
       </div></a></div>
-  <div data-toggle="tooltip" data-placement="bottom" title="This category lets you filter by when the statement was made (for example Bob completed maths quiz &quot;at 12pm last Tuesday&quot;" class="col-xs-6 col-sm-2"><a href="#dates" data-toggle="tab">
-      <div class="explore-option"><span><i class="icon icon-calendar"></i></span><%= trans('reporting.when') %>
+  <div data-toggle="tooltip" data-placement="bottom" title="Filters by when activities were done." class="col-xs-6 col-sm-2"><a href="#dates" data-toggle="tab">
+      <div class="explore-option"><span><i class="icon icon-calendar"></i></span><%= trans('reporting.tabs.dates') %>
       </div></a></div>
 </div>
 <div class="row">
@@ -45,7 +45,7 @@
                     <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
                     <h4 id="myModalLabel" class="modal-title">How do I filter by actors?</h4>
                   </div>
-                  <div class="modal-body"><p>To add an actor click the (green) “Add Actor” button (below the list of actors - which may be empty at this point). This will add a new entry to the list of actors, you can then type the name (statement.actor.name) of the actor you’re searchng for in the text box. If the actor’s name doesn’t appear as you type it you probably misspelled their name or they haven’t done anything according to your LRS. Currently the report will filter by the email (statement.actor.mbox) associated with the actor you’ve selected.</p><p>To remove an actor click the (red) minus icon next to the actor. Then select “OK” in the message that pops up.</p><p>If you don't want to filter any actors out, remove all of the actors.</p>
+                  <div class="modal-body"><p>To add an actor click the (green) “Add Actor” button (below the list of actors - which may be empty at this point). This will add a new entry to the list of actors, you can then type the name ("Bob") of the actor you’re searchng for in the text box. If the actor’s name doesn’t appear as you type it you probably misspelled their name or they haven’t done anything according to your LRS. Currently the report will filter by the email ("bob@example.com") associated with the actor you’ve selected.</p><p>To remove an actor click the (red) minus icon next to the actor. Then select “OK” in the message that pops up.</p><p>If you don't want to filter any actors out, remove all of the actors.</p>
                   </div>
                   <div class="modal-footer">
                     <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
@@ -70,7 +70,7 @@
                     <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
                     <h4 id="myModalLabel" class="modal-title">How do I filter by verbs?</h4>
                   </div>
-                  <div class="modal-body"><p>To add an verb click the (green) “Add verb” button (below the list you’d like to add to - which may be empty at this point). This will add a new entry to the list, you can then type the verb's name (statement.verb.id) you’re searchng for in the text box.</p><p>To remove an verb click the (red) minus icon next to the verb. Then select “OK” in the message that pops up.</p><p>If you don't want to filter any verbs out, remove all of the verbs.</p>
+                  <div class="modal-body"><p>To add an verb click the (green) “Add verb” button (below the list you’d like to add to - which may be empty at this point). This will add a new entry to the list, you can then type the verb's name (i.e. "completed") you’re searching for in the text box.</p><p>To remove an verb click the (red) minus icon next to the verb. Then select “OK” in the message that pops up.</p><p>If you don't want to filter any verbs out, remove all of the verbs.</p>
                   </div>
                   <div class="modal-footer">
                     <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
@@ -96,7 +96,7 @@
                       <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
                       <h4 id="myModalLabel" class="modal-title">How do I filter by activities?</h4>
                     </div>
-                    <div class="modal-body"><p>To add an activity click the (green) “Add activity” button (below the list you’d like to add to - which may be empty at this point). This will add a new entry to the list, you can then type the activity's url identifier (statement.object.id) you’re searchng for in the text box.</p><p>To remove an activity click the (red) minus icon next to the activity. Then select “OK” in the message that pops up.</p><p>If you don't want to filter any activities out, remove all of the activities.</p>
+                    <div class="modal-body"><p>To add an activity click the (green) “Add activity” button (below the list you’d like to add to - which may be empty at this point). This will add a new entry to the list, you can then type the activity's url identifier (i.e. "www.example.com/quiz/1") you’re searching for in the text box.</p><p>To remove an activity click the (red) minus icon next to the activity. Then select “OK” in the message that pops up.</p><p>If you don't want to filter any activities out, remove all of the activities.</p>
                     </div>
                     <div class="modal-footer">
                       <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
@@ -121,7 +121,7 @@
                       <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
                       <h4 id="myModalLabel" class="modal-title">How do I filter by activity types?</h4>
                     </div>
-                    <div class="modal-body"><p>To add an activity type click the (green) “Add activity type” button (below the list you’d like to add to - which may be empty at this point). This will add a new entry to the list, you can then type the activity type's url identifier (statement.object.definition.type) you’re searchng for in the text box.</p><p>To remove an activity type click the (red) minus icon next to the activity type. Then select “OK” in the message that pops up.</p><p>If you don't want to filter any activity types out, remove all of the activity types.</p>
+                    <div class="modal-body"><p>To add an activity type click the (green) “Add activity type” button (below the list you’d like to add to - which may be empty at this point). This will add a new entry to the list, you can then type the activity type's url identifier (i.e. "www.example.com/activity-type/course") you’re searching for in the text box.</p><p>To remove an activity type click the (red) minus icon next to the activity type. Then select “OK” in the message that pops up.</p><p>If you don't want to filter any activity types out, remove all of the activity types.</p>
                     </div>
                     <div class="modal-footer">
                       <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
@@ -149,7 +149,7 @@
                         <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
                         <h4 id="myModalLabel" class="modal-title">How do I filter by parent activities?</h4>
                       </div>
-                      <div class="modal-body"><p>To add an parent activity click the (green) “Add parent activity” button (below the list you’d like to add to - which may be empty at this point). This will add a new entry to the list, you can then type the parent activity's name (statement.context.contextActivities.parent.id) you’re searchng for in the text box.</p><p>To remove an parent activity click the (red) minus icon next to the parent activity. Then select “OK” in the message that pops up.</p><p>If you don't want to filter any parent activities out, remove all of the parent activities.</p>
+                      <div class="modal-body"><p>To add an parent activity click the (green) “Add parent activity” button (below the list you’d like to add to - which may be empty at this point). This will add a new entry to the list, you can then type the parent activity's url identifier (i.e. "www.example.com/quiz/1") you’re searching for in the text box.</p><p>To remove an parent activity click the (red) minus icon next to the parent activity. Then select “OK” in the message that pops up.</p><p>If you don't want to filter any parent activities out, remove all of the parent activities.</p>
                       </div>
                       <div class="modal-footer">
                         <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
@@ -174,7 +174,7 @@
                         <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
                         <h4 id="myModalLabel" class="modal-title">How do I filter by grouping activities?</h4>
                       </div>
-                      <div class="modal-body"><p>To add an grouping activity click the (green) “Add grouping activity” button (below the list you’d like to add to - which may be empty at this point). This will add a new entry to the list, you can then type the grouping activity's name (statement.context.contextActivities.grouping.id) you’re searchng for in the text box.</p><p>To remove an grouping activity click the (red) minus icon next to the grouping activity. Then select “OK” in the message that pops up.</p><p>If you don't want to filter any grouping activities out, remove all of the grouping activities.</p>
+                      <div class="modal-body"><p>To add an grouping activity click the (green) “Add grouping activity” button (below the list you’d like to add to - which may be empty at this point). This will add a new entry to the list, you can then type the grouping activity's url identifier (i.e. "www.example.com/course/1") you’re searching for in the text box.</p><p>To remove an grouping activity click the (red) minus icon next to the grouping activity. Then select “OK” in the message that pops up.</p><p>If you don't want to filter any grouping activities out, remove all of the grouping activities.</p>
                       </div>
                       <div class="modal-footer">
                         <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
@@ -201,7 +201,7 @@
                         <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
                         <h4 id="myModalLabel" class="modal-title">How do I filter by platforms?</h4>
                       </div>
-                      <div class="modal-body"><p>To add an platform click the (green) “Add platform” button (below the list you’d like to add to - which may be empty at this point). This will add a new entry to the list, you can then type the platform's name (statement.context.platform) you’re searchng for in the text box.</p><p>To remove an platform click the (red) minus icon next to the platform. Then select “OK” in the message that pops up.</p><p>If you don't want to filter any platforms out, remove all of the platforms.</p>
+                      <div class="modal-body"><p>To add an platform click the (green) “Add platform” button (below the list you’d like to add to - which may be empty at this point). This will add a new entry to the list, you can then type the platform's name (i.e. "Curatr") you’re searching for in the text box.</p><p>To remove an platform click the (red) minus icon next to the platform. Then select “OK” in the message that pops up.</p><p>If you don't want to filter any platforms out, remove all of the platforms.</p>
                       </div>
                       <div class="modal-footer">
                         <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
@@ -226,7 +226,7 @@
                         <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
                         <h4 id="myModalLabel" class="modal-title">How do I filter by instructors?</h4>
                       </div>
-                      <div class="modal-body"><p>To add an instructor click the (green) “Add instructor” button (below the list you’d like to add to - which may be empty at this point). This will add a new entry to the list, you can then type the instructor's name (statement.context.instructor) you’re searchng for in the text box.</p><p>To remove an instructor click the (red) minus icon next to the instructor. Then select “OK” in the message that pops up.</p><p>If you don't want to filter any instructors out, remove all of the instructors.</p>
+                      <div class="modal-body"><p>To add an instructor click the (green) “Add instructor” button (below the list you’d like to add to - which may be empty at this point). This will add a new entry to the list, you can then type the instructor's name (i.e. "Bob") you’re searching for in the text box.</p><p>To remove an instructor click the (red) minus icon next to the instructor. Then select “OK” in the message that pops up.</p><p>If you don't want to filter any instructors out, remove all of the instructors.</p>
                       </div>
                       <div class="modal-footer">
                         <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
@@ -251,7 +251,7 @@
                         <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
                         <h4 id="myModalLabel" class="modal-title">How do I filter by languages?</h4>
                       </div>
-                      <div class="modal-body"><p>To add an language click the (green) “Add language” button (below the list you’d like to add to - which may be empty at this point). This will add a new entry to the list, you can then type the language's name (statement.context.language) you’re searchng for in the text box.</p><p>To remove an language click the (red) minus icon next to the language. Then select “OK” in the message that pops up.</p><p>If you don't want to filter any languages out, remove all of the languages.</p>
+                      <div class="modal-body"><p>To add an language click the (green) “Add language” button (below the list you’d like to add to - which may be empty at this point). This will add a new entry to the list, you can then type the language's name (i.e. "en-GB") you’re searching for in the text box.</p><p>To remove an language click the (red) minus icon next to the language. Then select “OK” in the message that pops up.</p><p>If you don't want to filter any languages out, remove all of the languages.</p>
                       </div>
                       <div class="modal-footer">
                         <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
@@ -279,7 +279,7 @@
                       <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
                       <h4 id="myModalLabel" class="modal-title">How do I filter by scales?</h4>
                     </div>
-                    <div class="modal-body"><p>You can set a min (left-most box) and/or a max (right-most box) for each of the scales. You can filter by maximum (max - statement.result.score.max), minimum (min - statement.result.score.min), the actual mark (raw - statement.result.score.raw), and the percentage of the raw mark in relation to the max mark (scaled - statement.result.score.scaled). Change the min and max by entering a number into the boxes, you can remove these filters by clicking the (red) “Clear” button next to the score.</p>
+                    <div class="modal-body"><p>You can set a min (left-most box) and/or a max (right-most box) for each of the scales. You can filter by maximum (max), minimum (min), the actual mark (raw), and the percentage of the raw mark in relation to the max mark (scaled). Change the min and max by entering a number into the boxes, you can remove these filters by clicking the (red) “Clear” button next to the score.</p>
                     </div>
                     <div class="modal-footer">
                       <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
@@ -292,29 +292,29 @@
           <div id="Scaled" class="panel-body">
             <div class="form-group scaled"><%= trans('reporting.scales.scaled') %>
               <div class="pull-right">
-                <input type="number" data-toggle="tooltip" data-placement="bottom" title="Enter the start of the range" id="scaled-min" style="width:50px;" value="<%= (query['statement.result.score.scaled'] && query['statement.result.score.scaled'][1]) || null %>"/><span> <%= trans('reporting.to') %></span>
-                <input type="number" data-toggle="tooltip" data-placement="bottom" title="Enter the end of the range" id="scaled-max" style="width:50px;" value="<%= (query['statement.result.score.scaled'] && query['statement.result.score.scaled'][2]) || null %>"/>
+                <input type="number" placeholder="0" data-toggle="tooltip" data-placement="bottom" title="Enter the start of the range" id="scaled-min" style="width:50px;" value="<%= (query['statement.result.score.scaled'] && query['statement.result.score.scaled'][1]) || null %>"/><span> <%= trans('reporting.to') %></span>
+                <input type="number" placeholder="1" data-toggle="tooltip" data-placement="bottom" title="Enter the end of the range" id="scaled-max" style="width:50px;" value="<%= (query['statement.result.score.scaled'] && query['statement.result.score.scaled'][2]) || null %>"/>
                 <button id="scaled-clear" data-toggle="tooltip" data-placement="bottom" title="Clear the range" class="btn btn-xs btn-danger pull-right"><i class="icon icon-trash"> <%= trans('reporting.clear') %></i></button>
               </div>
             </div>
             <div class="form-group scaled"><%= trans('reporting.scales.raw') %>
               <div class="pull-right">
-                <input type="number" data-toggle="tooltip" data-placement="bottom" title="Enter the start of the range" id="raw-min" style="width:50px;" value="<%= (query['statement.result.score.raw'] && query['statement.result.score.raw'][1]) || null %>"/><span> <%= trans('reporting.to') %></span>
-                <input type="number" data-toggle="tooltip" data-placement="bottom" title="Enter the end of the range" id="raw-max" style="width:50px;" value="<%= (query['statement.result.score.raw'] && query['statement.result.score.raw'][2]) || null %>"/>
+                <input type="number" placeholder="0" data-toggle="tooltip" data-placement="bottom" title="Enter the start of the range" id="raw-min" style="width:50px;" value="<%= (query['statement.result.score.raw'] && query['statement.result.score.raw'][1]) || null %>"/><span> <%= trans('reporting.to') %></span>
+                <input type="number" placeholder="1" data-toggle="tooltip" data-placement="bottom" title="Enter the end of the range" id="raw-max" style="width:50px;" value="<%= (query['statement.result.score.raw'] && query['statement.result.score.raw'][2]) || null %>"/>
                 <button id="raw-clear" data-toggle="tooltip" data-placement="bottom" title="Clear the range" class="btn btn-xs btn-danger pull-right"><i class="icon icon-trash"> <%= trans('reporting.clear') %></i></button>
               </div>
             </div>
             <div class="form-group scaled"><%= trans('reporting.scales.min') %>
               <div class="pull-right">
-                <input type="number" data-toggle="tooltip" data-placement="bottom" title="Enter the start of the range" id="min-min" style="width:50px;" value="<%= (query['statement.result.score.min'] && query['statement.result.score.min'][1]) || null %>"/><span> <%= trans('reporting.to') %></span>
-                <input type="number" data-toggle="tooltip" data-placement="bottom" title="Enter the end of the range" id="min-max" style="width:50px;" value="<%= (query['statement.result.score.min'] && query['statement.result.score.min'][2]) || null %>"/>
+                <input type="number" placeholder="0" data-toggle="tooltip" data-placement="bottom" title="Enter the start of the range" id="min-min" style="width:50px;" value="<%= (query['statement.result.score.min'] && query['statement.result.score.min'][1]) || null %>"/><span> <%= trans('reporting.to') %></span>
+                <input type="number" placeholder="1" data-toggle="tooltip" data-placement="bottom" title="Enter the end of the range" id="min-max" style="width:50px;" value="<%= (query['statement.result.score.min'] && query['statement.result.score.min'][2]) || null %>"/>
                 <button id="min-clear" data-toggle="tooltip" data-placement="bottom" title="Clear the range" class="btn btn-xs btn-danger pull-right"><i class="icon icon-trash"> <%= trans('reporting.clear') %></i></button>
               </div>
             </div>
             <div class="form-group scaled"><%= trans('reporting.scales.max') %>
               <div class="pull-right">
-                <input type="number" data-toggle="tooltip" data-placement="bottom" title="Enter the start of the range" id="max-min" style="width:50px;" value="<%= (query['statement.result.score.max'] && query['statement.result.score.max'][1]) || null %>"/><span> <%= trans('reporting.to') %></span>
-                <input type="number" data-toggle="tooltip" data-placement="bottom" title="Enter the end of the range" id="max-max" style="width:50px;" value="<%= (query['statement.result.score.max'] && query['statement.result.score.max'][2]) || null %>"/>
+                <input type="number" placeholder="0" data-toggle="tooltip" data-placement="bottom" title="Enter the start of the range" id="max-min" style="width:50px;" value="<%= (query['statement.result.score.max'] && query['statement.result.score.max'][1]) || null %>"/><span> <%= trans('reporting.to') %></span>
+                <input type="number" placeholder="1" data-toggle="tooltip" data-placement="bottom" title="Enter the end of the range" id="max-max" style="width:50px;" value="<%= (query['statement.result.score.max'] && query['statement.result.score.max'][2]) || null %>"/>
                 <button id="max-clear" data-toggle="tooltip" data-placement="bottom" title="Clear the range" class="btn btn-xs btn-danger pull-right"><i class="icon icon-trash"> <%= trans('reporting.clear') %></i></button>
               </div>
             </div>
@@ -332,7 +332,7 @@
                       <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
                       <h4 id="myModalLabel" class="modal-title">How do I filter by success/completion?</h4>
                     </div>
-                    <div class="modal-body"><p>Success (statement.result.success) may determine whether a learner was successful in passing a test. Setting this filter to true will return all the statements that show a successful pass and false will do the opposite. You can remove this filter by clicking the (red) “Clear” button next to success.</p><p>Complete (statement.result.completion) may determine whether a learner completed a test. Setting this filter to true will return all the statements that show a completed test and false will do the opposite. You can remove this filter by clicking the (red) “Clear” button next to success.</p>
+                    <div class="modal-body"><p>Success may determine whether a learner was successful in passing a test. Setting this filter to true will return all the statements that show a successful pass and false will do the opposite. You can remove this filter by clicking the (red) “Clear” button next to success.</p><p>Complete may determine whether a learner completed a test. Setting this filter to true will return all the statements that show a completed test and false will do the opposite. You can remove this filter by clicking the (red) “Clear” button next to success.</p>
                     </div>
                     <div class="modal-footer">
                       <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
@@ -376,7 +376,7 @@
                     <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
                     <h4 id="myModalLabel" class="modal-title">How do I filter by dates?</h4>
                   </div>
-                  <div class="modal-body">Select a since and/or until date which will determine the date (statement.timestamp) range you’re interested in. Statements that were not made during your date range will not be returned (unless it meets certain conditions regarding statement refs).
+                  <div class="modal-body">Select a since and/or until date which will determine the date (2015-01-01) range you’re interested in. Statements that were not made during your date range will not be returned (unless it meets certain conditions regarding statement refs).
                   </div>
                   <div class="modal-footer">
                     <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>

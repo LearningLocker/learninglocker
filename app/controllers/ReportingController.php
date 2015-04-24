@@ -1,7 +1,7 @@
 <?php
 
-use Locker\Repository\Lrs\LrsRepository as Lrs;
-use Locker\Repository\Report\Repository as Report;
+use Locker\Repository\Lrs\Repository as LrsRepo;
+use Locker\Repository\Report\Repository as ReportRepo;
 
 class ReportingController extends \BaseController {
 
@@ -47,7 +47,7 @@ class ReportingController extends \BaseController {
     ]
   ];
 
-  public function __construct(Lrs $lrs, Report $report){
+  public function __construct(LrsRepo $lrs, ReportRepo $report){
     $this->lrs = $lrs;
     $this->report = $report;
     $this->beforeFilter('auth');
@@ -55,47 +55,51 @@ class ReportingController extends \BaseController {
     $this->beforeFilter('csrf', array('only' => array('update', 'store', 'destroy')));
   }
 
+  private function getLrs($lrs_id) {
+    $opts = ['user' => \Auth::user()];
+    return [
+      'lrs' => $this->lrs->show($lrs_id, $opts),
+      'list' => $this->lrs->index($opts)
+    ];
+  }
+
   /**
    * Displays the reporting view.
+   * @param String $lrs_id
    * @return reporting view.
    */
-  public function index($id){
-    $lrs      = $this->lrs->find($id);
-    $lrs_list = $this->lrs->all();
-    $reports  = $this->report->index([
-      'lrs_id' => $id
-    ]);
-    return View::make("{$this->views}.index", [
-      'lrs' => $lrs, 
-      'list' => $lrs_list,
+  public function index($lrs_id) {
+    return View::make("{$this->views}.index", array_merge($this->getLrs($lrs_id), [
       'reporting_nav' => true,
-      'reports' => $reports
-    ]);
+      'reports' => $this->report->index([
+        'lrs_id' => $lrs_id
+      ])
+    ]));
   }
 
   /**
    * Displays the statements from the report.
+   * @param String $lrs_id
+   * @param String $report_id
    * @return reporting view.
    */
-  public function statements($lrsId, $reportId) {
-    return View::make("{$this->views}.statements", [
-      'lrs' => $this->lrs->find($lrsId), 
-      'list' => $this->lrs->all(),
+  public function statements($lrs_id, $report_id) {
+    return View::make("{$this->views}.statements", array_merge($this->getLrs($lrs_id), [
       'reporting_nav' => true,
-      'statements' => $this->report->statements($reportId, [
-        'lrs_id' => $lrsId
+      'statements' => $this->report->statements($report_id, [
+        'lrs_id' => $lrs_id
       ])->select('statement')->paginate(20),
-      'report' => $this->report->show($reportId, [
-        'lrs_id' => $lrsId
+      'report' => $this->report->show($report_id, [
+        'lrs_id' => $lrs_id
       ])
-    ]);
+    ]));
   }
 
   /**
    * Gets typeahead values (matching the query) in segments for the current lrs.
-   * @param string $lrs LRS in use.
-   * @param string $segement Statement segment (i.e. 'verbs').
-   * @param query String to match against.
+   * @param String $lrs LRS in use.
+   * @param String $segement Statement segment (i.e. 'verbs').
+   * @param String $query to match against.
    * @return [Typeahead values] Typeahead values.
    **/
   public function typeahead($lrs, $segment, $query){
@@ -104,8 +108,8 @@ class ReportingController extends \BaseController {
     return Response::json($this->report->setQuery(
       $lrs,
       $query,
-      self::statementKey . $options['return'],
-      self::statementKey . $options['query']
+      self::statementKey.$options['return'],
+      self::statementKey.$options['query']
     ));
   }
 
