@@ -446,7 +446,9 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
 | oAuth handling
 |----------------------------------------------------------------------
 */
-Route::post('oauth/access_token', 'OAuthController@postAccessToken');
+Route::post('oauth/access_token', function() {
+  return Response::json(Authorizer::issueAccessToken());
+});
 
 //Add OPTIONS routes for all defined xAPI and api routes
 foreach( Route::getRoutes()->getIterator() as $route  ){
