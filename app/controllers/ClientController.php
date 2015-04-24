@@ -57,20 +57,20 @@ class ClientController extends BaseController {
   
   /**
    * Create a new client.
-   * @param String $id
+   * @param String $lrs_id
    * @return View
    */
-  public function create($id) {
+  public function create($lrs_id) {
     $opts = ['user' => \Auth::user()];
     $lrs = $this->lrs->show($lrs_id, $opts);
 	  $data = ['lrs_id' => $lrs->id];
 	
     if ($this->client->create($data)) {
       $message_type = 'success';
-      $message = trans('update_key');
+      $message = trans('lrs.client.created_sucecss');
     } else {
       $message_type = 'error';
-      $message = trans('update_key_error');
+      $message = trans('lrs.client.created_fail');
     }
     
     return Redirect::back()->with($message_type, $message);
@@ -102,10 +102,10 @@ class ClientController extends BaseController {
   public function destroy($lrs_id, $id){
 	  if ($this->client->delete($id)) {
       $message_type = 'success';
-      $message = trans('delete_client_success');
+      $message = trans('lrs.client.delete_client_success');
     } else {
       $message_type = 'error';
-      $message = trans('delete_client_error');
+      $message = trans('lrs.client.delete_client_error');
     }
 	
     return Redirect::back()->with($message_type, $message);
