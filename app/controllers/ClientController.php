@@ -57,10 +57,10 @@ class ClientController extends BaseController {
   
   /**
    * Create a new client.
-   * @param String $id
+   * @param String $lrs_id
    * @return View
    */
-  public function create($id) {
+  public function create($lrs_id) {
     $opts = ['user' => \Auth::user()];
     $lrs = $this->lrs->show($lrs_id, $opts);
 	  $data = ['lrs_id' => $lrs->id];
