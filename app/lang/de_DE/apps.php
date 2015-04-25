@@ -7,9 +7,9 @@
 */
 
 return array(
-    'list'    => 'Apps',
-    'create'  => 'Neue App erstellen',
-    'show'    => 'App details',
+    'list' => 'Apps',
+    'create' => 'Neue App erstellen',
+    'show' => 'App details',
     'no_data' => 'Keine Information vorhanden.',
 
     //API calls

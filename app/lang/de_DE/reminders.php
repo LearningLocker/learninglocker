@@ -23,7 +23,7 @@ return array(
 
     "reset" => "Das Passwort wurde zurück gesetzt.",
 
-    "password_reset" => "Password Wiederherstellung",
+    "password_reset" => "Passwort Wiederherstellung",
 
     "password_reset_form" => "Um das Passwort wieder herstellen zu können muss das Formular ausgefüllt werden",
 
