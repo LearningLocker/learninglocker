@@ -56,7 +56,6 @@ return array(
       'completion' => 'Abgeschlossen'
     ],
     'dates' => [
-      'intro' => 'You can select a since date, until date or both to filter results between two dates.',
       'intro' => 'Um die Ergebnisse zeitlich zu filtern kann ein Start-, ein Enddatum oder beides angegeben werden.',
       'since' => 'Von',
       'until' => 'Bis'

@@ -36,7 +36,6 @@ return array(
   'email_verified' => 'Vielen Dank. Die E-Mail-Adresse wurde bestätigt.',
   'email_verify_problem' => 'Die E-Mail-Addresse konnte nicht bestätigt werden.',
   'unverified'     => 'Unbestätigt',
-  'verify_resend'  => 'Resend verify email',
   'verify_resend'  => 'E-Mail noch einmal versenden',
   'reset'          => 'Passwort wiederherstellen',
   'success'        => 'Das Passwort wurde gespeichert.',
