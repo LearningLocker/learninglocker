@@ -199,4 +199,41 @@ class Helpers {
       'X-Experience-API-Version' => '1.0.1'
     ];
   }
+
+  /**
+   * Checks the authentication.
+   * @param String $type The name of the model used to authenticate.
+   * @param String $username
+   * @param String $username
+   * @return Model
+   */
+  static function checkAuth($type, $username, $password) {
+    return (new $type)
+      ->where('api.basic_key', $username)
+      ->where('api.basic_secret', $password)
+      ->first();
+  }
+
+  /**
+   * Gets the current LRS from the Auth.
+   * @return \Lrs
+   */
+  static function getLrsFromAuth() {
+    $username = \LockerRequest::getUser();
+    $password = \LockerRequest::getPassword();
+    $lrs = Helpers::checkAuth('Lrs', $username, $password);
+
+    //if main credentials not matched, try the additional credentials
+    if ($lrs == null) {
+      $client = Helpers::checkAuth('Client', $username, $password);
+
+      if ($client != null) {
+        $lrs = \Lrs::find($client->lrs_id);
+      } else {
+        throw new Exceptions\Exception('Unauthorized request.', 401);
+      }
+    }
+
+    return $lrs;
+  }
 }

@@ -162,19 +162,4 @@ class EloquentRepository extends BaseRepository implements Repository {
     }, $lrs->users);
     return $lrs->save();
   }
-
-  /**
-   * Checks that the secret matches.
-   * Also used to authenticate client users.
-   * @param Illuminate\Database\Eloquent\Model $client
-   * @param string $secret
-   * @return Illuminate\Database\Eloquent\Model
-   */
-  public function checkSecret($client, $secret) {
-    if ($client !== null && $client->api['basic_secret'] === $secret) {
-      return $client;
-    } else {
-      return null;
-    }
-  }
 }

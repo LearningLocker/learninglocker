@@ -10,6 +10,8 @@ use \DB as DB;
 use \Locker\Repository\Lrs\EloquentRepository as LrsRepository;
 use \Lrs as Lrs;
 use \Client as Client;
+use \Locker\Helpers\Helpers as Helpers;
+use \LucaDegasperi\OAuth2Server\Filters\OAuthFilter as OAuthFilter;
 
 class Base extends Controller {
 
@@ -17,7 +19,10 @@ class Base extends Controller {
    * Constructs a new base controller.
    */
   public function __construct() {
-    $this->beforeFilter('@getLrs');
+    \Log::info('here');
+    $this->filterScopes(['all']);
+    \Log::info('Woo');
+    $this->lrs = Helpers::getLrsFromAuth();
   }
 
   /**
@@ -46,27 +51,18 @@ class Base extends Controller {
     ]);
   }
 
-  /**
-   * Get the LRS details based on Auth credentials
-   **/
-  public function getLrs() {
-    $key = LockerRequest::getUser();
-    $secret = LockerRequest::getPassword();
-    $lrs = (new LrsRepository)->checkSecret(Lrs::where('api.basic_key', $key)->first(), $secret);
+  protected function filterScopes($scopes) {
+    // Registers the OAuth filter with LockerRequest headers.
+    $app->bindShared('LucaDegasperi\OAuth2Server\Filters\OAuthFilter', function ($container) {
+      $httpHeadersOnly = $container['config']->get('oauth2-server-laravel::oauth2.http_headers_only');
+      return new OAuthFilter($container['oauth2-server.authorizer'], $httpHeadersOnly);
+    });
 
-    //if main credentials not matched, try the additional credentials
-    if ($lrs == null) {
-      $client = (new LrsRepository)->checkSecret(Client::where('api.basic_key', $key)->first(), $secret);
-
-      if ($client != null) {
-        $lrs = Lrs::find($client->lrs_id);
-      } else {
-        throw new Exceptions\Exception('Unauthorized request.', 401);
-      }
-    }
-
-    $this->lrs = $lrs;
+    // Calls the filter.
+    $filter = 'oauth';
+    $request = \Request::instance();
+    $route = $this->filterer->findRoute($request);
+    $response = null;
+    return $this->filterer->callRouteFilter($filter, $scopes, $route, $request, $response);
   }
-
-
 }
