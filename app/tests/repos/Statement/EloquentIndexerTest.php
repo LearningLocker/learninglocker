@@ -49,8 +49,44 @@ class EloquentIndexerTest extends EloquentTest {
     $this->assertEquals(count($this->statements), $result);
   }
 
-  protected function assertStatementMatch(\stdClass $statement_a, \stdClass $statement_b) {
-    unset($statement_b->version);
-    $this->assertEquals(true, $statement_a == $statement_b);
+  public function testAgentAccount() {
+    // Defines the test agent.
+    $agent = (object) [
+      'account' => (object) [
+        'homePage' => 'http://www.example.com/users',
+        'name' => '1'
+      ],
+      'objectType' => 'Agent'
+    ];
+
+    // Updates the already inserted model with the test agent.
+    $model = $this->statements[0];
+    $model->statement = $this->generateStatement([
+      'actor' => $agent
+    ]);
+    $model->save();
+
+    // Uses the repo.
+    $opts = new IndexOptions([
+      'lrs_id' => $this->lrs->_id,
+      'agent' => $agent
+    ]);
+    $result = $this->indexer->index($opts);
+    $result = $this->indexer->format($result, $opts);
+
+    // Checks the result is correct.
+    $this->assertEquals(true, is_array($result));
+    $this->assertEquals(count($this->statements), count($result));
+    foreach ($result as $statement) {
+      $this->assertEquals(true, is_object($statement));
+      $this->assertEquals(true, isset($statement->id));
+      $this->assertEquals(true, is_string($statement->id));
+      $expected_statement = $this->statements[0]->statement;
+      $this->assertStatementMatch($expected_statement, $statement);
+    }
+  }
+
+  private function assertStatementMatch(array $statement_a, \stdClass $statement_b) {
+    $this->assertEquals(true, json_decode(json_encode($statement_a)) == $statement_b);
   }
 }

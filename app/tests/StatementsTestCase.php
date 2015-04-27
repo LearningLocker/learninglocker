@@ -15,6 +15,7 @@ abstract class StatementsTestCase extends LrsTestCase {
   protected function generateStatement($statement = []) {
     $timestamp = Helpers::getCurrentDate();
     return array_merge([
+      'id' => '00000000-0000-0000-0000-000000000000',
       'actor' => [
         'mbox' => 'mailto:test@example.com',
         'objectType' => 'Agent'
@@ -31,7 +32,8 @@ abstract class StatementsTestCase extends LrsTestCase {
       'authority' => [
         'mbox' => 'mailto:test@example.com',
         'objectType' => 'Agent'
-      ]
+      ],
+      'version' => '1.0.1'
     ], $statement);
   }
 
