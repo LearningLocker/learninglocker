@@ -26,10 +26,10 @@ class EloquentShowerTest extends EloquentTest {
       'lrs_id' => $this->lrs->_id,
       'active' => false
     ]);
-    $model = $this->createStatement(1);
+    $model = $this->statements[0];
     $model->active = false;
     $model->save();
-    $result = $this->shower->show('10000000-0000-0000-0000-000000000000', $opts);
+    $result = $this->shower->show('00000000-0000-0000-0000-000000000000', $opts);
 
     $this->assertEquals(true, is_object($result));
     $this->assertEquals('stdClass', get_class($result));
@@ -41,10 +41,10 @@ class EloquentShowerTest extends EloquentTest {
       'lrs_id' => $this->lrs->_id,
       'voided' => true
     ]);
-    $model = $this->createStatement(1);
+    $model = $this->statements[0];
     $model->voided = true;
     $model->save();
-    $result = $this->shower->show('10000000-0000-0000-0000-000000000000', $opts);
+    $result = $this->shower->show('00000000-0000-0000-0000-000000000000', $opts);
 
     $this->assertEquals(true, is_object($result));
     $this->assertEquals('stdClass', get_class($result));
@@ -57,19 +57,18 @@ class EloquentShowerTest extends EloquentTest {
       'active' => false,
       'voided' => true
     ]);
-    $model = $this->createStatement(1);
+    $model = $this->statements[0];
     $model->active = false;
     $model->voided = true;
     $model->save();
-    $result = $this->shower->show('10000000-0000-0000-0000-000000000000', $opts);
+    $result = $this->shower->show('00000000-0000-0000-0000-000000000000', $opts);
 
     $this->assertEquals(true, is_object($result));
     $this->assertEquals('stdClass', get_class($result));
     $this->assertStatementMatch($model->statement, $result);
   }
 
-  private function assertStatementMatch(\stdClass $statement_a, \stdClass $statement_b) {
-    unset($statement_b->version);
-    $this->assertEquals(true, $statement_a == $statement_b);
+  private function assertStatementMatch(array $statement_a, \stdClass $statement_b) {
+    $this->assertEquals(true, json_decode(json_encode($statement_a)) == $statement_b);
   }
 }

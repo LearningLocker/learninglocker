@@ -21,6 +21,6 @@ abstract class EloquentReader {
    * @return \stdClass
    */
   protected function formatModel(Model $model) {
-    return Helpers::replaceHTMLEntity($model->statement);
+    return Helpers::replaceHtmlEntity($model->statement);
   }
 }
