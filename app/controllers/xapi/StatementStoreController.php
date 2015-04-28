@@ -24,7 +24,7 @@ class StatementStoreController {
    */
   private function getParts() {
     $content = \LockerRequest::getContent();
-    $contentType = \LockerRequest::header('content-type');
+    $contentType = \LockerRequest::header('Content-Type');
     $types = explode(';', $contentType, 2);
     $mimeType = count($types) >= 1 ? $types[0] : $types;
 
@@ -95,7 +95,7 @@ class StatementStoreController {
    * @return AssocArray Result of storing the statements.
    */
   private function createStatements($lrs_id, Callable $modifier = null) {
-    Helpers::validateAtom(new XApiImt(LockerRequest::header('Content-Type')));
+    Helpers::validateAtom(new XApiImt(explode(';', LockerRequest::header('Content-Type'))[0]));
 
     // Gets parts of the request.
     $parts = $this->getParts();
