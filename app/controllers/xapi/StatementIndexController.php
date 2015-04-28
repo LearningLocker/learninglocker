@@ -94,24 +94,27 @@ class StatementIndexController {
    * @return \stdClass
    */
   private function makeAttachmentsResult(array $statements, $count, array $opts) {
-    $content_type = 'multipart/mixed; boundary='.static::BOUNDARY;
-    $statement_result = "Content-Type:application/json{static::EOL}{static::EOL}".$this->makeStatementsResult(
+    $boundary = static::BOUNDARY;
+    $eol = static::EOL;
+    $content_type = 'multipart/mixed; boundary='.$boundary;
+    $statement_result = "Content-Type:application/json$eol$eol".$this->makeStatementsResult(
       $statements,
       $count,
       $opts
     );
-    $body = "--{static::BOUNDARY}{static::EOL}".implode(
-      "{static::EOL}--{static::BOUNDARY}{static::EOL}",
-      array_merge([$statement_result], array_map(function ($attachment) {
+
+    return "--$boundary$eol".implode(
+      "$eol--$boundary$eol",
+      array_merge([$statement_result], array_map(function ($attachment) use ($eol, $boundary) {
         return (
-          'Content-Type:'.$attachment->content_type.static::EOL.
-          'Content-Transfer-Encoding:binary'.static::EOL.
+          'Content-Type:'.$attachment->content_type.$eol.
+          'Content-Transfer-Encoding:binary'.$eol.
           'X-Experience-API-Hash:'.$attachment->hash.
-          static::EOL.static::EOL.
+          $eol.$eol.
           $attachment->content
         );
       }, $this->statements->getAttachments($statements, $opts)))
-    )."{static::EOL}--{static::BOUNDARY}--";
+    )."$eol--$boundary--";
   }
 
   private function getMoreLink($count, $limit, $offset) {

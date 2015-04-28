@@ -133,7 +133,7 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
 
     // Returns the models.
     return json_decode($builder
-      ->orderBy('statement.stored', $opts->getOpt('ascending') ? 'ASC' : 'DESC')
+      ->orderBy('statement.stored', $opts->getOpt('ascending') === true ? 'ASC' : 'DESC')
       ->skip($opts->getOpt('offset'))
       ->take($opts->getOpt('limit'))
       ->get()
