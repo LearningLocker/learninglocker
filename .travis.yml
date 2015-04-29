@@ -13,7 +13,7 @@ install:
 before_script:
   - phpenv config-add travisconfig.ini
   - sleep 3
-  - sudo chmod 777 ./uploads && sudo chmod 666 ./uploads
+  - sudo chmod 777 ./uploads
   - php artisan migrate --env="testing"
 
 script: ./vendor/bin/phpunit
