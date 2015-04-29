@@ -16,7 +16,7 @@ before_script:
   - sudo chmod 775 ./uploads && sudo chmod 664 ./uploads
   - php artisan migrate --env="testing"
 
-script: sudo ./vendor/bin/phpunit
+script: ./vendor/bin/phpunit
 
 notifications:
   slack:
