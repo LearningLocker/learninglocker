@@ -40,7 +40,7 @@ Route::filter('auth', function() {
 | Login in once using key / secret to store statements or retrieve statements.
 |
 */
-Route::filter('auth.statement', function(){
+Route::filter('auth.statement', function($route, $request){
 
   $method = Request::server('REQUEST_METHOD');
 
@@ -49,12 +49,18 @@ Route::filter('auth.statement', function(){
     // Validates authorization header.
     $auth_validator = new XApiValidator();
     $authorization = LockerRequest::header('Authorization');
-    if ($authorization !== null && strpos('Basic', $authorization) === 0) {
+    if ($authorization !== null && strpos($authorization, 'Basic') === 0) {
       $authorization = gettype($authorization) === 'string' ? substr($authorization, 6) : false;
       $auth_validator->checkTypes('auth', $authorization, 'base64', 'headers');
 
       if ($auth_validator->getStatus() === 'failed') {
         throw new Exceptions\Validation($auth_validator->getErrors());
+      }
+    }
+
+    if ($authorization !== null && strpos($authorization, 'Bearer') === 0) {
+      if ($r = Route::callRouteFilter('oauth', [], $route, $request)) {
+        return $r;
       }
     }
 

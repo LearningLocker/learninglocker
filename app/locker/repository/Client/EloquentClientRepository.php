@@ -47,6 +47,12 @@ class EloquentClientRepository implements ClientRepository {
 
     $client->save() ? $result = $client : $return = false;
 
+    // Adds OAuth client.
+    \DB::connection('mysql')->insert(
+      'insert into oauth_clients (id, secret, name) values (?, ?, ?)',
+      [$client->api['basic_key'], $client->api['basic_secret'], $client->_id]
+    );
+
     //fire a create client event if it worked and saved
     if( $result )
       \Event::fire('user.create_client', array('user' => $user, 'client' => $client));
@@ -107,6 +113,12 @@ class EloquentClientRepository implements ClientRepository {
   public function delete($id){
 
     $client = $this->find($id);
+
+    // Updates OAuth table.
+    \DB::connection('mysql')->delete(
+      'delete from oauth_clients where id=?',
+      [$client->api['basic_key']]
+    );
 
     return $client->delete();
   }

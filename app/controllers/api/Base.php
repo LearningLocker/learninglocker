@@ -19,9 +19,6 @@ class Base extends Controller {
    * Constructs a new base controller.
    */
   public function __construct() {
-    \Log::info('here');
-    $this->filterScopes(['all']);
-    \Log::info('Woo');
     $this->lrs = Helpers::getLrsFromAuth();
   }
 
@@ -49,20 +46,5 @@ class Base extends Controller {
       'data' => $data,
       'debug' => !Config::get('app.debug') ? trans('api.info.trace') : DB::getQueryLog()
     ]);
-  }
-
-  protected function filterScopes($scopes) {
-    // Registers the OAuth filter with LockerRequest headers.
-    $app->bindShared('LucaDegasperi\OAuth2Server\Filters\OAuthFilter', function ($container) {
-      $httpHeadersOnly = $container['config']->get('oauth2-server-laravel::oauth2.http_headers_only');
-      return new OAuthFilter($container['oauth2-server.authorizer'], $httpHeadersOnly);
-    });
-
-    // Calls the filter.
-    $filter = 'oauth';
-    $request = \Request::instance();
-    $route = $this->filterer->findRoute($request);
-    $response = null;
-    return $this->filterer->callRouteFilter($filter, $scopes, $route, $request, $response);
   }
 }

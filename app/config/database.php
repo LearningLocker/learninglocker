@@ -51,7 +51,7 @@ return array(
 			'host'      => 'localhost',
 			'database'  => 'll_staging',
 			'username'  => 'root',
-			'password'  => 'mysql',
+			'password'  => '',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',

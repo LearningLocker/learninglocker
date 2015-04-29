@@ -215,12 +215,12 @@ class Helpers {
   }
 
   /**
-   * Gets the current LRS from the Auth.
-   * @return \Lrs
+   * Gets the Lrs associated with the given username and password.
+   * @param String $username
+   * @param String $password
+   * @return Lrs
    */
-  static function getLrsFromAuth() {
-    $username = \LockerRequest::getUser();
-    $password = \LockerRequest::getPassword();
+  static function getLrsFromUserPass($username, $password) {
     $lrs = Helpers::checkAuth('Lrs', $username, $password);
 
     //if main credentials not matched, try the additional credentials
@@ -235,5 +235,53 @@ class Helpers {
     }
 
     return $lrs;
+  }
+
+  /**
+   * Gets the Client/Lrs username and password from the OAuth authorization string.
+   * @param String $authorization
+   * @return [String] Formed of [Username, Password]
+   */
+  static function getUserPassFromOAuth($authorization) {
+    $token = substr($authorization, 7);
+    $db = \DB::connection('mysql');
+
+    $session_id = $db->select(
+      'select session_id from oauth_access_tokens where id=?',
+      [$token]
+    )[0]->session_id;
+    $client_id = $db->select(
+      'select client_id from oauth_sessions where id=?',
+      [$session_id]
+    )[0]->client_id;
+    $client_secret = $db->select(
+      'select secret from oauth_clients where id=?',
+      [$client_id]
+    )[0]->secret;
+
+    return [$client_id, $client_secret];
+  }
+
+  /**
+   * Gets the Client/Lrs username and password from the Basic Auth authorization string.
+   * @param String $authorization
+   * @return [String] Formed of [Username, Password]
+   */
+  static function getUserPassFromBAuth($authorization) {
+    return [\LockerRequest::getUser(), \LockerRequest::getPassword()];
+  }
+
+  /**
+   * Gets the current LRS from the Authorization header.
+   * @return \Lrs
+   */
+  static function getLrsFromAuth() {
+    $authorization = \LockerRequest::header('Authorization');
+    if ($authorization !== null && strpos($authorization, 'Basic') === 0) {
+      list($username, $password) = Helpers::getUserPassFromBAuth($authorization);
+    } else if ($authorization !== null && strpos($authorization, 'Bearer') === 0) {
+      list($username, $password) = Helpers::getUserPassFromOAuth($authorization);
+    }
+    return Helpers::getLrsFromUserPass($username, $password);
   }
 }

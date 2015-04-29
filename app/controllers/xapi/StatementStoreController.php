@@ -131,9 +131,15 @@ class StatementStoreController {
   }
 
   private function getAuthority() {
+    $authorization = \LockerRequest::header('Authorization');
+    if (strpos($authorization, 'Basic') === 0) {
+      $key = \LockerRequest::getUser();
+    } else if (strpos($authorization, 'Bearer') === 0) {
+      $key = Helpers::getClientIdFromOAuth($authorization);
+    }
+
     $client = (new \Client)
-      ->where('api.basic_key', \LockerRequest::getUser())
-      ->where('api.basic_secret', \LockerRequest::getPassword())
+      ->where('api.basic_key', $key)
       ->first();
 
     if ($client != null && isset($client['authority'])) {
