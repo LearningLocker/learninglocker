@@ -11,6 +11,13 @@
 |
 */
 
+App::singleton('oauth2', function() {
+    $storage = new OAuth2\Storage\Mongo(App::make('db')->getMongoDB());
+    $server = new OAuth2\Server($storage);
+    $server->addGrantType(new OAuth2\GrantType\ClientCredentials($storage));
+    return $server;
+});
+
 Route::get('/', function(){
   if( Auth::check() ){
     $site = \Site::first();
@@ -447,7 +454,10 @@ Route::group( array('prefix' => 'api/v1', 'before'=>'auth.statement'), function(
 |----------------------------------------------------------------------
 */
 Route::post('oauth/access_token', function() {
-  return Response::json(Authorizer::issueAccessToken());
+  $bridgedRequest  = OAuth2\HttpFoundationBridge\Request::createFromRequest(Request::instance());
+  $bridgedResponse = new OAuth2\HttpFoundationBridge\Response();
+  $bridgedResponse = App::make('oauth2')->handleTokenRequest($bridgedRequest, $bridgedResponse);
+  return $bridgedResponse;
 });
 
 //Add OPTIONS routes for all defined xAPI and api routes

@@ -48,10 +48,11 @@ class EloquentClientRepository implements ClientRepository {
     $client->save() ? $result = $client : $return = false;
 
     // Adds OAuth client.
-    \DB::connection('mysql')->insert(
-      'insert into oauth_clients (id, secret, name) values (?, ?, ?)',
-      [$client->api['basic_key'], $client->api['basic_secret'], $client->_id]
-    );
+    \DB::getMongoDB()->oauth_clients->insert([
+      'client_id' => $client->api['basic_key'],
+      'client_secret' => $client->api['basic_secret'],
+      'redirect_uri' => 'http://www.example.com/'
+    ]);
 
     //fire a create client event if it worked and saved
     if( $result )
@@ -115,10 +116,9 @@ class EloquentClientRepository implements ClientRepository {
     $client = $this->find($id);
 
     // Updates OAuth table.
-    \DB::connection('mysql')->delete(
-      'delete from oauth_clients where id=?',
-      [$client->api['basic_key']]
-    );
+    \DB::getMongoDB()->oauth_clients->remove([
+      'client_id' => [$client->api['basic_key']]
+    ]);
 
     return $client->delete();
   }

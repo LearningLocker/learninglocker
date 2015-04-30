@@ -59,8 +59,10 @@ Route::filter('auth.statement', function($route, $request){
     }
 
     if ($authorization !== null && strpos($authorization, 'Bearer') === 0) {
-      if ($r = Route::callRouteFilter('oauth', [], $route, $request)) {
-        return $r;
+      $bridgedRequest  = OAuth2\HttpFoundationBridge\Request::createFromRequest(Request::instance());
+      $bridgedResponse = new OAuth2\HttpFoundationBridge\Response();
+      if (!App::make('oauth2')->verifyResourceRequest($bridgedRequest, $bridgedResponse)) {
+        throw new Exceptions\Exception('Unauthorized request.', $bridgedResponse->getStatusCode());
       }
     }
 

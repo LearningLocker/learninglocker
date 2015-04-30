@@ -244,20 +244,14 @@ class Helpers {
    */
   static function getUserPassFromOAuth($authorization) {
     $token = substr($authorization, 7);
-    $db = \DB::connection('mysql');
+    $db = \App::make('db')->getMongoDB();
 
-    $session_id = $db->select(
-      'select session_id from oauth_access_tokens where id=?',
-      [$token]
-    )[0]->session_id;
-    $client_id = $db->select(
-      'select client_id from oauth_sessions where id=?',
-      [$session_id]
-    )[0]->client_id;
-    $client_secret = $db->select(
-      'select secret from oauth_clients where id=?',
-      [$client_id]
-    )[0]->secret;
+    $client_id = $db->oauth_access_tokens->find([
+      'access_token' => $token
+    ])->getNext()['client_id'];
+    $client_secret = $db->oauth_clients->find([
+      'client_id' => $client_id
+    ])->getNext()['client_secret'];
 
     return [$client_id, $client_secret];
   }
