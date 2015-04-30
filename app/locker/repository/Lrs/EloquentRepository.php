@@ -36,15 +36,17 @@ class EloquentRepository extends BaseRepository implements Repository {
     if (isset($data['api']['basic_secret'])) XAPIHelpers::checkType('api.basic_secret', 'string', $data['api']['basic_secret']);
     if (isset($data['owner'])) XAPIHelpers::checkType('owner', 'array', $data['owner']);
     if (isset($data['owner']['_id'])) XAPIHelpers::checkType('owner._id', 'string', $data['owner']['_id']);
-    if (isset($data['users'])) XAPIHelpers::checkType('users', 'array', $data['users']);
 
     // Validate users.
-    foreach ($data['users'] as $key => $field) {
-      XAPIHelpers::checkType("fields.$key", 'array', $field);
-      if (isset($field['_id'])) XAPIHelpers::checkType("fields.$key._id", 'string', $field['_id']);
-      if (isset($field['email'])) XAPIHelpers::checkType("fields.$key.email", 'string', $field['email']);
-      if (isset($field['name'])) XAPIHelpers::checkType("fields.$key.name", 'string', $field['name']);
-      if (isset($field['role'])) XAPIHelpers::checkType("fields.$key.role", 'string', $field['role']);
+    if (isset($data['users'])) {
+      XAPIHelpers::checkType('users', 'array', $data['users']);
+      foreach ($data['users'] as $key => $field) {
+        XAPIHelpers::checkType("fields.$key", 'array', $field);
+        if (isset($field['_id'])) XAPIHelpers::checkType("fields.$key._id", 'string', $field['_id']);
+        if (isset($field['email'])) XAPIHelpers::checkType("fields.$key.email", 'string', $field['email']);
+        if (isset($field['name'])) XAPIHelpers::checkType("fields.$key.name", 'string', $field['name']);
+        if (isset($field['role'])) XAPIHelpers::checkType("fields.$key.role", 'string', $field['role']);
+      }
     }
   }
 
@@ -110,7 +112,7 @@ class EloquentRepository extends BaseRepository implements Repository {
     if ($opts['user']->role === 'super') {
       $query = $this->where($opts);
     } else {
-      $query = $this->where('users._id', $opts['user']->_id)->remember(10);
+      $query = $this->where([])->where('users._id', $opts['user']->_id)->remember(10);
     }
 
     $obj_result = $query->get()->sortBy(function (Model $model) {
@@ -141,15 +143,15 @@ class EloquentRepository extends BaseRepository implements Repository {
   }
 
   public function removeUser($id, $user_id) {
-    return $this->where('_id', $id)->pull('users', ['_id' => $user_id]);
+    return $this->where([])->where('_id', $id)->pull('users', ['_id' => $user_id]);
   }
 
   public function getLrsOwned($user_id) {
-    return $this->where('owner._id', $user_id)->select('title')->get()->toArray();
+    return $this->where([])->where('owner._id', $user_id)->select('title')->get()->toArray();
   }
 
   public function getLrsMember($user_id) {
-    return $this->where('users._id', $user_id)->select('title')->get()->toArray();
+    return $this->where([])->where('users._id', $user_id)->select('title')->get()->toArray();
   }
 
   public function changeRole($id, $user_id, $role) {

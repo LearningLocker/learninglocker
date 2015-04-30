@@ -1,0 +1,25 @@
+{
+  "actor": {
+    "mbox": "mailto:test@example.com",
+    "name": "Test User",
+    "objectType": "Agent"
+  },
+  "verb": {
+    "id": "www.example.com/verb",
+    "display": {
+      "en-GB": "Example display"
+    }
+  },
+  "object": {
+    "id": "www.example.com/object",
+    "objectType": "Activity",
+    "definition": {
+      "name": {
+        "en-GB": "Example name"
+      },
+      "description": {
+        "en-GB": "Example description"
+      }
+    }
+  }
+}

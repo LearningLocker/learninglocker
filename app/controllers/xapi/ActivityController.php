@@ -1,7 +1,6 @@
 <?php namespace Controllers\xAPI;
 
 use \Locker\Repository\Document\DocumentRepository as Document;
-use \Locker\Repository\Activity\ActivityRepository as Activity;
 use Locker\Repository\Document\DocumentType as DocumentType;
 
 class ActivityController extends DocumentController {
@@ -22,9 +21,8 @@ class ActivityController extends DocumentController {
    * @param Document $document
    * @param Activity $activity
    */
-  public function __construct(Document $document, Activity $activity){
+  public function __construct(Document $document){
     parent::__construct($document);
-    $this->activity = $activity;
   }
 
   /**
