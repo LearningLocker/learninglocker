@@ -92,11 +92,11 @@ class StatementAttachmentTest extends StatementsTestCase {
     $attachment['content'] .= PHP_EOL;
     
     // Checks that the content is correct.
-    $actual_content = $response->getContent();
-    $expected_content = $this->generateContent(json_encode([
+    $actual_content = str_replace("\r", "", $response->getContent());
+    $expected_content = str_replace("\r", "", $this->generateContent(json_encode([
       'more' => '',
       'statements' => [$statement]
-    ]), $attachment);
+    ]), $attachment));
 
     // Hashes the content, otherwise it destroys the terminal if the assertion fails.
     $actual_hash = hash('sha256', $actual_content);
