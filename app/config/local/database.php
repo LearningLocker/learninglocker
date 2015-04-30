@@ -6,7 +6,6 @@ return array(
       'driver'    => 'mysql',
       'host'      => 'localhost',
       'database'  => 'll_staging',
-      'unix_socket' => '/Applications/AMPPS/var/mysql.sock',
       'username'  => 'root',
       'password'  => 'mysql',
       'charset'   => 'utf8',
