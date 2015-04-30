@@ -101,8 +101,6 @@ class StatementAttachmentTest extends StatementsTestCase {
     // Hashes the content, otherwise it destroys the terminal if the assertion fails.
     $actual_hash = hash('sha256', $actual_content);
     $expected_hash = hash('sha256', $expected_content);
-    var_dump(substr($actual_content, 0, 200));
-    var_dump(substr($expected_content, 0, 200));
     $this->assertEquals($actual_hash, $expected_hash);
   }
 
