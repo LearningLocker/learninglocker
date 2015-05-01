@@ -28,6 +28,7 @@ class Attachments {
 
       // Determines the delimiter.
       $delim = strpos($part, "\r\n") !== false ? "\r\n" : "\n";
+      $delim = strpos($part, $delim.$delim) === false ? "\n" : $delim;
 
       // Separate body contents from headers
       $part = ltrim($part, $delim);

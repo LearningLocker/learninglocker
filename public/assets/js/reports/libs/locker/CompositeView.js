@@ -1,6 +1,7 @@
 define([
   'marionette',
-  './ItemView'
+  './ItemView',
+  'bootstrap'
 ], function(Marionette, ItemView) {
   return Marionette.CompositeView.extend({
     // Adds utility methods (these should not override Marionette methods).

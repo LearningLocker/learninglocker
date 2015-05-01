@@ -51,8 +51,10 @@ class EloquentInserter extends EloquentReader implements Inserter {
     $matchable_x = $this->matchableStatement($statement_x);
     $matchable_y = $this->matchableStatement($statement_y);
     if ($matchable_x != $matchable_y) {
+      $encoded_x = json_encode($statement_x);
+      $encoded_y = json_encode($statement_y);
       throw new Exceptions\Conflict(
-        "Conflicts\r\n`{json_encode($statement_x)}`\r\n`{json_encode($statement_y)}`."
+        "Conflicts\r\n`$encoded_x`\r\n`$encoded_y`."
       );
     };
   }

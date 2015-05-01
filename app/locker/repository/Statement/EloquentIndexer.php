@@ -133,7 +133,7 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
 
     // Returns the models.
     return json_decode($builder
-      ->orderBy('statement.stored', $opts->getOpt('ascending') ? 'ASC' : 'DESC')
+      ->orderBy('statement.stored', $opts->getOpt('ascending') === true ? 'ASC' : 'DESC')
       ->skip($opts->getOpt('offset'))
       ->take($opts->getOpt('limit'))
       ->get()
@@ -143,27 +143,46 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
   }
 
   /**
-   * Constructs a Mongo match using the given agent and options.
-   * @param String $agent Agent to be matched.
+   * Constructs a builder using the given agent and options.
+   * @param \stdClass $agent Agent to be matched.
+   * @param Builder $builder
    * @param IndexOptions $opts Index options.
    * @return Builder
    */
-  private function matchAgent($agent, Builder $builder, IndexOptions $opts) {
+  private function matchAgent(\stdClass $agent, Builder $builder, IndexOptions $opts) {
     $id_key = Helpers::getAgentIdentifier($agent);
-    $id_val = $agent->{$id_key};
 
-    return $builder->where(function ($query) use ($id_key, $id_val, $builder, $opts) {
-      $keys = ["actor.$id_key", "actor.members.$id_key", "object.$id_key"];
+    if ($id_key === 'account') {
+      $builder = $this->matchAgentProp('account.homePage', $agent->account->homePage, $builder, $opts);
+      $builder = $this->matchAgentProp('account.name', $agent->account->name, $builder, $opts);
+    } else {
+      $builder = $this->matchAgentProp($id_key, $agent->{$id_key}, $builder, $opts);
+    }
+    
+    return $builder;
+  }
+
+  /**
+   * Constructs a builder using the given agent property and value, plus options.
+   * @param String $prop
+   * @param Mixed $value
+   * @param Builder $builder
+   * @param IndexOptions $opts Index options.
+   * @return Builder
+   */
+  private function matchAgentProp($prop, $value, Builder $builder, IndexOptions $opts) {
+    return $builder->where(function ($query) use ($prop, $value, $builder, $opts) {
+      $keys = ["actor.$prop", "actor.members.$prop", "object.$prop"];
 
       if ($opts->getOpt('related_agents') === true) {
         $keys = array_merge($keys, [
-          "authority.$id_key",
-          "context.instructor.$id_key",
-          "context.team.$id_key"
+          "authority.$prop",
+          "context.instructor.$prop",
+          "context.team.$prop"
         ]);
       }
 
-      $query = $this->addWheres($builder, $keys, $id_val);
+      $query = $this->addWheres($builder, $keys, $value);
     });
   }
 

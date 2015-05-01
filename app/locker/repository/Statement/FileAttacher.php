@@ -15,7 +15,7 @@ class FileAttacher {
   public function store(array $attachments, array $hashes, StoreOptions $opts) {
     $dir = $this->getDir($opts);
     if (!is_dir($dir) && count($attachments > 0) && !empty($attachments)) {
-      mkdir($dir, null, true);
+      mkdir($dir, 0775, true);
     }
 
     foreach ($attachments as $attachment) {
@@ -28,8 +28,8 @@ class FileAttacher {
         'This file type cannot be supported'
       );
 
-      $file = $attachment->hash.$ext;
-      file_put_contents($dir.'.'.$file, $attachment->content);
+      $file = $attachment->hash.'.'.$ext;
+      file_put_contents($dir.$file, $attachment->content);
     }
   }
 
@@ -48,7 +48,7 @@ class FileAttacher {
         $ext = $this->getExt($attachment->contentType);
         $filename = $attachment->sha2.'.'.$ext;
         return (object) [
-          'content_type' => $attachment['contentType'],
+          'content_type' => $attachment->contentType,
           'hash' => $attachment->sha2,
           'content' => file_get_contents($dir.$filename)
         ];
