@@ -3,6 +3,7 @@ use \Locker\Helpers\Helpers as Helpers;
 
 abstract class StatementsTestCase extends LrsTestCase {
   protected $statements;
+  protected $statement_id = '00000000-0000-0000-b000-000000000000';
 
   public function setUp() {
     parent::setUp();
@@ -15,7 +16,7 @@ abstract class StatementsTestCase extends LrsTestCase {
   protected function generateStatement($statement = []) {
     $timestamp = Helpers::getCurrentDate();
     return array_merge([
-      'id' => '00000000-0000-0000-0000-000000000000',
+      'id' => $this->statement_id,
       'actor' => [
         'mbox' => 'mailto:test@example.com',
         'objectType' => 'Agent'
