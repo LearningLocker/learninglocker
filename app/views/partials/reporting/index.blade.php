@@ -41,6 +41,8 @@
   </div>
 
   <div id="content"></div>
-
+@stop
+@section('scripts')
+  @parent
   <script data-main="{{ URL() }}/assets/js/reports/config" src="{{ URL() }}/assets/js/libs/require/require.js"></script>
 @stop

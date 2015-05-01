@@ -1,5 +1,8 @@
 requirejs.config({
   shim: {
+    bootstrap: {
+      deps: ['jquery']
+    },
     underscore: {
       deps: [],
       exports: '_'
@@ -23,6 +26,7 @@ requirejs.config({
   },
   paths: {
     jquery: '../bower_components/jquery/dist/jquery.min',
+    bootstrap: '../bower_components/bootstrap/dist/js/bootstrap.min',
     underscore: '../bower_components/underscore/underscore',
     backbone: '../bower_components/backbone/backbone',
     marionette: '../bower_components/backbone.marionette/lib/backbone.marionette.min',
