@@ -1,5 +1,6 @@
 <?php namespace Tests\Routes;
 use \Tests\StatementsTestCase as StatementsTestCase;
+use \Locker\Helpers\Helpers as Helpers;
 
 class StatementAttachmentTest extends StatementsTestCase {
   use RouteTestTrait;
@@ -104,8 +105,23 @@ class StatementAttachmentTest extends StatementsTestCase {
     $this->assertEquals($actual_hash, $expected_hash);
   }
 
+  private function deleteDirectory($dir) {
+    array_map(function ($file) {
+      if (is_dir($file)) {
+        $this->deleteDirectory($file);
+      } else {
+        unlink($file);
+      }
+    }, glob($dir . '*', GLOB_MARK));
+    if (is_dir($dir)) {
+      rmdir($dir);
+    }
+  }
+
   public function tearDown() {
     parent::tearDown();
+    $dir = Helpers::getEnvVar('LOCAL_FILESTORE').'/'.$this->lrs->_id;
+    $this->deleteDirectory($dir);
     (new \Statement)
       ->where('lrs._id', $this->lrs->_id)
       ->delete();
