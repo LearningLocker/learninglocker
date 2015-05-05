@@ -199,4 +199,87 @@ class Helpers {
       'X-Experience-API-Version' => '1.0.1'
     ];
   }
+
+  /**
+   * Checks the authentication.
+   * @param String $type The name of the model used to authenticate.
+   * @param String $username
+   * @param String $username
+   * @return Model
+   */
+  static function checkAuth($type, $username, $password) {
+    return (new $type)
+      ->where('api.basic_key', $username)
+      ->where('api.basic_secret', $password)
+      ->first();
+  }
+
+  /**
+   * Gets the Lrs associated with the given username and password.
+   * @param String $username
+   * @param String $password
+   * @return Lrs
+   */
+  static function getLrsFromUserPass($username, $password) {
+    $lrs = Helpers::checkAuth('Lrs', $username, $password);
+
+    //if main credentials not matched, try the additional credentials
+    if ($lrs == null) {
+      $client = Helpers::checkAuth('Client', $username, $password);
+
+      if ($client != null) {
+        $lrs = \Lrs::find($client->lrs_id);
+      } else {
+        throw new Exceptions\Exception('Unauthorized request.', 401);
+      }
+    }
+
+    return $lrs;
+  }
+
+  /**
+   * Gets the Client/Lrs username and password from the OAuth authorization string.
+   * @param String $authorization
+   * @return [String] Formed of [Username, Password]
+   */
+  static function getUserPassFromOAuth($authorization) {
+    $token = substr($authorization, 7);
+    $db = \App::make('db')->getMongoDB();
+
+    $client_id = $db->oauth_access_tokens->find([
+      'access_token' => $token
+    ])->getNext()['client_id'];
+    $client_secret = $db->oauth_clients->find([
+      'client_id' => $client_id
+    ])->getNext()['client_secret'];
+
+    return [$client_id, $client_secret];
+  }
+
+  /**
+   * Gets the Client/Lrs username and password from the Basic Auth authorization string.
+   * @param String $authorization
+   * @return [String] Formed of [Username, Password]
+   */
+  static function getUserPassFromBAuth($authorization) {
+    $username = json_decode('"'.\LockerRequest::getUser().'"');
+    $password = json_decode('"'.\LockerRequest::getPassword().'"');
+    return [$username, $password];
+  }
+
+  /**
+   * Gets the current LRS from the Authorization header.
+   * @return \Lrs
+   */
+  static function getLrsFromAuth() {
+    $authorization = \LockerRequest::header('Authorization');
+    if ($authorization !== null && strpos($authorization, 'Basic') === 0) {
+      list($username, $password) = Helpers::getUserPassFromBAuth($authorization);
+    } else if ($authorization !== null && strpos($authorization, 'Bearer') === 0) {
+      list($username, $password) = Helpers::getUserPassFromOAuth($authorization);
+    } else {
+      throw new Exceptions\Exception('Invalid auth', 400);
+    }
+    return Helpers::getLrsFromUserPass($username, $password);
+  }
 }
