@@ -262,7 +262,9 @@ class Helpers {
    * @return [String] Formed of [Username, Password]
    */
   static function getUserPassFromBAuth($authorization) {
-    return [\LockerRequest::getUser(), \LockerRequest::getPassword()];
+    $username = json_decode('"'.\LockerRequest::getUser().'"');
+    $password = json_decode('"'.\LockerRequest::getPassword().'"');
+    return [$username, $password];
   }
 
   /**
@@ -275,6 +277,8 @@ class Helpers {
       list($username, $password) = Helpers::getUserPassFromBAuth($authorization);
     } else if ($authorization !== null && strpos($authorization, 'Bearer') === 0) {
       list($username, $password) = Helpers::getUserPassFromOAuth($authorization);
+    } else {
+      throw new Exceptions\Exception('Invalid auth', 400);
     }
     return Helpers::getLrsFromUserPass($username, $password);
   }

@@ -52,18 +52,18 @@ Route::filter('auth.statement', function($route, $request){
     if ($authorization !== null && strpos($authorization, 'Basic') === 0) {
       $authorization = gettype($authorization) === 'string' ? substr($authorization, 6) : false;
       $auth_validator->checkTypes('auth', $authorization, 'base64', 'headers');
-
+      
       if ($auth_validator->getStatus() === 'failed') {
         throw new Exceptions\Validation($auth_validator->getErrors());
       }
-    }
-
-    if ($authorization !== null && strpos($authorization, 'Bearer') === 0) {
+    } else if ($authorization !== null && strpos($authorization, 'Bearer') === 0) {
       $bridgedRequest  = OAuth2\HttpFoundationBridge\Request::createFromRequest(Request::instance());
       $bridgedResponse = new OAuth2\HttpFoundationBridge\Response();
       if (!App::make('oauth2')->verifyResourceRequest($bridgedRequest, $bridgedResponse)) {
         throw new Exceptions\Exception('Unauthorized request.', $bridgedResponse->getStatusCode());
       }
+    } else if ($authorization === null) {
+      throw new Exceptions\Exception('Unauthorized request.', 401);
     }
 
     $lrs = Helpers::getLrsFromAuth();
