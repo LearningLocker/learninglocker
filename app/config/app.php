@@ -115,8 +115,6 @@ return array(
     'DaveJamesMiller\Breadcrumbs\ServiceProvider',
     'Way\Generators\GeneratorsServiceProvider',
     'Barryvdh\Cors\CorsServiceProvider',
-    'LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider',
-    'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
     'JsLocalization\JsLocalizationServiceProvider',
     'locker\RequestServiceProvider',
     'Philo\Translate\TranslateServiceProvider'
