@@ -14,13 +14,11 @@ class AddXapiScopes extends Migration {
       'statements/read', 
       'state', 
       'define', 
-      'profile', 
-      'all/read', 
-      'all'
+      'profile'
     ];
 
     DB::getMongoDB()->oauth_scopes->insert([
-      'default_scope' => 'all',
+      'default_scope' => null,
       'supported_scopes' => $scopes
     ]);
 	}
