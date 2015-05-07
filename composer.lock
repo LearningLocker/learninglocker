@@ -698,16 +698,16 @@
         },
         {
             "name": "learninglocker/statementfactory",
-            "version": "v0.0.0",
+            "version": "v0.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LearningLocker/StatementFactory.git",
-                "reference": "4fc7d41bd8b2037285c67b2808e9b65477433e69"
+                "reference": "dc9751b9eb2ae5c1ccb3b6625cefb32853ad13f3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LearningLocker/StatementFactory/zipball/4fc7d41bd8b2037285c67b2808e9b65477433e69",
-                "reference": "4fc7d41bd8b2037285c67b2808e9b65477433e69",
+                "url": "https://api.github.com/repos/LearningLocker/StatementFactory/zipball/dc9751b9eb2ae5c1ccb3b6625cefb32853ad13f3",
+                "reference": "dc9751b9eb2ae5c1ccb3b6625cefb32853ad13f3",
                 "shasum": ""
             },
             "type": "library",
@@ -727,7 +727,7 @@
                 }
             ],
             "description": "Learning Locker's classes for xAPI.",
-            "time": "2015-02-06 13:57:55"
+            "time": "2015-05-07 09:08:03"
         },
         {
             "name": "monolog/monolog",
