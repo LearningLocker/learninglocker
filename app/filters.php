@@ -3,6 +3,7 @@
 use \Locker\Repository\Lrs\EloquentRepository as LrsRepo;
 use \app\locker\statements\xAPIValidation as XApiValidator;
 use \Locker\Helpers\Exceptions as Exceptions;
+use \Locker\Helpers\Helpers as Helpers;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,41 +16,19 @@ use \Locker\Helpers\Exceptions as Exceptions;
 |
 */
 
-App::before(function($request)
-{
-  //
-});
+App::before(function($request) {});
 
-
-App::after(function($request, $response)
-{
+App::after(function($request, $response) {
   $response->headers->set('X-Experience-API-Version', '1.0.1');
 
-  if( isset($_SERVER['HTTP_ORIGIN']) ){
+  if (isset($_SERVER['HTTP_ORIGIN'])) {
     $response->headers->set('Access-Control-Allow-Origin', $_SERVER['HTTP_ORIGIN']);
   }
-
 });
 
-/*
-|--------------------------------------------------------------------------
-| Authentication Filters
-|--------------------------------------------------------------------------
-|
-| The following filters are used to verify that the user of the current
-| session is logged into this application. The "basic" filter easily
-| integrates HTTP Basic authentication for quick, simple checking.
-|
-*/
-
-Route::filter('auth', function()
-{
+// Checks for logged in user.
+Route::filter('auth', function() {
   if (Auth::guest()) return Redirect::guest('/');
-});
-
-Route::filter('auth.basic', function()
-{
-  return Auth::basic();
 });
 
 
@@ -61,11 +40,7 @@ Route::filter('auth.basic', function()
 | Login in once using key / secret to store statements or retrieve statements.
 |
 */
-Route::filter('auth.statement', function(){
-
-  //set passed credentials
-  $key    = LockerRequest::getUser();
-  $secret = LockerRequest::getPassword();
+Route::filter('auth.statement', function($route, $request){
 
   $method = Request::server('REQUEST_METHOD');
 
@@ -74,36 +49,24 @@ Route::filter('auth.statement', function(){
     // Validates authorization header.
     $auth_validator = new XApiValidator();
     $authorization = LockerRequest::header('Authorization');
-    if ($authorization !== null) {
+    if ($authorization !== null && strpos($authorization, 'Basic') === 0) {
       $authorization = gettype($authorization) === 'string' ? substr($authorization, 6) : false;
       $auth_validator->checkTypes('auth', $authorization, 'base64', 'headers');
-
+      
       if ($auth_validator->getStatus() === 'failed') {
         throw new Exceptions\Validation($auth_validator->getErrors());
       }
+    } else if ($authorization !== null && strpos($authorization, 'Bearer') === 0) {
+      $bridgedRequest  = OAuth2\HttpFoundationBridge\Request::createFromRequest(Request::instance());
+      $bridgedResponse = new OAuth2\HttpFoundationBridge\Response();
+      if (!App::make('oauth2')->verifyResourceRequest($bridgedRequest, $bridgedResponse)) {
+        throw new Exceptions\Exception('Unauthorized request.', $bridgedResponse->getStatusCode());
+      }
+    } else if ($authorization === null) {
+      throw new Exceptions\Exception('Unauthorized request.', 401);
     }
 
-
-	  //Note: this code is duplicated in Controllers\API\BaseController\GetLrs
-    //see if the lrs exists based on key and secret
-    // $lrs = \Lrs::where('api.basic_key', $key)
-    //     ->where('api.basic_secret', $secret)
-    //     ->select('owner._id')->first();
-    $lrs = (new LrsRepo)->checkSecret(\Lrs::where('api.basic_key', $key)->first(), $secret);
-
-  	//if main credentials not matched, try the additional credentials
-  	if ( $lrs == NULL ) {
-  		// $client = \Client::where('api.basic_key', $key)
-  	 //    ->where('api.basic_secret', $secret)
-  	 //    ->first();
-      $client = (new LrsRepo)->checkSecret(\Client::where('api.basic_key', $key)->first(), $secret);
-  		if( $client != NULL ){
-  			$lrs = \Lrs::find(  $client->lrs_id );
-  		}
-  		else {
-        throw new Exceptions\Exception('Unauthorized request.', 401);
-  		}
-  	}
+    $lrs = Helpers::getLrsFromAuth();
 
     //attempt login once
     if ( ! Auth::onceUsingId($lrs->owner['_id']) ) {
@@ -113,32 +76,14 @@ Route::filter('auth.statement', function(){
   }
 });
 
-
-/*
-|--------------------------------------------------------------------------
-| Check for super admin
-|--------------------------------------------------------------------------
-|
-| Check the logged in user is a super admin.
-|
-*/
-
+// Checks for super admin.
 Route::filter('auth.super', function( $route, $request ){
   if( Auth::user()->role != 'super' ){
     return Redirect::to('/');
   }
 });
 
-/*
-|--------------------------------------------------------------------------
-| LRS admin access
-|--------------------------------------------------------------------------
-|
-| Check the logged in user has admin privilages for current LRS. If not,
-| then redirect to home page without a message.
-|
-*/
-
+// Checks for LRS admin.
 Route::filter('auth.admin', function( $route, $request ){
 
   $lrs      = Lrs::find( $route->parameter('lrs') );
@@ -156,16 +101,7 @@ Route::filter('auth.admin', function( $route, $request ){
 
 });
 
-/*
-|--------------------------------------------------------------------------
-| Who can access an LRS?
-|--------------------------------------------------------------------------
-|
-| Check logged in user can access the current lrs. To access an LRS you have
-| to be the site super admin, the LRS owner (admin) or have been invited in.
-|
-*/
-
+// Checks for LRS access.
 Route::filter('auth.lrs', function( $route, $request ){
   //check to see if lrs id exists?
   $lrs  = Lrs::find( $route->parameter('id') );
@@ -191,15 +127,7 @@ Route::filter('auth.lrs', function( $route, $request ){
 
 });
 
-/*
-|--------------------------------------------------------------------------
-| Who can edit a LRS?
-|--------------------------------------------------------------------------
-|
-| Super admins and lrs admin only
-|
-*/
-
+// Checks for LRS edit access.
 Route::filter('edit.lrs', function( $route, $request ){
 
   //check to see if lrs id exists?
@@ -231,16 +159,7 @@ Route::filter('edit.lrs', function( $route, $request ){
 
 });
 
-/*
-|--------------------------------------------------------------------------
-| Who can create a new LRS?
-|--------------------------------------------------------------------------
-|
-| Super admins can decide who is allowed to create new LRSs. Super, existing
-| admins or everyone, including observers.
-|
-*/
-
+// Checks for LRS creation access.
 Route::filter('create.lrs', function( $route, $request ){
 
   $site       = Site::first();
