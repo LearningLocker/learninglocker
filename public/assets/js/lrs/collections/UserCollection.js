@@ -10,6 +10,9 @@ define([
     url: function(){
       return '../lrs/' + App.lrs_id + '/stats/activeUsers';
     },
+    generateId: function (attrs) {
+      return JSON.stringify(attrs._id);
+    }
   });
 
   return UserCollection;
