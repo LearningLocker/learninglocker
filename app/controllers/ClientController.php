@@ -48,10 +48,12 @@ class ClientController extends BaseController {
     $lrs = $this->lrs->show($lrs_id, $opts);
     $lrs_list = $this->lrs->index($opts); 
 	  $client = $this->client->find($id);
+    $scopes = \App::make('db')->getMongoDb()->oauth_scopes->find()->getNext()['supported_scopes'];
 	 	return View::make('partials.client.edit', [
       'client' => $client,
       'lrs' => $lrs,
-      'list' => $lrs_list
+      'list' => $lrs_list,
+      'scopes' => $scopes
 		]);
   }
   
@@ -83,7 +85,9 @@ class ClientController extends BaseController {
    * @return View
    */
   public function update($lrs_id, $id){
-    if ($this->client->update($id, Input::all())) {
+    $input = Input::all();
+    $input['scopes'] = array_values(isset($input['scopes']) ? $input['scopes'] : []);
+    if ($this->client->update($id, $input)) {
       $redirect_url = '/lrs/'.$lrs_id.'/client/manage#'.$id;
       return Redirect::to($redirect_url)->with('success', trans('lrs.client.updated'));
     }

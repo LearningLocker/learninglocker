@@ -110,6 +110,22 @@ document.addEventListener('DOMContentLoaded', function(){
 			{{ Form::text('description', $client->description,array('class' => 'form-control')) }}
 		</div>
 	</div>
+  <div class="form-group">
+    <label for="scopes" class="col-sm-2 control-label">
+      <a href="https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#details-29">
+        {{Lang::get('site.scopes')}}
+      </a>
+    </label>
+    <div class="col-sm-10">
+      <ul class="list-group">
+        @foreach ($scopes as $scope)
+          <li class="list-group-item">
+            {{ $scope.' '.Form::checkbox("scopes[]", $scope, in_array($scope, $client->scopes ?: [])); }}
+          </li>
+        @endforeach
+      </ul>
+    </div>
+  </div>
 </div>
 <hr>
 <div class="form-group">

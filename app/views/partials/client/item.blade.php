@@ -81,6 +81,9 @@
         <tr>
           <th scope="row">{{Lang::get('site.description')}}</th>
           <td>{{ $client->description }}</td>
+        </tr><tr>
+          <th scope="row"><a href="https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#details-29">{{Lang::get('site.scopes')}}</a></th>
+          <td>{{ implode(', ', $client->scopes); }}</td>
         </tr>
 	</table>
   </div>

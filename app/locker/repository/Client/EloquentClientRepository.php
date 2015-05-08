@@ -44,6 +44,9 @@ class EloquentClientRepository implements ClientRepository {
   		'name' => 'client',
       'mbox' => 'mailto:hello@learninglocker.net'
   	);
+    $client->scopes = !empty($input['scopes']) ? $input['scopes'] : [
+      \App::make('db')->getMongoDb()->oauth_scopes->find()->getNext()['supported_scopes']
+    ];
 
     $client->save() ? $result = $client : $return = false;
 
@@ -102,8 +105,10 @@ class EloquentClientRepository implements ClientRepository {
     }
 
   	$client->authority = $authority;
-
     $client->description = $input['description'];
+    $client->scopes = !empty($input['scopes']) ? $input['scopes'] : (
+      \App::make('db')->getMongoDb()->oauth_scopes->find()->getNext()['supported_scopes']
+    );
 
     $client->save();
 
