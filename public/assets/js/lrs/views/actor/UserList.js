@@ -16,7 +16,7 @@ define([
     itemView: UserListView,
 
     appendHtml: function(collectionView, itemView){
-        collectionView.$("#active").append(itemView.el);
+      collectionView.$("#active").append(itemView.el);
     }
 
   });

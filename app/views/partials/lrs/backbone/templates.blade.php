@@ -96,7 +96,7 @@
   <%= _id.mbox != null ? '<b>Email:</b> ' + _id.mbox : '' %>
   <%= _id.mbox_sha1sum != null ? '<b>Email:</b> ' + _id.mbox_sha1sum : '' %>
   <%= _id.openid != null ? '<b>OpenID:</b> ' + _id.openid : '' %>
-  <%= _id.account != null ? '<b>Account:</b> ' + _id.account.homePage + _id.account.name : '' %>
+  <%= _id.account != null ? '<b>Account:</b> ' + _id.account.homePage + '/' + _id.account.name : '' %>
 </script>
 
 <script id="userList" type="text/template">
