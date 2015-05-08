@@ -14,7 +14,7 @@ class EloquentShowerTest extends EloquentTest {
     $opts = new ShowOptions([
       'lrs_id' => $this->lrs->_id
     ]);
-    $result = $this->shower->show('00000000-0000-0000-0000-000000000000', $opts);
+    $result = $this->shower->show('00000000-0000-0000-b000-000000000000', $opts);
 
     $this->assertEquals(true, is_object($result));
     $this->assertEquals('stdClass', get_class($result));
@@ -29,7 +29,7 @@ class EloquentShowerTest extends EloquentTest {
     $model = $this->statements[0];
     $model->active = false;
     $model->save();
-    $result = $this->shower->show('00000000-0000-0000-0000-000000000000', $opts);
+    $result = $this->shower->show('00000000-0000-0000-b000-000000000000', $opts);
 
     $this->assertEquals(true, is_object($result));
     $this->assertEquals('stdClass', get_class($result));
@@ -44,7 +44,7 @@ class EloquentShowerTest extends EloquentTest {
     $model = $this->statements[0];
     $model->voided = true;
     $model->save();
-    $result = $this->shower->show('00000000-0000-0000-0000-000000000000', $opts);
+    $result = $this->shower->show('00000000-0000-0000-b000-000000000000', $opts);
 
     $this->assertEquals(true, is_object($result));
     $this->assertEquals('stdClass', get_class($result));
@@ -61,7 +61,7 @@ class EloquentShowerTest extends EloquentTest {
     $model->active = false;
     $model->voided = true;
     $model->save();
-    $result = $this->shower->show('00000000-0000-0000-0000-000000000000', $opts);
+    $result = $this->shower->show('00000000-0000-0000-b000-000000000000', $opts);
 
     $this->assertEquals(true, is_object($result));
     $this->assertEquals('stdClass', get_class($result));

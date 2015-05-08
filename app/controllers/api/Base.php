@@ -10,6 +10,8 @@ use \DB as DB;
 use \Locker\Repository\Lrs\EloquentRepository as LrsRepository;
 use \Lrs as Lrs;
 use \Client as Client;
+use \Locker\Helpers\Helpers as Helpers;
+use \LucaDegasperi\OAuth2Server\Filters\OAuthFilter as OAuthFilter;
 
 class Base extends Controller {
 
@@ -17,7 +19,7 @@ class Base extends Controller {
    * Constructs a new base controller.
    */
   public function __construct() {
-    $this->beforeFilter('@getLrs');
+    $this->lrs = Helpers::getLrsFromAuth();
   }
 
   /**
@@ -45,28 +47,4 @@ class Base extends Controller {
       'debug' => !Config::get('app.debug') ? trans('api.info.trace') : DB::getQueryLog()
     ]);
   }
-
-  /**
-   * Get the LRS details based on Auth credentials
-   **/
-  public function getLrs() {
-    $key = LockerRequest::getUser();
-    $secret = LockerRequest::getPassword();
-    $lrs = (new LrsRepository)->checkSecret(Lrs::where('api.basic_key', $key)->first(), $secret);
-
-    //if main credentials not matched, try the additional credentials
-    if ($lrs == null) {
-      $client = (new LrsRepository)->checkSecret(Client::where('api.basic_key', $key)->first(), $secret);
-
-      if ($client != null) {
-        $lrs = Lrs::find($client->lrs_id);
-      } else {
-        throw new Exceptions\Exception('Unauthorized request.', 401);
-      }
-    }
-
-    $this->lrs = $lrs;
-  }
-
-
 }

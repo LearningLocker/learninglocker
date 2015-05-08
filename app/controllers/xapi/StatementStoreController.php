@@ -24,7 +24,7 @@ class StatementStoreController {
    */
   private function getParts() {
     $content = \LockerRequest::getContent();
-    $contentType = \LockerRequest::header('content-type');
+    $contentType = \LockerRequest::header('Content-Type');
     $types = explode(';', $contentType, 2);
     $mimeType = count($types) >= 1 ? $types[0] : $types;
 
@@ -95,7 +95,7 @@ class StatementStoreController {
    * @return AssocArray Result of storing the statements.
    */
   private function createStatements($lrs_id, Callable $modifier = null) {
-    Helpers::validateAtom(new XApiImt(LockerRequest::header('Content-Type')));
+    Helpers::validateAtom(new XApiImt(explode(';', LockerRequest::header('Content-Type'))[0]));
 
     // Gets parts of the request.
     $parts = $this->getParts();
@@ -131,9 +131,15 @@ class StatementStoreController {
   }
 
   private function getAuthority() {
+    $authorization = \LockerRequest::header('Authorization');
+    if (strpos($authorization, 'Basic') === 0) {
+      $key = \LockerRequest::getUser();
+    } else if (strpos($authorization, 'Bearer') === 0) {
+      $key = Helpers::getClientIdFromOAuth($authorization);
+    }
+
     $client = (new \Client)
-      ->where('api.basic_key', \LockerRequest::getUser())
-      ->where('api.basic_secret', \LockerRequest::getPassword())
+      ->where('api.basic_key', $key)
       ->first();
 
     if ($client != null && isset($client['authority'])) {

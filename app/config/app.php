@@ -115,7 +115,6 @@ return array(
     'DaveJamesMiller\Breadcrumbs\ServiceProvider',
     'Way\Generators\GeneratorsServiceProvider',
     'Barryvdh\Cors\CorsServiceProvider',
-    'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
     'JsLocalization\JsLocalizationServiceProvider',
     'locker\RequestServiceProvider',
     'Philo\Translate\TranslateServiceProvider'
@@ -186,10 +185,9 @@ return array(
     'Validator'       => 'Illuminate\Support\Facades\Validator',
     'View'            => 'Illuminate\Support\Facades\View',
     'Breadcrumbs'     => 'DaveJamesMiller\Breadcrumbs\Facade',
-    'AuthorizationServer' => 'LucaDegasperi\OAuth2Server\Facades\AuthorizationServerFacade',
+    'Authorizer' => 'LucaDegasperi\OAuth2Server\Facades\AuthorizerFacade',
     'ResourceServer'  => 'LucaDegasperi\OAuth2Server\Facades\ResourceServerFacade',
-    'LockerRequest' => 'locker\RequestFacade'
-
+    'LockerRequest' => 'locker\RequestFacade',
   ),
 
 );
