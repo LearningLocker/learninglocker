@@ -113,9 +113,9 @@ document.addEventListener('DOMContentLoaded', function(){
 </div>
 <hr>
 <div class="form-group">
-	<div class="col-sm-offset-2 col-sm-10">
+	<div class="col-sm-10">
 		<p>
-			{{ Form::submit(Lang::get('site.submit'), array('class'=>'btn btn-primary')) }}
+			{{ Form::submit(Lang::get('site.save'), array('class'=>'btn btn-primary')) }}
 		</p>
 	</div>
 </div>
