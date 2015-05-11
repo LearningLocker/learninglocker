@@ -47,7 +47,7 @@ class ClientController extends BaseController {
     $opts = ['user' => \Auth::user()];
     $lrs = $this->lrs->show($lrs_id, $opts);
     $lrs_list = $this->lrs->index($opts); 
-	  $client = $this->client->find($id);
+	  $client = $this->client->show($id, ['lrs_id' => $lrs_id]);
 	 	return View::make('partials.client.edit', [
       'client' => $client,
       'lrs' => $lrs,
@@ -65,7 +65,7 @@ class ClientController extends BaseController {
     $lrs = $this->lrs->show($lrs_id, $opts);
 	  $data = ['lrs_id' => $lrs->id];
 	
-    if ($this->client->create($data)) {
+    if ($this->client->store([], ['lrs_id' => $lrs_id])) {
       $message_type = 'success';
       $message = trans('lrs.client.created_sucecss');
     } else {
@@ -83,14 +83,32 @@ class ClientController extends BaseController {
    * @return View
    */
   public function update($lrs_id, $id){
-    if ($this->client->update($id, Input::all())) {
+    $data = Input::all();
+    //dd($data);
+    $authority = [
+      'name' => $data['name'],
+    ];
+
+    switch ($data['ifi']) {
+      case 'mbox': $authority['mbox'] = 'mailto'.$data['mbox']; break;
+      case 'mbox_sha1sum': $authority['mbox_sha1sum'] = $data['mbox_sha1sum']; break;
+      case 'openid': $authority['openid'] = $data['openid']; break;
+      case 'account': $authority['account'] = [
+          'homePage' => $data['account_homePage'],
+          'name' => $data['account_name']
+        ]; break;
+    }
+
+    $data['authority'] = $authority;
+    
+    if ($this->client->update($id, $data, ['lrs_id' => $lrs_id])) {
       $redirect_url = '/lrs/'.$lrs_id.'/client/manage#'.$id;
       return Redirect::to($redirect_url)->with('success', trans('lrs.client.updated'));
     }
 
     return Redirect::back()
       ->withInput()
-      ->withErrors($this->client->errors());
+      ->withErrors(['Error']);
   }
 
   /**
@@ -100,7 +118,7 @@ class ClientController extends BaseController {
    * @return View
    */
   public function destroy($lrs_id, $id){
-	  if ($this->client->delete($id)) {
+	  if ($this->client->destroy($id, ['lrs_id' => $lrs_id])) {
       $message_type = 'success';
       $message = trans('lrs.client.delete_client_success');
     } else {

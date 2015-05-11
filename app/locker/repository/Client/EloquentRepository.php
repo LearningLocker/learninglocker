@@ -8,7 +8,21 @@ use \Locker\Helpers\Helpers as Helpers;
 class EloquentRepository extends BaseRepository implements Repository {
 
   protected $model = '\Client';
-  protected $defaults = [];
+  protected $defaults = [
+    'authority' => [
+      'name' => 'New Client',
+      'mbox' => 'mailto:hello@learninglocker.net'
+    ]
+  ];
+
+  /**
+   * Constructs a query restricted by the given options.
+   * @param [String => Mixed] $opts
+   * @return \Jenssegers\Mongodb\Eloquent\Builder
+   */
+  protected function where(array $opts) {
+    return (new $this->model)->where('lrs_id', $opts['lrs_id']);
+  }
 
   /**
    * Validates data.
@@ -23,6 +37,15 @@ class EloquentRepository extends BaseRepository implements Repository {
   }
 
   /**
+   * Generates a random value.
+   * Used for generating usernames and passwords.
+   * @return String Randomly generated value.
+   */
+  private function getRandomValue(){
+    return sha1(uniqid(mt_rand(), true));
+  }
+
+  /**
    * Constructs a store.
    * @param Model $model Model to be stored.
    * @param [String => Mixed] $data Properties to be used on the model.
@@ -30,17 +53,15 @@ class EloquentRepository extends BaseRepository implements Repository {
    * @return Model
    */
   protected function constructStore(Model $model, array $data, array $opts) {
-    // Merges and validates data with defaults.
-    $data['authority'] = [
-      'name' => 'New Client',
-      'mbox' => 'mailto:hello@learninglocker.net'
-    ];
+    $data = array_merge($this->defaults, $data);
     $this->validateData($data);
 
     // Sets properties on model.
-    $model->username = \Locker\Helpers\Helpers::getRandomValue();
-    $model->password = \Locker\Helpers\Helpers::getRandomValue();
-    $model->lrs = $opts['lrs_id'];
+    $model->api = [
+      'basic_key' => $this->getRandomValue(),
+      'basic_secret' => $this->getRandomValue()
+    ];
+    $model->lrs_id = $opts['lrs_id'];
     $model->authority = $data['authority'];
 
     return $model;
@@ -54,6 +75,7 @@ class EloquentRepository extends BaseRepository implements Repository {
    * @return Model
    */
   protected function constructUpdate(Model $model, array $data, array $opts) {
+    //dd($data);
     $this->validateData($data);
 
     // Sets properties on model.
@@ -89,7 +111,7 @@ class EloquentRepository extends BaseRepository implements Repository {
   public function destroy($id, array $opts) {
     $client = $this->show($id, $opts);
     \DB::getMongoDB()->oauth_clients->remove([
-      'client_id' => $client->username
+      'client_id' => $client->api['basic_key']
     ]);
     return parent::destroy($id, $opts);
   }
@@ -103,8 +125,8 @@ class EloquentRepository extends BaseRepository implements Repository {
    */
   public function showFromUserPass($username, $password, array $opts) {
     $model = (new $this->model)
-      ->where('username', $username)
-      ->where('password', $password)
+      ->where('api.basic_key', $username)
+      ->where('api.basic_secret', $password)
       ->first();
 
     if ($model === null) throw new Exceptions\NotFound($id, $this->model);

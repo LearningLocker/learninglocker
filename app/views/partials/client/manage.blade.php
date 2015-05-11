@@ -18,13 +18,28 @@
         <b>Endpoint for all clients:</b> <span class="break-words">{{ URL() }}/data/xAPI/</span>
       </div>
     </div>
-    <div class="row">
+    <div>
 
     @if ( isset($clients) && !empty($clients) )
 
-      @foreach( $clients as $client )
-          @include('partials.client.item', array( 'client' => $client ))
-      @endforeach
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>{{Lang::get('site.name')}}</th>
+            <th>Type</th>
+            <th>{{Lang::get('lrs.client.authority.ifi')}}</th>
+            <th>{{Lang::get('site.username')}}</th>
+            <th>{{Lang::get('site.password')}}</th>
+            <th>{{ Lang::get('site.edit') }}</th>
+            <th>{{ Lang::get('site.delete') }}</th>
+          <tr>
+        </thead>
+        <tbody>
+          @foreach( $clients as $client )
+              @include('partials.client.item', array( 'client' => $client ))
+          @endforeach
+        </tbody>
+      </table>
 
     @endif
 

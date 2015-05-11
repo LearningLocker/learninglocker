@@ -30,8 +30,8 @@ class BasicRequestController extends BaseController {
   public function store(){
     $content = \LockerRequest::getContent();
 	
-  	$data = ['lrs_id' => $this->lrs->_id];
-  	$client = $this->client->create( $data );
+  	$opts = ['lrs_id' => $this->lrs->_id];
+  	$client = $this->client->store([], $opts);
 
     if($client){
     	$returnCredentials = array(

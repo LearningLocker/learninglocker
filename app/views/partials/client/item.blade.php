@@ -16,10 +16,7 @@
 		
 	} else if (array_key_exists('account', $client->authority)){
 		$authorityIdentifier = Lang::get('lrs.client.authority.account');
-		$authorityHTML = '
-			<b>'.Lang::get('lrs.client.authority.accountname').':</b> '.$client->authority['account']['name'].'<br/>
-			<b>'.Lang::get('lrs.client.authority.accounthomepage').':</b> '.$client->authority['account']['homePage']
-		;
+		$authorityHTML = $client->authority['account']['homePage'].'/'.$client->authority['account']['name'];
 			
 	} else  {
 		$authorityIdentifier = Lang::get('lrs.client.authority.ifi');
@@ -27,61 +24,21 @@
 	}
 	
 ?>
+<tr>
+  <td>{{ $client->authority['name'] }}</td>
+  <td>{{$authorityIdentifier}}</td>
+  <td>{{ $authorityHTML }}</td>
+  <td>{{ chunk_split($client->api['basic_key'], 20, '</br>') }}</td>
+  <td>{{ chunk_split($client->api['basic_secret'], 20, '</br>') }}</td>
+  <td>
+    <a
+      href="{{ URL() }}/lrs/{{ $lrs->_id }}/client/{{ $client->_id }}/edit"
+      class="btn btn-success btn-sm pull-right"
+      title="{{ Lang::get('site.edit') }}"
+    >
+      <i class="icon-pencil"></i>
+    </a>
+  </td>
+  <td>@include('partials.client.forms.delete')</td>
+</tr>
 <a name="{{ $client->_id }}"></a>
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    	<h3 class="panel-title">
-    		<div class="pull-left" >
-    			{{ ($client->authority['name']) ? ($client->authority['name']) : Lang::get('lrs.client.unnamed_client') }}
-    		</div>
-    		&nbsp;
-    		<div class="pull-right" style="margin-top: -6px;">
-				<a href="{{ URL() }}/lrs/{{ $lrs->_id }}/client/{{ $client->_id }}/edit" class="btn btn-success btn-sm pull-right" title="{{ Lang::get('site.edit') }}">
-					<i class="icon-pencil"></i><span class="hidden-xs"> {{ Lang::get('site.edit') }}</span>
-				</a>
-				@include('partials.client.forms.delete')
-			</div>
-    	</h3>
-  </div>
-  <div class="panel-body">
-  	<h4>
-  		Authority
-  	</h4>
-    <table class="table table-striped table-bordered table-xs-rows break-words">        
-        <tr>
-          <th scope="row">{{Lang::get('site.name')}}</th>
-          <td>{{ $client->authority['name'] }}</td>
-        </tr>
-        <tr>
-          <th scope="row">{{$authorityIdentifier}}</th>
-          <td>{{ $authorityHTML }}</td>
-        </tr>
-	</table>
-  	<h4> 		
-  		<div class="pull-left" >Credentials </div>
-    	&nbsp;
-    	<div class="pull-right hidden" style="margin-top: -6px;">
-			<a href="{{ URL() }}/lrs/{{ $lrs->_id }}/client/{{ $client->_id }}/refreshcredentials" class="btn btn-default btn-sm pull-right" title="{{ Lang::get('lrs.endpoint.new_key_secret') }}">
-				<i class="icon-refresh"></i><span class="hidden-xs"> {{ Lang::get('lrs.endpoint.new_key_secret') }}</span>
-			</a>
-		</div>
-	</h4>
-    <table class="table table-striped table-bordered table-xs-rows break-words">        
-        <tr>
-          <th scope="row">{{Lang::get('site.username')}}</th>
-          <td>{{ $client->api['basic_key'] }}</td>
-        </tr>
-        <tr>
-          <th scope="row">{{Lang::get('site.password')}}</th>
-          <td>{{ $client->api['basic_secret'] }}</td>
-        </tr>
-	</table>
-	<h4>Other information</h4>
-    <table class="table table-striped table-bordered table-xs-rows break-words">        
-        <tr>
-          <th scope="row">{{Lang::get('site.description')}}</th>
-          <td>{{ $client->description }}</td>
-        </tr>
-	</table>
-  </div>
-</div>
