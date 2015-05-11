@@ -7,7 +7,7 @@
 
 @section('content')
 
-  @include('partials.site.elements.page_title', array('page' => Lang::get('lrs.client.manageclients')))
+  @include('partials.site.elements.page_title', array('page' => trans('lrs.client.manageclients')))
 
   <div>
      <div class="alert alert-success clearfix">
@@ -22,11 +22,11 @@
       <table class="table table-bordered">
         <thead>
           <tr>
-            <th>{{Lang::get('site.name')}}</th>
-            <th>{{Lang::get('site.username')}}</th>
-            <th>{{Lang::get('site.password')}}</th>
-            <th>{{ Lang::get('site.edit') }}</th>
-            <th>{{ Lang::get('site.delete') }}</th>
+            <th>{{trans('site.name')}}</th>
+            <th>{{trans('site.username')}}</th>
+            <th>{{trans('site.password')}}</th>
+            <th>{{trans('site.edit')}}</th>
+            <th>{{trans('site.delete')}}</th>
           <tr>
         </thead>
         <tbody>
@@ -40,7 +40,7 @@
 
     @if ( count($clients) == 0 )
       <div class="col-xs-12 col-sm-12 col-lg-12">
-        <p class="bg-warning">{{ Lang::get('lrs.client.none') }}</p>
+        <p class="bg-warning">{{trans('lrs.client.none')}}</p>
       </div>
     @endif
 
