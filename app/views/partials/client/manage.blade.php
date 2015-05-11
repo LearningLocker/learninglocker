@@ -18,7 +18,6 @@
         <b>Endpoint for all clients:</b> <span class="break-words">{{ URL() }}/data/xAPI/</span>
       </div>
     </div>
-    <h4>{{ Lang::get('lrs.endpoint.basic_http') }}</h4>
     <div class="row">
 
     @if ( isset($clients) && !empty($clients) )
