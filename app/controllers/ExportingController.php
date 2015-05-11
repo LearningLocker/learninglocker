@@ -14,7 +14,7 @@ class ExportingController extends \BaseController {
     $this->beforeFilter('csrf', array('only' => array('update', 'store', 'destroy')));
   }
 
-  /**
+  /**./ve
    * Display a listing of the resource.
    * @return View
    */
