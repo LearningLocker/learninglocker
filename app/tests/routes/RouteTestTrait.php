@@ -2,10 +2,10 @@
 
 trait RouteTestTrait {
 
-  protected function getServer(\Lrs $lrs, $version = '1.0.1') {
+  protected function getServer(\Client $client, $version = '1.0.1') {
     return [
-      'PHP_AUTH_USER' => $lrs->api['basic_key'],
-      'PHP_AUTH_PW' => $lrs->api['basic_secret'],
+      'PHP_AUTH_USER' => $client->api['basic_key'],
+      'PHP_AUTH_PW' => $client->api['basic_secret'],
       'HTTP_X-Experience-API-Version' => $version
     ];
   }

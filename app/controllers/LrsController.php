@@ -135,7 +135,8 @@ class LrsController extends BaseController {
     return View::make('partials.lrs.dashboard', array_merge($this->getLrs($lrs_id), [
       'stats' => $dashboard->getStats(),
       'graph_data' => $dashboard->getGraphData(),
-      'dash_nav' => true
+      'dash_nav' => true,
+      'client' => (new \Client)->where('lrs_id', $lrs_id)->first()
     ]));
   }
 

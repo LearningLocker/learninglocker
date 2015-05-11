@@ -207,8 +207,8 @@ class Helpers {
    * @param String $username
    * @return Model
    */
-  static function checkAuth($type, $username, $password) {
-    return (new $type)
+  static function checkAuth($username, $password) {
+    return (new \Client)
       ->where('api.basic_key', $username)
       ->where('api.basic_secret', $password)
       ->first();
@@ -221,20 +221,13 @@ class Helpers {
    * @return Lrs
    */
   static function getLrsFromUserPass($username, $password) {
-    $lrs = Helpers::checkAuth('Lrs', $username, $password);
+    $client = Helpers::checkAuth($username, $password);
 
-    //if main credentials not matched, try the additional credentials
-    if ($lrs == null) {
-      $client = Helpers::checkAuth('Client', $username, $password);
-
-      if ($client != null) {
-        $lrs = \Lrs::find($client->lrs_id);
-      } else {
-        throw new Exceptions\Exception('Unauthorized request.', 401);
-      }
+    if ($client === null) {
+      throw new Exceptions\Exception('Unauthorized request.', 401);
     }
 
-    return $lrs;
+    return \Lrs::find($client->lrs_id);
   }
 
   /**

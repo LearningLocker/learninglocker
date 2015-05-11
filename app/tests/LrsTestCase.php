@@ -7,6 +7,7 @@ abstract class LrsTestCase extends InstanceTestCase {
   public function setUp() {
     parent::setUp();
     $this->lrs = $this->createLrs($this->user);
+    $this->client = $this->createClient($this->lrs);
     $_SERVER['SERVER_NAME'] = $this->lrs->title.'.com.vn';
   }
 
@@ -15,10 +16,6 @@ abstract class LrsTestCase extends InstanceTestCase {
       'title' => Helpers::getRandomValue(),
       'description' => Helpers::getRandomValue(),
       'subdomain' => Helpers::getRandomValue(),
-      'api' => [
-        'basic_key' => helpers::getRandomValue(),
-        'basic_secret' => helpers::getRandomValue()
-      ],
       'owner' => ['_id' => $user->_id],
       'users' => Helpers::getRandomValue(),
       'users' => [[
@@ -27,6 +24,22 @@ abstract class LrsTestCase extends InstanceTestCase {
         'name' => $user->name,
         'role' => 'admin'
       ]]
+    ]);
+    $model->save();
+    return $model;
+  }
+
+  protected function createClient(\Lrs $lrs) {
+    $model = new \Client([
+      'api' => [
+        'basic_key' => Helpers::getRandomValue(),
+        'basic_secret' => Helpers::getRandomValue()
+      ],
+      'authority' => [
+        'name' => 'Test client',
+        'mbox' => 'mailto:test@example.com'
+      ],
+      'lrs_id' => $lrs->_id
     ]);
     $model->save();
     return $model;
