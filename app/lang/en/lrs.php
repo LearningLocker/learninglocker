@@ -49,9 +49,9 @@ return array(
     ),
     
 	'client'       => array(
-    	'manageclients'   => 'Manage clients',
+    	'manageclients'   => 'Clients',
     	'manageclients_intro'   => 'Create a new client for each application or user accessing the LRS via xAPI.',
-    	'new_client'   => 'Create new client',
+    	'new_client'   => 'Create client',
     	'unnamed_client' => 'Unnamed client',
     	'created_fail' => 'The client was not created sucecssfully. Sorry.',
     	'created_sucecss' => 'The client was created sucecssfully. Hurrah!',

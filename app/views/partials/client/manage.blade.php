@@ -7,15 +7,12 @@
 
 @section('content')
 
-	@include('partials.client.forms.create')
-
   @include('partials.site.elements.page_title', array('page' => Lang::get('lrs.client.manageclients')))
 
   <div class="col-md-10">
-    <p>{{ Lang::get('lrs.client.manageclients_intro') }}</p>
      <div class="alert alert-success clearfix">
       <div class="col-sm-10">
-        <b>Endpoint for all clients:</b> <span class="break-words">{{ URL() }}/data/xAPI/</span>
+        <b>{{ trans('lrs.endpoint.endpoint') }}:</b> <span class="break-words">{{ URL() }}/data/xAPI/</span>
       </div>
     </div>
     <div>
@@ -26,8 +23,6 @@
         <thead>
           <tr>
             <th>{{Lang::get('site.name')}}</th>
-            <th>Type</th>
-            <th>{{Lang::get('lrs.client.authority.ifi')}}</th>
             <th>{{Lang::get('site.username')}}</th>
             <th>{{Lang::get('site.password')}}</th>
             <th>{{ Lang::get('site.edit') }}</th>
@@ -48,6 +43,8 @@
         <p class="bg-warning">{{ Lang::get('lrs.client.none') }}</p>
       </div>
     @endif
+
+    @include('partials.client.forms.create')
 
   </div>
   </div>
