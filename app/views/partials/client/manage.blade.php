@@ -9,7 +9,7 @@
 
   @include('partials.site.elements.page_title', array('page' => Lang::get('lrs.client.manageclients')))
 
-  <div class="col-md-10">
+  <div>
      <div class="alert alert-success clearfix">
       <div class="col-sm-10">
         <b>{{ trans('lrs.endpoint.endpoint') }}:</b> <span class="break-words">{{ URL() }}/data/xAPI/</span>
