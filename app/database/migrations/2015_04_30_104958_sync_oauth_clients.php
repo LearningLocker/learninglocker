@@ -14,13 +14,6 @@ class SyncOauthClients extends Migration {
         'redirect_uri' => 'http://www.example.com/'
       ]);
     });
-    (new \Lrs)->get()->each(function ($lrs) use ($db) {
-      $db->insert([
-        'client_id' => $lrs->api['basic_key'],
-        'client_secret' => $lrs->api['basic_secret'],
-        'redirect_uri' => 'http://www.example.com/'
-      ]);
-    });
   }
 
   public function down() {
