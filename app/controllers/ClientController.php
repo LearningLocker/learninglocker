@@ -2,7 +2,7 @@
 
 use Locker\Repository\User\UserRepository as UserRepo;
 use Locker\Repository\Lrs\Repository as LrsRepo;
-use Locker\Repository\Client\ClientRepository as ClientRepo; 
+use Locker\Repository\Client\Repository as ClientRepo; 
 
 class ClientController extends BaseController {
 
