@@ -222,12 +222,13 @@ class Helpers {
    */
   static function getLrsFromUserPass($username, $password) {
     $client = Helpers::getClient($username, $password);
+    $lrs = $client === null ? null : \Lrs::find($client->lrs_id);
 
-    if ($client === null) {
+    if ($lrs === null) {
       throw new Exceptions\Exception('Unauthorized request.', 401);
     }
 
-    return \Lrs::find($client->lrs_id);
+    return $lrs;
   }
 
   /**
