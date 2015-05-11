@@ -207,7 +207,7 @@ class Helpers {
    * @param String $username
    * @return Model
    */
-  static function checkAuth($username, $password) {
+  static function getClient($username, $password) {
     return (new \Client)
       ->where('api.basic_key', $username)
       ->where('api.basic_secret', $password)
@@ -221,7 +221,7 @@ class Helpers {
    * @return Lrs
    */
   static function getLrsFromUserPass($username, $password) {
-    $client = Helpers::checkAuth($username, $password);
+    $client = Helpers::getClient($username, $password);
 
     if ($client === null) {
       throw new Exceptions\Exception('Unauthorized request.', 401);
@@ -261,10 +261,10 @@ class Helpers {
   }
 
   /**
-   * Gets the current LRS from the Authorization header.
-   * @return \Lrs
+   * Gets the username and password from the authorization string.
+   * @return [String] Formed of [Username, Password]
    */
-  static function getLrsFromAuth() {
+  static function getUserPassFromAuth() {
     $authorization = \LockerRequest::header('Authorization');
     if ($authorization !== null && strpos($authorization, 'Basic') === 0) {
       list($username, $password) = Helpers::getUserPassFromBAuth($authorization);
@@ -273,6 +273,15 @@ class Helpers {
     } else {
       throw new Exceptions\Exception('Invalid auth', 400);
     }
+    return [$username, $password];
+  }
+
+  /**
+   * Gets the current LRS from the Authorization header.
+   * @return \Lrs
+   */
+  static function getLrsFromAuth() {
+    list($username, $password) = Helpers::getUserPassFromAuth();
     return Helpers::getLrsFromUserPass($username, $password);
   }
 }

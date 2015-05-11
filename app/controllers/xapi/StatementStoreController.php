@@ -131,26 +131,13 @@ class StatementStoreController {
   }
 
   private function getAuthority() {
-    $authorization = \LockerRequest::header('Authorization');
-    if (strpos($authorization, 'Basic') === 0) {
-      $key = \LockerRequest::getUser();
-    } else if (strpos($authorization, 'Bearer') === 0) {
-      $key = Helpers::getClientIdFromOAuth($authorization);
-    }
+    list($username, $password) = Helpers::getUserPassFromAuth();
+    $client = Helpers::getClient($username, $password);
 
-    $client = (new \Client)
-      ->where('api.basic_key', $key)
-      ->first();
-
-    if ($client != null && isset($client['authority'])) {
-      return json_decode(json_encode($client['authority']));
-    } else {
-      $site = \Site::first();
-      return (object) [
-        'name' => $site->name,
-        'mbox' => 'mailto:' . $site->email,
-        'objectType' => 'Agent'
-      ];
+    if ($client === null) {
+      throw new Exceptions\Exception('No authority.');
     }
+    
+    return json_decode(json_encode($client['authority']));
   }
 }
