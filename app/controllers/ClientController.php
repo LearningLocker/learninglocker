@@ -84,7 +84,6 @@ class ClientController extends BaseController {
    */
   public function update($lrs_id, $id){
     $data = Input::all();
-    //dd($data);
     $authority = [
       'name' => $data['name'],
     ];
