@@ -113,6 +113,12 @@ class EloquentRepository extends BaseRepository implements Repository {
     \DB::getMongoDB()->oauth_clients->remove([
       'client_id' => $client->api['basic_key']
     ]);
+    if ($this->where($opts)->count() < 2) {
+      $this->store(['authority' => [
+        'name' => 'Must have client',
+        'mbox' => 'mailto:hello@learninglocker.net'
+      ]], $opts);
+    }
     return parent::destroy($id, $opts);
   }
 
