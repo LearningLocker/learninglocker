@@ -13,7 +13,7 @@ abstract class LrsTestCase extends InstanceTestCase {
 
   protected function createLrs(\User $user) {
     $model = new \Lrs([
-      'title' => Helpers::getRandomValue(),
+      'title' => 'Test',
       'owner' => ['_id' => $user->_id],
       'users' => [[
         '_id' => $user->_id,
@@ -29,8 +29,8 @@ abstract class LrsTestCase extends InstanceTestCase {
   protected function createLLClient(\Lrs $lrs) {
     $model = new \Client([
       'api' => [
-        'basic_key' => Helpers::getRandomValue(),
-        'basic_secret' => Helpers::getRandomValue()
+        'basic_key' => '123',
+        'basic_secret' => '456'
       ],
       'authority' => [
         'name' => 'Test client',

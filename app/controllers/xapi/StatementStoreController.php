@@ -63,7 +63,7 @@ class StatementStoreController {
       throw new Exceptions\Exception('Statement ID parameter is invalid.');
     }
 
-    return IlluminateResponse::json($this->createStatements($lrs_id), 200, Helpers::getCORSHeaders());
+    return IlluminateResponse::json($this->createStatements($lrs_id), 200, $this->getCORSHeaders());
   }
 
   /**
@@ -85,7 +85,7 @@ class StatementStoreController {
       return $statements;
     });
 
-    return IlluminateResponse::make('', 204, Helpers::getCORSHeaders());
+    return IlluminateResponse::make('', 204, $this->getCORSHeaders());
   }
 
   /**
@@ -139,5 +139,20 @@ class StatementStoreController {
     }
     
     return json_decode(json_encode($client['authority']));
+  }
+
+  /**
+   * Gets the CORS headers.
+   * @return [String => Mixed] CORS headers.
+   */
+  private function getCORSHeaders() {
+    return [
+      'Access-Control-Allow-Origin' => \Request::root(),
+      'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers' => 'Origin, Content-Type, Accept, Authorization, X-Requested-With, X-Experience-API-Version, X-Experience-API-Consistent-Through, Updated',
+      'Access-Control-Allow-Credentials' => 'true',
+      'X-Experience-API-Consistent-Through' => Helpers::getCurrentDate(),
+      'X-Experience-API-Version' => '1.0.1'
+    ];
   }
 }
