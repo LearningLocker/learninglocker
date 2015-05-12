@@ -10,6 +10,7 @@ class Client extends Eloquent {
    * @var string
    */
   protected $collection = 'client';
+  protected $fillable = ['authority', 'description', 'api', 'lrs_id'];
   
    /**
    * All clients belong to an LRS

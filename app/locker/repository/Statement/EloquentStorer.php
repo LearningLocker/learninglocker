@@ -58,7 +58,7 @@ class EloquentStorer extends EloquentReader implements Storer {
       }
 
       if (!isset($statement->id)) {
-        $statement->id = Helpers::makeUUID();
+        $statement->id = $this->getUUID();
       }
 
       // Validates statement.
@@ -92,5 +92,22 @@ class EloquentStorer extends EloquentReader implements Storer {
     return $this->where($opts)
       ->whereIn('statement.id', $ids)
       ->update(['active' => true]);
+  }
+
+  /**
+   * Generates a UUID.
+   * @return String
+   */
+  private function getUUID() {
+    $remote_addr = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'LL';
+    mt_srand(crc32(serialize([microtime(true), $remote_addr, 'ETC'])));
+
+    return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+      mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+      mt_rand(0, 0xffff),
+      mt_rand(0, 0x0fff) | 0x4000,
+      mt_rand(0, 0x3fff) | 0x8000,
+      mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+    );
   }
 }

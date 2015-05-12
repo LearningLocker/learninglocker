@@ -13,7 +13,7 @@ class StatementRefTest extends StatementsTestCase {
     $method = 'POST';
     $uri = '/data/xAPI/statements';
     $params = $files = [];
-    $server = $this->getServer($this->lrs);
+    $server = $this->getServer($this->ll_client);
     return $this->request($method, $uri, $params, $server, $content);
   }
 

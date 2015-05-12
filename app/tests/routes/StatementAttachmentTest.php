@@ -13,7 +13,7 @@ class StatementAttachmentTest extends StatementsTestCase {
 
   protected function requestStatements($method, $params = [], $server = [], $content = '') {
     $uri = '/data/xAPI/statements';
-    $server = array_merge($this->getServer($this->lrs), $server);
+    $server = array_merge($this->getServer($this->ll_client), $server);
     return $this->request($method, $uri, $params, $server, $content);
   }
 
