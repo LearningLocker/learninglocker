@@ -4,13 +4,17 @@
   @include('partials.lrs.sidebars.lrs')
 @stop
 
+@section('head')
+  @parent
+  {{ HTML::style('assets/css/exports.css')}}
+@stop
 
 @section('content')
 
   @include('partials.site.elements.page_title', array('page' => trans('lrs.client.manageclients')))
 
   <div>
-     <div class="alert alert-success clearfix">
+    <div class="alert alert-success clearfix">
       <div class="col-sm-10">
         <b>{{ trans('lrs.endpoint.endpoint') }}:</b> <span class="break-words">{{ URL() }}/data/xAPI/</span>
       </div>
@@ -30,8 +34,8 @@
           <tr>
         </thead>
         <tbody>
-          @foreach( $clients as $client )
-              @include('partials.client.item', array( 'client' => $client ))
+          @foreach( $clients as $index => $client )
+              <tr class="{{ Session::get('success') === trans('lrs.client.created_sucecss') && $index === ($clients->count() - 1) ? 'flash' : '' }}">@include('partials.client.item', array( 'client' => $client ))</tr>
           @endforeach
         </tbody>
       </table>
@@ -46,7 +50,7 @@
 
     @include('partials.client.forms.create')
 
-  </div>
+    </div>
   </div>
 
 @stop
