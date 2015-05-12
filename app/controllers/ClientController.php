@@ -89,7 +89,7 @@ class ClientController extends BaseController {
     ];
 
     switch ($data['ifi']) {
-      case 'mbox': $authority['mbox'] = 'mailto'.$data['mbox']; break;
+      case 'mbox': $authority['mbox'] = 'mailto:'.$data['mbox']; break;
       case 'mbox_sha1sum': $authority['mbox_sha1sum'] = $data['mbox_sha1sum']; break;
       case 'openid': $authority['openid'] = $data['openid']; break;
       case 'account': $authority['account'] = [
