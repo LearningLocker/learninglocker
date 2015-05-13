@@ -100,7 +100,7 @@ define([
                         intermediateValue = intermediateValue.slice(8,intermediateValue.length).split(" / ");
                         var homePage = intermediateValue.shift();
                         var name = intermediateValue.pop();
-                        var obj = {homePage:homePage, name:name};
+                        var obj = {name:name, homePage:homePage };
                         combined.account.push(
                             obj
                         );
