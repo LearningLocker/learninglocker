@@ -72,24 +72,21 @@ define([
       this.set('query', query);
     },
     _initializeRelations: function (response, empty) {
-      // Maps query relations to response.
-      if (!empty && response.query != false && response.query != null) {
-        this._mapQueryToResponse(response.query, response);
-      } else {
-        response.query = {};
-      }
-
       // Calls parent to initialise relations.
-      response = locker.Model.prototype._initializeRelations.bind(this)(response, empty);
+      if (this.attributes.lrs == null) {
+        response.query = Array.isArray(response.query) ? {} : response.query || {};
+        this._mapQueryToResponse(response.query, response);
+        response = locker.Model.prototype._initializeRelations.bind(this)(response, empty);
+      } else {
+        response = this.attributes;
+      }
 
       return response;
     },
     save: function (attrs, opts) {
       opts || (opts = {});
       this._mapResponseToQuery();
-
-      attrs = _.clone(this.attributes);
-      opts.data = JSON.stringify(attrs);
+      opts.data = JSON.stringify(this.attributes);
 
       return Backbone.Model.prototype.save.call(this, attrs, opts);
     }
