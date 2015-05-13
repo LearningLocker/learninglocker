@@ -156,7 +156,7 @@ class Helpers {
   static function getCurrentDate() {
     $current_date = \DateTime::createFromFormat('U.u', sprintf('%.4f', microtime(true)));
     $current_date->setTimezone(new \DateTimeZone(\Config::get('app.timezone')));
-    return $current_date->format('Y-m-d\TH:i:s.uP');
+    return $current_date->format('c');
   }
 
   /**
