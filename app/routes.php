@@ -174,9 +174,6 @@ Route::put('site/users/verify/{id}', array(
 Route::get('lrs/{id}/statements', array(
   'uses' => 'LrsController@statements',
 ));
-Route::get('lrs/{id}/endpoint', array(
-  'uses' => 'LrsController@endpoint',
-));
 Route::get('lrs/{id}/users', array(
   'uses' => 'LrsController@users',
 ));
@@ -199,10 +196,6 @@ Route::get('lrs/{id}/users/invite', array(
 ));
 Route::get('lrs/{id}/api', array(
   'uses' => 'LrsController@api',
-));
-Route::post('lrs/{id}/apikey', array(
-  'before' => 'csrf',
-  'uses'   => 'LrsController@editCredentials'
 ));
 
 Route::resource('lrs', 'LrsController');

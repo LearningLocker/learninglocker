@@ -14,18 +14,19 @@ class ExportingController extends \BaseController {
     $this->beforeFilter('csrf', array('only' => array('update', 'store', 'destroy')));
   }
 
-  /**
+  /**./ve
    * Display a listing of the resource.
    * @return View
    */
-  public function index($id){
+  public function index($lrs_id){
     $opts = ['user' => \Auth::user()];
-    $lrs = $this->lrs->show($id, $opts);
+    $lrs = $this->lrs->show($lrs_id, $opts);
     $lrs_list = $this->lrs->index($opts);
     return View::make("{$this->views}.index", [
       'lrs' => $lrs, 
       'list' => $lrs_list,
-      'exporting_nav' => true
+      'exporting_nav' => true,
+      'client' => (new \Client)->where('lrs_id', $lrs_id)->first()
     ]);
   }
 }
