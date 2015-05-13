@@ -12,6 +12,7 @@ class Report extends Eloquent {
   protected $collection = 'reports';
   public static $rules = [];
   protected $fillable = ['name', 'description', 'query', 'lrs', 'since', 'until'];
+  protected $actorQuery = [ 'statement.actor.account', 'statement.actor.mbox', 'statement.actor.openid', 'statement.actor.mbox_sha1sum' ];
 
   public function getFilterAttribute() {
     $reportArr = $this->toArray();
@@ -32,12 +33,11 @@ class Report extends Eloquent {
     $reportArr = $this->toArray();
     $match = [];
     $query = isset($reportArr['query']) ? (array) $reportArr['query'] : null;
-    $actorQuery = [ 'statement.actor.account', 'statement.actor.mbox', 'statement.actor.openid', 'statement.actor.mbox_sha1sum' ];
     $actorArray = [];
 
     if (is_array($query) && count($query) > 0 && !isset($query[0])) {
       foreach ($query as $key => $value) {
-        if (in_array($key, $actorQuery)) {
+        if (in_array($key, $this->actorQuery)) {
           if (is_array($value)) {
             $match['$or'][][$key] = ['$in' => $value];
           } else {
@@ -73,12 +73,11 @@ class Report extends Eloquent {
     $reportArr = $this->toArray();
     $wheres = [];
     $query = isset($reportArr['query']) ? (array) $reportArr['query'] : null;
-    $actorQuery = [ 'statement.actor.account', 'statement.actor.mbox', 'statement.actor.openid', 'statement.actor.mbox_sha1sum' ];
     $actorArray = [];
 
     if (is_array($query) && count($query) > 0 && !isset($query[0])) {
       foreach (array_keys($query) as $key) {
-        if (in_array($key, $actorQuery)) {
+        if (in_array($key, $this->actorQuery)) {
           array_push($actorArray, [$key, $query[$key]]);
         } else {
           if (is_array($query[$key])) {
