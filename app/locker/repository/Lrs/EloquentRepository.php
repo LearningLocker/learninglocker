@@ -73,8 +73,6 @@ class EloquentRepository extends BaseRepository implements Repository {
     $model->owner = $data['owner'];
     $model->users = $data['users'];
 
-    Event::fire('user.create_lrs', ['user' => $opts['user']]);
-
     return $model;
   }
 

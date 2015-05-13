@@ -26,7 +26,7 @@ abstract class EloquentRepository implements Repository {
    */
   protected function fire($allow, $event, array $opts, array $extra) {
     if ($allow) {
-      \Event::fire(ltrim($this->model, ':').'.'.$event, array_merge($opts, $extra));
+      \Event::fire(ltrim($this->model, '\\').'.'.$event, [array_merge($opts, $extra)]);
     }
     return $allow;
   }
@@ -81,7 +81,8 @@ abstract class EloquentRepository implements Repository {
   public function store(array $data, array $opts) {
     $model = $this->constructStore((new $this->model), $data, $opts);
     $this->fire($model->save(), 'store', $opts, [
-      'data' => $data
+      'data' => $data,
+      'model' => $model
     ]);
     return $this->format($model);
   }
@@ -97,7 +98,8 @@ abstract class EloquentRepository implements Repository {
     $model = $this->constructUpdate($this->show($id, $opts), $data, $opts);
     $this->fire($model->save(), 'store', $opts, [
       'id' => $id,
-      'data' => $data
+      'data' => $data,
+      'model' => $model
     ]);
     return $this->format($model);
   }
