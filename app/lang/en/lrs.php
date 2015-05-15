@@ -26,7 +26,7 @@ return array(
     'sidebar'	=> array(
     	'dash' 	    => 'Dashboard',
     	'edit' 	    => 'Edit LRS details',
-    	'endpoint'  => 'xAPI statements',
+    	'endpoint'  => 'Manage clients',
     	'api'	    => 'LRS API',
     	'users'     => 'Manage users',
     	'analytics' => 'Analytics',
@@ -49,9 +49,9 @@ return array(
     ),
     
 	'client'       => array(
-    	'manageclients'   => 'Manage additional clients',
-    	'manageclients_intro'   => 'Create a new client for each application or user accessing the LRS via xapi. Coming soon: data tagging by client, client permissions and client management API.',
-    	'new_client'   => 'Create new client',
+    	'manageclients'   => 'Clients',
+    	'manageclients_intro'   => 'Create a new client for each application or user accessing the LRS via xAPI.',
+    	'new_client'   => 'Create client',
     	'unnamed_client' => 'Unnamed client',
     	'created_fail' => 'The client was not created sucecssfully. Sorry.',
     	'created_sucecss' => 'The client was created sucecssfully. Hurrah!',

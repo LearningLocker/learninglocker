@@ -21,7 +21,7 @@ abstract class InstanceTestCase extends TestCase {
       'domain' => '',
       'super' => [['user' => $user->_id]]
     ]);
-    $model->save();
+    $success = $model->save();
     return $model;
   }
 

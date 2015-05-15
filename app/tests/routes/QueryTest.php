@@ -9,7 +9,7 @@ class QueryTest extends \Tests\StatementsTestCase {
 
   protected function requestAnalytics($params = []) {
     $content = null;
-    return $this->request('GET', 'api/v1/query/analytics', $params, $this->getServer($this->lrs), $content);
+    return $this->request('GET', 'api/v1/query/analytics', $params, $this->getServer($this->ll_client), $content);
   }
 
   public function testAnalyticsDefault() {

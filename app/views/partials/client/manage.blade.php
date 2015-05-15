@@ -4,38 +4,53 @@
   @include('partials.lrs.sidebars.lrs')
 @stop
 
+@section('head')
+  @parent
+  {{ HTML::style('assets/css/exports.css')}}
+@stop
 
 @section('content')
 
-	@include('partials.client.forms.create')
+  @include('partials.site.elements.page_title', array('page' => trans('lrs.client.manageclients')))
 
-  @include('partials.site.elements.page_title', array('page' => Lang::get('lrs.client.manageclients')))
-
-  <div class="col-md-10">
-    <p>{{ Lang::get('lrs.client.manageclients_intro') }}</p>
-     <div class="alert alert-success clearfix">
+  <div>
+    <div class="alert alert-success clearfix">
       <div class="col-sm-10">
-        <b>Endpoint for all clients:</b> <span class="break-words">{{ URL() }}/data/xAPI/</span>
+        <b>{{ trans('lrs.endpoint.endpoint') }}:</b> <span class="break-words">{{ URL() }}/data/xAPI/</span>
       </div>
     </div>
-    <h4>{{ Lang::get('lrs.endpoint.basic_http') }}</h4>
-    <div class="row">
+    <div>
 
     @if ( isset($clients) && !empty($clients) )
 
-      @foreach( $clients as $client )
-          @include('partials.client.item', array( 'client' => $client ))
-      @endforeach
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>{{trans('site.name')}}</th>
+            <th>{{trans('site.username')}}</th>
+            <th>{{trans('site.password')}}</th>
+            <th>{{trans('site.edit')}}</th>
+            <th>{{trans('site.delete')}}</th>
+          <tr>
+        </thead>
+        <tbody>
+          @foreach( $clients as $index => $client )
+              <tr class="{{ Session::get('success') === trans('lrs.client.created_sucecss') && $index === ($clients->count() - 1) ? 'flash' : '' }}">@include('partials.client.item', array( 'client' => $client ))</tr>
+          @endforeach
+        </tbody>
+      </table>
 
     @endif
 
     @if ( count($clients) == 0 )
       <div class="col-xs-12 col-sm-12 col-lg-12">
-        <p class="bg-warning">{{ Lang::get('lrs.client.none') }}</p>
+        <p class="bg-warning">{{trans('lrs.client.none')}}</p>
       </div>
     @endif
 
-  </div>
+    @include('partials.client.forms.create')
+
+    </div>
   </div>
 
 @stop

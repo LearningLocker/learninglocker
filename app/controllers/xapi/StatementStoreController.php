@@ -63,7 +63,7 @@ class StatementStoreController {
       throw new Exceptions\Exception('Statement ID parameter is invalid.');
     }
 
-    return IlluminateResponse::json($this->createStatements($lrs_id), 200, Helpers::getCORSHeaders());
+    return IlluminateResponse::json($this->createStatements($lrs_id), 200, $this->getCORSHeaders());
   }
 
   /**
@@ -85,7 +85,7 @@ class StatementStoreController {
       return $statements;
     });
 
-    return IlluminateResponse::make('', 204, Helpers::getCORSHeaders());
+    return IlluminateResponse::make('', 204, $this->getCORSHeaders());
   }
 
   /**
@@ -131,26 +131,28 @@ class StatementStoreController {
   }
 
   private function getAuthority() {
-    $authorization = \LockerRequest::header('Authorization');
-    if (strpos($authorization, 'Basic') === 0) {
-      $key = \LockerRequest::getUser();
-    } else if (strpos($authorization, 'Bearer') === 0) {
-      $key = Helpers::getClientIdFromOAuth($authorization);
-    }
+    list($username, $password) = Helpers::getUserPassFromAuth();
+    $client = Helpers::getClient($username, $password);
 
-    $client = (new \Client)
-      ->where('api.basic_key', $key)
-      ->first();
-
-    if ($client != null && isset($client['authority'])) {
-      return json_decode(json_encode($client['authority']));
-    } else {
-      $site = \Site::first();
-      return (object) [
-        'name' => $site->name,
-        'mbox' => 'mailto:' . $site->email,
-        'objectType' => 'Agent'
-      ];
+    if ($client === null) {
+      throw new Exceptions\Exception('No authority.');
     }
+    
+    return json_decode(json_encode($client['authority']));
+  }
+
+  /**
+   * Gets the CORS headers.
+   * @return [String => Mixed] CORS headers.
+   */
+  private function getCORSHeaders() {
+    return [
+      'Access-Control-Allow-Origin' => \Request::root(),
+      'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers' => 'Origin, Content-Type, Accept, Authorization, X-Requested-With, X-Experience-API-Version, X-Experience-API-Consistent-Through, Updated',
+      'Access-Control-Allow-Credentials' => 'true',
+      'X-Experience-API-Consistent-Through' => Helpers::getCurrentDate(),
+      'X-Experience-API-Version' => '1.0.1'
+    ];
   }
 }

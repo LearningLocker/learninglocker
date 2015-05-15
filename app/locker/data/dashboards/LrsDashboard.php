@@ -22,7 +22,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
       'statement_count' => $this->statementCount(),
       'statement_avg'   => $this->statementAvgCount(),
       'actor_count'     => $this->actorCount()
-    );      
+    );
   }
 
   public function getGraphData(\DateTime $startDate = null, \DateTime $endDate = null) {
@@ -56,15 +56,15 @@ class LrsDashboard extends \app\locker\data\BaseData {
     $count = $this->db->statements->aggregate(
               array('$match' => $this->getMatch( $this->lrs )),
               array('$group' => array('_id' => '$statement.actor.mbox')),
-              array('$group' => array('_id' => 1, 'count' => array('$sum' => 1)))             
+              array('$group' => array('_id' => 1, 'count' => array('$sum' => 1)))
               );
-          
+
     if( isset($count['result'][0]) ){
       return $count['result'][0]['count'];
     }else{
       return 0;
     }
-   
+
   }
 
   /**
@@ -115,17 +115,17 @@ class LrsDashboard extends \app\locker\data\BaseData {
    **/
   public function getTopActivities(){
 
-    $match = $this->getMatch( $this->lrs ); 
+    $match = $this->getMatch( $this->lrs );
     return $this->db->statements->aggregate(
                 array('$match' => $match),
                 array('$group' => array('_id'   => '$statement.object.id',
                       'name'  => array('$addToSet' => '$statement.object.definition.name'),
-                      'description' => array('$addToSet' => '$statement.object.definition.description'), 
+                      'description' => array('$addToSet' => '$statement.object.definition.description'),
                       'count' => array('$sum' => 1))),
                 array('$sort'  => array('count' => -1)),
                 array('$limit' => 6)
               );
-  
+
   }
 
   /**
@@ -134,16 +134,25 @@ class LrsDashboard extends \app\locker\data\BaseData {
    **/
   public function getActiveUsers(){
 
-    $match = $this->getMatch( $this->lrs ); 
-    return $this->db->statements->aggregate(
-                array('$match' => $match),
-                array('$group' => array('_id'   => '$statement.actor',
-                      'names'   => array('$addToSet' => '$statement.actor.name'),
-                      'count'  => array('$sum' => 1))),
-                array('$sort'  => array('count' => -1)),
-                array('$limit' => 5)
-              );
-
+    $match = $this->getMatch( $this->lrs );
+    return $this->db->statements->aggregate([
+      '$match' => $match
+    ], [
+      '$group' => [
+        '_id' => [
+          'mbox' => '$statement.actor.mbox',
+          'mbox_sha1sum' => '$statement.actor.mbox_sha1sum',
+          'openid' => '$statement.actor.openid',
+          'account' => '$statement.actor.account'
+        ],
+        'names' => ['$addToSet' => '$statement.actor.name'],
+        'count' => ['$sum' => 1]
+      ]
+    ], [
+      '$sort'  => ['count' => -1]
+    ], [
+      '$limit' => 5
+    ]);
   }
 
   /**
@@ -170,7 +179,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
           'timestamp' => $timestamp,
           'lrs._id' => $this->lrs
         ]
-      ], 
+      ],
       [
         '$group' => [
           '_id'   => [
@@ -185,11 +194,11 @@ class LrsDashboard extends \app\locker\data\BaseData {
       ],
       [
         '$sort' => ['_id' => 1]
-      ], 
+      ],
       [
         '$project' => [
-          'count' => 1, 
-          'date' => 1, 
+          'count' => 1,
+          'date' => 1,
           'actor' => 1
         ]
       ]
@@ -203,7 +212,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
         $data[$date] = json_encode( array( "y" => $date, "a" => $s['count'], 'b' => count($s['actor'])) );
       }
     }
-    
+
     // Add empty point in data (fixes issue #265).
     $dates = array_keys($data);
 
@@ -212,7 +221,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
       $start = strtotime(reset($dates));
       $end = strtotime(end($dates));
 
-      for($i=$start; $i<=$end; $i+=24*60*60) { 
+      for($i=$start; $i<=$end; $i+=24*60*60) {
         $date = date("Y-m-d", $i);
         if(!isset($data[$date])) {
           $data[$date] = json_encode( array( "y" => $date, "a" => 0, 'b' => 0 ) );

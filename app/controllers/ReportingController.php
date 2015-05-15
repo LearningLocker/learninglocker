@@ -73,7 +73,8 @@ class ReportingController extends \BaseController {
       'reporting_nav' => true,
       'reports' => $this->report->index([
         'lrs_id' => $lrs_id
-      ])
+      ]),
+      'client' => (new \Client)->where('lrs_id', $lrs_id)->first()
     ]));
   }
 

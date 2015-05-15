@@ -31,9 +31,6 @@ class EloquentRepository extends BaseRepository implements Repository {
   protected function validateData(array $data) {
     if (isset($data['title'])) XAPIHelpers::checkType('title', 'string', $data['title']);
     if (isset($data['description'])) XAPIHelpers::checkType('description', 'string', $data['description']);
-    if (isset($data['api'])) XAPIHelpers::checkType('api', 'array', $data['api']);
-    if (isset($data['api']['basic_key'])) XAPIHelpers::checkType('api.basic_key', 'string', $data['api']['basic_key']);
-    if (isset($data['api']['basic_secret'])) XAPIHelpers::checkType('api.basic_secret', 'string', $data['api']['basic_secret']);
     if (isset($data['owner'])) XAPIHelpers::checkType('owner', 'array', $data['owner']);
     if (isset($data['owner']['_id'])) XAPIHelpers::checkType('owner._id', 'string', $data['owner']['_id']);
 
@@ -59,11 +56,7 @@ class EloquentRepository extends BaseRepository implements Repository {
    */
   protected function constructStore(Model $model, array $data, array $opts) {
     // Merges and validates data with defaults.
-    $data = array_merge(array_merge($this->defaults, $data), [
-      'api' => [
-        'basic_key' => Helpers::getRandomValue(),
-        'basic_secret' => Helpers::getRandomValue()
-      ],
+    $data = array_merge($this->defaults, $data, [
       'owner' => ['_id' => $opts['user']->_id],
       'users' => [[
         '_id'   => $opts['user']->_id,
@@ -77,11 +70,8 @@ class EloquentRepository extends BaseRepository implements Repository {
     // Sets properties on model.
     $model->title = $data['title'];
     $model->description = $data['description'];
-    $model->api = $data['api'];
     $model->owner = $data['owner'];
     $model->users = $data['users'];
-
-    Event::fire('user.create_lrs', ['user' => $opts['user']]);
 
     return $model;
   }
