@@ -19,8 +19,8 @@ class RepositoryServiceProvider extends ServiceProvider {
       'Locker\Repository\Lrs\EloquentRepository'
     );
 	$this->app->bind(
-      'Locker\Repository\Client\ClientRepository',
-      'Locker\Repository\Client\EloquentClientRepository'
+      'Locker\Repository\Client\Repository',
+      'Locker\Repository\Client\EloquentRepository'
     );
     $this->app->bind(
       'Locker\Repository\Site\SiteRepository',

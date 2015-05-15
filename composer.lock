@@ -298,12 +298,12 @@
             "version": "v1.0.8",
             "source": {
                 "type": "git",
-                "url": "https://github.com/d11wtq/boris.git",
+                "url": "https://github.com/borisrepl/boris.git",
                 "reference": "125dd4e5752639af7678a22ea597115646d89c6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/d11wtq/boris/zipball/125dd4e5752639af7678a22ea597115646d89c6e",
+                "url": "https://api.github.com/repos/borisrepl/boris/zipball/125dd4e5752639af7678a22ea597115646d89c6e",
                 "reference": "125dd4e5752639af7678a22ea597115646d89c6e",
                 "shasum": ""
             },
@@ -698,16 +698,16 @@
         },
         {
             "name": "learninglocker/statementfactory",
-            "version": "v0.0.1",
+            "version": "v0.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LearningLocker/StatementFactory.git",
-                "reference": "dc9751b9eb2ae5c1ccb3b6625cefb32853ad13f3"
+                "reference": "b364e7f49329230ee9eef7a30536ca9637a42630"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LearningLocker/StatementFactory/zipball/dc9751b9eb2ae5c1ccb3b6625cefb32853ad13f3",
-                "reference": "dc9751b9eb2ae5c1ccb3b6625cefb32853ad13f3",
+                "url": "https://api.github.com/repos/LearningLocker/StatementFactory/zipball/b364e7f49329230ee9eef7a30536ca9637a42630",
+                "reference": "b364e7f49329230ee9eef7a30536ca9637a42630",
                 "shasum": ""
             },
             "type": "library",
@@ -727,7 +727,7 @@
                 }
             ],
             "description": "Learning Locker's classes for xAPI.",
-            "time": "2015-05-07 09:08:03"
+            "time": "2015-05-13 14:33:50"
         },
         {
             "name": "monolog/monolog",

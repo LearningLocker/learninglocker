@@ -16,7 +16,7 @@ class StatementsTest extends StatementsTestCase {
     $method = 'GET';
     $content = null;
     $uri = '/api/v1/statements/'.$uri;
-    $server = $this->getServer($this->lrs);
+    $server = $this->getServer($this->ll_client);
     return $this->request($method, $uri, $params, $server, $content);
   }
 

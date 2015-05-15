@@ -48,7 +48,7 @@
         </a>
       </li>
       <li class="@if ( isset($endpoint_nav) ) active @endif">
-        <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/endpoint" >
+        <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/client/manage" >
           <span class="menu-icon"><i class="icon icon-cogs"></i></span> {{ Lang::get('lrs.sidebar.endpoint') }}
         </a>
       </li>

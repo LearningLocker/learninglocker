@@ -28,7 +28,7 @@ abstract class ResourcesTestCase extends StatementsTestCase {
 
   protected function requestResource($method = 'GET', $uri = '', $content = '') {
     $params = [];
-    return $this->request($method, $uri, $params, $this->getServer($this->lrs), $content);
+    return $this->request($method, $uri, $params, $this->getServer($this->ll_client), $content);
   }
 
   public function testIndex() {

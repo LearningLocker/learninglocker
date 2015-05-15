@@ -135,7 +135,8 @@ class LrsController extends BaseController {
     return View::make('partials.lrs.dashboard', array_merge($this->getLrs($lrs_id), [
       'stats' => $dashboard->getStats(),
       'graph_data' => $dashboard->getGraphData(),
-      'dash_nav' => true
+      'dash_nav' => true,
+      'client' => (new \Client)->where('lrs_id', $lrs_id)->first()
     ]));
   }
 
@@ -203,17 +204,6 @@ class LrsController extends BaseController {
   }
 
   /**
-   * Display the endpoint view.
-   * @param String $lrs_id
-   * @return View
-   */
-  public function endpoint($lrs_id) {
-    return View::make('partials.lrs.endpoint', array_merge($this->getLrs($lrs_id), [
-      'endpoint_nav' => true
-    ]));
-  }
-
-  /**
    * Display the api view.
    * @param String $lrs_id
    * @return View
@@ -222,30 +212,6 @@ class LrsController extends BaseController {
     return View::make('partials.lrs.api', array_merge($this->getLrs($lrs_id), [
       'api_nav' => true
     ]));
-  }
-
-  /**
-   * Generate a new key and secret for basic auth
-   *
-   **/
-  public function editCredentials( $lrs_id ){
-    $opts = ['user' => \Auth::user()];
-    $lrs = $this->lrs->show($lrs_id);
-
-    $lrs->api  = [
-      'basic_key' => \Locker\Helpers\Helpers::getRandomValue(),
-      'basic_secret' => \Locker\Helpers\Helpers::getRandomValue()
-    ];
-
-    if ($lrs->save()) {
-      $message_type = 'success';
-      $message = trans('update_key');
-    } else {
-      $message_type = 'error';
-      $message = trans('update_key_error');
-    }
-
-    return Redirect::back()->with($message_type, $message);
   }
 
   /**
