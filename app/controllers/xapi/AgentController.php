@@ -34,13 +34,20 @@ class AgentController extends DocumentController {
     )->toArray();
     $agents = array_column($agents, 'agent');
 
+    $accounts = array_map(function ($agent) {
+      return isset($agent['account']) ? json_encode($agent['account']) : null;
+    }, $agents);
+    $accounts = array_map(function ($account) {
+      return json_decode($account);
+    }, array_unique($accounts));
+
     $person = (object) [
       'objectType' => 'Person',
       'name' => array_unique(array_column($agents, 'name')),
       'mbox' => array_unique(array_column($agents, 'mbox')),
       'mbox_sha1sum' => array_unique(array_column($agents, 'mbox_sha1sum')),
       'openid' => array_unique(array_column($agents, 'openid')),
-      'account' => array_unique(array_column($agents, 'account'))
+      'account' => $accounts
     ];
 
     return \Response::json($person);
