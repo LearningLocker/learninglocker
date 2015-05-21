@@ -1,0 +1,22 @@
+{
+    "name": "philo/laravel-translate",
+    "description": "Translation manager for Laravel 4",
+    "keywords": ["laravel", "translate", "translation", "manager"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Philo Hermans",
+            "email": "me@philohermans.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "illuminate/support": "4.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "Philo\\Translate\\": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
