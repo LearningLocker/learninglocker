@@ -93,12 +93,12 @@ class EloquentRepository extends BaseRepository implements Repository {
   public function store(array $data, array $opts) {
     $client = parent::store($data, $opts);
 
+    var_dump('Client/EloquentRepository@store1');
     \DB::getMongoDB()->oauth_clients->insert([
       'client_id' => $client->api['basic_key'],
       'client_secret' => $client->api['basic_secret'],
       'redirect_uri' => 'http://www.example.com/'
     ]);
-    var_dump('Client/EloquentRepository@store1');
 
     return $client;
   }
@@ -111,10 +111,10 @@ class EloquentRepository extends BaseRepository implements Repository {
    */
   public function destroy($id, array $opts) {
     $client = $this->show($id, $opts);
+    var_dump('Client/EloquentRepository@destroy1');
     \DB::getMongoDB()->oauth_clients->remove([
       'client_id' => $client->api['basic_key']
     ]);
-    var_dump('Client/EloquentRepository@destroy1');
     if ($this->where($opts)->count() < 2) {
       $this->store(['authority' => [
         'name' => 'Must have client',
