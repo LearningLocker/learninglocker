@@ -98,6 +98,7 @@ class EloquentRepository extends BaseRepository implements Repository {
       'client_secret' => $client->api['basic_secret'],
       'redirect_uri' => 'http://www.example.com/'
     ]);
+    var_dump('Client/EloquentRepository@store1');
 
     return $client;
   }
@@ -113,6 +114,7 @@ class EloquentRepository extends BaseRepository implements Repository {
     \DB::getMongoDB()->oauth_clients->remove([
       'client_id' => $client->api['basic_key']
     ]);
+    var_dump('Client/EloquentRepository@destroy1');
     if ($this->where($opts)->count() < 2) {
       $this->store(['authority' => [
         'name' => 'Must have client',
