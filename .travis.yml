@@ -6,9 +6,6 @@ php:
 services:
   - mongodb
 
-install:
-  - npm install -g bower
-  - composer install --no-interaction --dev
 
 before_script:
   - phpenv config-add travisconfig.ini
