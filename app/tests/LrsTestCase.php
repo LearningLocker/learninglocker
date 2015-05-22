@@ -6,7 +6,9 @@ abstract class LrsTestCase extends InstanceTestCase {
 
   public function setUp() {
     parent::setUp();
+    echo 'LrsTestCase::createLrs'.PHP_EOL;
     $this->lrs = $this->createLrs($this->user);
+    echo 'LrsTestCase::createLLClient'.PHP_EOL;
     $this->ll_client = $this->createLLClient($this->lrs);
     $_SERVER['SERVER_NAME'] = $this->lrs->title.'.com.vn';
   }
