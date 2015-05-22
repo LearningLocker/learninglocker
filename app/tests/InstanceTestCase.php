@@ -4,6 +4,7 @@ abstract class InstanceTestCase extends TestCase {
   protected $user, $site;
 
   public function setUp() {
+    echo 'TestCase::setup'.PHP_EOL;
     parent::setUp();
     echo 'InstanceTestCase::createUser'.PHP_EOL;
     $this->user = $this->createUser();
