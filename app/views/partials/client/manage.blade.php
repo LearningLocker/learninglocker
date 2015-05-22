@@ -16,7 +16,7 @@
   <div>
     <div class="alert alert-success clearfix">
       <div class="col-sm-10">
-        <b>{{ trans('lrs.endpoint.endpoint') }}:</b> <span class="break-words">{{ URL() }}/data/xAPI/</span>
+        <b>{{ trans('lrs.endpoint.endpoint') }}:</b> <span class="break-words">{{ URL() }}/data/xAPI</span>
       </div>
     </div>
     <div>
@@ -29,8 +29,8 @@
             <th>{{trans('site.name')}}</th>
             <th>{{trans('site.username')}}</th>
             <th>{{trans('site.password')}}</th>
-            <th>{{trans('site.edit')}}</th>
-            <th>{{trans('site.delete')}}</th>
+            <th width="5%"><center>{{trans('site.edit')}}</center></th>
+            <th width="5%"><center>{{trans('site.delete')}}</center></th>
           <tr>
         </thead>
         <tbody>
