@@ -1,7 +1,7 @@
 <td>{{ $client->authority['name'] }}</td>
-<td>{{ chunk_split($client->api['basic_key'], 20, '</br>') }}</td>
-<td>{{ chunk_split($client->api['basic_secret'], 20, '</br>') }}</td>
-<td>
+<td>{{ chunk_split($client->api['basic_key'], 40, '') }}</td>
+<td>{{ chunk_split($client->api['basic_secret'], 40, '') }}</td>
+<td><center>
   <a
     href="{{ URL() }}/lrs/{{ $lrs->_id }}/client/{{ $client->_id }}/edit"
     class="btn btn-info btn-sm"
@@ -9,5 +9,5 @@
   >
     <i class="icon-pencil"></i>
   </a>
-</td>
-<td>@include('partials.client.forms.delete')</td>
+</center></td>
+<td><center>@include('partials.client.forms.delete')</center></td>
