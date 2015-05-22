@@ -1,0 +1,31 @@
+{
+  "name": "backbone.basicauth",
+  "version": "0.4.0",
+  "description": "Sync data through your Backbone Models and Collections to resources protected by HTTP Basic Authentication.",
+  "main": "backbone.basicauth.js",
+  "dependencies": {
+    "backbone": "~1.0.0",
+    "underscore": ">=1.4.3"
+  },
+  "keywords": [
+    "backbone.js",
+    "basic authentication",
+    "basicauth",
+    "auth"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ],
+  "homepage": "https://github.com/fiznool/backbone.basicauth",
+  "_release": "0.4.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.4.0",
+    "commit": "0af8c33509b416c4cb42277daaa88c9cfc017c29"
+  },
+  "_source": "git://github.com/fiznool/backbone.basicauth.git",
+  "_target": "~0.4.0",
+  "_originalSource": "backbone.basicauth"
+}

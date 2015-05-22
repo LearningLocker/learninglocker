@@ -6,14 +6,12 @@ php:
 services:
   - mongodb
 
-install:
-  - npm install -g bower
-  - composer install --no-interaction --dev
 
 before_script:
   - phpenv config-add travisconfig.ini
   - sleep 3
   - sudo chmod -R 777 ./uploads
+  - sudo chmod -R 777 ./vendor
   - php artisan migrate --env="testing"
 
 script: ./vendor/bin/phpunit

@@ -1,0 +1,44 @@
+{
+  "name": "npm-beagle",
+  "version": "1.0.2",
+  "description": "A library to support nested routers.",
+  "main": "build/export.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "gulp"
+  },
+  "author": "Ryan Smith",
+  "licence": {
+    "type": "Creative Commons",
+    "url": "https://github.com/ht2/beagle/blob/master/license.md"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ht2/beagle.git"
+  },
+  "homepage": "https://www.github.com/ht2/beagle",
+  "keywords": [
+    "coupling",
+    "objects"
+  ],
+  "bugs": {
+    "url": "http://github.com/ht2/beagle/issues"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "devDependencies": {
+    "coffee-script": "^1.7.1",
+    "gulp": "^3.8.7",
+    "gulp-coffee": "^2.2.0",
+    "gulp-coffeelint": "^0.3.4",
+    "gulp-jasmine": "^1.0.0",
+    "gulp-sourcemaps": "^1.2.1"
+  },
+  "dependencies": {
+    "amdefine": "^0.1.0"
+  }
+}

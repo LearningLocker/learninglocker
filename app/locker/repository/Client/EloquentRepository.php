@@ -75,7 +75,6 @@ class EloquentRepository extends BaseRepository implements Repository {
    * @return Model
    */
   protected function constructUpdate(Model $model, array $data, array $opts) {
-    //dd($data);
     $this->validateData($data);
 
     // Sets properties on model.
@@ -110,15 +109,18 @@ class EloquentRepository extends BaseRepository implements Repository {
    */
   public function destroy($id, array $opts) {
     $client = $this->show($id, $opts);
+
     \DB::getMongoDB()->oauth_clients->remove([
       'client_id' => $client->api['basic_key']
     ]);
+
     if ($this->where($opts)->count() < 2) {
       $this->store(['authority' => [
         'name' => 'Must have client',
         'mbox' => 'mailto:hello@learninglocker.net'
       ]], $opts);
     }
+    
     return parent::destroy($id, $opts);
   }
 

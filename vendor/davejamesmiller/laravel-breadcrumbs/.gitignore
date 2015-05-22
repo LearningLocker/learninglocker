@@ -1,0 +1,5 @@
+/test-coverage
+/vendor
+composer.phar
+composer.lock
+.DS_Store

@@ -5,6 +5,7 @@ class OAuthTest extends \Tests\LrsTestCase {
 
   public function setup() {
     parent::setup();
+    echo 'OAuthTest::createOAuthClient'.PHP_EOL;
     \DB::getMongoDB()->oauth_clients->insert([
       'client_id' => $this->ll_client->api['basic_key'],
       'client_secret' => $this->ll_client->api['basic_secret'],
