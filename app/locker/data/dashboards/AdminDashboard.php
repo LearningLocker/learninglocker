@@ -60,7 +60,11 @@ class AdminDashboard extends \app\locker\data\BaseData {
    *
    **/
   public function actorCount(){
-    return \Statement::distinct('statement.actor.mbox')->remember(5)->count();
+    $mbox =  intval( \Statement::distinct('statement.actor.mbox')->remember(5)->get()->count() );
+    $openid =  intval( \Statement::distinct('statement.actor.openid')->remember(5)->get()->count() );
+    $mbox_sha1sum =  intval( \Statement::distinct('statement.actor.mbox_sha1sum')->remember(5)->get()->count() );
+    $account =  intval( \Statement::distinct('statement.actor.account.name')->remember(5)->get()->count() );
+    return ($mbox + $openid + $mbox_sha1sum + $account);
   }
 
   /**

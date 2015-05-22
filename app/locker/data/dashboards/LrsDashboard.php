@@ -52,19 +52,40 @@ class LrsDashboard extends \app\locker\data\BaseData {
    *
    **/
   public function actorCount(){
-
-    $count = $this->db->statements->aggregate(
+    $count_array = ['mbox' => '', 'openid' => '', 'mbox_sha1sum' => '', 'account' => ''];
+    
+    $count_array['mbox'] = $this->db->statements->aggregate(
               array('$match' => $this->getMatch( $this->lrs )),
               array('$group' => array('_id' => '$statement.actor.mbox')),
               array('$group' => array('_id' => 1, 'count' => array('$sum' => 1)))
               );
+    
+    $count_array['openid'] = $this->db->statements->aggregate(
+            array('$match' => $this->getMatch( $this->lrs )),
+            array('$group' => array('_id' => '$statement.actor.openid')),
+            array('$group' => array('_id' => 1, 'count' => array('$sum' => 1)))
+    );
+    
+    $count_array['mbox_sha1sum'] = $this->db->statements->aggregate(
+            array('$match' => $this->getMatch( $this->lrs )),
+            array('$group' => array('_id' => '$statement.actor.mbox_sha1sum')),
+            array('$group' => array('_id' => 1, 'count' => array('$sum' => 1)))
+    );
+    
+    $count_array['account'] = $this->db->statements->aggregate(
+            array('$match' => $this->getMatch( $this->lrs )),
+            array('$group' => array('_id' => '$statement.actor.account.name')),
+            array('$group' => array('_id' => 1, 'count' => array('$sum' => 1)))
+    );
 
-    if( isset($count['result'][0]) ){
-      return $count['result'][0]['count'];
-    }else{
-      return 0;
+    $summary = 0;
+    foreach ($count_array as $key => $val) {
+        if( isset($val['result'][0]) ){
+          $summary += $val['result'][0]['count'];
+        }
     }
-
+    
+    return $summary;
   }
 
   /**
