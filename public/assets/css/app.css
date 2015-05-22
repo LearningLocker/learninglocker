@@ -215,6 +215,10 @@ table.break-words td, table.break-words th {
   word-wrap: break-word;
 }
 
+.ico_col {
+	text-align: center;
+}
+
 /* Bootstrap extensions (note: looks like we're not using LESS?)
 --------------------------------------------------------------*/
 @media(max-width: 480px){

@@ -29,14 +29,15 @@
             <th>{{trans('site.name')}}</th>
             <th>{{trans('site.username')}}</th>
             <th>{{trans('site.password')}}</th>
-            <th width="5%"><center>{{trans('site.edit')}}</center></th>
-            <th width="5%"><center>{{trans('site.delete')}}</center></th>
+            <th class="ico_col">{{trans('site.edit')}}</th>
+            <th class="ico_col">{{trans('site.delete')}}</th>
           <tr>
         </thead>
         <tbody>
           @foreach( $clients as $index => $client )
-              <tr class="{{ Session::get('success') === trans('lrs.client.created_sucecss') && $index === ($clients->count() - 1) ? 'flash' : '' }}">@include('partials.client.item', array( 'client' => $client ))</tr>
+              <tr class="{{ Session::get('success') === trans('lrs.client.created_success') && $index === ($clients->count() - 1) ? 'flash' : '' }}">@include('partials.client.item', array( 'client' => $client ))
           @endforeach
+</tr>
         </tbody>
       </table>
 
