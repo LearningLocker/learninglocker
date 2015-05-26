@@ -23,6 +23,7 @@ return array(
   	'title'       => 'Title',
   	'name'		    => 'Name',
   	'description' => 'Description',
+    'scopes'      => 'Scopes',
   	'logo'		    => 'Logo',
   	'language'    => 'Language',
   	'submit'	    => 'Submit',

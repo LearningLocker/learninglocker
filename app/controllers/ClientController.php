@@ -51,7 +51,8 @@ class ClientController extends BaseController {
 	 	return View::make('partials.client.edit', [
       'client' => $client,
       'lrs' => $lrs,
-      'list' => $lrs_list
+      'list' => $lrs_list,
+      'scopes' => ['all'],
 		]);
   }
   
@@ -83,7 +84,8 @@ class ClientController extends BaseController {
    * @return View
    */
   public function update($lrs_id, $id){
-    $data = Input::all();
+    $input = Input::all();
+    $input['scopes'] = array_values(isset($input['scopes']) ? $input['scopes'] : []);
     $authority = [
       'name' => $data['name'],
     ];
