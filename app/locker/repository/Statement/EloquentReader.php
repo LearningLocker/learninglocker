@@ -20,8 +20,10 @@ abstract class EloquentReader {
     } else if (in_array('statements/read/mine', $scopes)) {
       $query = $query->where('client_id', $opts->getOpt('client')->_id);
     } else {
-      // Throw exception.
+      throw new Exceptions\Exception('Unauthorized request.', 401);
     }
+
+    return $query;
   }
 
   /**
