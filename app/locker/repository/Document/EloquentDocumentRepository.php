@@ -138,6 +138,14 @@ class EloquentDocumentRepository implements DocumentRepository {
     return true;
   }
 
+  private function filterScopes($options, $scope, $read = true) {
+    $scopes = $options['scopes'];
+
+    if (!(in_array('all', $scopes) || ($read && in_array('all/read', $scopes)) || in_array($scope, $scopes))) {
+      throw new Exceptions\Exception('Unauthorized request.', 401);
+    }
+  }
+
 
 
   ///////////////////
@@ -157,6 +165,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    * @return Collection              A collection of DocumentAPIs
    */
   public function allStateDocs( $options,  $activityId, $agent, $registration, $since, $get ){
+    $this->filterScopes($options, 'state');
 
     $query = $this->documentapi->where('lrs', $options['lrs_id'])
          ->where('documentType', DocumentType::STATE)
@@ -190,6 +199,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    * @return DocumentAPI
    */
   public function findStateDoc( $options, $stateId, $activityId, $agent, $registration, $get ){
+    $this->filterScopes($options, 'state');
 
     $query = $this->documentapi->where('lrs', $options['lrs_id'])
          ->where('documentType', DocumentType::STATE)
@@ -222,6 +232,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    * @return DocumentAPI        The document being created/updated
    */
   public function storeStateDoc( $options, $data, $updated, $method ){
+    $this->filterScopes($options, 'state', false);
 
     $existing_document = $this->findStateDoc( $options, $data['stateId'], $data['activityId'], $data['agent'], $data['registration'], true );
 
@@ -277,6 +288,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    * @return Collection              A collection of DocumentAPIs
    */
   public function allActivityDocs( $options, $activityId, $since, $get ){
+    $this->filterScopes($options, 'profile');
 
     $query = $this->documentapi->where('lrs', $options['lrs_id'])
          ->where('documentType', DocumentType::ACTIVITY)
@@ -305,6 +317,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    * @return DocumentAPI
    */
   public function findActivityDoc( $options, $profileId, $activityId, $get ){
+    $this->filterScopes($options, 'profile');
 
     $query = $this->documentapi->where('lrs', $options['lrs_id'])
          ->where('documentType', DocumentType::ACTIVITY)
@@ -345,6 +358,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    * @return DocumentAPI        The document being created/updated
    */
   public function storeActivityDoc( $options, $data, $updated, $method ){
+    $this->filterScopes($options, 'profile', false);
 
     $existing_document = $this->findActivityDoc( $options, $data['profileId'], $data['activityId'], true );
 
@@ -396,6 +410,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    * @return Collection              A collection of DocumentAPIs
    */
   public function allAgentDocs( $options, $agent, $since, $get ){
+    $this->filterScopes($options, 'profile');
 
     $query = $this->documentapi->where('lrs', $options['lrs_id'])
          ->where('documentType', DocumentType::AGENT);
@@ -426,6 +441,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    * @return DocumentAPI
    */
   public function findAgentDoc( $options, $profileId, $agent, $get ){
+    $this->filterScopes($options, 'profile');
 
     $query = $this->documentapi->where('lrs', $options['lrs_id'])
          ->where('documentType', DocumentType::AGENT)
@@ -453,6 +469,7 @@ class EloquentDocumentRepository implements DocumentRepository {
    * @return DocumentAPI        The document being created/updated
    */
   public function storeAgentDoc( $options, $data, $updated, $method ){
+    $this->filterScopes($options, 'profile', false);
 
     $existing_document = $this->findAgentDoc( $options, $data['profileId'], $data['agent'], true );
 

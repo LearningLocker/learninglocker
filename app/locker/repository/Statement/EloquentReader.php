@@ -12,7 +12,16 @@ abstract class EloquentReader {
    * @return \Jenssegers\Mongodb\Eloquent\Builder
    */
   protected function where(Options $opts) {
-    return (new $this->model)->where('lrs._id', $opts->getOpt('lrs_id'));
+    $scopes = $opts->getOpt('scopes');
+    $query = (new $this->model)->where('lrs._id', $opts->getOpt('lrs_id'));
+
+    if (in_array('all', $scopes) || in_array('all/read', $scopes) || in_array('statements/read/mine', $scopes)) {
+      // Get all statements.
+    } else if (in_array('statements/read/mine', $scopes)) {
+      $query = $query->where('client_id', $opts->getOpt('client')->_id);
+    } else {
+      // Throw exception.
+    }
   }
 
   /**
