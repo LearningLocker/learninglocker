@@ -84,8 +84,8 @@ class ClientController extends BaseController {
    * @return View
    */
   public function update($lrs_id, $id){
-    $input = Input::all();
-    $input['scopes'] = array_values(isset($input['scopes']) ? $input['scopes'] : []);
+    $data = Input::all();
+    $data['scopes'] = array_values(isset($data['scopes']) ? $data['scopes'] : []);
     $authority = [
       'name' => $data['name'],
     ];

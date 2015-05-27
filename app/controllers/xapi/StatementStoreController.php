@@ -55,24 +55,24 @@ class StatementStoreController {
 
   /**
    * Stores (POSTs) a newly created statement in storage.
-   * @param String $lrs_id
+   * @param [String => mixed] $options
    * @return Response
    */
-  public function store($lrs_id) {
+  public function store($options) {
     if (LockerRequest::hasParam(StatementController::STATEMENT_ID)) {
       throw new Exceptions\Exception('Statement ID parameter is invalid.');
     }
 
-    return IlluminateResponse::json($this->createStatements($lrs_id), 200, $this->getCORSHeaders());
+    return IlluminateResponse::json($this->createStatements($options), 200, $this->getCORSHeaders());
   }
 
   /**
    * Updates (PUTs) Statement with the given id.
-   * @param String $lrs_id
+   * @param [String => mixed] $options
    * @return Response
    */
-  public function update($lrs_id) {
-    $this->createStatements($lrs_id, function ($statements) {
+  public function update($options) {
+    $this->createStatements($options, function ($statements) {
       $statement_id = \LockerRequest::getParam(StatementController::STATEMENT_ID);
 
       // Returns a error if identifier is not present.
@@ -90,11 +90,11 @@ class StatementStoreController {
 
   /**
    * Creates statements from the content of the request.
-   * @param String $lrs_id
+   * @param [String => mixed] $options
    * @param Callable|null $modifier A function that modifies the statements before storing them.
    * @return AssocArray Result of storing the statements.
    */
-  private function createStatements($lrs_id, Callable $modifier = null) {
+  private function createStatements($options, Callable $modifier = null) {
     Helpers::validateAtom(new XApiImt(explode(';', LockerRequest::header('Content-Type'))[0]));
 
     // Gets parts of the request.
@@ -123,21 +123,13 @@ class StatementStoreController {
     return $this->statements->store(
       $statements,
       is_array($parts['attachments']) ? $parts['attachments'] : [],
-      [
-        'lrs_id' => $lrs_id,
-        'authority' => $this->getAuthority()
-      ]
+      array_merge([
+        'authority' => $this->getAuthority($options['client'])
+      ], $options)
     );
   }
 
-  private function getAuthority() {
-    list($username, $password) = Helpers::getUserPassFromAuth();
-    $client = Helpers::getClient($username, $password);
-
-    if ($client === null) {
-      throw new Exceptions\Exception('No authority.');
-    }
-    
+  private function getAuthority($client) {
     return json_decode(json_encode($client['authority']));
   }
 

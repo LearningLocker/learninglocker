@@ -21,10 +21,10 @@ class StatementIndexController {
   /**
    * Gets an array of statements.
    * https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#723-getstatements
-   * @param String $lrs_id
+   * @param [String => mixed] $options
    * @return Response
    */
-  public function index($lrs_id) {
+  public function index($options) {
     // Gets the acceptable languages.
     $langs = LockerRequest::header('Accept-Language', []);
     $langs = is_array($langs) ? $langs : explode(',', $langs);
@@ -43,9 +43,8 @@ class StatementIndexController {
 
     // Gets an index of the statements with the given options.
     list($statements, $count, $opts) = $this->statements->index(array_merge([
-      'lrs_id' => $lrs_id,
       'langs' => $langs
-    ], $params));
+    ], $params, $options));
 
     // Defines the content type and body of the response.
     if ($opts['attachments'] === true) {
