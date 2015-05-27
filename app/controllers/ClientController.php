@@ -52,7 +52,15 @@ class ClientController extends BaseController {
       'client' => $client,
       'lrs' => $lrs,
       'list' => $lrs_list,
-      'scopes' => ['all'],
+      'scopes' => [
+        'all',
+        'all/read',
+        'statements/write',
+        'statements/read',
+        'statements/read/mine',
+        'state',
+        'profile',
+      ],
 		]);
   }
   
