@@ -27,7 +27,16 @@ class EloquentQueryRepository implements QueryRepository {
                     $statements->where(function($query) use ($filter) {
                         foreach ($filter[2] as $value) {
                             foreach ($value[1] as $subVal) {
-                                $query->orWhere($value[0], '=', $subVal);
+                                if (is_object($subVal)) {
+                                    $subVal_array = get_object_vars($subVal);
+                                    $query->orWhere(function($query) use ($subVal_array, $value) {
+                                        foreach ($subVal_array as $key => $val) {
+                                            $auery->where($value[0] . '.' . $key, '=', $val);
+                                        }
+                                    });
+                                } else {
+                                    $query->orWhere($value[0], '=', $subVal);
+                                }
                             }
                         }
                     });
