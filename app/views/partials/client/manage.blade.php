@@ -29,8 +29,8 @@
             <th>{{trans('site.name')}}</th>
             <th>{{trans('site.username')}}</th>
             <th>{{trans('site.password')}}</th>
-            <th class="ico_col">{{trans('site.edit')}}</th>
-            <th class="ico_col">{{trans('site.delete')}}</th>
+            <th class="text-center">{{trans('site.edit')}}</th>
+            <th class="text-center">{{trans('site.delete')}}</th>
           <tr>
         </thead>
         <tbody>
