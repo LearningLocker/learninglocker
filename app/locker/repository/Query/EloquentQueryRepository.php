@@ -31,7 +31,7 @@ class EloquentQueryRepository implements QueryRepository {
                                     $subVal_array = get_object_vars($subVal);
                                     $query->orWhere(function($query) use ($subVal_array, $value) {
                                         foreach ($subVal_array as $key => $val) {
-                                            $auery->where($value[0] . '.' . $key, '=', $val);
+                                            $query->where($value[0] . '.' . $key, '=', $val);
                                         }
                                     });
                                 } else {
