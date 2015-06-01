@@ -1,4 +1,5 @@
 <?php namespace Locker\Repository\Query;
+use \Locker\Helpers\Helpers as Helpers;
 
 class EloquentQueryRepository implements QueryRepository {
 
@@ -64,7 +65,7 @@ class EloquentQueryRepository implements QueryRepository {
       '$match' => [self::LRS_ID_KEY => $lrsId]
     ], $pipeline[0]);
 
-    return $this->db->statements->aggregate($pipeline);
+    return Helpers::replaceHtmlEntity($this->db->statements->aggregate($pipeline), true);
   }
 
   /**
