@@ -65,7 +65,7 @@ class EloquentQueryRepository implements QueryRepository {
       '$match' => [self::LRS_ID_KEY => $lrsId]
     ], $pipeline[0]);
 
-    return Helpers::replaceHtmlEntity($this->db->statements->aggregate($pipeline));
+    return Helpers::replaceHtmlEntity($this->db->statements->aggregate($pipeline), true);
   }
 
   /**
