@@ -26,17 +26,22 @@ abstract class LrsTestCase extends InstanceTestCase {
     return $model;
   }
 
+  private function createRandomString() {
+    return sha1(uniqid(mt_rand(), true));
+  }
+
   protected function createLLClient(\Lrs $lrs) {
     $model = new \Client([
       'api' => [
-        'basic_key' => '123',
-        'basic_secret' => '456'
+        'basic_key' => $this->createRandomString(),
+        'basic_secret' => $this->createRandomString()
       ],
       'authority' => [
         'name' => 'Test client',
         'mbox' => 'mailto:test@example.com'
       ],
-      'lrs_id' => $lrs->_id
+      'lrs_id' => $lrs->_id,
+      'scopes' => ['all']
     ]);
     $model->save();
     return $model;
