@@ -33,15 +33,21 @@ class Report extends Eloquent {
     $reportArr = $this->toArray();
     $match = [];
     $query = isset($reportArr['query']) ? (array) $reportArr['query'] : null;
-    $actorArray = [];
 
     if (is_array($query) && count($query) > 0 && !isset($query[0])) {
       foreach ($query as $key => $value) {
         if (in_array($key, $this->actorQuery)) {
-          if (is_array($value)) {
-            $match['$or'][][$key] = ['$in' => $value];
-          } else {
-            $match['$or'][][$key] = $value;
+          foreach ($value as $actor_id) {
+            if (is_object($actor_id)) {
+              $object_vars = get_object_vars($actor_id);
+              $filter = [];
+              foreach ($object_vars as $var_key => $var_val) {
+                $filter[$key.'.'.$var_key] = $var_val;
+              }
+              $match['$or'][] = $filter;
+            } else {
+              $match['$or'][][$key] = $actor_id;
+            }
           }
         } else {
           if (is_array($value)) {
