@@ -122,7 +122,7 @@ class SiteController extends BaseController {
     $lrss = $this->lrs->index($opts);
 
     return Response::json(array_map(function ($lrs) {
-      $lrs->statement_total = $this->statement->count(['lrs_id' => $lrs->_id]);
+      $lrs->statement_total = $this->statement->count(['lrs_id' => $lrs->_id, 'scopes' => ['all']]);
       return $lrs;
     }, $lrss));
   }
