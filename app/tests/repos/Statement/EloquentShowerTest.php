@@ -12,7 +12,9 @@ class EloquentShowerTest extends EloquentTest {
 
   public function testShow() {
     $opts = new ShowOptions([
-      'lrs_id' => $this->lrs->_id
+      'lrs_id' => $this->lrs->_id,
+      'client' => $this->ll_client,
+      'scopes' => $this->ll_client->scopes
     ]);
     $result = $this->shower->show('00000000-0000-0000-b000-000000000000', $opts);
 
@@ -24,7 +26,9 @@ class EloquentShowerTest extends EloquentTest {
   public function testShowInactive() {
     $opts = new ShowOptions([
       'lrs_id' => $this->lrs->_id,
-      'active' => false
+      'active' => false,
+      'client' => $this->ll_client,
+      'scopes' => $this->ll_client->scopes
     ]);
     $model = $this->statements[0];
     $model->active = false;
@@ -39,7 +43,9 @@ class EloquentShowerTest extends EloquentTest {
   public function testShowVoided() {
     $opts = new ShowOptions([
       'lrs_id' => $this->lrs->_id,
-      'voided' => true
+      'voided' => true,
+      'client' => $this->ll_client,
+      'scopes' => $this->ll_client->scopes
     ]);
     $model = $this->statements[0];
     $model->voided = true;
@@ -55,7 +61,9 @@ class EloquentShowerTest extends EloquentTest {
     $opts = new ShowOptions([
       'lrs_id' => $this->lrs->_id,
       'active' => false,
-      'voided' => true
+      'voided' => true,
+      'client' => $this->ll_client,
+      'scopes' => $this->ll_client->scopes
     ]);
     $model = $this->statements[0];
     $model->active = false;

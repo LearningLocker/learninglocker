@@ -81,6 +81,7 @@ class EloquentInserter extends EloquentReader implements Inserter {
   private function constructModel(\stdClass $statement, StoreOptions $opts) {
     return [
       'lrs' => ['_id' => $opts->getOpt('lrs_id')],
+      'client_id' => $opts->getOpt('client')->_id,
       'statement' => Helpers::replaceFullStop(json_decode(json_encode($statement), true)),
       'active' => false,
       'voided' => false,

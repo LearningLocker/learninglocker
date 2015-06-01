@@ -2,6 +2,7 @@
 
 use \Locker\Helpers\Helpers as Helpers;
 use \Locker\XApi\Statement as XAPIStatement;
+use \Locker\Helpers\Exceptions as Exceptions;
 
 interface Storer {
   public function store(array $statements, array $attachments, StoreOptions $opts);
@@ -26,6 +27,11 @@ class EloquentStorer extends EloquentReader implements Storer {
    * @return [String] UUIDs of the statements stored.
    */
   public function store(array $statements, array $attachments, StoreOptions $opts) {
+    $scopes = $opts->getOpt('scopes');
+    if (!(in_array('all', $scopes) || in_array('statements/write', $scopes))) {
+      throw new Exceptions\Exception('Unauthorized request.', 401);
+    }
+
     $id_statements = $this->constructValidStatements($statements, $opts);
     $ids = array_keys($id_statements);
     $statements = array_values($id_statements);
