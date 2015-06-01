@@ -16,7 +16,7 @@
   <div>
     <div class="alert alert-success clearfix">
       <div class="col-sm-10">
-        <b>{{ trans('lrs.endpoint.endpoint') }}:</b> <span class="break-words">{{ URL() }}/data/xAPI/</span>
+        <b>{{ trans('lrs.endpoint.endpoint') }}:</b> <span class="break-words">{{ URL() }}/data/xAPI</span>
       </div>
     </div>
     <div>
@@ -29,14 +29,15 @@
             <th>{{trans('site.name')}}</th>
             <th>{{trans('site.username')}}</th>
             <th>{{trans('site.password')}}</th>
-            <th>{{trans('site.edit')}}</th>
-            <th>{{trans('site.delete')}}</th>
+            <th class="text-center">{{trans('site.edit')}}</th>
+            <th class="text-center">{{trans('site.delete')}}</th>
           <tr>
         </thead>
         <tbody>
           @foreach( $clients as $index => $client )
-              <tr class="{{ Session::get('success') === trans('lrs.client.created_sucecss') && $index === ($clients->count() - 1) ? 'flash' : '' }}">@include('partials.client.item', array( 'client' => $client ))</tr>
+              <tr class="{{ Session::get('success') === trans('lrs.client.created_success') && $index === ($clients->count() - 1) ? 'flash' : '' }}">@include('partials.client.item', array( 'client' => $client ))
           @endforeach
+</tr>
         </tbody>
       </table>
 
