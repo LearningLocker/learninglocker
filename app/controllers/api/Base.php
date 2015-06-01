@@ -20,6 +20,8 @@ class Base extends Controller {
    */
   public function __construct() {
     $this->lrs = Helpers::getLrsFromAuth();
+    list($username, $password) = Helpers::getUserPassFromAuth();
+    $this->client = Helpers::getClient($username, $password);
   }
 
   /**
@@ -28,7 +30,9 @@ class Base extends Controller {
    */
   protected function getOptions() {
     return [
-      'lrs_id' => $this->lrs->_id
+      'lrs_id' => $this->lrs->_id,
+      'scopes' => $this->client->scopes,
+      'client' => $this->client
     ];
   }
 

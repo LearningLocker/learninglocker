@@ -9,6 +9,7 @@ abstract class StatementsTestCase extends LrsTestCase {
     parent::setUp();
     $this->statements = [$this->createStatement(
       $this->lrs,
+      $this->ll_client,
       $this->generateStatement()
     )];
   }
@@ -38,9 +39,10 @@ abstract class StatementsTestCase extends LrsTestCase {
     ], $statement);
   }
 
-  protected function createStatement(\Lrs $lrs, array $statement) {
+  protected function createStatement(\Lrs $lrs, \Client $client, array $statement) {
     $model = new \Statement([
       'lrs' => ['_id' => $lrs->_id],
+      'client_id' => $client->_id,
       'statement' => $statement,
       'active' => true,
       'voided' => false,

@@ -26,7 +26,7 @@ class AgentController extends DocumentController {
 
     $agent = (array) $this->getIndexData()[key($this->required)];
     $agents = $this->document->all(
-      $this->lrs->_id,
+      $this->getOptions(),
       $this->document_type,
       $this->getIndexData([
         'since' => ['string', 'timestamp']

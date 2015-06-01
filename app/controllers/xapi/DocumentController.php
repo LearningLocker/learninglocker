@@ -46,7 +46,7 @@ abstract class DocumentController extends BaseController {
 
     // Gets all documents.
     $documents = $this->document->all(
-      $this->lrs->_id,
+      $this->getOptions(),
       $this->document_type,
       $this->getIndexData([
         'since' => ['string', 'timestamp']
@@ -89,7 +89,7 @@ abstract class DocumentController extends BaseController {
 
     // Stores the document.
     $document = $this->document->store(
-      $this->lrs->_id,
+      $this->getOptions(),
       $this->document_type,
       $data,
       $this->getUpdatedValue(),
@@ -139,7 +139,7 @@ abstract class DocumentController extends BaseController {
   protected function completeDelete($data = null, $singleDelete = false) {
     // Attempts to delete the document.
     $success = $this->document->delete(
-      $this->lrs->_id,
+      $this->getOptions(),
       $this->document_type,
       $data ?: $this->getShowData(),
       $singleDelete
@@ -218,7 +218,7 @@ abstract class DocumentController extends BaseController {
    * @return Response
    */
   public function documentResponse($data) {
-    $document = $this->document->find($this->lrs->_id, $this->document_type, $data);
+    $document = $this->document->find($this->getOptions(), $this->document_type, $data);
 
     if (!$document) {
       throw new Exceptions\NotFound($data[$this->identifier], $this->document_type);
