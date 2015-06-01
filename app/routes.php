@@ -217,28 +217,31 @@ Route::get('lrs/{id}/exporting', array(
 |------------------------------------------------------------------
 */
 Route::get('lrs/{id}/client/manage', array(
+  'before' => 'auth',
   'uses' => 'ClientController@manage',
   'as' => 'client.manage'
 ));
 
 Route::delete('lrs/{lrs_id}/client/{id}/destory', array(
+  'before' => 'auth',
   'uses' => 'ClientController@destroy',
   'as' => 'client.destroy'
 ));
 
 Route::get('lrs/{lrs_id}/client/{id}/edit', array(
+  'before' => 'auth',
   'uses' => 'ClientController@edit',
   'as' => 'client.edit'
 ));
 
 Route::post('lrs/{id}/client/create', array(
-  'before' => 'csrf',
+  'before' => ['auth', 'csrf'],
   'uses' => 'ClientController@create',
   'as' => 'client.create'
 ));
 
 Route::put('lrs/{lrs_id}/client/{id}/update', array(
-  'before' => 'csrf',
+  'before' => ['auth', 'csrf'],
   'uses' => 'ClientController@update',
   'as' => 'client.update'
 ));
