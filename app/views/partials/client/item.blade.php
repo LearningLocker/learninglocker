@@ -1,6 +1,6 @@
 <td>{{ $client->authority['name'] }}</td>
-<td>{{ $client->api['basic_key'] }}</td>
-<td>{{ $client->api['basic_secret'] }}</td>
+<td><a href="#" class="copyable" title="Click to copy">{{ $client->api['basic_key'] }}</a></td>
+<td><a href="#" class="copyable" title="Click to copy">{{ $client->api['basic_secret'] }}</a></td>
 <td class="text-center">
   <a
     href="{{ URL() }}/lrs/{{ $lrs->_id }}/client/{{ $client->_id }}/edit"

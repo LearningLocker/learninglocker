@@ -86,6 +86,27 @@
       {{ HTML::script('assets/js/libs/bootstrap/bootstrap.min.js') }}
       {{ HTML::script('assets/js/respond.min.js') }}
       {{ HTML::script('assets/js/placeholder.js') }}
+      <script type="text/javascript">
+      (function (window, document) {
+        var copyables = [].slice.call(document.querySelectorAll('.copyable'));
+        var copy = function(event) {
+          window.getSelection().removeAllRanges();  
+          var range = document.createRange();
+          document.createElement
+          range.selectNode(event.currentTarget); 
+          window.getSelection().addRange(range);  
+          document.execCommand('copy');
+          window.getSelection().removeAllRanges();
+          if (!window.LL.copyalert) {
+            window.alert('{{trans("Copied")}}');
+            window.LL.copyalert = true;
+          }
+        };
+        copyables.map(function (copyable) {
+          copyable.addEventListener('click', copy);
+        });
+      })(window, document);
+      </script>
     @show
     @show
   </body>
