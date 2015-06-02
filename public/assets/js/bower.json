@@ -23,5 +23,8 @@
     "text": "git://github.com/requirejs/text.git#~2.0.12",
     "typeahead.js": "~0.10.5",
     "bootstrap": "~3.3.0"
+  },
+  "resolutions": {
+    "underscore": ">=1.7.0"
   }
 }
