@@ -7,7 +7,7 @@
   if( isset($statement['actor']['mbox']) ){
     $avatar = \Locker\Helpers\Helpers::getGravatar( substr($statement['actor']['mbox'], 7), '20');
   }else{
-    $avatar = 'http://placehold.it/20X20';
+    $avatar = 'http://placehold.it/20x20';
   }
 
   if( isset($statement['actor']['name']) && $statement['actor']['name'] != ''){
