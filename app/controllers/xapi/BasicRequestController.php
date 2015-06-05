@@ -17,10 +17,9 @@ class BasicRequestController extends BaseController {
    *  @param Lrs $lrs
    *  @param Client $client
    */
-  public function __construct(Client $client){
-  	$this->client  = $client;
-    $this->beforeFilter('@getLrs');
-    $this->beforeFilter('@setParameters', ['except' => 'store', 'put']);
+  public function __construct(Client $client_repo){
+    parent::__construct();
+  	$this->client_repo  = $client_repo;
   }
 
   /**
@@ -28,10 +27,13 @@ class BasicRequestController extends BaseController {
    * @return Response
    */
   public function store(){
-    $content = \LockerRequest::getContent();
-	
   	$opts = ['lrs_id' => $this->lrs->_id];
-  	$client = $this->client->store([], $opts);
+  	$client = $this->client_repo->store([
+      'authority' => [
+        'name' => 'API Client',
+        'mbox' => 'mailto:hello@learninglocker.net'
+      ]
+    ], $opts);
 
     if($client){
     	$returnCredentials = array(
