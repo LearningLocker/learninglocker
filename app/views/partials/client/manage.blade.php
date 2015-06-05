@@ -16,7 +16,7 @@
   <div>
     <div class="alert alert-success clearfix">
       <div class="col-sm-10">
-        <b>{{ trans('lrs.endpoint.endpoint') }}:</b> <span class="break-words">{{ URL() }}/data/xAPI</span>
+        <b>{{ trans('lrs.endpoint.endpoint') }}:</b> <span class="break-words">{{ URL() }}/data/xAPI/</span>
       </div>
     </div>
     <div>
