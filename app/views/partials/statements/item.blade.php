@@ -5,10 +5,12 @@
   $json = $statement;
   
   if( isset($statement['actor']['mbox']) ){
-    $avatar = \Locker\Helpers\Helpers::getGravatar( substr($statement['actor']['mbox'], 7), '20');
-  }else{
-    $avatar = 'http://placehold.it/20X20';
+    $avatar_id = substr($statement['actor']['mbox'], 7);
+  } else {
+    $avatar_id = 'hello@learninglocker.net';
   }
+
+  $avatar = \Locker\Helpers\Helpers::getGravatar( $avatar_id, '20');
 
   if( isset($statement['actor']['name']) && $statement['actor']['name'] != ''){
     $name = $statement['actor']['name'];
@@ -83,7 +85,7 @@
       <span onclick="$('.state-{{ $statement['id'] }}').toggle();"><i class="icon icon-cog lightgrey pull-left"></i></span>
 
       <span class="pull-left statement-avatar">
-          <img src="{{ $avatar }}" alt='avatar' class="img-circle" />
+          <img src="{{ $avatar }}" alt='avatar' class="img-circle avatar" />
       </span> 
         
       {{ $name }}

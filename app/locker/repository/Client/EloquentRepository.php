@@ -63,6 +63,7 @@ class EloquentRepository extends BaseRepository implements Repository {
     ];
     $model->lrs_id = $opts['lrs_id'];
     $model->authority = $data['authority'];
+    $model->scopes = ['all'];
 
     return $model;
   }
@@ -80,6 +81,7 @@ class EloquentRepository extends BaseRepository implements Repository {
 
     // Sets properties on model.
     if (isset($data['authority'])) $model->authority = $data['authority'];
+    if (isset($data['scopes'])) $model->scopes = $data['scopes'];
 
     return $model;
   }

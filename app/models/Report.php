@@ -12,6 +12,7 @@ class Report extends Eloquent {
   protected $collection = 'reports';
   public static $rules = [];
   protected $fillable = ['name', 'description', 'query', 'lrs', 'since', 'until'];
+  protected $actorQuery = [ 'statement.actor.account', 'statement.actor.mbox', 'statement.actor.openid', 'statement.actor.mbox_sha1sum' ];
 
   public function getFilterAttribute() {
     $reportArr = $this->toArray();
@@ -35,10 +36,25 @@ class Report extends Eloquent {
 
     if (is_array($query) && count($query) > 0 && !isset($query[0])) {
       foreach ($query as $key => $value) {
-        if (is_array($value)) {
-          $match[$key] = ['$in' => $value];
+        if (in_array($key, $this->actorQuery)) {
+          foreach ($value as $actor_id) {
+            if (is_object($actor_id)) {
+              $object_vars = get_object_vars($actor_id);
+              $filter = [];
+              foreach ($object_vars as $var_key => $var_val) {
+                $filter[$key.'.'.$var_key] = $var_val;
+              }
+              $match['$or'][] = $filter;
+            } else {
+              $match['$or'][][$key] = $actor_id;
+            }
+          }
         } else {
-          $match[$key] = $value;
+          if (is_array($value)) {
+            $match[$key] = ['$in' => $value];
+          } else {
+            $match[$key] = $value;
+          }
         }
       }
     }
@@ -63,15 +79,21 @@ class Report extends Eloquent {
     $reportArr = $this->toArray();
     $wheres = [];
     $query = isset($reportArr['query']) ? (array) $reportArr['query'] : null;
+    $actorArray = [];
 
     if (is_array($query) && count($query) > 0 && !isset($query[0])) {
-      $wheres = array_map(function ($key) use ($query) {
-        if (is_array($query[$key])) {
-          return [$key, 'in', $query[$key]];
+      foreach (array_keys($query) as $key) {
+        if (in_array($key, $this->actorQuery)) {
+          array_push($actorArray, [$key, $query[$key]]);
         } else {
-          return [$key, '=', $query[$key]];
+          if (is_array($query[$key])) {
+            array_push($wheres, [$key, 'in', $query[$key]]);
+          } else {
+            array_push($wheres, [$key, '=', $query[$key]]);
+          }
         }
-      }, array_keys($query));
+      }
+      array_push($wheres, ['orArray', 'or', $actorArray]);
     }
 
     $since = isset($reportArr['since']) ? (new \Carbon\Carbon($reportArr['since']))->toIso8601String() : null;

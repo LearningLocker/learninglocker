@@ -60,7 +60,7 @@ class StatementController extends BaseController {
   public function update() {
     // Runs filters.
     if ($result = $this->checkVersion()) return $result;
-    return $this->store_controller->update($this->lrs->_id);
+    return $this->store_controller->update($this->getOptions());
   }
 
   /**
@@ -70,7 +70,7 @@ class StatementController extends BaseController {
   public function store() {
     // Runs filters.
     if ($result = $this->checkVersion()) return $result;
-    return $this->store_controller->store($this->lrs->_id);
+    return $this->store_controller->store($this->getOptions());
   }
 
   /**
@@ -78,7 +78,7 @@ class StatementController extends BaseController {
    * @return Response
    */
   public function index() {
-    return $this->index_controller->index($this->lrs->_id);
+    return $this->index_controller->index($this->getOptions());
   }
 
   /**
@@ -91,10 +91,9 @@ class StatementController extends BaseController {
     // Runs filters.
     if ($result = $this->checkVersion()) return $result;
 
-    $statement = $this->statements->show($id, [
-      'lrs_id' => $this->lrs->_id,
+    $statement = $this->statements->show($id, array_merge([
       'voided' => $voided
-    ]);
+    ], $this->getOptions()));
 
     return \Response::json(Helpers::replaceHtmlEntity($statement), 200);
   }

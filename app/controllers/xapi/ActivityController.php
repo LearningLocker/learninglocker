@@ -34,7 +34,7 @@ class ActivityController extends DocumentController {
     if ($result = $this->checkVersion()) return $result;
 
     $documents = $this->document->all(
-      $this->lrs->_id,
+      $this->getOptions(),
       $this->document_type,
       $this->getIndexData([
         'since' => ['string', 'timestamp']

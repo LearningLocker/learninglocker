@@ -8,6 +8,8 @@ class ShowOptions extends Options {
   protected $types = [
     'lrs_id' => 'String',
     'voided' => 'Boolean',
-    'active' => 'Boolean'
+    'active' => 'Boolean',
+    'scopes' => ['String'],
+    'client' => null
   ];
 }

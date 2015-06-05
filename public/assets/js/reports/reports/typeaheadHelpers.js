@@ -38,8 +38,21 @@ define([
     return item;
   };
   var displayActor = function (actor) {
-    var id = actor.mbox || actor.account.href || actor.openId
-    return actor.name + ' (' + id + ')';
+    var id= '';
+    var pre = '';
+    if (typeof actor.mbox !== "undefined") {
+      id = actor.mbox;
+    } else if (typeof actor.account !== "undefined" && typeof actor.account.name !== "undefined" && typeof actor.account.homePage !== "undefined") {
+      id = actor.account.homePage + ' / ' + actor.account.name;
+      pre = 'account:';
+    } else if (typeof actor.openid !== "undefined") {
+      id = actor.openid;
+      pre = 'openid:';
+    } else if (typeof actor.mbox_sha1sum !== "undefined") {
+      id = actor.mbox_sha1sum;
+      pre = 'mbox_sha1sum:';
+    }
+    return actor.name + ' (' + pre + id + ')';
   };
   var view = function (segment, type, example, display) {
     return CompositeView.extend({

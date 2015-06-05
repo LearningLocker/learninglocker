@@ -1,4 +1,5 @@
 <?php namespace Locker\Repository\Query;
+use \Locker\Helpers\Helpers as Helpers;
 
 class EloquentQueryRepository implements QueryRepository {
 
@@ -22,6 +23,26 @@ class EloquentQueryRepository implements QueryRepository {
       switch ($filter[1]) {
         case 'in': $statements->whereIn($filter[0], $filter[2]); break;
         case 'between': $statements->whereBetween($filter[0], [$filter[2], $filter[3]]); break;
+        case 'or':
+                if (!empty($filter[2]) && is_array($filter[2])) {
+                    $statements->where(function($query) use ($filter) {
+                        foreach ($filter[2] as $value) {
+                            foreach ($value[1] as $subVal) {
+                                if (is_object($subVal)) {
+                                    $subVal_array = get_object_vars($subVal);
+                                    $query->orWhere(function($query) use ($subVal_array, $value) {
+                                        foreach ($subVal_array as $key => $val) {
+                                            $query->where($value[0] . '.' . $key, '=', $val);
+                                        }
+                                    });
+                                } else {
+                                    $query->orWhere($value[0], '=', $subVal);
+                                }
+                            }
+                        }
+                    });
+                }
+                break;
         default: $statements->where($filter[0], $filter[1], $filter[2]);
       }
     }
@@ -44,7 +65,7 @@ class EloquentQueryRepository implements QueryRepository {
       '$match' => [self::LRS_ID_KEY => $lrsId]
     ], $pipeline[0]);
 
-    return $this->db->statements->aggregate($pipeline);
+    return Helpers::replaceHtmlEntity($this->db->statements->aggregate($pipeline), true);
   }
 
   /**

@@ -193,8 +193,10 @@ class LrsController extends BaseController {
     $statements = (new StatementIndexer)->index(new IndexOptions([
       'lrs_id' => $lrs_id,
       'limit' => $this->statement->count([
-        'lrs_id' => $lrs_id
-      ])
+        'lrs_id' => $lrs_id,
+        'scopes' => ['all']
+      ]),
+      'scopes' => ['all']
     ]))->orderBy('statement.stored', 'DESC')->paginate(15);
 
     return View::make('partials.statements.list', array_merge($this->getLrs($lrs_id), [

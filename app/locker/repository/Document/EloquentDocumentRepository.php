@@ -28,22 +28,22 @@ class EloquentDocumentRepository implements DocumentRepository {
 
   /**
    * Find multiple documents
-   * @param  Lrs $lrs
+   * @param  [String => Mixed] $options
    * @param  String $documentType   The type of document
    * @param  Array $data
    * @return Collection             A collection of DocumentAPIs
    */
-  public function all( $lrs, $documentType, $data, $get = true ){
+  public function all( $options, $documentType, $data, $get = true ){
 
     switch( $documentType ){
       case DocumentType::STATE:
-        return $this->allStateDocs( $lrs, $data['activityId'], $data['agent'], $data['registration'], $data['since'], $get );
+        return $this->allStateDocs( $options, $data['activityId'], $data['agent'], $data['registration'], $data['since'], $get );
       break;
       case DocumentType::ACTIVITY:
-        return $this->allActivityDocs( $lrs, $data['activityId'], $data['since'], $get );
+        return $this->allActivityDocs( $options, $data['activityId'], $data['since'], $get );
       break;
       case DocumentType::AGENT:
-        return $this->allAgentDocs( $lrs, $data['agent'], $data['since'], $get );
+        return $this->allAgentDocs( $options, $data['agent'], $data['since'], $get );
       break;
     }
 
@@ -52,24 +52,24 @@ class EloquentDocumentRepository implements DocumentRepository {
   /**
    * Find single document
    *
-   * @param  Lrs $lrs
+   * @param  [String => Mixed] $options
    * @param  String $documentType   The type of document
    * @param  Array $data
    *
    * @return DocumentAPI
    */
-  public function find( $lrs, $documentType, $data, $get = true ){
+  public function find( $options, $documentType, $data, $get = true ){
 
     switch( $documentType ){
       case DocumentType::STATE:
         $registration = isset($data['registration']) ? $data['registration'] : null;
-        return $this->findStateDoc( $lrs, $data['stateId'], $data['activityId'], $data['agent'], $registration, $get );
+        return $this->findStateDoc( $options, $data['stateId'], $data['activityId'], $data['agent'], $registration, $get );
       break;
       case DocumentType::ACTIVITY:
-        return $this->findActivityDoc( $lrs, $data['profileId'], $data['activityId'], $get );
+        return $this->findActivityDoc( $options, $data['profileId'], $data['activityId'], $get );
       break;
       case DocumentType::AGENT:
-        return $this->findAgentDoc( $lrs, $data['profileId'], $data['agent'], $get );
+        return $this->findAgentDoc( $options, $data['profileId'], $data['agent'], $get );
       break;
     }
 
@@ -79,7 +79,7 @@ class EloquentDocumentRepository implements DocumentRepository {
   /**
    * Store document
    *
-   * @param  Lrs $lrs
+   * @param  [String => Mixed] $options
    * @param  String $documentType   The type of document
    * @param  Array $data
    * @param  String $updated        ISO 8601 Timestamp
@@ -87,17 +87,17 @@ class EloquentDocumentRepository implements DocumentRepository {
    *
    * @return DocumentAPI  Returns the updated/created document
    */
-  public function store( $lrs, $documentType, $data, $updated, $method ){
+  public function store( $options, $documentType, $data, $updated, $method ){
 
     switch( $documentType ){
       case DocumentType::STATE:
-        return $this->storeStateDoc( $lrs, $data, $updated, $method );
+        return $this->storeStateDoc( $options, $data, $updated, $method );
       break;
       case DocumentType::ACTIVITY:
-        return $this->storeActivityDoc( $lrs, $data, $updated, $method );
+        return $this->storeActivityDoc( $options, $data, $updated, $method );
       break;
       case DocumentType::AGENT:
-        return $this->storeAgentDoc( $lrs, $data, $updated, $method );
+        return $this->storeAgentDoc( $options, $data, $updated, $method );
       break;
     }
 
@@ -106,20 +106,20 @@ class EloquentDocumentRepository implements DocumentRepository {
   /**
    * Delete document(s)
    *
-   * @param  Lrs $lrs
+   * @param  [String => Mixed] $options
    * @param  String $documentType   The type of document
    * @param  Array $data
    *
    * @return DocumentAPI
    */
-  public function delete( $lrs, $documentType, $data, $single_document ){
+  public function delete( $options, $documentType, $data, $single_document ){
 
     $data['since'] = null;
 
     if( $single_document ){
-      $result = $this->find( $lrs, $documentType, $data, false );
+      $result = $this->find( $options, $documentType, $data, false );
     } else {
-      $result = $this->all( $lrs, $documentType, $data, false );
+      $result = $this->all( $options, $documentType, $data, false );
     }
 
     //Find all documents in this query that have files and delete them
@@ -138,6 +138,14 @@ class EloquentDocumentRepository implements DocumentRepository {
     return true;
   }
 
+  private function filterScopes($options, $scope, $read = true) {
+    $scopes = $options['scopes'];
+
+    if (!(in_array('all', $scopes) || ($read && in_array('all/read', $scopes)) || in_array($scope, $scopes))) {
+      throw new Exceptions\Exception('Unauthorized request.', 401);
+    }
+  }
+
 
 
   ///////////////////
@@ -147,7 +155,7 @@ class EloquentDocumentRepository implements DocumentRepository {
   /**
    * Find States
    *
-   * @param  Lrs $lrs
+   * @param  [String => Mixed] $options
    * @param  String $activityId      IRI
    * @param  Object $agent
    * @param  String $registration
@@ -156,9 +164,10 @@ class EloquentDocumentRepository implements DocumentRepository {
    *
    * @return Collection              A collection of DocumentAPIs
    */
-  public function allStateDocs( $lrs,  $activityId, $agent, $registration, $since, $get ){
+  public function allStateDocs( $options,  $activityId, $agent, $registration, $since, $get ){
+    $this->filterScopes($options, 'state');
 
-    $query = $this->documentapi->where('lrs', $lrs)
+    $query = $this->documentapi->where('lrs', $options['lrs_id'])
          ->where('documentType', DocumentType::STATE)
          ->where('activityId', $activityId);
 
@@ -180,7 +189,7 @@ class EloquentDocumentRepository implements DocumentRepository {
   /**
    * Find single stateId
    *
-   * @param  Lrs $lrs
+   * @param  [String => Mixed] $options
    * @param  string $stateId
    * @param  String $activityId      IRI
    * @param  Object $agent
@@ -189,9 +198,10 @@ class EloquentDocumentRepository implements DocumentRepository {
    *
    * @return DocumentAPI
    */
-  public function findStateDoc( $lrs, $stateId, $activityId, $agent, $registration, $get ){
+  public function findStateDoc( $options, $stateId, $activityId, $agent, $registration, $get ){
+    $this->filterScopes($options, 'state');
 
-    $query = $this->documentapi->where('lrs', $lrs)
+    $query = $this->documentapi->where('lrs', $options['lrs_id'])
          ->where('documentType', DocumentType::STATE)
          ->where('activityId', $activityId)
          ->where('identId', $stateId);
@@ -214,16 +224,17 @@ class EloquentDocumentRepository implements DocumentRepository {
   /**
    * Handle storing State documents
    *
-   * @param  Lrs $lrs
+   * @param  [String => Mixed] $options
    * @param  Array $data        The required data for the state
    * @param  String $updated    ISO 8601 Timestamp
    * @param  String $method     HTTP Method used to send store request
    *
    * @return DocumentAPI        The document being created/updated
    */
-  public function storeStateDoc( $lrs, $data, $updated, $method ){
+  public function storeStateDoc( $options, $data, $updated, $method ){
+    $this->filterScopes($options, 'state', false);
 
-    $existing_document = $this->findStateDoc( $lrs, $data['stateId'], $data['activityId'], $data['agent'], $data['registration'], true );
+    $existing_document = $this->findStateDoc( $options, $data['stateId'], $data['activityId'], $data['agent'], $data['registration'], true );
 
     if ($method === 'PUT' && (
       $data['ifMatch'] !== null ||
@@ -238,7 +249,7 @@ class EloquentDocumentRepository implements DocumentRepository {
       $document                 = $this->documentapi;
 
       //LL vars
-      $document->lrs            = $lrs; //LL specific
+      $document->lrs            = $options['lrs_id']; //LL specific
       $document->documentType   = DocumentType::STATE; //LL specific
 
       //AP vars
@@ -269,16 +280,17 @@ class EloquentDocumentRepository implements DocumentRepository {
   /**
    * Find Activity documents
    *
-   * @param  Lrs $lrs
+   * @param  [String => Mixed] $options
    * @param  String $activityId      IRI
    * @param  Timestamp $since        ISO 8601
    * @param  Boolean $get            Used to check if we return a collection or just the eloquent object
    *
    * @return Collection              A collection of DocumentAPIs
    */
-  public function allActivityDocs( $lrs, $activityId, $since, $get ){
+  public function allActivityDocs( $options, $activityId, $since, $get ){
+    $this->filterScopes($options, 'profile');
 
-    $query = $this->documentapi->where('lrs', $lrs)
+    $query = $this->documentapi->where('lrs', $options['lrs_id'])
          ->where('documentType', DocumentType::ACTIVITY)
          ->where('activityId', $activityId);
 
@@ -297,16 +309,17 @@ class EloquentDocumentRepository implements DocumentRepository {
   /**
    * Find single stateId
    *
-   * @param  Lrs $lrs
+   * @param  [String => Mixed] $options
    * @param  string $stateId
    * @param  String $activityId      IRI
    * @param  Boolean $get            Used to check if we return a collection or just the eloquent object
    *
    * @return DocumentAPI
    */
-  public function findActivityDoc( $lrs, $profileId, $activityId, $get ){
+  public function findActivityDoc( $options, $profileId, $activityId, $get ){
+    $this->filterScopes($options, 'profile');
 
-    $query = $this->documentapi->where('lrs', $lrs)
+    $query = $this->documentapi->where('lrs', $options['lrs_id'])
          ->where('documentType', DocumentType::ACTIVITY)
          ->where('activityId', $activityId)
          ->where('identId', $profileId);
@@ -337,16 +350,17 @@ class EloquentDocumentRepository implements DocumentRepository {
   /**
    * Handle storing State documents
    *
-   * @param  Lrs $lrs
+   * @param  [String => Mixed] $options
    * @param  Array $data        The required data for the state
    * @param  String $updated    ISO 8601 Timestamp
    * @param  String $method     HTTP Method used to send store request
    *
    * @return DocumentAPI        The document being created/updated
    */
-  public function storeActivityDoc( $lrs, $data, $updated, $method ){
+  public function storeActivityDoc( $options, $data, $updated, $method ){
+    $this->filterScopes($options, 'profile', false);
 
-    $existing_document = $this->findActivityDoc( $lrs, $data['profileId'], $data['activityId'], true );
+    $existing_document = $this->findActivityDoc( $options, $data['profileId'], $data['activityId'], true );
 
     if ($method === 'PUT') $this->checkETag(
       isset($existing_document->sha) ? $existing_document->sha : null,
@@ -358,7 +372,7 @@ class EloquentDocumentRepository implements DocumentRepository {
       $document                 = $this->documentapi;
 
       //LL vars
-      $document->lrs            = $lrs; //LL specific
+      $document->lrs            = $options['lrs_id']; //LL specific
       $document->documentType   = DocumentType::ACTIVITY; //LL specific
 
       //AP vars
@@ -388,16 +402,17 @@ class EloquentDocumentRepository implements DocumentRepository {
   /**
    * Find Agent documents
    *
-   * @param  Lrs $lrs
+   * @param  [String => Mixed] $options
    * @param  Array $agent
    * @param  Timestamp $since        ISO 8601
    * @param  Boolean $get            Used to check if we return a collection or just the eloquent object
    *
    * @return Collection              A collection of DocumentAPIs
    */
-  public function allAgentDocs( $lrs, $agent, $since, $get ){
+  public function allAgentDocs( $options, $agent, $since, $get ){
+    $this->filterScopes($options, 'profile');
 
-    $query = $this->documentapi->where('lrs', $lrs)
+    $query = $this->documentapi->where('lrs', $options['lrs_id'])
          ->where('documentType', DocumentType::AGENT);
 
     $query = $this->setQueryAgent( $query, $agent );
@@ -418,16 +433,17 @@ class EloquentDocumentRepository implements DocumentRepository {
   /**
    * Find single profileId
    *
-   * @param  Lrs $lrs
+   * @param  [String => Mixed] $options
    * @param  string $stateId
    * @param  Object $agent
    * @param  Boolean $get            Used to check if we return a collection or just the eloquent object
    *
    * @return DocumentAPI
    */
-  public function findAgentDoc( $lrs, $profileId, $agent, $get ){
+  public function findAgentDoc( $options, $profileId, $agent, $get ){
+    $this->filterScopes($options, 'profile');
 
-    $query = $this->documentapi->where('lrs', $lrs)
+    $query = $this->documentapi->where('lrs', $options['lrs_id'])
          ->where('documentType', DocumentType::AGENT)
          ->where('identId', $profileId);
 
@@ -445,16 +461,17 @@ class EloquentDocumentRepository implements DocumentRepository {
   /**
    * Handle storing State documents
    *
-   * @param  Lrs $lrs
+   * @param  [String => Mixed] $options
    * @param  Array $data        The required data for the state
    * @param  String $updated    ISO 8601 Timestamp
    * @param  String $method     HTTP Method used to send store request
    *
    * @return DocumentAPI        The document being created/updated
    */
-  public function storeAgentDoc( $lrs, $data, $updated, $method ){
+  public function storeAgentDoc( $options, $data, $updated, $method ){
+    $this->filterScopes($options, 'profile', false);
 
-    $existing_document = $this->findAgentDoc( $lrs, $data['profileId'], $data['agent'], true );
+    $existing_document = $this->findAgentDoc( $options, $data['profileId'], $data['agent'], true );
 
     if ($method === 'PUT') $this->checkETag(
       isset($existing_document->sha) ? $existing_document->sha : null,
@@ -466,7 +483,7 @@ class EloquentDocumentRepository implements DocumentRepository {
       $document                 = $this->documentapi;
 
       //LL vars
-      $document->lrs            = $lrs; //LL specific
+      $document->lrs            = $options['lrs_id']; //LL specific
       $document->documentType   = DocumentType::AGENT; //LL specific
 
       //AP vars
