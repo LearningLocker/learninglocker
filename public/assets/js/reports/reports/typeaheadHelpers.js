@@ -10,11 +10,11 @@ define([
 
       // Return a human-readable value if the browser defines languages.
       if (navigator.languages instanceof Array) {
-        value = navigator.languages.map(function (lang) {
-          return item.definition && item.definition.name && item.definition.name[lang];
+        value = item.definition && item.definition.name && (navigator.languages.map(function (lang) {
+          return item.definition.name[lang];
         }).filter(function (value) {
           return value != null;
-        })[0];
+        })[0] || (item.definition.name[Object.keys(item.definition.name)[0]]));
       }
 
       // Display human-readable value if it exists
