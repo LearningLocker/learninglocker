@@ -14,10 +14,10 @@
   <td>
     <%= created_at %>
   </td>
-  <td>
+  <td class="text-center">
     <a href="{{ URL() }}/lrs/<%= _id %>/edit" class="btn btn-xs btn-success btn-space" title="{{ Lang::get('site.edit') }}"><i class="icon-pencil"></i></a>
   </td>
-  <td>
+  <td class="text-center">
     <button class="btn btn-danger btn-xs delete" title="{{ Lang::get('site.delete') }}"><i class="icon-trash"></i></button>
   </td>
 </script>
@@ -30,8 +30,8 @@
       <th>Statement #</th>
       <th>User #</th>
       <th>Created</th>
-      <th>Edit</th>
-      <th></th>
+      <th class="text-center">Edit</th>
+      <th class="text-center">Delete</th>
     </tr>
   </thead>
   <tbody></tbody>
@@ -60,7 +60,7 @@
   <td class="col-sm-2">
     <%= email %>
   </td>
-  <td class="col-sm-4">
+  <td class="col-sm-3">
     <% if ( lrs_owned.length > 0 ){ %>
       <p>Lrs's owned:
       <% _.each(lrs_owned, function(lrs) { %>  
@@ -86,7 +86,7 @@
   <td class="col-sm-2">
     <%= created_at %>
   </td>
-  <td class="col-sm-1">
+  <td class="col-sm-2 text-center">
     <button class="btn btn-danger btn-xs delete" title="{{ Lang::get('site.delete') }}"><i class="icon-trash"></i></button>
   </td>
 </script>
@@ -100,7 +100,7 @@
       <th>LRSs</th>
       <th>Role</th>
       <th>Joined</th>
-      <th></th>
+      <th class="text-center">Delete</th>
     </tr>
   </thead>
   <tbody></tbody>
@@ -125,7 +125,7 @@
   <td>
     <%= created_at %>
   </td>
-  <td>
+  <td class="text-center">
     <button class="btn btn-danger btn-xs delete" title="{{ Lang::get('site.delete') }}"><i class="icon-remove"></i></button>
   </td>
 </script>

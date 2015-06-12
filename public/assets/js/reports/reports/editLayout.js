@@ -114,7 +114,27 @@ define([
     relations: {
       actors: typeaheadHelpers.view('actors', 'Actor', 'Start typing name e.g. Bob', typeaheadHelpers.displayActor),
       verbs: typeaheadHelpers.view('verbs', 'Verb', 'Start typing verb e.g. completed', function (item) {
-        var id = item.id
+        var id = item.id;
+        var value = null;
+
+        // Return a human-readable value if the browser defines languages.
+        if (navigator.languages instanceof Array) {
+          value = item.display && (navigator.languages.map(function (lang) {
+            return item.display[lang];
+          }).filter(function (value) {
+            return value != null;
+          })[0] || (item.display[Object.keys(item.display)[0]]));
+        }
+
+        // Display human-readable value if it exists
+        if (value != null) {
+          return value + ' (' + id + ')';
+        }
+
+        // Otherwise display just the identifier.
+        else {
+          return id
+        }
         return item.display['en-GB'] + ' (' + id + ')';
       }),
       activities: typeaheadHelpers.view('activities', 'Activity URL', 'www.example.com/quiz/1'),
