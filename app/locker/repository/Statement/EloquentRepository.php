@@ -39,9 +39,10 @@ class EloquentRepository implements Repository {
   public function index(array $opts) {
     $opts = new IndexOptions($opts);
     $builder = $this->indexer->index($opts);
+    $count = $this->indexer->count($builder, $opts);
     return [
       $this->indexer->format($builder, $opts),
-      $this->indexer->count($builder, $opts),
+      $count,
       $opts->options
     ];
   }
