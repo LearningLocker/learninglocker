@@ -31,7 +31,7 @@ define([
       password: window.lrs.secret
     },
     _queryResponseMap: {
-      'actor.mbox': 'actors',
+      'actor': 'actors',
       'verb.id': 'verbs',
       'object.id': 'activities',
       'object.definition.type': 'activityTypes',
@@ -41,34 +41,26 @@ define([
       'context.instructor': 'instructors',
       'context.language': 'languages'
     },
+    _mapActorToResponse: function (query, response, responseKey, queryKey) {
+      var identifierKeys = ['mbox', 'account', 'openid', 'mbox_sha1sum'];
+
+      return identifierKeys.reduce(function (actors, identifierKey) {
+          var xapiKey = 'statement.' + queryKey + '.' + identifierKey;
+          if (query[xapiKey] != null) {
+              return actors.concat(query[xapiKey].map(function (identifier) {
+                  var display = identifierKey === 'account' ? identifier.homePage + ' / ' + identifier.name : identifier;
+                  return (identifierKey === 'mbox' ? '' : identifierKey + ':') + display;
+              }));
+          } else {
+              return actors;
+          }
+      }, []);
+    },
     _mapQueryToResponse: function (query, response) {
       Object.keys(this._queryResponseMap).forEach(function (queryKey) {
         var responseKey = this._queryResponseMap[queryKey];
-        if (responseKey === 'actors') {
-            var actorValues = ['actor.mbox', 'actor.account', 'actor.openid', 'actor.mbox_sha1sum'];
-            var consolidatedActors = [];
-            actorValues.forEach(function(value,index, originalArray) {
-                queryKey = 'statement.' + value;
-                if (typeof query[queryKey] !== "undefined") {
-                    var tempArray = [];
-                    var queryLabel = '';
-                    switch (value) {
-                        case 'actor.mbox':          queryLabel = ''; break;
-                        case 'actor.account':       queryLabel = 'account:'; break;
-                        case 'actor.openid':        queryLabel = 'openid:'; break;
-                        case 'actor.mbox_sha1sum':  queryLabel = 'mbox_sha1sum:'; break;
-                    }
-                    query[queryKey].forEach(function(val, ind, orgArr) {
-                        if (queryKey === 'statement.actor.account') {
-                            tempArray.push(queryLabel + val.homePage + ' / ' + val.name);
-                        } else {
-                            tempArray.push(queryLabel + query[queryKey][ind]);
-                        }
-                    });
-                    consolidatedActors = consolidatedActors.concat(tempArray);
-                }
-            });
-            response[responseKey] = consolidatedActors;
+        if (responseKey === 'actors' || responseKey === 'instructors') {
+            response[responseKey] = this._mapActorToResponse(query, response, responseKey, queryKey);
         } else {
             queryKey = 'statement.' + queryKey;
             response[responseKey] = query[queryKey];
@@ -79,7 +71,7 @@ define([
       var query = this.get('query');
       Object.keys(this._queryResponseMap).forEach(function (queryKey) {
         var responseKey = this._queryResponseMap[queryKey];
-        if (responseKey == 'actors') {
+        if (responseKey === 'actors' || responseKey === 'instructors') {
             //consolidate actor query values by type of IFI
             var combined = {'account':[], 'openid':[], 'mbox_sha1sum':[], 'mailto':[]};
             (this.get(responseKey) || []).map(function (model) {
@@ -125,17 +117,17 @@ define([
             Object.keys(combined).forEach(function(value, index, originalArray) {
                 if (combined[value].length > 0) {
                     switch (value) {
-                        case 'account':         query['statement.actor.account'] = combined[value]; break;
-                        case 'mailto':          query['statement.actor.mbox'] = combined[value]; break;
-                        case 'openid':          query['statement.actor.openid'] = combined[value]; break;
-                        case 'mbox_sha1sum':    query['statement.actor.mbox_sha1sum'] = combined[value]; break;
+                        case 'account':         query['statement.' + queryKey + '.account'] = combined[value]; break;
+                        case 'mailto':          query['statement.' + queryKey + '.mbox'] = combined[value]; break;
+                        case 'openid':          query['statement.' + queryKey + '.openid'] = combined[value]; break;
+                        case 'mbox_sha1sum':    query['statement.' + queryKey + '.mbox_sha1sum'] = combined[value]; break;
                     }
                 } else {
                     switch (value) {
-                        case 'account':         query['statement.actor.account'] = undefined; break;
-                        case 'mailto':          query['statement.actor.mbox'] = undefined; break;
-                        case 'openid':          query['statement.actor.openid'] = undefined; break;
-                        case 'mbox_sha1sum':    query['statement.actor.mbox_sha1sum'] = undefined; break;
+                        case 'account':         query['statement.' + queryKey + '.account'] = undefined; break;
+                        case 'mailto':          query['statement.' + queryKey + '.mbox'] = undefined; break;
+                        case 'openid':          query['statement.' + queryKey + '.openid'] = undefined; break;
+                        case 'mbox_sha1sum':    query['statement.' + queryKey + '.mbox_sha1sum'] = undefined; break;
                     }
                 }
             });
