@@ -78,7 +78,6 @@
     "refresh": [
       "php artisan optimize",
       "php artisan js-localization:refresh",
-      "cd public/assets/js && bower --allow-root update && cd ../../..",
       "php composer.phar clean-bower"
     ],
     "clean-bower": [
