@@ -1,11 +1,8 @@
 /bootstrap/compiled.php
 /vendor
-composer.phar
 .DS_Store
 Thumbs.db
 
 /app/config/ht2
 /app/config/production
 /app/config/staging
-
-/public/assets/js/bower_components
