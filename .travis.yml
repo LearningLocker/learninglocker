@@ -8,6 +8,7 @@ services:
 
 install:
   - npm install -g bower
+  - php -r "readfile('https://getcomposer.org/installer');" | php
   - php composer.phar install --no-interaction --dev
 
 before_script:
