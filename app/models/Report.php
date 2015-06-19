@@ -20,21 +20,6 @@ class Report extends Eloquent {
     'statement.context.instructor.mbox_sha1sum'
   ];
 
-  public function getFilterAttribute() {
-    $reportArr = $this->toArray();
-    $filter = [];
-
-    if (isset($reportArr['query'])) $filter['filter'] = json_encode($reportArr['query']);
-    if (isset($reportArr['since'])) {
-      $filter['since'] = $this->constructDate($reportArr['since']);
-    }
-    if (isset($reportArr['until'])) {
-      $filter['until'] = $this->constructDate($reportArr['until']);
-    }
-
-    return $filter;
-  }
-
   private function constructOr($key, $value) {
     $query = [];
     foreach ($value as $actor_id) {
@@ -105,11 +90,14 @@ class Report extends Eloquent {
     $wheres = [];
     $query = isset($reportArr['query']) ? (array) $reportArr['query'] : null;
     $actorArray = [];
+    $instructorArray = [];
 
     if (is_array($query) && count($query) > 0 && !isset($query[0])) {
       foreach (array_keys($query) as $key) {
         if (in_array($key, $this->actorQuery)) {
           array_push($actorArray, [$key, $query[$key]]);
+        } else if (in_array($key, $this->instructorQuery)) {
+          array_push($instructorArray, [$key, $query[$key]]);
         } else {
           if (is_array($query[$key])) {
             array_push($wheres, [$key, 'in', $query[$key]]);
@@ -119,6 +107,7 @@ class Report extends Eloquent {
         }
       }
       array_push($wheres, ['orArray', 'or', $actorArray]);
+      array_push($wheres, ['orArray', 'or', $instructorArray]);
     }
 
     $since = isset($reportArr['since']) ? $this->constructDate($reportArr['since']) : null;
