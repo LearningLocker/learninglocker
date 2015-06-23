@@ -66,11 +66,11 @@
   },
   "scripts": {
     "post-install-cmd": [
-      "refresh.sh"
+      "sh refresh.sh"
     ],
     "post-update-cmd": [
       "php artisan clear-compiled",
-      "refresh.sh"
+      "sh refresh.sh"
     ],
     "post-create-project-cmd": [
       "php artisan key:generate"
