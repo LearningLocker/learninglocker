@@ -1,5 +1,6 @@
 <?php namespace Locker\Repository\Query;
 use \Locker\Helpers\Helpers as Helpers;
+use \Locker\Repository\Statement\EloquentRepository as StatementsRepo;
 
 class EloquentQueryRepository implements QueryRepository {
 
@@ -118,6 +119,37 @@ class EloquentQueryRepository implements QueryRepository {
         'count' => 1
       ]
     ]]);
+  }
+
+  public function void(array $match, array $opts) {
+    $data = $this->aggregate($opts['lrs_id'], [[
+      '$match' => $match
+    ], [
+      '$project' => [
+        '_id' => 0,
+        'statement.id' => 1,
+      ]
+    ]]);
+
+    $statements = array_map(function ($result) use ($opts) {
+      return [
+        'actor' => $opts['client']['authority'],
+        'verb' => [
+          'id' => 'http://adlnet.gov/expapi/verbs/voided',
+          'display' => [
+            'en' => 'voided'
+          ]
+        ],
+        'object' => [
+          'objectType' => 'StatementRef',
+          'id' => $result['statement']['id']
+        ]
+      ];
+    }, $data['result']);
+
+    $opts['authority'] = json_decode(json_encode($opts['client']['authority']));
+
+    return (new StatementsRepo())->store(json_decode(json_encode($statements)), [], $opts);
   }
 
   /**
