@@ -79,4 +79,12 @@ class Statements extends Base {
 
     return $this->returnJson($data);
   }
+
+  public function void() {
+    $match = json_decode(
+      \LockerRequest::getParam('match'),
+      true
+    ) ?: [];
+    return \Response::json($this->query->void($match, $this->getOptions()));
+  }
 }
