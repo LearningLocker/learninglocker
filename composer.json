@@ -66,26 +66,14 @@
   },
   "scripts": {
     "post-install-cmd": [
-      "php composer.phar refresh"
+      "refresh.sh"
     ],
     "post-update-cmd": [
       "php artisan clear-compiled",
-      "php composer.phar refresh"
+      "refresh.sh"
     ],
     "post-create-project-cmd": [
       "php artisan key:generate"
-    ],
-    "refresh": [
-      "php artisan optimize",
-      "php artisan js-localization:refresh",
-      "php composer.phar clean-bower"
-    ],
-    "clean-bower": [
-      "find public/assets/js/bower_components/ -type f -name '*.md' | xargs rm -f",
-      "find public/assets/js/bower_components/ -type d -name 'docs' | xargs rm -rf",
-      "find public/assets/js/bower_components/ -type d -name 'spec' | xargs rm -rf",
-      "find public/assets/js/bower_components/ -type d -name 'test' | xargs rm -rf",
-      "find public/assets/js/bower_components/ -type f -not \\( -name '*.css' -o -name '*.js' \\) | xargs rm -rf"
     ]
   },
   "minimum-stability": "stable"
