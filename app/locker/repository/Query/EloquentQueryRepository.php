@@ -149,7 +149,11 @@ class EloquentQueryRepository implements QueryRepository {
 
     $opts['authority'] = json_decode(json_encode($opts['client']['authority']));
 
-    return (new StatementsRepo())->store(json_decode(json_encode($statements)), [], $opts);
+    if( count($statements) > 0 ){
+      return (new StatementsRepo())->store(json_decode(json_encode($statements)), [], $opts);      
+    } else {
+      return [];
+    }
   }
 
   /**
