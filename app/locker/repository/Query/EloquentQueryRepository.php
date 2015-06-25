@@ -62,12 +62,12 @@ class EloquentQueryRepository implements QueryRepository {
       return;
     }
 
-    $pipeline[0] = array_merge_recursive([
-      '$match' => [
+    $pipeline[0]['$match'] = [
+      '$and' => [(object) $pipeline[0]['$match'], [
         self::LRS_ID_KEY => $lrsId,
         'active' => true
-      ]
-    ], $pipeline[0]);
+      ]]
+    ];
 
     return Helpers::replaceHtmlEntity($this->db->statements->aggregate($pipeline), true);
   }
