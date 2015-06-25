@@ -20,10 +20,7 @@ class Statements extends Base {
    */
   public function where() {
     $limit = \LockerRequest::getParam('limit', 100);
-    $filters = json_decode(
-      \LockerRequest::getParam('filters'),
-      true
-    ) ?: [];
+    $filters = $this->getParam('filters');
     return \Response::json($this->query->where($this->lrs->_id, $filters)->paginate($limit));
   }
 
@@ -32,10 +29,7 @@ class Statements extends Base {
    * @return Aggregate http://php.net/manual/en/mongocollection.aggregate.php#refsect1-mongocollection.aggregate-examples
    */
   public function aggregate() {
-    $pipeline = json_decode(
-      \LockerRequest::getParam('pipeline'),
-      true
-    ) ?: [['$match' => ['active' => true]]];
+    $pipeline = $this->getParam('pipeline');
     return \Response::json($this->query->aggregate($this->lrs->_id, $pipeline));
   }
 
@@ -44,10 +38,7 @@ class Statements extends Base {
    * @return Aggregate http://php.net/manual/en/mongocollection.aggregate.php#refsect1-mongocollection.aggregate-examples
    */
   public function aggregateTime() {
-    $match = json_decode(
-      \LockerRequest::getParam('match'),
-      true
-    ) ?: [];
+    $match = $this->getParam('match');
     return \Response::json($this->query->aggregateTime($this->lrs->_id, $match));
   }
 
@@ -56,10 +47,7 @@ class Statements extends Base {
    * @return Aggregate http://php.net/manual/en/mongocollection.aggregate.php#refsect1-mongocollection.aggregate-examples
    */
   public function aggregateObject() {
-    $match = json_decode(
-      \LockerRequest::getParam('match'),
-      true
-    ) ?: [];
+    $match = $this->getParam('match');
     return \Response::json($this->query->aggregateObject($this->lrs->_id, $match));
   }
 
@@ -81,10 +69,15 @@ class Statements extends Base {
   }
 
   public function void() {
-    $match = json_decode(
-      \LockerRequest::getParam('match'),
-      true
-    ) ?: [];
+    $match = $this->getParam('match');
     return \Response::json($this->query->void($match, $this->getOptions()));
+  }
+
+  private function getParam($param) {
+    $value = json_decode(\LockerRequest::getParam($param), true);
+    if ($value === null) {
+      throw new Exceptions\Exception("Expected `$param` to be defined as a URL parameter.");
+    }
+    return $value;
   }
 }
