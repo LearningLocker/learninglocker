@@ -63,7 +63,10 @@ class EloquentQueryRepository implements QueryRepository {
     }
 
     $pipeline[0] = array_merge_recursive([
-      '$match' => [self::LRS_ID_KEY => $lrsId]
+      '$match' => [
+        self::LRS_ID_KEY => $lrsId,
+        'active' => true
+      ]
     ], $pipeline[0]);
 
     return Helpers::replaceHtmlEntity($this->db->statements->aggregate($pipeline), true);
@@ -122,6 +125,14 @@ class EloquentQueryRepository implements QueryRepository {
   }
 
   public function void(array $match, array $opts) {
+    $void_id = 'http://adlnet.gov/expapi/verbs/voided';
+    $match = [
+      '$and' => [$match, [
+        'statement.verb.id' => ['$ne' => $void_id],
+        'voided' => false
+      ]]
+    ];
+
     $data = $this->aggregate($opts['lrs_id'], [[
       '$match' => $match
     ], [
@@ -131,11 +142,11 @@ class EloquentQueryRepository implements QueryRepository {
       ]
     ]]);
 
-    $statements = array_map(function ($result) use ($opts) {
+    $statements = array_map(function ($result) use ($opts, $void_id) {
       return [
         'actor' => $opts['client']['authority'],
         'verb' => [
-          'id' => 'http://adlnet.gov/expapi/verbs/voided',
+          'id' => $void_id,
           'display' => [
             'en' => 'voided'
           ]
