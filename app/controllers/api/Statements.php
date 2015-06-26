@@ -74,9 +74,12 @@ class Statements extends Base {
   }
 
   private function getParam($param) {
-    $value = json_decode(\LockerRequest::getParam($param), true);
-    if ($value === null) {
+    $param_value = \LockerRequest::getParam($param);
+    $value = json_decode($param_value, true);
+    if ($value === null && $param_value === null) {
       throw new Exceptions\Exception("Expected `$param` to be defined as a URL parameter.");
+    } else if ($value === null) {
+      throw new Exceptions\Exception("Expected the value of `$param` to be valid JSON in the URL parameter.");
     }
     return $value;
   }

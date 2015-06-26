@@ -25,25 +25,25 @@ class EloquentQueryRepository implements QueryRepository {
         case 'in': $statements->whereIn($filter[0], $filter[2]); break;
         case 'between': $statements->whereBetween($filter[0], [$filter[2], $filter[3]]); break;
         case 'or':
-                if (!empty($filter[2]) && is_array($filter[2])) {
-                    $statements->where(function($query) use ($filter) {
-                        foreach ($filter[2] as $value) {
-                            foreach ($value[1] as $subVal) {
-                                if (is_object($subVal)) {
-                                    $subVal_array = get_object_vars($subVal);
-                                    $query->orWhere(function($query) use ($subVal_array, $value) {
-                                        foreach ($subVal_array as $key => $val) {
-                                            $query->where($value[0] . '.' . $key, '=', $val);
-                                        }
-                                    });
-                                } else {
-                                    $query->orWhere($value[0], '=', $subVal);
-                                }
-                            }
-                        }
+          if (!empty($filter[2]) && is_array($filter[2])) {
+            $statements->where(function($query) use ($filter) {
+              foreach ($filter[2] as $value) {
+                foreach ($value[1] as $subVal) {
+                  if (is_object($subVal)) {
+                    $subVal_array = get_object_vars($subVal);
+                    $query->orWhere(function($query) use ($subVal_array, $value) {
+                      foreach ($subVal_array as $key => $val) {
+                        $query->where($value[0] . '.' . $key, '=', $val);
+                      }
                     });
+                  } else {
+                    $query->orWhere($value[0], '=', $subVal);
+                  }
                 }
-                break;
+              }
+            });
+          }
+          break;
         default: $statements->where($filter[0], $filter[1], $filter[2]);
       }
     }
@@ -161,7 +161,7 @@ class EloquentQueryRepository implements QueryRepository {
     $opts['authority'] = json_decode(json_encode($opts['client']['authority']));
 
     if( count($statements) > 0 ){
-      return (new StatementsRepo())->store(json_decode(json_encode($statements)), [], $opts);      
+      return (new StatementsRepo())->store(json_decode(json_encode($statements)), [], $opts);
     } else {
       return [];
     }
@@ -191,19 +191,19 @@ class EloquentQueryRepository implements QueryRepository {
 
   /**
    * Gets statement documents based on a filter.
-   * 
+   *
    * @param $lrs       id      The Lrs to search in (required)
    * @param $filter    array   The filter array
    * @param $raw       boolean  Pagination or raw statements?
    * @param $sections  array   Sections of the statement to return, default = all
-   * 
+   *
    * @return Statement query
    */
   public function selectStatementDocs( $lrs='', $filter, $raw=false, $sections=[] ){
     $statements = \Statement::where('lrs._id', $lrs);
 
     if( !empty($filter) ){
-      
+
       foreach($filter as $key => $value ){
         if( is_array($value) ){
           //does the array contain between values? e.g. <> 3, 6
@@ -229,7 +229,7 @@ class EloquentQueryRepository implements QueryRepository {
    * @param $filter    array   The filter array
    * @param $raw       boolean  Pagination or raw statements?
    * @param $sections  array   Sections of the statement to return, default = all
-   * 
+   *
    * @return array results
    *
    **/
@@ -276,16 +276,16 @@ class EloquentQueryRepository implements QueryRepository {
       $set_id = [ $interval => '$timestamp' ];
     }else{
       switch($type){
-        case 'user': 
-          $set_id  = ['actor' => '$statement.actor'];  
-          $project = ['$addToSet' => '$statement.actor'];  
+        case 'user':
+          $set_id  = ['actor' => '$statement.actor'];
+          $project = ['$addToSet' => '$statement.actor'];
           break;
-        case 'verb': 
-          $set_id  = ['verb' => '$statement.verb'];   
-          $project = ['$addToSet' => '$statement.verb'];    
+        case 'verb':
+          $set_id  = ['verb' => '$statement.verb'];
+          $project = ['$addToSet' => '$statement.verb'];
           break;
-        case 'activity': 
-          $set_id  = ['activity' => '$statement.object']; 
+        case 'activity':
+          $set_id  = ['activity' => '$statement.object'];
           $project = ['$addToSet' => '$statement.object'];
           break;
       }
@@ -337,8 +337,8 @@ class EloquentQueryRepository implements QueryRepository {
    * Return grouped object based on criteria passed.
    *
    * @param $lrs
-   * @param $section 
-   * @param $filters 
+   * @param $section
+   * @param $filters
    * @param $returnFields
    *
    * @return $results
