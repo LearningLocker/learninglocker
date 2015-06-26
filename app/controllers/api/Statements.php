@@ -68,6 +68,11 @@ class Statements extends Base {
     return $this->returnJson($data);
   }
 
+  public function insert() {
+    $pipeline = $this->getParam('pipeline');
+    return \Response::json($this->query->insert($pipeline, $this->getOptions()));
+  }
+
   public function void() {
     $match = $this->getParam('match');
     return \Response::json($this->query->void($match, $this->getOptions()));

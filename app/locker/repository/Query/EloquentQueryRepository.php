@@ -124,6 +124,17 @@ class EloquentQueryRepository implements QueryRepository {
     ]]);
   }
 
+  public function insert(array $project, array $opts) {
+    $statements = $this->aggregate($opts['lrs_id'], $project)['result'];
+
+    if (count($statements) > 0) {
+      $opts['authority'] = json_decode(json_encode($opts['client']['authority']));
+      return (new StatementsRepo())->store(json_decode(json_encode($statements)), [], $opts);
+    } else {
+      return [];
+    }
+  }
+
   public function void(array $match, array $opts) {
     $void_id = 'http://adlnet.gov/expapi/verbs/voided';
     $match = [
