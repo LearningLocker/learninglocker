@@ -47,7 +47,7 @@ class EloquentInserter extends EloquentReader implements Inserter {
    * @param \stdClass $statement_y
    * @throws Exceptions\Conflict
    */
-  private function compareForConflict(\stdClass $statement_x, \stdClass $statement_y) {
+  public function compareForConflict(\stdClass $statement_x, \stdClass $statement_y) {
     $matchable_x = $this->matchableStatement($statement_x);
     $matchable_y = $this->matchableStatement($statement_y);
     if ($matchable_x != $matchable_y) {

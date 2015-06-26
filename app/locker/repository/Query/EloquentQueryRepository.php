@@ -1,5 +1,6 @@
 <?php namespace Locker\Repository\Query;
 use \Locker\Helpers\Helpers as Helpers;
+use \Locker\Repository\Statement\EloquentRepository as StatementsRepo;
 
 class EloquentQueryRepository implements QueryRepository {
 
@@ -24,25 +25,25 @@ class EloquentQueryRepository implements QueryRepository {
         case 'in': $statements->whereIn($filter[0], $filter[2]); break;
         case 'between': $statements->whereBetween($filter[0], [$filter[2], $filter[3]]); break;
         case 'or':
-                if (!empty($filter[2]) && is_array($filter[2])) {
-                    $statements->where(function($query) use ($filter) {
-                        foreach ($filter[2] as $value) {
-                            foreach ($value[1] as $subVal) {
-                                if (is_object($subVal)) {
-                                    $subVal_array = get_object_vars($subVal);
-                                    $query->orWhere(function($query) use ($subVal_array, $value) {
-                                        foreach ($subVal_array as $key => $val) {
-                                            $query->where($value[0] . '.' . $key, '=', $val);
-                                        }
-                                    });
-                                } else {
-                                    $query->orWhere($value[0], '=', $subVal);
-                                }
-                            }
-                        }
+          if (!empty($filter[2]) && is_array($filter[2])) {
+            $statements->where(function($query) use ($filter) {
+              foreach ($filter[2] as $value) {
+                foreach ($value[1] as $subVal) {
+                  if (is_object($subVal)) {
+                    $subVal_array = get_object_vars($subVal);
+                    $query->orWhere(function($query) use ($subVal_array, $value) {
+                      foreach ($subVal_array as $key => $val) {
+                        $query->where($value[0] . '.' . $key, '=', $val);
+                      }
                     });
+                  } else {
+                    $query->orWhere($value[0], '=', $subVal);
+                  }
                 }
-                break;
+              }
+            });
+          }
+          break;
         default: $statements->where($filter[0], $filter[1], $filter[2]);
       }
     }
@@ -61,9 +62,12 @@ class EloquentQueryRepository implements QueryRepository {
       return;
     }
 
-    $pipeline[0] = array_merge_recursive([
-      '$match' => [self::LRS_ID_KEY => $lrsId]
-    ], $pipeline[0]);
+    $pipeline[0]['$match'] = [
+      '$and' => [(object) $pipeline[0]['$match'], [
+        self::LRS_ID_KEY => $lrsId,
+        'active' => true
+      ]]
+    ];
 
     return Helpers::replaceHtmlEntity($this->db->statements->aggregate($pipeline), true);
   }
@@ -120,6 +124,49 @@ class EloquentQueryRepository implements QueryRepository {
     ]]);
   }
 
+  public function void(array $match, array $opts) {
+    $void_id = 'http://adlnet.gov/expapi/verbs/voided';
+    $match = [
+      '$and' => [$match, [
+        'statement.verb.id' => ['$ne' => $void_id],
+        'voided' => false
+      ]]
+    ];
+
+    $data = $this->aggregate($opts['lrs_id'], [[
+      '$match' => $match
+    ], [
+      '$project' => [
+        '_id' => 0,
+        'statement.id' => 1,
+      ]
+    ]]);
+
+    $statements = array_map(function ($result) use ($opts, $void_id) {
+      return [
+        'actor' => $opts['client']['authority'],
+        'verb' => [
+          'id' => $void_id,
+          'display' => [
+            'en' => 'voided'
+          ]
+        ],
+        'object' => [
+          'objectType' => 'StatementRef',
+          'id' => $result['statement']['id']
+        ]
+      ];
+    }, $data['result']);
+
+    $opts['authority'] = json_decode(json_encode($opts['client']['authority']));
+
+    if( count($statements) > 0 ){
+      return (new StatementsRepo())->store(json_decode(json_encode($statements)), [], $opts);
+    } else {
+      return [];
+    }
+  }
+
   /**
    * Query to grab the required data based on type
    *
@@ -144,19 +191,19 @@ class EloquentQueryRepository implements QueryRepository {
 
   /**
    * Gets statement documents based on a filter.
-   * 
+   *
    * @param $lrs       id      The Lrs to search in (required)
    * @param $filter    array   The filter array
    * @param $raw       boolean  Pagination or raw statements?
    * @param $sections  array   Sections of the statement to return, default = all
-   * 
+   *
    * @return Statement query
    */
   public function selectStatementDocs( $lrs='', $filter, $raw=false, $sections=[] ){
     $statements = \Statement::where('lrs._id', $lrs);
 
     if( !empty($filter) ){
-      
+
       foreach($filter as $key => $value ){
         if( is_array($value) ){
           //does the array contain between values? e.g. <> 3, 6
@@ -182,7 +229,7 @@ class EloquentQueryRepository implements QueryRepository {
    * @param $filter    array   The filter array
    * @param $raw       boolean  Pagination or raw statements?
    * @param $sections  array   Sections of the statement to return, default = all
-   * 
+   *
    * @return array results
    *
    **/
@@ -229,16 +276,16 @@ class EloquentQueryRepository implements QueryRepository {
       $set_id = [ $interval => '$timestamp' ];
     }else{
       switch($type){
-        case 'user': 
-          $set_id  = ['actor' => '$statement.actor'];  
-          $project = ['$addToSet' => '$statement.actor'];  
+        case 'user':
+          $set_id  = ['actor' => '$statement.actor'];
+          $project = ['$addToSet' => '$statement.actor'];
           break;
-        case 'verb': 
-          $set_id  = ['verb' => '$statement.verb'];   
-          $project = ['$addToSet' => '$statement.verb'];    
+        case 'verb':
+          $set_id  = ['verb' => '$statement.verb'];
+          $project = ['$addToSet' => '$statement.verb'];
           break;
-        case 'activity': 
-          $set_id  = ['activity' => '$statement.object']; 
+        case 'activity':
+          $set_id  = ['activity' => '$statement.object'];
           $project = ['$addToSet' => '$statement.object'];
           break;
       }
@@ -290,8 +337,8 @@ class EloquentQueryRepository implements QueryRepository {
    * Return grouped object based on criteria passed.
    *
    * @param $lrs
-   * @param $section 
-   * @param $filters 
+   * @param $section
+   * @param $filters
    * @param $returnFields
    *
    * @return $results

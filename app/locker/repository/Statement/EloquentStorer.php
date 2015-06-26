@@ -52,6 +52,7 @@ class EloquentStorer extends EloquentReader implements Storer {
    * @return [String => \stdClass] Array of statements mapped to their UUIDs.
    */
   private function constructValidStatements(array $statements, StoreOptions $opts) {
+    $generated_ids = [];
     $constructed = [];
     $this->hashes = [];
 
@@ -64,7 +65,8 @@ class EloquentStorer extends EloquentReader implements Storer {
       }
 
       if (!isset($statement->id)) {
-        $statement->id = $this->getUUID();
+        $statement->id = $this->getUUID($generated_ids);
+        $generated_ids[] = $statement->id;
       }
 
       // Validates statement.
@@ -102,18 +104,25 @@ class EloquentStorer extends EloquentReader implements Storer {
 
   /**
    * Generates a UUID.
+   * @param $excludes An array of ids to check that the new id is unique against
    * @return String
    */
-  private function getUUID() {
+  private function getUUID($exclude=[]) {
     $remote_addr = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'LL';
     mt_srand(crc32(serialize([microtime(true), $remote_addr, 'ETC'])));
 
-    return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+    $uuid = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
       mt_rand(0, 0xffff), mt_rand(0, 0xffff),
       mt_rand(0, 0xffff),
       mt_rand(0, 0x0fff) | 0x4000,
       mt_rand(0, 0x3fff) | 0x8000,
       mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
     );
+
+    if( in_array($uuid, $exclude)){
+      return $this->getUUID($exclude);
+    } else {
+      return $uuid;
+    }
   }
 }

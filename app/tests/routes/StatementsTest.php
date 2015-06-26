@@ -103,7 +103,7 @@ class StatementsTest extends StatementsTestCase {
 
   public function testWhere() {
     $response = $this->requestStatements('where', [
-      'filter' => '[[{"active", true}]]',
+      'filters' => '[["active", "=", true]]',
       'limit' => 1,
       'page' => 1
     ]);
