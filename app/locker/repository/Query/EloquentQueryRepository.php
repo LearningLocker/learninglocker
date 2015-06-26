@@ -124,8 +124,14 @@ class EloquentQueryRepository implements QueryRepository {
     ]]);
   }
 
-  public function insert(array $project, array $opts) {
-    $statements = $this->aggregate($opts['lrs_id'], $project)['result'];
+  /**
+   * Inserts new statements based on existing ones in one query using our existing aggregation.
+   * @param [Mixed] $pipeline
+   * @param [Sting => Mixed] $opts
+   * @return [String] Ids of the inserted statements.
+   */
+  public function insert(array $pipeline, array $opts) {
+    $statements = $this->aggregate($opts['lrs_id'], $pipeline)['result'];
 
     if (count($statements) > 0) {
       $opts['authority'] = json_decode(json_encode($opts['client']['authority']));
