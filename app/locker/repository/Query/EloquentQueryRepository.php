@@ -124,47 +124,57 @@ class EloquentQueryRepository implements QueryRepository {
     ]]);
   }
 
-  public function void(array $match, array $opts) {
-    $void_id = 'http://adlnet.gov/expapi/verbs/voided';
-    $match = [
-      '$and' => [$match, [
-        'statement.verb.id' => ['$ne' => $void_id],
-        'voided' => false
-      ]]
-    ];
+  /**
+   * Inserts new statements based on existing ones in one query using our existing aggregation.
+   * @param [Mixed] $pipeline
+   * @param [Sting => Mixed] $opts
+   * @return [String] Ids of the inserted statements.
+   */
+  public function insert(array $pipeline, array $opts) {
+    $statements = $this->aggregate($opts['lrs_id'], $pipeline)['result'];
 
-    $data = $this->aggregate($opts['lrs_id'], [[
-      '$match' => $match
-    ], [
-      '$project' => [
-        '_id' => 0,
-        'statement.id' => 1,
-      ]
-    ]]);
-
-    $statements = array_map(function ($result) use ($opts, $void_id) {
-      return [
-        'actor' => $opts['client']['authority'],
-        'verb' => [
-          'id' => $void_id,
-          'display' => [
-            'en' => 'voided'
-          ]
-        ],
-        'object' => [
-          'objectType' => 'StatementRef',
-          'id' => $result['statement']['id']
-        ]
-      ];
-    }, $data['result']);
-
-    $opts['authority'] = json_decode(json_encode($opts['client']['authority']));
-
-    if( count($statements) > 0 ){
+    if (count($statements) > 0) {
+      $opts['authority'] = json_decode(json_encode($opts['client']['authority']));
       return (new StatementsRepo())->store(json_decode(json_encode($statements)), [], $opts);
     } else {
       return [];
     }
+  }
+
+  /**
+   * Inserts new voiding statements based on existing statements in one query using our aggregation.
+   * @param [String => Mixed] $match
+   * @param [String => Mixed] $opts
+   * @return [String] Ids of the inserted statements.
+   */
+  public function void(array $match, array $opts) {
+    $void_id = 'http://adlnet.gov/expapi/verbs/voided';
+
+    $pipeline = [[
+      '$match' => [
+        '$and' => [$match, [
+          'statement.verb.id' => ['$ne' => $void_id],
+          'voided' => false
+        ]]
+      ]
+    ], [
+      '$project' => [
+        '_id' => 0,
+        'actor' => ['$literal' => $opts['client']['authority']],
+        'verb' => [
+          'id' => ['$literal' => $void_id],
+          'display' => [
+            'en' => ['$literal' => 'voided']
+          ]
+        ],
+        'object' => [
+          'objectType' => ['$literal' => 'StatementRef'],
+          'id' => '$statement.id'
+        ]
+      ]
+    ]];
+
+    return $this->insert($pipeline, $opts);
   }
 
   /**
