@@ -1,4 +1,6 @@
 <?php namespace Locker\Repository\Query;
+use \Cache as IlluminateCache;
+use \Carbon\Carbon as Carbon;
 use \Locker\Helpers\Helpers as Helpers;
 use \Locker\Repository\Statement\EloquentRepository as StatementsRepo;
 
@@ -80,7 +82,15 @@ class EloquentQueryRepository implements QueryRepository {
       '$and' => [(object) $pipeline[0]['$match'], $match]
     ];
 
-    return Helpers::replaceHtmlEntity($this->db->statements->aggregate($pipeline), true);
+    $cache_key = sha1(json_encode($pipeline));
+    $result = IlluminateCache::get($cache_key, function() use ($pipeline, $cache_key) {
+      $expiration = Carbon::now()->addMinutes(10);
+      $result = Helpers::replaceHtmlEntity($this->db->statements->aggregate($pipeline), true);
+      IlluminateCache::put($cache_key, $result, $expiration);
+      return $result;
+    });
+
+    return $result;
   }
 
   /**
