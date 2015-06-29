@@ -53,20 +53,31 @@ class EloquentQueryRepository implements QueryRepository {
 
   /**
    * Aggregates the statements in the LRS (with the $lrsId) with the $pipeline.
-   * @param string $lrsId
+   * @param [string => mixed] $opts
    * @param [mixed] $pipeline
    * @return [Aggregate] http://php.net/manual/en/mongocollection.aggregate.php#refsect1-mongocollection.aggregate-examples
    */
-  public function aggregate($lrsId, array $pipeline) {
+  public function aggregate(array $opts, array $pipeline) {
     if (strpos(json_encode($pipeline), '$out') !== false) {
       return;
     }
 
+    $match = [
+      self::LRS_ID_KEY => $opts['lrs_id'],
+      'active' => true
+    ];
+
+    $scopes = $opts['scopes'];
+    if (in_array('all', $scopes) || in_array('all/read', $scopes) || in_array('statements/read', $scopes)) {
+      // Get all statements.
+    } else if (in_array('statements/read/mine', $scopes)) {
+      $match['client_id'] = $opts['client']->_id;
+    } else {
+      throw new Exceptions\Exception('Unauthorized request.', 401);
+    }
+
     $pipeline[0]['$match'] = [
-      '$and' => [(object) $pipeline[0]['$match'], [
-        self::LRS_ID_KEY => $lrsId,
-        'active' => true
-      ]]
+      '$and' => [(object) $pipeline[0]['$match'], $match]
     ];
 
     return Helpers::replaceHtmlEntity($this->db->statements->aggregate($pipeline), true);
@@ -74,12 +85,12 @@ class EloquentQueryRepository implements QueryRepository {
 
   /**
    * Aggregates statements in the LRS (with the $lrsId) that $match into a timed group.
-   * @param string $lrsId
+   * @param [string => mixed] $opts
    * @param [mixed] $match
    * @return [Aggregate] http://php.net/manual/en/mongocollection.aggregate.php#refsect1-mongocollection.aggregate-examples
    */
-  public function aggregateTime($lrsId, array $match) {
-    return $this->aggregate($lrsId, [[
+  public function aggregateTime($opts, array $match) {
+    return $this->aggregate($opts, [[
       '$match' => $match
     ], [
       '$group' => [
@@ -102,12 +113,12 @@ class EloquentQueryRepository implements QueryRepository {
 
   /**
    * Aggregates statements in the LRS (with the $lrsId) that $match into a object group.
-   * @param string $lrsId
+   * @param [string => mixed] $opts
    * @param [mixed] $match
    * @return [Aggregate] http://php.net/manual/en/mongocollection.aggregate.php#refsect1-mongocollection.aggregate-examples
    */
-  public function aggregateObject($lrsId, array $match) {
-    return $this->aggregate($lrsId, [[
+  public function aggregateObject($opts, array $match) {
+    return $this->aggregate($opts, [[
       '$match' => $match
     ], [
       '$group' => [
