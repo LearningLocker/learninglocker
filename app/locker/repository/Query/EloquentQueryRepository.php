@@ -141,47 +141,40 @@ class EloquentQueryRepository implements QueryRepository {
     }
   }
 
+  /**
+   * Inserts new voiding statements based on existing statements in one query using our aggregation.
+   * @param [String => Mixed] $match
+   * @param [String => Mixed] $opts
+   * @return [String] Ids of the inserted statements.
+   */
   public function void(array $match, array $opts) {
     $void_id = 'http://adlnet.gov/expapi/verbs/voided';
-    $match = [
-      '$and' => [$match, [
-        'statement.verb.id' => ['$ne' => $void_id],
-        'voided' => false
-      ]]
-    ];
 
-    $data = $this->aggregate($opts['lrs_id'], [[
-      '$match' => $match
+    $pipeline = [[
+      '$match' => [
+        '$and' => [$match, [
+          'statement.verb.id' => ['$ne' => $void_id],
+          'voided' => false
+        ]]
+      ]
     ], [
       '$project' => [
         '_id' => 0,
-        'statement.id' => 1,
-      ]
-    ]]);
-
-    $statements = array_map(function ($result) use ($opts, $void_id) {
-      return [
-        'actor' => $opts['client']['authority'],
+        'actor' => ['$literal' => $opts['client']['authority']],
         'verb' => [
-          'id' => $void_id,
+          'id' => ['$literal' => $void_id],
           'display' => [
-            'en' => 'voided'
+            'en' => ['$literal' => 'voided']
           ]
         ],
         'object' => [
-          'objectType' => 'StatementRef',
-          'id' => $result['statement']['id']
+          'objectType' => ['$literal' => 'StatementRef'],
+          'id' => '$statement.id'
         ]
-      ];
-    }, $data['result']);
+      ]
+    ]];
 
-    $opts['authority'] = json_decode(json_encode($opts['client']['authority']));
-
-    if( count($statements) > 0 ){
-      return (new StatementsRepo())->store(json_decode(json_encode($statements)), [], $opts);
-    } else {
-      return [];
-    }
+    return $this->insert($pipeline, $opts);
   }
 
   /**
