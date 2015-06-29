@@ -1,7 +1,5 @@
 <?php namespace app\locker\data\dashboards;
 
-use App\Locker\Repository\Query\EloquentQueryRepository as Query;
-
 class AdminDashboard extends \app\locker\data\BaseData {
 
   private $user;

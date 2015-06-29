@@ -37,7 +37,7 @@ class Reports extends Resources {
    */
   public function graph($id) {
     $report = $this->repo->show($id, $this->getOptions());
-    $data = $this->query->aggregateTime($report->lrs, $report->match);
+    $data = $this->query->aggregateTime($this->getOptions(), $report->match);
     return IlluminateResponse::json($data['result']);
   }
 

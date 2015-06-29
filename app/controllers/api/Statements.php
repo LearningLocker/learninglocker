@@ -30,7 +30,7 @@ class Statements extends Base {
    */
   public function aggregate() {
     $pipeline = $this->getParam('pipeline');
-    return \Response::json($this->query->aggregate($this->lrs->_id, $pipeline));
+    return \Response::json($this->query->aggregate($this->getOptions(), $pipeline));
   }
 
   /**
@@ -39,7 +39,7 @@ class Statements extends Base {
    */
   public function aggregateTime() {
     $match = $this->getParam('match');
-    return \Response::json($this->query->aggregateTime($this->lrs->_id, $match));
+    return \Response::json($this->query->aggregateTime($this->getOptions(), $match));
   }
 
   /**
@@ -48,7 +48,7 @@ class Statements extends Base {
    */
   public function aggregateObject() {
     $match = $this->getParam('match');
-    return \Response::json($this->query->aggregateObject($this->lrs->_id, $match));
+    return \Response::json($this->query->aggregateObject($this->getOptions(), $match));
   }
 
   /**
