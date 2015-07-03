@@ -5,5 +5,5 @@ return array(
     'Jenssegers\Mongodb\Auth\ReminderServiceProvider',
    )),
 
-  'debug' => false,
+  'debug' => true,
 );
