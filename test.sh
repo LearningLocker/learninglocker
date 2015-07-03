@@ -7,7 +7,7 @@ if [ "${DEVELOP}" = "${TRAVIS_BRANCH}" ]; then
 
   # Starts the server.
   sudo chmod -R 777 *
-  php artisan serve --env=testing --port=8000 &
+  php artisan serve --env=testing --host 0.0.0.0 --port=8000 &
 
   # Creates a new LRS.
   mongo lltest --eval 'db.lrs.insert({"title" : "Conformance", "description" : ""})'
