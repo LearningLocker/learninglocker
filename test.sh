@@ -17,6 +17,8 @@ if [ "${DEVELOP}" = "${TRAVIS_BRANCH}" ]; then
   git clone https://github.com/ryansmith94/xAPI_LRS_Test.git conformance
   cd conformance
   git checkout develop
+  npm install -g grunt-cli
+  npm install
   cd src
   grunt --config="testing.config.json"
 
