@@ -23,6 +23,8 @@ if [ "${DEVELOP}" = "${TRAVIS_BRANCH}" ]; then
   grunt --bail --config="testing.config.json" > /dev/null
 
   # Stops the server.
+  ps aux | grep [p]hp
+  ps aux | grep [p]hp | awk '{print $1}'
   ps aux | grep [p]hp | awk '{print $1}' | xargs kill
 
   echo "Completed conformance tests."
