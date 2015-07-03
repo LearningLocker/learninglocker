@@ -24,8 +24,8 @@ if [ "${DEVELOP}" = "${TRAVIS_BRANCH}" ]; then
 
   # Stops the server.
   ps aux | grep [p]hp
-  ps aux | grep [p]hp | awk '{print $1}'
-  ps aux | grep [p]hp | awk '{print $1}' | xargs kill
+  ps aux | grep [p]hp | awk '{print $2}'
+  ps aux | grep [p]hp | awk '{print $2}' | xargs kill
 
   echo "Completed conformance tests."
 else
