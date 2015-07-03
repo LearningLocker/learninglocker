@@ -2,12 +2,12 @@
 
 DEVELOP="issue/conformance-tests"
 
-echo $1
-if [ "${DEVELOP}" = "${1}" ]; then
+if [ "${DEVELOP}" = "${TRAVIS_BRANCH}" ]; then
   echo "Running conformance tests."
 
   # Starts the server.
-  php artisan serve --env=testing --port=8000 > /dev/null &
+  sudo chmod -R 777 *
+  php artisan serve --env=testing --port=8000 &
 
   # Creates a new LRS.
   mongo lltest --eval 'db.lrs.insert({"title" : "Conformance", "description" : ""})'
@@ -22,8 +22,8 @@ if [ "${DEVELOP}" = "${1}" ]; then
   cd src
   npm install -g grunt-cli > /dev/null
   npm install > /dev/null
-  grunt --bail --reporter="dot" --endpoint="http://localhost:8000/data/xAPI/" --username="1484c2ac05269b8c5479a1dd6a0d6370991fd6a1" --password="f0ef3d8062805c0fc1675beb8ac0715c75df13cb" --xapi-version="1.0.1"
-  curl http://localhost:8000/data/xAPI/about
+  grunt --bail --reporter="dot" --endpoint="http://127.0.0.1:8000/data/xAPI/" --username="1484c2ac05269b8c5479a1dd6a0d6370991fd6a1" --password="f0ef3d8062805c0fc1675beb8ac0715c75df13cb" --xapi-version="1.0.1"
+  curl http://127.0.0.1:8000/data/xAPI/about
 
   # Stops the server.
   ps aux | grep [p]hp | awk '{print $2}' | xargs kill

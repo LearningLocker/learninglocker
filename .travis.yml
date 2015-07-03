@@ -15,10 +15,9 @@ before_script:
   - sleep 3
   - sudo chmod -R 777 ./uploads
   - php artisan migrate --env="testing"
-  - sudo chmod -R 777 *
 
 script: ./vendor/bin/phpunit
-after_success: sh test.sh $TRAVIS_BRANCH
+after_success: sh test.sh
 
 notifications:
   slack:
