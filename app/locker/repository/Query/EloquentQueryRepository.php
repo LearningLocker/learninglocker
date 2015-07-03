@@ -1,4 +1,6 @@
 <?php namespace Locker\Repository\Query;
+use \Cache as IlluminateCache;
+use \Carbon\Carbon as Carbon;
 use \Locker\Helpers\Helpers as Helpers;
 use \Locker\Repository\Statement\EloquentRepository as StatementsRepo;
 
@@ -53,33 +55,54 @@ class EloquentQueryRepository implements QueryRepository {
 
   /**
    * Aggregates the statements in the LRS (with the $lrsId) with the $pipeline.
-   * @param string $lrsId
+   * @param [string => mixed] $opts
    * @param [mixed] $pipeline
    * @return [Aggregate] http://php.net/manual/en/mongocollection.aggregate.php#refsect1-mongocollection.aggregate-examples
    */
-  public function aggregate($lrsId, array $pipeline) {
+  public function aggregate(array $opts, array $pipeline) {
     if (strpos(json_encode($pipeline), '$out') !== false) {
       return;
     }
 
-    $pipeline[0]['$match'] = [
-      '$and' => [(object) $pipeline[0]['$match'], [
-        self::LRS_ID_KEY => $lrsId,
-        'active' => true
-      ]]
+    $match = [
+      self::LRS_ID_KEY => $opts['lrs_id'],
+      'active' => true
     ];
 
-    return Helpers::replaceHtmlEntity($this->db->statements->aggregate($pipeline), true);
+    $scopes = $opts['scopes'];
+    if (in_array('all', $scopes) || in_array('all/read', $scopes) || in_array('statements/read', $scopes)) {
+      // Get all statements.
+    } else if (in_array('statements/read/mine', $scopes)) {
+      $match['client_id'] = $opts['client']->_id;
+    } else {
+      throw new Exceptions\Exception('Unauthorized request.', 401);
+    }
+
+    $pipeline[0]['$match'] = [
+      '$and' => [(object) $pipeline[0]['$match'], $match]
+    ];
+
+    $cache_key = sha1(json_encode($pipeline));
+    $create_cache = function () use ($pipeline, $cache_key) {
+      $expiration = Carbon::now()->addMinutes(10);
+      $result = Helpers::replaceHtmlEntity($this->db->statements->aggregate($pipeline), true);
+      IlluminateCache::put($cache_key, $result, $expiration);
+      return $result;
+    };
+    //$result = IlluminateCache::get($cache_key, $create_cache);
+    $result = $create_cache();
+
+    return $result;
   }
 
   /**
    * Aggregates statements in the LRS (with the $lrsId) that $match into a timed group.
-   * @param string $lrsId
+   * @param [string => mixed] $opts
    * @param [mixed] $match
    * @return [Aggregate] http://php.net/manual/en/mongocollection.aggregate.php#refsect1-mongocollection.aggregate-examples
    */
-  public function aggregateTime($lrsId, array $match) {
-    return $this->aggregate($lrsId, [[
+  public function aggregateTime($opts, array $match) {
+    return $this->aggregate($opts, [[
       '$match' => $match
     ], [
       '$group' => [
@@ -102,12 +125,12 @@ class EloquentQueryRepository implements QueryRepository {
 
   /**
    * Aggregates statements in the LRS (with the $lrsId) that $match into a object group.
-   * @param string $lrsId
+   * @param [string => mixed] $opts
    * @param [mixed] $match
    * @return [Aggregate] http://php.net/manual/en/mongocollection.aggregate.php#refsect1-mongocollection.aggregate-examples
    */
-  public function aggregateObject($lrsId, array $match) {
-    return $this->aggregate($lrsId, [[
+  public function aggregateObject($opts, array $match) {
+    return $this->aggregate($opts, [[
       '$match' => $match
     ], [
       '$group' => [
@@ -124,47 +147,57 @@ class EloquentQueryRepository implements QueryRepository {
     ]]);
   }
 
-  public function void(array $match, array $opts) {
-    $void_id = 'http://adlnet.gov/expapi/verbs/voided';
-    $match = [
-      '$and' => [$match, [
-        'statement.verb.id' => ['$ne' => $void_id],
-        'voided' => false
-      ]]
-    ];
+  /**
+   * Inserts new statements based on existing ones in one query using our existing aggregation.
+   * @param [Mixed] $pipeline
+   * @param [Sting => Mixed] $opts
+   * @return [String] Ids of the inserted statements.
+   */
+  public function insert(array $pipeline, array $opts) {
+    $statements = $this->aggregate($opts['lrs_id'], $pipeline)['result'];
 
-    $data = $this->aggregate($opts['lrs_id'], [[
-      '$match' => $match
-    ], [
-      '$project' => [
-        '_id' => 0,
-        'statement.id' => 1,
-      ]
-    ]]);
-
-    $statements = array_map(function ($result) use ($opts, $void_id) {
-      return [
-        'actor' => $opts['client']['authority'],
-        'verb' => [
-          'id' => $void_id,
-          'display' => [
-            'en' => 'voided'
-          ]
-        ],
-        'object' => [
-          'objectType' => 'StatementRef',
-          'id' => $result['statement']['id']
-        ]
-      ];
-    }, $data['result']);
-
-    $opts['authority'] = json_decode(json_encode($opts['client']['authority']));
-
-    if( count($statements) > 0 ){
+    if (count($statements) > 0) {
+      $opts['authority'] = json_decode(json_encode($opts['client']['authority']));
       return (new StatementsRepo())->store(json_decode(json_encode($statements)), [], $opts);
     } else {
       return [];
     }
+  }
+
+  /**
+   * Inserts new voiding statements based on existing statements in one query using our aggregation.
+   * @param [String => Mixed] $match
+   * @param [String => Mixed] $opts
+   * @return [String] Ids of the inserted statements.
+   */
+  public function void(array $match, array $opts) {
+    $void_id = 'http://adlnet.gov/expapi/verbs/voided';
+
+    $pipeline = [[
+      '$match' => [
+        '$and' => [$match, [
+          'statement.verb.id' => ['$ne' => $void_id],
+          'voided' => false
+        ]]
+      ]
+    ], [
+      '$project' => [
+        '_id' => 0,
+        'actor' => ['$literal' => $opts['client']['authority']],
+        'verb' => [
+          'id' => ['$literal' => $void_id],
+          'display' => [
+            'en' => ['$literal' => 'voided']
+          ]
+        ],
+        'object' => [
+          'objectType' => ['$literal' => 'StatementRef'],
+          'id' => '$statement.id'
+        ]
+      ]
+    ]];
+
+    return $this->insert($pipeline, $opts);
   }
 
   /**

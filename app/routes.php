@@ -390,6 +390,7 @@ Route::group( array('prefix' => 'data/xAPI', 'before'=>'auth.statement'), functi
 });
 
 Route::group(['prefix' => 'api/v2', 'before' => 'auth.statement'], function () {
+  Route::get('statements/insert', ['uses' => 'Controllers\API\Statements@insert']);
   Route::get('statements/void', ['uses' => 'Controllers\API\Statements@void']);
 });
 

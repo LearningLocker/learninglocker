@@ -1,7 +1,5 @@
 <?php namespace app\locker\data\dashboards;
 
-use App\Locker\Repository\Query\EloquentQueryRepository as Query;
-
 class AdminDashboard extends \app\locker\data\BaseData {
 
   private $user;
@@ -60,10 +58,10 @@ class AdminDashboard extends \app\locker\data\BaseData {
    *
    **/
   public function actorCount(){
-    $mbox =  intval( \Statement::distinct('statement.actor.mbox')->remember(5)->get()->count() );
-    $openid =  intval( \Statement::distinct('statement.actor.openid')->remember(5)->get()->count() );
-    $mbox_sha1sum =  intval( \Statement::distinct('statement.actor.mbox_sha1sum')->remember(5)->get()->count() );
-    $account =  intval( \Statement::distinct('statement.actor.account.name')->remember(5)->get()->count() );
+    $mbox =  intval( \Statement::distinct('statement.actor.mbox')->remember(5)->count() );
+    $openid =  intval( \Statement::distinct('statement.actor.openid')->remember(5)->count() );
+    $mbox_sha1sum =  intval( \Statement::distinct('statement.actor.mbox_sha1sum')->remember(5)->count() );
+    $account =  intval( \Statement::distinct('statement.actor.account.name')->remember(5)->count() );
     return ($mbox + $openid + $mbox_sha1sum + $account);
   }
 
