@@ -17,7 +17,7 @@ before_script:
   - php artisan migrate --env="testing"
 
 script: ./vendor/bin/phpunit
-after_success: sudo sh test.sh
+after_success: sudo sh test.sh $TRAVIS_BRANCH
 
 notifications:
   slack:

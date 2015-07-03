@@ -2,7 +2,8 @@
 
 DEVELOP="issue/conformance-tests"
 
-if [ "${DEVELOP}" = "${TRAVIS_BRANCH}" ]; then
+echo $1
+if [ "${DEVELOP}" = "${1}" ]; then
   echo "Running conformance tests."
 
   # Starts the server.
