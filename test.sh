@@ -20,8 +20,7 @@ if [ "${DEVELOP}" = "${TRAVIS_BRANCH}" ]; then
   cd src
   npm install -g grunt-cli > /dev/null
   npm install > /dev/null
-  curl http://localhost:8080/data/xAPI/about
-  grunt --bail --config="testing.config.json" --reporter="dot" --endpoint="http://localhost:8080/data/xAPI/" --username="1484c2ac05269b8c5479a1dd6a0d6370991fd6a1" --password="f0ef3d8062805c0fc1675beb8ac0715c75df13cb" --xapi-version="1.0.1"
+  grunt --bail --config="testing.config.json" --reporter="dot" --endpoint="http://localhost:8080/data/xAPI" --username="1484c2ac05269b8c5479a1dd6a0d6370991fd6a1" --password="f0ef3d8062805c0fc1675beb8ac0715c75df13cb" --xapi-version="1.0.1"
 
   # Stops the server.
   echo "Stopping the server."
