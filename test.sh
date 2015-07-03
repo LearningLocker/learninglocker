@@ -7,7 +7,6 @@ if [ "${DEVELOP}" = "${1}" ]; then
   echo "Running conformance tests."
 
   # Starts the server.
-  sudo chmod -R 777 *
   php artisan serve --env=testing --port=8000 > /dev/null &
 
   # Creates a new LRS.
