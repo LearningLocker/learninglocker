@@ -21,7 +21,7 @@ if [ "${DEVELOP}" = "${TRAVIS_BRANCH}" ]; then
   # Runs the test suite.
   git clone https://github.com/ryansmith94/xAPI_LRS_Test.git conformance > /dev/null
   cd conformance
-  git checkout develop > /dev/null
+  git checkout travis > /dev/null
   cd src
   npm install -g grunt-cli > /dev/null
   npm install > /dev/null
