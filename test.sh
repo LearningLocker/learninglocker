@@ -9,8 +9,11 @@ if [ "${DEVELOP}" = "${TRAVIS_BRANCH}" ]; then
   sudo chmod -R 777 *
   php artisan serve --env=testing --host 0.0.0.0 --port=8000 &
 
+  # Creates a new User.
+  mongo ll_staging --eval 'db.users.insert({"name" : "Test User", "email" : "test@example.com", "verified" : "yes", "role" : "super", "password" : "$2y$10$MKDC2thihULF3fNuVj.DyORidVd.airmxZicEcSrpNQRsJMX3ZGBW"})'
+
   # Creates a new LRS.
-  mongo ll_staging --eval 'db.lrs.insert({"title" : "Conformance", "description" : ""})'
+  mongo ll_staging --eval 'db.lrs.insert({"title" : "Conformance", "description" : "",  "owner" : { "_id" : db.users.find()[0]._id}})'
 
   # Creates a new Client.
   mongo ll_staging --eval 'db.client.insert({"api" : { "basic_key" : "1484c2ac05269b8c5479a1dd6a0d6370991fd6a1", "basic_secret" : "f0ef3d8062805c0fc1675beb8ac0715c75df13cb" }, "lrs_id" : db.lrs.find()[0]._id, "authority" : { "name" : "New Client", "mbox" : "mailto:hello@learninglocker.net" }, "scopes" : [ "all" ]})'
