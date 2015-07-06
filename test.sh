@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-DEVELOP="issue/conformance-tests"
+DEVELOP="develop"
 
 if [ "${DEVELOP}" = "${TRAVIS_BRANCH}" ]; then
   echo "Running conformance tests."
