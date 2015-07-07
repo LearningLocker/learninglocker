@@ -84,12 +84,14 @@ class EloquentQueryRepository implements QueryRepository {
     ];
 
     $cache_key = sha1(json_encode($pipeline));
-    $result = IlluminateCache::get($cache_key, function() use ($pipeline, $cache_key) {
+    $create_cache = function () use ($pipeline, $cache_key) {
       $expiration = Carbon::now()->addMinutes(10);
       $result = Helpers::replaceHtmlEntity($this->db->statements->aggregate($pipeline), true);
       IlluminateCache::put($cache_key, $result, $expiration);
       return $result;
-    });
+    };
+    //$result = IlluminateCache::get($cache_key, $create_cache);
+    $result = $create_cache();
 
     return $result;
   }

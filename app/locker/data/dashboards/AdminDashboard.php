@@ -58,13 +58,12 @@ class AdminDashboard extends \app\locker\data\BaseData {
    *
    **/
   public function actorCount(){
-
     $mbox =  intval( \Statement::distinct('statement.actor.mbox')->remember(5)->count() );
     $openid =  intval( \Statement::distinct('statement.actor.openid')->remember(5)->count() );
     $mbox_sha1sum =  intval( \Statement::distinct('statement.actor.mbox_sha1sum')->remember(5)->count() );
     $account =  intval( \Statement::distinct('statement.actor.account.name')->remember(5)->count() );
-     return ($mbox + $openid + $mbox_sha1sum + $account);
-   }
+    return ($mbox + $openid + $mbox_sha1sum + $account);
+  }
 
   /**
    * Count the number of users in Learning Locker.
