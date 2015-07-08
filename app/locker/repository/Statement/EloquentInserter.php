@@ -16,11 +16,15 @@ class EloquentInserter extends EloquentReader implements Inserter {
    * @throws Exceptions\Conflict
    */
   public function insert(array $statements, StoreOptions $opts) {
-    $models = array_map(function (\stdClass $statement) use ($opts) {
-      $this->checkForConflict($statement, $opts);
-      return $this->constructModel($statement, $opts);
-    }, $statements);
+    $models = [];
 
+    foreach($statements as $statement) {
+      $duplicate = $this->checkForConflict($statement, $opts);
+      if (!$duplicate) {
+        $models[] = $this->constructModel($statement, $opts);
+      }
+    }
+    
     return $this->insertModels($models, $opts);
   }
 
@@ -36,8 +40,9 @@ class EloquentInserter extends EloquentReader implements Inserter {
       ->where('active', true)
       ->first();
 
-    if ($duplicate === null) return;
+    if ($duplicate === null) return false;
     $this->compareForConflict($statement, $this->formatModel($duplicate));
+    return true;
   }
 
   /**
@@ -68,6 +73,7 @@ class EloquentInserter extends EloquentReader implements Inserter {
   private function matchableStatement(\stdClass $statement) {
     $statement = json_decode(json_encode($statement));
     unset($statement->stored);
+    unset($statement->timestamp);
     unset($statement->authority);
     return $statement;
   }
@@ -95,6 +101,9 @@ class EloquentInserter extends EloquentReader implements Inserter {
    * @param StoreOptions $opts
    */
   private function insertModels(array $models, StoreOptions $opts) {
+    if(empty($models)) {
+      return;
+    }
     return $this->where($opts)->insert($models);
   }
 }
