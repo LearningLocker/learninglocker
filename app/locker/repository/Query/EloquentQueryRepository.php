@@ -2,6 +2,7 @@
 use \Cache as IlluminateCache;
 use \Carbon\Carbon as Carbon;
 use \Locker\Helpers\Helpers as Helpers;
+use \Locker\Helpers\Exceptions as Exceptions;
 use \Locker\Repository\Statement\EloquentRepository as StatementsRepo;
 
 class EloquentQueryRepository implements QueryRepository {
@@ -154,7 +155,7 @@ class EloquentQueryRepository implements QueryRepository {
    * @return [String] Ids of the inserted statements.
    */
   public function insert(array $pipeline, array $opts) {
-    $statements = $this->aggregate($opts['lrs_id'], $pipeline)['result'];
+    $statements = $this->aggregate($opts, $pipeline)['result'];
 
     if (count($statements) > 0) {
       $opts['authority'] = json_decode(json_encode($opts['client']['authority']));

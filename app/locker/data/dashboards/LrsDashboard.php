@@ -54,29 +54,29 @@ class LrsDashboard extends \app\locker\data\BaseData {
   public function actorCount(){
     $count_array = ['mbox' => '', 'openid' => '', 'mbox_sha1sum' => '', 'account' => ''];
     
-    $count_array['mbox'] = $this->db->statements->aggregate(
-            ['$match' => $this->getMatch( $this->lrs )],
-            ['$group' => ['_id' => '$statement.actor.mbox']],
-            ['$group' => ['_id' => 1, 'count' => ['$sum' => 1]]]
-    );
+    $count_array['mbox'] = $this->db->statements->aggregate([
+      ['$match' => ['lrs._id' => $this->lrs, 'statement.actor.mbox' => ['$exists' => true]]],
+      ['$group' => ['_id' => '$statement.actor.mbox']],
+      ['$group' => ['_id' => 1, 'count' => ['$sum' => 1]]]
+    ]);
     
-    $count_array['openid'] = $this->db->statements->aggregate(
-            ['$match' => $this->getMatch( $this->lrs )],
-            ['$group' => ['_id' => '$statement.actor.openid']],
-            ['$group' => ['_id' => 1, 'count' => ['$sum' => 1]]]
-    );
+    $count_array['openid'] = $this->db->statements->aggregate([
+      ['$match' => ['lrs._id' => $this->lrs, 'statement.actor.openid' => ['$exists' => true]]],
+      ['$group' => ['_id' => '$statement.actor.openid']],
+      ['$group' => ['_id' => 1, 'count' => ['$sum' => 1]]]
+    ]);
     
-    $count_array['mbox_sha1sum'] = $this->db->statements->aggregate(
-            ['$match' => $this->getMatch( $this->lrs )],
-            ['$group' => ['_id' => '$statement.actor.mbox_sha1sum']],
-            ['$group' => ['_id' => 1, 'count' => ['$sum' => 1]]]
-    );
+    $count_array['mbox_sha1sum'] = $this->db->statements->aggregate([
+      ['$match' => ['lrs._id' => $this->lrs, 'statement.actor.mbox_sha1sum' => ['$exists' => true]]],
+      ['$group' => ['_id' => '$statement.actor.mbox_sha1sum']],
+      ['$group' => ['_id' => 1, 'count' => ['$sum' => 1]]]
+    ]);
     
-    $count_array['account'] = $this->db->statements->aggregate(
-            ['$match' => $this->getMatch( $this->lrs )],
-            ['$group' => ['_id' => ['accountName' => '$statement.actor.account.name', 'accountHomePage' => '$statement.actor.account.homePage']]],
-            ['$group' => ['_id' => 1, 'count' => ['$sum' => 1]]]
-    );
+    $count_array['account'] = $this->db->statements->aggregate([
+      ['$match' => ['lrs._id' => $this->lrs, 'statement.actor.account' => ['$exists' => true]]],
+      ['$group' => ['_id' => ['accountName' => '$statement.actor.account.name', 'accountHomePage' => '$statement.actor.account.homePage']]],
+      ['$group' => ['_id' => 1, 'count' => ['$sum' => 1]]]
+    ]);
 
     $summary = 0;
     foreach ($count_array as $key => $val) {
