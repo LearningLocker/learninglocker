@@ -190,6 +190,8 @@ class LrsController extends BaseController {
    * @return View
    */
   public function statements($lrs_id){
+    $site = \Site::first();
+
     $statements = (new StatementIndexer)->index(new IndexOptions([
       'lrs_id' => $lrs_id,
       'limit' => $this->statement->count([
@@ -201,7 +203,8 @@ class LrsController extends BaseController {
 
     return View::make('partials.statements.list', array_merge($this->getLrs($lrs_id), [
       'statements' => $statements,
-      'statement_nav' => true
+      'statement_nav' => true,
+      'lang' => $site->lang
     ]));
   }
 

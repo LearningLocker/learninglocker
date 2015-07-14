@@ -29,7 +29,11 @@
     if (!is_array($verb)) {
       $verb = [$verb];
     }
-    $verb = reset( $verb );
+    if (isset($verb[$lang])) {
+      $verb = $verb[$lang];
+    } else {
+      $verb = reset( $verb );
+    }
   }else{
     $verb = $statement['verb']['id'];
   }
