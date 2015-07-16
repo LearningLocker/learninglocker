@@ -191,7 +191,6 @@ class LrsController extends BaseController {
    */
   public function statements($lrs_id){
     $site = \Site::first();
-
     $statements = (new StatementIndexer)->index(new IndexOptions([
       'lrs_id' => $lrs_id,
       'limit' => $this->statement->count([
@@ -200,7 +199,6 @@ class LrsController extends BaseController {
       ]),
       'scopes' => ['all']
     ]))->orderBy('statement.stored', 'DESC')->paginate(15);
-
     return View::make('partials.statements.list', array_merge($this->getLrs($lrs_id), [
       'statements' => $statements,
       'statement_nav' => true,

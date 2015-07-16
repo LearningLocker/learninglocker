@@ -5,27 +5,7 @@ define([
   var getKeys = function (display) {
     // Sets display to default if not set.
     display = display || function (item) {
-      var id = item.id;
-      var value = null;
-
-      // Return a human-readable value if the browser defines languages.
-      if (navigator.languages instanceof Array) {
-        value = item.definition && item.definition.name && (navigator.languages.map(function (lang) {
-          return item.definition.name[lang];
-        }).filter(function (value) {
-          return value != null;
-        })[0] || (item.definition.name[Object.keys(item.definition.name)[0]]));
-      }
-
-      // Display human-readable value if it exists
-      if (value != null) {
-        return value + ' (' + id + ')';
-      }
-
-      // Otherwise display just the identifier.
-      else {
-        return id;
-      }
+      return displayLangString(item.id, item.definition && item.definition.name);
     };
 
     return function (items, query) {
@@ -34,9 +14,11 @@ define([
       });
     };
   };
+
   var displayItem = function (item) {
     return item;
   };
+
   var displayActor = function (actor) {
     var id= '';
     var pre = '';
@@ -54,6 +36,7 @@ define([
     }
     return actor.name + ' (' + pre + id + ')';
   };
+
   var view = function (segment, type, example, display) {
     return CompositeView.extend({
       example: example,
@@ -65,10 +48,28 @@ define([
     });
   };
 
+  var displayLangString = function (id, langMap) {
+    var value = null;
+
+    // Return a human-readable value if the browser defines languages.
+    if (navigator.languages instanceof Array) {
+      value = langMap && ([window.lrs.lang].concat(navigator.languages || []).map(function (lang) {
+        return langMap[lang];
+      }).filter(function (value) {
+        return value != null;
+      })[0] || (langMap[Object.keys(langMap)[0]]));
+    }
+
+    // Display human-readable value if it exists. Otherwise display just the identifier.
+
+    return value != null ? (value + ' (' + id + ')') : id;
+  };
+
   return {
     getKeys: getKeys,
     displayItem: displayItem,
     displayActor: displayActor,
-    view: view
+    view: view,
+    displayLangString: displayLangString
   };
 });

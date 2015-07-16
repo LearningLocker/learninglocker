@@ -24,7 +24,7 @@
     $name = 'no name available';
   }
 
-  if( isset($statement['verb']['display']) ){
+ if( isset($statement['verb']['display']) ){
     $verb = $statement['verb']['display'];
     if (!is_array($verb)) {
       $verb = [$verb];
