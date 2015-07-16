@@ -5,7 +5,8 @@
   <script>
     window.lrs = {
       key: '{{ $client->api['basic_key']}}',
-      secret: '{{ $client->api['basic_secret'] }}'
+      secret: '{{ $client->api['basic_secret'] }}',
+      lang: '{{ $lang }}'
     };
   </script>
   {{ HTML::style('assets/css/exports.css')}}
