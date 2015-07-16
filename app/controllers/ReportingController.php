@@ -85,6 +85,8 @@ class ReportingController extends \BaseController {
    * @return reporting view.
    */
   public function statements($lrs_id, $report_id) {
+    $site = \Site::first();
+
     return View::make("{$this->views}.statements", array_merge($this->getLrs($lrs_id), [
       'reporting_nav' => true,
       'statements' => $this->report->statements($report_id, [
@@ -92,7 +94,8 @@ class ReportingController extends \BaseController {
       ])->select('statement')->paginate(20),
       'report' => $this->report->show($report_id, [
         'lrs_id' => $lrs_id
-      ])
+      ]),
+      'lang' => $site->lang
     ]));
   }
 
