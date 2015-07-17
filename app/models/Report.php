@@ -56,12 +56,9 @@ class Report extends Eloquent {
           $instructorMatch['$or'][] = $this->constructOr($key, $value);
         } else {
           if (is_array($value)) {
-            if($value[0] != '<>')
-            {
+            if($value[0] != '<>') {
               $match[$key] = ['$in' => $value];
-            }
-            else
-            {
+            } else {
               $match[$key] = ['$lte' => $value[2], '$gte' => $value[1]];
             }
           } else {
@@ -107,12 +104,9 @@ class Report extends Eloquent {
           array_push($instructorArray, [$key, $query[$key]]);
         } else {
           if (is_array($query[$key])) {
-            if($query[$key][0] != '<>')
-            {
+            if($query[$key][0] != '<>') {
               array_push($wheres, [$key, 'in', $query[$key]]);
-            }
-            else
-            {
+            } else {
               array_push($wheres, [$key, 'between', $query[$key][1], $query[$key][2]]);
             }
           } else {
