@@ -69,12 +69,14 @@ class ReportingController extends \BaseController {
    * @return reporting view.
    */
   public function index($lrs_id) {
+    $site = \Site::first();
     return View::make("{$this->views}.index", array_merge($this->getLrs($lrs_id), [
       'reporting_nav' => true,
       'reports' => $this->report->index([
         'lrs_id' => $lrs_id
       ]),
-      'client' => (new \Client)->where('lrs_id', $lrs_id)->first()
+      'client' => (new \Client)->where('lrs_id', $lrs_id)->first(),
+      'lang' => $site->lang
     ]));
   }
 
@@ -85,6 +87,7 @@ class ReportingController extends \BaseController {
    * @return reporting view.
    */
   public function statements($lrs_id, $report_id) {
+    $site = \Site::first();
     return View::make("{$this->views}.statements", array_merge($this->getLrs($lrs_id), [
       'reporting_nav' => true,
       'statements' => $this->report->statements($report_id, [
@@ -92,7 +95,8 @@ class ReportingController extends \BaseController {
       ])->select('statement')->paginate(20),
       'report' => $this->report->show($report_id, [
         'lrs_id' => $lrs_id
-      ])
+      ]),
+      'lang' => $site->lang
     ]));
   }
 
@@ -105,7 +109,6 @@ class ReportingController extends \BaseController {
    **/
   public function typeahead($lrs, $segment, $query){
     $options = self::$segments[$segment];
-
     return Response::json($this->report->setQuery(
       $lrs,
       $query,

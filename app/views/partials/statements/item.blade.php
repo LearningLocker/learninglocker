@@ -24,12 +24,16 @@
     $name = 'no name available';
   }
 
-  if( isset($statement['verb']['display']) ){
+ if( isset($statement['verb']['display']) ){
     $verb = $statement['verb']['display'];
     if (!is_array($verb)) {
       $verb = [$verb];
     }
-    $verb = reset( $verb );
+    if (isset($verb[$lang])) {
+      $verb = $verb[$lang];
+    } else {
+      $verb = reset( $verb );
+    }
   }else{
     $verb = $statement['verb']['id'];
   }
