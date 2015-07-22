@@ -66,16 +66,16 @@ class Request {
    * @return mixed Value of the header.
    */
   public function header($key, $default=null) {
-    $value = \Request::header($key);
+    $value = $this->getParam($key);
 
-    // If the key is set in the headers then return it.
+    // If the key is set in the payload then return it.
     if (isset($value)) {
       return $value;
     }
 
-    // Else return it from the payload.
+    // Else return it from the headers.
     else {
-      return $this->getParam($key, $default);
+      return \Request::header($key, $default);
     }
   }
 
