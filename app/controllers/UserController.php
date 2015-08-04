@@ -2,6 +2,7 @@
 
 use Locker\Repository\User\UserRepository as User;
 use Locker\Repository\Lrs\Repository as Lrs;
+use Locker\Helpers\User as UserHelpers;
 
 class UserController extends BaseController {
 
@@ -104,6 +105,12 @@ class UserController extends BaseController {
     //delete
     $this->user->delete( $id );
     return Redirect::back()->with('success', Lang::get('users.deleted'));
+  }
+
+  public function resetPassword($id) {
+    $user = $this->user->find($id);
+    $token = UserHelpers::setEmailToken($user, $user->email);
+    return \URL::route('email.invite', [$token]);
   }
 
 

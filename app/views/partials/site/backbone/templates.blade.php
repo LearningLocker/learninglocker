@@ -87,6 +87,9 @@
     <%= created_at %>
   </td>
   <td class="col-sm-2 text-center">
+    <button class="btn btn-danger btn-xs reset" title="{{ Lang::get('site.edit') }}"><i class="icon-refresh"></i></button>
+  </td>
+  <td class="col-sm-2 text-center">
     <button class="btn btn-danger btn-xs delete" title="{{ Lang::get('site.delete') }}"><i class="icon-trash"></i></button>
   </td>
 </script>
@@ -100,6 +103,7 @@
       <th>LRSs</th>
       <th>Role</th>
       <th>Joined</th>
+      <th>Reset Password</th>
       <th class="text-center">Delete</th>
     </tr>
   </thead>

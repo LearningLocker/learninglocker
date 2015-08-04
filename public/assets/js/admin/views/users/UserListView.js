@@ -21,11 +21,18 @@ define([
     events: {
       'click div.verify': 'verifyUser',
       'click button.delete': 'deleteUser',
+      'click button.reset': 'resetUserPassword',
       'change select.role-select': 'changeRole',
     },
 
     unrender: function() {
       this.remove();
+    },
+
+    resetUserPassword: function () {
+      $.get('users/'+this.model.id+'/reset/password', null, function (data) {
+        prompt('Send this URL to '+this.model.get('name')+' so they can reset their password.', data);
+      }.bind(this));
     },
 
     deleteUser: function() {
