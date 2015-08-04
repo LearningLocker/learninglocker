@@ -36,6 +36,7 @@ class User {
 
     //explode email addresses
     $emails = explode("\r\n", $data['emails']);
+    $tokens = [];
 
     foreach( $emails as $e ){
 
@@ -105,7 +106,9 @@ class User {
           //if adding to lrs, get lrs title, otherwise use the site name
           isset($lrs) ? $title = 'the ' . $lrs->title . ' LRS' : $title = \Site::first()->name . '\'s Learning Locker';
           //set data to use in email
-          $set_data = array('token'          => User::setEmailToken( $user, $user->email ), 
+          $token = User::setEmailToken( $user, $user->email );
+          $tokens[] = ['email' => $user->email, 'url' => \URL::to('email/invite', array($token))];
+          $set_data = array('token'          => $token, 
                             'custom_message' => $data['message'],
                             'title'          => $title,
                             'sender'         => \Auth::user());
@@ -120,6 +123,8 @@ class User {
       }
 
     }
+
+    return $tokens;
     
   }
 
