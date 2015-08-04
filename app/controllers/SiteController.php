@@ -163,7 +163,7 @@ class SiteController extends BaseController {
     return Redirect::back()->with('success', trans('users.invite.invited', [
       'tokens' => array_reduce($tokens, function ($carry, $item) {
         return $carry .= '</br>'.$item['email'].' must <a href="'.$item['url'].'">reset their password</a>.';
-      }, '').'</br></br>Share these one time password reset links with their respective user.</br>If you have emails configured these links will be emailed to the users.'
+      }, '')
     ]));
   }
 
