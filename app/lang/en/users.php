@@ -14,7 +14,7 @@ return array(
     'email'   => 'Email addresses (separate lines)',
     'message' => 'Message (optional)',
     'sample'  => 'I would like to invite you to join this Learning Record Store (LRS).',
-    'invited' => 'Those users have been invited.',
+    'invited' => 'Those users have been invited. :tokens</br></br>Share these one time password reset links with their respective user.</br>If you have emails configured these links will be emailed to the users.',
     'failed'  => 'Inviting that user failed, check the user is not already a member of the LRS and the email is valid.',
     'has_invited' => 'has invited you to join',
     'invite_instructions' => 'To do this, please click on the following link'
