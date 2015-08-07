@@ -158,8 +158,13 @@ class SiteController extends BaseController {
    * Invite in the users
    **/
   public function inviteUsers() {
-    $invite = \Locker\Helpers\User::inviteUser(Input::all());
-    return Redirect::back()->with('success', trans('users.invite.invited'));
+    $tokens = \Locker\Helpers\User::inviteUser(Input::all());
+
+    return Redirect::back()->with('success', trans('users.invite.invited', [
+      'tokens' => array_reduce($tokens, function ($carry, $item) {
+        return $carry .= '</br>'.$item['email'].' must <a href="'.$item['url'].'">reset their password</a>.';
+      }, '')
+    ]));
   }
 
   /**

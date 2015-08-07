@@ -117,8 +117,8 @@ return array(
     'Barryvdh\Cors\CorsServiceProvider',
     'JsLocalization\JsLocalizationServiceProvider',
     'locker\RequestServiceProvider',
-    'Philo\Translate\TranslateServiceProvider'
-
+    'Philo\Translate\TranslateServiceProvider',
+    'Jenssegers\Mongodb\Auth\ReminderServiceProvider',
   ),
 
   /*

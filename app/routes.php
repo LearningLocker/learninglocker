@@ -289,6 +289,10 @@ Route::put('users/{id}/add/password', array(
   'before' => 'csrf',
   'uses'   => 'PasswordController@addPassword'
 ));
+Route::get('users/{id}/reset/password', array(
+  'as'     => 'users.resetpassword',
+  'uses'   => 'UserController@resetPassword'
+));
 
 /*
 |------------------------------------------------------------------
