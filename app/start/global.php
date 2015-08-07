@@ -31,7 +31,7 @@ ClassLoader::addDirectories(array(
 |
 */
 
-Log::useFiles(storage_path().'/logs/laravel.log');
+Log::useDailyFiles(Locker\Helpers\Helpers::getEnvVar('LOG_FILESTORE'));
 
 /*
 |--------------------------------------------------------------------------
