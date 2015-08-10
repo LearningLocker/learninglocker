@@ -20,7 +20,7 @@ class LoginController extends BaseController {
     $remember_me = Input::get('remember', 0);
 
     if( Auth::attempt($creds, $remember_me) ){
-      return Redirect::to('/');
+      return Redirect::intended('/');
     } 
 
     return Redirect::route('login.create')
