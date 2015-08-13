@@ -34,7 +34,7 @@ class StatementRefTest extends StatementsTestCase {
 
   private function checkStatement($id, $expected_references = [], $expected_referrers = []) {
     $uuid = $this->generateUUID($id);
-    $statement = \Statement::where('lrs_id', $this->lrs->_id)->where('statement.id', '=', $uuid)->first();
+    $statement = \Statement::where('lrs_id', new \MongoId($this->lrs->_id))->where('statement.id', '=', $uuid)->first();
 
     //$queries = DB::getQueryLog();
 

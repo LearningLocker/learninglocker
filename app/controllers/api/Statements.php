@@ -21,7 +21,7 @@ class Statements extends Base {
   public function where() {
     $limit = \LockerRequest::getParam('limit', 100);
     $filters = $this->getParam('filters');
-    return \Response::json($this->query->where($this->lrs->_id, $filters)->paginate($limit));
+    return \Response::json($this->query->where($this->getOptions()['lrs_id'], $filters)->paginate($limit));
   }
 
   /**

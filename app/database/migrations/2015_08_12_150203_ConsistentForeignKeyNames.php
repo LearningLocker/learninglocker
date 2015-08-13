@@ -19,8 +19,8 @@ class ConsistentForeignKeyNames extends Migration {
     $value = array_reduce(explode('.', $old_name), function ($value, $key) {
       return is_object($value) ? $value->{$key} : $value[$key];
     }, $model);
-    //$model->$new_name = new \MongoId($value);
-    $model->$new_name = $value;
+    $model->$new_name = new \MongoId($value);
+    //$model->$new_name = $value;
     $model->save();
   }
 

@@ -39,7 +39,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
    **/
   public function statementCount(){
     return \DB::collection('statements')
-    ->where('lrs_id', $this->lrs)
+    ->where('lrs_id', new \MongoId($this->lrs))
     ->remember(5)
     ->count();
   }
@@ -55,25 +55,25 @@ class LrsDashboard extends \app\locker\data\BaseData {
     $count_array = ['mbox' => '', 'openid' => '', 'mbox_sha1sum' => '', 'account' => ''];
     
     $count_array['mbox'] = $this->db->statements->aggregate([
-      ['$match' => ['lrs_id' => $this->lrs, 'statement.actor.mbox' => ['$exists' => true]]],
+      ['$match' => ['lrs_id' => new \MongoId($this->lrs), 'statement.actor.mbox' => ['$exists' => true]]],
       ['$group' => ['_id' => '$statement.actor.mbox']],
       ['$group' => ['_id' => 1, 'count' => ['$sum' => 1]]]
     ]);
     
     $count_array['openid'] = $this->db->statements->aggregate([
-      ['$match' => ['lrs_id' => $this->lrs, 'statement.actor.openid' => ['$exists' => true]]],
+      ['$match' => ['lrs_id' => new \MongoId($this->lrs), 'statement.actor.openid' => ['$exists' => true]]],
       ['$group' => ['_id' => '$statement.actor.openid']],
       ['$group' => ['_id' => 1, 'count' => ['$sum' => 1]]]
     ]);
     
     $count_array['mbox_sha1sum'] = $this->db->statements->aggregate([
-      ['$match' => ['lrs_id' => $this->lrs, 'statement.actor.mbox_sha1sum' => ['$exists' => true]]],
+      ['$match' => ['lrs_id' => new \MongoId($this->lrs), 'statement.actor.mbox_sha1sum' => ['$exists' => true]]],
       ['$group' => ['_id' => '$statement.actor.mbox_sha1sum']],
       ['$group' => ['_id' => 1, 'count' => ['$sum' => 1]]]
     ]);
     
     $count_array['account'] = $this->db->statements->aggregate([
-      ['$match' => ['lrs_id' => $this->lrs, 'statement.actor.account' => ['$exists' => true]]],
+      ['$match' => ['lrs_id' => new \MongoId($this->lrs), 'statement.actor.account' => ['$exists' => true]]],
       ['$group' => ['_id' => ['accountName' => '$statement.actor.account.name', 'accountHomePage' => '$statement.actor.account.homePage']]],
       ['$group' => ['_id' => 1, 'count' => ['$sum' => 1]]]
     ]);
@@ -96,7 +96,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
    **/
   private function statementDays(){
     $firstStatement = \DB::collection('statements')
-      ->where('lrs_id', $this->lrs)
+      ->where('lrs_id', new \MongoId($this->lrs))
       ->orderBy("timestamp")->first();
 
     if($firstStatement) {
@@ -198,7 +198,7 @@ class LrsDashboard extends \app\locker\data\BaseData {
       [
         '$match' => [
           'timestamp' => $timestamp,
-          'lrs_id' => $this->lrs
+          'lrs_id' => new \MongoId($this->lrs)
         ]
       ],
       [

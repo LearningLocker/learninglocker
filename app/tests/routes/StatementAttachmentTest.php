@@ -81,7 +81,7 @@ class StatementAttachmentTest extends StatementsTestCase {
   public function testIndexAttachments() {
     $attachment = $this->storeAttachments();
     $statement = (new \Statement)
-      ->where('lrs_id', $this->lrs->_id)
+      ->where('lrs_id', new \MongoId($this->lrs->_id))
       ->where('statement.id', $this->statement_id)
       ->first()->statement;
 
@@ -123,7 +123,7 @@ class StatementAttachmentTest extends StatementsTestCase {
     $dir = Helpers::getEnvVar('LOCAL_FILESTORE').'/'.$this->lrs->_id;
     $this->deleteDirectory($dir);
     (new \Statement)
-      ->where('lrs_id', $this->lrs->_id)
+      ->where('lrs_id', new \MongoId($this->lrs->_id))
       ->delete();
   }
 }

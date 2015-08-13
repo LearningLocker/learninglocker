@@ -91,10 +91,10 @@ class ReportingController extends \BaseController {
     return View::make("{$this->views}.statements", array_merge($this->getLrs($lrs_id), [
       'reporting_nav' => true,
       'statements' => $this->report->statements($report_id, [
-        'lrs_id' => $lrs_id
+        'lrs_id' => new \MongoId($lrs_id)
       ])->select('statement')->paginate(20),
       'report' => $this->report->show($report_id, [
-        'lrs_id' => $lrs_id
+        'lrs_id' => new \MongoId($lrs_id)
       ]),
       'lang' => $site->lang
     ]));
