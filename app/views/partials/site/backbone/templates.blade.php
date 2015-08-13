@@ -64,7 +64,7 @@
     <% if ( lrs_owned.length > 0 ){ %>
       <p>Lrs's owned:
       <% _.each(lrs_owned, function(lrs) { %>  
-        <a href="{{ URL() }}/lrs/<%= lrs._id %>"><%= lrs.title %></a>, 
+        <a href="{{ URL() }}/lrs/<%= lrs_id %>"><%= lrs.title %></a>, 
       <% }); %>
       </p>
     <% } %>

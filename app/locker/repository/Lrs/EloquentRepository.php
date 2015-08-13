@@ -128,7 +128,7 @@ class EloquentRepository extends BaseRepository implements Repository {
    * @return Boolean
    */
   public function destroy($id, array $opts) {
-    StatementModel::where('lrs._id', $id)->delete();
+    StatementModel::where('lrs_id', $id)->delete();
     return parent::destroy($id, $opts);
   }
 

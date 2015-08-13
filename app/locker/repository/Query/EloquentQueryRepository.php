@@ -7,7 +7,7 @@ use \Locker\Repository\Statement\EloquentRepository as StatementsRepo;
 
 class EloquentQueryRepository implements QueryRepository {
 
-  const LRS_ID_KEY = 'lrs._id';
+  const LRS_ID_KEY = 'lrs_id';
   protected $db;
 
   public function __construct(){
@@ -215,7 +215,7 @@ class EloquentQueryRepository implements QueryRepository {
    **/
   public function selectDistinctField( $lrs='', $table='', $field='', $value='', $select='' ){
     return \DB::table($table)
-    ->where('lrs._id', $lrs)
+    ->where('lrs_id', $lrs)
     ->where( $field, $value )
     ->select( $select )
     ->distinct()
@@ -234,7 +234,7 @@ class EloquentQueryRepository implements QueryRepository {
    * @return Statement query
    */
   public function selectStatementDocs( $lrs='', $filter, $raw=false, $sections=[] ){
-    $statements = \Statement::where('lrs._id', $lrs);
+    $statements = \Statement::where('lrs_id', $lrs);
 
     if( !empty($filter) ){
 
@@ -300,7 +300,7 @@ class EloquentQueryRepository implements QueryRepository {
   public function timedGrouping( $lrs, $filters, $interval, $type='time' ){
 
     //set filters
-    $lrs_filter = ['lrs._id' => $lrs];
+    $lrs_filter = ['lrs_id' => $lrs];
 
     //if further filters passed, add them
     $match = array_merge( $lrs_filter, $filters );
@@ -381,7 +381,7 @@ class EloquentQueryRepository implements QueryRepository {
   public function objectGrouping( $lrs, $section='', $filters='', $returnFields ){
 
     //set filters
-    $lrs_filter = array('lrs._id' => $lrs);
+    $lrs_filter = array('lrs_id' => $lrs);
 
     //if further filters passed, add them
     $match = array_merge( $lrs_filter, $filters );
