@@ -75,7 +75,7 @@ class Lrs {
    **/
   public static function lrsOwner( $lrs_id ){
     $lrs = \Lrs::find( $lrs_id );
-    if( $lrs->owner['_id'] == \Auth::user()->_id || \Auth::user()->role == 'super' ){
+    if( $lrs->owner_id == \Auth::user()->_id || \Auth::user()->role == 'super' ){
       return true;
     }else{
       return false;

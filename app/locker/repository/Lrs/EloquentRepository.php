@@ -31,8 +31,7 @@ class EloquentRepository extends BaseRepository implements Repository {
   protected function validateData(array $data) {
     if (isset($data['title'])) XAPIHelpers::checkType('title', 'string', $data['title']);
     if (isset($data['description'])) XAPIHelpers::checkType('description', 'string', $data['description']);
-    if (isset($data['owner'])) XAPIHelpers::checkType('owner', 'array', $data['owner']);
-    if (isset($data['owner']['_id'])) XAPIHelpers::checkType('owner._id', 'string', $data['owner']['_id']);
+    if (isset($data['owner_id'])) XAPIHelpers::checkType('owner_id', 'string', $data['owner_id']);
 
     // Validate users.
     if (isset($data['users'])) {
@@ -57,7 +56,7 @@ class EloquentRepository extends BaseRepository implements Repository {
   protected function constructStore(Model $model, array $data, array $opts) {
     // Merges and validates data with defaults.
     $data = array_merge($this->defaults, $data, [
-      'owner' => ['_id' => $opts['user']->_id],
+      'owner_id' => $opts['user']->_id,
       'users' => [[
         '_id'   => $opts['user']->_id,
         'email' => $opts['user']->email,
@@ -70,7 +69,7 @@ class EloquentRepository extends BaseRepository implements Repository {
     // Sets properties on model.
     $model->title = $data['title'];
     $model->description = $data['description'];
-    $model->owner = $data['owner'];
+    $model->owner_id = $data['owner_id'];
     $model->users = $data['users'];
 
     return $model;
@@ -137,7 +136,7 @@ class EloquentRepository extends BaseRepository implements Repository {
   }
 
   public function getLrsOwned($user_id) {
-    return $this->where([])->where('owner._id', $user_id)->select('title')->get()->toArray();
+    return $this->where([])->where('owner_id', $user_id)->select('title')->get()->toArray();
   }
 
   public function getLrsMember($user_id) {
