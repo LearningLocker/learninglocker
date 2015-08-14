@@ -192,9 +192,9 @@ class LrsController extends BaseController {
   public function statements($lrs_id){
     $site = \Site::first();
     $statements = (new StatementIndexer)->index(new IndexOptions([
-      'lrs_id' => $lrs_id,
+      'lrs_id' => new \MongoId($lrs_id),
       'limit' => $this->statement->count([
-        'lrs_id' => $lrs_id,
+        'lrs_id' => new \MongoId($lrs_id),
         'scopes' => ['all']
       ]),
       'scopes' => ['all']

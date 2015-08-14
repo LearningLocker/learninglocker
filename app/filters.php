@@ -69,7 +69,7 @@ Route::filter('auth.statement', function($route, $request){
     $lrs = Helpers::getLrsFromAuth();
 
     //attempt login once
-    if ( ! Auth::onceUsingId($lrs->owner['_id']) ) {
+    if ( ! Auth::onceUsingId($lrs->owner_id) ) {
       throw new Exceptions\Exception('Unauthorized request.', 401);
     }
 

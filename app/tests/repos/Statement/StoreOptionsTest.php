@@ -12,7 +12,6 @@ class StoreOptionsTest extends OptionsTest {
     'lrs_id' => '1',
   ];
   protected $invalid_opts = [
-    'lrs_id' => true
   ];
 
   public function setup() {
