@@ -41,7 +41,7 @@ class ConsistentForeignKeyNames extends Migration {
       $model->{$keys[$key_index]} = (object) [];
       $this->setKey($model->{$keys[$key_index]}, $keys, $key_index + 1, $value);
     } else {
-      $model->{$keys[$key_index]} = (string) $value;
+      $model->{$keys[$key_index]} = $value;
     }
     return $model;
   }
