@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "bcdfb4af26f8bd68dcce2f1705632c89",
+    "hash": "b300d70f2ad422c80d93ffd5a64f11e2",
     "packages": [
         {
             "name": "andywer/js-localization",
@@ -698,16 +698,16 @@
         },
         {
             "name": "learninglocker/statementfactory",
-            "version": "v0.0.2",
+            "version": "v0.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LearningLocker/StatementFactory.git",
-                "reference": "b364e7f49329230ee9eef7a30536ca9637a42630"
+                "reference": "09f16deabe5071a1d103caa3d6bfd23d786e899a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LearningLocker/StatementFactory/zipball/b364e7f49329230ee9eef7a30536ca9637a42630",
-                "reference": "b364e7f49329230ee9eef7a30536ca9637a42630",
+                "url": "https://api.github.com/repos/LearningLocker/StatementFactory/zipball/09f16deabe5071a1d103caa3d6bfd23d786e899a",
+                "reference": "09f16deabe5071a1d103caa3d6bfd23d786e899a",
                 "shasum": ""
             },
             "type": "library",
@@ -727,7 +727,7 @@
                 }
             ],
             "description": "Learning Locker's classes for xAPI.",
-            "time": "2015-05-13 14:33:50"
+            "time": "2015-08-17 14:47:42"
         },
         {
             "name": "monolog/monolog",
