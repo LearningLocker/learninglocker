@@ -5,63 +5,56 @@ use Illuminate\Database\Migrations\Migration;
 class ConsistentForeignKeyNames extends Migration {
 
 	public function up() {
-		$this->chunkKeyRenaming(new DocumentAPI, 'lrs', 'lrs_id');
-    $this->chunkKeyRenaming(new Statement, 'lrs._id', 'lrs_id');
-    $this->chunkKeyRenaming(new Lrs, 'owner._id', 'owner_id');
-    $this->chunkKeyRenaming(new Report, 'lrs', 'lrs_id');
-    $this->chunkKeyRenaming(new Export, 'lrs', 'lrs_id');
+    $db = \DB::getMongoDB();
+
+    Lrs::get()->each(function (Lrs $lrs) use ($db) {
+      $convertToMongoId = function ($value) {
+        return new \MongoId($value);
+      };
+      $this->changeForeignKey($db->statements, 'lrs._id', 'lrs_id', $lrs->_id, $convertToMongoId);
+      $this->changeForeignKey($db->documentapi, 'lrs', 'lrs_id', $lrs->_id, $convertToMongoId);
+      $this->changeForeignKey($db->reports, 'lrs', 'lrs_id', $lrs->_id, $convertToMongoId);
+      $this->changeForeignKey($db->exports, 'lrs', 'lrs_id', $lrs->_id, $convertToMongoId);
+
+      $lrs->owner_id = $convertToMongoId($lrs->owner['_id']);
+      $lrs->save();
+
+      echo 'Models for "'.$lrs->title.'" converted.'.PHP_EOL;
+    });
+
+    echo 'All finished, hopefully!'.PHP_EOL;
 	}
 
+  private function changeForeignKey($collection, $old_key, $new_key, $old_value, $modifier) {
+    $collection->update([
+      $old_key => $old_value
+    ], [
+      '$set' => [
+        $new_key => $modifier($old_value)
+      ]
+    ], [
+      'multiple' => true
+    ]);
+  }
+
   public function down() {
-    $this->chunkMongoIdRemoval(new DocumentAPI, 'lrs', 'lrs_id');
-    $this->chunkMongoIdRemoval(new Statement, 'lrs._id', 'lrs_id');
-    $this->chunkMongoIdRemoval(new Lrs, 'owner._id', 'owner_id');
-    $this->chunkMongoIdRemoval(new Report, 'lrs', 'lrs_id');
-    $this->chunkMongoIdRemoval(new Export, 'lrs', 'lrs_id');
-  }
+    $db = \DB::getMongoDB();
 
-  private function chunkKeyRenaming($model, $old_name, $new_name) {
-    $this->chunkModelMigration($model, $this->renameKey($old_name, $new_name));
-  }
+    Lrs::get()->each(function (Lrs $lrs) use ($db) {
+      $convertToString = function ($value) {
+        return (string) $value;
+      };
+      $this->changeForeignKey($db->statements, 'lrs_id', 'lrs._id', $lrs->_id, $convertToString);
+      $this->changeForeignKey($db->documentapi, 'lrs_id', 'lrs', $lrs->_id, $convertToString);
+      $this->changeForeignKey($db->reports, 'lrs_id', 'lrs', $lrs->_id, $convertToString);
+      $this->changeForeignKey($db->exports, 'lrs_id', 'lrs', $lrs->_id, $convertToString);
 
-  private function chunkMongoIdRemoval($model, $old_name, $new_name) {
-    $this->chunkModelMigration($model, $this->removeMongoId($old_name, $new_name));
-  }
+      $lrs->owner = [
+        '_id' => $convertToString($lrs->owner_id)
+      ];
+      $lrs->save();
 
-  private function removeMongoId($old_name, $new_name) {
-    return function ($model) use ($old_name, $new_name) {
-      $value = $model->$new_name;
-      $model = $this->setKey($model, explode('.', $old_name), 0, (string) $value);
-      $model->save();
-    };
-  }
-
-  private function setKey($model, $keys, $key_index, $value) {
-    if ($key_index < count($keys) - 1) {
-      $model->{$keys[$key_index]} = (object) [];
-      $this->setKey($model->{$keys[$key_index]}, $keys, $key_index + 1, $value);
-    } else {
-      $model->{$keys[$key_index]} = $value;
-    }
-    return $model;
-  }
-
-  private function renameKey($old_name, $new_name) {
-    return function ($model) use ($old_name, $new_name) {
-      $value = array_reduce(explode('.', $old_name), function ($value, $key) {
-        return is_object($value) ? $value->{$key} : $value[$key];
-      }, $model);
-      $model->$new_name = new \MongoId($value);
-      $model->save();
-    };
-  }
-
-  private function chunkModelMigration($model, Callable $migration) {
-    $model->chunk(1000, function ($models) use ($migration) {
-      foreach ($models as $model){
-        $migration($model);
-      }
-      echo count($models) . ' converted.'.PHP_EOL;
+      echo 'Models for "'.$lrs->title.'" converted.'.PHP_EOL;
     });
 
     echo 'All finished, hopefully!'.PHP_EOL;
