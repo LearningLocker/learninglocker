@@ -120,9 +120,11 @@ class SiteController extends BaseController {
   public function lrs(){
     $opts = ['user' => \Auth::user()];
     $lrss = $this->lrs->index($opts);
+    $counts = $this->lrs->getCounts();
 
-    return Response::json(array_map(function ($lrs) {
-      $lrs->statement_total = $this->statement->count(['lrs_id' => $lrs->_id, 'scopes' => ['all']]);
+
+    return Response::json(array_map(function ($lrs) use ($counts) {
+      $lrs->statement_total = isset($counts[$lrs->_id]) ? $counts[$lrs->_id] : 0;
       return $lrs;
     }, $lrss));
   }
