@@ -387,7 +387,6 @@ class EloquentDocumentRepository implements DocumentRepository {
 
     $document->updated_at = new Carbon($updated);
     $document->setContent( $data['content_info'], $method ); //set the content for the document
-
     if( $document->save() ){
       return $document;
     }

@@ -7,8 +7,9 @@
 use Jenssegers\Mongodb\Model as Eloquent;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Locker\Repository\Document\FileTypes;
-use \Locker\Helpers\Helpers as Helpers;
-use \Locker\Helpers\Exceptions as Exceptions;
+use Locker\Helpers\Helpers as Helpers;
+use Locker\Helpers\Exceptions as Exceptions;
+use Locker\Repository\File\FlyRepository as FileRepository;
 
 class DocumentAPI extends Eloquent {
   protected $collection = 'documentapi';
@@ -36,12 +37,6 @@ class DocumentAPI extends Eloquent {
         break;
       default: $this->saveDocument($content, $contentType);
     }
-  }
-
-  private function ammendmentError() {
-    return new Exceptions\Exception(
-      "Cannot amend existing {$this->contentType} document with a string"
-    );
   }
 
   private function postContent($content, $contentType) {
@@ -94,13 +89,19 @@ class DocumentAPI extends Eloquent {
       $origname = $content->getClientOriginalName();
       $parts = pathinfo($origname);
       $filename = Str::slug(Str::lower($parts['filename'])).'-'.time().'.'.$parts['extension'];
-      $content->move($dir, $filename);
+
+      // Stores the file in a temporary location before writing it to the FileRepository.
+      $tmp_location = __DIR__.'/../../uploads/tmp';
+      $content->move($tmp_location, $filename);
+      $data = file_get_contents($tmp_location.'/'.$filename);
+      (new FileRepository)->update($dir.$filename, ['content' => $data], []);
+      unlink($tmp_location.'/'.$filename);
     } else {
       $ext = array_search($contentType, FileTypes::getMap());
 
       $filename = time().'_'.mt_rand(0,1000).($ext !== false ? '.'.$ext : '');
 
-      $size = file_put_contents($dir.$filename, $content);
+      $size = (new FileRepository)->update($dir.$filename, ['content' => $content], []);
 
       if ($size === false) throw new Exceptions\Exception('There was an issue saving the content');
     }
@@ -136,12 +137,7 @@ class DocumentAPI extends Eloquent {
   }
 
   public function getContentDir(){
-    $dir = Helpers::getEnvVar('LOCAL_FILESTORE').'/'.$this->lrs_id.'/documents/';
-    if( !file_exists($dir) ){
-      mkdir( $dir, 0774, true );
-    }
-
-    return $dir;
+    return $this->lrs_id.'/documents/';
   }
 
   public function getFilePath(){

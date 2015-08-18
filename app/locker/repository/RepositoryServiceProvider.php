@@ -46,6 +46,10 @@ class RepositoryServiceProvider extends ServiceProvider {
       'Locker\Repository\Export\Repository',
       'Locker\Repository\Export\EloquentRepository'
     );
+    $this->app->bind(
+      'Locker\Repository\File\Repository',
+      'Locker\Repository\File\FlyRepository'
+    );
   }
 
 
