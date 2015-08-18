@@ -49,7 +49,7 @@ class EloquentRepository extends BaseRepository implements Repository {
     // Sets properties on model.
     $model->name = $data['name'];
     $model->description = $data['description'];
-    $model->lrs = $opts['lrs_id'];
+    $model->lrs_id = $opts['lrs_id'];
     $model->fields = $data['fields'];
     $model->report = $data['report'];
 

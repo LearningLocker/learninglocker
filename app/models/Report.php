@@ -11,7 +11,7 @@ class Report extends Eloquent {
    */
   protected $collection = 'reports';
   public static $rules = [];
-  protected $fillable = ['name', 'description', 'query', 'lrs', 'since', 'until'];
+  protected $fillable = ['name', 'description', 'query', 'lrs_id', 'since', 'until'];
   protected $actorQuery = [ 'statement.actor.account', 'statement.actor.mbox', 'statement.actor.openid', 'statement.actor.mbox_sha1sum' ];
   protected $instructorQuery = [
     'statement.context.instructor.account',
@@ -80,13 +80,16 @@ class Report extends Eloquent {
     if ($until) {
       $match['statement.timestamp']['$lte'] = $until;
     }
-    $andMatch = ['$and' => []];
-    if (!empty($actorMatch)) $andMatch['$and'][] = $actorMatch;
-    if (!empty($instructorMatch)) $andMatch['$and'][] = $instructorMatch;
-    if (!empty($match)) $andMatch['$and'][] = $match;
-    //echo(json_encode($andMatch));die;
+    $andMatch = [];
+    if (!empty($actorMatch)) $andMatch[] = $actorMatch;
+    if (!empty($instructorMatch)) $andMatch[] = $instructorMatch;
+    if (!empty($match)) $andMatch[] = $match;
 
-    return $andMatch;
+    if (!empty($andMatch)) {
+      $match = ['$and' => $andMatch];
+    }
+
+    return $match;
   }
 
   public function getWhereAttribute() {
