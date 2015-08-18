@@ -16,8 +16,6 @@ class FlyRepository implements Repository {
   }
 
   public function show($id, array $opts) {
-    \Log::info($id);
-    \Log::info(Helpers::getEnvVar('LOCAL_FILESTORE'));
     return $this->filesystem->read($id);
   }
 
