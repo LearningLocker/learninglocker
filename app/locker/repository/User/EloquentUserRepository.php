@@ -93,7 +93,7 @@ class EloquentUserRepository implements UserRepository {
     $super   = \User::where('role', 'super')->first();
 
     //get all LRSs owned by user being deleted
-    $get_lrs = \Lrs::where('owner_id', $id)->get();
+    $get_lrs = \Lrs::where('owner._id', $id)->get();
     
     //do LRS exists?
     if( $get_lrs ){
@@ -107,7 +107,7 @@ class EloquentUserRepository implements UserRepository {
         //add merged users
         $lrs->users = $existing;
         //set owner to super admin
-        $lrs->owner_id = $super->_id;
+        $lrs->owner = array('_id' => $super->_id);
         $lrs->save();
       }
     }

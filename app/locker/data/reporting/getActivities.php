@@ -6,7 +6,7 @@ class getActivities {
 
   public function getActivities( $lrs ){
 
-    return \Statement::where('lrs_id', $lrs)
+    return \Statement::where('lrs._id', $lrs)
                   ->where('statement.object.objectType', 'Activity')
                   ->select('statement.object.definition.type')
                   ->distinct()

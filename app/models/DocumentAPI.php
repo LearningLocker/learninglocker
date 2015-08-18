@@ -12,7 +12,7 @@ use \Locker\Helpers\Exceptions as Exceptions;
 
 class DocumentAPI extends Eloquent {
   protected $collection = 'documentapi';
-  protected $hidden = ['_id', 'created_at', 'updated_at', 'lrs_id', 'apitype'];
+  protected $hidden = ['_id', 'created_at', 'updated_at', 'lrs', 'apitype'];
 
   /**
    * Returns true if $array is associative.
@@ -136,7 +136,7 @@ class DocumentAPI extends Eloquent {
   }
 
   public function getContentDir(){
-    $dir = Helpers::getEnvVar('LOCAL_FILESTORE').'/'.$this->lrs_id.'/documents/';
+    $dir = Helpers::getEnvVar('LOCAL_FILESTORE').'/'.$this->lrs.'/documents/';
     if( !file_exists($dir) ){
       mkdir( $dir, 0774, true );
     }

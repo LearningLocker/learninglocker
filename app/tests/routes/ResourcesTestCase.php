@@ -16,7 +16,7 @@ abstract class ResourcesTestCase extends StatementsTestCase {
   }
 
   protected function constructData($data) {
-    $data['lrs_id'] = new \MongoId($this->lrs->_id);
+    $data['lrs'] = $this->lrs->_id;
     return $data;
   }
 

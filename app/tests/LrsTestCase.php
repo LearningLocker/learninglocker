@@ -14,7 +14,7 @@ abstract class LrsTestCase extends InstanceTestCase {
   protected function createLrs(\User $user) {
     $model = new \Lrs([
       'title' => 'Test',
-      'owner_id' => $user->_id,
+      'owner' => ['_id' => $user->_id],
       'users' => [[
         '_id' => $user->_id,
         'email' => $user->email,

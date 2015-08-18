@@ -41,7 +41,7 @@ abstract class StatementsTestCase extends LrsTestCase {
 
   protected function createStatement(\Lrs $lrs, \Client $client, array $statement) {
     $model = new \Statement([
-      'lrs_id' => new \MongoId($lrs->_id),
+      'lrs' => ['_id' => $lrs->_id],
       'client_id' => $client->_id,
       'statement' => $statement,
       'active' => true,

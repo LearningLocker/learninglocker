@@ -39,7 +39,7 @@ class IndexOptions extends Options {
     'limit' => 'Integer',
     'langs' => ['Language'],
     'attachments' => 'Boolean',
-    'lrs_id' => null,
+    'lrs_id' => 'String',
     'scopes' => ['String'],
     'client' => null
   ];

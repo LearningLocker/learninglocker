@@ -14,7 +14,7 @@ abstract class EloquentRepository implements Repository {
    * @return \Jenssegers\Mongodb\Eloquent\Builder
    */
   protected function where(array $opts) {
-    return (new $this->model)->where('lrs_id', $opts['lrs_id']);
+    return (new $this->model)->where('lrs', $opts['lrs_id']);
   }
 
   /**

@@ -6,7 +6,7 @@ class ShowOptions extends Options {
     'active' => true
   ];
   protected $types = [
-    'lrs_id' => null,
+    'lrs_id' => 'String',
     'voided' => 'Boolean',
     'active' => 'Boolean',
     'scopes' => ['String'],

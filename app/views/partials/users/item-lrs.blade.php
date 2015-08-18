@@ -4,7 +4,7 @@ $grav_url = \Locker\Helpers\Helpers::getGravatar( $user['email'], '50');
 
 ?>
 <div class='user-list'>
-  @if ( $lrs->owner_id != $user['_id'] )
+  @if ( $lrs->owner['_id'] != $user['_id'] )
     <div class="meta pull-right">
       @include('partials.lrs.forms.removeUser', array('lrs' => $lrs, 'user' => $user))
     </div>
@@ -17,7 +17,7 @@ $grav_url = \Locker\Helpers\Helpers::getGravatar( $user['email'], '50');
       {{ $user['email'] }}
     </div>
     <div class="user-details-item">
-      @if ( $lrs->owner_id != $user['_id'] )
+      @if ( $lrs->owner['_id'] != $user['_id'] )
         <select class="form-control lrs-user-role" data-user="{{ $user['_id'] }}">
           <option value="admin" @if($user['role'] == 'admin') selected @endif>Admin</option>
           <option value="observer" @if($user['role'] != 'admin') selected @endif>Observer</option>

@@ -10,7 +10,7 @@ class Lrs extends Eloquent {
    * @var string
    */
   protected $collection = 'lrs';
-  protected $fillable = ['title', 'description', 'owner_id', 'users'];
+  protected $fillable = ['title', 'description', 'owner', 'users'];
 
   /**
    * Validation rules for statement input

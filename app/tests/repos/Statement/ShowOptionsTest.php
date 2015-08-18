@@ -16,6 +16,7 @@ class ShowOptionsTest extends OptionsTest {
     'active' => false
   ];
   protected $invalid_opts = [
+    'lrs_id' => true,
     'voided' => 'false',
     'active' => 'true'
   ];

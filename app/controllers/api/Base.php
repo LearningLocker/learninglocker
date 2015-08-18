@@ -30,7 +30,7 @@ class Base extends Controller {
    */
   protected function getOptions() {
     return [
-      'lrs_id' => new \MongoId($this->lrs->_id),
+      'lrs_id' => $this->lrs->_id,
       'scopes' => $this->client->scopes,
       'client' => $this->client
     ];

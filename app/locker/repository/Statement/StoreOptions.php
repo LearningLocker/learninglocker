@@ -3,7 +3,7 @@
 class StoreOptions extends Options {
   protected $defaults = [];
   protected $types = [
-    'lrs_id' => null,
+    'lrs_id' => 'String',
     'authority' => 'Authority',
     'scopes' => ['String'],
     'client' => null

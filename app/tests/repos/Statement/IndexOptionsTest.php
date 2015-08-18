@@ -57,7 +57,8 @@ class IndexOptionsTest extends OptionsTest {
     'offset' => -1,
     'limit' => -1,
     'langs' => 'invalid',
-    'attachments' => 'invalid'
+    'attachments' => 'invalid',
+    'lrs_id' => true
   ];
 
   public function setup() {

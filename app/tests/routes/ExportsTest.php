@@ -27,7 +27,7 @@ class ExportsTest extends ResourcesTestCase {
       'query' => [
         'statement.actor.mbox' => ['mailto:test@example.com']
       ],
-      'lrs_id' => new \MongoId($this->lrs->_id)
+      'lrs' => $this->lrs->_id
     ]);
     $model->save();
     return $model;
