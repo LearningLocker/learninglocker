@@ -2,7 +2,7 @@
 use Locker\Repository\Document\FileTypes as FileTypes;
 use Locker\Helpers\Helpers as Helpers;
 use Locker\Helpers\Exceptions as Exceptions;
-use Locker\Repository\File\FlyRepository as FileRepository;
+use Locker\Repository\File\Factory as FileFactory;
 
 class FileAttacher {
 
@@ -26,7 +26,7 @@ class FileAttacher {
       );
 
       $filename = $attachment->hash.'.'.$ext;
-      (new FileRepository)->update($dir.$filename, ['content' => $attachment->content], []);
+      FileFactory::create()->update($dir.$filename, ['content' => $attachment->content], []);
     }
   }
 
@@ -47,7 +47,7 @@ class FileAttacher {
         return (object) [
           'content_type' => $attachment->contentType,
           'hash' => $attachment->sha2,
-          'content' => (new FileRepository)->show($dir.$filename, [])
+          'content' => FileFactory::create()->show($dir.$filename, [])
         ];
       }, isset($statement->attachments) ? $statement->attachments : []));
     }

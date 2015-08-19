@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Locker\Repository\Document\FileTypes;
 use Locker\Helpers\Helpers as Helpers;
 use Locker\Helpers\Exceptions as Exceptions;
-use Locker\Repository\File\FlyRepository as FileRepository;
+use Locker\Repository\File\Factory as FileFactory;
 
 class DocumentAPI extends Eloquent {
   protected $collection = 'documentapi';
@@ -94,14 +94,14 @@ class DocumentAPI extends Eloquent {
       $tmp_location = __DIR__.'/../../uploads/tmp';
       $content->move($tmp_location, $filename);
       $data = file_get_contents($tmp_location.'/'.$filename);
-      (new FileRepository)->update($dir.$filename, ['content' => $data], []);
+      FileFactory::create()->update($dir.$filename, ['content' => $data], []);
       unlink($tmp_location.'/'.$filename);
     } else {
       $ext = array_search($contentType, FileTypes::getMap());
 
       $filename = time().'_'.mt_rand(0,1000).($ext !== false ? '.'.$ext : '');
 
-      $size = (new FileRepository)->update($dir.$filename, ['content' => $content], []);
+      $size = FileFactory::create()->update($dir.$filename, ['content' => $content], []);
 
       if ($size === false) throw new Exceptions\Exception('There was an issue saving the content');
     }

@@ -1,13 +1,13 @@
 <?php namespace Locker\Repository\File;
 use League\Flysystem\Filesystem as Filesystem;
-use League\Flysystem\Adapter\Local as LocalAdapter;
-use Locker\Helpers\Helpers as Helpers;
+use League\Flysystem\AdapterInterface as AdapterInterface;
 
-class FlyRepository implements Repository {
+abstract class FlyRepository implements Repository {
   protected $filesystem;
 
-  public function __construct() {
-    $adapter = new LocalAdapter(Helpers::getEnvVar('LOCAL_FILESTORE'));
+  public function __construct(array $conf) {}
+
+  protected function constructFileSystem(AdapterInterface $adapter) {
     $this->filesystem = new Filesystem($adapter);
   }
 

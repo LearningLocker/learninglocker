@@ -46,7 +46,7 @@ return array(
 	|
 	*/
 
-	'files' => Helpers::getEnvVar('SESSION_FILESTORE'),
+	'files' => null,
 
 	/*
 	|--------------------------------------------------------------------------
