@@ -2,8 +2,7 @@
 use OpenCloud\OpenStack as OpenStack;
 use League\Flysystem\Rackspace\RackspaceAdapter as RackspaceAdapter;
 
-class LocalFlyRepository implements Repository {
-  protected $filesystem;
+class RackspaceFlyRepository extends FlyRepository {
 
   public function __construct(array $conf) {
     $client = new OpenStack($conf['ENDPOINT'], [
