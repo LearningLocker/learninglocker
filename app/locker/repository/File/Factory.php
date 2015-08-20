@@ -5,7 +5,7 @@ class Factory {
   public static function create() {
     $repo = Helpers::getEnvVar('FS_REPO');
 
-    return $this->createRepo($repo);
+    return static::createRepo($repo);
   }
 
   public static function createRepo($repo) {
