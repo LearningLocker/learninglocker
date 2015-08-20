@@ -120,7 +120,7 @@ class StatementAttachmentTest extends StatementsTestCase {
 
   public function tearDown() {
     parent::tearDown();
-    $dir = Helpers::getEnvVar('FS_CONF')['ENDPOINT'].'/'.$this->lrs->_id;
+    $dir = Helpers::getEnvVar('FS_ENDPOINT').'/'.$this->lrs->_id;
     $this->deleteDirectory($dir);
     (new \Statement)
       ->where('lrs_id', new \MongoId($this->lrs->_id))

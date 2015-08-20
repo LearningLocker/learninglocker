@@ -7,7 +7,7 @@ use \Locker\Helpers\Helpers as Helpers;
 class AttachmentRename extends Migration {
 
   public function up() {
-    $uploads = Helpers::getEnvVar('FS_CONF')['ENDPOINT'];
+    $uploads = Helpers::getEnvVar('FS_ENDPOINT');
     $LRSs = $this->getDirectores($uploads);
     
     // Gets the attachments.
