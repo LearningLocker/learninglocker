@@ -8,7 +8,7 @@ This page documents how to use different storage adapters in Learning Locker. Th
 Your .env.local.php file should look something like this.
 ```php
   'FS_REPO' => 'Local',
-  'FS_ENDPOINT' => __DIR__.'/uploads',
+  'FS_LOCAL_ENDPOINT' => __DIR__.'/uploads',
 ```
 
 ### Rackspace
@@ -20,11 +20,11 @@ use OpenCloud\Rackspace as Rackspace;
 Your .env.local.php file should look something like this.
 ```php
   'FS_REPO' => 'Rackspace',
-  'FS_ENDPOINT' => Rackspace::UK_IDENTITY_ENDPOINT,
-  'FS_USERNAME' => 'YOUR USERNAME',
-  'FS_API_KEY' => 'YOUR API KEY',
-  'FS_REGION' => 'LON',
-  'FS_CONTAINER' => 'YOUR CONTAINER',
+  'FS_RACK_ENDPOINT' => Rackspace::UK_IDENTITY_ENDPOINT,
+  'FS_RACK_USERNAME' => 'YOUR USERNAME',
+  'FS_RACK_API_KEY' => 'YOUR API KEY',
+  'FS_RACK_REGION' => 'LON',
+  'FS_RACK_CONTAINER' => 'YOUR CONTAINER',
 ```
 
 ### Useful Development Links

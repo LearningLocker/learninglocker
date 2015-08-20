@@ -1,17 +1,16 @@
 <?php namespace Locker\Repository\File;
 use OpenCloud\Rackspace as Rackspace;
 use League\Flysystem\Rackspace\RackspaceAdapter as RackspaceAdapter;
-use Locker\Helpers\Helpers as Helpers;
 
 class RackspaceFlyRepository extends FlyRepository {
 
-  public function __construct() {
-    $client = new Rackspace(Helpers::getEnvVar('FS_ENDPOINT'), [
-      'username' => Helpers::getEnvVar('FS_USERNAME'),
-      'apiKey' => Helpers::getEnvVar('FS_API_KEY'),
+  public function __construct(Callable $conf) {
+    $client = new Rackspace($conf('FS_RACK_ENDPOINT'), [
+      'username' => $conf('FS_RACK_USERNAME'),
+      'apiKey' => $conf('FS_RACK_API_KEY'),
     ]);
-    $store = $client->objectStoreService('cloudFiles', Helpers::getEnvVar('FS_REGION'));
-    $container = $store->getContainer(Helpers::getEnvVar('FS_CONTAINER'));
+    $store = $client->objectStoreService('cloudFiles', $conf('FS_RACK_REGION'));
+    $container = $store->getContainer($conf('FS_RACK_CONTAINER'));
     $adapter = new RackspaceAdapter($container);
     $this->constructFileSystem($adapter);
   }

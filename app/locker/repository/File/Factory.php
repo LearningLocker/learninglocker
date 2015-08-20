@@ -3,12 +3,26 @@ use Locker\Helpers\Helpers as Helpers;
 
 class Factory {
   public static function create() {
-    $FS_REPO = Helpers::getEnvVar('FS_REPO');
-    $FS_REPO = ucfirst(strtolower($FS_REPO));
+    $repo = Helpers::getEnvVar('FS_REPO');
 
-    switch ($FS_REPO) {
-      case 'Rackspace': return new RackspaceFlyRepository();
-      default: return new LocalFlyRepository();
+    return $this->createRepo($repo);
+  }
+
+  public static function createRepo($repo) {
+    $repos = [
+      'Local' => 'LocalFlyRepository',
+      'Rackspace' => 'RackspaceFlyRepository',
+    ];
+    $repo = ucfirst(strtolower($repo));
+    $conf = function ($var) {
+      return Helpers::getEnvVar($var);
+    };
+
+    if (isset($repos[$repo])) {
+      $selected_repo = 'Locker\Repository\File\\'.$repos[$repo];
+      return new $selected_repo($conf);
+    } else {
+      throw new \Exception('Valid `FS_REPO` not specified in ".env.'.\App::environment().'.php". Valid values include: "'.implode('", "', array_keys($repos)).'". You provided "'.$repo.'".');
     }
   }
 }
