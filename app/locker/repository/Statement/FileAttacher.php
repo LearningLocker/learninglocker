@@ -47,7 +47,7 @@ class FileAttacher {
         return (object) [
           'content_type' => $attachment->contentType,
           'hash' => $attachment->sha2,
-          'content' => FileFactory::create()->show($dir.$filename, [])
+          'content' => FileFactory::create()->stream($dir.$filename, [])
         ];
       }, isset($statement->attachments) ? $statement->attachments : []));
     }

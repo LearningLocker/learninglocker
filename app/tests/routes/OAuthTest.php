@@ -61,8 +61,9 @@ class OAuthTest extends \Tests\LrsTestCase {
   public function testAccessViaToken() {
     $token_response = $this->requestToken($this->ll_client->api['basic_key'], $this->ll_client->api['basic_secret']);
     $token = json_decode($token_response->getContent())->access_token;
+    ob_start();
     $response = $this->requestApi($token);
-    $data = $response->getContent();
+    $data = ob_get_flush();
 
     // Checks result object.
     $this->assertEquals('{"more":"","statements":[]}', $data);

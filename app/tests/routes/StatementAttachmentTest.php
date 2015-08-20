@@ -85,6 +85,7 @@ class StatementAttachmentTest extends StatementsTestCase {
       ->where('statement.id', $this->statement_id)
       ->first()->statement;
 
+    ob_start();
     $response = $this->requestStatements('GET', [
       'attachments' => true
     ]);
@@ -94,6 +95,7 @@ class StatementAttachmentTest extends StatementsTestCase {
     
     // Checks that the content is correct.
     $actual_content = str_replace("\r", "", $response->getContent());
+    $actual_content = str_replace("\r", "", ob_get_flush());
     $expected_content = str_replace("\r", "", $this->generateContent(json_encode([
       'more' => '',
       'statements' => [$statement]
