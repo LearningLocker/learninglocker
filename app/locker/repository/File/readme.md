@@ -12,9 +12,10 @@ Your .env.local.php file should look something like this.
 ```
 
 ### Rackspace
-Your .env.local.php file will need this line at the top (below `<?php`).
-
-`use OpenCloud\Rackspace as Rackspace;`
+Your .env.local.php file will need to include `OpenCloud\Rackspace` (below `<?php`).
+```php
+use OpenCloud\Rackspace as Rackspace;
+```
 
 Your .env.local.php file should look something like this.
 ```php
@@ -27,7 +28,7 @@ Your .env.local.php file should look something like this.
 ```
 
 ### Useful Development Links
-http://docs.rackspace.com/sdks/api/php/class-OpenCloud.Rackspace.html
-http://flysystem.thephpleague.com/api/
-https://github.com/thephpleague/flysystem-aws-s3-v2/issues/3
-https://github.com/thephpleague/flysystem-rackspace/issues/7
+- http://docs.rackspace.com/sdks/api/php/class-OpenCloud.Rackspace.html
+- http://flysystem.thephpleague.com/api/
+- https://github.com/thephpleague/flysystem-aws-s3-v2/issues/3
+- https://github.com/thephpleague/flysystem-rackspace/issues/7
