@@ -5,8 +5,6 @@ use League\Flysystem\AdapterInterface as AdapterInterface;
 abstract class FlyRepository implements Repository {
   protected $filesystem;
 
-  public function __construct(array $conf) {}
-
   protected function constructFileSystem(AdapterInterface $adapter) {
     $this->filesystem = new Filesystem($adapter);
   }
@@ -34,7 +32,9 @@ abstract class FlyRepository implements Repository {
   }
 
   public function stream($id, array $opts) {
-    return $this->filesystem->readStream($id);
+    $stream = $this->filesystem->readStream($id);
+    fseek($stream, 0);
+    return $stream;
   }
 
 }

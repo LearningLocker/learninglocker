@@ -240,7 +240,10 @@ abstract class DocumentController extends BaseController {
           default:
             $stream = FileFactory::create()->stream($document->getFilePath(), []);
             return \Response::stream(function () use ($stream) {
-              fpassthru($stream);
+              while (!feof($stream)) {
+                echo fread($stream, 8192); flush();ob_flush();
+              }
+              fclose($stream);
             }, 200, $headers);
         }
       }

@@ -2,8 +2,6 @@
 
 return [
   'FS_REPO' => 'Local',
-  'FS_CONF' => [
-    'ENDPOINT' => __DIR__.'/uploads'
-  ],
+  'FS_ENDPOINT' => __DIR__.'/uploads',
   'LOG_FILESTORE' => __DIR__.'/app/storage/logs/laravel.log',
 ];

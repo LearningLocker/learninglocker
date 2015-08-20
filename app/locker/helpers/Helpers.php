@@ -114,6 +114,7 @@ class Helpers {
 
   static function getEnvVar($var) {
     $value = getenv($var);
+    \Log::info($var, [json_encode($value)]);
     if ($value === false) {
       $defaults = include base_path() . '/.env.php';
       $value = $defaults[$var];
