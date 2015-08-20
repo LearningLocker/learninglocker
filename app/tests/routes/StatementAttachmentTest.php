@@ -94,8 +94,7 @@ class StatementAttachmentTest extends StatementsTestCase {
     $attachment['content'] .= PHP_EOL;
     
     // Checks that the content is correct.
-    $actual_content = str_replace("\r", "", $response->getContent());
-    $actual_content = str_replace("\r", "", ob_get_flush());
+    $actual_content = str_replace("\r", "", ob_get_clean());
     $expected_content = str_replace("\r", "", $this->generateContent(json_encode([
       'more' => '',
       'statements' => [$statement]
