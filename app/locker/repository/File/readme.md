@@ -39,6 +39,22 @@ If you're migrating from another file repository (i.e. "Local"), you'll need to 
 php artisan ll:file-repo Rackspace -f Local
 ```
 
+### Azure
+Your .env.local.php file should look something like this.
+```php
+  'FS_REPO' => 'Azure',
+  'FS_AZURE_PROTOCOL' => 'DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s',
+  'FS_AZURE_USERNAME' => 'YOUR USERNAME',
+  'FS_AZURE_API_KEY' => 'YOUR API KEY',
+  'FS_AZURE_CONTAINER' => 'YOUR CONTAINER',
+```
+
+If you're migrating from another file repository (i.e. "Local"), you'll need to run the command below.
+
+```shell
+php artisan ll:file-repo Azure -f Local
+```
+
 ### Useful Development Links
 - http://docs.rackspace.com/sdks/api/php/class-OpenCloud.Rackspace.html
 - http://flysystem.thephpleague.com/api/

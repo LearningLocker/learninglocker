@@ -12,6 +12,7 @@ class Factory {
     $repos = [
       'Local' => 'LocalFlyRepository',
       'Rackspace' => 'RackspaceFlyRepository',
+      'Azure' => 'AzureFlyRepository',
     ];
     $repo = ucfirst(strtolower($repo));
     $conf = function ($var) {
