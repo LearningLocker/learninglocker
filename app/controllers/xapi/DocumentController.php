@@ -1,8 +1,8 @@
 <?php namespace Controllers\xAPI;
-
-use \Locker\Repository\Document\DocumentRepository as Document;
-use \Carbon\Carbon;
-use \Locker\Helpers\Exceptions as Exceptions;
+use Locker\Repository\Document\DocumentRepository as Document;
+use Carbon\Carbon;
+use Locker\Helpers\Exceptions as Exceptions;
+use Locker\Repository\File\Factory as FileFactory;
 
 abstract class DocumentController extends BaseController {
 
@@ -238,11 +238,13 @@ abstract class DocumentController extends BaseController {
           case "text/plain":
             return \Response::make($document->content, 200, $headers);
           default:
-            return \Response::download(
-              $document->getFilePath(),
-              $document->content,
-              $headers
-            );
+            $stream = FileFactory::create()->stream($document->getFilePath(), []);
+            return \Response::stream(function () use ($stream) {
+              while (!feof($stream)) {
+                echo fread($stream, 8192); flush();ob_flush();
+              }
+              fclose($stream);
+            }, 200, $headers);
         }
       }
     }

@@ -1,7 +1,7 @@
 <?php
 
 return [
-  'LOCAL_FILESTORE' => __DIR__.'/uploads',
-  'SESSION_FILESTORE' => __DIR__.'/app/storage/sessions',
+  'FS_REPO' => 'Local',
+  'FS_LOCAL_ENDPOINT' => __DIR__.'/uploads',
   'LOG_FILESTORE' => __DIR__.'/app/storage/logs/laravel.log',
 ];

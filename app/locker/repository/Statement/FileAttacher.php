@@ -1,8 +1,8 @@
 <?php namespace Locker\Repository\Statement;
-
-use \Locker\Repository\Document\FileTypes as FileTypes;
-use \Locker\Helpers\Helpers as Helpers;
-use \Locker\Helpers\Exceptions as Exceptions;
+use Locker\Repository\Document\FileTypes as FileTypes;
+use Locker\Helpers\Helpers as Helpers;
+use Locker\Helpers\Exceptions as Exceptions;
+use Locker\Repository\File\Factory as FileFactory;
 
 class FileAttacher {
 
@@ -14,9 +14,6 @@ class FileAttacher {
    */
   public function store(array $attachments, array $hashes, StoreOptions $opts) {
     $dir = $this->getDir($opts);
-    if (!is_dir($dir) && count($attachments > 0) && !empty($attachments)) {
-      mkdir($dir, 0775, true);
-    }
 
     foreach ($attachments as $attachment) {
       if (!in_array($attachment->hash, $hashes)) throw new Exceptions\Exception(
@@ -28,8 +25,8 @@ class FileAttacher {
         'This file type cannot be supported'
       );
 
-      $file = $attachment->hash.'.'.$ext;
-      file_put_contents($dir.$file, $attachment->content);
+      $filename = $attachment->hash.'.'.$ext;
+      FileFactory::create()->update($dir.$filename, ['content' => $attachment->content], []);
     }
   }
 
@@ -50,7 +47,7 @@ class FileAttacher {
         return (object) [
           'content_type' => $attachment->contentType,
           'hash' => $attachment->sha2,
-          'content' => file_get_contents($dir.$filename)
+          'content' => FileFactory::create()->stream($dir.$filename, [])
         ];
       }, isset($statement->attachments) ? $statement->attachments : []));
     }
@@ -73,6 +70,6 @@ class FileAttacher {
    * @return String
    */
   private function getDir(Options $opts) {
-    return Helpers::getEnvVar('LOCAL_FILESTORE').'/'.$opts->getOpt('lrs_id').'/attachments/';
+    return $opts->getOpt('lrs_id').'/attachments/';
   }
 }
