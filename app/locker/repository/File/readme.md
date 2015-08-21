@@ -13,7 +13,7 @@ Your .env.local.php file should look something like this.
 
 If you're migrating from another file repository (i.e. "Rackspace"), you'll need to run the command below.
 
-```sh
+```shell
 php artisan ll:file-repo Local -f Rackspace
 ```
 
@@ -35,7 +35,7 @@ Your .env.local.php file should look something like this.
 
 If you're migrating from another file repository (i.e. "Local"), you'll need to run the command below.
 
-```sh
+```shell
 php artisan ll:file-repo Rackspace -f Local
 ```
 
