@@ -12,7 +12,7 @@ class EloquentIndexerTest extends EloquentTest {
 
   public function testIndex() {
     $opts = new IndexOptions([
-      'lrs_id' => $this->lrs->_id,
+      'lrs_id' => new \MongoId($this->lrs->_id),
       'client' => $this->ll_client,
       'scopes' => $this->ll_client->scopes
     ]);
@@ -24,7 +24,7 @@ class EloquentIndexerTest extends EloquentTest {
 
   public function testFormat() {
     $opts = new IndexOptions([
-      'lrs_id' => $this->lrs->_id,
+      'lrs_id' => new \MongoId($this->lrs->_id),
       'client' => $this->ll_client,
       'scopes' => $this->ll_client->scopes
     ]);
@@ -44,7 +44,7 @@ class EloquentIndexerTest extends EloquentTest {
 
   public function testCount() {
     $opts = new IndexOptions([
-      'lrs_id' => $this->lrs->_id,
+      'lrs_id' => new \MongoId($this->lrs->_id),
       'client' => $this->ll_client,
       'scopes' => $this->ll_client->scopes
     ]);
@@ -74,7 +74,7 @@ class EloquentIndexerTest extends EloquentTest {
 
     // Uses the repo.
     $opts = new IndexOptions([
-      'lrs_id' => $this->lrs->_id,
+      'lrs_id' => new \MongoId($this->lrs->_id),
       'agent' => $agent,
       'client' => $this->ll_client,
       'scopes' => $this->ll_client->scopes
