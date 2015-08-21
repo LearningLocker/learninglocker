@@ -12,6 +12,7 @@ class Factory {
     $repos = [
       'Local' => 'LocalFlyRepository',
       'Rackspace' => 'RackspaceFlyRepository',
+      'S3V2' => 'S3V2FlyRepository',
     ];
     $repo = ucfirst(strtolower($repo));
     $conf = function ($var) {
