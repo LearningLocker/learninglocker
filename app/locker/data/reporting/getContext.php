@@ -18,7 +18,7 @@ class getContext {
 
   private function setSelect( $lrs, $select ){
 
-    return \Statement::where('lrs._id', $lrs)
+    return \Statement::where('lrs_id', $lrs)
             ->select( $select )
             ->distinct()
             ->remember(15)

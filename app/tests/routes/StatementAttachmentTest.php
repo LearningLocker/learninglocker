@@ -81,10 +81,11 @@ class StatementAttachmentTest extends StatementsTestCase {
   public function testIndexAttachments() {
     $attachment = $this->storeAttachments();
     $statement = (new \Statement)
-      ->where('lrs._id', $this->lrs->_id)
+      ->where('lrs_id', new \MongoId($this->lrs->_id))
       ->where('statement.id', $this->statement_id)
       ->first()->statement;
 
+    ob_start();
     $response = $this->requestStatements('GET', [
       'attachments' => true
     ]);
@@ -93,7 +94,7 @@ class StatementAttachmentTest extends StatementsTestCase {
     $attachment['content'] .= PHP_EOL;
     
     // Checks that the content is correct.
-    $actual_content = str_replace("\r", "", $response->getContent());
+    $actual_content = str_replace("\r", "", ob_get_clean());
     $expected_content = str_replace("\r", "", $this->generateContent(json_encode([
       'more' => '',
       'statements' => [$statement]
@@ -120,10 +121,10 @@ class StatementAttachmentTest extends StatementsTestCase {
 
   public function tearDown() {
     parent::tearDown();
-    $dir = Helpers::getEnvVar('LOCAL_FILESTORE').'/'.$this->lrs->_id;
+    $dir = Helpers::getEnvVar('FS_LOCAL_ENDPOINT').'/'.$this->lrs->_id;
     $this->deleteDirectory($dir);
     (new \Statement)
-      ->where('lrs._id', $this->lrs->_id)
+      ->where('lrs_id', new \MongoId($this->lrs->_id))
       ->delete();
   }
 }

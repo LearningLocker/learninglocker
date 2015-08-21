@@ -14,7 +14,7 @@ abstract class EloquentReader {
    */
   protected function where(Options $opts) {
     $scopes = $opts->getOpt('scopes');
-    $query = (new $this->model)->where('lrs._id', $opts->getOpt('lrs_id'));
+    $query = (new $this->model)->where('lrs_id', $opts->getOpt('lrs_id'));
 
     if (in_array('all', $scopes) || in_array('all/read', $scopes) || in_array('statements/read', $scopes)) {
       // Get all statements.

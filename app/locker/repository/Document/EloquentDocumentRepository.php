@@ -167,7 +167,7 @@ class EloquentDocumentRepository implements DocumentRepository {
   public function allStateDocs( $options,  $activityId, $agent, $registration, $since, $get ){
     $this->filterScopes($options, 'state');
 
-    $query = $this->documentapi->where('lrs', $options['lrs_id'])
+    $query = $this->documentapi->where('lrs_id', $options['lrs_id'])
          ->where('documentType', DocumentType::STATE)
          ->where('activityId', $activityId);
 
@@ -201,7 +201,7 @@ class EloquentDocumentRepository implements DocumentRepository {
   public function findStateDoc( $options, $stateId, $activityId, $agent, $registration, $get ){
     $this->filterScopes($options, 'state');
 
-    $query = $this->documentapi->where('lrs', $options['lrs_id'])
+    $query = $this->documentapi->where('lrs_id', $options['lrs_id'])
          ->where('documentType', DocumentType::STATE)
          ->where('activityId', $activityId)
          ->where('identId', $stateId);
@@ -249,8 +249,9 @@ class EloquentDocumentRepository implements DocumentRepository {
       $document                 = $this->documentapi;
 
       //LL vars
-      $document->lrs            = $options['lrs_id']; //LL specific
-      $document->documentType   = DocumentType::STATE; //LL specific
+      $document->lrs            = $options['lrs_id']; // Deprected.
+      $document->lrs_id         = $options['lrs_id'];
+      $document->documentType   = DocumentType::STATE;
 
       //AP vars
       $document->identId        = $data['stateId'];
@@ -290,7 +291,7 @@ class EloquentDocumentRepository implements DocumentRepository {
   public function allActivityDocs( $options, $activityId, $since, $get ){
     $this->filterScopes($options, 'profile');
 
-    $query = $this->documentapi->where('lrs', $options['lrs_id'])
+    $query = $this->documentapi->where('lrs_id', $options['lrs_id'])
          ->where('documentType', DocumentType::ACTIVITY)
          ->where('activityId', $activityId);
 
@@ -319,7 +320,7 @@ class EloquentDocumentRepository implements DocumentRepository {
   public function findActivityDoc( $options, $profileId, $activityId, $get ){
     $this->filterScopes($options, 'profile');
 
-    $query = $this->documentapi->where('lrs', $options['lrs_id'])
+    $query = $this->documentapi->where('lrs_id', $options['lrs_id'])
          ->where('documentType', DocumentType::ACTIVITY)
          ->where('activityId', $activityId)
          ->where('identId', $profileId);
@@ -372,7 +373,8 @@ class EloquentDocumentRepository implements DocumentRepository {
       $document                 = $this->documentapi;
 
       //LL vars
-      $document->lrs            = $options['lrs_id']; //LL specific
+      $document->lrs            = $options['lrs_id']; // Deprected.
+      $document->lrs_id         = $options['lrs_id'];
       $document->documentType   = DocumentType::ACTIVITY; //LL specific
 
       //AP vars
@@ -385,7 +387,6 @@ class EloquentDocumentRepository implements DocumentRepository {
 
     $document->updated_at = new Carbon($updated);
     $document->setContent( $data['content_info'], $method ); //set the content for the document
-
     if( $document->save() ){
       return $document;
     }
@@ -412,7 +413,7 @@ class EloquentDocumentRepository implements DocumentRepository {
   public function allAgentDocs( $options, $agent, $since, $get ){
     $this->filterScopes($options, 'profile');
 
-    $query = $this->documentapi->where('lrs', $options['lrs_id'])
+    $query = $this->documentapi->where('lrs_id', $options['lrs_id'])
          ->where('documentType', DocumentType::AGENT);
 
     $query = $this->setQueryAgent( $query, $agent );
@@ -443,7 +444,7 @@ class EloquentDocumentRepository implements DocumentRepository {
   public function findAgentDoc( $options, $profileId, $agent, $get ){
     $this->filterScopes($options, 'profile');
 
-    $query = $this->documentapi->where('lrs', $options['lrs_id'])
+    $query = $this->documentapi->where('lrs_id', $options['lrs_id'])
          ->where('documentType', DocumentType::AGENT)
          ->where('identId', $profileId);
 
@@ -483,7 +484,8 @@ class EloquentDocumentRepository implements DocumentRepository {
       $document                 = $this->documentapi;
 
       //LL vars
-      $document->lrs            = $options['lrs_id']; //LL specific
+      $document->lrs            = $options['lrs_id']; // Deprected.
+      $document->lrs_id         = $options['lrs_id'];
       $document->documentType   = DocumentType::AGENT; //LL specific
 
       //AP vars

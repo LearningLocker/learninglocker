@@ -49,17 +49,21 @@ class StatementIndexController {
     // Defines the content type and body of the response.
     if ($opts['attachments'] === true) {
       $content_type = 'multipart/mixed; boundary='.static::BOUNDARY;
-      $body = $this->makeAttachmentsResult($statements, $count, $opts);
+      $body = function () use ($statements, $count, $opts) {
+        return $this->makeAttachmentsResult($statements, $count, $opts);
+      };
     } else {
       $content_type = 'application/json;';
-      $body = $this->makeStatementsResult($statements, $count, $opts);
+      $body = function () use ($statements, $count, $opts) {
+        return $this->makeStatementsResult($statements, $count, $opts);
+      };
     }
 
     // Creates the response.
-    return \Response::make($body, 200, [
+    return \Response::stream($body, 200, [
       'Content-Type' => $content_type,
       'X-Experience-API-Consistent-Through' => Helpers::getCurrentDate()
-    ]);;
+    ]);
   }
 
   /**
@@ -83,7 +87,7 @@ class StatementIndexController {
       'statements' => $statements
     ];
 
-    return json_encode($statement_result);
+    $this->emit(json_encode($statement_result));
   }
 
   /**
@@ -96,24 +100,37 @@ class StatementIndexController {
     $boundary = static::BOUNDARY;
     $eol = static::EOL;
     $content_type = 'multipart/mixed; boundary='.$boundary;
-    $statement_result = "Content-Type:application/json$eol$eol".$this->makeStatementsResult(
+    
+    $this->emit("--$boundary$eol");
+    $this->emit("Content-Type:application/json$eol$eol");
+    $this->makeStatementsResult(
       $statements,
       $count,
       $opts
     );
 
-    return "--$boundary$eol".implode(
-      "$eol--$boundary$eol",
-      array_merge([$statement_result], array_map(function ($attachment) use ($eol, $boundary) {
-        return (
+    $attachments = $this->statements->getAttachments($statements, $opts);
+    foreach ($attachments as $attachment) {
+        $this->emit(
+          "$eol--$boundary$eol".
           'Content-Type:'.$attachment->content_type.$eol.
           'Content-Transfer-Encoding:binary'.$eol.
           'X-Experience-API-Hash:'.$attachment->hash.
-          $eol.$eol.
-          $attachment->content
+          $eol.$eol
         );
-      }, $this->statements->getAttachments($statements, $opts)))
-    )."$eol--$boundary--";
+        while (!feof($attachment->content)) {
+          $this->emit(fread($attachment->content, 8192));
+        }
+        fclose($attachment->content);
+    }
+
+    $this->emit("$eol--$boundary--");
+  }
+
+  private function emit($value) {
+    echo $value;
+    flush();
+    ob_flush();
   }
 
   private function getMoreLink($count, $limit, $offset) {
