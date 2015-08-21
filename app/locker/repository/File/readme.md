@@ -11,6 +11,12 @@ Your .env.local.php file should look something like this.
   'FS_LOCAL_ENDPOINT' => __DIR__.'/uploads',
 ```
 
+If you're migrating from another file repository (i.e. "Rackspace"), you'll need to run the command below.
+
+```sh
+php artisan ll:file-repo Local -f Rackspace
+```
+
 ### Rackspace
 Your .env.local.php file will need to include `OpenCloud\Rackspace` (below `<?php`).
 ```php
@@ -25,6 +31,12 @@ Your .env.local.php file should look something like this.
   'FS_RACK_API_KEY' => 'YOUR API KEY',
   'FS_RACK_REGION' => 'LON',
   'FS_RACK_CONTAINER' => 'YOUR CONTAINER',
+```
+
+If you're migrating from another file repository (i.e. "Local"), you'll need to run the command below.
+
+```sh
+php artisan ll:file-repo Rackspace -f Local
 ```
 
 ### Useful Development Links
