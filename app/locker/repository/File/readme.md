@@ -3,10 +3,10 @@ This page documents how to use different storage adapters in Learning Locker. Th
 
 - [Local](#local)
 - [Rackspace](#rackspace)
+- [Copy.com](#copycom)
 - [Dropbox](#dropbox)
 - [Azure](#azure)
 - [AWS S3 V3](#aws-s3-v3)
-- [Copy.com](#copycom)
 
 ### Local
 Your .env.local.php file should look something like this.
