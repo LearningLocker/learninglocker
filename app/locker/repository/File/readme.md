@@ -46,7 +46,7 @@ php artisan ll:file-repo Rackspace -f Local
 ### Copy.com
 Your .env.local.php file should look something like this.
 ```php
-  'FS_REPO' => 'Rackspace',
+  'FS_REPO' => 'Copy',
   'FS_COPY_CONSUMER_KEY' => 'YOUR CONSUMER KEY',
   'FS_COPY_CONSUMER_SECRET' => 'YOUR CONSUMER SECRET',
   'FS_COPY_ACCESS_TOKEN' => YOUR ACCESS TOKEN',
