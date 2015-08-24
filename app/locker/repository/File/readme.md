@@ -39,25 +39,6 @@ If you're migrating from another file repository (i.e. "Local"), you'll need to 
 php artisan ll:file-repo Rackspace -f Local
 ```
 
-### AWS S3 V2
-Your .env.local.php file should look something like this.
-```php
-  'FS_REPO' => 'S3V2',
-  'FS_S3V2_ENDPOINT' => 'YOUR ENDPOINT',
-  'FS_S3V2_KEY' => 'YOUR API KEY',
-  'FS_S3V2_SECRET' => 'YOUR API SECRET',
-  'FS_S3V2_REGION' => 'YOUR REGION',
-  'FS_S3V2_CONTAINER' => 'YOUR CONTAINER',
-  'FS_S3V2_BUCKET' => 'YOUR BUCKET',
-  'FS_S3V2_PREFIX' => 'YOUR PREFIX',
-```
-
-If you're migrating from another file repository (i.e. "Local"), you'll need to run the command below.
-
-```shell
-php artisan ll:file-repo S3V2 -f Local
-```
-
 ### Useful Development Links
 - http://docs.rackspace.com/sdks/api/php/class-OpenCloud.Rackspace.html
 - http://flysystem.thephpleague.com/api/
