@@ -50,7 +50,8 @@
     "jenssegers/mongodb-session": "~1.0",
     "league/flysystem": "~1.0",
     "league/flysystem-rackspace": "^1.0",
-    "league/flysystem-azure": "^1.0"
+    "league/flysystem-azure": "^1.0",
+    "league/flysystem-aws-s3-v3": "^1.0"
   },
   "require-dev": {
     "phpunit/phpunit": "4.1.*"

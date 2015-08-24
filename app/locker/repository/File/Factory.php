@@ -13,6 +13,7 @@ class Factory {
       'Local' => 'LocalFlyRepository',
       'Rackspace' => 'RackspaceFlyRepository',
       'Azure' => 'AzureFlyRepository',
+      'S3V3' => 'S3V3FlyRepository',
     ];
     $repo = ucfirst(strtolower($repo));
     $conf = function ($var) {
