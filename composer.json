@@ -29,6 +29,10 @@
     {
       "type": "vcs",
       "url": "git@github.com:LearningLocker/oauth2-server-laravel"
+    },
+    {
+      "type": "pear",
+      "url": "http://pear.php.net"
     }
   ],
   "require": {
@@ -46,7 +50,10 @@
     "jenssegers/mongodb-session": "~1.0",
     "league/flysystem": "~1.0",
     "league/flysystem-rackspace": "^1.0",
-    "league/flysystem-copy": "^1.0"
+    "league/flysystem-copy": "^1.0",
+    "league/flysystem-dropbox": "^1.0",
+    "league/flysystem-azure": "^1.0",
+    "league/flysystem-aws-s3-v3": "^1.0"
   },
   "require-dev": {
     "phpunit/phpunit": "4.1.*"
