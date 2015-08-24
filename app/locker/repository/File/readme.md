@@ -93,7 +93,7 @@ php artisan ll:file-repo Azure -f Local
 ### AWS S3 V3
 Your .env.local.php file should look something like this.
 ```php
-  'FS_REPO' => 'Rackspace',
+  'FS_REPO' => 'S3V3',
   'FS_S3V3_KEY' => 'YOUR KEY',
   'FS_S3V3_SECRET' => 'YOUR SECRET',
   'FS_S3V3_REGION' => 'YOUR REGION',
