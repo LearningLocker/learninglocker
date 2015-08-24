@@ -39,6 +39,23 @@ If you're migrating from another file repository (i.e. "Local"), you'll need to 
 php artisan ll:file-repo Rackspace -f Local
 ```
 
+### Copy.com
+Your .env.local.php file should look something like this.
+```php
+  'FS_REPO' => 'Rackspace',
+  'FS_COPY_CONSUMER_KEY' => 'YOUR CONSUMER KEY',
+  'FS_COPY_CONSUMER_SECRET' => 'YOUR CONSUMER SECRET',
+  'FS_COPY_ACCESS_TOKEN' => YOUR ACCESS TOKEN',
+  'FS_COPY_TOKEN_SECRET' => 'YOUR TOKEN SECRET',
+  'FS_COPY_PREFIX' => 'YOUR PREFIX',
+```
+
+If you're migrating from another file repository (i.e. "Local"), you'll need to run the command below.
+
+```shell
+php artisan ll:file-repo Copy -f Local
+```
+
 ### Useful Development Links
 - http://docs.rackspace.com/sdks/api/php/class-OpenCloud.Rackspace.html
 - http://flysystem.thephpleague.com/api/
