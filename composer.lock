@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "494e460a2d706233c19007c89a6ba65e",
+    "hash": "b4e3846b73c7225c8f346dc22071870b",
     "packages": [
         {
             "name": "andywer/js-localization",
@@ -447,6 +447,45 @@
                 "laravel"
             ],
             "time": "2014-09-10 19:17:46"
+        },
+        {
+            "name": "dropbox/dropbox-sdk",
+            "version": "v1.1.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dropbox/dropbox-sdk-php.git",
+                "reference": "6901f8122458e0ce7e391468c0cf6cca465bd0ee"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dropbox/dropbox-sdk-php/zipball/6901f8122458e0ce7e391468c0cf6cca465bd0ee",
+                "reference": "6901f8122458e0ce7e391468c0cf6cca465bd0ee",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">= 5.3"
+            },
+            "require-dev": {
+                "apigen/apigen": "2.8.2",
+                "phpunit/phpunit": "~4.0",
+                "squizlabs/php_codesniffer": "2.0.0RC3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Dropbox": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Dropbox SDK for PHP",
+            "keywords": [
+                "dropbox"
+            ],
+            "time": "2015-06-29 21:47:57"
         },
         {
             "name": "filp/whoops",
@@ -1257,6 +1296,53 @@
             ],
             "description": "Flysystem adapter for Windows Azure",
             "time": "2015-07-07 19:21:10"
+        },
+        {
+            "name": "league/flysystem-dropbox",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/flysystem-dropbox.git",
+                "reference": "96c37124590bef6277c0e68a12e2dc40e5f82baa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-dropbox/zipball/96c37124590bef6277c0e68a12e2dc40e5f82baa",
+                "reference": "96c37124590bef6277c0e68a12e2dc40e5f82baa",
+                "shasum": ""
+            },
+            "require": {
+                "dropbox/dropbox-sdk": "~1.1",
+                "league/flysystem": "~1.0",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "0.9.*",
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "League\\Flysystem\\Dropbox\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Frank de Jonge",
+                    "email": "info@frenky.net"
+                }
+            ],
+            "description": "Flysystem adapter for Dropbox",
+            "time": "2015-05-30 09:18:29"
         },
         {
             "name": "league/flysystem-rackspace",

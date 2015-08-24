@@ -3,6 +3,7 @@ This page documents how to use different storage adapters in Learning Locker. Th
 
 - [Local](#local)
 - [Rackspace](#rackspace)
+- [Dropbox](#dropbox)
 - [Azure](#azure)
 - [AWS S3 V3](#aws-s3-v3)
 
@@ -41,6 +42,21 @@ If you're migrating from another file repository (i.e. "Local"), you'll need to 
 php artisan ll:file-repo Rackspace -f Local
 ```
 
+### Dropbox
+Your .env.local.php file should look something like this.
+```php
+  'FS_REPO' => 'Dropbox',
+  'FS_DROPBOX_ACCESS_TOKEN' => 'YOUR ACCESS TOKEN',
+  'FS_DROPBOX_APP_SECRET' => 'YOUR APP SECRET',
+  'FS_DROPBOX_PREFIX' => 'YOUR PREFIX',
+```
+
+If you're migrating from another file repository (i.e. "Local"), you'll need to run the command below.
+
+```shell
+php artisan ll:file-repo Dropbox -f Local
+```
+
 ### Azure
 Your .env.local.php file should look something like this.
 ```php
@@ -55,7 +71,6 @@ If you're migrating from another file repository (i.e. "Local"), you'll need to 
 ```shell
 php artisan ll:file-repo Azure -f Local
 ```
-
 
 ### AWS S3 V3
 Your .env.local.php file should look something like this.
