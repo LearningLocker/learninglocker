@@ -110,7 +110,7 @@ class ReportingController extends \BaseController {
   public function typeahead($lrs, $segment, $query){
     $options = self::$segments[$segment];
     return Response::json($this->report->setQuery(
-      $lrs,
+      new \MongoId($lrs),
       $query,
       self::statementKey.$options['return'],
       self::statementKey.$options['query']
