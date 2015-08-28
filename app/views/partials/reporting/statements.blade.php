@@ -30,7 +30,7 @@
 
 @section('buttons')
   <a id="edit" href="{{ route('reporting.index', [$report->lrs_id]) }}#{{$report->_id}}/edit" class="btn btn-info"><i class="icon icon-pencil"></i> {{ Lang::get('site.edit') }}</a>
-  <a id="graph" data-toggle="tooltip" data-placement="top" title="View a graph of statements that match this report" href="{{ route('reporting.index', [$report->lrs]) }}#{{$report->_id}}/graph" class="btn btn-success"><i class="icon icon-signal"></i> {{ Lang::get('reporting.graph') }}</a>
+  <a id="graph" data-toggle="tooltip" data-placement="top" title="View a graph of statements that match this report" href="{{ route('reporting.index', [$report->lrs_id]) }}#{{$report->_id}}/graph" class="btn btn-success"><i class="icon icon-signal"></i> {{ Lang::get('reporting.graph') }}</a>
 @stop
 
 @section('footer')
