@@ -60,59 +60,51 @@ define([
       });
     },
 
-    verifyUser: function(element){
-
-      var target = $(element.target)
-      var user = target.data('id') || target.parent().data('id');
-
-      jQuery.ajax({
-        url: 'site/users/verify/' + user,
-        type: 'PUT',
-        contentType: 'application/json',
-        dataType: 'json',
-        success: function (json) {
-          styleCheckbox(target);
-          //console.log('success');
-        },
-        error: function( error ) {
-          console.log('error');
-        }
-      });
-
-      
-    }
+      verifyUser: function(element){
+        var target = $(element.target)
+        var user = target.data('id') || target.parent().data('id');
+        jQuery.ajax({
+          url: 'site/users/verify/' + user,
+          type: 'PUT',
+          contentType: 'application/json',
+          dataType: 'json',
+          success: function (json) {
+            var checkboxClicked = target.data('id') ? false : true;
+            if(checkboxClicked) {
+                    if(target.parent().hasClass("label-default")) {
+                    target.parent().removeClass("label-default");
+                    target.parent().addClass("label-success");
+                    target.removeClass("icon-check-empty");
+                    target.addClass("icon-check");
+                  }else if(target.parent().hasClass("label-success")) {
+                    target.parent().removeClass("label-success");
+                    target.parent().addClass("label-default");
+                    target.removeClass("icon-check");
+                    target.addClass("icon-check-empty");
+                  }
+                }else{
+                  if(target.hasClass("label-default")) {
+                    target.removeClass("label-default");
+                    target.addClass("label-success");
+                    target.children().removeClass("icon-check-empty");
+                    target.children().addClass("icon-check");
+                  }else if(target.hasClass("label-success")) {
+                    target.removeClass("label-success");
+                    target.addClass("label-default");
+                    target.children().removeClass("icon-check");
+                    target.children().addClass("icon-check-empty");
+                  }
+                }
+            //console.log('success');
+          },
+          error: function( error ) {
+            console.log('error');
+          }
+        });
+      }
 
   });
 
   return UserListView;
 
 });
-
-function styleCheckbox(target) {
-  var checkboxClicked = target.data('id') ? false : true;
-  if(checkboxClicked) {
-          if(target.parent().hasClass("label-default")) {
-          target.parent().removeClass("label-default");
-          target.parent().addClass("label-success");
-          target.removeClass("icon-check-empty");
-          target.addClass("icon-check");
-        }else if(target.parent().hasClass("label-success")) {
-          target.parent().removeClass("label-success");
-          target.parent().addClass("label-default");
-          target.removeClass("icon-check");
-          target.addClass("icon-check-empty");
-        }
-      }else{
-        if(target.hasClass("label-default")) {
-          target.removeClass("label-default");
-          target.addClass("label-success");
-          target.children().removeClass("icon-check-empty");
-          target.children().addClass("icon-check");
-        }else if(target.hasClass("label-success")) {
-          target.removeClass("label-success");
-          target.addClass("label-default");
-          target.children().removeClass("icon-check");
-          target.children().addClass("icon-check-empty");
-        }
-      }
-}
