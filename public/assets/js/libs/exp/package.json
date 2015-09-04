@@ -1,0 +1,36 @@
+{
+  "name": "exp",
+  "version": "0.0.0",
+  "description": "An experiment.",
+  "main": "index.js",
+  "dependencies": {
+    "bootstrap": "^3.3.5",
+    "brace": "^0.5.1",
+    "chart.js": "^1.0.2",
+    "codemirror": "^5.6.0",
+    "jquery": "^2.1.4",
+    "react": "^0.13.3",
+    "react-ace": "^2.1.1",
+    "react-chartjs": "^0.6.0",
+    "reactify": "^1.1.1"
+  },
+  "devDependencies": {
+    "typescript": "^1.5.3",
+    "watchify": "^3.3.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:watch": "watchify tmp/main.js -o src/bundle.js",
+    "dev:tsc": "tsc src/main.ts --outDir tmp --module commonjs --watch -t ES5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ryansmith94/experiments.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ryansmith94/experiments/issues"
+  },
+  "homepage": "https://github.com/ryansmith94/experiments"
+}
