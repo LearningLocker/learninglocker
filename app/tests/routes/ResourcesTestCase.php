@@ -38,7 +38,7 @@ abstract class ResourcesTestCase extends StatementsTestCase {
 
     // Checks that the response is correct.
     $this->assertEquals(1, count($content), 'Incorrect number of models returned.');
-    $this->assertEquals($this->data, $model, 'Incorrect model data returned.');
+    $this->assertCorrectModelData($this->data, $model);
     $this->assertEquals(200, $response->getStatusCode(), 'Incorrect status code.');
   }
 
@@ -47,7 +47,7 @@ abstract class ResourcesTestCase extends StatementsTestCase {
     $model = $this->getModelFromResponse($response);
 
     // Checks that the response is correct.
-    $this->assertEquals($this->data, $model, 'Incorrect model data returned.');
+    $this->assertCorrectModelData($this->data, $model);
     $this->assertEquals(200, $response->getStatusCode(), 'Incorrect status code.');
   }
 
@@ -57,7 +57,7 @@ abstract class ResourcesTestCase extends StatementsTestCase {
     $model = $this->getModelFromResponse($response);
 
     // Checks that the response is correct.
-    $this->assertEquals($data, $model, 'Incorrect model data returned.');
+    $this->assertCorrectModelData($data, $model);
     $this->assertEquals(200, $response->getStatusCode(), 'Incorrect status code.');
   }
 
@@ -66,7 +66,7 @@ abstract class ResourcesTestCase extends StatementsTestCase {
     $model = $this->getModelFromResponse($response);
 
     // Checks that the response is correct.
-    $this->assertEquals($this->data, $model, 'Incorrect model data returned.');
+    $this->assertCorrectModelData($this->data, $model);
     $this->assertEquals(200, $response->getStatusCode(), 'Incorrect status code.');
   }
 
@@ -92,6 +92,22 @@ abstract class ResourcesTestCase extends StatementsTestCase {
 
   protected function getContentFromResponse(JsonResponse $response) {
     return json_decode($response->getContent(), true);
+  }
+
+  protected function assertCorrectModelData($data, $model) {
+    $data = ksort($data);
+    $model = ksort($model);
+    $this->assertEquals(
+      $data,
+      $model,
+      (
+        'Incorrect model data returned. '
+        .PHP_EOL.json_encode($model)
+        .PHP_EOL.gettype($model)
+        .PHP_EOL.json_encode($data)
+        .PHP_EOL.gettype($data)
+      )
+    );
   }
 
   public function tearDown() {
