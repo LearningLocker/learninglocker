@@ -31,6 +31,7 @@ class EloquentRepository extends BaseRepository implements Repository {
   }
 
   protected function format(Model $model) {
+    $model->aggregate_match = $model->getMatchAttribute();
     $model->query = Helpers::replaceHtmlEntity($model->query);
     return $model;
   }
@@ -74,6 +75,8 @@ class EloquentRepository extends BaseRepository implements Repository {
     if (isset($data['query'])) $model->query = Helpers::replaceFullStop($data['query']);
     if (isset($data['since'])) $model->since = $data['since'];
     if (isset($data['until'])) $model->until = $data['until'];
+
+    unset($model->aggregate_match);
 
     return $model;
   }
