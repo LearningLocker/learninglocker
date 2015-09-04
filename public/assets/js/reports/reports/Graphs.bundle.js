@@ -32770,17 +32770,11 @@ var Button = require('../commons/Button');
 var DOM = React.DOM;
 var getInitialState = function () {
     var since = new Date();
-    if (since.getDate() < 7) {
-        since.setDate(24);
-        if (since.getMonth() < 1) {
-            since.setMonth(11);
-        }
-        else {
-            since.setMonth(since.getMonth() - 1);
-        }
+    if (since.getMonth() < 1) {
+        since.setMonth(11);
     }
     else {
-        since.setDate(since.getDate() - 7);
+        since.setMonth(since.getMonth() - 1);
     }
     return {
         since: since.toISOString(),
@@ -33300,6 +33294,7 @@ var Export = function (element, props) {
     return React.render(Factory(props), element);
 };
 module.exports = window.ReportGraphs = Export;
+// cd public/assets/js/reports/reports;
 // npm install; tsc Graphs.ts --outDir tmp --module commonjs -t ES5; browserify tmp/reports/reports/Graphs.js -o Graphs.bundle.js;
 // Condition on line 2006 of ../node_modules/chart.js/Chart.js needs changing to `false` so that AMD isn't used.
 
