@@ -19,7 +19,30 @@ define([
     };
   };
 
-  var keys = ['statement.id', 'statement.timestamp', 'statement.version', 'statement.actor.objectType', 'statement.actor.name', 'statement.actor.mbox', 'statement.actor.account.name', 'statement.actor.account.href', 'statement.actor.openid', 'statement.verb.id', 'statement.result.response', 'statement.object.objectType', 'statement.object.id', 'statement.object.definition.type', 'statement.authority.name', 'statement.authority.mbox', 'statement.authority.objectType', 'statement.stored'];
+  // transcribed from https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#appendix-a-example-statements
+  var properties2 = [
+    'id',
+    'timestamp',
+    'version',
+    'actor.objectType',
+    'actor.name',
+    'actor.mbox',
+    'actor.account.name',
+    'actor.account.href',
+    'actor.openid',
+    'verb.id',
+    'result.response',
+    'object.objectType',
+    'object.id',
+    'object.definition.type',
+    'authority.name',
+    'authority.mbox',
+    'authority.objectType',
+    'stored'
+  ];
+  var properties = ['id', 'timestamp', 'version', 'actor.name', 'actor.mbox', 'actor.member', 'actor.objectType', 'actor.account.name', 'actor.account.href', 'actor.openid', 'verb.id', 'verb.display.en-GB', 'verb.display.en-US', 'authority.objectType', 'authority.name', 'authority.mbox', 'result.extensions', 'result.success', 'result.completion', 'result.response', 'result.duration', 'context.contextActivities', 'context.statement.objectType', 'context.statement.id', 'stored', 'object.id', 'object.definition.extensions', 'object.definition.name', 'object.definition.description', 'object.definition.type', 'object.objectType'];
+  var keys = [];
+  $.each(properties, function(index, value){keys.push('statement.'+value)});
 
   return Marionette.ItemView.extend({
     template: _.template(template),
