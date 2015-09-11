@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html lang="{{ app('translator')->getLocale() }}">
   <head>
     <meta charset="utf-8">
   </head>
@@ -7,8 +7,8 @@
     <h2>{{ trans('site.welcome') }}</h2>
 
     <div>
-      <p>{{ trans('users.registration_various.thanks') }}</p>
-      <p>{{ trans('users.registration_various.click') }}: <a href="{{ $url }}">{{ $url }}</a></p>
+      <p>{{ trans('users.registration.thanks') }}</p>
+      <p>{{ trans('users.registration.click') }} <a href="{{ $url }}">{{ $url }}</a></p>
     </div>
   </body>
 </html>

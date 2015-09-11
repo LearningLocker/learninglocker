@@ -1,5 +1,6 @@
-{{ $sender->name }} {{ trans('users.invite.has_invited') }} {{ $title }}
+{{ trans('users.invite.has_invited', ['INVITOR' => $sender->name, 'LRS_TITLE' => $title]) }}
 
 {{ $custom_message }}
 
-{{ trans('users.invite.invite_instructions') }}: {{ $url }}
+{{ trans('users.invite.instructions') }}
+{{ $url }}

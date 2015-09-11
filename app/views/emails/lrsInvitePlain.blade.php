@@ -1,3 +1,4 @@
-{{ $sender->name }} has added you to the {{ $lrs->title }} LRS
+{{ trans('users.invite.has_added', ['INVITOR' => $sender->name, 'LRS_TITLE' => $lrs->title]) }}
 
-To visit the LRS, click here: {{ $url }}
+{{ trans('users.invite.instructions') }}
+{{ $url }}

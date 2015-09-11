@@ -1,4 +1,5 @@
 {{ trans('site.welcome') }}
 
-{{ trans('users.registration_various.thanks') }}
-{{ trans('users.registration_various.click') }}: {{ $url }}
+{{ trans('users.registration.thanks') }}
+{{ trans('users.registration.click') }}
+{{ $url }}
