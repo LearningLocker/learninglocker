@@ -24,7 +24,7 @@ class User {
     $token = User::setEmailToken($user, $user->email);
     $emailData = array('url' => \URL::to('email/verify', array($token)));
     
-    \Mail::send('emails.verify', $emailData, function($message) use ($user){
+    \Mail::send(['emails.verifyHtml', 'emails.verifyPlain'], $emailData, function($message) use ($user){
       $message->to($user->email, $user->name)->subject('Welcome, please verify your email');
     });
     
@@ -98,7 +98,7 @@ class User {
           //set data to use in email
           $emailData = array('sender' => \Auth::user(), 'lrs' => $lrs, 'url' => URL() . "/lrs/$lrs->_id");
           //send out message to user
-          \Mail::send('emails.lrsInvite', $emailData, function($message) use ($user){
+          \Mail::send(['emails.lrsInviteHtml', 'emails.lrsInvitePlain'], $emailData, function($message) use ($user){
             $message->to($user->email, $user->name)->subject('You have been added to an LRS.');
           });
         }elseif( $user_exists){
@@ -115,7 +115,7 @@ class User {
                             'sender'         => \Auth::user());
 
           //send out message to user
-          \Mail::send('emails.invite', $emailData, function($message) use ($user){
+          \Mail::send(['emails.inviteHtml', 'emails.invitePlain'], $emailData, function($message) use ($user){
             $message->to($user->email, $user->name)->subject('You have been invited to join our LRS.');
           });
 
