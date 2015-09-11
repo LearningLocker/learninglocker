@@ -8,7 +8,7 @@
 
     <div>
       <p>{{ trans('users.registration_various.thanks') }}</p>
-      <p>{{ trans('users.registration_various.click') }}: {{ URL::to('email/verify', array($token)) }}</p>
+      <p>{{ trans('users.registration_various.click') }}: <a href="{{ $url }}">{{ $url }}</a></p>
     </div>
   </body>
 </html>

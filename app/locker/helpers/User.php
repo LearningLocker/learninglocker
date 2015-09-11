@@ -21,9 +21,10 @@ class User {
    **/
   public static function sendEmailValidation( $user ){
 
-    $data = array('token' => User::setEmailToken( $user, $user->email ));
-
-    \Mail::send('emails.verify', $data, function($message) use ($user){
+    $token = User::setEmailToken($user, $user->email);
+    $emailData = array('url' => \URL::to('email/verify', array($token)));
+    
+    \Mail::send('emails.verify', $emailData, function($message) use ($user){
       $message->to($user->email, $user->name)->subject('Welcome, please verify your email');
     });
     
@@ -95,9 +96,9 @@ class User {
         //determine which message to send to the user
         if( $user_exists && isset($lrs) ){
           //set data to use in email
-          $set_data = array('sender' => \Auth::user(), 'lrs' => $lrs);
+          $emailData = array('sender' => \Auth::user(), 'lrs' => $lrs, 'url' => URL() . "/lrs/$lrs->_id");
           //send out message to user
-          \Mail::send('emails.lrsInvite', $set_data, function($message) use ($user){
+          \Mail::send('emails.lrsInvite', $emailData, function($message) use ($user){
             $message->to($user->email, $user->name)->subject('You have been added to an LRS.');
           });
         }elseif( $user_exists){
@@ -108,13 +109,13 @@ class User {
           //set data to use in email
           $token = User::setEmailToken( $user, $user->email );
           $tokens[] = ['email' => $user->email, 'url' => \URL::to('email/invite', array($token))];
-          $set_data = array('token'          => $token, 
+          $emailData = array('url'           => \URL::to('email/invite', array($token)),
                             'custom_message' => $data['message'],
                             'title'          => $title,
                             'sender'         => \Auth::user());
 
           //send out message to user
-          \Mail::send('emails.invite', $set_data, function($message) use ($user){
+          \Mail::send('emails.invite', $emailData, function($message) use ($user){
             $message->to($user->email, $user->name)->subject('You have been invited to join our LRS.');
           });
 

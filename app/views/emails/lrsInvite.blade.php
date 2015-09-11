@@ -6,7 +6,7 @@
   <body>
     <h2>{{ $sender->name }} has added you to the {{ $lrs->title }} LRS</h2>
     <div>
-      <p>To visit the LRS, click here {{ URL() }}/lrs/{{ $lrs->_id }}</p>
+      <p>To visit the LRS, click here: <a href="{{ $url }}">{{ $url }}</a></p>
     </div>
   </body>
 </html>

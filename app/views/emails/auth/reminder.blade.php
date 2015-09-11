@@ -7,7 +7,8 @@
     <h2>{{ Lang::get('reminders.password_reset') }}</h2>
 
     <div>
-      {{ Lang::get('reminders.password_reset_form') }}: {{ URL::to('password/reset', array($token)) }}
+      {{ Lang::get('reminders.password_reset_form') }}: <a href="{{ URL::to('password/reset', array($token)) }}">
+      {{ URL::to('password/reset', array($token)) }}</a>
     </div>
   </body>
 </html>
