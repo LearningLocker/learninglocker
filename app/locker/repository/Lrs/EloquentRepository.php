@@ -5,6 +5,7 @@ use \Locker\Repository\Base\EloquentRepository as BaseRepository;
 use \Locker\XApi\Helpers as XAPIHelpers;
 use \Locker\Helpers\Helpers as Helpers;
 use \Event as Event;
+use \Client as ClientModel;
 use \Statement as StatementModel;
 
 class EloquentRepository extends BaseRepository implements Repository {
@@ -127,6 +128,7 @@ class EloquentRepository extends BaseRepository implements Repository {
    * @return Boolean
    */
   public function destroy($id, array $opts) {
+    ClientModel::where('lrs_id', $id)->delete();
     StatementModel::where('lrs_id', $id)->delete();
     return parent::destroy($id, $opts);
   }
