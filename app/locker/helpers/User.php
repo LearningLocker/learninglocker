@@ -78,7 +78,7 @@ class User {
           //if lrs exists and user is not a member, add them
           if( $lrs && !$isMember){
             $existing  = $lrs->users;
-            array_push($existing, array('_id'   => $user->_id,
+            array_push($existing, array('_id' => new \MongoId($user->_id),
                           'email' => $user->email,
                           'role'  => 'observer' ));
             $lrs->users = $existing;
