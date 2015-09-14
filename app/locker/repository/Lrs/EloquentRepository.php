@@ -31,14 +31,14 @@ class EloquentRepository extends BaseRepository implements Repository {
   protected function validateData(array $data) {
     if (isset($data['title'])) XAPIHelpers::checkType('title', 'string', $data['title']);
     if (isset($data['description'])) XAPIHelpers::checkType('description', 'string', $data['description']);
-    if (isset($data['owner_id'])) XAPIHelpers::checkType('owner_id', 'string', $data['owner_id']);
+    if (isset($data['owner_id'])) XAPIHelpers::checkType('owner_id', 'MongoId', $data['owner_id']);
 
     // Validate users.
     if (isset($data['users'])) {
       XAPIHelpers::checkType('users', 'array', $data['users']);
       foreach ($data['users'] as $key => $field) {
         XAPIHelpers::checkType("fields.$key", 'array', $field);
-        if (isset($field['_id'])) XAPIHelpers::checkType("fields.$key._id", 'string', $field['_id']);
+        if (isset($field['_id'])) XAPIHelpers::checkType("fields.$key._id", 'MongoId', $field['_id']);
         if (isset($field['email'])) XAPIHelpers::checkType("fields.$key.email", 'string', $field['email']);
         if (isset($field['name'])) XAPIHelpers::checkType("fields.$key.name", 'string', $field['name']);
         if (isset($field['role'])) XAPIHelpers::checkType("fields.$key.role", 'string', $field['role']);
@@ -56,9 +56,9 @@ class EloquentRepository extends BaseRepository implements Repository {
   protected function constructStore(Model $model, array $data, array $opts) {
     // Merges and validates data with defaults.
     $data = array_merge($this->defaults, $data, [
-      'owner_id' => $opts['user']->_id,
+      'owner_id' => new \MongoId($opts['user']->_id),
       'users' => [[
-        '_id'   => $opts['user']->_id,
+        '_id'   => new \MongoId($opts['user']->_id),
         'email' => $opts['user']->email,
         'name'  => $opts['user']->name,
         'role'  => 'admin'
@@ -132,7 +132,7 @@ class EloquentRepository extends BaseRepository implements Repository {
   }
 
   public function removeUser($id, $user_id) {
-    return $this->where([])->where('_id', $id)->pull('users', ['_id' => $user_id]);
+    return $this->where([])->where('_id', $id)->pull('users', ['_id' => new \MongoId($user_id)]);
   }
 
   public function getLrsOwned($user_id) {
