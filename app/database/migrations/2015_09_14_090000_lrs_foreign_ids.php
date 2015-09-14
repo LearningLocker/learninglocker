@@ -1,7 +1,7 @@
 <?php
 use Illuminate\Database\Migrations\Migration;
 
-class LrsIds extends Migration
+class LrsForeignIds extends Migration
 {
 
   public function up()
