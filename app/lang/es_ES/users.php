@@ -40,6 +40,12 @@ return array(
   'verify_resend'  => 'Reenviar verificar email',
   'reset'          => 'Restablecer su contraseña',
   'success'        => 'Su contraseña ha sido guardada',
+  'role' => array(
+    'super_admin' => 'Super Administrador (pueden acceder y hacer todo)',
+    'plus'        => 'Observador Más (privilegios no específicos)',
+    'observer'    => 'Observador (privilegios no específicos)',
+    'help'        => 'La única razón existen Observador y Observador Plus es proporcionar una opción de conceder a ciertos usuarios el privilegio de crear LRSs.',
+  ),
   'role_change'    => 'El papel del usuario se ha cambiado.',
   'deleted'        => 'El usuario fue borrado y cualquier LRS que crearon transfiere al administrador del sitio.',
   'updated'        => 'Detalles de cuenta han sido actualizados',

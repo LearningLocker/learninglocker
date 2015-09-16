@@ -40,6 +40,12 @@ return array(
   'verify_resend' => 'E-Mail noch einmal versenden',
   'reset' => 'Passwort wiederherstellen',
   'success' => 'Das Passwort wurde gespeichert.',
+  'role' => array(
+    'super_admin' => 'Super Verwalter (zugreifen können und alles tun)',
+    'plus'        => 'Beobachter Plus (keine spezielle Privilegien)',
+    'observer'    => 'Beobachter (keine spezielle Privilegien)',
+    'help'        => 'Der einzige Grund, Observer und Observer plus vorhanden ist, um eine Option auf bestimmte Benutzer das Privileg, die Schaffung LRSs zu gewähren ist.',
+  ),
   'role_change' => 'Die Rolle des Benutzers wurde geändert.',
   'deleted' => 'Der Benutzer wurde gelöscht und evetuell von ihm erstellte LRSs an den Administrator transferiert.',
   'updated' => 'Account einstellungen wurden aktualisiert',
