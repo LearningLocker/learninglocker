@@ -16,8 +16,9 @@ return array(
     'sample' => 'Einladung zum Beitritt in unseren Learning Record Store (LRS).',
     'invited' => 'Diese Benutzer wurden eingeladen.',
     'failed' => 'Dieser Benutzer konnte nicht eingeladen werden. Möglicherweise ist er bereits ein Mitglied dieses LRS oder die E-Mail-Addresse ist ungültig.',
-    'has_invited' => 'hat Dich eingeladen beizutreten',
-    'invite_instructions' => 'Um beizutreten, bitte diesem Link folgen'
+    'has_added' => ':INVITOR hat Sie zu dem :LRS_TITLE Learning Record Store (LRS) aufgenommen.',
+    'has_invited' => ':INVITOR hat Sie eingeladen, die :LRS_TITLE Learning Record Store (LRS) anzuschließen.',
+    'instructions' => 'Bitte gehen Sie auf der folgenden Website:'
   ),
   'password' => 'Passwort',
   'password_again' => 'Passwort bestätigen',
@@ -39,12 +40,18 @@ return array(
   'verify_resend' => 'E-Mail noch einmal versenden',
   'reset' => 'Passwort wiederherstellen',
   'success' => 'Das Passwort wurde gespeichert.',
+  'role' => array(
+    'super_admin' => 'Super Verwalter (zugreifen können und alles tun)',
+    'plus'        => 'Beobachter Plus (keine spezielle Privilegien)',
+    'observer'    => 'Beobachter (keine spezielle Privilegien)',
+    'help'        => 'Der einzige Grund, Observer und Observer plus vorhanden ist, um eine Option auf bestimmte Benutzer das Privileg, die Schaffung LRSs zu gewähren ist.',
+  ),
   'role_change' => 'Die Rolle des Benutzers wurde geändert.',
   'deleted' => 'Der Benutzer wurde gelöscht und evetuell von ihm erstellte LRSs an den Administrator transferiert.',
   'updated' => 'Account einstellungen wurden aktualisiert',
   'updated_error' => 'Der Account konnte nicht aktualisiert werden.',
-  'registration_various' => array(
+  'registration' => array(
       'thanks' => 'Vielen Dank für die Anmeldung an Learning Locker. um die Registrierung abzuschließen muss die E-Mail-Adresse verifiziert werden.',
-      'click' => 'Zur Verifizierung bitte dem Link folgen'
+      'instructions' => 'Bitte gehen Sie auf der folgenden Website:'
     ) 
 );

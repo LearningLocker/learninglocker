@@ -16,8 +16,9 @@ return array(
     'sample'  => 'I would like to invite you to join this Learning Record Store (LRS).',
     'invited' => 'Those users have been invited. :tokens</br></br>Share these one time password reset links with their respective user.</br>If you have emails configured these links will be emailed to the users.',
     'failed'  => 'Inviting that user failed, check the user is not already a member of the LRS and the email is valid.',
-    'has_invited' => 'has invited you to join',
-    'invite_instructions' => 'To do this, please click on the following link'
+    'has_added' => ':INVITOR has added you to the :LRS_TITLE Learning Record Store (LRS).',
+    'has_invited' => ':INVITOR has invited you to join the :LRS_TITLE.',
+    'instructions' => 'Please go to the following web address:'
   ),
   'password'         => 'Password',
   'password_again'   => 'Password confirm',
@@ -39,12 +40,18 @@ return array(
   'verify_resend'  => 'Resend verify email',
   'reset'          => 'Reset your password',
   'success'        => 'Your password has been saved',
+  'role' => array(
+    'super_admin' => 'Super Admin (can access and do everything)',
+    'plus'        => 'Observer Plus (no specific privileges)',
+    'observer'    => 'Observer (no specific privileges)',
+    'help'        => 'The only reason Observer and Observer Plus exist is to provide an option to grant certain users the privilege of creating LRSs.',
+  ),
   'role_change'    => 'The user\'s role has been changed.',
   'deleted'        => 'The user was delete and any LRSs they created transferred to the site admin.',
   'updated'        => 'Account settings have been updated',
   'updated_error'  => 'There was a problem updating that account.',
-  'registration_various' => array(
-      'thanks' => 'Thanks for signing up to use Learning Locker. To complete your registration, we need you to verify your email.',
-      'click'  => 'To do this, please click on the following link'
+  'registration' => array(
+      'thanks'       => 'Thanks for signing up to use Learning Locker. To complete your registration, we need you to verify your email.',
+      'instructions' => 'Please go to the following web address:'
     ) 
 );
