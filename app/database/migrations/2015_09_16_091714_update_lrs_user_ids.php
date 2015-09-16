@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use \Locker\XApi\Helpers as XAPIHelpers;
+use \Locker\Helpers\Helpers as Helpers;
 
 class UpdateLrsUserIds extends Migration {
 
@@ -14,7 +14,7 @@ class UpdateLrsUserIds extends Migration {
 	public function up()
 	{
 		(new \Lrs)->get()->each(function ($lrs) {
-      if( isset($lrs->users) ) $lrs->users = XAPIHelpers::convertIds($lrs->users);
+      if( isset($lrs->users) ) $lrs->users = Helpers::convertIds($lrs->users);
       $lrs->save();
     });
 	}
