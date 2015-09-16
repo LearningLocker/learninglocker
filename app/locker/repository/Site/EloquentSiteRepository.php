@@ -27,7 +27,7 @@ class EloquentSiteRepository implements SiteRepository {
     $site->registration = $data['registration'];
     $site->restrict    = $data['restrict']; //restrict registration to a specific email domain
     $site->domain      = $data['domain'];
-    $site->super       = array( array('user' => \Auth::user()->_id ) );
+    $site->super       = array( array('user' => new \MongoId(\Auth::user()->_id) ) );
     $site->save();
 
     return $site;
