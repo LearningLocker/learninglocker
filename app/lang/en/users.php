@@ -17,7 +17,7 @@ return array(
     'invited' => 'Those users have been invited. :tokens</br></br>Share these one time password reset links with their respective user.</br>If you have emails configured these links will be emailed to the users.',
     'failed'  => 'Inviting that user failed, check the user is not already a member of the LRS and the email is valid.',
     'has_added' => ':INVITOR has added you to the :LRS_TITLE Learning Record Store (LRS).',
-    'has_invited' => ':INVITOR has invited you to join the :LRS_TITLE Learning Record Store (LRS).',
+    'has_invited' => ':INVITOR has invited you to join the :LRS_TITLE.',
     'instructions' => 'Please go to the following web address:'
   ),
   'password'         => 'Password',
