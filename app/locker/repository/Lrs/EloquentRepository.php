@@ -70,7 +70,7 @@ class EloquentRepository extends BaseRepository implements Repository {
     $model->title = $data['title'];
     $model->description = $data['description'];
     $model->owner_id = $data['owner_id'];
-    $model->users = $data['users'];
+    $model->users = XAPIHelpers::convertIds($data['users']);
 
     return $model;
   }
