@@ -30,3 +30,16 @@ class UpdateLrsUserIds extends Migration {
 	}
 
 }
+
+
+db.users.update({}, {$set: { users: [{
+                        "_id" : "55f92d9be51088181f000029",
+                        "email" : "andrewhickey@live.co.uk",
+                        "name" : "Andrew Hickey",
+                        "role" : "admin"
+                },
+                {
+                        "_id" : "55f92dd3e51088a81f000029",
+                        "email" : "andrew.hickey@ht2.co.uk",
+                        "role" : "observer"
+                }]}})
