@@ -123,14 +123,19 @@ class EloquentRepository extends BaseRepository implements Repository {
 
   /**
    * Destroys the model with the given ID and options.
-   * @param String $id ID to match.
+   * @param String $lrs_id ID to match.
    * @param [String => Mixed] $opts
    * @return Boolean
    */
-  public function destroy($id, array $opts) {
-    ClientModel::where('lrs_id', $id)->delete();
-    StatementModel::where('lrs_id', $id)->delete();
-    return parent::destroy($id, $opts);
+  public function destroy($lrs_id, array $opts) {
+    // Delete related documents from client and oauth_clients collections.
+    $clients = ClientModel::where('lrs_id', $lrs_id)->get();
+    foreach ($clients as $client) {
+      $client->delete();
+    }
+    
+    StatementModel::where('lrs_id', $lrs_id)->delete();
+    return parent::destroy($lrs_id, $opts);
   }
 
   public function removeUser($id, $user_id) {
