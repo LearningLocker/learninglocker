@@ -147,6 +147,7 @@ class EloquentRepository extends BaseRepository implements Repository {
     $lrs = $this->show($id, []);
     $lrs->users = array_map(function ($user) use ($user_id, $role) {
       $user['role'] = $user['_id'] === $user_id ? $role : $user['role'];
+      $user['role'] = (string)$user['_id'] === $user_id ? $role : $user['role'];
       return $user;
     }, $lrs->users);
     return $lrs->save();
