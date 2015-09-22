@@ -69,7 +69,7 @@ class EloquentRepository extends BaseRepository implements Repository {
     // Sets properties on model.
     $model->title = $data['title'];
     $model->description = $data['description'];
-    $model->owner_id = $data['owner_id'];
+    $model->owner_id = new \MongoId($data['owner_id']);
     $model->users = Helpers::convertIds($data['users']);
 
     return $model;
