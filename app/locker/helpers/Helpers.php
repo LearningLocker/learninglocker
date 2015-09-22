@@ -244,4 +244,12 @@ class Helpers {
     list($username, $password) = Helpers::getUserPassFromAuth();
     return Helpers::getLrsFromUserPass($username, $password);
   }
+
+  public static function convertIds( $models = [] ) {
+    return array_map( function($model){
+      $idString = \MongoId::isValid($model['_id']) ? $model['_id'] : null;
+      $model['_id'] = new \MongoId($idString);
+      return $model;
+    }, $models);
+  }
 }

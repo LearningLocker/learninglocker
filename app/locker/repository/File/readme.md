@@ -35,7 +35,9 @@ Your .env.local.php file should look something like this.
   'FS_RACK_API_KEY' => 'YOUR API KEY',
   'FS_RACK_REGION' => 'LON',
   'FS_RACK_CONTAINER' => 'YOUR CONTAINER',
+  'FS_RACK_URL_TYPE' => 'URL TYPE',
 ```
+The URL TYPE should either be `publicURL` or `internalURL`, depending on whether your application operates within the Rackspace Cloud network (`internalURL`). Read more here: http://docs.php-opencloud.com/en/latest/url-types.html
 
 If you're migrating from another file repository (i.e. "Local"), you'll need to run the command below.
 
