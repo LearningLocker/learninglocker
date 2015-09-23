@@ -73,7 +73,7 @@ class EmailController extends BaseController {
               ->where('token', $token)
               ->pluck('email');
     $user = \User::where('email', $email)->first();
-    if (!isset($user->_id)) \App::abort(404, 'This token cannot be found or has expired.');
+    if (!isset($user->_id)) \App::abort(404, 'Your email verification link has has expired - please request a new one. ');
     Auth::loginUsingId($user->_id);
     \DB::table('user_tokens')
       ->where('token', $token)

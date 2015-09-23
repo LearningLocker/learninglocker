@@ -41,7 +41,7 @@ return array(
   'reset' => 'Passwort wiederherstellen',
   'success' => 'Das Passwort wurde gespeichert.',
   'role' => array(
-    'super_admin' => 'Super Verwalter (zugreifen können und alles tun)',
+    'super'       => 'Super Verwalter (zugreifen können und alles tun)',
     'plus'        => 'Beobachter Plus (keine spezielle Privilegien)',
     'observer'    => 'Beobachter (keine spezielle Privilegien)',
     'help'        => 'Der einzige Grund, Observer und Observer plus vorhanden ist, um eine Option auf bestimmte Benutzer das Privileg, die Schaffung LRSs zu gewähren ist.',

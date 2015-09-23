@@ -14,10 +14,10 @@ return array(
     'email'   => 'Email addresses (separate lines)',
     'message' => 'Message (optional)',
     'sample'  => 'I would like to invite you to join this Learning Record Store (LRS).',
-    'invited' => 'Those users have been invited. :tokens</br></br>Share these one time password reset links with their respective user.</br>If you have emails configured these links will be emailed to the users.',
+    'invited' => 'Those users have been invited. :tokens<br /><br />Share these one time password reset links with their respective user.<br />If you have emails configured these links will be emailed to the users.',
     'failed'  => 'Inviting that user failed, check the user is not already a member of the LRS and the email is valid.',
-    'has_added' => ':INVITOR has added you to the :LRS_TITLE Learning Record Store (LRS).',
-    'has_invited' => ':INVITOR has invited you to join the :LRS_TITLE.',
+    'has_added' => ':INVITOR has added you to the <strong>:LRS_TITLE</strong> Learning Record Store (LRS).',
+    'has_invited' => ':INVITOR has invited you to join the <strong>:LRS_TITLE</strong> Learning Record Store (LRS).',
     'instructions' => 'Please go to the following web address:'
   ),
   'password'         => 'Password',
@@ -40,8 +40,8 @@ return array(
   'verify_resend'  => 'Resend verify email',
   'reset'          => 'Reset your password',
   'success'        => 'Your password has been saved',
-  'role' => array(
-    'super_admin' => 'Super Admin (can access and do everything)',
+  'roles' => array(
+    'super'       => 'Super Admin (can access and do everything)',
     'plus'        => 'Observer Plus (no specific privileges)',
     'observer'    => 'Observer (no specific privileges)',
     'help'        => 'The only reason Observer and Observer Plus exist is to provide an option to grant certain users the privilege of creating LRSs.',
