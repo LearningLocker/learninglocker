@@ -15,10 +15,10 @@
   <div class="form-group">
     {{ Form::label('role', 'Role', array('class' => 'col-sm-4 control-label' )) }}
     <div class="col-sm-8">
-      {{ Form::radio('role', 'super') }} {{ Lang::get('users.role.super') }}<br />
-      {{ Form::radio('role', 'plus') }} {{ Lang::get('users.role.plus') }}<br />
-      {{ Form::radio('role', 'observer') }} {{ Lang::get('users.role.observer') }}
-      <span class="help-block">{{ Lang::get('users.role.help') }}</span>
+      {{ Form::radio('role', 'super') }} {{ Lang::get('users.roles.super') }}<br />
+      {{ Form::radio('role', 'plus') }} {{ Lang::get('users.roles.plus') }}<br />
+      {{ Form::radio('role', 'observer') }} {{ Lang::get('users.roles.observer') }}
+      <span class="help-block">{{ Lang::get('users.roles.help') }}</span>
     </div>
   </div>
   <hr>
