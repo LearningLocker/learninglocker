@@ -5,6 +5,7 @@ use \Locker\Repository\Base\EloquentRepository as BaseRepository;
 use \Locker\XApi\Helpers as XAPIHelpers;
 use \Locker\Helpers\Helpers as Helpers;
 use \Event as Event;
+use \Client as ClientModel;
 use \Statement as StatementModel;
 
 class EloquentRepository extends BaseRepository implements Repository {
@@ -122,13 +123,19 @@ class EloquentRepository extends BaseRepository implements Repository {
 
   /**
    * Destroys the model with the given ID and options.
-   * @param String $id ID to match.
+   * @param String $lrs_id ID to match.
    * @param [String => Mixed] $opts
    * @return Boolean
    */
-  public function destroy($id, array $opts) {
-    StatementModel::where('lrs_id', $id)->delete();
-    return parent::destroy($id, $opts);
+  public function destroy($lrs_id, array $opts) {
+    // Delete related documents from client and oauth_clients collections.
+    $clients = ClientModel::where('lrs_id', $lrs_id)->get();
+    foreach ($clients as $client) {
+      $client->delete();
+    }
+    
+    StatementModel::where('lrs_id', $lrs_id)->delete();
+    return parent::destroy($lrs_id, $opts);
   }
 
   public function removeUser($id, $user_id) {
