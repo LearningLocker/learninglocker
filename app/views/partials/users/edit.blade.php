@@ -30,7 +30,7 @@
             @include('partials.users.forms.resendEmailVerification')
           @endif
         </p>
-        <p><b>{{ Lang::get('users.role') }}:</b> {{ $user->role }}</p>
+        <p><b>{{ Lang::get('users.role') }}:</b> {{ Lang::get("users.roles.{$user->role}") }}</p>
       </div>
       @include('partials.users.forms.account')
       @include('partials.users.forms.password')

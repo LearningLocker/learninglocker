@@ -91,10 +91,10 @@ class ReportingController extends \BaseController {
     return View::make("{$this->views}.statements", array_merge($this->getLrs($lrs_id), [
       'reporting_nav' => true,
       'statements' => $this->report->statements($report_id, [
-        'lrs_id' => new \MongoId($lrs_id)
+        'lrs_id' => $lrs_id
       ])->select('statement')->paginate(20),
       'report' => $this->report->show($report_id, [
-        'lrs_id' => new \MongoId($lrs_id)
+        'lrs_id' => $lrs_id
       ]),
       'lang' => $site->lang
     ]));
@@ -107,10 +107,10 @@ class ReportingController extends \BaseController {
    * @param String $query to match against.
    * @return [Typeahead values] Typeahead values.
    **/
-  public function typeahead($lrs, $segment, $query){
+  public function typeahead($lrs_id, $segment, $query){
     $options = self::$segments[$segment];
     return Response::json($this->report->setQuery(
-      new \MongoId($lrs),
+      $lrs_id,
       $query,
       self::statementKey.$options['return'],
       self::statementKey.$options['query']

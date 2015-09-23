@@ -62,14 +62,14 @@
   </td>
   <td class="col-sm-3">
     <% if ( lrs_owned.length > 0 ){ %>
-      <p>Lrs's owned:
+      <p>Owner of:
       <% _.each(lrs_owned, function(lrs) { %>  
         <a href="{{ URL() }}/lrs/<%= lrs._id %>"><%= lrs.title %></a>, 
       <% }); %>
       </p>
     <% } %>
     <% if ( lrs_member.length > 0 ){ %>
-    <p>Lrs's member:
+    <p>Member of:
     <% _.each(lrs_member, function(member) { %>  
       <a href="{{ URL() }}/lrs/<%= member._id %>"><%= member.title %></a>, 
     <% }); %>
