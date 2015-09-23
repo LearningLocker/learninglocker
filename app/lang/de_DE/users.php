@@ -31,7 +31,7 @@ return array(
   'password_instructions' => 'Bitte diesem Account ein Passwort hinzufügen. Das ist notwendig um den Prozess fort zu setzen.',
   'email' => 'E-Mail',
   'verify' => 'Bestätigen',
-  'verfiy_success' => 'Dieser Benutzer wurde bestätigt.',
+  'verify_success' => 'Dieser Benutzer wurde bestätigt.',
   'verified' => 'Bestätigt',
   'verify_request' => 'Es wurde eine E-Mail mit weiteren Instruktionen versandt.',
   'email_verified' => 'Vielen Dank. Die E-Mail-Adresse wurde bestätigt.',

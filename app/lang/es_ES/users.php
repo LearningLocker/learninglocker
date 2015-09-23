@@ -31,7 +31,7 @@ return array(
   'password_instructions' => 'Por favor, añada una contraseña para su cuenta. Tienes que hacer esto antes de poder continuar.',
   'email'          => 'Email',
   'verify'         => 'Compruebe',
-  'verfiy_success' => 'Ha verificado este usuario.',
+  'verify_success' => 'Ha verificado este usuario.',
   'verified'       => 'Verificado',
   'verify_request' => 'Por favor revise su correo electrónico para los próximos pasos.',
   'email_verified' => 'Gracias, ahora han validado su dirección de correo electrónico.',
