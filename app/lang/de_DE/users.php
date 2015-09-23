@@ -40,7 +40,7 @@ return array(
   'verify_resend' => 'E-Mail noch einmal versenden',
   'reset' => 'Passwort wiederherstellen',
   'success' => 'Das Passwort wurde gespeichert.',
-  'role' => array(
+  'roles' => array(
     'super'       => 'Super Verwalter (zugreifen können und alles tun)',
     'plus'        => 'Beobachter Plus (keine spezielle Privilegien)',
     'observer'    => 'Beobachter (keine spezielle Privilegien)',

@@ -47,7 +47,7 @@ return array(
     'help'        => 'The only reason Observer and Observer Plus exist is to provide an option to grant certain users the privilege of creating LRSs.',
   ),
   'role_change'    => 'The user\'s role has been changed.',
-  'deleted'        => 'The user was delete and any LRSs they created transferred to the site admin.',
+  'deleted'        => 'The user was deleted and any LRSs they created transferred to the site admin.',
   'updated'        => 'Account settings have been updated',
   'updated_error'  => 'There was a problem updating that account.',
   'registration' => array(

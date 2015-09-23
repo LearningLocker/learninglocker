@@ -40,7 +40,7 @@ return array(
   'verify_resend'  => 'Reenviar verificar email',
   'reset'          => 'Restablecer su contraseña',
   'success'        => 'Su contraseña ha sido guardada',
-  'role' => array(
+  'roles' => array(
     'super'       => 'Super Administrador (pueden acceder y hacer todo)',
     'plus'        => 'Observador Más (privilegios no específicos)',
     'observer'    => 'Observador (privilegios no específicos)',
