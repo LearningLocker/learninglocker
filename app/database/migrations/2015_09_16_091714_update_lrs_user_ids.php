@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use \Locker\Helpers\Helpers as Helpers;
 
 class UpdateLrsUserIds extends Migration {
 
@@ -13,10 +12,8 @@ class UpdateLrsUserIds extends Migration {
 	 */
 	public function up()
 	{
-		(new \Lrs)->get()->each(function ($lrs) {
-      if( isset($lrs->users) ) $lrs->users = Helpers::convertIds($lrs->users);
-      $lrs->save();
-    });
+		// Legacy migration - now handled in 2015_09_14_090000_lrs_foreign_ids.php
+		// Thanks to @pondermatic
 	}
 
 	/**
