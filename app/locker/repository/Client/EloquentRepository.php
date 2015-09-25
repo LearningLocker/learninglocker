@@ -125,6 +125,18 @@ class EloquentRepository extends BaseRepository implements Repository {
   }
 
   /**
+   * Converts foreign ids to MongoIds, then
+   * gets the model with the given ID and options.
+   * @param String $id ID to match.
+   * @param [String => Mixed] $opts
+   * @return Model
+   */
+  public function show($id, array $opts) {
+    $opts['lrs_id'] = new \MongoId($opts['lrs_id']);
+    return parent::show($id, $opts);
+  }
+
+  /**
    * Gets the model with the given username, password, and options.
    * @param String $username Username to match.
    * @param String $password Password to match.

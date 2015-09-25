@@ -15,7 +15,7 @@ class RegisterHandler {
       $site->registration = 'Closed';
       $site->restrict    = 'None'; //restrict registration to a specific email domain
       $site->domain      = '';
-      $site->super       = array( array('user' => $user->_id ) );
+      $site->super       = array( array('user' => new \MongoId($user->_id) ) );
       $site->save();
     }
 

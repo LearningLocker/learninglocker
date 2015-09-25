@@ -222,7 +222,7 @@ Route::get('lrs/{id}/client/manage', array(
   'as' => 'client.manage'
 ));
 
-Route::delete('lrs/{lrs_id}/client/{id}/destory', array(
+Route::delete('lrs/{lrs_id}/client/{id}/destroy', array(
   'before' => 'auth',
   'uses' => 'ClientController@destroy',
   'as' => 'client.destroy'
@@ -503,7 +503,7 @@ App::error(function(Exception $exception) {
       'success' => false,
       'message' => method_exists($exception, 'getErrors') ? $exception->getErrors() : $exception->getMessage(),
       'code' => $code,
-      'trace' => Config::get('app.debug') ? $exception->getTrace() : trans('api.info.trace')
+      'trace' => Config::get('app.debug') ? $exception->getTraceAsString() : trans('api.info.trace')
     ], $code);
   } else {
     echo "Status: ".$code." Error: ".$exception->getMessage();

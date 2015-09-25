@@ -9,7 +9,7 @@ class RackspaceFlyRepository extends FlyRepository {
       'username' => $conf('FS_RACK_USERNAME'),
       'apiKey' => $conf('FS_RACK_API_KEY'),
     ]);
-    $store = $client->objectStoreService('cloudFiles', $conf('FS_RACK_REGION'));
+    $store = $client->objectStoreService('cloudFiles', $conf('FS_RACK_REGION'), $conf('FS_RACK_URL_TYPE'));
     $container = $store->getContainer($conf('FS_RACK_CONTAINER'));
     $adapter = new RackspaceAdapter($container);
     $this->constructFileSystem($adapter);
