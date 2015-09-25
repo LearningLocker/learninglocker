@@ -503,7 +503,7 @@ App::error(function(Exception $exception) {
       'success' => false,
       'message' => method_exists($exception, 'getErrors') ? $exception->getErrors() : $exception->getMessage(),
       'code' => $code,
-      'trace' => Config::get('app.debug') ? $exception->getTrace() : trans('api.info.trace')
+      'trace' => Config::get('app.debug') ? $exception->getTraceAsString() : trans('api.info.trace')
     ], $code);
   } else {
     echo "Status: ".$code." Error: ".$exception->getMessage();
