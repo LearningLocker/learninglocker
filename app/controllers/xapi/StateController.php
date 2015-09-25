@@ -16,7 +16,8 @@ class StateController extends DocumentController {
     'stateId' => 'string'
   ];
   protected $optional = [
-    'registration' => 'uuid'
+    'registration' => 'uuid',
+    'since' => 'timestamp'
   ];
   protected $document_type = DocumentType::STATE;
 
