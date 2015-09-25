@@ -222,7 +222,7 @@ Route::get('lrs/{id}/client/manage', array(
   'as' => 'client.manage'
 ));
 
-Route::delete('lrs/{lrs_id}/client/{id}/destory', array(
+Route::delete('lrs/{lrs_id}/client/{id}/destroy', array(
   'before' => 'auth',
   'uses' => 'ClientController@destroy',
   'as' => 'client.destroy'

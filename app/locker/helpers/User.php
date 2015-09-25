@@ -1,5 +1,7 @@
 <?php namespace Locker\Helpers;
 
+use MongoId;
+
 class User {
 
   /**
@@ -21,9 +23,10 @@ class User {
    **/
   public static function sendEmailValidation( $user ){
 
-    $data = array('token' => User::setEmailToken( $user, $user->email ));
-
-    \Mail::send('emails.verify', $data, function($message) use ($user){
+    $token = User::setEmailToken($user, $user->email);
+    $emailData = array('url' => \URL::to('email/verify', array($token)));
+    
+    \Mail::send(['emails.verifyHtml', 'emails.verifyPlain'], $emailData, function($message) use ($user){
       $message->to($user->email, $user->name)->subject('Welcome, please verify your email');
     });
     
@@ -78,7 +81,9 @@ class User {
           //if lrs exists and user is not a member, add them
           if( $lrs && !$isMember){
             $existing  = $lrs->users;
-            array_push($existing, array('_id'   => $user->_id,
+
+            array_push($existing, array(
+                          '_id' => new \MongoId($user->_id),
                           'email' => $user->email,
                           'role'  => 'observer' ));
             $lrs->users = $existing;
@@ -95,26 +100,26 @@ class User {
         //determine which message to send to the user
         if( $user_exists && isset($lrs) ){
           //set data to use in email
-          $set_data = array('sender' => \Auth::user(), 'lrs' => $lrs);
+          $emailData = array('sender' => \Auth::user(), 'lrs' => $lrs, 'url' => URL() . "/lrs/$lrs->_id");
           //send out message to user
-          \Mail::send('emails.lrsInvite', $set_data, function($message) use ($user){
+          \Mail::send(['emails.lrsInviteHtml', 'emails.lrsInvitePlain'], $emailData, function($message) use ($user){
             $message->to($user->email, $user->name)->subject('You have been added to an LRS.');
           });
         }elseif( $user_exists){
           //do nothing as they are already in the system
         }else{
           //if adding to lrs, get lrs title, otherwise use the site name
-          isset($lrs) ? $title = 'the ' . $lrs->title . ' LRS' : $title = \Site::first()->name . '\'s Learning Locker';
+          $title = isset($lrs) ? $lrs->title . ' LRS' : \Site::first()->name . ' Learning Locker';
           //set data to use in email
           $token = User::setEmailToken( $user, $user->email );
           $tokens[] = ['email' => $user->email, 'url' => \URL::to('email/invite', array($token))];
-          $set_data = array('token'          => $token, 
+          $emailData = array('url'           => \URL::to('email/invite', array($token)),
                             'custom_message' => $data['message'],
                             'title'          => $title,
                             'sender'         => \Auth::user());
 
           //send out message to user
-          \Mail::send('emails.invite', $set_data, function($message) use ($user){
+          \Mail::send(['emails.inviteHtml', 'emails.invitePlain'], $emailData, function($message) use ($user){
             $message->to($user->email, $user->name)->subject('You have been invited to join our LRS.');
           });
 
