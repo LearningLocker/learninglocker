@@ -59,7 +59,7 @@ class User {
           $user->name   = $e;
           $user->email  = $e;
           $user->verified = 'no';
-          $user->role   = $data['role'] ? $data['role'] : 'observer';
+          $user->role   = isset($data['role']) ? $data['role'] : 'observer';
           $user->password = \Hash::make(base_convert(uniqid('pass', true), 10, 36));
           $user->save(); 
 
