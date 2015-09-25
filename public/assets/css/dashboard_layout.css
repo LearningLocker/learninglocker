@@ -74,7 +74,12 @@ body {
 .main .page-header {
   margin-top: 0;
 }
-
+.verify:hover {
+  cursor: pointer;
+}
+.icon-check-empty {
+  padding-right: 1px;
+}
 
 /*
  * Placeholder dashboard ideas
