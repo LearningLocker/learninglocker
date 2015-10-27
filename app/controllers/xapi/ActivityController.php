@@ -33,21 +33,33 @@ class ActivityController extends DocumentController {
     // Runs filters.
     if ($result = $this->checkVersion()) return $result;
 
+    //Setup a return object
+    $result = [
+        'objectType'  => 'Activity',
+        'id'          => $this->params['activityId'],
+        'definition'  => []
+    ];
+
+    //Retrieve documents for the activity
     $documents = $this->document->all(
       $this->getOptions(),
       $this->document_type,
       $this->getIndexData([
         'since' => ['string', 'timestamp']
       ])
-    )->toArray();
-    $contents = array_column($documents, 'content');
+    );
 
-    return \Response::json([
-      'objectType' => 'Activity',
-      'id' => array_column($documents, 'activityId')[0],
-      'definition' => (object) array_reduce(array_column($contents, 'definition'), function ($carry, $item) {
+    //If there are documents, pull out any definitions
+    if( $documents->count() > 0 ){
+      $documents = $documents->toArray();
+      $contents = array_column($documents, 'content');
+
+      $result['definition'] = (object) array_reduce(array_column($contents, 'definition'), function ($carry, $item) {
         return array_merge_recursive($carry, $item);
-      }, [])
-    ]);
+      }, []);
+    }
+
+    //return the result object as JSON
+    return \Response::json($result);
   }
 }
