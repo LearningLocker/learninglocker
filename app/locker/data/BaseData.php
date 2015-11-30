@@ -16,7 +16,7 @@ class BaseData {
    *
    **/
   protected function getMatch( $lrs ){
-    return array('lrs._id' => $lrs);
+    return array('lrs_id' => new \MongoId($lrs));
   }
 
 }
