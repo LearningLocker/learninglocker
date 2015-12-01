@@ -121,7 +121,6 @@ class SiteController extends BaseController {
     $opts = ['user' => \Auth::user()];
     $lrss = $this->lrs->index($opts);
     $lrs_repo = $this->lrs;
-    //$counts = $this->lrs->getCounts();
 
     $collection = \DB::getCollection('statements');
 
