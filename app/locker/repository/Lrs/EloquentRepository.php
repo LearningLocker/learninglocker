@@ -158,4 +158,22 @@ class EloquentRepository extends BaseRepository implements Repository {
     }, $lrs->users);
     return $lrs->save();
   }
+
+  public function getCounts() {
+    $counts = \DB::getMongoDB()->statements->aggregate([
+      ['$match' => [
+        'active' => true,
+        'voided' => false
+      ]],
+      ['$group' => [
+        '_id' => '$lrs_id',
+        'count' => ['$sum' => 1]
+      ]]
+    ])['result'];
+
+    return array_reduce($counts, function ($carry, $result) {
+      $carry[(string) $result['_id']] = $result['count'];
+      return $carry;
+    }, []);
+  }
 }
