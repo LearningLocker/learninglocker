@@ -35,14 +35,16 @@ class BaseDashboard extends \app\locker\data\BaseData {
    **/
   public function statementCount(){
 
-    $query = \DB::collection('statements');
+    $collection = \DB::getCollection('statements');
 
+    $query = [];
+    
     //Limit by LRS
     if( $this->has_lrs ){
-      $query->where('lrs_id', new \MongoId($this->lrs));
+      $query['lrs_id'] = new \MongoId($this->lrs);
     }
 
-    return $query->remember(5)->count();
+    return $collection->count($query);
   }
 
   /**
