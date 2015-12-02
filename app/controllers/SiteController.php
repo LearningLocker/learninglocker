@@ -124,8 +124,7 @@ class SiteController extends BaseController {
 
     $collection = \DB::getCollection('statements');
 
-    return Response::json(array_map(function ($lrs) use ($lrs_repo) {      
-      $query = ['lrs_id'=>new \MongoId($lrs->_id)];
+    return Response::json(array_map(function ($lrs) use ($lrs_repo) {
       $lrs->statement_total = $lrs_repo->getStatementCount($lrs->_id);
       return $lrs;
     }, $lrss));
