@@ -2,7 +2,7 @@
 
 use Locker\Repository\Lrs\EloquentRepository as LrsRepo;
 
-class BaseDashboard extends \app\locker\data\BaseData {
+abstract class BaseDashboard extends \app\locker\data\BaseData {
   protected $lrs_repo;
   protected $has_lrs = false;
 
