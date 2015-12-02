@@ -150,6 +150,26 @@ class EloquentRepository extends BaseRepository implements Repository {
     return $this->where([])->where('users._id', $user_id)->select('title')->get()->toArray();
   }
 
+  /**
+   * Get a statement count, either for an LRS or for the entire site if no lrs_id passed
+   */
+  public function getStatementCount( $lrs_id = null ) {
+    $collection = \DB::getCollection('statements');
+
+    $query = [];
+    
+    //Limit by LRS
+    if( $lrs_id ){
+      if( !$lrs_id instanceof \MongoId ){
+        $lrs_id = new \MongoId($lrs_id);
+      }
+
+      $query['lrs_id'] = $lrs_id;
+    }
+
+    return $collection->count($query);
+  }
+
   public function changeRole($id, $user_id, $role) {
     $lrs = $this->show($id, []);
     $lrs->users = array_map(function ($user) use ($user_id, $role) {
@@ -157,23 +177,5 @@ class EloquentRepository extends BaseRepository implements Repository {
       return $user;
     }, $lrs->users);
     return $lrs->save();
-  }
-
-  public function getCounts() {
-    $counts = \DB::getMongoDB()->statements->aggregate([
-      ['$match' => [
-        'active' => true,
-        'voided' => false
-      ]],
-      ['$group' => [
-        '_id' => '$lrs_id',
-        'count' => ['$sum' => 1]
-      ]]
-    ])['result'];
-
-    return array_reduce($counts, function ($carry, $result) {
-      $carry[(string) $result['_id']] = $result['count'];
-      return $carry;
-    }, []);
   }
 }

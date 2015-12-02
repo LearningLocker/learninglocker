@@ -1,11 +1,14 @@
 <?php namespace app\locker\data\dashboards;
 
-class BaseDashboard extends \app\locker\data\BaseData {
+use Locker\Repository\Lrs\EloquentRepository as LrsRepo;
 
+abstract class BaseDashboard extends \app\locker\data\BaseData {
+  protected $lrs_repo;
   protected $has_lrs = false;
 
-  public function __construct() {
+  public function __construct( LrsRepo $lrs_repo=null ) {
     $this->setDb();
+    $this->lrs_repo  = $lrs_repo ?: new LrsRepo; 
   }
 
   /**
@@ -34,17 +37,8 @@ class BaseDashboard extends \app\locker\data\BaseData {
    *
    **/
   public function statementCount(){
-
-    $collection = \DB::getCollection('statements');
-
-    $query = [];
-    
-    //Limit by LRS
-    if( $this->has_lrs ){
-      $query['lrs_id'] = new \MongoId($this->lrs);
-    }
-
-    return $collection->count($query);
+    $lrs_id = $this->has_lrs ? $this->lrs : null;
+    return $this->lrs_repo->getStatementCount($lrs_id);
   }
 
   /**
