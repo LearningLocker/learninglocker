@@ -32,7 +32,7 @@
     }
   ],
   "require": {
-    "php": ">=5.4.0",
+    "php": ">=5.5.0",
     "ext-mongo": "*",
     "laravel/framework": "4.2.x",
     "jenssegers/mongodb": "2.0.x",
