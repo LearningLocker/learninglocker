@@ -36,6 +36,8 @@
     }
   ],
   "require": {
+    "php": ">=5.4.0",
+    "ext-mongo": "*",
     "laravel/framework": "4.2.x",
     "jenssegers/mongodb": "2.0.x",
     "davejamesmiller/laravel-breadcrumbs": "2.2.x",
