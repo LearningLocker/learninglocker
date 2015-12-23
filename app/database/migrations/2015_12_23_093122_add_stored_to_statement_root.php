@@ -66,12 +66,52 @@ class AddStoredToStatementRoot extends Migration {
 	public function down()
 	{
 		$db = \DB::getMongoDB();
-    $statements = new MongoCollection($db, 'statements');
+    $statementsCollection = new MongoCollection($db, 'statements');
     
-    $statements->deleteIndex('stored');
-    $statements->deleteIndex(['lrs_id' => 1, 'stored' => -1]);
+    $statementsCollection->deleteIndex('stored');
+    $statementsCollection->deleteIndex(['lrs_id' => 1, 'stored' => -1]);
 
-    $statements->update([], ['$unset' => ["stored" => ""]], ['multiple' => true]);
+    $statementsCollection->update([], ['$unset' => ["stored" => ""]], ['multiple' => true]);
+
+    $statementsCursor = $statementsCollection->find();
+    $remaining = $statementsCursor->count();
+    print($remaining . ' statements total' . PHP_EOL);
+
+    $maxBatchSize = 10000;
+
+    while($statementsCursor->hasNext()) {
+	    $batch = new MongoUpdateBatch($statementsCollection);
+	    $batchSize = 0;
+	    $shouldExecute = false;
+
+	    while($batchSize < $maxBatchSize && $statementsCursor->hasNext()) {
+	    	$batchSize++;
+	    	$statement = $statementsCursor->next();
+
+	    	if(isset($statement['refs'])) {
+		    	$query = [
+					  'q' => ['_id' => $statement['_id']],
+					  'u' => ['$set' => []],
+					  'multi' => false,
+					  'upsert' => false,
+					];
+	    		foreach ($statement['refs'] as $key => $refStatement) {
+	    			if(isset($refStatement['timestamp'])) $query['u']['$unset']['statement.refs.'.$key.'.timestamp'] = 1;
+	    			if(isset($refStatement['stored'])) $query['u']['$unset']['statement.refs.'.$key.'.stored'] = 1;
+	    		}
+					
+					if(!empty($query['u']['$set'])) {
+						$batch->add((object) $query);
+						$shouldExecute = true;
+					}
+	    	}
+	    }
+
+	    if($shouldExecute) $batch->execute();
+	    $remaining -= $batchSize;
+
+	    print($remaining . ' remaining' . PHP_EOL);
+    }
 	}
 
 }
