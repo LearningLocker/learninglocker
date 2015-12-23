@@ -44,8 +44,8 @@ class AddStoredToStatementRoot extends Migration {
 
 	    	if(isset($statement['refs'])) {
 	    		foreach ($statement['refs'] as $key => $refStatement) {
-	    			if(isset($refStatement['timestamp'])) $query['u']['$set']['statement.refs.'.$key.'.timestamp'] = new \MongoDate(strtotime($refStatement['timestamp']));
-	    			if(isset($refStatement['stored'])) $query['u']['$set']['statement.refs.'.$key.'.stored'] = new \MongoDate(strtotime($refStatement['stored']));
+	    			if(isset($refStatement['timestamp']) && !$refStatement['timestamp'] instanceof MongoDate) $query['u']['$set']['refs.'.$key.'.timestamp'] = new \MongoDate(strtotime($refStatement['timestamp']));
+	    			if(isset($refStatement['stored']) && !$refStatement['stored'] instanceof MongoDate) $query['u']['$set']['refs.'.$key.'.stored'] = new \MongoDate(strtotime($refStatement['stored']));
 	    		}
 	    	}
 
@@ -96,11 +96,15 @@ class AddStoredToStatementRoot extends Migration {
 					  'upsert' => false,
 					];
 	    		foreach ($statement['refs'] as $key => $refStatement) {
-	    			if(isset($refStatement['timestamp'])) $query['u']['$unset']['statement.refs.'.$key.'.timestamp'] = 1;
-	    			if(isset($refStatement['stored'])) $query['u']['$unset']['statement.refs.'.$key.'.stored'] = 1;
+            if(isset($refStatement['timestamp']) && $refStatement['timestamp'] instanceof MongoDate ) {
+              $query['u']['$set']['refs.'.$key.'.timestamp'] = date('Y-m-d\TH:i:s.uP', $refStatement['timestamp']->sec);
+            }
+            if(isset($refStatement['stored']) && $refStatement['stored'] instanceof MongoDate ) {
+              $query['u']['$set']['refs.'.$key.'.stored'] = date('Y-m-d\TH:i:s.uP', $refStatement['stored']->sec);
+            }
 	    		}
-					
-					if(!empty($query['u']['$set'])) {
+          
+          if(!empty($query['u']['$set'])) {
 						$batch->add((object) $query);
 						$shouldExecute = true;
 					}

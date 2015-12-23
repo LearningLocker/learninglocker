@@ -45,20 +45,21 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
         $key = 'stored';
         $op = '>';
         return $builder->where(function ($query) use ($key, $value, $op) {
+          $date = new \MongoDate(strtotime($value));
           return $query
-            ->orWhere($key, $op, new \MongoDate(strtotime($value)))
-            ->orWhere('refs.'.$key, $op, $value);
+            ->orWhere($key, $op, $date)
+            ->orWhere('refs.'.$key, $op, $date);
         });
       },
       'until' => function ($value, $builder, IndexOptions $opts) {
         $key = 'stored';
         $op = '<=';
         return $builder->where(function ($query) use ($key, $value, $op) {
+          $date = new \MongoDate(strtotime($value));
           return $query
-            ->orWhere($key, $op, new \MongoDate(strtotime($value)))
-            ->orWhere('refs.'.$key, $op, $value);
+            ->orWhere($key, $op, $date)
+            ->orWhere('refs.'.$key, $op, $date);
         });
-        return $this->addWhere($builder, 'stored', $value, '<=');
       },
       'active' => function ($value, $builder, IndexOptions $opts) {
         return $builder->where('active', $value);
