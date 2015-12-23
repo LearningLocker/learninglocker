@@ -92,6 +92,7 @@ class EloquentInserter extends EloquentReader implements Inserter {
       'statement' => Helpers::replaceFullStop(json_decode(json_encode($statement), true)),
       'active' => false,
       'voided' => false,
+      'stored' => new \MongoDate(strtotime($statement->stored)),
       'timestamp' => new \MongoDate(strtotime($statement->timestamp))
     ];
   }
