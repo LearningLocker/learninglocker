@@ -17,7 +17,9 @@ class AddStoredToStatementRoot extends Migration {
 		$db = \DB::getMongoDB();
     $statementsCollection = new MongoCollection($db, 'statements');
     
+    $statementsCollection->createIndex(['stored' => 1], ['background'=>1, 'socketTimeoutMS'=>-1]);
     $statementsCollection->createIndex(['stored' => -1], ['background'=>1, 'socketTimeoutMS'=>-1]);
+    $statementsCollection->createIndex(['lrs_id' => 1, 'stored' => 1], ['background'=>1, 'socketTimeoutMS'=>-1]);
     $statementsCollection->createIndex(['lrs_id' => 1, 'stored' => -1], ['background'=>1, 'socketTimeoutMS'=>-1]);
 
     $statementsCursor = $statementsCollection->find();
