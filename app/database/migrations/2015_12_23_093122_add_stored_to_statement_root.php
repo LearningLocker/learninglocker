@@ -20,7 +20,7 @@ class AddStoredToStatementRoot extends Migration {
     $statementsCollection->createIndex(['stored' => -1]);
     $statementsCollection->createIndex(['lrs_id' => 1, 'stored' => -1]);
 
-    $statementsCursor = $statementsCollection->find([])->snapshot();
+    $statementsCursor = $statementsCollection->find();
 
     $remaining = $statementsCursor->count();
     print($remaining . ' statements total' . PHP_EOL);
@@ -34,12 +34,22 @@ class AddStoredToStatementRoot extends Migration {
 	    while($batchSize < $maxBatchSize && $statementsCursor->hasNext()) {
 	    	$batchSize++;
 	    	$statement = $statementsCursor->next();
-				$batch->add([
+	    	
+	    	$query = [
 				  'q' => ['_id' => $statement['_id']],
 				  'u' => ['$set' => ["stored" => new \MongoDate(strtotime($statement['statement']['stored']))]],
 				  'multi' => false,
 				  'upsert' => false,
-				]);
+				];
+
+	    	if(isset($statement['refs'])) {
+	    		foreach ($statement['refs'] as $key => $refStatement) {
+	    			if(isset($refStatement['timestamp'])) $query['u']['$set']['statement.refs.'.$key.'.timestamp'] = new \MongoDate(strtotime($refStatement['timestamp']));
+	    			if(isset($refStatement['stored'])) $query['u']['$set']['statement.refs.'.$key.'.stored'] = new \MongoDate(strtotime($refStatement['stored']));
+	    		}
+	    	}
+
+				$batch->add((object) $query);
 	    }
 	    $batch->execute();
 	    $remaining -= $batchSize;
@@ -61,7 +71,7 @@ class AddStoredToStatementRoot extends Migration {
     $statements->deleteIndex('stored');
     $statements->deleteIndex(['lrs_id' => 1, 'stored' => -1]);
 
-    $statements->update([], ['$unset' => ["stored" => 1]]);
+    $statements->update([], ['$unset' => ["stored" => ""]], ['multiple' => true]);
 	}
 
 }
