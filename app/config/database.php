@@ -6,11 +6,11 @@ return [
   'connections' => [
 		'mongodb' => [
 		    'driver'   => 'mongodb',
-		    'host'     => 'localhost',
+		    'host'     => '192.168.99.100',
 		    'port'     => 27017,
 		    'username' => '',
 		    'password' => '',
-		    'database' => 'll_staging' // Default name (removing this makes Travis fail).
+		    'database' => 'xerox_ll' // Default name (removing this makes Travis fail).
 		],
 	],
 	'migrations' => 'migrations',
