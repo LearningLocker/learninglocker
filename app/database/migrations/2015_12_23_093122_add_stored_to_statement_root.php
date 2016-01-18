@@ -40,7 +40,7 @@ class AddStoredToStatementRoot extends Migration {
 
 	    	$query = [
 				  'q' => ['_id' => $statement['_id']],
-				  'u' => ['$set' => ["stored" => new \MongoDate($statementStored->timestamp, $statementStored->micro))]],
+				  'u' => ['$set' => ["stored" => new \MongoDate($statementStored->timestamp, $statementStored->micro)]],
 				  'multi' => false,
 				  'upsert' => false,
 				];
