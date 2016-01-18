@@ -1,5 +1,6 @@
 <?php namespace Controllers\API;
 
+use Carbon\Carbon;
 use \Locker\Repository\Query\QueryRepository as QueryRepository;
 use \Locker\Helpers\Exceptions as Exceptions;
 
@@ -86,8 +87,8 @@ class Statements extends Base {
     if(is_array($value)) {
       if(isset($value['$dte']))  {
         $date = $value['$dte'];
-        $parsedDate = strtotime($date);
-        if($parsedDate) return new \MongoDate($parsedDate);
+        $parsedDate = new Carbon($date);
+        if($parsedDate) return new \MongoDate($parsedDate->timestamp, $parsedDate->micro);
         else throw new Exceptions\Exception("`$date` is not a valid date.");
       }
       else
