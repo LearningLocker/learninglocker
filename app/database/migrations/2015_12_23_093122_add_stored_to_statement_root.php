@@ -36,18 +36,25 @@ class AddStoredToStatementRoot extends Migration {
 	    while($batchSize < $maxBatchSize && $statementsCursor->hasNext()) {
 	    	$batchSize++;
 	    	$statement = $statementsCursor->next();
-	    	
+	    	$statementStored = new Carbon\Carbon($statement['statement']['stored']);
+
 	    	$query = [
 				  'q' => ['_id' => $statement['_id']],
-				  'u' => ['$set' => ["stored" => new \MongoDate(strtotime($statement['statement']['stored']))]],
+				  'u' => ['$set' => ["stored" => new \MongoDate($statementStored->timestamp, $statementStored->micro))]],
 				  'multi' => false,
 				  'upsert' => false,
 				];
 
 	    	if(isset($statement['refs'])) {
 	    		foreach ($statement['refs'] as $key => $refStatement) {
-	    			if(isset($refStatement['timestamp']) && !$refStatement['timestamp'] instanceof MongoDate) $query['u']['$set']['refs.'.$key.'.timestamp'] = new \MongoDate(strtotime($refStatement['timestamp']));
-	    			if(isset($refStatement['stored']) && !$refStatement['stored'] instanceof MongoDate) $query['u']['$set']['refs.'.$key.'.stored'] = new \MongoDate(strtotime($refStatement['stored']));
+	    			if(isset($refStatement['timestamp']) && !$refStatement['timestamp'] instanceof MongoDate) {
+              $timestamp = new Carbon\Carbon($refStatement['timestamp']);
+              $query['u']['$set']['refs.'.$key.'.timestamp'] = new \MongoDate($timestamp->timestamp, $timestamp->micro);
+            } 
+	    			if(isset($refStatement['stored']) && !$stored['stored'] instanceof MongoDate) {
+              $stored = new Carbon\Carbon($refStatement['stored']);
+              $query['u']['$set']['refs.'.$key.'.stored'] = new \MongoDate($stored->timestamp, $stored->micro);
+            }
 	    		}
 	    	}
 
