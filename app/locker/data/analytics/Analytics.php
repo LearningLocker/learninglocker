@@ -196,7 +196,8 @@ class Analytics extends \app\locker\data\BaseData implements AnalyticsInterface 
    * @return MongoDate object
    **/
   private function setMongoDate($date) {
-    return new \MongoDate(strtotime($date));
+    $carbon = new \Carbon\Carbon($date);
+    return new \MongoDate($carbon->timestamp, $carbon->micro);
   }
 
   /**
