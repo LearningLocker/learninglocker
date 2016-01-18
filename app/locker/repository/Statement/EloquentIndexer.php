@@ -42,10 +42,24 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
         return $this->addWhere($builder, 'context.registration', $value);
       },
       'since' => function ($value, $builder, IndexOptions $opts) {
-        return $this->addWhere($builder, 'stored', $value, '>');
+        $key = 'stored';
+        $op = '>';
+        return $builder->where(function ($query) use ($key, $value, $op) {
+          $date = new \MongoDate(strtotime($value));
+          return $query
+            ->orWhere($key, $op, $date)
+            ->orWhere('refs.'.$key, $op, $date);
+        });
       },
       'until' => function ($value, $builder, IndexOptions $opts) {
-        return $this->addWhere($builder, 'stored', $value, '<=');
+        $key = 'stored';
+        $op = '<=';
+        return $builder->where(function ($query) use ($key, $value, $op) {
+          $date = new \MongoDate(strtotime($value));
+          return $query
+            ->orWhere($key, $op, $date)
+            ->orWhere('refs.'.$key, $op, $date);
+        });
       },
       'active' => function ($value, $builder, IndexOptions $opts) {
         return $builder->where('active', $value);
@@ -133,7 +147,7 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
 
     // Returns the models.
     return json_decode($builder
-      ->orderBy('statement.stored', $opts->getOpt('ascending') === true ? 'ASC' : 'DESC')
+      ->orderBy('stored', $opts->getOpt('ascending') === true ? 'ASC' : 'DESC')
       ->skip($opts->getOpt('offset'))
       ->take($opts->getOpt('limit'))
       ->get()
