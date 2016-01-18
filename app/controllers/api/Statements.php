@@ -83,23 +83,29 @@ class Statements extends Base {
   }
 
   private function convertDte($value) {
-    if(isset($value['$dte'])) 
-      return new \MongoDate(strtotime($value['$dte']));
+    if(is_array($value)) {
+      if(isset($value['$dte']))  {
+        $date = $value['$dte'];
+        $parsedDate = strtotime($date);
+        if($parsedDate) return new \MongoDate($parsedDate);
+        else throw new Exceptions\Exception("`$date` is not a valid date.");
+      }
+      else
+        return array_map([$this, __FUNCTION__], $value); // recursively apply this function to whole pipeline
+    }
 
-    else if(is_array($value))
-      return array_map([$this, __FUNCTION__], $value); // recursively apply this function to whole pipeline
-
-    else return $value;
+    return $value;
   }
 
   private function convertOid($value) {
-    if(isset($value['$oid'])) 
-      return new \MongoId($value['$oid']);
+    if(is_array($value)) {
+      if(isset($value['$oid'])) 
+        return new \MongoId($value['$oid']);
+      else
+        return array_map([$this, __FUNCTION__], $value); // recursively apply this function to whole pipeline
+    }
 
-    else if(is_array($value))
-      return array_map([$this, __FUNCTION__], $value); // recursively apply this function to whole pipeline
-
-    else return $value;
+    return $value;
   }
 
   private function getPipeline() {
