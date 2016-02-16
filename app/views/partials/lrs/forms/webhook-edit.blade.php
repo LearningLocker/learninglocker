@@ -15,7 +15,12 @@
     </div>
     <div class="form-group">
       {{ Form::label('req_headers', 'Request headers:', ['class' => 'control-label']) }}
-      {{ Form::textarea('req_headers', $webhook->req_headers, ['class' => 'form-control', 'rows' => 6]) }}
+      {{ Form::textarea('req_headers', $webhook->req_headers, ['class' => 'form-control', 'rows' => 4]) }}
+    </div>
+    <div class="form-group">
+      {{ Form::label('tokens', 'Assign tokens (use dot notation to access to statement array):', ['class' => 'control-label']) }}
+      {{ Form::textarea('tokens', $webhook->tokens, ['class' => 'form-control', 'rows' => 6]) }}
+      <span class="help-block">E.g. <pre>foo=statement.verb.id<br/>bar=statement.context.registration</pre></span>
     </div>
     <div class="form-group">
       {{ Form::label('req_payload', 'Request payload:', ['class' => 'control-label']) }}

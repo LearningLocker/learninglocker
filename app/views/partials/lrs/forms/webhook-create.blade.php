@@ -15,11 +15,17 @@
   </div>
   <div class="form-group">
     {{ Form::label('req_headers', 'Request headers:', ['class' => 'control-label']) }}
-    {{ Form::textarea('req_headers', 'Content-Type: application/json', ['class' => 'form-control', 'rows' => 6]) }}
+    {{ Form::textarea('req_headers', 'Content-Type: application/json', ['class' => 'form-control', 'rows' => 4]) }}
+  </div>
+  <div class="form-group">
+    {{ Form::label('tokens', 'Assign tokens (use dot notation to access to statement array):', ['class' => 'control-label']) }}
+    {{ Form::textarea('tokens', '', ['class' => 'form-control', 'rows' => 6]) }}
+    <span class="help-block">E.g. <pre>foo=statement.verb.id<br/>bar=statement.context.registration</pre></span>
   </div>
   <div class="form-group">
     {{ Form::label('req_payload', 'Request payload:', ['class' => 'control-label']) }}
-    {{ Form::textarea('req_payload', '{foo:"bar"}', ['class' => 'form-control', 'rows' => 10]) }}
+    {{ Form::textarea('req_payload', '{foo:"@foo", bar:"@bar"}', ['class' => 'form-control', 'rows' => 10]) }}
+    <span class="help-block">Tokens can be injected with prefix <strong>@</strong>, unavailable tokens will be ignored.</span>
   </div>
 </div>
 <div class="modal-footer">
