@@ -264,6 +264,7 @@ class LrsController extends BaseController {
     $webhook->req_type = Input::get('req_type');
     $webhook->req_url = Input::get('req_url');
     $webhook->req_headers = Input::get('req_headers');
+    $webhook->tokens = Input::get('tokens');
     $webhook->req_payload = Input::get('req_payload');
     $webhook->lrs_id = $lrsId;
     $webhook->save();
@@ -276,6 +277,7 @@ class LrsController extends BaseController {
     $webhook->req_type = Input::get('req_type');
     $webhook->req_url = Input::get('req_url');
     $webhook->req_headers = Input::get('req_headers');
+    $webhook->tokens = Input::get('tokens');
     $webhook->req_payload = Input::get('req_payload');
     $webhook->save();
     return Redirect::back();

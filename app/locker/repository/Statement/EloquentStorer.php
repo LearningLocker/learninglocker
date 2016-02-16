@@ -3,6 +3,8 @@
 use \Locker\Helpers\Helpers as Helpers;
 use \Locker\XApi\Statement as XAPIStatement;
 use \Locker\Helpers\Exceptions as Exceptions;
+use \Queue as Queue;
+use \Webhook as Webhook;
 
 interface Storer {
   public function store(array $statements, array $attachments, StoreOptions $opts);
@@ -41,7 +43,14 @@ class EloquentStorer extends EloquentReader implements Storer {
     $this->voider->voidStatements($statements, $opts);
     $this->attacher->store($attachments, $this->hashes, $opts);
     $this->activateStatements($ids, $opts);
-
+    // Check if there's any webhook set up to queue up WebhookAsyncReq job
+    $lrsId = (string) $opts->getOpt('lrs_id');
+    $webhook = Webhook::where('lrs_id', $lrsId)->first();
+    if ($webhook) {
+      foreach ($statements as $statement) {
+        Queue::push('WebhookAsyncReq', array('lrs' => $lrsId, 'statement' => $statement));
+      }
+    }
     return $ids;
   }
 
