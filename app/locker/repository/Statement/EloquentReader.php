@@ -1,5 +1,6 @@
 <?php namespace Locker\Repository\Statement;
 
+use DB;
 use \Illuminate\Database\Eloquent\Model as Model;
 use \Locker\Helpers\Helpers as Helpers;
 use \Locker\Helpers\Exceptions as Exceptions;
@@ -34,5 +35,9 @@ abstract class EloquentReader {
    */
   protected function formatModel(Model $model) {
     return Helpers::replaceHtmlEntity($model->statement);
+  }
+
+  public function getCollection(){
+    return DB::getCollection((new $this->model)->getTable());
   }
 }
