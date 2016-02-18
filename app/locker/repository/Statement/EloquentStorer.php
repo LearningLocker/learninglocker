@@ -97,9 +97,7 @@ class EloquentStorer extends EloquentReader implements Storer {
    * @param StoreOptions $opts
    */
   private function activateStatements(array $ids, StoreOptions $opts) {
-    return $this->where($opts)
-      ->whereIn('statement.id', $ids)
-      ->update(['active' => true]);
+    return $this->update( ['statement.id'=>['$in'=>$ids]], ['active' => true], $opts);
   }
 
   /**
@@ -118,5 +116,32 @@ class EloquentStorer extends EloquentReader implements Storer {
     
     return $uuid;
     
+  }
+
+  protected function update( array $conditions, $new_object, Options $opts) {
+    $collection = $this->getCollection();
+
+    $baseWheres = [
+      'lrs_id' => new \MongoId($opts->getOpt('lrs_id'))
+    ];
+
+    $scopes = $opts->getOpt('scopes');
+
+    if (in_array('all', $scopes) || in_array('all/read', $scopes) || in_array('statements/read', $scopes)) {
+      // Query all statements.
+    } else if (in_array('statements/read/mine', $scopes)) {
+      $baseWheres['client_id'] = $opts->getOpt('client')->_id;
+    } else {
+      throw new Exceptions\Exception('Unauthorized request.', 401);
+    }
+
+    $criteria = array_merge($baseWheres, $conditions);
+
+    // Use $set as default operator.
+    if (!starts_with(key($new_object), '$')) {
+        $new_object = array('$set' => $new_object);
+    }
+
+    return $collection->update($criteria, $new_object, ['multiple'=>true]);
   }
 }
