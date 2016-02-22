@@ -120,7 +120,7 @@ return array(
     'JsLocalization\JsLocalizationServiceProvider',
     'locker\RequestServiceProvider',
     'Philo\Translate\TranslateServiceProvider',
-    'Barryvdh\Debugbar\ServiceProvider',
+    'Clockwork\Support\Laravel\ClockworkServiceProvider',
   ),
 
   /*
@@ -190,8 +190,6 @@ return array(
     'Authorizer' => 'LucaDegasperi\OAuth2Server\Facades\AuthorizerFacade',
     'ResourceServer'  => 'LucaDegasperi\OAuth2Server\Facades\ResourceServerFacade',
     'LockerRequest' => 'locker\RequestFacade',
-
-    'Debugbar' => 'Barryvdh\Debugbar\Facade',
   ),
 
 );
