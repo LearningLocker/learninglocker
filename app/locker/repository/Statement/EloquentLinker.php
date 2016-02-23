@@ -139,7 +139,10 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
       ->where('statement.id', $statement->id)
       ->update([
         'refs' => array_map(function ($ref) {
-          return Helpers::replaceFullStop(json_decode(json_encode($ref->statement), true));
+          $statement = Helpers::replaceFullStop(json_decode(json_encode($ref->statement), true));
+          $statement['stored'] = new \MongoDate( strtotime($statement['stored']));
+          $statement['timestamp'] = new \MongoDate( strtotime($statement['timestamp']));
+          return $statement;
         }, $refs)
       ]);
   }

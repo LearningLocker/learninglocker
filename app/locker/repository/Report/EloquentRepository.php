@@ -105,6 +105,6 @@ class EloquentRepository extends BaseRepository implements Repository {
     return (new QueryRepository)->where(
       $report->lrs_id,
       Helpers::replaceHtmlEntity($report->where)
-    )->orderBy('statement.stored', 'DESC');
+    )->orderBy('stored', 'DESC');
   }
 }

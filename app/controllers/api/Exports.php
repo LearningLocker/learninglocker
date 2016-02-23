@@ -23,6 +23,9 @@ class Exports extends Resources {
    * @return StreamedResponse.
    */
   public function showJson($id) {
+    // should top timeouts on long queries
+    set_time_limit(0);
+
     $opts = $this->getOptions();
     $model = $this->repo->show($id, $opts);
 
@@ -46,6 +49,9 @@ class Exports extends Resources {
    * @return StreamedResponse.
    */
   public function showCsv($id) {
+    // should top timeouts on long queries
+    set_time_limit(0);
+
     $opts = $this->getOptions();
     $model = $this->repo->show($id, $opts);
 
