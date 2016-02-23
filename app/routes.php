@@ -160,7 +160,6 @@ Route::post('site/invite', array(
 Route::get('site/plugins', array(
   'uses' => 'PluginController@index',
 ));
-Route::resource('site', 'SiteController');
 Route::put('site/users/verify/{id}', array(
   'uses' => 'SiteController@verifyUser',
   'as'   => 'user.verify'

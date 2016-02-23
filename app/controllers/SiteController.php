@@ -37,8 +37,8 @@ class SiteController extends BaseController {
     return View::make('partials.site.dashboard', [
       'site' => $site,
       'list' => $list,
-      'stats' => $admin_dashboard->getFullStats(),
-      'graph_data' => $admin_dashboard->getGraphData()
+      'stats' => [],
+      'graph_data' => []
     ]);
 
   }
