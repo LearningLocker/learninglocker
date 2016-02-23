@@ -4,10 +4,11 @@ use \Locker\Helpers\Helpers as Helpers;
 
 class StatementAttachmentTest extends StatementsTestCase {
   use RouteTestTrait;
-  protected $boundary = 'abcABC0123\'()+_,-./:=?';
+  protected $boundary;
 
   public function setup() {
     parent::setup();
+    $this->boundary = Helpers::MULTIPART_BOUNDARY;
     $this->statements[0]->delete();
   }
 
@@ -58,10 +59,11 @@ class StatementAttachmentTest extends StatementsTestCase {
     $attachment = $this->getAttachment($attachment_location);
     $statement = $this->generateStatementWithAttachment($attachment);
     $request_content = $this->generateContent(json_encode($statement), $attachment);
+    $content_type = Helpers::mixedMultipartContentType();
 
     // Sends request.
     $response = $this->requestStatements('POST', [], [
-      'CONTENT_TYPE' => "multipart/mixed; boundary=$this->boundary"
+      'CONTENT_TYPE' => $content_type
     ], $request_content);
 
     // Checks that the response is correct.
