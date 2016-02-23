@@ -35,3 +35,5 @@ if [ "${DEVELOP}" = "${TRAVIS_BRANCH}" ]; then
 else
   echo "Not running conformance tests."
 fi
+
+exit $?
