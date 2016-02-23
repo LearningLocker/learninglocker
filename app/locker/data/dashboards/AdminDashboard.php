@@ -1,13 +1,11 @@
 <?php namespace app\locker\data\dashboards;
 
-class AdminDashboard extends \app\locker\data\BaseData {
+class AdminDashboard extends BaseDashboard {
 
   private $user;
 
   public function __construct(){
-
-    $this->setDb();
-
+    parent::__construct();
     $this->user = \Auth::user(); //we might want to pass user in, for example when use the API
   }
 
@@ -16,29 +14,14 @@ class AdminDashboard extends \app\locker\data\BaseData {
    *
    **/
   public function getFullStats(){
-    return array(
-      'statement_count' => $this->statementCount(),
-      'lrs_count'       => $this->lrsCount(),
-      'actor_count'     => $this->actorCount(),
-      'user_count'      => $this->userCount(),
-      'statement_avg'   => $this->statementAvgCount()
+    $data = $this->getStats();
+    return array_merge(
+      $data,
+      [
+        'lrs_count'       => $this->lrsCount(),
+        'user_count'      => $this->userCount(),
+      ]
     );
-  }
-
-  public function getGraphData(\DateTime $startDate = null, \DateTime $endDate = null) {
-    return [
-      'statement_graph' => $this->getStatementNumbersByDate($startDate, $endDate)
-    ];
-  }
-
-  /**
-   * Count all statements in Learning Locker
-   *
-   * @return count
-   *
-   **/
-  public function statementCount(){
-    return \DB::collection('statements')->remember(5)->count();
   }
 
   /**
@@ -52,49 +35,6 @@ class AdminDashboard extends \app\locker\data\BaseData {
   }
 
   /**
-   * Count the number of distinct actors within Learning Locker statements.
-   *
-   * @return count.
-   *
-   **/
-  public function actorCount(){
-    $count_array = ['mbox' => '', 'openid' => '', 'mbox_sha1sum' => '', 'account' => ''];
-    
-    $count_array['mbox'] = $this->db->statements->aggregate([
-      ['$match' => ['statement.actor.mbox' => ['$exists' => true]]],
-      ['$group' => ['_id' => '$statement.actor.mbox']],
-      ['$group' => ['_id' => 1, 'count' => ['$sum' => 1]]]
-    ]);
-    
-    $count_array['openid'] = $this->db->statements->aggregate([
-      ['$match' => ['statement.actor.openid' => ['$exists' => true]]],
-      ['$group' => ['_id' => '$statement.actor.openid']],
-      ['$group' => ['_id' => 1, 'count' => ['$sum' => 1]]]
-    ]);
-    
-    $count_array['mbox_sha1sum'] = $this->db->statements->aggregate([
-      ['$match' => ['statement.actor.mbox_sha1sum' => ['$exists' => true]]],
-      ['$group' => ['_id' => '$statement.actor.mbox_sha1sum']],
-      ['$group' => ['_id' => 1, 'count' => ['$sum' => 1]]]
-    ]);
-    
-    $count_array['account'] = $this->db->statements->aggregate([
-      ['$match' => ['statement.actor.account' => ['$exists' => true]]],
-      ['$group' => ['_id' => ['accountName' => '$statement.actor.account.name', 'accountHomePage' => '$statement.actor.account.homePage']]],
-      ['$group' => ['_id' => 1, 'count' => ['$sum' => 1]]]
-    ]);
-
-    $summary = 0;
-    foreach ($count_array as $key => $val) {
-        if( isset($val['result'][0]) ){
-          $summary += $val['result'][0]['count'];
-        }
-    }
-    
-    return $summary;
-  }
-
-  /**
    * Count the number of users in Learning Locker.
    *
    * @return count.
@@ -102,124 +42,6 @@ class AdminDashboard extends \app\locker\data\BaseData {
    **/
   public function userCount(){
     return \DB::collection('users')->remember(5)->count();
-  }
-
-  /**
-   * Get a count of all the days from the first day a statement was submitted to Learning Locker.
-   *
-   * @return $days number
-   *
-   **/
-  private function statementDays(){
-    $firstStatement = \DB::collection('statements')
-      ->orderBy("timestamp")->first();
-
-    if($firstStatement) {
-      $firstDay = date_create(gmdate(
-        "Y-m-d",
-        strtotime($firstStatement['statement']['timestamp'])
-      ));
-      $today = date_create(gmdate("Y-m-d", time()));
-      $interval = date_diff($firstDay, $today);
-      $days = $interval->days + 1;
-      return $days;
-    } else {
-      return '';
-    }
-  }
-
-  /**
-   * Using the number of days Learning Locker has been running with statements
-   * work out the average number of statements per day.
-   *
-   * @return $avg
-   *
-   **/
-  public function statementAvgCount(){
-    $count = $this->statementCount();
-    $days  = $this->statementDays();
-    $avg   = 0;
-    if( $count && $days ){
-      $avg = round( $count / $days );
-    }
-    return $avg;
-  }
-
-  /**
-   * Get a count of statements on each day Learning Locker has been active.
-   *
-   * @return $data json feed.
-   *
-   **/
-  public function getStatementNumbersByDate(\DateTime $startDate = null, \DateTime $endDate = null) {
-    // If neither of the dates are set, default to the last 30 days.
-    if ($startDate === null && $endDate === null) {
-      $startDate = \Carbon\Carbon::now()->subMonth();
-      $endDate = \Carbon\Carbon::now();
-    }
-
-    // Create the timestamp filter.
-    $timestamp = [];
-    if ($startDate !== null) $timestamp['$gte'] = new \MongoDate($startDate->getTimestamp());
-    if ($endDate !== null) $timestamp['$lte'] = new \MongoDate($endDate->getTimestamp());
-
-    $statements = $this->db->statements->aggregate(
-      [
-        '$match' => [
-          'timestamp'=> $timestamp
-        ]
-      ], 
-      [
-        '$group' => [
-          '_id'   => [
-            'year' => ['$year' => '$timestamp'],
-            'month' => ['$month' => '$timestamp'],
-            'day' => ['$dayOfMonth' => '$timestamp']
-          ],
-          'count' => ['$sum' => 1],
-          'date'  => ['$addToSet' => '$statement.timestamp'],
-          'actor' => ['$addToSet' => '$statement.actor']
-        ]
-      ],
-      [
-        '$sort' => ['_id' => 1]
-      ], 
-      [
-        '$project' => [
-          'count' => 1, 
-          'date' => 1, 
-          'actor' => 1
-        ]
-      ]
-    );
-
-    //set statements for graphing
-    $data = array();
-    if( isset($statements['result']) ){
-      foreach( $statements['result'] as $s ){
-        $date = substr($s['date'][0],0,10);
-        $data[$date] = json_encode( array( "y" => $date, "a" => $s['count'], 'b' => count($s['actor'])) );
-      }
-    }
-    
-    // Add empty point in data (fixes issue #265).
-    $dates = array_keys($data);
-
-    if( count($dates) > 0 ){
-      sort($dates);
-      $start = strtotime(reset($dates));
-      $end = strtotime(end($dates));
-
-      for($i=$start; $i<=$end; $i+=24*60*60) { 
-        $date = date("Y-m-d", $i);
-        if(!isset($data[$date])) {
-          $data[$date] = json_encode( array( "y" => $date, "a" => 0, 'b' => 0 ) );
-        }
-      }
-    }
-
-    return trim( implode(" ", $data) );
-
   }
 
 }

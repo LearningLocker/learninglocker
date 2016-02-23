@@ -4,7 +4,7 @@ define([
 ], function(_, Backbone) {
   var end = new Date();
   var start = new Date();
-  start.setMonth(end.getMonth() - 1);
+  start.setDate(end.getDate() - 7);
   
   var GraphModel = Backbone.Model.extend({
     defaults:{

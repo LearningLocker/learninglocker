@@ -134,7 +134,6 @@ class LrsController extends BaseController {
     $dashboard = new \app\locker\data\dashboards\LrsDashboard($lrs_id);
     return View::make('partials.lrs.dashboard', array_merge($this->getLrs($lrs_id), [
       'stats' => $dashboard->getStats(),
-      'graph_data' => $dashboard->getGraphData(),
       'dash_nav' => true,
       'client' => (new \Client)->where('lrs_id', $lrs_id)->first()
     ]));
@@ -198,7 +197,7 @@ class LrsController extends BaseController {
         'scopes' => ['all']
       ]),
       'scopes' => ['all']
-    ]))->orderBy('statement.stored', 'DESC')->paginate(15);
+    ]))->orderBy('stored', 'DESC')->paginate(15);
     return View::make('partials.statements.list', array_merge($this->getLrs($lrs_id), [
       'statements' => $statements,
       'statement_nav' => true,

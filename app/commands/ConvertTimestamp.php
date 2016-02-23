@@ -43,7 +43,8 @@ class ConvertTimestamp extends Command {
   {
     Statement::chunk(1000, function($statements){
       foreach ($statements as $s){
-        $s->timestamp = new \MongoDate(strtotime($s->statement['timestamp']));
+        $timestamp = new Carbon\Carbon($s->statement['timestamp']);
+        $s->timestamp = new \MongoDate($timestamp->timestamp, $timestamp->micro);
         $s->save();
       }
       $this->info(count($statements) . ' converted.');

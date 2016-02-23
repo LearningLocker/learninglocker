@@ -48,7 +48,8 @@ abstract class StatementsTestCase extends LrsTestCase {
       'voided' => false,
       'refs' => []
     ]);
-    $model->timestamp = new \MongoDate(strtotime($model->statement['timestamp']));
+    $timestamp = new \Carbon\Carbon($model->statement['timestamp']);
+    $model->timestamp = new \MongoDate($timestamp->timestamp, $timestamp->micro);
     $model->save();
     return $model;
   }

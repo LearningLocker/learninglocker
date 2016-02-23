@@ -85,6 +85,8 @@ class EloquentInserter extends EloquentReader implements Inserter {
    * @return [String => Mixed] $model
    */
   private function constructModel(\stdClass $statement, StoreOptions $opts) {
+    $timestamp = new \Carbon\Carbon($statement->timestamp);
+    $stored    = new \Carbon\Carbon($statement->stored);
     return [
       'lrs' => ['_id' => $opts->getOpt('lrs_id')], // Deprecated.
       'lrs_id' => $opts->getOpt('lrs_id'),
@@ -92,8 +94,8 @@ class EloquentInserter extends EloquentReader implements Inserter {
       'statement' => Helpers::replaceFullStop(json_decode(json_encode($statement), true)),
       'active' => false,
       'voided' => false,
-      'timestamp' => new \MongoDate(strtotime($statement->timestamp))
-    ];
+      'timestamp' => new \MongoDate($timestamp->timestamp, $timestamp->micro),
+      'stored'    => new \MongoDate($stored->timestamp, $stored->micro),    ];
   }
 
   /**

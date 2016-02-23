@@ -7,6 +7,7 @@ services:
   - mongodb
 
 install:
+  - echo y | pecl install mongo
   - php -r "readfile('https://getcomposer.org/installer');" | php
   - php composer.phar install --no-interaction --dev
 
@@ -16,8 +17,9 @@ before_script:
   - sudo chmod -R 777 ./uploads
   - php artisan migrate --env="testing"
 
-script: ./vendor/bin/phpunit
-after_success: sh test.sh
+script:
+  - ./vendor/bin/phpunit
+  - sh test.sh
 
 notifications:
   slack:

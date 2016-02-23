@@ -38,7 +38,7 @@ class SiteController extends BaseController {
       'site' => $site,
       'list' => $list,
       'stats' => $admin_dashboard->getFullStats(),
-      'graph_data' => $admin_dashboard->getGraphData()
+      'dash_nav' => true
     ]);
 
   }
@@ -120,9 +120,12 @@ class SiteController extends BaseController {
   public function lrs(){
     $opts = ['user' => \Auth::user()];
     $lrss = $this->lrs->index($opts);
+    $lrs_repo = $this->lrs;
 
-    return Response::json(array_map(function ($lrs) {
-      $lrs->statement_total = $this->statement->count(['lrs_id' => $lrs->_id, 'scopes' => ['all']]);
+    $collection = \DB::getCollection('statements');
+
+    return Response::json(array_map(function ($lrs) use ($lrs_repo) {
+      $lrs->statement_total = $lrs_repo->getStatementCount($lrs->_id);
       return $lrs;
     }, $lrss));
   }
