@@ -120,6 +120,7 @@ return array(
     'JsLocalization\JsLocalizationServiceProvider',
     'locker\RequestServiceProvider',
     'Philo\Translate\TranslateServiceProvider',
+    'Clockwork\Support\Laravel\ClockworkServiceProvider',
   ),
 
   /*
