@@ -1,6 +1,8 @@
 <?php namespace app\locker\data\dashboards;
 
 use Locker\Repository\Lrs\EloquentRepository as LrsRepo;
+use Carbon\Carbon as Carbon;
+use MongoDate;
 
 abstract class BaseDashboard extends \app\locker\data\BaseData {
   protected $lrs_repo;
@@ -144,16 +146,15 @@ abstract class BaseDashboard extends \app\locker\data\BaseData {
    *
    **/
   public function getStatementNumbersByDate(\DateTime $startDate = null, \DateTime $endDate = null) {
-    // If neither of the dates are set, default to the last 30 days.
-        if ($startDate === null && $endDate === null) {
-          $startDate = \Carbon\Carbon::now()->subMonth();
-          $endDate = \Carbon\Carbon::now();
-        }
+        // If neither of the dates are set, default to the last week
+        $startDate = $startDate ? Carbon::instance($startDate) : Carbon::now()->subWeek();
+        $endDate   = $endDate   ? Carbon::instance($endDate)   : Carbon::now();
+
 
         // Create the timestamp filter.
         $timestamp = [];
-        if ($startDate !== null) $timestamp['$gte'] = new \MongoDate($startDate->getTimestamp());
-        if ($endDate !== null) $timestamp['$lte'] = new \MongoDate($endDate->getTimestamp());
+        if ($startDate !== null) $timestamp['$gte'] = new MongoDate($startDate->timestamp, $startDate->micro);
+        if ($endDate !== null) $timestamp['$lte'] = new MongoDate($endDate->timestamp, $endDate->micro);
 
         $match = [
           'timestamp'=> $timestamp

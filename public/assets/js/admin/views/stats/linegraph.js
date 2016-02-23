@@ -26,13 +26,17 @@ define([
     },
 
     startupdate: function(e){
+      e.preventDefault();
+      this.updateGraph();
+    },
+
+    updateGraph: function(){
       this.ui.morrisLine.css({height: "auto"});
       var $img = $('<img/>').attr('src', window.LL.siteroot + "/assets/img/ajax-loader.gif" );
       this.ui.morrisLine.html($img);
       this.model.options.graphStartDate = this.ui.startDateInput.val();
       this.model.options.graphEndDate = this.ui.endDateInput.val();
       this.model.updateStats();
-      e.preventDefault();
     },
 
     templateHelpers: function(){
@@ -86,7 +90,7 @@ define([
       this.drawGraph( this.ui.morrisLine );
     },
     onShow: function () {
-      this.redraw();
+      this.updateGraph();
     },
     onRender: function(){
       this.redraw();

@@ -5,6 +5,8 @@ use \Locker\Helpers\Helpers as Helpers;
 use \Locker\XApi\Helpers as XApiHelpers;
 use \Jenssegers\Mongodb\Eloquent\Builder as Builder;
 use \Illuminate\Database\Eloquent\Model as Model;
+use Carbon\Carbon as Carbon;
+use MongoDate;
 
 interface IndexerInterface {
   public function index(IndexOptions $opts);
@@ -45,20 +47,22 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
         $key = 'stored';
         $op = '>';
         return $builder->where(function ($query) use ($key, $value, $op) {
-          $date = new \MongoDate(strtotime($value));
+          $date    = new Carbon($value);
+          $mongodate = new MongoDate($date->timestamp, $date->micro);
           return $query
-            ->orWhere($key, $op, $date)
-            ->orWhere('refs.'.$key, $op, $date);
+            ->orWhere($key, $op, $mongodate)
+            ->orWhere('refs.'.$key, $op, $mongodate);
         });
       },
       'until' => function ($value, $builder, IndexOptions $opts) {
         $key = 'stored';
         $op = '<=';
         return $builder->where(function ($query) use ($key, $value, $op) {
-          $date = new \MongoDate(strtotime($value));
+          $date    = new Carbon($value);
+          $mongodate = new MongoDate($date->timestamp, $date->micro);
           return $query
-            ->orWhere($key, $op, $date)
-            ->orWhere('refs.'.$key, $op, $date);
+            ->orWhere($key, $op, $mongodate)
+            ->orWhere('refs.'.$key, $op, $mongodate);
         });
       },
       'active' => function ($value, $builder, IndexOptions $opts) {

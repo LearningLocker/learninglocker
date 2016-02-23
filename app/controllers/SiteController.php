@@ -38,7 +38,7 @@ class SiteController extends BaseController {
       'site' => $site,
       'list' => $list,
       'stats' => $admin_dashboard->getFullStats(),
-      'graph_data' => $admin_dashboard->getGraphData()
+      'dash_nav' => true
     ]);
 
   }

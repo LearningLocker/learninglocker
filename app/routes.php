@@ -22,18 +22,10 @@ Route::get('/', function(){
   if( Auth::check() ){
     $site = \Site::first();
 
-    $admin_dashboard = new \app\locker\data\dashboards\AdminDashboard();
 
     //if super admin, show site dashboard, otherwise show list of LRSs can access
     if( Auth::user()->role == 'super' ){
-      $list = Lrs::all();
-      return View::make('partials.site.dashboard', array(
-        'site' => $site,
-        'list' => $list,
-        'stats' => $admin_dashboard->getFullStats(),
-        'graph_data' => $admin_dashboard->getGraphData(),
-        'dash_nav' => true
-      ));
+      return Redirect::route('site.index');
     }else{
       $lrs = Lrs::where('users._id', \Auth::user()->_id)->get();
       return View::make('partials.lrs.list', array('lrs' => $lrs, 'list' => $lrs, 'site' => $site));
@@ -130,6 +122,7 @@ Route::get('email/invite/{token}', array(
 |------------------------------------------------------------------
 */
 Route::get('site', array(
+  'as'   => 'site.index',
   'uses' => 'SiteController@index',
 ));
 Route::get('site/settings', array(

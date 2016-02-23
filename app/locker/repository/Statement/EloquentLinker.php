@@ -3,6 +3,8 @@
 use \Illuminate\Database\Eloquent\Model as Model;
 use \Illuminate\Database\Eloquent\Collection as Collection;
 use \Locker\Helpers\Helpers as Helpers;
+use Carbon\Carbon as Carbon;
+use MongoDate;
 
 interface LinkerInterface {
   public function updateReferences(array $statements, StoreOptions $opts);
@@ -140,8 +142,10 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
       ->update([
         'refs' => array_map(function ($ref) {
           $statement = Helpers::replaceFullStop(json_decode(json_encode($ref->statement), true));
-          $statement['stored'] = new \MongoDate( strtotime($statement['stored']));
-          $statement['timestamp'] = new \MongoDate( strtotime($statement['timestamp']));
+          $stored = new Carbon($statement['stored']);
+          $timestamp = new Carbon($statement['timestamp']);
+          $statement['stored'] = new MongoDate($stored->timestamp, $stored->micro);
+          $statement['timestamp'] = new MongoDate($timestamp->timestamp, $timestamp->micro);
           return $statement;
         }, $refs)
       ]);
