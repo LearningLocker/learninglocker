@@ -147,13 +147,14 @@ abstract class BaseDashboard extends \app\locker\data\BaseData {
    **/
   public function getStatementNumbersByDate(\DateTime $startDate = null, \DateTime $endDate = null) {
         // If neither of the dates are set, default to the last week
-        $startDate = $startDate ? new Carbon($startDate) : Carbon::now()->subWeek();
-        $endDate = $endDate ? new Carbon($endDate) : Carbon::now();
+        $startDate = $startDate ? Carbon::instance($startDate) : Carbon::now()->subWeek();
+        $endDate   = $endDate   ? Carbon::instance($endDate)   : Carbon::now();
+
 
         // Create the timestamp filter.
         $timestamp = [];
         if ($startDate !== null) $timestamp['$gte'] = new MongoDate($startDate->timestamp, $startDate->micro);
-        if ($endDate !== null) $timestamp['$lte'] = new MongoDate($startDate->timestamp, $startDate->micro);
+        if ($endDate !== null) $timestamp['$lte'] = new MongoDate($endDate->timestamp, $endDate->micro);
 
         $match = [
           'timestamp'=> $timestamp

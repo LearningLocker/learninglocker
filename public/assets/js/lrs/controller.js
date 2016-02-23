@@ -40,7 +40,7 @@ define([
 
 
       var timeline = new TimelineModel(window.LL.stats);
-      var graph_model = new GraphModel(window.LL.graph_data);
+      var graph_model = new GraphModel();
 
       var headerView    = new Header({ model: timeline });
       var lineGraphView = new LineGraph({ model: graph_model });
