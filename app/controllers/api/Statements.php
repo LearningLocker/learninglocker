@@ -1,5 +1,6 @@
 <?php namespace Controllers\API;
 
+use Carbon\Carbon;
 use \Locker\Repository\Query\QueryRepository as QueryRepository;
 use \Locker\Helpers\Exceptions as Exceptions;
 
@@ -29,7 +30,7 @@ class Statements extends Base {
    * @return Aggregate http://php.net/manual/en/mongocollection.aggregate.php#refsect1-mongocollection.aggregate-examples
    */
   public function aggregate() {
-    $pipeline = $this->getParam('pipeline');
+    $pipeline = $this->getPipeline();
     return \Response::json($this->query->aggregate($this->getOptions(), $pipeline));
   }
 
@@ -82,9 +83,43 @@ class Statements extends Base {
     return \Response::json($this->query->void($match, $this->getOptions()));
   }
 
+  private function convertDte($value) {
+    if(is_array($value)) {
+      if(isset($value['$dte']))  {
+        $date = $value['$dte'];
+        $parsedDate = new Carbon($date);
+        if($parsedDate) return new \MongoDate($parsedDate->timestamp, $parsedDate->micro);
+        else throw new Exceptions\Exception("`$date` is not a valid date.");
+      }
+      else
+        return array_map([$this, __FUNCTION__], $value); // recursively apply this function to whole pipeline
+    }
+
+    return $value;
+  }
+
+  private function convertOid($value) {
+    if(is_array($value)) {
+      if(isset($value['$oid'])) 
+        return new \MongoId($value['$oid']);
+      else
+        return array_map([$this, __FUNCTION__], $value); // recursively apply this function to whole pipeline
+    }
+
+    return $value;
+  }
+
+  private function getPipeline() {
+    $pipeline = $this->getParam('pipeline');
+    $pipeline = $this->convertDte($pipeline);
+    $pipeline = $this->convertOid($pipeline);
+    return $pipeline;
+  }
+
   private function getParam($param) {
     $param_value = \LockerRequest::getParam($param);
     $value = json_decode($param_value, true);
+
     if ($value === null && $param_value === null) {
       throw new Exceptions\Exception("Expected `$param` to be defined as a URL parameter.");
     } else if ($value === null) {
