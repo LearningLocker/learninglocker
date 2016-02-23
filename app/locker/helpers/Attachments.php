@@ -76,7 +76,7 @@ class Attachments {
    * @return String
    */
   private static function getBoundary($content_type) {
-    preg_match('/boundary=(.*)$/', $content_type, $matches);
+    preg_match('/boundary="?(.+?)"?$/', $content_type, $matches);
     if (!isset($matches[1])) throw new Exceptions\Exception(
       'You need to set a boundary if submitting attachments.'
     );
