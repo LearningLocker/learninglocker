@@ -126,6 +126,7 @@ class StatementIndexController {
   }
 
   private function emit($value) {
+    if (ob_get_level() == 0) ob_start();
     echo $value;
     flush();
     ob_flush();
