@@ -35,6 +35,5 @@
  
   <script type='text/javascript'>
     window.LL.stats = {{ json_encode( $stats ) }};
-    window.LL.graph_data = {{ json_encode( $graph_data ) }};
   </script>
 @stop
