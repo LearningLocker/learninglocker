@@ -28,13 +28,16 @@
   "repositories": [
     {
       "type": "pear",
-      "url": "https://pear.php.net"
+      "url": "http://pear.php.net"
     },
     {
       "type": "vcs",
       "url": "https://github.com/LearningLocker/laravel-mongodb"
     }
   ],
+  "config":{
+    "secure-http": false
+  },
   "require": {
     "php": ">=5.5.0",
     "ext-mongo": "*",
