@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f0ed5c6f85bb76872a55331c6507a947",
+    "hash": "21b12c2ab895c41624e3d157183ec6d6",
     "content-hash": "209d810043863f169201b35480f60683",
     "packages": [
         {
@@ -111,16 +111,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.15.3",
+            "version": "3.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "db18f6c4653add0cc40d708f0916192f9ec67ac3"
+                "reference": "e6d8b291b45009b310a174bcabad3de1c864e176"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/db18f6c4653add0cc40d708f0916192f9ec67ac3",
-                "reference": "db18f6c4653add0cc40d708f0916192f9ec67ac3",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e6d8b291b45009b310a174bcabad3de1c864e176",
+                "reference": "e6d8b291b45009b310a174bcabad3de1c864e176",
                 "shasum": ""
             },
             "require": {
@@ -187,7 +187,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-02-18 23:32:29"
+            "time": "2016-02-25 22:52:38"
         },
         {
             "name": "barracuda/copy",
@@ -938,16 +938,16 @@
         },
         {
             "name": "itsgoingd/clockwork",
-            "version": "v1.10.1",
+            "version": "v1.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/itsgoingd/clockwork.git",
-                "reference": "f14f8e91a34efd0d17e8350a1db5d436154bec87"
+                "reference": "bbc43ceefa4146d80a300f9a81fa83cacab4e8f3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/itsgoingd/clockwork/zipball/f14f8e91a34efd0d17e8350a1db5d436154bec87",
-                "reference": "f14f8e91a34efd0d17e8350a1db5d436154bec87",
+                "url": "https://api.github.com/repos/itsgoingd/clockwork/zipball/bbc43ceefa4146d80a300f9a81fa83cacab4e8f3",
+                "reference": "bbc43ceefa4146d80a300f9a81fa83cacab4e8f3",
                 "shasum": ""
             },
             "require": {
@@ -979,7 +979,7 @@
                 "logging",
                 "profiling"
             ],
-            "time": "2016-01-07 15:13:57"
+            "time": "2016-02-23 16:03:09"
         },
         {
             "name": "jenssegers/mongodb",
@@ -1957,10 +1957,10 @@
         },
         {
             "name": "pear-pear.php.net/Archive_Tar",
-            "version": "1.4.0",
+            "version": "1.4.2",
             "dist": {
                 "type": "file",
-                "url": "http://pear.php.net/get/Archive_Tar-1.4.0.tgz",
+                "url": "http://pear.php.net/get/Archive_Tar-1.4.2.tgz",
                 "reference": null,
                 "shasum": null
             },
@@ -1968,7 +1968,7 @@
                 "php": ">=5.2.0.0"
             },
             "replace": {
-                "pear-pear/archive_tar": "== 1.4.0.0"
+                "pear-pear/archive_tar": "== 1.4.2.0"
             },
             "type": "pear-library",
             "autoload": {
@@ -2987,16 +2987,16 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.8.2",
+            "version": "v2.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
-                "reference": "ee278f7c851533e58ca307f66305ccb9188aceda"
+                "reference": "78c468665c9568c3faaa9c416a7134308f2d85c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/ee278f7c851533e58ca307f66305ccb9188aceda",
-                "reference": "ee278f7c851533e58ca307f66305ccb9188aceda",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/78c468665c9568c3faaa9c416a7134308f2d85c3",
+                "reference": "78c468665c9568c3faaa9c416a7134308f2d85c3",
                 "shasum": ""
             },
             "require": {
@@ -3043,20 +3043,20 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2016-01-13 10:28:07"
+            "time": "2016-01-27 05:14:19"
         },
         {
             "name": "symfony/filesystem",
-            "version": "v2.8.2",
+            "version": "v2.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "637b64d0ee10f44ae98dbad651b1ecdf35a11e8c"
+                "reference": "65cb36b6539b1d446527d60457248f30d045464d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/637b64d0ee10f44ae98dbad651b1ecdf35a11e8c",
-                "reference": "637b64d0ee10f44ae98dbad651b1ecdf35a11e8c",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/65cb36b6539b1d446527d60457248f30d045464d",
+                "reference": "65cb36b6539b1d446527d60457248f30d045464d",
                 "shasum": ""
             },
             "require": {
@@ -3092,7 +3092,7 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2016-01-13 10:28:07"
+            "time": "2016-02-22 15:02:30"
         },
         {
             "name": "symfony/finder",
@@ -4039,16 +4039,16 @@
         },
         {
             "name": "sebastian/environment",
-            "version": "1.3.3",
+            "version": "1.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "6e7133793a8e5a5714a551a8324337374be209df"
+                "reference": "dc7a29032cf72b54f36dac15a1ca5b3a1b6029bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/6e7133793a8e5a5714a551a8324337374be209df",
-                "reference": "6e7133793a8e5a5714a551a8324337374be209df",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/dc7a29032cf72b54f36dac15a1ca5b3a1b6029bf",
+                "reference": "dc7a29032cf72b54f36dac15a1ca5b3a1b6029bf",
                 "shasum": ""
             },
             "require": {
@@ -4085,7 +4085,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2015-12-02 08:37:27"
+            "time": "2016-02-26 18:40:46"
         },
         {
             "name": "sebastian/exporter",
@@ -4243,16 +4243,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.2",
+            "version": "v2.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "34c8a4b51e751e7ea869b8262f883d008a2b81b8"
+                "reference": "2a4ee40acb880c56f29fb1b8886e7ffe94f3b995"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/34c8a4b51e751e7ea869b8262f883d008a2b81b8",
-                "reference": "34c8a4b51e751e7ea869b8262f883d008a2b81b8",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/2a4ee40acb880c56f29fb1b8886e7ffe94f3b995",
+                "reference": "2a4ee40acb880c56f29fb1b8886e7ffe94f3b995",
                 "shasum": ""
             },
             "require": {
@@ -4288,7 +4288,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-01-13 10:28:07"
+            "time": "2016-02-23 07:41:20"
         }
     ],
     "aliases": [],

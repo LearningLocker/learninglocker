@@ -35,6 +35,9 @@
       "url": "https://github.com/LearningLocker/laravel-mongodb"
     }
   ],
+  "config":{
+    "secure-http": false
+  },
   "require": {
     "php": ">=5.5.0",
     "ext-mongo": "*",

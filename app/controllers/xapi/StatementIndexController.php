@@ -7,7 +7,6 @@ use \LockerRequest as LockerRequest;
 
 class StatementIndexController {
 
-  const BOUNDARY = 'abcABC0123\'()+_,-./:=?';
   const EOL = "\r\n";
 
   /**
@@ -48,7 +47,7 @@ class StatementIndexController {
 
     // Defines the content type and body of the response.
     if ($opts['attachments'] === true) {
-      $content_type = 'multipart/mixed; boundary='.static::BOUNDARY;
+      $content_type = Helpers::mixedMultipartContentType();
       $body = function () use ($statements, $count, $opts) {
         return $this->makeAttachmentsResult($statements, $count, $opts);
       };
@@ -97,9 +96,8 @@ class StatementIndexController {
    * @return \stdClass
    */
   private function makeAttachmentsResult(array $statements, $count, array $opts) {
-    $boundary = static::BOUNDARY;
+    $boundary = Helpers::MULTIPART_BOUNDARY;
     $eol = static::EOL;
-    $content_type = 'multipart/mixed; boundary='.$boundary;
     
     $this->emit("--$boundary$eol");
     $this->emit("Content-Type:application/json$eol$eol");
@@ -128,6 +126,7 @@ class StatementIndexController {
   }
 
   private function emit($value) {
+    if (ob_get_level() == 0) ob_start();
     echo $value;
     flush();
     ob_flush();
