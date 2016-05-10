@@ -102,20 +102,22 @@ class StatementStoreController {
     $parts = $this->getParts();
     $content = $parts['content'];
 
-    if (strlen($content) === 0){
-      // if content is blank, then set to blank array of statements
-      $statements = [];
-    } else {
-      // Decodes $statements from $content.
-      $jsonParser = new JsonParser;
-      try {
-        $statements = $jsonParser->parse($content, JsonParser::DETECT_KEY_CONFLICTS);
-      } catch (\Seld\JsonLint\DuplicateKeyException $e) {
-        $details = $e->getDetails();
-        throw new Exceptions\Exception(sprintf('Invalid JSON: `%s` is a duplicate key on line %s', $details['key'], $details['line']));
-      } catch (\Exception $e) { // some other parsing error occured
-        throw new Exceptions\Exception('Invalid JSON: JSON could not be parsed');
+    // Decodes $statements from $content.
+    $jsonParser = new JsonParser;
+    try {
+      $jsonParser->parse($content, JsonParser::DETECT_KEY_CONFLICTS); // this will catch any parsing issues
+      
+      $statements = json_decode($content);
+      if ($statements === null && $content !== '') {
+        throw new Exceptions\Exception('Invalid JSON');
+      } else if ($statements === null) {
+        $statements = [];
       }
+    } catch (\Seld\JsonLint\DuplicateKeyException $e) {
+      $details = $e->getDetails();
+      throw new Exceptions\Exception(sprintf('Invalid JSON: `%s` is a duplicate key on line %s', $details['key'], $details['line']));
+    } catch (\Exception $e) { // some other parsing error occured
+      throw new Exceptions\Exception('Invalid JSON: JSON could not be parsed');
     }
 
     // Ensures that $statements is an array.
