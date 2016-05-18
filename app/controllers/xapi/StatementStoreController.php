@@ -7,6 +7,7 @@ use \Locker\Helpers\Helpers as Helpers;
 use \Locker\XApi\IMT as XApiImt;
 use \LockerRequest as LockerRequest;
 use \Response as IlluminateResponse;
+use Seld\JsonLint\JsonParser as JsonParser;
 
 class StatementStoreController {
 
@@ -102,11 +103,21 @@ class StatementStoreController {
     $content = $parts['content'];
 
     // Decodes $statements from $content.
-    $statements = json_decode($content);
-    if ($statements === null && $content !== '') {
-      throw new Exceptions\Exception('Invalid JSON');
-    } else if ($statements === null) {
-      $statements = [];
+    $jsonParser = new JsonParser;
+    try {
+      $jsonParser->parse($content, JsonParser::DETECT_KEY_CONFLICTS); // this will catch any parsing issues
+      
+      $statements = json_decode($content);
+      if ($statements === null && $content !== '') {
+        throw new Exceptions\Exception('Invalid JSON');
+      } else if ($statements === null) {
+        $statements = [];
+      }
+    } catch (\Seld\JsonLint\DuplicateKeyException $e) {
+      $details = $e->getDetails();
+      throw new Exceptions\Exception(sprintf('Invalid JSON: `%s` is a duplicate key on line %s', $details['key'], $details['line']));
+    } catch (\Exception $e) { // some other parsing error occured
+      throw new Exceptions\Exception('Invalid JSON: JSON could not be parsed');
     }
 
     // Ensures that $statements is an array.

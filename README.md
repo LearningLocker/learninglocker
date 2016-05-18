@@ -1,4 +1,4 @@
-[![Learning Locker Logo](http://bit.ly/ll-logo2)](http://learninglocker.net)
+[![Learning Locker Logo](http://i.imgur.com/w7SEoF6.png)](http://learninglocker.net)
 > An open source Learning Record Store (LRS) implementing the [xAPI](https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md) ([Tin Can API](http://tincanapi.com/)).
 
 [![Build Status](https://travis-ci.org/LearningLocker/learninglocker.svg?branch=master)](https://travis-ci.org/LearningLocker/learninglocker)
