@@ -234,6 +234,6 @@ class EloquentIndexer extends EloquentReader implements IndexerInterface {
    * @return Int Number of statements in Builder.
    */
   public function count(Builder $builder, IndexOptions $opts) {
-    return $builder->count(['lrs_id' => 1], ['lrs_id' => 1]);
+    return $builder->count(['lrs_id' => 1], ['lrs_id'=>1, 'active'=>-1, 'voided'=>1]);
   }
 }

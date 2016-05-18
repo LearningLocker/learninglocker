@@ -190,6 +190,7 @@ class LrsController extends BaseController {
    */
   public function statements($lrs_id){
     $site = \Site::first();
+    return "hello";
     $statements = (new StatementIndexer)->index(new IndexOptions([
       'lrs_id' => $lrs_id,
       'limit' => $this->statement->count([
@@ -197,7 +198,7 @@ class LrsController extends BaseController {
         'scopes' => ['all']
       ]),
       'scopes' => ['all']
-    ]))->orderBy('stored', 'DESC')->paginate(15, ['*'], ['lrs_id'=>1], ['lrs_id'=>1]);
+    ]))->orderBy('stored', 'DESC')->paginate(15, ['*'], ['lrs_id'=>1], ['lrs_id'=>1, 'active'=>-1, 'voided'=>1]);
 
     return View::make('partials.statements.list', array_merge($this->getLrs($lrs_id), [
       'statements' => $statements,
