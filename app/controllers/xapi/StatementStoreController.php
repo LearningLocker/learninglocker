@@ -131,13 +131,18 @@ class StatementStoreController {
     }
 
     // Saves $statements with attachments.
-    return $this->statements->store(
+    $rc = $this->statements->store(
       $statements,
       is_array($parts['attachments']) ? $parts['attachments'] : [],
       array_merge([
         'authority' => $this->getAuthority($options['client'])
       ], $options)
     );
+
+     // http://www.craighooghiem.com/application-hooks-with-laravel-events/
+     \Event::fire('Statements.store', array($statements));
+
+     return $rc;
   }
 
   private function getAuthority($client) {
