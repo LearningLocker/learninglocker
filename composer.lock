@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7b0a8756c2754c82d33c98dc84b73c93",
-    "content-hash": "a6240051dcdfed13f3b2d6cd6b49a03a",
+    "hash": "6c93ec04ae63b209fffb6017e537fe66",
+    "content-hash": "5adf185fabdf41e3e80fd6cee99bded5",
     "packages": [
         {
             "name": "andywer/js-localization",
@@ -1026,16 +1026,16 @@
         },
         {
             "name": "jenssegers/mongodb",
-            "version": "dev-issue/count",
+            "version": "dev-issue/count-0.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LearningLocker/laravel-mongodb.git",
-                "reference": "65343a1f1f68769ed814ab04ddba0b22a521958d"
+                "reference": "69f9f0f7bc722ee180c2381b688bc94f204dd0e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LearningLocker/laravel-mongodb/zipball/65343a1f1f68769ed814ab04ddba0b22a521958d",
-                "reference": "65343a1f1f68769ed814ab04ddba0b22a521958d",
+                "url": "https://api.github.com/repos/LearningLocker/laravel-mongodb/zipball/69f9f0f7bc722ee180c2381b688bc94f204dd0e3",
+                "reference": "69f9f0f7bc722ee180c2381b688bc94f204dd0e3",
                 "shasum": ""
             },
             "require": {
@@ -1081,9 +1081,9 @@
                 "mongodb"
             ],
             "support": {
-                "source": "https://github.com/LearningLocker/laravel-mongodb/tree/issue/count"
+                "source": "https://github.com/LearningLocker/laravel-mongodb/tree/issue/count-0.0.2"
             },
-            "time": "2016-01-26 17:20:04"
+            "time": "2016-05-18 14:34:01"
         },
         {
             "name": "jenssegers/mongodb-session",
