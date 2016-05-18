@@ -190,7 +190,6 @@ class LrsController extends BaseController {
    */
   public function statements($lrs_id){
     $site = \Site::first();
-    return "hello";
     $statements = (new StatementIndexer)->index(new IndexOptions([
       'lrs_id' => $lrs_id,
       'limit' => $this->statement->count([
