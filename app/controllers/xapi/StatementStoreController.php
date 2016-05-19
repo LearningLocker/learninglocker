@@ -140,7 +140,7 @@ class StatementStoreController {
     );
 
      // http://www.craighooghiem.com/application-hooks-with-laravel-events/
-     \Event::fire('Statements.store', array($statements));
+     \Event::fire('Statements.store', array(&$statements));
 
      return $rc;
   }
