@@ -181,7 +181,7 @@
     </div>
     <div class="col-xs-12 col-sm-4 col-lg-4">
       <div class="bordered stats-box">
-        <span><%= statement_count %></span>
+        <span><%= statement_count.toLocaleString() %></span>
         Total Statements
       </div>
     </div>
@@ -228,8 +228,8 @@
   <div class="row">
     <div class="col-xs-12 col-sm-12">
       <div class="statement-graph clearfix">
-        <h3>Statements <span><%= statement_count %></span></h3>
-        <p class="averages">Your daily average is <span style="color:#00cc00;"> <%= statement_avg %> statements</span>.</p>
+        <h3>Statements <span><%= statement_count.toLocaleString() %></span></h3>
+        <p class="averages">Your daily average is <span style="color:#00cc00;"> <%= statement_avg.toLocaleString() %> statements</span>.</p>
       </div>
     </div>
   </div>
