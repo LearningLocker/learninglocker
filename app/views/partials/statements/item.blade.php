@@ -49,11 +49,11 @@
   //set object for display
 
   //is the object of type agent?
-  if( isset($statement['object']['objectType']) && $statement['object']['objectType'] == 'Agent' ){
+  if( isset($statement['object']['objectType']) && ($statement['object']['objectType'] == 'Agent' || $statement['object']['objectType'] == 'Group') ){
     if( isset($statement['object']['name']) ){
       $object = $statement['object']['name'];
     }else{
-      $object = isset($statement['object']['mbox']) ? $statement['object']['mbox'] : 'no name available';
+      $object = isset($statement['object']['mbox']) ? $statement['object']['mbox'] : $statement['object']['objectType'];
     }
   }elseif( isset($statement['object']['objectType']) && $statement['object']['objectType'] == 'SubStatement' ){
     $object = 'A SubStatement'; //@todo not sure how to handle substatement display?
@@ -73,9 +73,11 @@
         $object = [$object];
       }
       $object = reset( $object );
-    }else{
+    } elseif (isset($statement['object']['id'])) {
       //last resort, or in the case of statement ref, use the id
       $object = $statement['object']['id'];
+    } else {
+      $object = "Unnamed Object";
     }
   }
 
