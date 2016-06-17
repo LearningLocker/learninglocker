@@ -51,7 +51,7 @@ class AddStoredToStatementRoot extends Migration {
               $timestamp = new Carbon\Carbon($refStatement['timestamp']);
               $query['u']['$set']['refs.'.$key.'.timestamp'] = new \MongoDate($timestamp->timestamp, $timestamp->micro);
             } 
-	    			if(isset($refStatement['stored']) && !$stored['stored'] instanceof MongoDate) {
+	    			if(isset($refStatement['stored']) && !$refStatement['stored'] instanceof MongoDate) {
               $stored = new Carbon\Carbon($refStatement['stored']);
               $query['u']['$set']['refs.'.$key.'.stored'] = new \MongoDate($stored->timestamp, $stored->micro);
             }
