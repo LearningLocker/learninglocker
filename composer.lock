@@ -1030,12 +1030,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/LearningLocker/laravel-mongodb.git",
-                "reference": "69f9f0f7bc722ee180c2381b688bc94f204dd0e3"
+                "reference": "0d11581cbcb8c9b7eb76b7cd9583fba33321b005"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LearningLocker/laravel-mongodb/zipball/69f9f0f7bc722ee180c2381b688bc94f204dd0e3",
-                "reference": "69f9f0f7bc722ee180c2381b688bc94f204dd0e3",
+                "url": "https://api.github.com/repos/LearningLocker/laravel-mongodb/zipball/0d11581cbcb8c9b7eb76b7cd9583fba33321b005",
+                "reference": "0d11581cbcb8c9b7eb76b7cd9583fba33321b005",
                 "shasum": ""
             },
             "require": {
@@ -1083,7 +1083,7 @@
             "support": {
                 "source": "https://github.com/LearningLocker/laravel-mongodb/tree/issue/count-0.0.2"
             },
-            "time": "2016-05-18 14:34:01"
+            "time": "2016-06-23 12:14:49"
         },
         {
             "name": "jenssegers/mongodb-session",
