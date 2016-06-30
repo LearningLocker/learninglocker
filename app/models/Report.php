@@ -117,8 +117,12 @@ class Report extends Eloquent {
           }
         }
       }
-      array_push($wheres, ['orArray', 'or', $actorArray]);
-      array_push($wheres, ['orArray', 'or', $instructorArray]);
+      if (!empty($actorArray)) {
+        array_push($wheres, ['orArray', 'or', $actorArray]);
+      }
+      if (!empty($instructorArray)) {
+        array_push($wheres, ['orArray', 'or', $instructorArray]);
+      }
     }
 
     $since = isset($reportArr['since']) ? $this->constructDate($reportArr['since']) : null;
@@ -131,6 +135,7 @@ class Report extends Eloquent {
     } else if ($until) {
       $wheres[] = ['statement.timestamp', '<=', $until];
     }
+
 
     return $wheres;
   }
