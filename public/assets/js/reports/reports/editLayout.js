@@ -18,8 +18,7 @@ define([
       if (query[field] == null) {
         query[field] = ['<>', '', ''];
       }
-
-      query[field][1 + !!min] = e.currentTarget.value;
+      query[field][1 + !!min] = parseInt(e.currentTarget.value);
     });
   };
   var clearQueryField = function (field) {
