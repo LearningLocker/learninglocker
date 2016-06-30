@@ -15,9 +15,9 @@ Please see our [documentation](http://docs.learninglocker.net) for installation,
 ## Developers
 You may contribute to this project by:
 
-- [Reporting issues](/issues)
-- [Updating code](/updating-code)
-- [Updating documentation](https://github.com/LearningLocker/docs)
+- [Reporting issues](/issues).
+- [Updating code](/updating-code).
+- [Updating documentation](https://github.com/LearningLocker/docs).
 
 ### Updating Code
 1. Install Learning Locker's [requirements](http://docs.learninglocker.net/installation/#requirements).
