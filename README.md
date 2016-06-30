@@ -3,7 +3,6 @@
 
 [![Build Status](https://travis-ci.org/LearningLocker/learninglocker.svg?branch=master)](https://travis-ci.org/LearningLocker/learninglocker)
 [![Latest Stable Version](https://poser.pugx.org/learninglocker/learninglocker/v/stable.svg)](https://packagist.org/packages/learninglocker/learninglocker)
-[![Latest Unstable Version](https://poser.pugx.org/learninglocker/learninglocker/v/unstable.svg)](https://packagist.org/packages/learninglocker/learninglocker)
 [![Total Downloads](https://poser.pugx.org/learninglocker/learninglocker/downloads.svg)](https://packagist.org/packages/learninglocker/learninglocker)
 [![License](https://poser.pugx.org/learninglocker/learninglocker/license.svg)](http://opensource.org/licenses/GPL-3.0)
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/LearningLocker/learninglocker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
