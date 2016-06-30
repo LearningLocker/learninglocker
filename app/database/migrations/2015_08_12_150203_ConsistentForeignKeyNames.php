@@ -16,7 +16,10 @@ class ConsistentForeignKeyNames extends Migration {
       $this->changeForeignKey($db->reports, 'lrs', 'lrs_id', $lrs->_id, $convertToMongoId);
       $this->changeForeignKey($db->exports, 'lrs', 'lrs_id', $lrs->_id, $convertToMongoId);
 
-      $lrs->owner_id = $convertToMongoId($lrs->owner['_id']);
+      if (isset($lrs->owner_id)) {
+				$lrs->owner_id = $convertToMongoId($lrs->owner['_id']);
+			}
+			
       $lrs->save();
 
       echo 'Models for "'.$lrs->title.'" converted.'.PHP_EOL;
