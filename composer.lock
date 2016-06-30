@@ -229,6 +229,7 @@
             "keywords": [
                 "copy"
             ],
+            "abandoned": true,
             "time": "2015-05-27 21:28:58"
         },
         {
@@ -1612,16 +1613,16 @@
         },
         {
             "name": "learninglocker/statementfactory",
-            "version": "v0.0.7",
+            "version": "v0.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LearningLocker/StatementFactory.git",
-                "reference": "a239144d87bd3b69daec605726f41af78232bb2a"
+                "reference": "7d6db6fc0171017865b1f3582104b5d91ebe60b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LearningLocker/StatementFactory/zipball/a239144d87bd3b69daec605726f41af78232bb2a",
-                "reference": "a239144d87bd3b69daec605726f41af78232bb2a",
+                "url": "https://api.github.com/repos/LearningLocker/StatementFactory/zipball/7d6db6fc0171017865b1f3582104b5d91ebe60b8",
+                "reference": "7d6db6fc0171017865b1f3582104b5d91ebe60b8",
                 "shasum": ""
             },
             "type": "library",
@@ -1641,7 +1642,7 @@
                 }
             ],
             "description": "Learning Locker's classes for xAPI.",
-            "time": "2016-04-12 10:09:31"
+            "time": "2016-06-30 13:26:27"
         },
         {
             "name": "microsoft/windowsazure",
