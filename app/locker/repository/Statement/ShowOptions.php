@@ -9,7 +9,7 @@ class ShowOptions extends Options {
     'lrs_id' => null,
     'voided' => 'Boolean',
     'active' => 'Boolean',
-    'scopes' => ['String'],
+    'scopes' => ['Str'],
     'client' => null
   ];
 }

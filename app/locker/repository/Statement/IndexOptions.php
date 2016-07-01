@@ -34,13 +34,13 @@ class IndexOptions extends Options {
     'related_activities' => 'Boolean',
     'related_agents' => 'Boolean',
     'ascending' => 'Boolean',
-    'format' => 'String',
+    'format' => 'Str',
     'offset' => 'Integer',
     'limit' => 'Integer',
     'langs' => ['Language'],
     'attachments' => 'Boolean',
     'lrs_id' => null,
-    'scopes' => ['String'],
+    'scopes' => ['Str'],
     'client' => null
   ];
 
