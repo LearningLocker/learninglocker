@@ -67,9 +67,10 @@ abstract class EloquentRepository implements Repository {
    */
   public function destroy($id, array $opts) {
     $model = $this->show($id, $opts);
-    return $this->fire($model->delete(), 'destroy', $opts, [
+    $this->fire($model->delete(), 'destroy', $opts, [
       'id' => $id
     ]);
+    return true;
   }
 
   /**
