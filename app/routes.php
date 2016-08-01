@@ -458,14 +458,6 @@ Route::post('oauth/access_token', function() {
   return $bridgedResponse;
 });
 
-//Add OPTIONS routes for all defined xAPI and api routes
-foreach( Route::getRoutes()->getIterator() as $route  ){
-  if( $route->getPrefix() === 'data/xAPI' || $route->getPrefix() === 'api/v1' ){
-    Route::options($route->getUri(), 'Controllers\API\Base@CORSOptions');
-  }
-}
-
-
 /*
 |------------------------------------------------------------------
 | For routes that don't exist
