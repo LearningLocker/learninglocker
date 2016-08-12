@@ -37,8 +37,10 @@ class Request {
    * @return AssocArray params from the payload.
    */
   public function getPayloadParams() {
+    $payload = $this->getPayload();
+    $decodedPayload = urldecode($payload);
     $payloadParams = [];
-    parse_str($this->getPayload(), $payloadParams); // Parse the payload into an AssocArray.
+    parse_str($decodedPayload, $payloadParams); // Parse the payload into an AssocArray.
     $payloadParams = json_decode(json_encode($payloadParams), true);
     return $payloadParams;
   }
