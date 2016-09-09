@@ -36,14 +36,12 @@ class Request {
    * Gets the data stored in the request payload.
    * @return AssocArray params from the payload.
    */
-  public function getPayloadParams() {
-    $payload = $this->getPayload();
-    $decodedPayload = urldecode($payload);
-    $payloadParams = [];
-    parse_str($decodedPayload, $payloadParams); // Parse the payload into an AssocArray.
-    $payloadParams = json_decode(json_encode($payloadParams), true);
-    return $payloadParams;
-  }
+   public function getPayloadParams() {
+     $payloadParams = [];
+     parse_str($this->getPayload(), $payloadParams); // Parse the payload into an AssocArray.
+     $payloadParams = json_decode(json_encode($payloadParams), true);
+     return $payloadParams;
+   }
 
   /**
    * Gets the user from the basic auth.
@@ -129,28 +127,65 @@ class Request {
   }
 
   /**
+   * Determines if the auth param is split by a space.
+   * @return boolean
+   */
+  private function getSplitAuth() {
+    $authParam = $this->getParam(self::authParam);
+    $isSplitBySpace = strpos($authParam, ' ') !== false;
+    $delimeter = $isSplitBySpace ? ' ' : '+';
+    return $this->splitAuthParam($authParam, $delimeter);
+  }
+
+  /**
+   * Gets the authentication details split by a delimeter.
+   * @param String $authParam
+   * @param String $delimeter
+   * @return String[]
+   */
+  private function splitAuthParam($authParam, $delimeter) {
+    return explode($delimeter, $authParam);
+  }
+
+  /**
+   * Gets the null authentication details.
+   * @return AssocArray Basic auth details.
+   */
+  private function getNullAuth() {
+    return [
+      self::authUser => null,
+      self::authPass => null,
+    ];
+  }
+
+  /**
+   * Gets decoded authentication details.
+   * @param String $auth
+   * @return AssocArray Basic auth details.
+   */
+  private function getDecodedAuth($auth) {
+    $decoded = base64_decode($auth);
+    $auth_parts = explode(':', $decoded);
+    return [
+      self::authUser => $auth_parts[0],
+      self::authPass => $auth_parts[1],
+    ];
+  }
+
+  /**
    * Gets the authentication details from the stored/cached params.
    * @return AssocArray Basic auth details.
    */
-  private function getAuth() {
-    $result = [];
+   private function getAuth() {
+     // If the basic auth details are set, decode and return them.
+     if ($this->hasParam(self::authParam)) {
+       $auth = $this->getSplitAuth();
+       if (count($auth) === 2) {
+         return $this->getDecodedAuth($auth[1]);
+       }
+     }
 
-    // If the basic auth details are set, decode and return them.
-    if ($this->hasParam(self::authParam)) {
-      $auth = explode(' ', $this->getParam(self::authParam));
-      $decoded = base64_decode($auth[1]);
-      $auth_parts = explode(':', $decoded);
-
-      $result[self::authUser] = $auth_parts[0];
-      $result[self::authPass] = $auth_parts[1];
-    }
-
-    // If the basic auth details are not set return a null user and password.
-    else {
-      $result[self::authUser] = null;
-      $result[self::authPass] = null;
-    }
-
-    return $result;
-  }
+     // If the basic auth details are not set return a null user and password.
+     return $this->getNullAuth();
+   }
 }
