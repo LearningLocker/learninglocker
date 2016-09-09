@@ -56,6 +56,10 @@ define([
     },
 
     new: function () {
+      if (this.reports.at(0) === undefined) {
+        alert('You must first create a report');
+        return this.list();
+      }
       this.exports.create({
         report: this.reports.at(0).id,
         lrs: this.app.lrs_id
