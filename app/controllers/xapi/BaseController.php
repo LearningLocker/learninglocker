@@ -56,8 +56,14 @@ class BaseController extends APIBaseController {
    **/
   protected function checkVersion() {
     $version = \LockerRequest::header('X-Experience-API-Version');
+    $isInvalidVersion = !(
+      isset($version) && (
+        substr($version, 0, 4) === '1.0.' ||
+        $version === '1.0'
+      )
+    );
 
-    if (!isset($version) || substr($version, 0, 4) !== '1.0.') {
+    if ($isInvalidVersion) {
       throw new Exceptions\Exception('This is not an accepted version of xAPI.');
     }
   }
