@@ -1,5 +1,7 @@
 <?php
 
+use \Config as Config;
+
 /*
 |--------------------------------------------------------------------------
 | Learning Locker event listeners
@@ -31,3 +33,8 @@ Event::listen('Lrs.destroy', function ($opts) {
     $repo->destroy($client->_id, ['lrs_id' => $opts['id']]);
   }
 });
+
+// Listeners for publishing to RabbitMQ topic exchange
+if (app\locker\listeners\MessageQueueHandler::enabled()) {
+  Event::listen('statement.store', 'app\locker\listeners\MessageQueueHandler@statement_store');
+}

@@ -28,7 +28,11 @@ class EloquentRepository implements Repository {
    * @return [String] UUIDs of the stored statements.
    */
   public function store(array $statements, array $attachments, array $opts) {
-    return $this->storer->store($statements, $attachments, new StoreOptions($opts));
+    $result = $this->storer->store($statements, $attachments, new StoreOptions($opts));
+
+    $event = \Event::fire('statement.store', array($statements));
+
+    return $result;
   }
 
   /**
