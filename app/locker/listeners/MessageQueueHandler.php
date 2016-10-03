@@ -33,10 +33,6 @@ class MessageQueueHandler {
     register_shutdown_function(array($this, 'shutdown'));
   }
 
-  public function is_enabled() {
-    return $this->isEnabled;
-  } 
-
   public function statement_store($statements) {
     if ($this->connection == false) {
        return false;
