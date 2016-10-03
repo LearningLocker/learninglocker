@@ -167,7 +167,7 @@ class EloquentRepository extends BaseRepository implements Repository {
       $query['lrs_id'] = $lrs_id;
     }
 
-    return $collection->count($query);
+    return $collection->count($query, ['hint'=>['lrs_id'=>1]]);
   }
 
   public function changeRole($id, $user_id, $role) {
