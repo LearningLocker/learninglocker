@@ -1,6 +1,7 @@
 <?php namespace app\locker\listeners;
 
 use \Config as Config;
+use PhpAmqpLib\Connection\AMQPSSLConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -18,11 +19,17 @@ class MessageQueueHandler {
     $options = Config::get('rabbitmq');
     $this->exchange = $options['exchange'];
 
-    // Setup the connection, TODO SSL
-    $this->connection = new AMQPStreamConnection($options['host'], $options['port'],
-      $options['username'], $options['password']);	
+    $sslEnabled = Config::get('rabbitmq.ssl_enabled');
+    if ($sslEnabled) {
+      $sslOptions = Config::get('rabbitmq.ssl');
+      $this->connection = new AMQPSSLConnection($options['host'], $options['port'],
+        $options['username'], $options['password'], $options['vhost'], $sslOptions);
+    } else {  
+      $this->connection = new AMQPStreamConnection($options['host'], $options['port'],
+        $options['username'], $options['password'], $options['vhost']);
+    }
 
-    // If we setup a connection, make sure to shut it down
+    // If we setup a connection, make sure to close it during shutdown
     register_shutdown_function(array($this, 'shutdown'));
   }
 
@@ -31,7 +38,6 @@ class MessageQueueHandler {
   } 
 
   public function statement_store($statements) {
-    error_log('blah');
     if ($this->connection == false) {
        return false;
     }

@@ -6,11 +6,11 @@ return [
   'port'=> 5672,
   'username'=> 'guest',
   'password'=> 'guest',
+  'vhost'=> '/',
   'exchange'=> 'learninglocker',
+  'ssl_enabled'=> true,
   'ssl'=> [
-    'enabled'=> false,
-    'capath'=> '/etc/ssl/cert',
-    'cafile'=> './somecert.pem',
+    'cafile'=> '/etc/ssl/cert/somecert.pem',
     'verify_peer'=> true
   ]
 ];
