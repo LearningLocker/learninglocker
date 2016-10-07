@@ -18,12 +18,27 @@ class EloquentInserter extends EloquentReader implements Inserter {
   public function insert(array $statements, StoreOptions $opts) {
     $models = [];
 
+    $ids = [];
+    $assoc_statements = [];
     foreach($statements as $statement) {
-      $duplicate = $this->checkForConflict($statement, $opts);
-      if (!$duplicate) {
-        $models[] = $this->constructModel($statement, $opts);
-      }
+      $assoc_statements[$statement->id] = $statement;
     }
+
+    $duplicateStatements = $this->where($opts)
+      ->whereIn('statement.id', array_keys($assoc_statements))
+      ->where('active', true)
+      ->first();
+
+    $duplicatedIds = [];
+    foreach ($duplicateStatements as $duplicate) {
+      $this->compareForConflict($assoc_statements[$duplicate->id], $this->formatModel($duplicate));
+      $duplicatedIds[] = $duplicatedIds;
+    }
+
+    $models = array_filter($assoc_statements, function($statement) use ($duplicatedIds) {
+      return !in_array($statement->id, $duplicatedIds);
+    });
+
     
     return $this->insertModels($models, $opts);
   }
