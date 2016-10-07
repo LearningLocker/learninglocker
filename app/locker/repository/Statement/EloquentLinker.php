@@ -23,9 +23,7 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
   public function updateReferences(array $statements, StoreOptions $opts) {
     $this->voider = strpos(json_encode($statements), 'voided') !== false;
     $this->downed = new Collection();
-    $this->to_update = array_map(function (\stdClass $statement) use ($opts) {
-      return $this->getModel($statement->id, $opts);
-    }, $statements);
+    $this->to_update = $this->getModels($statements, $opts);
 
     while (count($this->to_update) > 0) {
       $this->upLink($this->to_update[0], [], $opts);
@@ -45,6 +43,24 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
   }
 
   /**
+   * Gets the statements as an array from the database.
+   * @param [\stdClass] $statements Statements
+   * @param StoreOptions $opts
+   * @return [Model]
+   */
+  protected function getModels($statements, StoreOptions $opts) {
+    $statement_ids = array_map(function (\stdClass $statement) use ($opts) {
+      return $statement->id;
+    }, $statements);
+
+    $models = $this->where($opts)
+      ->whereIn('statement.id', $statement_ids)
+      ->get();
+
+    return $models->all();
+  }
+
+  /**
    * Gets the statement as an associative array from the database.
    * @param String $statement_id Statement's UUID.
    * @param StoreOptions $opts
@@ -54,7 +70,6 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
     $model = $this->where($opts)
       ->where('statement.id', $statement_id)
       ->first();
-
     return $model;
   }
 
