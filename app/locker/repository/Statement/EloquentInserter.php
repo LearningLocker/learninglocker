@@ -27,7 +27,7 @@ class EloquentInserter extends EloquentReader implements Inserter {
     $duplicateStatements = $this->where($opts)
       ->whereIn('statement.id', array_keys($assoc_statements))
       ->where('active', true)
-      ->first();
+      ->get();
 
     $duplicatedIds = [];
     foreach ($duplicateStatements as $duplicate) {
@@ -35,11 +35,13 @@ class EloquentInserter extends EloquentReader implements Inserter {
       $duplicatedIds[] = $duplicatedIds;
     }
 
-    $models = array_filter($assoc_statements, function($statement) use ($duplicatedIds) {
-      return !in_array($statement->id, $duplicatedIds);
-    });
+    $models = [];
+    foreach($assoc_statements as $statement) {
+      if (!in_array($statement->id, $duplicatedIds)) {
+        $models[] = $this->constructModel($statement, $opts);
+      }
+    }
 
-    
     return $this->insertModels($models, $opts);
   }
 
