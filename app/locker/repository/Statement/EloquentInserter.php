@@ -31,7 +31,7 @@ class EloquentInserter extends EloquentReader implements Inserter {
 
     $duplicatedIds = [];
     foreach ($duplicateStatements as $duplicate) {
-      $this->compareForConflict($assoc_statements[$duplicate->id], $this->formatModel($duplicate));
+      $this->compareForConflict($assoc_statements[$duplicate->statement->id], $this->formatModel($duplicate));
       $duplicatedIds[] = $duplicatedIds;
     }
 
