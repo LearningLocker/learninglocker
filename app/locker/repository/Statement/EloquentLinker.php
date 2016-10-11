@@ -12,6 +12,7 @@ interface LinkerInterface {
 
 class EloquentLinker extends EloquentReader implements LinkerInterface {
 
+  private $upRefStatements = [];
   private $to_update = [];
   private $downed = null;
 
@@ -25,9 +26,38 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
     $this->downed = new Collection();
     $this->to_update = $this->getModels($statements, $opts);
 
+    $statement_ids = array_map(function ($statement) {
+      return $statement->id;
+    }, $statements);
+
+    $this->upRefStatements = $this->eagerLoadUpRefs($statement_ids, $opts);
+
     while (count($this->to_update) > 0) {
-      $this->upLink($this->to_update[0], [], $opts);
+      $this->upLink($this->to_update[0], [], $opts, true);
     }
+  }
+
+  /**
+   * Gets the statements referencing the given statement ids.
+   * @param [string] $statement_ids
+   * @param StoreOptions $opts
+   * @return [\stdClass]
+   */
+  private function eagerLoadUpRefs(array $statement_ids, StoreOptions $opts) {
+    $models = $this->where($opts)
+      ->whereIn('statement.object.id', $statement_ids)
+      ->where('statement.object.objectType', 'StatementRef')
+      ->get();
+
+    $collatedStatements = [];
+    foreach( $models as $model) {
+      $objectId = $model->statement['object']['id'];
+      if (!isset($collatedStatements[$objectId])) {
+        $collatedStatements[$objectId] = new Collection;
+      }
+      $collatedStatements[$objectId]->push($model);
+    }
+    return $collatedStatements;
   }
 
   /**
@@ -80,11 +110,12 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
    * @param StoreOptions $opts
    * @return [Model]
    */
-  private function upLink(Model $model, array $visited, StoreOptions $opts) {
+  private function upLink(Model $model, array $visited, StoreOptions $opts, $useInitialUpRefs = false) {
     $statement = $this->formatModel($model);
     if (in_array($statement->id, $visited)) return [];
     $visited[] = $statement->id;
-    $up_refs = $this->upRefs($statement, $opts);
+
+    $up_refs = $this->upRefs($statement, $opts, $useInitialUpRefs);
     if ($up_refs->count() > 0) {
       return $up_refs->each(function ($up_ref) use ($opts, $visited) {
         if ($this->downed->has($up_ref->_id)) return;
@@ -94,6 +125,37 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
     } else {
       return $this->downLink($model, [], $opts);
     }
+  }
+
+  /**
+   * Gets the statements referencing the given statement.
+   * @param \stdClass $statement
+   * @param StoreOptions $opts
+   * @param boolean $useInitialUpRefs
+   * @return [\stdClass]
+   */
+  private function upRefs(\stdClass $statement, StoreOptions $opts, $useInitialUpRefs) {
+    if ($useInitialUpRefs) {
+      if (isset($this->upRefStatements[$statement->id])) {
+        return $this->upRefStatements[$statement->id];
+      }
+      return new Collection;
+    }
+
+    return $this->fetchUpRefs($statement, $opts);
+  }
+
+  /**
+   * Gets the statements referencing the given statement from the database
+   * @param \stdClass $statement
+   * @param StoreOptions $opts
+   * @return [\stdClass]
+   */
+  private function fetchUpRefs(\stdClass $statement, StoreOptions $opts) {
+    return $this->where($opts)
+      ->where('statement.object.id', $statement->id)
+      ->where('statement.object.objectType', 'StatementRef')
+      ->get();
   }
 
   /**
@@ -119,19 +181,6 @@ class EloquentLinker extends EloquentReader implements LinkerInterface {
       $this->unQueue($model);
       return [$model];
     }
-  }
-
-  /**
-   * Gets the statements referencing the given statement.
-   * @param \stdClass $statement
-   * @param StoreOptions $opts
-   * @return [\stdClass]
-   */
-  private function upRefs(\stdClass $statement, StoreOptions $opts) {
-    return $this->where($opts)
-      ->where('statement.object.id', $statement->id)
-      ->where('statement.object.objectType', 'StatementRef')
-      ->get();
   }
 
   /**
