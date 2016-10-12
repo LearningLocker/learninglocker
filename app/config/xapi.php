@@ -15,6 +15,6 @@
   | See https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Data.md#user-content-2.2.s2.b2
   |
   */
- return [
-  'disable_duplicate_key_checks' => false,
-];
+  return [
+    'disable_duplicate_key_checks' => false,
+  ];
