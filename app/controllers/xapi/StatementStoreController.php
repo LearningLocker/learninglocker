@@ -1,5 +1,6 @@
 <?php namespace Controllers\xAPI;
 
+use \Config as Config;
 use \Locker\Repository\Statement\Repository as StatementRepo;
 use \Locker\Helpers\Attachments as Attachments;
 use \Locker\Helpers\Exceptions as Exceptions;
@@ -103,9 +104,12 @@ class StatementStoreController {
     $content = $parts['content'];
 
     // Decodes $statements from $content.
-    $jsonParser = new JsonParser;
     try {
-      $jsonParser->parse($content, JsonParser::DETECT_KEY_CONFLICTS); // this will catch any parsing issues
+      if (Config::get('xapi.disable_duplicate_key_checks') !== true) {
+        // Check incoming statements for duplicate keys and throw an error if found
+        $jsonParser = new JsonParser;
+        $jsonParser->parse($content, JsonParser::DETECT_KEY_CONFLICTS); // this will catch any parsing issues
+      }
       
       $statements = json_decode($content);
       if ($statements === null && $content !== '') {
