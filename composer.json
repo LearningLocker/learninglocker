@@ -42,7 +42,7 @@
     "php": ">=5.5.0",
     "ext-mongo": "*",
     "laravel/framework": "4.2.x",
-    "jenssegers/mongodb": "dev-issue/count-0.0.2",
+    "jenssegers/mongodb": "dev-issue/count-0.0.3",
     "davejamesmiller/laravel-breadcrumbs": "2.2.x",
     "way/generators": "2.6.x",
     "ramsey/array_column": "1.1.x",
