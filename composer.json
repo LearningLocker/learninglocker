@@ -80,7 +80,8 @@
       "app/locker/graphing",
       "app/locker/explorer",
       "app/locker/statements",
-      "app/locker/listeners"
+      "app/locker/listeners",
+      "app/locker/queues"
     ]
   },
   "scripts": {
