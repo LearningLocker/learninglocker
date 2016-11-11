@@ -1,7 +1,5 @@
 <?php
 
-use \Config as Config;
-
 /*
 |--------------------------------------------------------------------------
 | Learning Locker event listeners
