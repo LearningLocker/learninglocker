@@ -30,6 +30,7 @@ class EloquentRepository implements Repository {
   public function store(array $statements, array $attachments, array $opts) {
     $result = $this->storer->store($statements, $attachments, new StoreOptions($opts));
 
+    // The statement.store event is used the message queue system
     $event = \Event::fire('statement.store', array($statements));
 
     return $result;

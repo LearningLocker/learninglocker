@@ -32,7 +32,7 @@ Event::listen('Lrs.destroy', function ($opts) {
   }
 });
 
-// Listeners for publishing to RabbitMQ topic exchange
+// Listeners for publishing to message queue system
 if (app\locker\listeners\MessageQueueHandler::enabled()) {
   Event::listen('statement.store', 'app\locker\listeners\MessageQueueHandler@statement_store');
 }
