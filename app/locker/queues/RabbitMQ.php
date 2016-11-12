@@ -49,8 +49,3 @@ class RabbitMQ implements MessageQueueInterface {
     return true;
   }
 }
-
-
-
-
-
