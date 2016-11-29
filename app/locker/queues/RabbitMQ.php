@@ -24,7 +24,7 @@ class RabbitMQ implements MessageQueueInterface {
     }
   }
 
-  public function publish_statements($statements) {
+  public function publishStatements($statements) {
     if ($this->connection == false) {
        return false;
     }

@@ -32,8 +32,8 @@ class MessageQueueHandler {
     $this->queue = $queue;
   }
 
-  public function statement_Store($statements) {
-    $this->queue->publish_statements($statements);
+  public function statementStore($statements) {
+    $this->queue->publishStatements($statements);
   }
 
   public function shutdown() {
