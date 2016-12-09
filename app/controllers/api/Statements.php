@@ -1,5 +1,6 @@
 <?php namespace Controllers\API;
 
+use Config;
 use Carbon\Carbon;
 use \Locker\Repository\Query\QueryRepository as QueryRepository;
 use \Locker\Helpers\Exceptions as Exceptions;
@@ -83,13 +84,16 @@ class Statements extends Base {
     return \Response::json($this->query->void($match, $this->getOptions()));
   }
 
+  private function createMongoDate($date) {
+    $parsedDate = new Carbon($date);
+    if($parsedDate) return new \MongoDate($parsedDate->timestamp, $parsedDate->micro);
+    else throw new Exceptions\Exception("`$date` is not a valid date.");
+  }
+
   private function convertDte($value) {
     if(is_array($value)) {
       if(isset($value['$dte']))  {
-        $date = $value['$dte'];
-        $parsedDate = new Carbon($date);
-        if($parsedDate) return new \MongoDate($parsedDate->timestamp, $parsedDate->micro);
-        else throw new Exceptions\Exception("`$date` is not a valid date.");
+        return $this->createMongoDate($value['dte']);
       }
       else
         return array_map([$this, __FUNCTION__], $value); // recursively apply this function to whole pipeline
@@ -109,10 +113,59 @@ class Statements extends Base {
     return $value;
   }
 
+  private function convertStringDate($value) {
+    if (is_string($value)) {
+      return $this->createMongoDate($value);
+    } else if (is_array($value)) {
+      foreach ($value as $key => $keyval) {
+        switch ($key) {
+          default:
+            break;
+          case '$lt':
+          case '$lte':
+          case '$gt':
+          case '$gte':
+          case '$eq':
+          case '$ne':
+            $value[$key] = $this->createMongoDate($keyval);
+            break;
+        }
+      }
+    }
+
+    return $value;
+  }
+
+  private function checkForStringDates($value) {
+    if(is_array($value)) {
+      foreach ($value as $key => $keyval) {
+        if ($key === 'statement.timestamp') {
+          $value['timestamp'] = $this->convertStringDate($keyval);
+          unset($value['statement.timestamp']);
+        } else if ($key === 'statement.stored') {
+          $value['stored'] = $this->convertStringDate($keyval);
+          unset($value['statement.stored']);
+        } else {
+          $value[$key] = $this->checkForStringDates($keyval);
+        }
+      }
+    }
+
+    return $value;
+  }
+
+
+
   private function getPipeline() {
     $pipeline = $this->getParam('pipeline');
     $pipeline = $this->convertDte($pipeline);
     $pipeline = $this->convertOid($pipeline);
+
+    if (Config::get('xapi.aggregate_on_native_dates')) {
+      // replace matches on string dates with native ones
+      $pipeline = $this->checkForStringDates($pipeline);
+    }
+
     return $pipeline;
   }
 
