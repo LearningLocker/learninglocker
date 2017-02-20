@@ -76,7 +76,7 @@ class ClientController extends BaseController {
 	
     if ($this->client->store([], ['lrs_id' => $lrs_id])) {
       $message_type = 'success';
-      $message = trans('lrs.client.created_sucecss');
+      $message = trans('lrs.client.created_success');
     } else {
       $message_type = 'error';
       $message = trans('lrs.client.created_fail');
