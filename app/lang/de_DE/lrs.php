@@ -54,7 +54,7 @@ return array(
         'new_client' => 'Neuen Client erstellen',
         'unnamed_client' => 'Unbenannter Client',
         'created_fail' => 'Der Client konnte nicht erstellt werden.',
-        'created_sucecss' => 'Der Client wurde erstellt.',
+        'created_success' => 'Der Client wurde erstellt.',
         'updated' => 'Der Client wurde aktualisiert.',
         'none' => 'Es sind keine Clients verfügbar.',
         'delete_client_success' => 'Der Client wurde gelöscht.',
