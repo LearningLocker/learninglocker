@@ -54,16 +54,16 @@ class EmailController extends BaseController {
    * Verify emails
    *
    **/
-    public function verifyEmail( $token ){
-        $message_type = 'error';
-        $message = \Lang::get('users.email_verified_problem');
+  public function verifyEmail( $token ){
+    $message_type = 'error';
+    $message = \Lang::get('users.email_verified_problem');
 
-        if($this->user->verifyEmail( $token )){
-            $message_type = 'success';
-            $message = \Lang::get('users.email_verified');
-        }
-        return Redirect::to('/')->with($message_type, $message);
+    if($this->user->verifyEmail( $token )){
+        $message_type = 'success';
+        $message = \Lang::get('users.email_verified');
     }
+    return Redirect::to('/')->with($message_type, $message);
+  }
 
   /**
    * Invite emails

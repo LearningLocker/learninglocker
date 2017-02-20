@@ -47,21 +47,21 @@ class EloquentUserRepository implements UserRepository {
 
   }
 
-    public function verifyEmail($token){
+  public function verifyEmail($token){
 
-        //first see if a record exists for that email and token
-        $email = \DB::table('user_tokens')
-            ->where('token', $token)
-            ->pluck('email');
+    //first see if a record exists for that email and token
+    $email = \DB::table('user_tokens')
+        ->where('token', $token)
+        ->pluck('email');
 
-        if( $email ){
-            //verify email
-            \User::where('email', $email)->update(array('verified' => 'yes'));
-            return true;
-        }else{
-            return false;
-        }
+    if( $email ){
+        //verify email
+        \User::where('email', $email)->update(array('verified' => 'yes'));
+        return true;
+    }else{
+        return false;
     }
+  }
 
   public function updateRole( $user, $role ){
 
