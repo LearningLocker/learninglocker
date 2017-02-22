@@ -2,10 +2,14 @@
 
 @section('content')
 
-  @if(Session::has('success'))
+  @if(Session::has('success') || Session::has('error'))
     <div class="clearfix">
       <div class="alert alert-info">
-        {{ Lang::get('reminders.reset') }}
+        @if(Session::has('success') )
+          {{ Session::get('success') }}
+        @elseif(Session::has('error'))
+          {{ Session::get('error') }}
+        @endif
       </div>
     </div>
   @endif
