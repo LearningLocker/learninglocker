@@ -36,11 +36,13 @@ class EloquentStorer extends EloquentReader implements Storer {
     $ids = array_keys($id_statements);
     $statements = array_values($id_statements);
 
-    $this->inserter->insert($statements, $opts);
-    $this->linker->updateReferences($statements, $opts);
-    $this->voider->voidStatements($statements, $opts);
-    $this->attacher->store($attachments, $this->hashes, $opts);
-    $this->activateStatements($ids, $opts);
+    $models = $this->inserter->insert($statements, $opts);
+    if (!empty($models)) {
+      $this->linker->updateReferences($statements, $opts);
+      $this->voider->voidStatements($statements, $opts);
+      $this->attacher->store($attachments, $this->hashes, $opts);
+      $this->activateStatements($ids, $opts);
+    }
 
     return $ids;
   }
