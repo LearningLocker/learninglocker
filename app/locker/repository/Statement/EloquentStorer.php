@@ -54,7 +54,9 @@ class EloquentStorer extends EloquentReader implements Storer {
       $this->activateStatements($storedIds, $opts);
     }
 
-    return array_keys($id_statements);
+    return [
+      'ids' => array_keys($id_statements)
+    ];
   }
 
   /**
