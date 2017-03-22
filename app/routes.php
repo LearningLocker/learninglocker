@@ -190,6 +190,26 @@ Route::get('lrs/{id}/users/invite', array(
 Route::get('lrs/{id}/api', array(
   'uses' => 'LrsController@api',
 ));
+Route::get('lrs/{id}/webhook/manage', array(
+  'before' => 'auth',
+  'uses' => 'LrsController@webhook',
+  'as' => 'lrs.webhook'
+));
+Route::post('lrs/{id}/webhook', array(
+  'before' => ['auth', 'csrf'],
+  'uses' => 'LrsController@createWebhook',
+  'as' => 'webhook.create'
+));
+Route::post('lrs/{id}/webhook/update/{webhook}', array(
+  'before' => ['auth', 'csrf'],
+  'uses' => 'LrsController@updateWebhook',
+  'as' => 'webhook.update'
+));
+Route::post('lrs/{id}/webhook/delete/{webhook}', array(
+  'before' => ['auth', 'csrf'],
+  'uses' => 'LrsController@deleteWebhook',
+  'as' => 'webhook.delete'
+));
 
 Route::resource('lrs', 'LrsController');
 

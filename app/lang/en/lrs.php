@@ -22,6 +22,15 @@ return array(
     'create_problem' => 'There was a problem creating that LRS.',
     'created'   => 'The LRS was created.',
     'active'    => 'Active',
+    'webhook'   => 'Webhooks',
+    'webhook.none' => 'No webhooks has been setup.',
+    'webhook.verb' => 'Statement verb',
+    'webhook.req_type' => 'Request type',
+    'webhook.req_url' => 'URL',
+    'webhook.req_headers' => 'Request headers',
+    'webhook.req_payload' => 'Request payload',
+    'webhook.edit' => 'Edit',
+    'webhook.delete' => 'Delete',
 
     'sidebar'	=> array(
     	'dash' 	    => 'Dashboard',
@@ -31,7 +40,8 @@ return array(
     	'users'     => 'Manage users',
     	'analytics' => 'Analytics',
     	'reporting' => 'Reporting',
-      'exporting' => 'Exporting'
+      'exporting' => 'Exporting',
+      'webhook'  => 'Manage webhooks',
     ),
 
     'endpoint' 	=> array(

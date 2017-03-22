@@ -4,6 +4,7 @@ use \Locker\Repository\Lrs\Repository as LrsRepo;
 use \Locker\Repository\Statement\Repository as StatementRepo;
 use \Locker\Repository\Statement\EloquentIndexer as StatementIndexer;
 use \Locker\Repository\Statement\IndexOptions as IndexOptions;
+use \Webhook as Webhook;
 
 class LrsController extends BaseController {
 
@@ -248,5 +249,42 @@ class LrsController extends BaseController {
   public function changeRole($lrs_id, $user, $role) {
     $change = $this->lrs->changeRole($lrs_id, $user, $role);
     return Response::json(['success' => true]);
+  }
+  
+  public function webhook($lrsId) {
+    return \View::make('partials.lrs.webhook', array_merge($this->getLrs($lrsId), [
+      'webhooks' => Webhook::where('lrs_id', $lrsId)->paginate(10),
+      'webhook_nav' => true
+    ]));
+  }
+  
+  public function createWebhook($lrsId) {
+    $webhook = new Webhook;
+    $webhook->verb = Input::get('verb');
+    $webhook->req_type = Input::get('req_type');
+    $webhook->req_url = Input::get('req_url');
+    $webhook->req_headers = Input::get('req_headers');
+    $webhook->tokens = Input::get('tokens');
+    $webhook->req_payload = Input::get('req_payload');
+    $webhook->lrs_id = $lrsId;
+    $webhook->save();
+    return Redirect::back();
+  }
+  
+  public function updateWebhook($lrsId, $webhookId) {
+    $webhook = Webhook::findOrFail($webhookId);
+    $webhook->verb = Input::get('verb');
+    $webhook->req_type = Input::get('req_type');
+    $webhook->req_url = Input::get('req_url');
+    $webhook->req_headers = Input::get('req_headers');
+    $webhook->tokens = Input::get('tokens');
+    $webhook->req_payload = Input::get('req_payload');
+    $webhook->save();
+    return Redirect::back();
+  }
+  
+  public function deleteWebhook($lrsId, $webhookId) {
+    Webhook::destroy($webhookId);
+    return Redirect::back();
   }
 }

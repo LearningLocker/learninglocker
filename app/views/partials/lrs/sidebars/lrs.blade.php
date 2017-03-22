@@ -52,9 +52,9 @@
           <span class="menu-icon"><i class="icon icon-cogs"></i></span> {{ Lang::get('lrs.sidebar.endpoint') }}
         </a>
       </li>
-      <li class="@if ( isset($user_nav) ) active @endif">
-        <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/users">
-          <span class="menu-icon"><i class="icon icon-group"></i></span> {{ Lang::get('lrs.sidebar.users') }}
+      <li class="@if ( isset($webhook_nav) ) active @endif">
+        <a href="{{ URL() }}/lrs/{{ $lrs->_id }}/webhook/manage">
+          <span class="menu-icon"><i class="icon icon-code-fork"></i></span> {{ Lang::get('lrs.sidebar.webhook') }}
         </a>
       </li>
     </ul>
