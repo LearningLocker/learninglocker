@@ -40,11 +40,11 @@ class BasicRequestController extends BaseController {
     if (!is_array($scopes)) {
       return \Response::json([
         'error' => true,
-	'success' => false,
+        'success' => false,
         'message' => 'Scopes must be an array or not defined',
-	'code' => 400
+        'code' => 400
       ], 400);
-    } 
+    }
 
     $client = $this->client_repo->store([
       'authority' => [
