@@ -12,7 +12,6 @@ class Factory {
     $repos = [
       'Local' => 'LocalFlyRepository',
       'Rackspace' => 'RackspaceFlyRepository',
-      'Copy' => 'CopyFlyRepository',
       'Dropbox' => 'DropboxFlyRepository',
       'Azure' => 'AzureFlyRepository',
       'S3V3' => 'S3V3FlyRepository',

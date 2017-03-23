@@ -52,6 +52,6 @@ return array(
   'updated_error'  => 'There was a problem updating that account.',
   'registration' => array(
       'thanks'       => 'Thanks for signing up to use Learning Locker. To complete your registration, we need you to verify your email.',
-      'instructions' => 'Please go to the following web address:'
+      'click'        => 'Please go to the following web address:'
     ) 
 );

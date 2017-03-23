@@ -52,6 +52,6 @@ return array(
   'updated_error' => 'Der Account konnte nicht aktualisiert werden.',
   'registration' => array(
       'thanks' => 'Vielen Dank für die Anmeldung an Learning Locker. um die Registrierung abzuschließen muss die E-Mail-Adresse verifiziert werden.',
-      'instructions' => 'Bitte gehen Sie auf der folgenden Website:'
+      'click'  => 'Bitte gehen Sie auf der folgenden Website:'
     ) 
 );

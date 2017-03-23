@@ -76,7 +76,6 @@ class EloquentRepository extends BaseRepository implements Repository {
    * @return Model
    */
   protected function constructUpdate(Model $model, array $data, array $opts) {
-    //dd($data);
     $this->validateData($data);
 
     // Sets properties on model.
