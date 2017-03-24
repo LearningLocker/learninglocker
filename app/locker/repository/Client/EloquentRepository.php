@@ -12,7 +12,8 @@ class EloquentRepository extends BaseRepository implements Repository {
     'authority' => [
       'name' => 'New Client',
       'mbox' => 'mailto:hello@learninglocker.net'
-    ]
+    ],
+    'scopes' => ['all']
   ];
 
   /**
@@ -63,7 +64,7 @@ class EloquentRepository extends BaseRepository implements Repository {
     ];
     $model->lrs_id = $opts['lrs_id'];
     $model->authority = $data['authority'];
-    $model->scopes = ['all'];
+    $model->scopes = $data['scopes'];
 
     return $model;
   }
