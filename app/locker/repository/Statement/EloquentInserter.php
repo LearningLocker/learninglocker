@@ -16,9 +16,6 @@ class EloquentInserter extends EloquentReader implements Inserter {
    * @throws Exceptions\Conflict
    */
   public function insert(array $statements, StoreOptions $opts) {
-    $models = [];
-
-    $ids = [];
     $assoc_statements = [];
     foreach($statements as $statement) {
       $assoc_statements[$statement->id] = $statement;
@@ -124,6 +121,12 @@ class EloquentInserter extends EloquentReader implements Inserter {
     if(empty($models)) {
       return;
     }
-    return $this->where($opts)->insert($models);
+
+    $result = $this->where($opts)->insert($models);
+
+    // The statement.store event is used the message queue system
+    \Event::fire('statement.inserted', array($models));
+
+    return $result;
   }
 }

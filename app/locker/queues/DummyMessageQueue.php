@@ -8,7 +8,7 @@ class DummyMessageQueue implements MessageQueueInterface {
   public function __construct() {}
 
   public function publishStatements($statements) {
-    array_push(self::$statements, $statements);
+    array_push(self::$statements, json_encode($statements));
     return true;
   }
 

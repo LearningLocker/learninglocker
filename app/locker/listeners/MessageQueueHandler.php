@@ -7,6 +7,7 @@ use \Locker\Helpers\Exceptions as Exceptions;
 
 class MessageQueueHandler {
   protected $queue;
+  protected $modelKeys;
   protected static $testDummy = false; // Used by tests
 
   public function __construct() {  
@@ -18,6 +19,12 @@ class MessageQueueHandler {
     $type = self::getType();
     $queue = MessageQueueFactory::getMessageQueueInstance($type);
     $this->setMessageQueue($queue);
+
+    // Setup filters that determine message content
+    $this->modelKeys = array_flip(Config::get('messagequeue.model_keys', []));
+    if (!is_array($this->modelKeys)) {
+      throw new Exceptions\Exception('Option messagequeue.model_keys must be an array');
+    }
 
     // If we setup a connection, make sure to close it during shutdown
     register_shutdown_function(array($this, 'shutdown'));
@@ -32,8 +39,34 @@ class MessageQueueHandler {
     $this->queue = $queue;
   }
 
-  public function statementStore($statements) {
-    $this->queue->publishStatements($statements);
+  public function statementInserted($models) {
+    $message = $this->constructStatementsMessage($models);
+    $this->queue->publishStatements($message);
+  }
+
+  public function constructStatementsMessage($models) {
+    // Determin if associative array or not
+    $keys = array_keys($models);
+    if (array_keys($keys) !== $keys) {
+      $models = [$models];
+    }
+
+    return array_map([$this, 'mapStatementModel'], $models);
+  }
+  
+  public function mapStatementModel($model) {
+    $result = [
+      'id' => $model['_id']->{'$id'},
+      'lrs_id' => $model['lrs_id']->{'$id'},
+      'client_id' => $model['client_id'],
+      'statement' => $model['statement'],
+      'active' => $model['active'],
+      'voided' => $model['voided'],
+      'timestamp' => $model['timestamp']->sec,
+      'stored' => $model['stored']->sec
+    ];
+
+    return array_intersect_key($result, $this->modelKeys);
   }
 
   public function shutdown() {
@@ -49,7 +82,11 @@ class MessageQueueHandler {
   }
 
   public static function enabled() {
-    return self::getType() != 'none';
+    if (self::$testDummy) {
+      return true;
+    }
+
+    return Config::get('messagequeue.enabled');
   } 
 
   public static function testDummy($state) {
