@@ -122,12 +122,13 @@ class EloquentInserter extends EloquentReader implements Inserter {
       return;
     }
 
-    $success = $this->where($opts)->insert(array_values($models));
+    $modelsValues = array_values($models);
+    $success = $this->where($opts)->insert($modelsValues);
     if (!$success) {
       throw new Exceptions\Exception('Error inserting models', 500);
     }
 
     // The statement.store event is used the message queue system
-    \Event::fire('statement.inserted', array($models));
+    \Event::fire('statement.inserted', array($modelsValues));
   }
 }

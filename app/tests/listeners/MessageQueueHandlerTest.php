@@ -16,8 +16,8 @@ class MessageQueueTest extends StatementsTestCase {
 
     $params = ['CONTENT_TYPE' => 'application/json'];
     $server = array_merge($this->getServer($this->ll_client), []);
-    $statement = $this->generateStatement([]);
-    $content = json_encode($statement);
+    $statement = $this->generateStatement(['id' => $this->getUUID()]);
+    $content = json_encode([$statement]);
     $response = $this->request('POST', '/data/xAPI/statements', $params, $server, $content);
 
     $published = \app\locker\queues\DummyMessageQueue::$statements;
