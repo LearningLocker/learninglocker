@@ -39,7 +39,7 @@
     "secure-http": false
   },
   "require": {
-    "php": ">=5.5.0",
+    "php": ">=5.5.0 <7.0",
     "ext-mongo": "*",
     "laravel/framework": "4.2.x",
     "jenssegers/mongodb": "dev-issue/count-0.0.3",
