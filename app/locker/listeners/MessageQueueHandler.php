@@ -67,7 +67,7 @@ class MessageQueueHandler {
     ];
 
     $message = $this->filterMessage($message, $this->messageIncludes, 1);
-    $message = $this->filtermessage($message, $this->messageExcludes, -1);
+    $message = $this->filterMessage($message, $this->messageExcludes, -1);
 
     return $message;
   }
