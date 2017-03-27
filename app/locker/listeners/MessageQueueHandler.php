@@ -87,11 +87,11 @@ class MessageQueueHandler {
     foreach ($filters as $key => $value) {
       // Filter leaf node (add all)
       if (count($filters[$key]) === 0) {
-	if ($action === 1 && isset($message[$key])) {
-	  $result[$key] = $message[$key];
-	} else {
-	  unset($result[$key]);
-	}
+        if ($action === 1 && isset($message[$key])) {
+          $result[$key] = $message[$key];
+        } else {
+          unset($result[$key]);
+        }
       } else { // Non-leaf node, go deeper
 	$result[$key] = $this->filterMessage($message[$key], $filters[$key], $action);
       }
@@ -116,11 +116,11 @@ class MessageQueueHandler {
       $path = &$tree;
       $parts = explode('.', $filters[$i]);
       for ($j = 0; $j < count($parts); $j++) {
-	if (!isset($path[$parts[$j]])) {
-	  $path[$parts[$j]] = [];
-	}
+        if (!isset($path[$parts[$j]])) {
+          $path[$parts[$j]] = [];
+        }
 
-	$path = &$path[$parts[$j]];
+        $path = &$path[$parts[$j]];
       }
     }
 
