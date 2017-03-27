@@ -93,7 +93,7 @@ class MessageQueueHandler {
           unset($result[$key]);
         }
       } else { // Non-leaf node, go deeper
-	$result[$key] = $this->filterMessage($message[$key], $filters[$key], $action);
+        $result[$key] = $this->filterMessage($message[$key], $filters[$key], $action);
       }
     }
 
@@ -104,7 +104,7 @@ class MessageQueueHandler {
     // Must be array or false
     if (is_bool($filters)) {
       if ($filters) {
-	throw new Exceptions\Exception('Message queue include_keys option must be array or false');
+        throw new Exceptions\Exception('Message queue include_keys option must be array or false');
       }
 
       return false;
