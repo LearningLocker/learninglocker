@@ -15,14 +15,8 @@ class EloquentInserter extends EloquentReader implements Inserter {
    * @param StoreOptions $opts
    * @throws Exceptions\Conflict
    */
-  public function insert(array $statements, StoreOptions $opts) {
+  public function insert(array $assoc_statements, StoreOptions $opts) {
     $models = [];
-
-    $ids = [];
-    $assoc_statements = [];
-    foreach($statements as $statement) {
-      $assoc_statements[$statement->id] = $statement;
-    }
 
     $duplicateStatements = $this->where($opts)
       ->whereIn('statement.id', array_keys($assoc_statements))
@@ -32,17 +26,19 @@ class EloquentInserter extends EloquentReader implements Inserter {
     $duplicatedIds = [];
     foreach ($duplicateStatements as $duplicate) {
       $this->compareForConflict($assoc_statements[$duplicate->statement['id']], $this->formatModel($duplicate));
-      $duplicatedIds[] = $duplicatedIds;
+      $duplicatedIds[] = $duplicate->statement['id'];
     }
 
-    $models = [];
+    $toBeInsertedModels = [];
     foreach($assoc_statements as $statement) {
       if (!in_array($statement->id, $duplicatedIds)) {
-        $models[] = $this->constructModel($statement, $opts);
+        $toBeInsertedModels[$statement->id] = $this->constructModel($statement, $opts);
       }
     }
 
-    return $this->insertModels($models, $opts);
+    $this->insertModels($toBeInsertedModels, $opts);
+
+    return array_keys($toBeInsertedModels);
   }
 
   /**
@@ -124,6 +120,10 @@ class EloquentInserter extends EloquentReader implements Inserter {
     if(empty($models)) {
       return;
     }
-    return $this->where($opts)->insert($models);
+
+    $success = $this->where($opts)->insert(array_values($models));
+    if (!$success) {
+      throw new Exceptions\Exception('Error inserting models', 500);
+    }
   }
 }
