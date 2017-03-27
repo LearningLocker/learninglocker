@@ -135,13 +135,14 @@ class StatementStoreController {
     }
 
     // Saves $statements with attachments.
-    return $this->statements->store(
+    $result = $this->statements->store(
       $statements,
       is_array($parts['attachments']) ? $parts['attachments'] : [],
       array_merge([
         'authority' => $this->getAuthority($options['client'])
       ], $options)
     );
+    return $result['ids'];
   }
 
   private function getAuthority($client) {
