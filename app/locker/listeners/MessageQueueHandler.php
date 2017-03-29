@@ -22,8 +22,8 @@ class MessageQueueHandler {
     $this->setMessageQueue($queue);
 
     // Setup filters that determine message content
-    $this->messageIncludes = $this->filtersToTree(Config::get('messagequeue.message_includes', false));
-    $this->messageExcludes = $this->filtersToTree(Config::get('messagequeue.message_excludes', false));
+    $this->setIncludes(Config::get('messagequeue.message_includes', false));
+    $this->setExcludes(Config::get('messagequeue.message_excludes', false));
 
     // If we setup a connection, make sure to close it during shutdown
     register_shutdown_function(array($this, 'shutdown'));
@@ -36,6 +36,14 @@ class MessageQueueHandler {
     }
 
     $this->queue = $queue;
+  }
+
+  public function setIncludes($includes) {
+    $this->messageIncludes = $this->filtersToTree($includes);
+  }
+
+  public function setExcludes($excludes) {
+    $this->messageExcludes = $this->filtersToTree($excludes);
   }
 
   public function statementInserted($models) {

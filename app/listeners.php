@@ -34,5 +34,6 @@ Event::listen('Lrs.destroy', function ($opts) {
 
 // Listeners for publishing to message queue system
 if (app\locker\listeners\MessageQueueHandler::enabled()) {
-  Event::listen('statement.inserted', 'app\locker\listeners\MessageQueueHandler@statementInserted');
+  $app->instance('MessageQueueHandler', new app\locker\listeners\MessageQueueHandler);
+  Event::listen('statement.inserted', 'MessageQueueHandler@statementInserted');
 }

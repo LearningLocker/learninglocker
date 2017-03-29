@@ -35,15 +35,16 @@ class MessageQueueTest extends StatementsTestCase {
     $this->assertEquals(isset($models[0]->active), false);
     $this->assertEquals(isset($models[0]->voided), false);
 
-    $this->assertEquals($models[0]->statement->actor->mbox, $statement['actor']['mbox']);
-    $this->assertEquals($models[0]->statement->actor->objectType, $statement['actor']['objectType']);
-    $this->assertEquals($models[0]->statement->verb->id, $statement['verb']['id']);
-    $this->assertEquals($models[0]->statement->object->id, $statement['object']['id']);
-    $this->assertEquals($models[0]->statement->object->objectType, $statement['object']['objectType']);
-    $this->assertEquals($models[0]->statement->object->objectType, $statement['object']['objectType']);
-    $this->assertEquals($models[0]->statement->timestamp, $statement['timestamp']);
-    $this->assertEquals($models[0]->statement->version, $statement['version']);
+    $this->assertEquals($models[0]->statement->id, $statement['id']);
 
+    $this->assertEquals(isset($models[0]->statement->actor->mbox), false);
+    $this->assertEquals(isset($models[0]->statement->actor->objectType), false);
+    $this->assertEquals(isset($models[0]->statement->verb->id), false);
+    $this->assertEquals(isset($models[0]->statement->object->id), false);
+    $this->assertEquals(isset($models[0]->statement->object->objectType), false);
+    $this->assertEquals(isset($models[0]->statement->object->objectType), false);
+    $this->assertEquals(isset($models[0]->statement->timestamp), false);
+    $this->assertEquals(isset($models[0]->statement->version), false);
   }
 
   public function testQueuingMulti() {
@@ -78,15 +79,100 @@ class MessageQueueTest extends StatementsTestCase {
       $this->assertEquals(isset($models[$i]->active), false);
       $this->assertEquals(isset($models[$i]->voided), false);
 
-      $this->assertEquals($models[$i]->statement->actor->mbox, $statements[$i]['actor']['mbox']);
-      $this->assertEquals($models[$i]->statement->actor->objectType, $statements[$i]['actor']['objectType']);
-      $this->assertEquals($models[$i]->statement->verb->id, $statements[$i]['verb']['id']);
-      $this->assertEquals($models[$i]->statement->object->id, $statements[$i]['object']['id']);
-      $this->assertEquals($models[$i]->statement->object->objectType, $statements[$i]['object']['objectType']);
-      $this->assertEquals($models[$i]->statement->object->objectType, $statements[$i]['object']['objectType']);
-      $this->assertEquals($models[$i]->statement->timestamp, $statements[$i]['timestamp']);
-      $this->assertEquals($models[$i]->statement->version, $statements[$i]['version']);
+      $this->assertEquals($models[$i]->statement->id, $statements[$i]['id']);
+
+      $this->assertEquals(isset($models[$i]->statement->actor->mbox), false);
+      $this->assertEquals(isset($models[$i]->statement->actor->objectType), false);
+      $this->assertEquals(isset($models[$i]->statement->verb->id), false);
+      $this->assertEquals(isset($models[$i]->statement->object->id), false);
+      $this->assertEquals(isset($models[$i]->statement->object->objectType), false);
+      $this->assertEquals(isset($models[$i]->statement->object->objectType), false);
+      $this->assertEquals(isset($models[$i]->statement->timestamp), false);
+      $this->assertEquals(isset($models[$i]->statement->version), false);
     }
+  }
+
+  public function testNestedSetIncludes() {
+    $isEnabled = \app\locker\listeners\MessageQueueHandler::enabled();
+    $this->assertEquals($isEnabled, true);
+
+    $mqHandler = $this->app->make('MessageQueueHandler');
+    $mqHandler->setIncludes(['id', 'lrs_id', 'client_id', 'statement.actor.mbox']);
+
+    $params = ['CONTENT_TYPE' => 'application/json'];
+    $server = array_merge($this->getServer($this->ll_client), []);
+    $statement = $this->generateStatement(['id' => $this->getUUID()]);
+    $content = json_encode([$statement]);
+    $response = $this->request('POST', '/data/xAPI/statements', $params, $server, $content);
+
+    $published = \app\locker\queues\DummyMessageQueue::$statements;
+    $this->assertEquals(count($published), 3);
+
+    $models = json_decode($published[2]);
+
+    $this->assertEquals(isset($models[0]->id), true);
+    $this->assertEquals(isset($models[0]->lrs_id), true);
+    $this->assertEquals(isset($models[0]->client_id), true);
+    $this->assertEquals(isset($models[0]->statement), true);
+    $this->assertEquals(isset($models[0]->stored), false);
+
+    // Default config filters these
+    $this->assertEquals(isset($models[0]->timestamp), false);
+    $this->assertEquals(isset($models[0]->active), false);
+    $this->assertEquals(isset($models[0]->voided), false);
+
+    $this->assertEquals($models[0]->statement->actor->mbox, $statement['actor']['mbox']);
+
+    $this->assertEquals(isset($models[0]->statement->actor->mbox), true);
+    $this->assertEquals(isset($models[0]->statement->actor->objectType), false);
+    $this->assertEquals(isset($models[0]->statement->verb->id), false);
+    $this->assertEquals(isset($models[0]->statement->object->id), false);
+    $this->assertEquals(isset($models[0]->statement->object->objectType), false);
+    $this->assertEquals(isset($models[0]->statement->object->objectType), false);
+    $this->assertEquals(isset($models[0]->statement->timestamp), false);
+    $this->assertEquals(isset($models[0]->statement->version), false);
+  }
+
+  public function testNestedSetExcludes() {
+    $isEnabled = \app\locker\listeners\MessageQueueHandler::enabled();
+    $this->assertEquals($isEnabled, true);
+
+    $mqHandler = $this->app->make('MessageQueueHandler');
+    $mqHandler->setIncludes(['id', 'lrs_id', 'client_id', 'statement', 'stored']);
+    $mqHandler->setExcludes(['statement.actor.mbox']);
+
+    $params = ['CONTENT_TYPE' => 'application/json'];
+    $server = array_merge($this->getServer($this->ll_client), []);
+    $statement = $this->generateStatement(['id' => $this->getUUID()]);
+    $content = json_encode([$statement]);
+    $response = $this->request('POST', '/data/xAPI/statements', $params, $server, $content);
+
+    $published = \app\locker\queues\DummyMessageQueue::$statements;
+    $this->assertEquals(count($published), 4);
+
+    $models = json_decode($published[3]);
+
+    $this->assertEquals(isset($models[0]->id), true);
+    $this->assertEquals(isset($models[0]->lrs_id), true);
+    $this->assertEquals(isset($models[0]->client_id), true);
+    $this->assertEquals(isset($models[0]->statement), true);
+    $this->assertEquals(isset($models[0]->stored), true);
+
+    // Default config filters these
+    $this->assertEquals(isset($models[0]->timestamp), false);
+    $this->assertEquals(isset($models[0]->active), false);
+    $this->assertEquals(isset($models[0]->voided), false);
+
+    $this->assertEquals($models[0]->statement->id, $statement['id']);
+
+    $this->assertEquals(isset($models[0]->statement->actor->mbox), false);
+    $this->assertEquals(isset($models[0]->statement->actor->objectType), true);
+    $this->assertEquals(isset($models[0]->statement->verb->id), true);
+    $this->assertEquals(isset($models[0]->statement->object->id), true);
+    $this->assertEquals(isset($models[0]->statement->object->objectType), true);
+    $this->assertEquals(isset($models[0]->statement->object->objectType), true);
+    $this->assertEquals(isset($models[0]->statement->timestamp), true);
+    $this->assertEquals(isset($models[0]->statement->version), true);
   }
 
   public function tearDown() {

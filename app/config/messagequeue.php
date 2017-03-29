@@ -16,6 +16,6 @@ return [
       'verify_peer'=> true
     ]
   ],
-  'message_includes' => ['id', 'lrs_id', 'client_id', 'statement', 'stored'], // False is include "all"
+  'message_includes' => ['id', 'lrs_id', 'client_id', 'statement.id', 'stored'], // False is include "all"
   'message_excludes' => false // False = no exclusions (same as empty array)
 ];
