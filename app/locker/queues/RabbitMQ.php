@@ -8,10 +8,12 @@ use PhpAmqpLib\Message\AMQPMessage;
 class RabbitMQ implements MessageQueueInterface {
   protected $connection = false;
   protected $exchange;
+  protected $statement_topic;
 
   public function __construct() {
     $options = Config::get('messagequeue.rabbitmq');
     $this->exchange = $options['exchange'];
+    $this->statement_topic = $options['statement_topic'];
 
     $sslEnabled = Config::get('rabbitmq.ssl_enabled');
     if ($sslEnabled) {
@@ -30,11 +32,10 @@ class RabbitMQ implements MessageQueueInterface {
     }
 
     // Publish to topic exchange
-    $key = 'statements';
     $data = json_encode($statements);
     $msg = new AMQPMessage($data, ['content_type'=>'application/json']);
     $channel = $this->connection->channel();
-    $channel->basic_publish($msg, $this->exchange,  $key);
+    $channel->basic_publish($msg, $this->exchange,  $this->statement_topic);
     $channel->close();
 
     return true;

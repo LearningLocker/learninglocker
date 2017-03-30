@@ -10,6 +10,7 @@ return [
     'password'=> 'guest',
     'vhost'=> '/',
     'exchange'=> 'learninglocker',
+    'statement_topic'=> 'statement',
     'ssl_enabled'=> true,
     'ssl'=> [
       'cafile'=> '/etc/ssl/cert/somecert.pem',
