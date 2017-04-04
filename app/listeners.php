@@ -31,3 +31,9 @@ Event::listen('Lrs.destroy', function ($opts) {
     $repo->destroy($client->_id, ['lrs_id' => $opts['id']]);
   }
 });
+
+// Listeners for publishing to message queue system
+if (app\locker\listeners\MessageQueueHandler::enabled()) {
+  $app->instance('MessageQueueHandler', new app\locker\listeners\MessageQueueHandler);
+  Event::listen('statement.inserted', 'MessageQueueHandler@statementInserted');
+}
