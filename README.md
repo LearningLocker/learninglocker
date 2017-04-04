@@ -5,7 +5,7 @@
 [![Latest Stable Version](https://poser.pugx.org/learninglocker/learninglocker/v/stable.svg)](https://packagist.org/packages/learninglocker/learninglocker)
 [![Total Downloads](https://poser.pugx.org/learninglocker/learninglocker/downloads.svg)](https://packagist.org/packages/learninglocker/learninglocker)
 [![License](https://poser.pugx.org/learninglocker/learninglocker/license.svg)](http://opensource.org/licenses/GPL-3.0)
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/LearningLocker/learninglocker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/LearningLocker/learninglocker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 *Learning Locker is copyright [HT2](http://ht2.co.uk)*
 
