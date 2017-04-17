@@ -13,7 +13,8 @@ define([
       lrs: window.lrsId,
       query: {},
       since: undefined,
-      until: undefined
+      until: undefined,
+      aggregate_match: {}
     },
     relations: {
       actors: TypeAheadCollection,

@@ -18,7 +18,8 @@ define([
   '../admin/views/stats/header',
   'views/activity/ActivityList',
   'views/actor/UserList',
-  'views/report/ReportList'
+  'views/report/ReportList',
+  '../reports/reports/Graphs.bundle'
 ], function($, _, Backbone, Marionette, App, TimelineModel, GraphModel, ActivityModel, UserModel, ReportModel, ActivityCollection, UserCollection, 
     ReportCollection, Stats, LineGraph, LoadingView, Header, ActivityList, UserList, ReportList){
 
@@ -46,7 +47,13 @@ define([
       var lineGraphView = new LineGraph({ model: graph_model });
       
       App.layouts.dashboard.headerArea.show( headerView );
-      App.layouts.dashboard.graphArea.show( lineGraphView );
+      // App.layouts.dashboard.graphArea.show( lineGraphView );
+      window.ReportGraphs(App.layouts.dashboard.graphArea.$el[0], {
+        endpoint: '..',
+        username: window.lrs.key,
+        password: window.lrs.secret,
+        match: '{}'
+      });
       
 
       var activities = new ActivityCollection;

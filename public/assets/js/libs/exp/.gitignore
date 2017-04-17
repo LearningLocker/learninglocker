@@ -1,4 +1,4 @@
-# NPM
+.DS_Store
 node_modules
 npm-debug.log
-reports/tmp
+tmp

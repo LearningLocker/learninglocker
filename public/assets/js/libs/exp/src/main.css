@@ -1,0 +1,11 @@
+html {
+  font-family: Arial;
+}
+body {
+  margin: 0 auto;
+  padding: 5px;
+  text-align: center;
+}
+.wrap {
+  word-wrap: break-word;
+}

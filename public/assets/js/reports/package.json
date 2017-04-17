@@ -5,6 +5,19 @@
     "coffee-script": "~1.7.1",
     "gulp": "^3.4.0",
     "gulp-jade": "~0.5.0",
-    "gulp-rename": "^1.2.0"
+    "gulp-rename": "^1.2.0",
+    "typescript": "^1.5.3",
+    "watchify": "^3.3.1"
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.5",
+    "brace": "^0.5.1",
+    "chart.js": "^1.0.2",
+    "codemirror": "^5.6.0",
+    "jquery": "^2.1.4",
+    "react": "^0.13.3",
+    "react-ace": "^2.1.1",
+    "react-chartjs": "^0.6.0",
+    "reactify": "^1.1.1"
   }
 }

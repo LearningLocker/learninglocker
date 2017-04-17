@@ -10,7 +10,10 @@ class ReportsTest extends ResourcesTestCase {
       'statement.actor.mbox' => ['mailto:test@example.com']
     ],
     'since' => null,
-    'until' => null
+    'until' => null,
+    'aggregation_match' => ['$and' => [['$or' => [[
+      'statement.actor.mbox' => 'mailto:test@example.com'
+    ]]]]]
   ];
   protected $update = [
     'name' => 'Test updated report'
