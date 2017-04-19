@@ -15,17 +15,17 @@ Please see our [documentation](http://docs.learninglocker.net) for installation,
 ## Developers
 You may contribute to this project by:
 
-- [Reporting issues](/issues).
-- [Updating code](/updating-code).
-- [Updating documentation](https://github.com/LearningLocker/docs).
+- [Reporting issues](http://docs.learninglocker.net/contribute/#issues).
+- [Updating code](#updating-code).
+- [Updating documentation](http://docs.learninglocker.net/contribute/#documentation).
 
 ### Updating Code
 1. Install Learning Locker's [requirements](http://docs.learninglocker.net/installation/#requirements).
 2. [Install and setup](http://docs.learninglocker.net/installation/) Learning Locker.
 3. Change the code.
-4. [Test](#testing) your code by ensuring that `./vendor/bin/phpunit` runs without any errors.
+4. Test your code by ensuring that `./vendor/bin/phpunit` runs without any errors.
 5. Repeat from Step 3 or continue to step 6.
 6. Commit and push your changes to Github.
-7. Create a [pull request](/pulls) on Github (ensuring that you follow the [guidelines](/contributing.md)).
+7. Create a [pull request](https://github.com/LearningLocker/learninglocker/pulls) on Github (ensuring that you follow the [guidelines](https://github.com/LearningLocker/learninglocker/blob/develop/contributing.md)).
 
-Note that Learning Locker is built upon the [Laravel](http://laravel.com/) PHP framework. To learn more about the code structure, please view the [Laravel documentation](laravel.com/docs/).
+Note that Learning Locker is built upon the [Laravel](http://laravel.com/) PHP framework. To learn more about the code structure, please view the [Laravel documentation](http://laravel.com/docs/).
