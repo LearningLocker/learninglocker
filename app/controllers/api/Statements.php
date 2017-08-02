@@ -139,6 +139,12 @@ class Statements extends Base {
   private function checkForStringDates($value) {
     if(is_array($value)) {
       foreach ($value as $key => $keyval) {
+        // if we are simply projecting, we do not want to amend the stage
+        if ($key === '$project') {
+          continue;
+        }
+        
+        // otherwise we must be inside another stage, continue to map and amend keys
         if ($key === 'statement.timestamp') {
           $value['timestamp'] = $this->convertStringDate($keyval);
           unset($value['statement.timestamp']);
