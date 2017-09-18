@@ -1,0 +1,113 @@
+import { getConnection } from 'lib/connections/mongoose';
+import { expect } from 'chai';
+import _ from 'lodash';
+import async from 'async';
+import Staff from 'lib/plugins/jisc_1_2_4/models/staff';
+import StaffCourseInstance from 'lib/plugins/jisc_1_2_4/models/staffCourseInstance';
+import StaffModuleInstance from 'lib/plugins/jisc_1_2_4/models/staffModuleInstance';
+import Student from 'lib/plugins/jisc_1_2_4/models/student';
+import DBHelper from 'lib/plugins/jisc_1_2_4/utils/TestDBHelper';
+
+const db = new DBHelper();
+
+describe('Test the relation hydration on JISC staff', () => {
+  before((done) => {
+    const connection = getConnection('JISC_1_2_4');
+    if (connection.readyState !== 1) {
+      connection.on('connected', done);
+    } else {
+      done();
+    }
+  });
+
+  before('Set up client with "all" scopes', (done) => {
+    db.prepareClient(done);
+  });
+
+  after('Clear client with "all" scopes', (done) => {
+    db.cleanUpClient(done);
+  });
+
+
+  describe('add course related models and test for relations', () => {
+    let savedModels;
+    const staffData = db.getStaffData();
+    const student1Data = db.getStudentData('student01', db.staffId);
+    const student2Data = db.getStudentData('student02', db.staffId);
+    const sciData = db.getStaffCourseInstanceData(staffData.STAFF_ID);
+    const smiData = db.getStaffModuleInstanceData(staffData.STAFF_ID);
+
+    before('Insert course and related models', (done) => {
+      async.series({
+        sci: insertDone => db.prepStaffCourseInstance(insertDone, sciData),
+        staff: insertDone => db.prepStaff(insertDone, staffData),
+        scm: insertDone => db.prepStaffModuleInstance(insertDone, smiData),
+        student1: insertDone => db.prepStudent(insertDone, student1Data, db.defaultId),
+        student2: insertDone => db.prepStudent(insertDone, student2Data, db.secondaryId),
+      }, (err, results) => {
+        savedModels = results;
+        done(err);
+      });
+    });
+
+    after('Clean up related models', (done) => {
+      async.parallel({
+        staff: cleanDone => db.cleanStaff(cleanDone),
+        scm: cleanDone => db.cleanStaffModuleInstance(cleanDone),
+        sci: cleanDone => db.cleanStaffCourseInstance(cleanDone),
+        students: cleanDone => db.cleanStudent(cleanDone),
+      }, (err) => {
+        done(err);
+      });
+    });
+
+    it('should find multiple hydrated relations on the staff', (done) => {
+      Staff.findOne({ STAFF_ID: staffData.STAFF_ID }, (err, model) => {
+        expect(model).to.not.be.null; //eslint-disable-line
+        const modelData = model.toObject();
+        expect(modelData.staffCourseInstances).to.be.an('Array').and.have.lengthOf(1);
+        expect(modelData.staffModuleInstances).to.be.an('Array').and.have.lengthOf(1);
+        expect(modelData.mentees).to.be.an('Array').and.have.lengthOf(2);
+        expect(_.toString(modelData.staffCourseInstances[0])).to.equal(_.toString(savedModels.sci._id));
+        expect(_.toString(modelData.staffModuleInstances[0])).to.equal(_.toString(savedModels.scm._id));
+        done(err);
+      });
+    });
+
+    it('should find hydrated staff relation on the staff course instance', (done) => {
+      StaffCourseInstance.findById(savedModels.sci._id, (err, model) => {
+        expect(model).to.not.be.null; //eslint-disable-line
+        const modelData = model.toObject();
+        expect(_.toString(modelData.staff)).to.equal(_.toString(savedModels.staff._id));
+        done(err);
+      });
+    });
+
+    it('should find hydrated staff relation on the staff module instance', (done) => {
+      StaffModuleInstance.findById(savedModels.scm._id, (err, model) => {
+        expect(model).to.not.be.null; //eslint-disable-line
+        const modelData = model.toObject();
+        expect(_.toString(modelData.staff)).to.equal(_.toString(savedModels.staff._id));
+        done(err);
+      });
+    });
+
+    it('should find hydrated staff (tutor) relation on student1', (done) => {
+      Student.findById(savedModels.student1._id, (err, model) => {
+        expect(model).to.not.be.null; //eslint-disable-line
+        const modelData = model.toObject();
+        expect(_.toString(modelData.tutor)).to.equal(_.toString(savedModels.staff._id));
+        done(err);
+      });
+    });
+
+    it('should find hydrated staff (tutor) relation on student2', (done) => {
+      Student.findById(savedModels.student2._id, (err, model) => {
+        expect(model).to.not.be.null; //eslint-disable-line
+        const modelData = model.toObject();
+        expect(_.toString(modelData.tutor)).to.equal(_.toString(savedModels.staff._id));
+        done(err);
+      });
+    });
+  });
+});

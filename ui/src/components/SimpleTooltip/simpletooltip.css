@@ -1,0 +1,11 @@
+.tooltip {
+  position: fixed; }
+  .tooltip .tooltipContent {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 6px;
+    font-size: 9pt; }
+    .tooltip .tooltipContent ul {
+      margin: 0;
+      padding-left: 15px; }
+  .tooltip .tooltipTriangleRight {
+    border-color: transparent transparent transparent rgba(255, 255, 255, 0.8); }

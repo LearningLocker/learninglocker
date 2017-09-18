@@ -1,0 +1,14 @@
+.closeTab {
+  margin-left: 12px; }
+  .closeTab:hover {
+    background-color: #494444;
+    color: #fff;
+    border-radius: 50%;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border: 0px solid #494444; }
+
+.closeIcon {
+  margin-right: 0px;
+  padding-top: 1px;
+  padding-bottom: 1px; }

@@ -1,0 +1,12 @@
+.box {
+  border: 1px solid #f1f1f1;
+  padding: 10px; }
+
+.block {
+  max-width: 250; }
+
+.toggle {
+  margin-bottom: 16; }
+
+.tab section:focus {
+  outline: 0; }

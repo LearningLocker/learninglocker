@@ -1,0 +1,49 @@
+.queryForm > span > .childContainer {
+  margin-left: 0px;
+}
+.queryForm > span > .childContainer > .expandedChildren > span > .formGroup > label {
+  font-size: 1.2em;
+}
+
+.queryForm {
+  border: 1px solid #f1f1f1;
+  padding: 10px;
+}
+.queryForm span {
+  white-space: normal;
+  word-break: break-all;
+}
+.queryForm label {
+  cursor: pointer;
+  font-weight: normal;
+  word-wrap: break-word;
+}
+.queryForm textarea {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.childContainer {
+  margin-left: 8px;
+}
+
+.collapsedChildren a {
+  margin-right: 8px;
+  color: #929292;
+}
+
+.hasParams {
+  font-weight: bold;
+}
+
+.buttonBox {
+  flex-wrap: nowrap;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 6px;
+}
+
+.buttonBox button {
+  margin-left: 4px;
+}
+

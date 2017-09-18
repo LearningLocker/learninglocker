@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BarChartResult should render axes 1`] = `
+<div
+  className="chart"
+>
+  <div
+    className="buttons"
+  />
+  <div
+    className="xAxisLabel withPrevNext clearfix"
+  >
+    <span
+      className="xAxis"
+    >
+      THE-X
+    </span>
+  </div>
+  <div
+    className="barContainer"
+  >
+    <div
+      className="yAxisLabel"
+    >
+      <span
+        className="yAxis"
+      >
+        THE-Y
+      </span>
+    </div>
+    <div
+      className="chartWrapper"
+    >
+      <div />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`BarChartResults should render 1`] = `
+<h4
+  style={
+    Object {
+      "marginTop": 20,
+      "textAlign": "center",
+    }
+  }
+>
+  No data in this time range.
+</h4>
+`;

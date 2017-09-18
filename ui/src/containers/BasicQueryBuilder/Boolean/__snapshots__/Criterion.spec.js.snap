@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Criterion should render 1`] = `
+<div
+  className="criterion"
+>
+  <div
+    className="criterionValue noCriteria"
+  >
+    <div>
+      <label
+        className="radioLabel"
+        htmlFor="statement.result.success-1"
+      >
+        True:  
+      </label>
+      <input
+        checked={false}
+        id="statement.result.success-1"
+        name="statement.result.success"
+        onChange={[Function]}
+        type="radio"
+        value="true"
+      />
+    </div>
+    <div>
+      <label
+        className="radioLabel"
+        htmlFor="statement.result.success-2"
+      >
+        False:  
+      </label>
+      <input
+        checked={false}
+        id="statement.result.success-2"
+        name="statement.result.success"
+        onChange={[Function]}
+        type="radio"
+        value="false"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Criterion with value 1`] = `
+<div
+  className="criterion"
+>
+  <div
+    className="criterionValue noCriteria"
+  >
+    <div>
+      <label
+        className="radioLabel"
+        htmlFor="statement.result.success-3"
+      >
+        True:  
+      </label>
+      <input
+        checked={false}
+        id="statement.result.success-3"
+        name="statement.result.success"
+        onChange={[Function]}
+        type="radio"
+        value="true"
+      />
+    </div>
+    <div>
+      <label
+        className="radioLabel"
+        htmlFor="statement.result.success-4"
+      >
+        False:  
+      </label>
+      <input
+        checked={false}
+        id="statement.result.success-4"
+        name="statement.result.success"
+        onChange={[Function]}
+        type="radio"
+        value="false"
+      />
+    </div>
+  </div>
+</div>
+`;

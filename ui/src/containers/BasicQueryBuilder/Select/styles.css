@@ -1,0 +1,20 @@
+.select {
+  position: relative;
+  cursor: pointer; }
+  .select:focus {
+    outline: 0; }
+
+.content {
+  display: flex;
+  flex-direction: row; }
+
+.value {
+  justify-content: flex-start;
+  flex-grow: 1; }
+
+.indicator {
+  margin-left: 2px;
+  justify-content: flex-end;
+  width: 10px; }
+
+

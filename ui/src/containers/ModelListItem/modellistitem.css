@@ -1,0 +1,23 @@
+.builder-edit-mode {
+  font-size: 12px;
+  margin-left: 20px; }
+
+.creator {
+  margin-top: -4px;
+  text-align: right;
+  font-size: 11px;
+  margin-left: 30px; }
+
+.builder-description {
+  margin-left: 20px;
+  font-weight: bold; }
+
+.expanded {
+  margin-top: 11px;
+  margin-bottom: 11px; }
+  .expanded p {
+    padding: 8px; }
+
+.collapsed {
+  margin-top: 0px;
+  margin-bottom: 0px; }

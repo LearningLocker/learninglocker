@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ColumnChartResult should render axes 1`] = `
+<div
+  className="chart"
+>
+  <div
+    className="xAxisLabel"
+  >
+    <span
+      className="xAxis"
+    >
+      THE-X
+    </span>
+  </div>
+  <div
+    className="barContainer"
+  >
+    <div
+      className="yAxisLabel"
+    >
+      <span
+        className="yAxis"
+      >
+        THE-Y
+      </span>
+    </div>
+    <div
+      className="chartWrapper"
+    >
+      <div />
+    </div>
+  </div>
+</div>
+`;

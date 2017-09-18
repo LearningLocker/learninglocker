@@ -1,0 +1,49 @@
+.queryForm > span > .childContainer {
+  margin-left: 0px; }
+  .queryForm > span > .childContainer > .expandedChildren > span > .formGroup > label {
+    font-size: 1.2em; }
+
+.queryForm {
+  border: 1px solid #DDDDDD;
+  padding: 5px;
+  margin-bottom: 10px; }
+  .queryForm span {
+    white-space: normal;
+    word-break: break-all; }
+  .queryForm label {
+    cursor: pointer;
+    font-weight: normal;
+    word-wrap: break-word; }
+  .queryForm textarea {
+    margin-top: 8px;
+    width: 100%; }
+
+.childContainer {
+  margin-left: 8px; }
+
+.collapsedChildren a {
+  margin-right: 8px;
+  color: #929292; }
+
+.hasParams {
+  font-weight: bold; }
+
+.table {
+  margin-top: 0px; }
+
+.table > thead > tr > th {
+  padding-top: 10px;
+  padding-bottom: 9px; }
+
+.table > tbody > tr > td {
+  padding: 2px 0px;
+  vertical-align: middle; }
+  .table > tbody > tr > td input {
+    border: none;
+    box-shadow: none; }
+
+.textRight {
+  text-align: right; }
+
+.textInput {
+  padding: 1rem 0; }

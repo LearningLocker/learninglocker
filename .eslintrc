@@ -1,0 +1,78 @@
+{ "extends": "eslint-config-airbnb",
+  "env": {
+    "browser": true,
+    "node": true,
+    "mocha": true,
+    "jest/globals": true
+  },
+  "parser": "babel-eslint",
+  "rules": {
+    "max-len": 0,
+    "linebreak-style": 0,
+    "array-callback-return": 0,
+    "generator-star-spacing": 0,
+    "no-mixed-operators": 0,
+    "react/no-multi-comp": 0,
+    "react/prop-types": 0, // doesn't really work with functional components and HOCs
+    "react/sort-comp": [1, {
+      "order": [
+        'lifecycle',
+        'everything-else',
+        'rendering',
+      ],
+      groups: {
+        rendering: [
+          '/^render.+$/',
+          'render'
+        ]
+      }
+    }],
+    "id-length": 0,
+    "import/default": 0,
+    "import/no-duplicates": 0,
+    "import/named": 0,
+    "import/namespace": 0,
+    "import/no-unresolved": 0,
+    "import/no-named-as-default": 0,
+    "import/extensions": 0,
+    "import/no-extraneous-dependencies": 0,
+    "react/forbid-prop-types": [1, { "forbid": ['any', 'array'] }],
+    "jsx-a11y/no-static-element-interactions": 0, // stops you having onClick on a div
+    "react/jsx-closing-bracket-location": [1, 'after-props'],
+    "react/jsx-no-bind": 0, // it's actually pretty useful to bind and the only workaround is to make an entirely new component
+    "react/no-unused-prop-types": [2, { skipShapeProps: true }],
+    "no-shadow": [2, { "builtinGlobals": false, "hoist": "functions", "allow": ['err'] }],
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "comma-dangle": 0,  // not sure why airbnb turned this on. gross!
+    "no-underscore-dangle": 0,
+    "consistent-return": 0,
+    "no-param-reassign": 0,
+    "global-require": 0,
+    "indent": [2, 2, {"SwitchCase": 1}],
+    "no-console": 0,
+    "no-alert": 0,
+    "radix": 0,
+    "no-constant-condition": 0,
+    "no-const-assign": 0, // seems to be buggy, triggers on let
+  },
+  "plugins": [
+    "react", "import", "jest"
+  ],
+  "settings": {
+    "import/parser": "babel-eslint",
+    "import/resolve": {
+      moduleDirectory: ["node_modules", "src"]
+    }
+  },
+  "globals": {
+    "__DEVELOPMENT__": true,
+    "__SITE_URL__": true,
+    "__CLIENT__": true,
+    "__SERVER__": true,
+    "__DISABLE_SSR__": true,
+    "__DEVTOOLS__": true,
+    "__GOOGLE_ENABLED__": true,
+    "socket": true,
+    "webpackIsomorphicTools": true
+  }
+}

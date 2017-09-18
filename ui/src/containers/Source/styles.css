@@ -1,0 +1,10 @@
+.heading {
+  display: flex;
+  align-items: baseline; }
+  .heading .buttons {
+    margin-left: auto; }
+  .heading i {
+    font-size: 24px;
+    color: #929292; }
+
+

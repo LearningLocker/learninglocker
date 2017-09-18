@@ -1,0 +1,12 @@
+.exportForm {
+  margin: 10px 0;
+  display: flex; }
+
+.rightPane {
+  flex-grow: 1;
+  margin-left: 20px;
+  padding-left: 20px;
+  margin-top: 10px;
+  border-left: 1px solid #eee; }
+
+

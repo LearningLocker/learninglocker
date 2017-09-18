@@ -1,0 +1,10 @@
+.form {
+  padding-left: 8px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  flex-grow: 1; }
+
+.buttons {
+  float: right; }
+
+

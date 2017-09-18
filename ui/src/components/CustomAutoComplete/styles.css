@@ -1,0 +1,36 @@
+.dropdown {
+  flex-grow: 1;
+  position: relative; }
+  .dropdown.input-group {
+    width: 100%; }
+
+.dropdown .listItem > .listLink {
+  line-height: 24px;
+  padding: 6px 0px 6px 12px;
+  flex-grow: 1; }
+
+.dropdown .listItem {
+  display: flex;
+  padding: 0;
+  flex-wrap: nowrap; }
+  .dropdown .listItem:hover {
+    background-color: #f5f5f5; }
+
+.inputs {
+  display: flex;
+  align-items: center; }
+
+.listButtons {
+  padding: 6px 8px 6px 12px; }
+
+.closeButton {
+  margin: 0px 4px;
+  color: #ccc; }
+
+.inputWrapper {
+  flex-grow: 1; }
+
+.buttonWrapper button, .buttonWrapper a, .buttonWrapper div {
+  margin-left: 8px; }
+
+
