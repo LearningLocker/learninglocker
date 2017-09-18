@@ -21,7 +21,6 @@
 1. Configure the Nginx config
 1. `yarn build-all`
 1. `pm2 start process.json`
-<<<<<<< HEAD
 
 # Requirements
 Redis ^2.8.11
