@@ -3,8 +3,9 @@ node_js: "6"
 sudo: false
 
 env:
-  - MONGODB=3.2.13
-  - APP_SECRET=44E52D2227F93179525E252EC3AB5
+  global:
+    - MONGODB=3.2.13
+    - APP_SECRET=44E52D2227F93179525E252EC3AB5
 install:
   - wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${MONGODB}.tgz
   - tar xzf mongodb-linux-x86_64-${MONGODB}.tgz
