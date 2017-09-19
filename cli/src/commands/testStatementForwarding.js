@@ -68,7 +68,6 @@ export default function (statementId, options = {}) {
           'Access-Control-Allow-Origin': '*'
         });
         response.end('Success\n');
-
       }).listen(options.port);
     }).then(() => { // push onto the queue
       const promise = new Promise((resolve, reject) => {

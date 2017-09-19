@@ -568,7 +568,5 @@ export const getAvailableSections = (sections, filter) => createSelector(
 
 export const getAvailableSection = (section, filter) => createSelector(
   [modelsByFilterSelector('querybuildercache', filter)],
-  (caches) => {
-    return buildSectionFromCaches(new Map({ section, caches }));
-  }
+  caches => buildSectionFromCaches(new Map({ section, caches }))
 );

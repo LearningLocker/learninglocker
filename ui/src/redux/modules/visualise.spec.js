@@ -5,7 +5,7 @@ test('visualisationPiplelinesSelector should unflattern axis', () => {
   const mockVisualisation = fromJS({
     axesxValue: 6245
   });
-  const mockState = {models: 
+  const mockState = { models:
     fromJS({
       visualisation: {
         56: {

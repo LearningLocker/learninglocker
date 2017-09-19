@@ -30,7 +30,7 @@ export const streamToCsv = (headers, stream) => new Promise((resolve, reject) =>
   return resolve(csvStream);
 });
 
-export const exportCSV = ({ authInfo, pipelines, type }) => new Promise((resolve, reject) => {
+export const exportCSV = ({ authInfo, pipelines }) => new Promise((resolve, reject) => {
   const headers = pipelines.reduce((result, pipeline) => {
     const projections = pipeline.filter(stage => stage.$project !== undefined);
     const lastProjection = projections[projections.length - 1].$project;

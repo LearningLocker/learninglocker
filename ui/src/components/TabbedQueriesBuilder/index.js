@@ -80,7 +80,7 @@ class TabbedQueriesBuilder extends Component {
           onChange={this.props.onChangeLabel.bind(null, index)} />
       </div>
 
-        {this.renderQueryBuilder(index)}
+      {this.renderQueryBuilder(index)}
 
     </span>
   );

@@ -23,7 +23,6 @@ export default memoize((args = new Map()) => {
     timestamp: { $gte: { $dte: periodToDate(previewPeriod, today).toISOString() } }
   } }];
   const type = args.get('type');
-  const id = args.get('id');
   const axes = args.get('axes');
   const preReqs = fromJS(previewPeriodMatch.concat(queryMatch));
   switch (type) {
