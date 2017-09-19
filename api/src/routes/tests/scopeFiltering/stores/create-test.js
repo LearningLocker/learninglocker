@@ -5,13 +5,14 @@ import createUserToken from 'api/routes/tests/utils/tokens/createUserToken';
 import createOwnerOrgToken
   from 'api/routes/tests/utils/tokens/createOwnerOrgToken';
 import setup from 'api/routes/tests/utils/setup';
+import { RESTIFY_PREFIX } from 'lib/constants/routes';
 
 describe('API HTTP POST stores route scope filtering', () => {
   const apiApp = setup();
 
   const assertCreate = ({ token, expectedCode }) =>
     apiApp
-      .post('/api/v1/lrs')
+      .post(`${RESTIFY_PREFIX}/lrs`)
       .set('Authorization', `Bearer ${token}`)
       .set('Content-Type', 'application/json')
       .expect(expectedCode);
