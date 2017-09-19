@@ -1,6 +1,6 @@
 # Learning Locker v2
 
-![Build Status](https://travis-ci.com/LearningLocker/learninglocker_node.svg?token=bhrQ2VaxsFy5LxzSAinN&branch=master)
+[![Build Status](https://travis-ci.org/LearningLocker/learninglocker.svg?branch=v2)](https://travis-ci.org/LearningLocker/learninglocker)
 
 ###  Instructions
 
@@ -24,3 +24,5 @@
 
 # Requirements
 Redis ^2.8.11
+MongoDB ^3.2
+Node.js ^6.11.3
