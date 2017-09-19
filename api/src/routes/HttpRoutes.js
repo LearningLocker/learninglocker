@@ -139,12 +139,12 @@ router.post(
  */
 router.get(
   routes.DOWNLOADLOGO,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  passport.authenticate(['jwt', 'jwt-cookie'], DEFAULT_PASSPORT_OPTIONS),
   DownloadController.downloadLogo
 );
 router.get(
   routes.DOWNLOADEXPORT,
-  passport.authenticate('jwt-cookie', DEFAULT_PASSPORT_OPTIONS),
+  passport.authenticate(['jwt', 'jwt-cookie'], DEFAULT_PASSPORT_OPTIONS),
   DownloadController.downloadExport
 );
 
