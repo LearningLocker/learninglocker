@@ -172,6 +172,15 @@ router.get(
 );
 
 /**
+ * V1 compatability
+ */
+router.get(
+  routes.V1_STATEMENTS_AGGREGATE,
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  StatementController.v1aggregate
+);
+
+/**
  * REST APIS
  */
 restify.defaults(RESTIFY_DEFAULTS);

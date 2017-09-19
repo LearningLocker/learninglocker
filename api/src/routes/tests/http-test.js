@@ -132,7 +132,7 @@ describe('API HTTP Route tests', () => {
 
     it.skip('should get all statements in the org', (done) => {
       apiApp
-        .get('/api/v1/organisation')
+        .get(`${routes.RESTIFY_PREFIX}/organisation`)
         .set('Authorization', `Bearer ${orgJwtToken}`)
         .expect(200, done);
     });

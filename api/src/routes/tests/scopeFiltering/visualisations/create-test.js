@@ -8,13 +8,14 @@ import createUserToken from 'api/routes/tests/utils/tokens/createUserToken';
 import createOwnerOrgToken
   from 'api/routes/tests/utils/tokens/createOwnerOrgToken';
 import setup from 'api/routes/tests/utils/setup';
+import { RESTIFY_PREFIX } from 'lib/constants/routes';
 
 describe('API HTTP POST visualisations route scope filtering', () => {
   const apiApp = setup();
 
   const assertCreate = ({ token }) =>
     apiApp
-      .post('/api/v1/visualisation')
+      .post(`${RESTIFY_PREFIX}/visualisation`)
       .set('Authorization', `Bearer ${token}`)
       .set('Content-Type', 'application/json')
       .expect(201)
