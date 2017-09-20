@@ -1,0 +1,86 @@
+.chart {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart svg g text {
+  font-size: 12px; }
+
+.barContainer {
+  display: flex;
+  flex-grow: 1;
+}
+
+.customTooltip {
+  width: 150px;
+  margin: 0;
+  line-height: 15px;
+  border: 2px solid #f5f5f5;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 10px;
+  font-size: 12px; }
+
+.label {
+  margin: 1;
+  color: #ED7030;
+  font-weight: 700;
+  word-break: break-all;
+}
+
+.value {
+  margin: 5;
+  color: #000;
+  font-weight: 300; }
+
+.desc {
+  margin: 0;
+  color: #999; }
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+}
+
+.prevButton {
+  align-self: flex-start;
+  margin-left: 10px; }
+
+.nextButton {
+  margin-right: 10px;
+  margin-left: auto; }
+
+.xAxis {
+  display: inline-block;
+  white-space: nowrap; }
+
+.xAxisLabel {
+  text-align: right;
+  word-break: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
+  position: static;
+  margin-right: 12px;
+}
+
+.yAxisLabel {
+  margin-bottom: 12px;
+  flex-shrink: 0;
+  writing-mode: vertical-rl;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transform: rotate(-180deg);
+  max-width: 20px; /* otherwise this element pushes chart of the page in firefox, (dispite the element naturally being 20px) */
+}
+
+.yAxis {
+  display: inline-block;
+  }
+
+.chartWrapper {
+  flex-grow: 1;
+  flex-shrink: 0;
+}

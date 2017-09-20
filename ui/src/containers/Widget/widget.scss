@@ -1,0 +1,45 @@
+.widget {
+  height: 100%;
+  padding: 0px 0px 0px 0px;
+  border-top: 4px solid #CCC;
+}
+
+.widgetContent {
+  overflow: hidden;
+  height: 100%;
+}
+
+.marginRight {
+  margin-right: 8px;
+}
+
+.body {
+  padding: 0px 10px 10px 10px;
+  height: calc( 100% - 43px );
+}
+
+.heading {
+  padding: 0px;
+  height: 43px;
+}
+
+.title {
+  padding: 10px;
+}
+
+.draggableTitle {
+  cursor: move;
+}
+
+.menuButton {
+  padding: 8px;
+}
+
+.closeButton {
+  margin-right: 8px;
+  float: right;
+}
+
+:global(.open) .menuButton {
+  color: #CCC;
+}

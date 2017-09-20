@@ -1,0 +1,13 @@
+.field .ripple {
+  background-color: rgb(245,171,53);
+  border-color: rgb(245,171,53);
+}
+
+.inputElement:focus:not([disabled]):not([readonly]) ~ .label:not(.fixed) {
+  color: rgb(245,171,53);
+}
+
+.input .bar:before,
+.input .bar:after {
+  background-color: rgb(245,171,53);
+}

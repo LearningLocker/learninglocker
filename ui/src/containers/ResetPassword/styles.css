@@ -1,0 +1,14 @@
+.card {
+  padding: 10px 20px;
+}
+
+.buttonGroup {
+  text-align: center;
+  margin-top: 10px;
+  button {
+    margin-right: 10px;
+  }
+  button.last {
+    margin-right: 0px;
+  }
+}

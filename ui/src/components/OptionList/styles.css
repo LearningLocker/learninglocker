@@ -1,0 +1,22 @@
+.wrapper {
+  position: absolute;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0px 0px 2px 2px;
+  overflow: auto;
+  background-color: #fff;
+  width: 100%;
+  z-index: 1;
+  outline: none; }
+  .wrapper div {
+    outline: none; }
+
+.emptyInfo {
+  padding: 10px; }
+
+.divider {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #eee; }
+
+

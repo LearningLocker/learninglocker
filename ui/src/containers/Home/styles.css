@@ -1,0 +1,18 @@
+.buttonGroup, .loginButtons {
+  text-align: center;
+  margin-top: 10px; }
+  .buttonGroup button, .loginButtons button {
+    margin-right: 10px; }
+  .buttonGroup button.last, .loginButtons button.last {
+    margin-right: 0px; }
+
+.loginButtons {
+  margin-top: 20px; }
+
+.orgContainer {
+  position: relative; }
+
+.spinnerContainer {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.5);
+  width: 100%; }

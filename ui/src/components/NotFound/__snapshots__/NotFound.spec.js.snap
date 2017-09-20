@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly with no props 1`] = `
+<div
+  className="container"
+>
+  <h1>
+    Coming soon!
+  </h1>
+  <p>
+    This page is still being built
+  </p>
+</div>
+`;

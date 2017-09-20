@@ -1,0 +1,71 @@
+.topLevel > .expandedSection > .expandedTitle {
+  font-size: 16px; }
+
+.topLevel > .collapsedSection {
+  font-size: 16px; }
+
+.topLevel {
+  display: flex;
+  flex-direction: column; }
+
+.expandedTitle {
+  font-weight: bold;
+  cursor: pointer; }
+
+.expandedCriteria {
+  margin-top: 10px; }
+
+.expandedChildren {
+  padding-top: 10px;
+  padding-left: 10px;
+  border-left: 1px dotted #CCC;
+  display: flex;
+  flex-direction: column; }
+
+.expandedSection {
+  padding-bottom: 20px; }
+
+.collapsedSection {
+  margin-right: 10px;
+  cursor: pointer;
+  align-self: flex-start;
+  white-space: normal;
+  word-break: break-all;
+  }
+
+.usedCollapsedSection {
+  color: #F5AB35; }
+
+.unusedCollapsedSection {
+  color: #687B88; }
+
+.criterion {
+  margin-bottom: 4px;
+  display: flex;
+  flex-direction: row; }
+
+.criterionOperator {
+  padding-top: 2px;
+  width: 15%;
+  margin-right: 2%;
+  justify-content: flex-start;
+  min-height: 30px; }
+
+.criterionValue {
+  width: 71%;
+  min-height: 30px; }
+  .criterionValue.noCriteria {
+    width: 100%; }
+
+.criterionButton {
+  width: 10%;
+  margin-left: 2%;
+  justify-content: flex-end;
+  height: 30px; 
+  margin-left: auto;
+}
+
+.radioLabel {
+  width: 20%;
+  min-width: 50px;
+}

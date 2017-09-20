@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Renders help link 1`] = `
+<div
+  className="sidenav-footer"
+>
+  <a
+    href="https://ht2ltd.zendesk.com/hc/en-us/categories/115000129989-Learning-Locker"
+  >
+    Help centre
+  </a>
+  <div>
+    Powered by
+  </div>
+  <a
+    href="http://learninglocker.net"
+    rel="noopener noreferrer"
+    target="_blank"
+  >
+    Learning Locker Cloud
+  </a>
+</div>
+`;

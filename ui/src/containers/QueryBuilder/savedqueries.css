@@ -1,0 +1,10 @@
+.buttonContainer {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.buttonContainer button {
+  margin-left: 8px;
+  margin-bottom: auto;
+  margin-top: auto;
+}

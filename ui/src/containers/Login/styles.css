@@ -1,0 +1,16 @@
+.buttonGroup, .loginButtons, .otherButtons {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.buttonGroup button, .loginButtons button, .otherButtons button {
+  margin-right: 10px;
+}
+
+.buttonGroup button.last, .loginButtons button.last, .otherButtons button.last {
+  margin-right: 0px;
+}
+
+.loginButtons {
+  margin-top: 20px;
+}

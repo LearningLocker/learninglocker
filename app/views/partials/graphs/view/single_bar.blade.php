@@ -1,1 +1,0 @@
-<div id="single_bar"></div>

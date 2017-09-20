@@ -1,0 +1,20 @@
+.marginLeft {
+  margin-left: 1em;
+  font-weight: bold; }
+
+.queryForm > span > .childContainer {
+  margin-left: 0px; }
+  .queryForm > span > .childContainer > .expandedChildren > span > .formGroup > label {
+    font-size: 1.2em; }
+
+.queryForm {
+  border: 1px solid #f1f1f1;
+  padding: 10px; }
+  .queryForm label {
+    font-weight: normal; }
+  .queryForm textarea {
+    margin-top: 8px;
+    width: 100%; }
+
+.search {
+  margin-top: 10px; }

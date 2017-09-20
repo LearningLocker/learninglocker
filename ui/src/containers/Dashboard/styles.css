@@ -1,0 +1,22 @@
+.editor {
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.sharingCard {
+  padding: 10px;
+}
+
+.textField {
+  max-width: 500px;
+  width: 100%;
+}
+
+.editWrapper {
+  display: flex;
+}
+
+.editWrapper :global(.btn) {
+  margin-bottom: auto;
+}

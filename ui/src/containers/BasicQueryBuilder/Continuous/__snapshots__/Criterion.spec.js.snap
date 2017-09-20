@@ -1,0 +1,139 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`render criterion with value 1`] = `
+<div
+  className="criterion"
+>
+  <div
+    className="criterionOperator"
+  >
+    <div
+      className="select"
+      onBlur={[Function]}
+      onFocus={[Function]}
+      tabIndex={0}
+    >
+      <div
+        className="content btn btn-default btn-xs"
+      >
+        <div
+          className="value"
+        >
+          &gt;
+        </div>
+        <div
+          className="indicator"
+        >
+          <div
+            className="ion-arrow-up-b"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="criterionValue"
+  >
+    <div
+      data-react-toolbox="date-picker"
+    >
+      <div
+        className=""
+        data-react-toolbox="input"
+      >
+        <input
+          className="undefined"
+          disabled={false}
+          maxLength={undefined}
+          name={undefined}
+          onChange={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onKeyPress={[Function]}
+          readOnly={true}
+          required={false}
+          role="input"
+          type="text"
+          value="31 October 1986"
+        />
+        <span
+          className={undefined}
+        />
+      </div>
+    </div>
+  </div>
+  <button
+    className="criterionButton btn btn-default btn-xs"
+    onClick={[Function]}
+  >
+    <i
+      className="ion-minus-round"
+    />
+  </button>
+</div>
+`;
+
+exports[`renders criterion 1`] = `
+<div
+  className="criterion"
+>
+  <div
+    className="criterionOperator"
+  >
+    <div
+      className="select"
+      onBlur={[Function]}
+      onFocus={[Function]}
+      tabIndex={0}
+    >
+      <div
+        className="content btn btn-default btn-xs"
+      >
+        <div
+          className="value"
+        >
+          &lt;
+        </div>
+        <div
+          className="indicator"
+        >
+          <div
+            className="ion-arrow-up-b"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="criterionValue noCriteria"
+  >
+    <div
+      data-react-toolbox="date-picker"
+    >
+      <div
+        className=""
+        data-react-toolbox="input"
+      >
+        <input
+          className=""
+          disabled={false}
+          maxLength={undefined}
+          name={undefined}
+          onChange={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onKeyPress={[Function]}
+          readOnly={true}
+          required={false}
+          role="input"
+          type="text"
+          value=""
+        />
+        <span
+          className={undefined}
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;

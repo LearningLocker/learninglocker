@@ -1,0 +1,12 @@
+.divider {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #eee; }
+
+.optionList {
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0px 0px 2px 2px;
+  background-color: #fff; }
+
+

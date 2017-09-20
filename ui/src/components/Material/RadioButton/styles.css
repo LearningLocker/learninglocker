@@ -1,0 +1,14 @@
+.radioChecked {
+  border-color: rgb(245,171,53);
+}
+
+.radio:before,
+.radioChecked:before {
+  background-color: rgb(245,171,53);
+}
+
+.radio .ripple,
+.radioChecked .ripple {
+  background-color: rgb(245,171,53);
+  border-color: rgb(245,171,53);
+}

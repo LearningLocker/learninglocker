@@ -1,0 +1,9 @@
+.visualisation-row {
+  border-top: solid #e4e4e4 1px; }
+  .visualisation-row h5 {
+    text-align: center;
+    padding: 0px 4px; }
+  .visualisation-row img {
+    height: 45px; }
+  .visualisation-row.active {
+    background-color: rgba(0, 0, 0, 0.1); }

@@ -1,0 +1,20 @@
+.field .ripple {
+  background-color: rgb(245,171,53);
+  border-color: rgb(245,171,53);
+}
+
+.field .off {
+  background-color: rgba(0, 0, 0, 0.26);
+}
+
+.field .off .thumb {
+  background-color: white;
+}
+
+.field .on {
+  background-color: rgba(245,171,53, 0.26);
+}
+
+.field .on .thumb {
+  background-color: rgb(245,171,53);
+}

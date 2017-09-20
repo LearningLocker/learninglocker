@@ -1,0 +1,33 @@
+.fakeInput, .input {
+  padding: 0px 8px 0px 0px;
+  display: flex !important;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  overflow: hidden;
+  min-height: 36px; }
+  .fakeInput input, .input input {
+    border: none;
+    outline: none;
+    box-shadow: none;
+    flex-grow: 1; }
+    .fakeInput input::focus, .input input::focus {
+      box-shadow: none; }
+  .fakeInput .buttonGroup .button, .input .buttonGroup .button {
+    margin: 0px 6px; }
+    .fakeInput .buttonGroup .button:first-child, .input .buttonGroup .button:first-child {
+      margin-left: 14px; }
+
+.input {
+  border: none;
+  box-shadow: none; }
+  .input input {
+    border-bottom: 1px #CCC solid; }
+
+.group {
+  margin: 10px 0px; }
+  .group .label {
+    font-weight: bold;
+    margin-bottom: 0; }
+
+

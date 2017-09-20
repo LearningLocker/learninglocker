@@ -1,0 +1,23 @@
+.wrapper {
+  cursor: default;
+  white-space: nowrap;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  height: 36px; }
+
+.highlighted {
+  background: #eee; }
+
+.linkLeft {
+  justify-content: flex-start;
+  color: #555459;
+  display: inline; }
+
+.linkLeft:hover {
+  color: #555459; }
+
+.tooltip {
+  max-width: initial; }
+
+

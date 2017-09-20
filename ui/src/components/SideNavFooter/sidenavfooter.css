@@ -1,0 +1,14 @@
+.sidenav-footer {
+  margin-top: 100px;
+  position: absolute;
+  bottom: 10px;
+  left: 15px;
+  color: #999; }
+  @media screen and (max-height: 765px) {
+    .sidenav-footer {
+      position: inherit;
+      margin-top: 50px;
+      bottom: 10px;
+      left: 13px;
+      color: #999;
+      width: 150px; } }

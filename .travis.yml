@@ -1,31 +1,46 @@
-language: php
+language: node_js
+node_js: "6"
+sudo: false
 
-php:
-  - 5.5
+env:
+  global:
+    - MONGODB=3.2.13
+    - APP_SECRET=44E52D2227F93179525E252EC3AB5
+install:
+  - wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${MONGODB}.tgz
+  - tar xzf mongodb-linux-x86_64-${MONGODB}.tgz
+  - ${PWD}/mongodb-linux-x86_64-${MONGODB}/bin/mongod --version
+  - cp .env.example .env
+  - yarn
 
 services:
-  - mongodb
+  - redis-server
 
-install:
-  - echo y | pecl install mongo
-  - php -r "readfile('https://getcomposer.org/installer');" | php
-  - php composer.phar install --no-interaction --dev
+before_install:
+  - export CXX=g++-4.8
+  - export DISPLAY=:99.0
+  - export NODE_UNICODETABLE_UNICODEDATA_TXT=$PWD/UnicodeData.txt
+  - sh -e /etc/init.d/xvfb start
+  - touch .env
 
 before_script:
-  - phpenv config-add travisconfig.ini
-  - sleep 3
-  - sudo chmod -R 777 ./uploads
-  - php artisan migrate --env="testing"
+  - mkdir ${PWD}/mongodb-linux-x86_64-${MONGODB}/data
+  - ${PWD}/mongodb-linux-x86_64-${MONGODB}/bin/mongod --dbpath ${PWD}/mongodb-linux-x86_64-${MONGODB}/data --logpath ${PWD}/mongodb-linux-x86_64-${MONGODB}/mongodb.log --fork
+
+cache:
+  directories:
+  - $HOME/.yarn-cache
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - g++-4.8
 
 script:
-  - ./vendor/bin/phpunit
-  - sh test.sh
+  - npm run lint
+  - yarn test
 
-notifications:
-  slack:
-    secure: bSHZUJ5uisX15oQVLu/6Q+Q6719//x1oWo02noCY2WhXTszTbdKV25OG34pwcndO7AfrXLetm6CAF46Yj0K+GzwEtqjear8JQj8ugnZmjJTG0prYNzFJic7Lkf2a+2mROBDd60cLDW3OMGhBvxMV5ZEhutQ9o+fwMgcbKIy/gAM=
-  webhooks:
-    urls:
-      - secure: "IH89fjFa94bV0+RCyoRYcUGpBDT/F87Vdpki+wH7HoowVN7Zsv0O+V6Bl6Xl31VqrEJ3KmBcVpm4KL3Fkv081NqRmC03pqyNmLhHzf10k2m6kFm52pwD6t8f4eoRHuCHnbFdAMBCBfQbXC8oVFXtSNtfISYikCrs6uZ/cwmAxWk="
-    on_success: change
-    on_failure: change
+after_script:
+  - pkill mongod
