@@ -1,0 +1,41 @@
+.highlighted {
+  background: #eee; }
+
+.linkWrapper {
+  height: 36px;
+  width: 100%;
+  padding: 0px 8px;
+  display: flex; }
+  .linkWrapper:hover {
+    background: #eee; }
+
+.textWrapper {
+  flex-grow: 1;
+  display: flex;
+  align-content: center;
+  min-width: 0; }
+  .textWrapper abbr {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .textWrapper a {
+    min-width: 0;
+    color: #000; }
+
+.buttonWrapper {
+  display: flex;
+  align-items: center; }
+  .buttonWrapper a {
+    padding: 4px;
+    color: #ccc; }
+    .buttonWrapper a:hover {
+      color: #F5AB35; }
+
+.link {
+  justify-content: flex-start; }
+
+.tooltip {
+  word-break: break-all; }
+
+

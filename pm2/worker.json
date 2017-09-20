@@ -1,0 +1,18 @@
+{
+  "apps": [
+    {
+      "name": "Worker",
+      "script": "worker/dist/server",
+      "cwd": ".",
+      "output": "./logs/worker_stdout.log",
+      "error": "./logs/worker_stderr.log",
+      "pid": "./pids/ui.pid",
+      "instances": 1,
+      "exec_mode": "cluster",
+      "wait_ready": true,
+      "listen_timeout": 30000,
+      "watch": [".env"],
+      "max_memory_restart" : "500M"
+    }
+   ]
+ }

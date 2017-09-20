@@ -1,0 +1,11 @@
+//  enable runtime transpilation to use ES6/7 in node
+require('dotenv').config();
+process.env.MONGODB_PATH = process.env.MONGODB_TEST_PATH;
+process.env.API_PORT = process.env.TEST_API_PORT;
+process.env.SMTP_PASS = process.env.TEST_SMTP_PASS;
+process.env.LOG_MIN_LEVEL = process.env.TEST_LOG_MIN_LEVEL;
+process.env.TESTING = true;
+
+require('babel-runtime/core-js/promise').default = require('bluebird');
+require('babel-polyfill');
+require('babel-register');

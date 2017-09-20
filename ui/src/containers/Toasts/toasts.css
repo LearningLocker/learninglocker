@@ -1,0 +1,18 @@
+.toasts {
+  top: 56px;
+  width: 20%;
+  left: 40%;
+  position: fixed;
+  z-index: 301;
+  opacity: 0.7;
+  text-align: center;
+}
+
+.toast {
+  background-color: #d9534f;
+  border-color: #d43f3a;
+  color: white;
+  padding: 10px;
+  margin: 10px;
+  cursor: pointer;
+}

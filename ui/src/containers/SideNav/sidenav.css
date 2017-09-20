@@ -1,0 +1,78 @@
+.sidenav {
+  display: none; }
+
+.mediaAuthor {
+  text-align: center; }
+
+@media (max-width: 768px) {
+  .sidenav {
+    width: 27%; } }
+@media (min-width: 568px) {
+  .sidenav {
+    position: fixed;
+    top: 56px;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    display: block;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: #fff;
+    border-right: 1px solid #d9e3ea;
+    /* Sub-Menu Item - BG Color */
+    /* Sub-Menu Item - BG Color:hover */
+    /* Sub-Menu Item - BG Color:hover */
+    /* Sub-Menu Item - Border Color:hover */ }
+    .sidenav a {
+      color: #444; }
+    .sidenav ul.navSidenav {
+      margin: 20px -20px 0px -20px;
+      padding: 0;
+      position: relative; }
+    .sidenav ul li a {
+      padding: 12px 24px 12px 28px;
+      color: #515253;
+      letter-spacing: .025em;
+      font-weight: 400; }
+    .sidenav ul li a i {
+      font-size: 20px;
+      margin-right: 10px; }
+    .sidenav ul li a.vLinkActive,
+    .sidenav ul li a.active,
+    .sidenav ul li a:hover {
+      color: #F5AB35;
+      background: transparent;
+      box-shadow: inset 20px 0 0px -15px #F5AB35; }
+    .sidenav .fa-sidenav {
+      margin-right: 10px; }
+    .sidenav ul li > ul li {
+      background: #fafafa;
+      /*#454241; */
+      padding-left: 30px;
+      box-shadow: inset 20px 0 0px -15px #F5AB35; }
+    .sidenav ul.subNav li a {
+      padding-left: 30px;
+      color: #777;
+      background: #fafafa; }
+    .sidenav .navSidenav > li > ul > li > a:hover,
+    .sidenav .navSidenav > li > ul > li > a:focus {
+      color: inherit;
+      box-shadow: none; }
+    .sidenav .navSidenav > li > ul > li:hover > a:after,
+    .sidenav .navSidenav > li > ul > li a.vLinkActive,
+    .sidenav .navSidenav > li > ul > li:focus > a:after {
+      background: #fafafa;
+      color: #000;
+      box-shadow: none; }
+    .sidenav .loggedin-user {
+      text-align: center; }
+    .sidenav .sidenavHeader {
+      text-align: center; } }
+.orgAvatar {
+  display: block;
+  margin: 0 auto 20px auto; }
+  .orgAvatar img {
+    width: 100px;
+    background-color: #FFF;
+    height: auto; }

@@ -1,0 +1,47 @@
+.value {
+  background-color: rgb(245, 171, 53);
+}
+
+.linear {
+  display: block;
+}
+
+.container {
+  margin-right: -11px;
+  top: 56px;
+  height: 0.4rem;
+  position: relative;
+}
+
+.container .linear {
+  background: none;
+}
+
+.container .value {
+  height: 0.4rem;
+}
+
+.label {
+  color: rgb(245, 171, 53);
+  position: absolute;
+  top: 0.4rem;
+  left: 0px;
+  right: 0px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.label.failed {
+  color: red;
+}
+
+.label.completed {
+  color: #3ECB7A;
+}
+
+.failed .value {
+  background-color: red;
+}
+.completed .value{
+  background-color: #3ECB7A;
+}

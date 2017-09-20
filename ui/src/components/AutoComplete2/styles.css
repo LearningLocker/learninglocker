@@ -1,0 +1,10 @@
+.wrapper {
+  position: relative;
+  flex-grow: 1; }
+
+.optionsWrapper {
+  position: absolute;
+  z-index: 1;
+  width: 100%; }
+
+

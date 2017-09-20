@@ -1,0 +1,46 @@
+{
+  "apps": [
+    {
+      "name": "API",
+      "script": "api/dist/server",
+      "cwd": ".",
+      "output": "./logs/stdout.log",
+      "error": "./logs/stderr.log",
+      "pid": "./pids/api.pid",
+      "instances": 1,
+      "exec_mode": "cluster",
+      "detached": true,
+      "watch": ["api/dist", ".env"],
+      "ignore_watch": [".map", "node_modules"],
+      "watch_options": {
+        "usePolling": true
+      }
+    },
+    {
+      "name": "UIServer",
+      "script": "ui/dist/server",
+      "cwd": ".",
+      "output": "./logs/stdout.log",
+      "error": "./logs/stderr.log",
+      "pid": "./pids/ui.pid",
+      "instances": 1,
+      "exec_mode": "cluster",
+      "detached": true,
+      "wait_ready": true,
+      "listen_timeout": 30000
+    },
+    {
+      "name": "Worker",
+      "script": "worker/dist/server",
+      "cwd": ".",
+      "output": "./logs/stdout.log",
+      "error": "./logs/stderr.log",
+      "pid": "./pids/ui.pid",
+      "instances": 1,
+      "exec_mode": "cluster",
+      "detached": true,
+      "wait_ready": true,
+      "listen_timeout": 30000
+    }
+  ]
+}

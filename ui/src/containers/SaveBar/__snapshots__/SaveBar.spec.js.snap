@@ -1,0 +1,124 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SaveBar should render save bar COMPLETED 1`] = `
+<div
+  className="container"
+>
+  <div
+    aria-valuemax={100}
+    aria-valuemin={0}
+    aria-valuenow={100}
+    className=""
+    data-react-toolbox="progress-bar"
+    disabled={undefined}
+  >
+    <div>
+      <span
+        className={undefined}
+        data-ref="buffer"
+        style={
+          Object {
+            "MsTransform": "scaleX(0)",
+            "WebkitTransform": "scaleX(0)",
+            "transform": "scaleX(0)",
+          }
+        }
+      />
+      <span
+        className={undefined}
+        data-ref="value"
+        style={
+          Object {
+            "MsTransform": "scaleX(1)",
+            "WebkitTransform": "scaleX(1)",
+            "transform": "scaleX(1)",
+          }
+        }
+      />
+    </div>
+  </div>
+  <div
+    className="label"
+  >
+    SAVED
+  </div>
+</div>
+`;
+
+exports[`SaveBar should render save bar FAILED 1`] = `
+<div
+  className="container"
+>
+  <div
+    aria-valuemax={100}
+    aria-valuemin={0}
+    aria-valuenow={100}
+    className=""
+    data-react-toolbox="progress-bar"
+    disabled={undefined}
+  >
+    <div>
+      <span
+        className={undefined}
+        data-ref="buffer"
+        style={
+          Object {
+            "MsTransform": "scaleX(0)",
+            "WebkitTransform": "scaleX(0)",
+            "transform": "scaleX(0)",
+          }
+        }
+      />
+      <span
+        className={undefined}
+        data-ref="value"
+        style={
+          Object {
+            "MsTransform": "scaleX(1)",
+            "WebkitTransform": "scaleX(1)",
+            "transform": "scaleX(1)",
+          }
+        }
+      />
+    </div>
+  </div>
+  <div
+    className="label"
+  >
+    SAVE FAILED
+  </div>
+</div>
+`;
+
+exports[`SaveBar should render save bar IN_PROGRESS 1`] = `
+<div
+  className="container"
+>
+  <div
+    aria-valuemax={100}
+    aria-valuemin={0}
+    aria-valuenow={100}
+    className=""
+    data-react-toolbox="progress-bar"
+    disabled={undefined}
+  >
+    <div>
+      <span
+        className={undefined}
+        data-ref="buffer"
+        style={undefined}
+      />
+      <span
+        className={undefined}
+        data-ref="value"
+        style={undefined}
+      />
+    </div>
+  </div>
+  <div
+    className="label"
+  >
+    SAVING
+  </div>
+</div>
+`;

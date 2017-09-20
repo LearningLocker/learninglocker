@@ -1,0 +1,22 @@
+.available-widget {
+  border: 1px solid #d9e3ea;
+  background: #f9f9f9;
+  padding: 10px;
+  text-align: center;
+  width: 150px;
+  height: 130px;
+  font-size: 13px;
+  margin: 10px 10px 10px 0;
+  float: left;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative; }
+
+.available-widget span {
+  font-size: 60px;
+  display: block;
+  color: #999; }
+
+.available-widget:hover span,
+.available-widget.active span {
+  color: #F5AB35; }

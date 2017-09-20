@@ -1,0 +1,51 @@
+{
+  "presets": [
+    // 'latest',
+    // Experimental ECMAScript proposals
+    // https://github.com/babel/babel/tree/master/packages/babel-preset-stage-0
+    "react",
+    // Latest stable ECMAScript features
+    // https://github.com/babel/babel/tree/master/packages/babel-preset-latest
+    // webpack 2.0 can handle es6 modules natively
+    // and provides dead code removal
+    ["env", {
+      "es2015": {
+        "modules": false
+      }
+    }],
+    // JSX, Flow
+    // https://github.com/babel/babel/tree/master/packages/babel-preset-react
+    "stage-0"
+  ],
+  "plugins": [
+    "transform-runtime",
+    "transform-es2015-destructuring",
+    "transform-object-rest-spread",
+    "transform-es2015-parameters",
+    "transform-decorators-legacy",
+    "transform-class-properties",
+    "syntax-dynamic-import"
+  ],
+  "env": {
+    "development": {
+      "plugins": [
+        // Adds component stack to warning messages
+        // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-source
+        "transform-react-jsx-source",
+        // Adds __self attribute to JSX which React will use for some warnings
+        // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-self
+        "transform-react-jsx-self"
+      ]
+    },
+    "production": {
+      "presets": [
+        // Optimize React code for the production build
+        // https://github.com/thejameskyle/babel-react-optimize
+        "react-optimize"
+      ]
+    },
+    "test": {
+      "plugins": ["transform-es2015-modules-commonjs", "dynamic-import-node"]
+    }
+  }
+}

@@ -1,0 +1,41 @@
+@keyframes rotation {
+  from {
+    transform: rotate(0deg); }
+  to {
+    transform: rotate(359deg); } }
+.wrapper {
+  position: relative;
+  height: 100%; }
+
+.input {
+  border: none;
+  flex-grow: 1;
+  padding-left: 8px; }
+  .input:focus {
+    outline: 0; }
+
+.inputWrapper {
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  overflow: hidden;
+  flex-wrap: wrap;
+  min-height: 36px;
+  display: flex;
+  align-items: center; }
+  .inputWrapper.noBorder {
+    border: 1px solid transparent; }
+  .inputWrapper.open {
+    border-radius: 2px 2px 0px 0px;
+    border-bottom: 1px solid #eee; }
+
+.isLoading {
+  width: 18px;
+  height: 18px;
+  margin: 3px;
+  animation: rotation .75s infinite linear;
+  border-right: 2px solid #ddd;
+  border-left: 2px solid #ddd;
+  border-bottom: 2px solid #ddd;
+  border-top: 2px solid #888;
+  border-radius: 100%;
+  margin-left: auto; }

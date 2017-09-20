@@ -1,0 +1,5 @@
+.field .check.checked,
+.field .ripple {
+  background-color: rgb(245,171,53);
+  border-color: rgb(245,171,53);
+}

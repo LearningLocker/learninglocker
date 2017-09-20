@@ -1,0 +1,523 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AuthorityEditor renders correctly with account 1`] = `
+<div>
+  <div
+    className="form-group"
+  >
+    <select
+      defaultValue="account"
+      onChange={[Function]}
+    >
+      <option
+        value="mbox"
+      >
+        Email
+      </option>
+      <option
+        value="account"
+      >
+        Account
+      </option>
+      <option
+        value="openid"
+      >
+        Open ID
+      </option>
+      <option
+        value="mbox_sha1sum"
+      >
+        Encrypted Email
+      </option>
+    </select>
+  </div>
+  <div
+    className="form-group"
+  >
+    <div
+      className="form-group"
+    >
+      <label
+        htmlFor="name"
+      >
+        Authority Name
+      </label>
+      <input
+        className="form-control"
+        id="name"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onKeyDown={[Function]}
+        type="text"
+        value="test name"
+      />
+    </div>
+  </div>
+  <div>
+    <div>
+      <div
+        className="form-group"
+      >
+        <label
+          htmlFor="account.homePage"
+        >
+          Authority Account Home Page
+        </label>
+        <input
+          className="form-control"
+          id="account.homePage"
+          onBlur={[Function]}
+          onChange={[Function]}
+          onKeyDown={[Function]}
+          type="text"
+          value="http://learninglocker.net"
+        />
+      </div>
+      <div
+        className="form-group"
+      >
+        <label
+          htmlFor="account.name"
+        >
+          Authority Account Name
+        </label>
+        <input
+          className="form-control"
+          id="account.name"
+          onBlur={[Function]}
+          onChange={[Function]}
+          onKeyDown={[Function]}
+          type="text"
+          value="New Client"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`AuthorityEditor renders correctly with mbox 1`] = `
+<div>
+  <div
+    className="form-group"
+  >
+    <select
+      defaultValue="mbox"
+      onChange={[Function]}
+    >
+      <option
+        value="mbox"
+      >
+        Email
+      </option>
+      <option
+        value="account"
+      >
+        Account
+      </option>
+      <option
+        value="openid"
+      >
+        Open ID
+      </option>
+      <option
+        value="mbox_sha1sum"
+      >
+        Encrypted Email
+      </option>
+    </select>
+  </div>
+  <div
+    className="form-group"
+  >
+    <div
+      className="form-group"
+    >
+      <label
+        htmlFor="name"
+      >
+        Authority Name
+      </label>
+      <input
+        className="form-control"
+        id="name"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onKeyDown={[Function]}
+        type="text"
+        value="test name"
+      />
+    </div>
+  </div>
+  <div>
+    <div
+      className="form-group"
+    >
+      <label
+        htmlFor="mbox"
+      >
+        Authority Email
+      </label>
+      <input
+        className="form-control"
+        id="mbox"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onKeyDown={[Function]}
+        type="text"
+        value="mailto:hello@learninglocker.net"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`AuthorityEditor renders correctly with mboxsha1sum 1`] = `
+<div>
+  <div
+    className="form-group"
+  >
+    <select
+      defaultValue="mbox_sha1sum"
+      onChange={[Function]}
+    >
+      <option
+        value="mbox"
+      >
+        Email
+      </option>
+      <option
+        value="account"
+      >
+        Account
+      </option>
+      <option
+        value="openid"
+      >
+        Open ID
+      </option>
+      <option
+        value="mbox_sha1sum"
+      >
+        Encrypted Email
+      </option>
+    </select>
+  </div>
+  <div
+    className="form-group"
+  >
+    <div
+      className="form-group"
+    >
+      <label
+        htmlFor="name"
+      >
+        Authority Name
+      </label>
+      <input
+        className="form-control"
+        id="name"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onKeyDown={[Function]}
+        type="text"
+        value="test name"
+      />
+    </div>
+  </div>
+  <div>
+    <div
+      className="form-group"
+    >
+      <label
+        htmlFor="mbox_sha1sum"
+      >
+        Authority Encrypted Email
+      </label>
+      <input
+        className="form-control"
+        id="mbox_sha1sum"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onKeyDown={[Function]}
+        type="text"
+        value="53d04bc579b8b4d082ca4a530642845e2c0bfe74"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`AuthorityEditor renders correctly with openid 1`] = `
+<div>
+  <div
+    className="form-group"
+  >
+    <select
+      defaultValue="openid"
+      onChange={[Function]}
+    >
+      <option
+        value="mbox"
+      >
+        Email
+      </option>
+      <option
+        value="account"
+      >
+        Account
+      </option>
+      <option
+        value="openid"
+      >
+        Open ID
+      </option>
+      <option
+        value="mbox_sha1sum"
+      >
+        Encrypted Email
+      </option>
+    </select>
+  </div>
+  <div
+    className="form-group"
+  >
+    <div
+      className="form-group"
+    >
+      <label
+        htmlFor="name"
+      >
+        Authority Name
+      </label>
+      <input
+        className="form-control"
+        id="name"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onKeyDown={[Function]}
+        type="text"
+        value="test name"
+      />
+    </div>
+  </div>
+  <div>
+    <div
+      className="form-group"
+    >
+      <label
+        htmlFor="openid"
+      >
+        Authority Open ID
+      </label>
+      <input
+        className="form-control"
+        id="openid"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onKeyDown={[Function]}
+        type="text"
+        value="http://learninglocker.net/openid/example"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`ClientForm renders correctly 1`] = `
+<div
+  className="row"
+>
+  <div
+    className="col-md-12"
+  >
+    <div
+      className="form-group"
+    >
+      <label
+        htmlFor="lrsTitleInput"
+      >
+        Title
+      </label>
+      <input
+        className="form-control"
+        onChange={[Function]}
+        placeholder="Short name for this client"
+        value=""
+      />
+    </div>
+    <div
+      className="form-group"
+    >
+      <label
+        className=""
+        data-react-toolbox="checkbox"
+        onMouseEnter={undefined}
+        onMouseLeave={undefined}
+      >
+        <input
+          checked={false}
+          className={undefined}
+          disabled={false}
+          name={undefined}
+          onChange={[Function]}
+          onClick={[Function]}
+          type="checkbox"
+        />
+        <div
+          className=""
+          data-react-toolbox="check"
+          onMouseDown={[Function]}
+          style={undefined}
+        />
+        <span
+          className={undefined}
+          data-react-toolbox="label"
+        >
+          Enabled?
+        </span>
+      </label>
+    </div>
+    <div
+      className="form-group"
+    >
+      <label
+        htmlFor="basicKey"
+      >
+        Key
+      </label>
+      <p
+        className="help-block"
+      >
+        
+      </p>
+    </div>
+    <div
+      className="form-group"
+    >
+      <label
+        htmlFor="basicSecret"
+      >
+        Secret
+      </label>
+      <p
+        className="help-block"
+      >
+        
+      </p>
+    </div>
+    <div
+      className="form-group"
+    >
+      <label
+        htmlFor="basicAuth"
+      >
+        Basic auth
+      </label>
+      <p
+        className="help-block strongwrap"
+      >
+        Og==
+      </p>
+    </div>
+    <div
+      className="form-group"
+    >
+      <label
+        htmlFor="overallScopesCheckboxGroup"
+      >
+        Overall Scopes
+      </label>
+      <label
+        className=""
+        data-react-toolbox="checkbox"
+        onMouseEnter={undefined}
+        onMouseLeave={undefined}
+      >
+        <input
+          checked={false}
+          className={undefined}
+          disabled={false}
+          name={undefined}
+          onChange={[Function]}
+          onClick={[Function]}
+          type="checkbox"
+        />
+        <div
+          className=""
+          data-react-toolbox="check"
+          onMouseDown={[Function]}
+          style={undefined}
+        />
+        <span
+          className={undefined}
+          data-react-toolbox="label"
+        >
+          All
+        </span>
+      </label>
+    </div>
+    <div
+      className="page-header"
+    >
+      <h4>
+        xAPI
+      </h4>
+    </div>
+    <div
+      className="form-group"
+    >
+      <div>
+        <div
+          className=""
+          data-react-toolbox="dropdown"
+          onBlur={[Function]}
+          onFocus={[Function]}
+          tabIndex="0"
+        >
+          <div
+            className=""
+            data-react-toolbox="input"
+          >
+            <input
+              className=""
+              disabled={false}
+              id="lrsInput"
+              maxLength={undefined}
+              name={undefined}
+              onChange={[Function]}
+              onClick={[Function]}
+              onKeyPress={undefined}
+              readOnly={true}
+              required={false}
+              role="input"
+              tabIndex="-1"
+              type={null}
+              value=""
+            />
+            <span
+              className={undefined}
+            />
+            <label
+              className=""
+            >
+              LRS (optional)
+            </label>
+          </div>
+          <ul
+            className={undefined}
+          >
+            <li
+              className="undefined"
+              onClick={null}
+            >
+              No LRSs available
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+`;

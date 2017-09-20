@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Criterion should render 1`] = `
+<div
+  className="criterion"
+>
+  <div
+    className="criterionOperator"
+  >
+    <div
+      className="select"
+      onBlur={[Function]}
+      onFocus={[Function]}
+      tabIndex={0}
+    >
+      <div
+        className="content btn btn-default btn-xs"
+      >
+        <div
+          className="value"
+        >
+          &gt;
+        </div>
+        <div
+          className="indicator"
+        >
+          <div
+            className="ion-arrow-up-b"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="criterionValue noCriteria"
+  >
+    <input
+      max={1}
+      min="0"
+      onChange={[Function]}
+      step={0.1}
+      type="number"
+      value=""
+    />
+  </div>
+</div>
+`;
+
+exports[`Criterion with value 1`] = `
+<div
+  className="criterion"
+>
+  <div
+    className="criterionOperator"
+  >
+    <div
+      className="select"
+      onBlur={[Function]}
+      onFocus={[Function]}
+      tabIndex={0}
+    >
+      <div
+        className="content btn btn-default btn-xs"
+      >
+        <div
+          className="value"
+        >
+          &gt;
+        </div>
+        <div
+          className="indicator"
+        >
+          <div
+            className="ion-arrow-up-b"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="criterionValue noCriteria"
+  >
+    <input
+      max={1}
+      min="0"
+      onChange={[Function]}
+      step={0.1}
+      type="number"
+      value=""
+    />
+  </div>
+</div>
+`;
