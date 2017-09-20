@@ -55,10 +55,10 @@ describe('Statement Forwarding Request', () => {
     await promiseRequestHandler({ statementForwarding, statement });
     expect(request.isDone()).to.equal(true);
 
-    // const doneStatement = await Statement.findById(statementId);
-    // expect(doneStatement.pendingForwardingQueue.length).to.equal(0);
-    // expect(doneStatement.completedForwardingQueue.length).to.equal(1);
-    // expect(doneStatement.completedForwardingQueue[0].toString()).to.equal(statementForwardingId);
+    const doneStatement = await Statement.findById(statementId);
+    expect(doneStatement.pendingForwardingQueue.length).to.equal(0);
+    expect(doneStatement.completedForwardingQueue.length).to.equal(1);
+    expect(doneStatement.completedForwardingQueue[0].toString()).to.equal(statementForwardingId);
   }).timeout(10000);
 
 
@@ -101,16 +101,16 @@ describe('Statement Forwarding Request', () => {
     try {
       await promiseRequestHandler({ statementForwarding, statement });
     } catch (err) {
-      expect(err).to.be.err;
+      expect(err).to.be.err; // eslint-disable-line no-unused-expressions
     }
     expect(request.isDone()).to.equal(true);
 
-    // const doneStatement = Statement.findById(statementId);
-    // expect(doneStatement.pendingForwardingQueue[0].toString()).to
-    //   .equal(statementForwardingId);
-    // expect(doneStatement.completedForwardingQueue.length).to
-    //   .equal(0);
-    // expect(doneStatement.failedForwardingLog[0].statementForwarding_id.toString()).to
-    //   .equal(statementForwardingId);
+    const doneStatement = await Statement.findById(statementId);
+    expect(doneStatement.pendingForwardingQueue[0].toString()).to
+      .equal(statementForwardingId);
+    expect(doneStatement.completedForwardingQueue.length).to
+      .equal(0);
+    expect(doneStatement.failedForwardingLog[0].statementForwarding_id.toString()).to
+      .equal(statementForwardingId);
   }).timeout(5000);
 });
