@@ -20,28 +20,29 @@ const generateHeaders = (statementContent, statementForwarding) => {
   return headers2.toJS();
 };
 
-const sendRequest = (statement, statementForwarding) => {
+const sendRequest = async (statement, statementForwarding) => {
   const urlString = `${statementForwarding.configuration
     .protocol}://${statementForwarding.configuration.url}`;
 
   const statementContent = JSON.stringify(statement);
 
   const headers = generateHeaders(statementContent, statementForwarding);
+
   const request = popsicle.request({
     method: 'POST',
     body: statement,
     url: urlString,
     headers,
     timeout: 16000
-  }).then((response) => {
-    if (!(response.status >= 200 && response.status < 400)) {
-      throw new ForwardingRequestError(
-        `Status code was invalid: (${response.status})`,
-        response.body,
-      );
-    }
-    return response;
   });
+
+  const response = await request;
+  if (!(response.status >= 200 && response.status < 400)) {
+    throw new ForwardingRequestError(
+      `Status code was invalid: (${response.status})`,
+      response.body,
+    );
+  }
 
   return request;
 };
@@ -63,29 +64,29 @@ const setCompleteStatements = (statement, statementForwardingId) =>
     }
   });
 
-const statementForwardingRequestHandler = (
+const statementForwardingRequestHandler = async (
   { statement, statementForwarding },
   done
 ) => {
-  const updatePendingPromise = setPendingStatements(
-    statement,
-    statementForwarding._id
-  );
+  try {
+    await setPendingStatements(
+      statement,
+      statementForwarding._id
+    );
 
-  const sendRequestPromise = sendRequest(
-    statement.statement,
-    statementForwarding
-  ).then(() =>
-    // set to complete
-    updatePendingPromise
-      .then(() => setCompleteStatements(statement, statementForwarding._id))
-      .then(() => {
-        logger.debug(
-          `SUCCESS sending statement to ${statementForwarding.configuration.url}`
-        );
-        done();
-      })
-  ).catch((err) => {
+    await sendRequest(
+      statement.statement,
+      statementForwarding
+    );
+
+    await setCompleteStatements(statement, statementForwarding._id);
+
+    logger.debug(
+      `SUCCESS sending statement to ${statementForwarding.configuration.url}`
+    );
+
+    done();
+  } catch (err) {
     logger.info(
       `FAILED sending stetement to ${statementForwarding.configuration.url}`,
       err
@@ -103,24 +104,23 @@ const statementForwardingRequestHandler = (
       });
     }
 
-    const updateFailedLogPromise = Statement.findByIdAndUpdate(
-      statement._id,
-      {
-        $addToSet: {
-          failedForwardingLog: update
+    try {
+      await Statement.findByIdAndUpdate(
+        statement._id,
+        {
+          $addToSet: {
+            failedForwardingLog: update
+          }
         }
-      }
-    ).catch((err) => {
+      );
+    } catch (err) {
       logger.error('Failed updating failedForwardingLog', err);
-    });
+    }
 
-    Promise.all([updatePendingPromise, updateFailedLogPromise]).then(() => {
-      done(err);
-    });
-  });
+    done(err);
+  }
 
-  const outPromise = Promise.all([updatePendingPromise, sendRequestPromise]);
-  return outPromise;
+  return [statement._id];
 };
 
 export default statementForwardingRequestHandler;
