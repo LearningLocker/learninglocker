@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import PersonaIdentifier from 'ui/components/PersonaIdentifier';
 import { Map } from 'immutable';
 import { compose, renameProp, withProps, setPropTypes } from 'recompose';
@@ -17,21 +17,15 @@ const enhance = compose(
   renameProp('models', 'personaIdentifiers')
 );
 
-class PersonaIdentifiers extends Component {
-  renderItems = items => items.map((item) => {
-    if (typeof item !== 'string') {
-      return <PersonaIdentifier model={item} key={item.get('_id')} />;
-    }
-    return null;
-  }).valueSeq();
-
-  render = () => {
-    const { personaIdentifiers } = this.props;
-
-    return (
-      <div>{this.renderItems(personaIdentifiers)}</div>
-    );
+const renderItems = items => items.map((item) => {
+  if (typeof item !== 'string') {
+    return <PersonaIdentifier model={item} key={item.get('_id')} />;
   }
-}
+  return null;
+}).valueSeq();
 
-export default enhance(PersonaIdentifiers);
+const personaIdentifiers = ({
+  personaIdentifiers: personaIdentifiers2
+}) => (<div>{renderItems(personaIdentifiers2)}</div>);
+
+export default enhance(personaIdentifiers);

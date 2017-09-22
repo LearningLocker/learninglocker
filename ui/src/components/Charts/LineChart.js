@@ -34,21 +34,19 @@ const renderLine = colors => (label, i) => (
 const renderLines = labels => colors =>
   labels.map(renderLine(colors)).valueSeq();
 
-const renderLineChart = (labels, toggleHiddenSeries, hiddenSeries) => colors => data => ({ width, height }) => {
-  return (
-    <Chart
-      data={getChartData(data, hiddenSeries)}
-      width={width}
-      height={height}
-      margin={{ top: 10, right: 35, left: -20, bottom: 5 }}>
-      <XAxis type="category" dataKey="cellId" tickFormatter={getShortModel(data)} />
-      <YAxis type="number" />
-      {renderLegend(labels, toggleHiddenSeries)}
-      {renderLines(labels)(colors)}
-      {renderTooltips(data)}
-    </Chart>
+const renderLineChart = (labels, toggleHiddenSeries, hiddenSeries) => colors => data => ({ width, height }) => (
+  <Chart
+    data={getChartData(data, hiddenSeries)}
+    width={width}
+    height={height}
+    margin={{ top: 10, right: 35, left: -20, bottom: 5 }}>
+    <XAxis type="category" dataKey="cellId" tickFormatter={getShortModel(data)} />
+    <YAxis type="number" />
+    {renderLegend(labels, toggleHiddenSeries)}
+    {renderLines(labels)(colors)}
+    {renderTooltips(data)}
+  </Chart>
   );
-}
 
 const renderChart = (component, axesLabels, chartWrapperFn) => (
   <div className={styles.chart}>

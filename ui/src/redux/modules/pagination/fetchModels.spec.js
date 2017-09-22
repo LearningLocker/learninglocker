@@ -344,7 +344,7 @@ test('reduceSuccess add to middle BACKWARD', () => {
     sort: 'sort',
     direction: 'BACKWARD',
     edges: setupEdges([3, 3.5, 4]),
-    cursor: new Map({ before: 'c5'}),
+    cursor: new Map({ before: 'c5' }),
     pageInfo: new OrderedMap({
       page: 1
     })
@@ -458,7 +458,7 @@ test('reduceSuccess delete from middle BACKWARD', () => {
     sort: 'sort',
     direction: 'BACKWARD',
     edges: setupEdges([2, 4, 5]),
-    cursor: new Map({ before:'c6' }),
+    cursor: new Map({ before: 'c6' }),
     pageInfo: new OrderedMap({
       page: 1
     })
@@ -517,7 +517,7 @@ test('multi add', () => {
     sort: 'sort',
     direction: 'FORWARD',
     edges: setupEdges([2, 2.5, 3, 3.5, 4]),
-    cursor: new Map({ after: 'c1'}),
+    cursor: new Map({ after: 'c1' }),
     pageInfo: new OrderedMap({
       page: 1
     })

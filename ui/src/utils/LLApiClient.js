@@ -30,7 +30,7 @@ class _LLApiClient {
   }
 
   constructRequest = (schema, query = {}, props = {}, body = null) => {
-    const url = formatUrl(`/api/v1/${schema}${props._id ? `/${props._id}` : ''}`);
+    const url = formatUrl(`${routes.RESTIFY_PREFIX}/${schema}${props._id ? `/${props._id}` : ''}`);
     const data = {
       url,
       headers: {
@@ -76,14 +76,17 @@ class _LLApiClient {
   }
 
   getModel = (schema, id) => get({
-    url: formatUrl(`api/v1/${schema}/${id}`),
+    url: formatUrl(`${routes.RESTIFY_PREFIX}/${schema}/${id}`),
     headers: {
       Authorization: `Bearer ${this.getToken()}`
     },
   })
 
   countModels = (schema, filter, params) => get({
-    url: (schema === 'statement') ? formatUrl('/statements/count') : formatUrl(`api/v1/${schema}/count`),
+    url: (schema === 'statement') ?
+      formatUrl('/statements/count') : formatUrl(
+        `${routes.RESTIFY_PREFIX}/${schema}/count`
+      ),
     headers: {
       Authorization: `Bearer ${this.getToken()}`
     },

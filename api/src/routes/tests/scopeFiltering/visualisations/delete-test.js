@@ -8,6 +8,7 @@ import createUserToken from 'api/routes/tests/utils/tokens/createUserToken';
 import createOwnerOrgToken
   from 'api/routes/tests/utils/tokens/createOwnerOrgToken';
 import setup from 'api/routes/tests/utils/setup';
+import { RESTIFY_PREFIX } from 'lib/constants/routes';
 import createVisualisation from '../utils/createVisualisation';
 
 describe('API HTTP DELETE visualisations route scope filtering', () => {
@@ -17,7 +18,7 @@ describe('API HTTP DELETE visualisations route scope filtering', () => {
     const model = await createVisualisation();
     const modelId = model._id.toString();
     return apiApp
-      .delete(`/api/v1/visualisation/${modelId}`)
+      .delete(`${RESTIFY_PREFIX}/visualisation/${modelId}`)
       .set('Authorization', `Bearer ${token}`)
       .set('Content-Type', 'application/json')
       .expect(204);

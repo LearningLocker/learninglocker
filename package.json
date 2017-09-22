@@ -2,12 +2,12 @@
   "name": "learning_locker",
   "description": "An open source learning record store",
   "license": "GPL-3.0",
-  "version": "2.0.0-alpha1",
+  "version": "2.4.3",
   "repository": {
     "type": "git",
-    "url": "https://github.com/learninglocker/learninglocker_v2"
+    "url": "https://github.com/LearningLocker/learninglocker"
   },
-  "homepage": "https://github.com/learninglocker/learninglocker_v2",
+  "homepage": "https://github.com/LearningLocker/learninglocker",
   "keywords": [],
   "scripts": {
     "dev-api-server": "babel-node api/build",
@@ -270,6 +270,6 @@
     "webpack-notifier": "^1.2.1"
   },
   "engines": {
-    "node": "6.2"
+    "node": "6.11.3"
   }
 }

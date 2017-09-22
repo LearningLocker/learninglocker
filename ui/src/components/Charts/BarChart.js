@@ -75,25 +75,23 @@ class BarChart extends Component {
     </span>
   )
 
-  renderBarChart = colors => labels => data => stacked => page => ({ width, height }) => {
-    return (
-      <Chart
-        data={getChartData(this.getDataChunk(data)(page), this.props.hiddenSeries)}
-        width={width}
-        height={height}
-        layout="vertical">
-        <YAxis
-          dataKey="cellId"
-          tickFormatter={getShortModel(data)}
-          type="category"
-          width={90} />
-        <XAxis type="number" domain={getDomain(data)} />
-        {renderLegend(labels, this.props.toggleHiddenSeries)}
-        {renderBars(colors)(labels)(stacked)}
-        {renderTooltips(data, this.props.hiddenSeries)}
-      </Chart>
-    );
-  }
+  renderBarChart = colors => labels => data => stacked => page => ({ width, height }) => (
+    <Chart
+      data={getChartData(this.getDataChunk(data)(page), this.props.hiddenSeries)}
+      width={width}
+      height={height}
+      layout="vertical">
+      <YAxis
+        dataKey="cellId"
+        tickFormatter={getShortModel(data)}
+        type="category"
+        width={90} />
+      <XAxis type="number" domain={getDomain(data)} />
+      {renderLegend(labels, this.props.toggleHiddenSeries)}
+      {renderBars(colors)(labels)(stacked)}
+      {renderTooltips(data, this.props.hiddenSeries)}
+    </Chart>
+    )
 
   renderResults = results => colors => labels => (stacked) => {
     const { activePage } = this.state;

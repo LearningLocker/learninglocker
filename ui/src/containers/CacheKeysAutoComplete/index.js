@@ -73,27 +73,25 @@ const CacheKeysAutoComplete = ({
   fetchMore,
   useTooltip,
   selectOptionBlur
-}) => {
-  return (
-    <AutoComplete2
-      renderInput={({ hasFocus }) => (
-        <SingleInput
-          hasFocus={hasFocus}
-          searchString={searchString}
-          parseOption={option => option.get('searchString')}
-          renderOption={renderOption({ useTooltip })}
-          onChangeSearchString={e => setSearchString(e.target.value)}
-          selectedOption={selectedOption} />
+}) => (
+  <AutoComplete2
+    renderInput={({ hasFocus }) => (
+      <SingleInput
+        hasFocus={hasFocus}
+        searchString={searchString}
+        parseOption={option => option.get('searchString')}
+        renderOption={renderOption({ useTooltip })}
+        onChangeSearchString={e => setSearchString(e.target.value)}
+        selectedOption={selectedOption} />
       )}
-      renderOptions={({ onBlur }) => (
-        <OptionList
-          options={options.entrySeq().toList()}
-          optionCount={optionCount}
-          renderOption={renderOption({ useTooltip })}
-          onSelectOption={selectOptionBlur(onBlur)}
-          fetchMore={fetchMore} />
+    renderOptions={({ onBlur }) => (
+      <OptionList
+        options={options.entrySeq().toList()}
+        optionCount={optionCount}
+        renderOption={renderOption({ useTooltip })}
+        onSelectOption={selectOptionBlur(onBlur)}
+        fetchMore={fetchMore} />
       )} />
   );
-};
 
 export default withKeys(CacheKeysAutoComplete);

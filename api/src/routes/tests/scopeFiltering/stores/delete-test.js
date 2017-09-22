@@ -5,6 +5,7 @@ import createUserToken from 'api/routes/tests/utils/tokens/createUserToken';
 import createOwnerOrgToken
   from 'api/routes/tests/utils/tokens/createOwnerOrgToken';
 import setup from 'api/routes/tests/utils/setup';
+import { RESTIFY_PREFIX } from 'lib/constants/routes';
 import createStore from '../utils/createStore';
 
 describe('API HTTP DELETE stores route scope filtering', () => {
@@ -14,7 +15,7 @@ describe('API HTTP DELETE stores route scope filtering', () => {
     const store = await createStore();
     const storeId = store._id.toString();
     return apiApp
-      .delete(`/api/v1/lrs/${storeId}`)
+      .delete(`${RESTIFY_PREFIX}/lrs/${storeId}`)
       .set('Authorization', `Bearer ${token}`)
       .set('Content-Type', 'application/json')
       .expect(expectedCode);

@@ -89,24 +89,20 @@ class ExpandedSection extends Component {
       onDeleteCriterion={this.props.onDeleteCriterion} />
   );
 
-  renderRangeCriteria = () => {
-    return (<RangeCriteria
-      section={this.props.section}
-      criteria={this.props.sectionCriteria}
-      onCriteriaChange={this.props.onCriteriaChange}
-      onAddCriterion={this.props.onAddCriterion}
-      onDeleteCriterion={this.props.onDeleteCriterion} />
-    );
-  }
+  renderRangeCriteria = () => (<RangeCriteria
+    section={this.props.section}
+    criteria={this.props.sectionCriteria}
+    onCriteriaChange={this.props.onCriteriaChange}
+    onAddCriterion={this.props.onAddCriterion}
+    onDeleteCriterion={this.props.onDeleteCriterion} />
+    )
 
-  renderBooleanCriteria = () => {
-    return (<BooleanCriteria
-      section={this.props.section}
-      criteria={this.props.sectionCriteria}
-      onCriteriaChange={this.props.onCriteriaChange}
-      onDeleteCriterion={this.props.onDeleteCriterion} />
-    );
-  }
+  renderBooleanCriteria = () => (<BooleanCriteria
+    section={this.props.section}
+    criteria={this.props.sectionCriteria}
+    onCriteriaChange={this.props.onCriteriaChange}
+    onDeleteCriterion={this.props.onDeleteCriterion} />
+    )
 
   renderDiscreteCriteria = () => {
     const out = (

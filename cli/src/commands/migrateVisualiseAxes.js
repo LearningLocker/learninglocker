@@ -33,7 +33,7 @@ export default function (next = null) {
           // .set('axes', '{}');
 
         return doc.save();
-      } catch(err) {
+      } catch (err) {
         console.log('Failed to migrate', doc, err);
         return false;
       }

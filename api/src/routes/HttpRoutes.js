@@ -139,12 +139,12 @@ router.post(
  */
 router.get(
   routes.DOWNLOADLOGO,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  passport.authenticate(['jwt', 'jwt-cookie'], DEFAULT_PASSPORT_OPTIONS),
   DownloadController.downloadLogo
 );
 router.get(
   routes.DOWNLOADEXPORT,
-  passport.authenticate('jwt-cookie', DEFAULT_PASSPORT_OPTIONS),
+  passport.authenticate(['jwt', 'jwt-cookie'], DEFAULT_PASSPORT_OPTIONS),
   DownloadController.downloadExport
 );
 
@@ -169,6 +169,15 @@ router.get(
   routes.STATEMENTS_COUNT,
   passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   StatementController.count
+);
+
+/**
+ * V1 compatability
+ */
+router.get(
+  routes.V1_STATEMENTS_AGGREGATE,
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  StatementController.v1aggregate
 );
 
 /**
