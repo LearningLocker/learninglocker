@@ -33,7 +33,10 @@ const sendRequest = async (statement, statementForwarding) => {
     body: statement,
     url: urlString,
     headers,
-    timeout: 16000
+    timeout: 16000,
+    options: {
+      followRedirects: (() => true)
+    }
   });
 
   const response = await request;
