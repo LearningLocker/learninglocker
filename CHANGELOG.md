@@ -6,11 +6,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Deprecated
 ### Removed
 ### Fixed
-### Security
-### Migrations
-### Deprecated
-### Removed
-### Fixed
+ - Client auth not working with some APIs
 ### Security
 ### Migrations
 
