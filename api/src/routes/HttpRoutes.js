@@ -246,10 +246,12 @@ const generateModelRoutes = (model) => {
     passport.authenticate(
       ['jwt', 'clientBasic'],
       DEFAULT_PASSPORT_OPTIONS,
-      (err) => {
+      (err, user) => {
         if (err) {
           return handleError(res, err);
         }
+        req.user = user;
+        return next();
       }
     )(req, res, next);
   generateConnectionsRoute(model, routeSuffix, authentication);
