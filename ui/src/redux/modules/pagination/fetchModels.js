@@ -24,6 +24,7 @@ export const BACKWARD = 'BACKWARD'; // backward pagination direction
  * SELECTORS
  */
 const cacheDuration = moment.duration({ minute: 3 });
+const failedCacheDuration = moment.duration({ minute: 1 });
 
 const defaultFilter = new Map();
 const defaultSort = new Map({ createdAt: -1, _id: 1 });
@@ -76,6 +77,14 @@ const shouldFetchSelector = ({ schema, filter, sort, cursor }) => (createSelecto
     if (requestState === IN_PROGRESS) {
       return false;
     }
+
+    if (
+      requestState === FAILED &&
+      moment().diff(cachedAt) < failedCacheDuration.asMilliseconds()
+    ) {
+      return false;
+    }
+
     const cachedFor = moment().diff(cachedAt);
     if (cachedFor < cacheDuration.asMilliseconds()) {
       return false;
@@ -176,7 +185,8 @@ const fetchModels = createAsyncDuck({
   reduceSuccess,
 
   reduceFailure: (state, { schema, filter, sort, cursor }) =>
-    state.setIn([schema, filter, sort, cursor, 'requestState'], FAILED),
+    state.setIn([schema, filter, sort, cursor, 'requestState'], FAILED)
+      .setIn([schema, filter, sort, cursor, 'cachedAt'], moment()),
 
   reduceComplete: (state, { schema, filter, sort, cursor }) =>
     state.setIn([schema, filter, sort, cursor, 'requestState'], null),
@@ -252,7 +262,9 @@ const fetchModels = createAsyncDuck({
       first,
       last
     });
-    if (status >= 300) throw new Error(body.message || body);
+    if (status >= 300) {
+      throw new Error(body.message || body);
+    }
 
     const models = map(body.edges, 'node');
     const ids = map(models, '_id');
