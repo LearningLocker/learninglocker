@@ -3,11 +3,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ## [unreleased]
 ### Added
 ### Changed
-### Deprecated
-### Removed
-### Fixed
-### Security
-### Migrations
+ - Require submit to apply changes from advanced query editor
 ### Deprecated
 ### Removed
 ### Fixed
