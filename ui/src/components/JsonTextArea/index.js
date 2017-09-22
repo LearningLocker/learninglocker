@@ -110,8 +110,7 @@ export default class JsonTextArea extends Component {
           onChange={this.handleChange}
           value={value}
           className="form-control"
-          ref={(ref) => this.textarea = ref}
-          />
+          ref={(ref) => { (this.textarea = ref); }} />
         {error &&
           <span className="help-block">{error.message}</span>
         }
