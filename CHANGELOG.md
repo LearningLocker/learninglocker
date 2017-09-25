@@ -8,9 +8,14 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Fixed
 ### Security
 ### Migrations
+
+## [2.0.1] - 2017-09-25
+### Added
+### Changed
 ### Deprecated
 ### Removed
 ### Fixed
+ - Adds VERSION file
 ### Security
 ### Migrations
 
