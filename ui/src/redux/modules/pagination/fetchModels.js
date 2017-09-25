@@ -10,6 +10,7 @@ import { normalize, arrayOf } from 'normalizr';
 import entityReviver from 'ui/redux/modules/models/entityReviver';
 import * as mergeEntitiesDuck from 'ui/redux/modules/models/mergeEntities';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
+import Unauthorised from 'lib/errors/Unauthorised';
 import diffEdges from './fetchModelsDiff';
 
 
@@ -178,7 +179,7 @@ export const reduceSuccess = (
 
 const fetchModels = createAsyncDuck({
   actionName: 'learninglocker/pagination/FETCH_MODELS',
-  failureDelay: 20000,
+  failureDelay: 2000,
 
   reduceStart,
 
@@ -262,6 +263,10 @@ const fetchModels = createAsyncDuck({
       first,
       last
     });
+
+    if (status === 401) {
+      throw new Unauthorised('Unauthorised');
+    }
     if (status >= 300) {
       throw new Error(body.message || body);
     }
