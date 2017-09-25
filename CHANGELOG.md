@@ -6,6 +6,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Deprecated
 ### Removed
 ### Fixed
+ - Client auth not working with some APIs
 ### Security
 ### Migrations
 
@@ -197,4 +198,3 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 - Scrolling down really far in a journey visualisation sometimes stopped loading more results
 - Removing a user from an organisation could actually delete them
 - Setting a Journey to inactive wouldn’t actually stop it processing new statements ([#LL-139](https://ht2labs.myjetbrains.com/youtrack/issue/LL-139))
->>>>>>> v2.4.3
