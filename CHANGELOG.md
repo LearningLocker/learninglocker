@@ -2,12 +2,16 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [unreleased]
 ### Added
+  - Can now set the max times statement forwarding will retry.
+
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
 ### Security
 ### Migrations
+  - Delete the STATAMENT_FORWARDING_REQUEST_QUEUE
+  
 ### Deprecated
 ### Removed
 ### Fixed

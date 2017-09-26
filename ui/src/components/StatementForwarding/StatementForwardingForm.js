@@ -67,7 +67,14 @@ const updateHandlers = withHandlers({
   changeQuery: ({ updateModel }) => value => updateModel({
     path: ['query'],
     value
-  })
+  }),
+  changeMaxRetries: ({ updateModel, model }) => (event) => {
+    const newMaxRetriers = event.target.value;
+    return updateModel({
+      path: ['configuration'],
+      value: model.get('configuration', new Map()).set('maxRetries', newMaxRetriers)
+    });
+  }
 });
 
 const withProtocols = withProps(() => ({
@@ -90,7 +97,8 @@ const StatementForwardingForm = ({
   changeBasicUsername,
   changeBasicPassword,
   changeQuery,
-  authTypes
+  authTypes,
+  changeMaxRetries
 }) => (
   <div>
     <div className="row">
@@ -215,6 +223,29 @@ const StatementForwardingForm = ({
             </div>
           </div>)
         }
+
+        <div
+          className={classNames({
+            'form-group': true,
+            'has-error': model.getIn(['errors', 'messages', 'canfiguration.maxRetries'], false)
+          })}>
+          <label htmlFor={`${model.get('_id')}maxRetries`}>Max Retries</label>
+          <input
+            id={`${model.getIn(['configuration', 'maxRetries'], 3)}maxRetries`}
+            type="number"
+            step="1"
+            min="0"
+            max="1000"
+            className="form-control"
+            value={model.getIn(['configuration', 'maxRetries'], 3)}
+            placeholder="3"
+            onChange={changeMaxRetries} />
+          { model.getIn(['errors', 'messages', 'configuration.maxRetries'], false) &&
+            (<span className="help-block">
+              <ValidationList errors={model.getIn(['errors', 'messages', 'configuration.maxRetries'])} />
+            </span>
+            )}
+        </div>
 
         <div className="form-group">
           <QueryBuilder
