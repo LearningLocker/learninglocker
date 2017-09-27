@@ -2,6 +2,7 @@ import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { map } from 'lodash';
 import DebounceInput from 'react-debounce-input';
+import { Map } from 'immutable';
 import {
   compose,
   withHandlers,
@@ -61,6 +62,7 @@ const withHandlersEnhance = withHandlers(
 );
 
 const renderItems = ({
+  staticValues,
   values,
   onKeyChange,
   onValueChange,
@@ -69,7 +71,19 @@ const renderItems = ({
 }) => {
   const valuesJs = values.toJS();
 
-  return map(valuesJs, (value, key) => {
+  const staticValuesRendered = map(staticValues.toJS(), (value, key) =>
+    (<tr>
+      <td>
+        <input className="form-control" type="text" value={key} disabled="true" />
+      </td>
+      <td>
+        <input className="form-control" type="text" value={value} disabled="true" />
+      </td>
+    </tr>)
+  );
+
+
+  const valuesRendered = map(valuesJs, (value, key) => {
     if (key === '_id') {
       return null;
     }
@@ -96,9 +110,11 @@ const renderItems = ({
       </td>
     </tr>);
   });
+  return [staticValuesRendered, valuesRendered];
 };
 
 const render = ({
+  staticValues = new Map(), // can't be changed
   values, // key value object
   onChange,
   remove,
@@ -108,6 +124,7 @@ const render = ({
   onValueChange,
 }) => {
   const items = renderItems({
+    staticValues,
     values,
     onChange,
     onKeyChange,

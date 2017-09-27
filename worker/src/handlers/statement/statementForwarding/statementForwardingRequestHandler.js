@@ -15,13 +15,20 @@ import * as Queue from 'lib/services/queue';
 const objectId = mongoose.Types.ObjectId;
 
 const generateHeaders = (statementContent, statementForwarding) => {
-  const headers1 = new Map({
+  const headersWithLength = new Map({
     'Content-Type': 'application/json',
     'Content-Length': Buffer.byteLength(statementContent)
   });
-  const statementForwarding2 = new StatementForwarding(statementForwarding);
-  const headers2 = headers1.merge(statementForwarding2.getAuthHeaders());
-  return headers2.toJS();
+  const statementForwardingModel = new StatementForwarding(statementForwarding);
+
+  const headersWithAuthAndLength =
+    headersWithLength.merge(statementForwardingModel.getAuthHeaders());
+
+  const headersWithAuthAndLengthAndHeaders =
+    headersWithAuthAndLength.merge(statementForwardingModel.getHeaders());
+
+
+  return headersWithAuthAndLengthAndHeaders.toJS();
 };
 
 const sendRequest = async (statement, statementForwarding) => {
