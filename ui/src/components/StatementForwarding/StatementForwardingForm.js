@@ -228,9 +228,9 @@ const StatementForwardingForm = ({
         <div
           className={classNames({
             'form-group': true,
-            'has-error': model.getIn(['errors', 'messages', 'canfiguration.maxRetries'], false)
+            'has-error': model.getIn(['errors', 'messages', 'configuration.maxRetries'], false)
           })}>
-          <label htmlFor={`${model.get('_id')}maxRetries`}>{`Max Retries (0 - ${STATAMENT_FORWARDING_MAX_RETRIES}`)}</label>
+          <label htmlFor={`${model.get('_id')}maxRetries`}>{`Max Retries (0 - ${STATAMENT_FORWARDING_MAX_RETRIES})`}</label>
           <input
             id={`${model.getIn(['configuration', 'maxRetries'], 3)}maxRetries`}
             type="number"
