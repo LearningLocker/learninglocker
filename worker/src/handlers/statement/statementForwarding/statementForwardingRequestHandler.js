@@ -20,13 +20,11 @@ const generateHeaders = (statementContent, statementForwarding) => {
     'Content-Length': Buffer.byteLength(statementContent)
   });
   const statementForwardingModel = new StatementForwarding(statementForwarding);
-
   const headersWithAuthAndLength =
     headersWithLength.merge(statementForwardingModel.getAuthHeaders());
 
   const headersWithAuthAndLengthAndHeaders =
     headersWithAuthAndLength.merge(statementForwardingModel.getHeaders());
-
 
   return headersWithAuthAndLengthAndHeaders.toJS();
 };
