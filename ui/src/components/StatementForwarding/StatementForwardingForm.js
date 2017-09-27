@@ -6,6 +6,7 @@ import Switch from 'ui/components/Material/Switch';
 import QueryBuilder from 'ui/containers/QueryBuilder';
 import classNames from 'classnames';
 import ValidationList from 'ui/components/ValidationList';
+import { STATAMENT_FORWARDING_MAX_RETRIES } from 'lib/constants/statementForwarding';
 
 const schema = 'statementForwarding';
 
@@ -229,13 +230,13 @@ const StatementForwardingForm = ({
             'form-group': true,
             'has-error': model.getIn(['errors', 'messages', 'canfiguration.maxRetries'], false)
           })}>
-          <label htmlFor={`${model.get('_id')}maxRetries`}>Max Retries (0 - 1000)</label>
+          <label htmlFor={`${model.get('_id')}maxRetries`}>{`Max Retries (0 - ${STATAMENT_FORWARDING_MAX_RETRIES}`)}</label>
           <input
             id={`${model.getIn(['configuration', 'maxRetries'], 3)}maxRetries`}
             type="number"
             step="1"
             min="0"
-            max="1000"
+            max={STATAMENT_FORWARDING_MAX_RETRIES}
             className="form-control"
             value={model.getIn(['configuration', 'maxRetries'], 3)}
             placeholder="3"
