@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import ValidationList from 'ui/components/ValidationList';
 import TableInput from 'ui/components/TableInput';
 import { getAuthHeaders } from 'lib/helpers/statementForwarding';
-import { AUTH_TYPES, AUTH_TYPE_NO_AUTH } from 'lib/constants/statementForwarding';
+import { AUTH_TYPES, AUTH_TYPE_NO_AUTH, STATAMENT_FORWARDING_MAX_RETRIES } from 'lib/constants/statementForwarding';
 
 const schema = 'statementForwarding';
 
@@ -252,15 +252,15 @@ const StatementForwardingForm = ({
           <div
             className={classNames({
               'form-group': true,
-              'has-error': model.getIn(['errors', 'messages', 'canfiguration.maxRetries'], false)
+              'has-error': model.getIn(['errors', 'messages', 'configuration.maxRetries'], false)
             })}>
-            <label htmlFor={`${model.get('_id')}maxRetries`}>Max Retries (0 - 1000)</label>
+            <label htmlFor={`${model.get('_id')}maxRetries`}>{`Max Retries (0 - ${STATAMENT_FORWARDING_MAX_RETRIES})`}</label>
             <input
               id={`${model.getIn(['configuration', 'maxRetries'], 3)}maxRetries`}
               type="number"
               step="1"
               min="0"
-              max="1000"
+              max={STATAMENT_FORWARDING_MAX_RETRIES}
               className="form-control"
               value={model.getIn(['configuration', 'maxRetries'], 3)}
               placeholder="3"
@@ -268,8 +268,8 @@ const StatementForwardingForm = ({
             { model.getIn(['errors', 'messages', 'configuration.maxRetries'], false) &&
               (<span className="help-block">
                 <ValidationList errors={model.getIn(['errors', 'messages', 'configuration.maxRetries'])} />
-              </span>)
-            }
+              </span>
+              )}
           </div>
 
           <div
