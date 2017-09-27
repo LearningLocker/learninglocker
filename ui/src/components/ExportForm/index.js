@@ -94,7 +94,7 @@ class ExportForm extends Component {
 
     return (
       <div>
-        <div className={`${styles.exportForm} row row-no-padding`}>
+        <div className={`${styles.exportForm} row rowadding`}>
           {rawMode ? (
             <div className="col-xs-12">
               <ProjectionInput

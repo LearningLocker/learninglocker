@@ -1,11 +1,12 @@
 import React from 'react';
-import { List, Map } from 'immutable';
+import { fromJS, List, Map } from 'immutable';
 import { withModel } from 'ui/utils/hocs';
 import { withProps, compose, withHandlers } from 'recompose';
 import Switch from 'ui/components/Material/Switch';
 import QueryBuilder from 'ui/containers/QueryBuilder';
 import classNames from 'classnames';
 import ValidationList from 'ui/components/ValidationList';
+import TableInput from 'ui/components/TableInput';
 
 const schema = 'statementForwarding';
 
@@ -74,6 +75,17 @@ const updateHandlers = withHandlers({
       path: ['configuration'],
       value: model.get('configuration', new Map()).set('maxRetries', newMaxRetriers)
     });
+  },
+  changeHeaders: ({ updateModel, model }) => (newHeaders) => {
+    const newHeadersString = JSON.stringify(newHeaders.toJS());
+
+    return updateModel({
+      path: ['configuration'],
+      value: model.get('configuration', new Map()).set(
+        'headers',
+        newHeadersString
+      )
+    });
   }
 });
 
@@ -98,7 +110,8 @@ const StatementForwardingForm = ({
   changeBasicPassword,
   changeQuery,
   authTypes,
-  changeMaxRetries
+  changeMaxRetries,
+  changeHeaders
 }) => (
   <div>
     <div className="row">
@@ -245,6 +258,16 @@ const StatementForwardingForm = ({
               <ValidationList errors={model.getIn(['errors', 'messages', 'configuration.maxRetries'])} />
             </span>
             )}
+        </div>
+
+        <div
+          className={classNames({
+            'gorm-group': true
+          })}>
+          <label htmlFor={`${model.get('_id')}headers`}>Headers</label>
+          <TableInput
+            values={fromJS(JSON.parse(model.getIn(['configuration', 'headers'], '{}')))}
+            onChange={changeHeaders} />
         </div>
 
         <div className="form-group">
