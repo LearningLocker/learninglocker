@@ -61,7 +61,7 @@ export const extractPersonasStatementHandler = personaService =>
       .catch(done);
 
 // PROCESS START
-export default wrapHandlerForStatement(
+export default personaService => wrapHandlerForStatement(
   STATEMENT_EXTRACT_PERSONAS_QUEUE,
-  extractPersonasStatementHandler
+  extractPersonasStatementHandler(personaService)
 );
