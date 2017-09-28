@@ -2,6 +2,8 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [unreleased]
 ### Added
+  - Legend added to X vs Y charts ([#LL-322](https://ht2labs.myjetbrains.com/youtrack/issue/LL-322))
+  
 ### Changed
 ### Deprecated
 ### Removed
