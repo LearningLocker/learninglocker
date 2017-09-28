@@ -10,10 +10,10 @@ import statementForwardingRequestHandler from
   'worker/handlers/statement/statementForwarding/statementForwardingRequestHandler';
 import statementForwardingDeadLetterHandler from
   'worker/handlers/statement/statementForwarding/statementForwardingDeadLetterHandler';
-import mongoModelsRepo from 'persona-service/dist/mongoModelsRepo';
+import mongoModelsRepo from 'personas/dist/mongoModelsRepo';
 import { MongoClient } from 'mongodb';
-import config from 'persona-service/dist/config';
-import service from 'persona-service/dist/service';
+import config from 'personas/dist/config';
+import service from 'personas/dist/service';
 
 import {
   STATEMENT_QUEUE,
