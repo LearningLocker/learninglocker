@@ -3,8 +3,6 @@ import Statement from 'lib/models/statement';
 import Promise from 'bluebird';
 import nock from 'nock';
 import { expect } from 'chai';
-// import ForwardingRequestError from
-//   'worker/handlers/statement/statementForwarding/ForwardingRequestError';
 import statementForwardingRequestHandler from '../statementForwardingRequestHandler';
 
 const promiseRequestHandler = Promise.promisify(statementForwardingRequestHandler);
@@ -82,7 +80,8 @@ describe('Statement Forwarding Request', () => {
       configuration: {
         protocol: 'http',
         url: 'localhost:3101/',
-        method: 'POST'
+        method: 'POST',
+        headers: '{"testHeader1": "testHeaderValue1"}'
       }
     };
 
@@ -94,7 +93,11 @@ describe('Statement Forwarding Request', () => {
       }
     };
 
-    const request = nock('http://localhost:3101/')
+    const request = nock('http://localhost:3101/', {
+      reqheaders: {
+        testHeader1: 'testHeaderValue1'
+      }
+    })
       .post('/', {
         test: 'test'
       })
