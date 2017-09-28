@@ -114,6 +114,8 @@ const renderItems = ({
 };
 
 const render = ({
+  keyName = 'Column',
+  valueName = 'Source',
   staticValues = new Map(), // can't be changed
   values, // key value object
   onChange,
@@ -137,8 +139,8 @@ const render = ({
     <table className={`table table-borderless ${styles.table}`}>
       <thead>
         <tr>
-          <th>Column</th>
-          <th>Source</th>
+          <th>{keyName}</th>
+          <th>{valueName}</th>
           <th />
         </tr>
       </thead>

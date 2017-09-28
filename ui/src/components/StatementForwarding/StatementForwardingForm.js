@@ -256,6 +256,8 @@ const StatementForwardingForm = ({
             })}>
             <label htmlFor={`${model.get('_id')}headers`}>Headers</label>
             <TableInput
+              keyName="Field Name"
+              valueName="Field Value"
               staticValues={getAuthHeaders({
                 configuration: model.get('configuration').toJS()
               }).merge(new Map({
