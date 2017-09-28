@@ -82,13 +82,15 @@ const renderItems = ({
     </tr>)
   );
 
-
+  let trKey = 0;
   const valuesRendered = map(valuesJs, (value, key) => {
     if (key === '_id') {
       return null;
     }
 
-    return (<tr key={key}>
+    trKey += 1;
+
+    return (<tr key={trKey}>
       <td>
         <DebounceInput
           className="form-control"
