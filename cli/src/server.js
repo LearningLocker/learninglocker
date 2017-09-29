@@ -26,6 +26,8 @@ import migrateQueryBuilderCachesPath from 'cli/commands/migrateQueryBuilderCache
 import testStatementForwarding from 'cli/commands/testStatementForwarding';
 import testQueryBuilderCache from 'cli/commands/testQueryBuilderCache';
 
+import generateScopesDocs from 'cli/commands/generateScopesDocs';
+
 
 program.version('0.0.1');
 
@@ -148,6 +150,12 @@ program
   .command('testQueryBuilderCache')
   .action(testQueryBuilderCache);
 // node cli/dist/server testQueryBuilderCache
+
+program
+  .command('generateScopesDocs')
+  .option('-t, --type [type]')
+  .action(generateScopesDocs);
+// node cli/dist/server generateScopesDocs
 
 const dateType = val => new Date(val);
 
