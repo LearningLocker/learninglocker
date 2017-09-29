@@ -9,6 +9,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Deprecated
 ### Removed
 ### Fixed
+ - 'statement forwarding' menu item displaying incorrectly
  - Client auth not working with some APIs
 ### Security
 ### Migrations
