@@ -2,6 +2,8 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [unreleased]
 ### Added
+  - Added error alerts ([#LL-353](https://ht2labs.myjetbrains.com/youtrack/issue/LL-353))
+
 ### Changed
 ### Deprecated
 ### Removed
