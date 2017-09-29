@@ -3,6 +3,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ## [unreleased]
 ### Added
 ### Changed
+ - Tidy up unused variables in .env.example 
 ### Deprecated
 ### Removed
 ### Fixed
