@@ -15,6 +15,7 @@ import User from 'lib/models/user';
 import Dashboard from 'lib/models/dashboard';
 import { AUTH_JWT_GOOGLE_CALLBACK } from 'lib/constants/routes';
 import { getCookieNameStartsWith, getCookieName } from 'ui/utils/auth';
+import Unauthorized from 'lib/errors/Unauthorised';
 
 import {
   createOrgTokenPayload,
@@ -80,7 +81,7 @@ async function verifyToken(token, done) {
     const iTokenToVerify2 = iTokenToVerify.filter((value, key) => key !== 'filter');
 
     if (!iExpectedToken2.toMap().equals(iTokenToVerify2.toMap())) {
-      throw new Error('Unverified token');
+      throw new Unauthorized('Unverified token');
     }
     const auth = {
       ...(user ? user.toObject() : {}),

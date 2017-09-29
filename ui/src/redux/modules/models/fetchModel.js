@@ -46,7 +46,7 @@ const isLoadingModelSelector = ({ schema, id }) => createSelector(
 
 const fetchModel = createAsyncDuck({
   actionName: 'learninglocker/models/FETCH_MODEL',
-  failureDelay: 20000,
+  failureDelay: 2000,
 
   reduceStart: (state, action) => {
     const { schema, id } = action;

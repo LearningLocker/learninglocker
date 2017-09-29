@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SourceResults should render 1`] = `
+<wrappedSourceResults
+  axes={
+    Object {
+      "xLabel": "the-x-label",
+    }
+  }
+  labels={
+    Array [
+      "series 1",
+    ]
+  }
+  results={
+    Array [
+      Array [
+        Object {
+          "0": Object {
+            "count": 5,
+            "model": "monday",
+          },
+        },
+      ],
+    ]
+  }
+/>
+`;
