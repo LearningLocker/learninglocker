@@ -73,6 +73,7 @@ const SaveBar = ({
         value={100}
         theme={styles2} />
       <div className={classNames(styles.label, styles2[saving.toLowerCase()])}>{getLabel(saving)}</div>
+      <SaveBarErrors />
     </div>);
 };
 
