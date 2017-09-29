@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactTestRenderer from 'react-test-renderer';
 import { withInsertCSS } from 'ui/utils/hocs';
-import { fromJS } from 'immutable';
+import { fromJS, List } from 'immutable';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 import SaveBar, { savingSelector } from './index.js';
 
 const SaveBarWrapper = withInsertCSS(SaveBar);
@@ -20,7 +21,8 @@ const createMockStore = ({
           }
         }
       }
-    })
+    }),
+    alerts: new List()
   };
 
   const mockStore =
@@ -43,8 +45,11 @@ describe('SaveBar', () => {
   it('should render save bar IN_PROGRESS', () => {
     const mockStore = createMockStore({ requestState: IN_PROGRESS });
 
-    const sideNav = ReactTestRenderer.create(<SaveBarWrapper
-      store={mockStore} />).toJSON();
+    const sideNav = ReactTestRenderer.create(
+      <Provider store={mockStore}>
+        <SaveBarWrapper />
+      </Provider>
+    ).toJSON();
 
     expect(sideNav).toMatchSnapshot();
   });
@@ -52,8 +57,11 @@ describe('SaveBar', () => {
   it('should render save bar COMPLETED', () => {
     const mockStore = createMockStore({ requestState: COMPLETED });
 
-    const sideNav = ReactTestRenderer.create(<SaveBarWrapper
-      store={mockStore} />).toJSON();
+    const sideNav = ReactTestRenderer.create(
+      <Provider store={mockStore}>
+        <SaveBarWrapper />
+      </Provider>
+      ).toJSON();
 
     expect(sideNav).toMatchSnapshot();
   });
@@ -61,8 +69,11 @@ describe('SaveBar', () => {
   it('should render save bar FAILED', () => {
     const mockStore = createMockStore({ requestState: FAILED });
 
-    const sideNav = ReactTestRenderer.create(<SaveBarWrapper
-      store={mockStore} />).toJSON();
+    const sideNav = ReactTestRenderer.create(
+      <Provider store={mockStore}>
+        <SaveBarWrapper />
+      </Provider>
+    ).toJSON();
 
     expect(sideNav).toMatchSnapshot();
   });

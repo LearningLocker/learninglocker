@@ -48,14 +48,14 @@ export default (WrappedComponent) => {
       const { schema, filter, sort, first } = this.props;
       return this.props.fetchMore({ schema, filter, sort, first, ...args });
     }
-    render = () => (
-      <WrappedComponent
+    render = () =>
+      (<WrappedComponent
         {...this.props}
         fetchMore={this.fetchMore}
         addModel={this.addModel}
         deleteModel={this.deleteModel}
         updateModel={this.updateModel} />
-    )
+      )
   }
   return connect((state, { schema, filter, sort, cursor }) => (
     {

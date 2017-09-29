@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SaveBarErrors should render an error message 1`] = `
+<div
+  className="container"
+>
+  <div
+    className="alert alert-danger alert-dismissible"
+    role="alert"
+  >
+    <button
+      aria-label="Close"
+      className="close"
+      data-dismiss="alert"
+      onClick={[Function]}
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+      >
+        ×
+      </span>
+    </button>
+    Hello World
+  </div>
+</div>
+`;

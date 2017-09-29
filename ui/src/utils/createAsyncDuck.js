@@ -4,6 +4,7 @@ import identity from 'lodash/identity';
 import DispatchNotReadyError from 'ui/utils/errors/DispatchNotReadyError';
 import Unauthorised from 'lib/errors/Unauthorised';
 import { actions as logoutAcitons } from 'ui/redux/modules/auth/logout';
+import { alert } from 'ui/redux/modules/alerts';
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -82,6 +83,11 @@ export default function createAsyncDuck({
       }
     } catch (err) {
       yield put(actions.failure({ ...args, message: err.message }));
+      yield put(alert({
+        ...args,
+        message: err.message,
+      }));
+
       args.reject(err);
       if (failureDelay > -1) {
         yield call(delay, failureDelay); // shows the failure state for 2 seconds
