@@ -3,13 +3,18 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ## [unreleased]
 ### Added
   - Legend added to X vs Y charts ([#LL-322](https://ht2labs.myjetbrains.com/youtrack/issue/LL-322))
-  
+  - Prevents deleting a role if assigned to a user, added error alerts ([#LL-353](https://ht2labs.myjetbrains.com/youtrack/issue/LL-353))
 ### Changed
+ - Require submit to apply changes from advanced query editor
+ - Tidy up unused variables in .env.example 
 ### Deprecated
 ### Removed
 ### Fixed
+ - Allowed stamenent forwarding to follow redirects 
+ - Statement forwarding menu item displaying incorrectly
  - Client auth not working with some APIs
 ### Security
+ - If a request returns unauthorised the current user will be logged out
 ### Migrations
 
 ## [2.0.1] - 2017-09-25

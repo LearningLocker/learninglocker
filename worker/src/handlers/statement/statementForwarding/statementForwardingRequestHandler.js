@@ -1,6 +1,4 @@
-import * as http from 'http';
-import * as https from 'https';
-import * as URL from 'url';
+import * as popsicle from 'popsicle';
 import { assign } from 'lodash';
 import { Map } from 'immutable';
 import logger from 'lib/logger';
@@ -22,57 +20,34 @@ const generateHeaders = (statementContent, statementForwarding) => {
   return headers2.toJS();
 };
 
-const sendRequest = (statement, statementForwarding) => {
+const sendRequest = async (statement, statementForwarding) => {
   const urlString = `${statementForwarding.configuration
     .protocol}://${statementForwarding.configuration.url}`;
-
-
-  const url = URL.parse(urlString);
 
   const statementContent = JSON.stringify(statement);
 
   const headers = generateHeaders(statementContent, statementForwarding);
 
-  const promise = new Promise((resolve, reject) => {
-    const requestHandler = url.protocol === 'https:' ? https : http;
-    const request = requestHandler.request(
-      {
-        host: url.hostname,
-        path: url.path,
-        port: url.port,
-        method: 'POST',
-        headers,
-        timeout: 16000
-      },
-      (response) => {
-        let responseData = '';
-        response.on('data', (data) => {
-          responseData = responseData.concat(data.toString());
-        });
-
-        response.on('end', () => {
-          if (!(response.statusCode >= 200 && response.statusCode < 300)) {
-            reject(new ForwardingRequestError(
-              `Status code didn't return 200 (${response.statusCode})`,
-              responseData,
-            ));
-            return;
-          }
-
-          resolve();
-        });
-      }
-    );
-
-    request.on('error', (err) => {
-      if (err) reject(err);
-    });
-
-    request.write(statementContent);
-    request.end();
+  const request = popsicle.request({
+    method: 'POST',
+    body: statement,
+    url: urlString,
+    headers,
+    timeout: 16000,
+    options: {
+      followRedirects: (() => true)
+    }
   });
 
-  return promise;
+  const response = await request;
+  if (!(response.status >= 200 && response.status < 400)) {
+    throw new ForwardingRequestError(
+      `Status code was invalid: (${response.status})`,
+      response.body,
+    );
+  }
+
+  return request;
 };
 
 const setPendingStatements = (statement, statementForwardingId) =>
@@ -92,66 +67,63 @@ const setCompleteStatements = (statement, statementForwardingId) =>
     }
   });
 
-const statementForwardingRequestHandler = (
+const statementForwardingRequestHandler = async (
   { statement, statementForwarding },
   done
 ) => {
-  const updatePendingPromise = setPendingStatements(
-    statement,
-    statementForwarding._id
-  );
+  try {
+    await setPendingStatements(
+      statement,
+      statementForwarding._id
+    );
 
-  const sendRequestPromise = sendRequest(
-    statement.statement,
-    statementForwarding
-  )
-    .then(() =>
-      // set to complete
-      updatePendingPromise
-        .then(() => setCompleteStatements(statement, statementForwarding._id))
-        .then(() => {
-          logger.debug(
-            `SUCCESS sending statement to ${statementForwarding.configuration.url}`
-          );
-          done();
-        })
-    )
-    .catch((err) => {
-      logger.info(
-        `FAILED sending stetement to ${statementForwarding.configuration.url}`,
-        err
-      );
+    await sendRequest(
+      statement.statement,
+      statementForwarding
+    );
 
-      let update = {
-        timestamp: new Date(),
-        statementForwarding_id: objectId(statementForwarding._id),
-        message: err.toString()
-      };
+    await setCompleteStatements(statement, statementForwarding._id);
 
-      if (err.messageBody) {
-        update = assign({}, update, {
-          messageBody: err.messageBody
-        });
-      }
+    logger.debug(
+      `SUCCESS sending statement to ${statementForwarding.configuration.url}`
+    );
 
-      const updateFailedLogPromise = Statement.findByIdAndUpdate(
+    done();
+  } catch (err) {
+    logger.info(
+      `FAILED sending stetement to ${statementForwarding.configuration.url}`,
+      err
+    );
+
+    let update = {
+      timestamp: new Date(),
+      statementForwarding_id: objectId(statementForwarding._id),
+      message: err.toString()
+    };
+
+    if (err.messageBody) {
+      update = assign({}, update, {
+        messageBody: err.messageBody
+      });
+    }
+
+    try {
+      await Statement.findByIdAndUpdate(
         statement._id,
         {
           $addToSet: {
             failedForwardingLog: update
           }
         }
-      ).catch((err) => {
-        logger.error('Failed updating failedForwardingLog', err);
-      });
+      );
+    } catch (err) {
+      logger.error('Failed updating failedForwardingLog', err);
+    }
 
-      Promise.all([updatePendingPromise, updateFailedLogPromise]).then(() => {
-        done(err);
-      });
-    });
+    done(err);
+  }
 
-  const outPromise = Promise.all([updatePendingPromise, sendRequestPromise]);
-  return outPromise;
+  return [statement._id];
 };
 
 export default statementForwardingRequestHandler;
