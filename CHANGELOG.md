@@ -3,8 +3,8 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ## [unreleased]
 ### Added
   - Prevents deleting a role if assigned to a user, added error alerts ([#LL-353](https://ht2labs.myjetbrains.com/youtrack/issue/LL-353))
-
 ### Changed
+ - Require submit to apply changes from advanced query editor
  - Tidy up unused variables in .env.example 
 ### Deprecated
 ### Removed
