@@ -6,6 +6,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Deprecated
 ### Removed
 ### Fixed
+ - Allowed stamenent forwarding to follow redirects 
 ### Security
 ### Migrations
 ### Deprecated
