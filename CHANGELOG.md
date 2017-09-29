@@ -2,16 +2,26 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [unreleased]
 ### Added
+  - Prevents deleting a role if assigned to a user, added error alerts ([#LL-353](https://ht2labs.myjetbrains.com/youtrack/issue/LL-353))
 ### Changed
+ - Require submit to apply changes from advanced query editor
+ - Tidy up unused variables in .env.example 
 ### Deprecated
 ### Removed
 ### Fixed
  - Allowed stamenent forwarding to follow redirects 
+ - Statement forwarding menu item displaying incorrectly
+ - Client auth not working with some APIs
 ### Security
 ### Migrations
+
+## [2.0.1] - 2017-09-25
+### Added
+### Changed
 ### Deprecated
 ### Removed
 ### Fixed
+ - Adds VERSION file
 ### Security
 ### Migrations
 
@@ -193,4 +203,3 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 - Scrolling down really far in a journey visualisation sometimes stopped loading more results
 - Removing a user from an organisation could actually delete them
 - Setting a Journey to inactive wouldn’t actually stop it processing new statements ([#LL-139](https://ht2labs.myjetbrains.com/youtrack/issue/LL-139))
->>>>>>> v2.4.3
