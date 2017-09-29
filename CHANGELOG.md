@@ -5,6 +5,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
   - Prevents deleting a role if assigned to a user, added error alerts ([#LL-353](https://ht2labs.myjetbrains.com/youtrack/issue/LL-353))
 
 ### Changed
+ - Tidy up unused variables in .env.example 
 ### Deprecated
 ### Removed
 ### Fixed
