@@ -13,6 +13,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
  - Statement forwarding menu item displaying incorrectly
  - Client auth not working with some APIs
 ### Security
+ - If a request returns unauthorised the current user will be logged out
 ### Migrations
 
 ## [2.0.1] - 2017-09-25

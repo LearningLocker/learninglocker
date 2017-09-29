@@ -17,13 +17,19 @@ import {
 
 export default (WrappedComponent) => {
   class WithModels extends Component {
-    componentWillMount = () => this.fetchModels(this.props)
-    componentWillReceiveProps = nextProps => this.fetchModels(nextProps)
+    componentWillMount = () => {
+      return this.fetchModels(this.props);
+    }
+
+    componentWillReceiveProps = nextProps =>
+      this.fetchModels(nextProps);
 
     fetchModels = ({ schema, filter, sort, first }) => {
       if (filter) {
         this.props.fetchAllOutstandingModels({ schema, filter, sort, first })
-          .catch(err => console.error(err));
+          .catch((err) => {
+            console.error(err);
+          });
       }
     }
     addModel = (args) => {
