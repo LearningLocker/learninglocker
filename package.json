@@ -36,8 +36,9 @@
     "test-api": "mocha-webpack --exit --webpack-config \"api/testConfig.js\" \"api/src/**/*-test.js\"",
     "test-worker": "mocha-webpack --exit --webpack-config \"worker/testConfig.js\" \"worker/src/**/*-test.js\"",
     "test-lib": "mocha-webpack --exit --webpack-config \"api/testConfig.js\" \"lib/**/*-test.js\"",
+    "test-cli": "mocha-webpack --exit --webpack-config \"cli/testConfig.js\" \"cli/**/*-test.js\"",
     "test-ui": "jest --config ui/jest.config.json --env node",
-    "test": "yarn test-api && yarn test-lib && yarn test-worker && yarn test-ui"
+    "test": "yarn test-api && yarn test-lib && yarn test-worker && yarn test-ui && yarn test-cli"
   },
   "dependencies": {
     "@newrelic/native-metrics": "^2.1.0",
@@ -230,6 +231,7 @@
     "babel-plugin-dynamic-import-node": "^1.0.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
     "chai": "^3.3.0",
+    "chai-as-promised": "^7.1.1",
     "chai-things": "^0.2.0",
     "clean-webpack-plugin": "^0.1.6",
     "cookie-parser": "^1.4.1",
