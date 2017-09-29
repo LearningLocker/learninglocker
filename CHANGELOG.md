@@ -3,6 +3,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ## [unreleased]
 ### Added
 ### Changed
+ - Only allow sensible combinations of roles
 ### Deprecated
 ### Removed
 ### Fixed
