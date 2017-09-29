@@ -16,6 +16,7 @@ import toasts from 'ui/redux/modules/toasts';
 import queries from 'ui/redux/modules/queries';
 import metadata from 'ui/redux/modules/metadata';
 import app from 'ui/redux/modules/app';
+import alerts from 'ui/redux/modules/alerts';
 
 export default combineReducers({
   auth: recycleState(auth, [LOGOUT]),
@@ -31,6 +32,7 @@ export default combineReducers({
   clientIds: recycleState(clientIds, [LOGOUT, ORG_LOGOUT]),
   queries: recycleState(queries, [LOGOUT, ORG_LOGOUT]),
   metadata: recycleState(metadata, [LOGOUT, ORG_LOGOUT]),
+  alerts: recycleState(alerts, [LOGOUT, ORG_LOGOUT]),
   app,
   router: router5Reducer
 });
