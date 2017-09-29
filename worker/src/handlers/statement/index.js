@@ -10,6 +10,10 @@ import statementForwardingRequestHandler from
   'worker/handlers/statement/statementForwarding/statementForwardingRequestHandler';
 import statementForwardingDeadLetterHandler from
   'worker/handlers/statement/statementForwarding/statementForwardingDeadLetterHandler';
+import mongoModelsRepo from 'personas/dist/mongoModelsRepo';
+import { MongoClient } from 'mongodb';
+import config from 'personas/dist/config';
+import service from 'personas/dist/service';
 
 import {
   STATEMENT_QUEUE,
@@ -25,6 +29,16 @@ const defaultHandleResponse = (err) => {
   return err;
 };
 
+export const getPersonaService = () =>
+  service({
+    repo: mongoModelsRepo({
+      db: MongoClient.connect(
+        process.env.MONGODB_PATH,
+        config.mongoModelsRepo.options,
+      ),
+    }),
+  });
+
 export default (
 {
   handleResponse = defaultHandleResponse,
@@ -33,6 +47,8 @@ export default (
   statementHandlerProccessed
 }
 ) => {
+  const personaService = getPersonaService();
+  
   // GET NOTIFICATIONS FROM V1. Keep this until statement API is moved to node
   listenForV1();
 
@@ -41,6 +57,11 @@ export default (
     handler: statementHandler,
     onEmpty: statementHandlerEmpty,
     onProccessed: statementHandlerProccessed
+  }, handleResponse);
+
+  Queue.subscribe({
+    queueName: STATEMENT_EXTRACT_PERSONAS_QUEUE,
+    handler: extractPersonasHandler(personaService)
   }, handleResponse);
 
   Queue.subscribe({
