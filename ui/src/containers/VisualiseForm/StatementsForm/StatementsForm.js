@@ -3,7 +3,6 @@ import { Map } from 'immutable';
 import { updateModel } from 'ui/redux/modules/models';
 import { connect } from 'react-redux';
 import VisualiseResults from 'ui/containers/VisualiseResults';
-import SourceResults from 'ui/containers/VisualiseResults/SourceResults';
 import {
   LAST_30_DAYS,
   LAST_7_DAYS,
@@ -13,21 +12,7 @@ import {
   LAST_1_YEAR,
   LAST_2_YEARS
 } from 'ui/utils/constants';
-import Switch from 'ui/components/Material/Switch';
-import {
-  getMetadataSelector,
-  setInMetadata
-} from 'ui/redux/modules/metadata';
-import { createSelector } from 'reselect';
 import Editor from './Editor';
-
-const SCHEMA = 'visualisation';
-
-export const toggleSourceSelector = ({ id }) => createSelector(
-  [getMetadataSelector({ schema: SCHEMA, id })],
-  metadata =>
-    metadata.get('source')
-);
 
 class StatementsForm extends Component {
   static propTypes = {
@@ -44,8 +29,7 @@ class StatementsForm extends Component {
   }
 
   shouldComponentUpdate = nextProps => !(
-    this.props.model.equals(nextProps.model) &&
-      this.props.source === nextProps.source
+    this.props.model.equals(nextProps.model)
   )
 
   onChangeAttr = (attr, e) => this.props.updateModel({
@@ -54,23 +38,6 @@ class StatementsForm extends Component {
     path: attr,
     value: e.target.value
   })
-
-  toggleSource = (value) => {
-    this.props.setInMetadata({
-      schema: SCHEMA,
-      id: this.props.model.get('_id'),
-      path: ['source'],
-      value
-    });
-  }
-
-  renderSourceToggle = () =>
-    (
-      <Switch
-        checked={this.props.source}
-        label="Source"
-        onChange={this.toggleSource} />
-    );
 
   render = () => {
     const { model } = this.props;
@@ -84,9 +51,6 @@ class StatementsForm extends Component {
 
         <div
           className="col-md-6">
-          <div style={{ float: 'left' }}>
-            { this.renderSourceToggle() }
-          </div>
           <div className="form-group form-inline" style={{ textAlign: 'right' }}>
             <select
               id={`${model.get('_id')}previewPeriodInput`}
@@ -103,10 +67,7 @@ class StatementsForm extends Component {
             </select>
           </div>
           <div style={{ height: '400px', paddingTop: 5 }}>
-            {!this.props.source && <VisualiseResults id={model.get('_id')} />}
-            {this.props.source &&
-              <SourceResults id={model.get('_id')} />
-            }
+            <VisualiseResults id={model.get('_id')} />
           </div>
         </div>
       </div>
@@ -116,6 +77,5 @@ class StatementsForm extends Component {
 
 export default connect((state, ownProps) => ({
   hasMore: ownProps.hasMore,
-  isLoading: ownProps.isLoading,
-  source: toggleSourceSelector({ id: ownProps.model.get('_id') })(state)
-}), { updateModel, setInMetadata })(StatementsForm);
+  isLoading: ownProps.isLoading
+}), { updateModel })(StatementsForm);

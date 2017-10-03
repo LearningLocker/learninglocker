@@ -19,32 +19,21 @@ const shouldDeleteSelector = schema => createSelector(
 const deleteModel = createAsyncDuck({
   actionName: 'learninglocker/models/DELETE_MODEL',
 
-  successDelay: 2000,
-  failureDelay: 2000,
+  successDelay: 0,
 
-  reduceStart: (state, { schema, id }) =>
-    state.setIn([schema, id, 'deleteState'], IN_PROGRESS),
-  reduceSuccess: (state, { schema, id }) =>
-    state.setIn([schema, id, 'deleteState'], COMPLETED),
-  reduceFailure: (state, { schema, id }) =>
-    state.setIn([schema, id, 'deleteState'], FAILED),
-  reduceComplete: (state, { schema, id }) =>
-    state.setIn([schema, id, 'deleteState'], null),
+  reduceStart: (state, { schema, id }) => state.setIn([schema, id, 'deleteState'], IN_PROGRESS),
+  reduceSuccess: (state, { schema, id }) => state.deleteIn([schema, id]),
+  reduceFailure: (state, { schema, id }) => state.setIn([schema, id, 'deleteState'], FAILED),
+  reduceComplete: state => state,
 
   startAction: ({ schema, id }) => ({ schema, id }),
   successAction: ({ schema, id }) => ({ schema, id }),
-  failureAction: ({ schema, id, message }) => ({ schema, id, message }),
-  completeAction: ({ schema, id }) => ({ schema, id }),
+  failureAction: ({ schema }) => ({ schema }),
+  completeAction: ({ schema }) => ({ schema }),
   checkShouldFire: ({ schema }, state) => shouldDeleteSelector({ schema })(state),
 
   doAction: function* deleteModelSaga({ schema, id, llClient }) {
-    const { status, body } = yield call(llClient.deleteModel, schema, { _id: id });
-
-    if (status >= 300) {
-      const message = body.message || body;
-      throw new Error(message);
-    }
-
+    yield call(llClient.deleteModel, schema, { _id: id });
     // check the status and throw errors if not valid
     yield put(clearModelsCacheDuck.actions.clearModelsCache({ schema }));
 

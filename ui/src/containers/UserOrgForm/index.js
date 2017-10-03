@@ -21,11 +21,10 @@ const RolesList = compose(
       title: 1,
       _id: 1,
     }),
-    filter: new Map({}),
   }),
   withSchema('role'),
 )(({ models, selectedRoles, handleRolesChange }) =>
-  (<div>
+  <div>
     {
       models.map((model) => {
         const modelId = model.get('_id');
@@ -39,7 +38,7 @@ const RolesList = compose(
         );
       }).valueSeq()
     }
-  </div>)
+  </div>
 );
 
 const getDefaultOrgSettings = organisation =>

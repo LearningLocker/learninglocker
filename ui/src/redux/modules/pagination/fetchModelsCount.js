@@ -52,7 +52,7 @@ const isLoadingCountSelector = (schema, filter) => createSelector(
 
 const fetchModelsCount = createAsyncDuck({
   actionName: 'learninglocker/pagination/FETCH_MODELS_COUNT',
-  failureDelay: 2000,
+  failureDelay: 20000,
 
   reduceStart: (state, action) => {
     const { schema, filter } = action;
