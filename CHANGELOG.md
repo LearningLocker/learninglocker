@@ -2,6 +2,15 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [unreleased]
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+### Migrations
+
+## [2.0.2] - 2017-10-03
+### Added
   - Legend added to X vs Y charts ([#LL-322](https://ht2labs.myjetbrains.com/youtrack/issue/LL-322))
   - Prevents deleting a role if assigned to a user, added error alerts ([#LL-353](https://ht2labs.myjetbrains.com/youtrack/issue/LL-353))
 ### Changed
@@ -10,7 +19,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Deprecated
 ### Removed
 ### Fixed
- - Allowed stamenent forwarding to follow redirects 
+ - Allowed statement forwarding to follow redirects 
  - Statement forwarding menu item displaying incorrectly
  - Client auth not working with some APIs
 ### Security
