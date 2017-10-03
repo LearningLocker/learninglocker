@@ -1,7 +1,7 @@
 import React from 'react';
 import { compose, withHandlers, withProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
-import IntialUploadForm from 'ui/containers/PersonaImports/stages/initialUpload';
+import IntialUploadForm from 'ui/containers/PersonasImports/stages/initialUpload';
 
 const schema = 'personasImport';
 

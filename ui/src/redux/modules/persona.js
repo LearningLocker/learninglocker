@@ -6,6 +6,7 @@ import { actions as mergeEntitiesActions } from 'ui/redux/modules/models/mergeEn
 import { normalize } from 'normalizr';
 import entityReviver from 'ui/redux/modules/models/entityReviver';
 import * as schemas from 'ui/utils/schemas';
+import { alert } from 'ui/redux/modules/alerts';
 
 
 const UPLOAD_PERSONAS = 'learninglocker/uploadpersona/UPLOAD_PERSONAS';
@@ -14,7 +15,7 @@ const UPLOAD_PERSONAS_SUCCESS = 'learninglocker/uploadpersona/UPLOAD_PERSONAS_SU
 const UPLOAD_PERSONAS_FAILURE = 'learninglocker/uploadpersona/UPLOAD_PERSONAS_FAILURE';
 
 const IN_PROGRESS = 'IN_PROGRESS';
-const SUCCESS = 'SUCCESS';
+const COMPLETED = 'COMPLETED';
 const FAILED = 'FAILED';
 
 /*
@@ -25,9 +26,8 @@ const rootSelector = state => state.uploadPersonas;
 
 export const requestStateSelector = ({ id }) => createSelector(
   rootSelector,
-  (state) => {
-    return state.getIn([id, 'requestState']);
-  }
+  state =>
+    state.getIn([id, 'requestState'])
 );
 
 /*
@@ -65,7 +65,6 @@ export const uploadPersonasReset = ({ id }) => ({
  */
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 function* uploadPersonasSaga() {
-
   while (true) {
     const { id, file, llClient } = yield take(UPLOAD_PERSONAS);
     const { body, status } = yield call(llClient.personasUpload, {
@@ -73,9 +72,12 @@ function* uploadPersonasSaga() {
       file
     });
 
-    if (status > 200 && status < 500) yield put(uploadPersonasFailure({ id, body }));
-    else if (status >= 500) yield put(uploadPersonasFailure({ id, body }));
-    else {
+    if (status > 200) {
+      yield put(uploadPersonasFailure({ id, body }));
+      yield put(alert({
+        message: body
+      }));
+    } else {
       yield put(uploadPersonasSuccess({ id, body }));
 
       const schemaClass = schemas.personasImport;
@@ -102,7 +104,7 @@ const handler = handleActions({
   [UPLOAD_PERSONAS]: (state, { id }) =>
     state.setIn([id, 'requestState'], IN_PROGRESS),
   [UPLOAD_PERSONAS_SUCCESS]: (state, { id }) =>
-    state.setIn([id, 'requestState'], SUCCESS),
+    state.setIn([id, 'requestState'], COMPLETED),
   [UPLOAD_PERSONAS_FAILURE]: (state, { id }) => (
     state.setIn([id, 'requestState'], FAILED)
   ),

@@ -41,7 +41,7 @@ const renderPage = (routeName) => {
 
   if (testRoute('organisation.people.imports')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/PersonaImports')
+      loader: System.import('ui/containers/PersonasImports')
     }));
   }
 

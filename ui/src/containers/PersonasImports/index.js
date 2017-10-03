@@ -6,7 +6,7 @@ import { withModels } from 'ui/utils/hocs';
 import ModelList from 'ui/containers/ModelList';
 import { addModel } from 'ui/redux/modules/models';
 import { loggedInUserId } from 'ui/redux/modules/auth';
-import PersonaImportForm from './PersonaImportForm';
+import PersonasImportForm from './PersonasImportForm';
 
 const schema = 'personasImport';
 
@@ -54,7 +54,7 @@ const personaImports = ({
         <div className="col-md-12">
           <ImportList
             filter={({})}
-            ModelForm={PersonaImportForm}
+            ModelForm={PersonasImportForm}
             getDescription={model => model.get('title', '~ Unnamed Import')} />
         </div>
       </div>

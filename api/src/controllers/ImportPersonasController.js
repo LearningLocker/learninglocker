@@ -4,7 +4,6 @@ import catchErrors from 'api/controllers/utils/catchErrors';
 import getFileAndFieldsFromRequest from 'api/controllers/utils/getFileAndFieldsFromRequest';
 import PersonasImport, { STAGE_CONFIGURE_FIELDS } from 'lib/models/personasImport';
 import csv from 'fast-csv';
-import BaseError from 'lib/errors/BaseError';
 import { isUndefined } from 'lodash';
 
 const getCsvHeaders = async (handle) => {
@@ -17,13 +16,13 @@ const getCsvHeaders = async (handle) => {
   let headers;
 
   csvStream.on('data', (data) => {
+    // we're just interested in the first one.
     if (isUndefined(headers)) headers = data;
-    csvStream.end();
   });
 
   const csvPromise = new Promise((resolve, reject) => {
     csvStream.on('error', reject);
-    csvStream.on('finish', resolve());
+    csvStream.on('finish', resolve);
   });
 
   fileService.downloadToStream(handle)(csvStream);

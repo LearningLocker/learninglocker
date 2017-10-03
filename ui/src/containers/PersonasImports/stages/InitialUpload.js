@@ -12,7 +12,7 @@ import {
 import ProgressBar from 'ui/containers/ProgressBar';
 
 const IN_PROGRESS = 'IN_PROGRESS';
-const SUCCESS = 'SUCCESS';
+const COMPLETED = 'COMPLETED';
 const FAILED = 'FAILED';
 
 const fileState = withState('file', 'setFile', {});
@@ -27,15 +27,15 @@ const renderUploadButton = ({
       return (
         <button
           onClick={onSubmit}
-          className="btn btn-primary">
+          className="btn btn-primary pull-right">
           <i className="icon ion-gear-a animated rotate infinite" style={({ display: 'block' })} />
         </button>);
-    case SUCCESS:
+    case COMPLETED:
       return (
         <button
           onClick={onSubmit}
           disabled="true"
-          className="btn btn-primary">
+          className="btn btn-primary pull-right">
           <i className="icon animated fadeIn ion-checkmark" />
         </button>
       );
@@ -43,15 +43,15 @@ const renderUploadButton = ({
       return (
         <button
           onClick={onSubmit}
-          className="btn btn-primary">
+          className="btn btn-primary pull-right">
           <i className="icon animated fadeIn ion-sad" /> Retry
         </button>);
     default: {
       return (
         <button
           onClick={onSubmit}
-          className="btn btn-primary">
-          <i className="icon ion-upload" style={({ display: 'block' })} /> Upload
+          className="btn btn-primary pull-right">
+          <i className="icon ion-upload" /> Upload
         </button>
       );
     }
