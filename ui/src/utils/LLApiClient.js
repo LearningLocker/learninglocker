@@ -213,6 +213,25 @@ class _LLApiClient {
       personaIdentifierId,
     }
   });
+
+  personasUpload = ({
+    id,
+    file
+  }) => {
+    const personaForm = form({
+      id,
+      file: file.handle
+    });
+    return post({
+      url: formatUrl('/uploadpersonas'),
+      headers: {
+        Authorization: `Bearer ${this.getToken()}`,
+        ContentType: 'multipart/form-data; boundary=,',
+        Accept: 'text/csv'
+      },
+      body: personaForm
+    });
+  }
 }
 
 const LLApiClient = _LLApiClient;

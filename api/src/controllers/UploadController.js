@@ -3,6 +3,7 @@ import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
 import catchErrors from 'api/controllers/utils/catchErrors';
 import getFileFromRequest from 'api/controllers/utils/getFileFromRequest';
 
+// TODO: remove/replace
 const uploadPeople = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
   const file = await getFileFromRequest(req);

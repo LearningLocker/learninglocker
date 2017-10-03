@@ -19,7 +19,8 @@ export const savingSelector = () => createSelector(
       model.map(item =>
         item && item.getIn && item.getIn(['remoteCache', 'requestState'])
       )
-    ),
+    )
+  ,
   (saving) => {
     if (saving.includes(IN_PROGRESS)) {
       return IN_PROGRESS;

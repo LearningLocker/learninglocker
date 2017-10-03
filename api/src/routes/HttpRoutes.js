@@ -20,6 +20,7 @@ import StatementController from 'api/controllers/StatementController';
 import PersonaController from 'api/controllers/PersonaController';
 import generateConnectionController from 'api/controllers/ConnectionController';
 import generateIndexesController from 'api/controllers/IndexesController';
+import ImportPersonasController from 'api/controllers/ImportPersonasController';
 
 // REST
 import LRS from 'lib/models/lrs';
@@ -41,6 +42,7 @@ import Dashboard from 'lib/models/dashboard';
 import QueryBuilderCache from 'lib/models/querybuildercache';
 import QueryBuilderCacheValue from 'lib/models/querybuildercachevalue';
 import Role from 'lib/models/role';
+import PersonasImport from 'lib/models/personasImport';
 import * as routes from 'lib/constants/routes';
 
 const router = new express.Router();
@@ -134,6 +136,12 @@ router.post(
   UploadController.uploadLogo
 );
 
+router.post(
+  routes.UPLOADPERSONAS,
+  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  ImportPersonasController.uploadPersonas
+);
+
 /**
  * DOWNLOADS
  */
@@ -203,6 +211,7 @@ restify.serve(router, StatementForwarding);
 restify.serve(router, QueryBuilderCache);
 restify.serve(router, QueryBuilderCacheValue);
 restify.serve(router, Role);
+restify.serve(router, PersonasImport);
 
 /**
  * CONNECTIONS and INDEXES
@@ -224,7 +233,8 @@ const generatedRouteModels = [
   Export,
   Download,
   ImportCsv,
-  Role
+  Role,
+  PersonasImport
 ];
 
 const generateConnectionsRoute = (model, routeSuffix, authentication) => {

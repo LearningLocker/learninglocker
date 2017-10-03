@@ -11,6 +11,7 @@ import { sagas as exportSagas } from './exports';
 import { sagas as uploadLogoSaga } from './logo';
 import { sagas as toastSagas } from './toasts';
 import { sagas as appSagas } from './app';
+import { sagas as personasSagas } from './persona';
 
 export const sagaMiddleware = createSagaMiddleware();
 
@@ -28,5 +29,6 @@ export default function* rootSaga() {
     ...map(modelSagas, runSaga),
     ...map(toastSagas, runSaga),
     ...map(appSagas, runSaga),
+    ...map(personasSagas, runSaga)
   ];
 }
