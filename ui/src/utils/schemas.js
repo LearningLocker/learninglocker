@@ -83,20 +83,19 @@ const organisation = new LLSchema('organisation', { idAttribute: '_id', sortKey:
 const statement = new LLSchema('statement', { idAttribute: '_id', sortKey: 'timestamp' });
 
 const visualisation = new LLSchema('visualisation', { idAttribute: '_id', sortKey: 'updatedAt' }, {
-  preSave: model =>
-    model.update('filters',
-      fromJS([{ $match: {} }]),
-      filters => filters.map(
-        query => JSON.stringify(query.toJS())
+  preSave: model => model.update('filters',
+    fromJS([{}]),
+    filters => filters.map(
+      query => JSON.stringify(query.toJS())
+    )
+  ).update('axes', new Map(), axes => JSON.stringify(axes.toJS()))
+  .merge(
+    model
+      .filter((item, key) => key.startsWith('axes') && includes(axesToJsList, key))
+      .map(item =>
+        JSON.stringify(item && item.toJS && item.toJS() || item)
       )
-    ).update('axes', new Map(), axes => JSON.stringify(axes.toJS()))
-    .merge(
-      model
-        .filter((item, key) => key.startsWith('axes') && includes(axesToJsList, key))
-        .map(item =>
-          JSON.stringify(item ? item.toJS() : null)
-        )
-    ),
+  ),
 
   reviver: (key, value) => {
     const isIndexed = Iterable.isIndexed(value); // From default reviver.

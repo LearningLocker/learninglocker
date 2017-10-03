@@ -43,12 +43,6 @@ class CollapsibleNav extends Component {
     onClick(routeName);
   }
 
-  animationComplete = isExpanded => () => {
-    if (isExpanded) {
-      this.bodyDom.style.height = 'auto';
-    }
-  }
-
   render = () => {
     const { bodyHeight } = this.state;
     const {
@@ -79,10 +73,7 @@ class CollapsibleNav extends Component {
           <i className={icon} /> {label}
         </Link>
 
-        <VelocityComponent
-          animation={animationProps}
-          duration={350}
-          complete={this.animationComplete(isExpanded)} >
+        <VelocityComponent animation={animationProps} duration={350}>
           <ul
             className={`nav animated fadeIn ${styles.subNav}`}
             ref={this.saveBodyRef}

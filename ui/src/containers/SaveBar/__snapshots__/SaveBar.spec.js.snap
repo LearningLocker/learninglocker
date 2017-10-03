@@ -42,9 +42,6 @@ exports[`SaveBar should render save bar COMPLETED 1`] = `
   >
     SAVED
   </div>
-  <div
-    className="container"
-  />
 </div>
 `;
 
@@ -90,9 +87,6 @@ exports[`SaveBar should render save bar FAILED 1`] = `
   >
     SAVE FAILED
   </div>
-  <div
-    className="container"
-  />
 </div>
 `;
 
@@ -126,8 +120,5 @@ exports[`SaveBar should render save bar IN_PROGRESS 1`] = `
   >
     SAVING
   </div>
-  <div
-    className="container"
-  />
 </div>
 `;

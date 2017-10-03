@@ -2,7 +2,6 @@ import isNull from 'lodash/isNull';
 import isUndefined from 'lodash/isUndefined';
 import NotFoundError from 'lib/errors/NotFoundError';
 import NoAccessError from 'lib/errors/NoAccessError';
-import Unauthorised from 'lib/errors/Unauthorised';
 import UnauthorisedQueryError from 'lib/errors/UnauthorisedQueryError';
 import InvalidRecalc from 'lib/errors/InvalidRecalc';
 import BaseError from 'lib/errors/BaseError';
@@ -15,8 +14,6 @@ export default (res, err) => {
   switch (err.constructor) {
     case NotFoundError:
       return res.status(404).send(err.message);
-    case Unauthorised:
-      return res.status(401).send(err.message);
     case NoAccessError:
     case UnauthorisedQueryError:
       return res.status(403).send(err.message);

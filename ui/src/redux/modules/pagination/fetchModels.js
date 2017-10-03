@@ -10,7 +10,6 @@ import { normalize, arrayOf } from 'normalizr';
 import entityReviver from 'ui/redux/modules/models/entityReviver';
 import * as mergeEntitiesDuck from 'ui/redux/modules/models/mergeEntities';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
-import Unauthorised from 'lib/errors/Unauthorised';
 import diffEdges from './fetchModelsDiff';
 
 
@@ -25,7 +24,6 @@ export const BACKWARD = 'BACKWARD'; // backward pagination direction
  * SELECTORS
  */
 const cacheDuration = moment.duration({ minute: 3 });
-const failedCacheDuration = moment.duration({ minute: 1 });
 
 const defaultFilter = new Map();
 const defaultSort = new Map({ createdAt: -1, _id: 1 });
@@ -78,14 +76,6 @@ const shouldFetchSelector = ({ schema, filter, sort, cursor }) => (createSelecto
     if (requestState === IN_PROGRESS) {
       return false;
     }
-
-    if (
-      requestState === FAILED &&
-      moment().diff(cachedAt) < failedCacheDuration.asMilliseconds()
-    ) {
-      return false;
-    }
-
     const cachedFor = moment().diff(cachedAt);
     if (cachedFor < cacheDuration.asMilliseconds()) {
       return false;
@@ -179,15 +169,14 @@ export const reduceSuccess = (
 
 const fetchModels = createAsyncDuck({
   actionName: 'learninglocker/pagination/FETCH_MODELS',
-  failureDelay: 2000,
+  failureDelay: 20000,
 
   reduceStart,
 
   reduceSuccess,
 
   reduceFailure: (state, { schema, filter, sort, cursor }) =>
-    state.setIn([schema, filter, sort, cursor, 'requestState'], FAILED)
-      .setIn([schema, filter, sort, cursor, 'cachedAt'], moment()),
+    state.setIn([schema, filter, sort, cursor, 'requestState'], FAILED),
 
   reduceComplete: (state, { schema, filter, sort, cursor }) =>
     state.setIn([schema, filter, sort, cursor, 'requestState'], null),
@@ -263,13 +252,7 @@ const fetchModels = createAsyncDuck({
       first,
       last
     });
-
-    if (status === 401) {
-      throw new Unauthorised('Unauthorised');
-    }
-    if (status >= 300) {
-      throw new Error(body.message || body);
-    }
+    if (status >= 300) throw new Error(body.message || body);
 
     const models = map(body.edges, 'node');
     const ids = map(models, '_id');

@@ -1,21 +1,12 @@
 import StatementForwarding from 'lib/models/statementForwarding';
 import Statement from 'lib/models/statement';
-import Promise from 'bluebird';
 import nock from 'nock';
+import async from 'async';
 import { expect } from 'chai';
-// import ForwardingRequestError from
-//   'worker/handlers/statement/statementForwarding/ForwardingRequestError';
 import statementForwardingRequestHandler from '../statementForwardingRequestHandler';
 
-const promiseRequestHandler = Promise.promisify(statementForwardingRequestHandler);
-
 describe('Statement Forwarding Request', () => {
-  afterEach(async () => {
-    await Statement.remove({});
-    await StatementForwarding.remove({});
-  });
-
-  it('Request returns 308', async () => {
+  it('Request success', (done) => {
     const statementId = '59438cabedcedb70146337ec';
     const statementForwardingId = '59438cabedcedb70146337eb';
     const organisationId = '561a679c0c5d017e4004715a';
@@ -26,8 +17,8 @@ describe('Statement Forwarding Request', () => {
       organisation: organisationId,
       active: true,
       configuration: {
-        protocol: 'http',
-        url: 'redirectto/',
+        protocal: 'http',
+        url: 'localhost:3101/',
         method: 'POST'
       }
     };
@@ -40,36 +31,68 @@ describe('Statement Forwarding Request', () => {
       }
     };
 
-    const request = nock('http://localhost:3101/')
-      .post('/', {
-        test: 'test'
-      }).reply(200, {
-        _id: '1',
-        _rev: '1',
-        success: true
-      });
+    Statement.create(statement)
+    .then(() => {
+      const request = nock('http://localhost:3101/')
+        .post('/', {
+          test: 'test'
+        })
+        .reply(200, {
+          _id: '1',
+          _rev: '1',
+          success: true
+        });
+      return { request };
+    }).then((params) => {
+      const promise = new Promise(resolve =>
+        statementForwardingRequestHandler({
+          statementForwarding,
+          statement
+        }, () => {
+          resolve(params);
+        })
+      );
 
-    const redirectRequest = nock('http://redirectto/')
-      .post('/', {
-        test: 'test'
-      }).reply(308, undefined, {
-        Location: 'http://localhost:3101/'
-      });
-
-    await Statement.create(statement);
-
-    await promiseRequestHandler({ statementForwarding, statement });
-    Promise.delay(1000);
-    expect(redirectRequest.isDone()).to.equal(true);
-    expect(request.isDone()).to.equal(true);
-
-    const doneStatement = await Statement.findById(statementId);
-    expect(doneStatement.pendingForwardingQueue.length).to.equal(0);
-    expect(doneStatement.completedForwardingQueue.length).to.equal(1);
-    expect(doneStatement.completedForwardingQueue[0].toString()).to.equal(statementForwardingId);
+      return promise;
+    })
+    .then(({ request }) => {
+      expect(request.isDone()).to.equal(true);
+    })
+    .then(() =>
+      new Promise((resolve) => {
+        Statement.findById(statementId).then((statementModel) => {
+          expect(statementModel.pendingForwardingQueue.length).to
+            .equal(0);
+          expect(statementModel.completedForwardingQueue[0].toString()).to
+            .equal(statementForwardingId);
+          resolve();
+        });
+      })
+    )
+    .then(() => new Promise(reslove =>
+      async.forEach(
+        [StatementForwarding, Statement],
+        (model, doneDeleting) => {
+          model.remove({}, doneDeleting);
+        },
+        reslove
+      )
+    ), () => new Promise(reslove =>
+      async.forEach(
+        [StatementForwarding, Statement],
+        (model, doneDeleting) => {
+          model.remove({}, doneDeleting);
+        },
+        reslove
+      )
+    ))
+    .then(() => {
+      done();
+    });
   }).timeout(10000);
 
-  it('Request success', async () => {
+
+  it('If a request fails, keep in pending', (done) => {
     const statementId = '59438cabedcedb70146337ec';
     const statementForwardingId = '59438cabedcedb70146337eb';
     const organisationId = '561a679c0c5d017e4004715a';
@@ -94,77 +117,57 @@ describe('Statement Forwarding Request', () => {
       }
     };
 
-    const request = nock('http://localhost:3101/')
-      .post('/', {
-        test: 'test'
+    Statement.create(statement)
+    .then(() => {
+      const request = nock('http://localhost:3101')
+        .post('/', {
+          test: 'test'
+        })
+        .reply(404, {
+          _id: '1',
+          _rev: '1',
+          success: false
+        });
+      return { request };
+    }).then((params) => {
+      const promise = new Promise(resolve =>
+        statementForwardingRequestHandler({
+          statementForwarding,
+          statement
+        }, () => {
+          resolve(params);
+        })
+      );
+
+      return promise;
+    })
+    .then(({ request }) => {
+      expect(request.isDone()).to.equal(true);
+    })
+    .then(() =>
+      new Promise((resolve) => {
+        Statement.findById(statementId).then((statementModel) => {
+          expect(statementModel.pendingForwardingQueue[0].toString()).to
+            .equal(statementForwardingId);
+          expect(statementModel.completedForwardingQueue.length).to
+            .equal(0);
+          expect(statementModel.failedForwardingLog[0].statementForwarding_id.toString()).to
+            .equal(statementForwardingId);
+          resolve();
+        });
       })
-      .reply(200, {
-        _id: '1',
-        _rev: '1',
-        success: true
-      });
-
-    await Statement.create(statement);
-
-    await promiseRequestHandler({ statementForwarding, statement });
-    expect(request.isDone()).to.equal(true);
-
-    const doneStatement = await Statement.findById(statementId);
-    expect(doneStatement.pendingForwardingQueue.length).to.equal(0);
-    expect(doneStatement.completedForwardingQueue.length).to.equal(1);
-    expect(doneStatement.completedForwardingQueue[0].toString()).to.equal(statementForwardingId);
-  }).timeout(10000);
-
-
-  it('If a request fails, keep in pending', async () => {
-    const statementId = '59438cabedcedb70146337ec';
-    const statementForwardingId = '59438cabedcedb70146337eb';
-    const organisationId = '561a679c0c5d017e4004715a';
-
-    const statementForwarding = {
-      _id: statementForwardingId,
-      lrs_id: '560a679c0c5d017e4004714f',
-      organisation: organisationId,
-      active: true,
-      configuration: {
-        protocol: 'http',
-        url: 'localhost:3101/',
-        method: 'POST'
-      }
-    };
-
-    const statement = {
-      _id: statementId,
-      organisation: organisationId,
-      statement: {
-        test: 'test'
-      }
-    };
-
-    await Statement.create(statement);
-
-    const request = nock('http://localhost:3101')
-      .post('/', {
-        test: 'test'
-      })
-      .reply(404, {
-        _id: '1',
-        _rev: '1',
-        success: false
-      });
-    try {
-      await promiseRequestHandler({ statementForwarding, statement });
-    } catch (err) {
-      expect(err).to.be.err; // eslint-disable-line no-unused-expressions
-    }
-    expect(request.isDone()).to.equal(true);
-
-    const doneStatement = await Statement.findById(statementId);
-    expect(doneStatement.pendingForwardingQueue[0].toString()).to
-      .equal(statementForwardingId);
-    expect(doneStatement.completedForwardingQueue.length).to
-      .equal(0);
-    expect(doneStatement.failedForwardingLog[0].statementForwarding_id.toString()).to
-      .equal(statementForwardingId);
+    )
+    .then(() => new Promise(reslove =>
+      async.forEach(
+        [StatementForwarding, Statement],
+        (model, doneDeleting) => {
+          model.remove({}, doneDeleting);
+        },
+        reslove
+      )
+    ))
+    .then(() => {
+      done();
+    });
   }).timeout(5000);
 });
