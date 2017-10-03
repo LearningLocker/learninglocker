@@ -2,7 +2,7 @@
   "name": "learning_locker",
   "description": "An open source learning record store",
   "license": "GPL-3.0",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/LearningLocker/learninglocker"
@@ -134,7 +134,7 @@
     "normalizr": "^2.0.0",
     "numeral": "^1.5.3",
     "object-hash": "^1.1.2",
-    "passport": "^0.3.2",
+    "passport": "^0.4.0",
     "passport-custom": "^1.0.5",
     "passport-google-oauth": "^0.2.0",
     "passport-http": "^0.3.0",
@@ -268,8 +268,5 @@
     "timekeeper": "0.0.5",
     "webpack-hot-middleware": "^2.5.0",
     "webpack-notifier": "^1.2.1"
-  },
-  "engines": {
-    "node": "6.11.3"
   }
 }

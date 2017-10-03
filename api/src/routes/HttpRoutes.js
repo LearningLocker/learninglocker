@@ -10,6 +10,7 @@ import {
   RESTIFY_DEFAULTS,
   setNoCacheHeaders
 } from 'lib/constants/auth';
+import handleError from 'api/controllers/utils/handleError';
 
 // CONTROLLERS
 import AuthController from 'api/controllers/AuthController';
@@ -241,10 +242,18 @@ const generateIndexesRoute = (model, routeSuffix, authentication) => {
 
 const generateModelRoutes = (model) => {
   const routeSuffix = model.modelName.toLowerCase();
-  const authentication = passport.authenticate(
-    ['jwt', 'clientBasic'],
-    DEFAULT_PASSPORT_OPTIONS
-  );
+  const authentication = (req, res, next) =>
+    passport.authenticate(
+      ['jwt', 'clientBasic'],
+      DEFAULT_PASSPORT_OPTIONS,
+      (err, user) => {
+        if (err) {
+          return handleError(res, err);
+        }
+        req.user = user;
+        return next();
+      }
+    )(req, res, next);
   generateConnectionsRoute(model, routeSuffix, authentication);
   generateIndexesRoute(model, routeSuffix, authentication);
 };

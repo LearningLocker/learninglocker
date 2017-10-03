@@ -1,0 +1,8 @@
+.sourceResultsContainer {
+  height: 100%;
+  overflow: scroll;
+}
+
+.sourceResultsContainer table {
+  width: 100%;
+}
