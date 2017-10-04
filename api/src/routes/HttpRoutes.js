@@ -44,6 +44,7 @@ import QueryBuilderCache from 'lib/models/querybuildercache';
 import QueryBuilderCacheValue from 'lib/models/querybuildercachevalue';
 import Role from 'lib/models/role';
 import PersonasImport from 'lib/models/personasImport';
+import PersonasImportTemplate from 'lib/models/personasImportTemplate';
 import * as routes from 'lib/constants/routes';
 
 const router = new express.Router();
@@ -213,6 +214,7 @@ restify.serve(router, QueryBuilderCache);
 restify.serve(router, QueryBuilderCacheValue);
 restify.serve(router, Role);
 restify.serve(router, PersonasImport);
+restify.serve(router, PersonasImportTemplate);
 
 /**
  * CONNECTIONS and INDEXES
@@ -235,7 +237,8 @@ const generatedRouteModels = [
   Download,
   ImportCsv,
   Role,
-  PersonasImport
+  PersonasImport,
+  PersonasImportTemplate
 ];
 
 const generateConnectionsRoute = (model, routeSuffix, authentication) => {

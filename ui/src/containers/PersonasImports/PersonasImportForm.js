@@ -1,7 +1,13 @@
 import React from 'react';
 import { compose, withHandlers, withProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
-import IntialUploadForm from 'ui/containers/PersonasImports/stages/initialUpload';
+import IntialUploadForm from 'ui/containers/PersonasImports/stages/InitialUpload';
+import ConfigureUpload from 'ui/containers/PersonasImports/stages/ConfigureUpload';
+
+import {
+  STAGE_UPLOAD,
+  STAGE_CONFIGURE_FIELDS
+} from 'lib/constants/personasImport';
 
 const schema = 'personasImport';
 
@@ -31,8 +37,13 @@ const personasImportForm = ({
         onChange={changeTitle} />
     </div>
 
-    <IntialUploadForm
+    {model.get('stage') === STAGE_UPLOAD && <IntialUploadForm
       model={model} />
+    }
+    {model.get('stage') === STAGE_CONFIGURE_FIELDS && 
+      <ConfigureUpload
+        model={model} />
+    }
   </div>
   );
 };
