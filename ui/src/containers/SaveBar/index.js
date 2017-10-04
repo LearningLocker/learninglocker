@@ -67,12 +67,13 @@ const SaveBar = ({
 
   return (
     <div className={styles.container}>
-      <ProgressBar
+      {saving && <ProgressBar
         className={styles2[saving.toLowerCase()]}
         mode={saving === IN_PROGRESS ? 'indeterminate' : 'determinate'}
         value={100}
         theme={styles2} />
-      <div className={classNames(styles.label, styles2[saving.toLowerCase()])}>{getLabel(saving)}</div>
+      }
+      {saving && <div className={classNames(styles.label, styles2[saving.toLowerCase()])}>{getLabel(saving)}</div>}
       <SaveBarErrors />
     </div>);
 };
