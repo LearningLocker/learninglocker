@@ -81,7 +81,7 @@ const saveModel = createAsyncDuck({
     const { status, body } = yield call(llClient.patchModel, schema, model.toJS());
 
     // check the status and throw errors if not valid
-    if (status > 300) {
+    if (status >= 300) {
       if (has(body, 'errors') && has(body, 'name') && body.name === 'ValidationError') {
         const errors = { hasErrors: true, messages: {} };
 
