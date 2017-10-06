@@ -7,6 +7,7 @@ import UnauthorisedQueryError from 'lib/errors/UnauthorisedQueryError';
 import InvalidRecalc from 'lib/errors/InvalidRecalc';
 import BaseError from 'lib/errors/BaseError';
 import logger from 'lib/logger';
+import EmptyCsvError from 'lib/errors/EmptyCsvError';
 
 export default (res, err) => {
   logger.error(err);
@@ -21,6 +22,8 @@ export default (res, err) => {
     case UnauthorisedQueryError:
       return res.status(403).send(err.message);
     case InvalidRecalc:
+      return res.status(400).send(err.message);
+    case EmptyCsvError:
       return res.status(400).send(err.message);
     case Error:
     case BaseError:

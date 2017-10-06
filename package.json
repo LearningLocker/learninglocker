@@ -231,6 +231,7 @@
     "babel-plugin-dynamic-import-node": "^1.0.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
     "chai": "^3.3.0",
+    "chai-as-promised": "^7.1.1",
     "chai-things": "^0.2.0",
     "clean-webpack-plugin": "^0.1.6",
     "cookie-parser": "^1.4.1",
