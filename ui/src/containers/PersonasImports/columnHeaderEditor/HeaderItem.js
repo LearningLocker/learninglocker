@@ -5,6 +5,7 @@ import {
   setPropTypes
 } from 'recompose';
 import { connect } from 'react-redux';
+import { fromJS } from 'immutable';
 import { updateModel } from 'ui/redux/modules/models';
 import { COLUMN_TYPES } from 'lib/constants/personasImport';
 import Checkbox from 'ui/components/Material/Checkbox';
@@ -27,7 +28,7 @@ const headerItemHandlers = withHandlers({
     const value = event.target.value;
 
     const resetStructure = resetRelatedStructure({
-      structure: model.get('structure'),
+      structure: model.get('structure', fromJS({})),
       columnName
     });
 

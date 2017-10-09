@@ -25,8 +25,8 @@ const handlers = withHandlers({
 const personasImportForm = ({
   model,
   changeTitle
-}) => {
-  return (<div>
+}) =>
+  (<div>
     <div className="form-group">
       <label htmlFor={`${model.get('_id')}descriptionInput`}>Name</label>
       <input
@@ -37,16 +37,15 @@ const personasImportForm = ({
         onChange={changeTitle} />
     </div>
 
-    {model.get('stage') === STAGE_UPLOAD && <IntialUploadForm
+    {model.get('importStage') === STAGE_UPLOAD && <IntialUploadForm
       model={model} />
     }
-    {model.get('stage') === STAGE_CONFIGURE_FIELDS && 
+    {model.get('importStage') === STAGE_CONFIGURE_FIELDS &&
       <ConfigureUpload
         model={model} />
     }
   </div>
   );
-};
 
 export default compose(
   withProps(({ model }) => ({

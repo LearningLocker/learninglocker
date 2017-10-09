@@ -1,6 +1,18 @@
 import React from 'react';
 import { fromJS } from 'immutable';
+import {
+  compose,
+  withHandlers
+} from 'recompose';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { Card } from 'react-toolbox/lib/Card';
+import {
+  reduce,
+  debounce
+} from 'lodash';
+import styles from './styles.css';
 import HeaderItem from './HeaderItem';
+import ScrollSnapper from './ScrollSnapper';
 
 export const generateStructure = ({
   csvHeaders,
@@ -43,23 +55,36 @@ export const generateStructure = ({
 const render = ({
   csvHeaders,
   structure,
-  model
+  model,
 }) => {
   const renderStructure = generateStructure({
     csvHeaders,
     structure
   });
 
-  return (<div>{
-    renderStructure.map((columnStructure, name) => {
-      return (
-        <HeaderItem
-          columnName={name}
-          columnStructure={columnStructure}
-          model={model} />
-      );
-    }).toList().toJS()
-  }</div>);
+    // <div
+    //   className={styles.container}
+    //   onScroll={onContainerScroll}>
+    //   <div className={styles.content}>
+
+  return (
+    <ScrollSnapper>
+      {
+        renderStructure.map((columnStructure, name) =>
+          (
+            <Card className={styles.card}>
+              <HeaderItem
+                columnName={name}
+                columnStructure={columnStructure}
+                model={model} />
+            </Card>
+          )
+        ).toList().toJS()
+      }
+    </ScrollSnapper>
+  );
 };
 
-export default render;
+export default compose(
+  withStyles(styles)
+)(render);

@@ -34,20 +34,23 @@ const renderTemplateSelector = ({
 const TemplateManager = compose(
 )(renderTemplateSelector);
 
-const render = ({ model }) => {
-
-  return (<div>
-    <div className="form-group">
-      <TemplateManager />
+const render = ({ model }) =>
+  (
+    <div>
+      <div className="form-group">
+        <TemplateManager />
+      </div>
+      <div className="form-group">
+        <ColumnHeaderEditor
+          csvHeaders={model.get('csvHeaders', new List())}
+          structure={model.get('structure', new Map())}
+          model={model} />
+      </div>
+      <div className="form-group">
+        <button className="btn btn-primary pull-right">Import Personas</button>
+      </div>
     </div>
-    <div className="form-group">
-      <ColumnHeaderEditor
-        csvHeaders={model.get('csvHeaders', new List())}
-        structure={model.get('structure', new Map())}
-        model={model} />
-    </div>
-  </div>);
-};
+  );
 
 export default compose(
   withProps(({ model }) => ({

@@ -8,7 +8,7 @@ const uploadPersonas = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
   const { file, fields: { id } } = await getFileAndFieldsFromRequest(req);
 
-  const personasImport = uploadPersonasService({
+  const personasImport = await uploadPersonasService({
     id,
     file,
     authInfo
