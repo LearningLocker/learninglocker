@@ -6,6 +6,8 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Deprecated
 ### Removed
 ### Fixed
+  - Prevents repeat failed requests. ([#LL-411](https://ht2labs.myjetbrains.com/youtrack/issue/LL-411))
+
 ### Security
 ### Migrations
 
