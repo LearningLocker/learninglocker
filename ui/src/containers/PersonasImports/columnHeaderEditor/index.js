@@ -62,11 +62,6 @@ const render = ({
     structure
   });
 
-    // <div
-    //   className={styles.container}
-    //   onScroll={onContainerScroll}>
-    //   <div className={styles.content}>
-
   return (
     <ScrollSnapper>
       {

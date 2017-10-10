@@ -14,7 +14,8 @@ import {
   hasRelatedField,
   getPossibleRelatedColumns,
   updateRelatedStructure,
-  resetRelatedStructure
+  resetRelatedStructure,
+  isColumnOrderable
 } from 'lib/helpers/personasImport';
 
 const schema = 'personasImport';
@@ -105,7 +106,6 @@ const renderHeaderItem = ({
   columnStructure,
 
   onColumnTypeChange,
-  onPrimaryChange,
   onPrimaryOrderChange,
   onRelatedColumnChange,
   model
@@ -114,18 +114,14 @@ const renderHeaderItem = ({
     <div>
       <h3>{columnName}</h3>
 
-      <div className="form-group">
-        <Checkbox
-          label="Primary"
-          checked={isNumber(columnStructure.get('primary'))}
-          onChange={onPrimaryChange} />
-        {isNumber(columnStructure.get('primary')) &&
-          <input
-            type="number"
-            value={columnStructure.get('primary')}
-            onChange={onPrimaryOrderChange} />
-        }
+      { isColumnOrderable({ columnName, structure: columnStructure }) && <div className="form-group">
+        <label htmlFor={`${model.get('_id')}-${columnName}-order`}>Order</label>
+        <text
+          id={`${model.get('_id')}-${columnName}-order`}
+          onChange={onPrimaryOrderChange}
+          type="number" />
       </div>
+    }
 
       <div className="form-group">
         <label htmlFor={`${model.get('_id')}-${columnName}-columnType`}>Field type</label>
