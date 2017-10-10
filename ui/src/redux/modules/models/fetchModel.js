@@ -12,13 +12,13 @@ import { modelsSchemaIdSelector } from 'ui/redux/modules/models/selectors';
 const cacheDuration = moment.duration({ minute: 3 });
 
 const modelRequestStateSelector = ({ schema, id }) => createSelector(
-  modelsSchemaIdSelector(schema, id),
-  model => model.get('requestState', false)
+  [state => state.models],
+  model => model.getIn([schema, id, 'requestState'], false)
 );
 
 const cachedAtSelector = ({ schema, id }) => createSelector(
-  [modelsSchemaIdSelector(schema, id)],
-  model => model.get('cachedAt', moment(0))
+  [state => state.models],
+  models => models.getIn([schema, id, 'cachedAt'], moment(0))
 );
 
 const shouldFetchModelSelector = ({ schema, id, force }) => createSelector(
@@ -60,7 +60,9 @@ const fetchModel = createAsyncDuck({
   },
   reduceFailure: (state, action) => {
     const { schema, id } = action;
-    return state.setIn([schema, id, 'requestState'], FAILED);
+    return state
+      .setIn([schema, id, 'requestState'], FAILED)
+      .setIn([schema, id, 'cachedAt'], moment());
   },
   reduceComplete: (state, action) => {
     const { schema, id } = action;
