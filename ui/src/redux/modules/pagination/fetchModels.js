@@ -25,7 +25,6 @@ export const BACKWARD = 'BACKWARD'; // backward pagination direction
  * SELECTORS
  */
 const cacheDuration = moment.duration({ minute: 3 });
-const failedCacheDuration = moment.duration({ minute: 1 });
 
 const defaultFilter = new Map();
 const defaultSort = new Map({ createdAt: -1, _id: 1 });
@@ -76,13 +75,6 @@ const shouldFetchSelector = ({ schema, filter, sort, cursor }) => (createSelecto
   ],
   (requestState, cachedAt) => {
     if (requestState === IN_PROGRESS) {
-      return false;
-    }
-
-    if (
-      requestState === FAILED &&
-      moment().diff(cachedAt) < failedCacheDuration.asMilliseconds()
-    ) {
       return false;
     }
 
