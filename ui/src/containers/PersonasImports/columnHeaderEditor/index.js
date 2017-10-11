@@ -5,7 +5,7 @@ import {
   withHandlers
 } from 'recompose';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Card } from 'react-toolbox/lib/Card';
+import { Card } from 'react-toolbox/lib/card';
 import {
   reduce,
   debounce

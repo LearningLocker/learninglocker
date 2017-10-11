@@ -6,7 +6,7 @@ import passport from 'api/auth/passport';
 import HttpRoutes from 'api/routes/HttpRoutes';
 import logger from 'lib/logger';
 import { install } from 'source-map-support';
-import { personaService } from 'api/utils/expressPersonaService';
+import personaService from 'api/utils/expressPersonaService';
 
 install();
 
