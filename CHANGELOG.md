@@ -18,6 +18,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
   - Repeating failed requests. ([#LL-411](https://ht2labs.myjetbrains.com/youtrack/issue/LL-411))
   - Not being able to delete the last model ([#LL-412](https://ht2labs.myjetbrains.com/youtrack/issue/LL-412))
   - 404 errors being displayed globally ([#LL-413](https://ht2labs.myjetbrains.com/youtrack/issue/LL-413))
+  - Returning aggregations results as a string
 ### Security
 ### Migrations
 
