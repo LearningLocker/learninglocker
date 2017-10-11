@@ -86,6 +86,9 @@ export default function createAsyncDuck({
       yield put(alert({
         ...args,
         message: err.message,
+        options: {
+          status: err.status
+        }
       }));
 
       args.reject(err);

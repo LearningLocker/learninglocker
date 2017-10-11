@@ -2,7 +2,7 @@ import { take, put, call, fork } from 'redux-saga/effects';
 import { List } from 'immutable';
 import { createSelector } from 'reselect';
 import { handleActions } from 'redux-actions';
-import { uniqueId } from 'lodash';
+import { uniqueId, get } from 'lodash';
 import { delay } from 'bluebird';
 
 const ALERT = 'learninglocker/alerts/ALERT';
@@ -35,6 +35,7 @@ export const alert = ({
   id,
   message,
   alertType = DANGER,
+  options,
 }) =>
   ({
     type: ALERT,
@@ -42,6 +43,7 @@ export const alert = ({
     schema,
     id,
     message,
+    options,
   });
 
 const alertFailureStart = ({
@@ -85,9 +87,10 @@ export default function reducer(state = initialState, action = {}) {
   return handler(state, action);
 }
 
-export const getAlertsSelector = () => createSelector(
+export const getAlertsSelector = createSelector(
   [alertsSelector],
-  state => state
+  alertState =>
+    alertState.filter(alertItem => get(alertItem, ['options', 'status']) !== '404')
 );
 
 // const delayFn = ms => new Promise(resolve => setTimeout(resolve, ms));

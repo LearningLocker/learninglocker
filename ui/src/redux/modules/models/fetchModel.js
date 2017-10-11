@@ -8,6 +8,7 @@ import entityReviver from 'ui/redux/modules/models/entityReviver';
 import * as mergeEntitiesDuck from 'ui/redux/modules/models/mergeEntities';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 import { modelsSchemaIdSelector } from 'ui/redux/modules/models/selectors';
+import HttpError from 'ui/utils/errors/HttpError';
 
 const cacheDuration = moment.duration({ minute: 3 });
 
@@ -81,7 +82,11 @@ const fetchModel = createAsyncDuck({
     const schemaClass = schemas[schema];
     const { status, body } =
       yield call(llClient.getModel, schema, id);
-    if (status >= 300) throw new Error(body.message || body);
+    if (status >= 300) {
+      throw new HttpError(body.message || body, {
+        status
+      });
+    }
     const normalizedModels = normalize(body, schemaClass);
     const entities = entityReviver(normalizedModels);
     const model = entities.getIn([schema, id]);
