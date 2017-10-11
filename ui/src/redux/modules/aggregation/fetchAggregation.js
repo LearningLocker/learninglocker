@@ -32,7 +32,7 @@ const aggregationShouldFetchSelector = pipeline => createSelector(
 
 const fetchAggregaation = createAsyncDuck({
   actionName: 'learninglocker/aggregation/FETCH_AGGREGATION',
-  failureDelay: 20000,
+  failureDelay: 2000,
 
   reduceStart: (state, { pipeline }) => state
     .setIn([pipeline, 'requestState'], IN_PROGRESS),

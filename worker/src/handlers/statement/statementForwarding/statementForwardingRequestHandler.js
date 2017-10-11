@@ -103,10 +103,10 @@ const statementForwardingRequestHandler = async (
     done();
   } catch (err) {
     logger.info(
-      `FAILED sending stetement ${statement._id} to ${statementForwarding.configuration.url}`,
+      `FAILED sending statement ${statement._id} to ${statementForwarding.configuration.url}`,
       err
     );
-
+    
     let update = {
       timestamp: new Date(),
       statementForwarding_id: objectId(statementForwarding._id),

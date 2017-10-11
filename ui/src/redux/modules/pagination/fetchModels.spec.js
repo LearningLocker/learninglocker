@@ -546,6 +546,26 @@ test('multi add BACKWARD', () => {
     .toEqual([1, 2, 2.5, 3, 3.5, 4, 5]);
 });
 
+test('empty state', () => {
+  const mockState = setupMockState(new OrderedSet([1]));
+
+  const result = reduceSuccess(mockState.pagination, {
+    schema: 'user',
+    filter: 'filter',
+    sort: 'sort',
+    direction: 'FORWARD',
+    edges: setupEdges([]),
+    cursor: new Map({ after: 'undefined' }),
+    pageInfo: new OrderedMap({
+      page: 1
+    })
+  });
+
+  expect(result.getIn(['user', 'filter', 'sort', 'edges'])
+    .map(item => item.get('id')).toJS())
+    .toEqual([]);
+});
+
 // //////////////////////////////////////
 
 test('fetchAllOutstandingModels', () => {

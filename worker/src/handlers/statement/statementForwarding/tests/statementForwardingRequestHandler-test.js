@@ -3,6 +3,8 @@ import Statement from 'lib/models/statement';
 import Promise from 'bluebird';
 import nock from 'nock';
 import { expect } from 'chai';
+// import ForwardingRequestError from
+//   'worker/handlers/statement/statementForwarding/ForwardingRequestError';
 import statementForwardingRequestHandler from '../statementForwardingRequestHandler';
 
 const promiseRequestHandler = Promise.promisify(statementForwardingRequestHandler);

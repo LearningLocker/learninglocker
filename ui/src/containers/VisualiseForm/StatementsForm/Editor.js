@@ -10,6 +10,8 @@ import SeriesEditor from './SeriesEditor';
 import AxesEditor from './AxesEditor/AxesEditor';
 import styles from '../visualiseform.css';
 
+const SCHEMA = 'visualisation';
+
 class Editor extends Component {
   static propTypes = {
     model: PropTypes.instanceOf(Map),
@@ -22,7 +24,7 @@ class Editor extends Component {
 
   changeAttr = attr => newValue =>
     this.props.updateModel({
-      schema: 'visualisation',
+      schema: SCHEMA,
       id: this.props.model.get('_id'),
       path: attr,
       value: newValue

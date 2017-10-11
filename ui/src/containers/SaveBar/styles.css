@@ -11,6 +11,7 @@
   top: 56px;
   height: 0.4rem;
   position: relative;
+  z-index: 5;
 }
 
 .container .linear {
@@ -25,6 +26,7 @@
   color: rgb(245, 171, 53);
   position: absolute;
   top: 0.4rem;
+  height: 2rem;
   left: 0px;
   right: 0px;
   text-align: center;
