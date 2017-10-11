@@ -35,7 +35,7 @@ test('should not show alert for 404 errors', () => {
     alerts: new List([{
       message: 'Not found',
       options: {
-        status: '404'
+        status: 404
       },
     },
     {
