@@ -36,9 +36,9 @@ const aggregateStatements = catchErrors(async (req, res) => {
 
 const aggregateStatementsV1 = catchErrors(async (req, res) => {
   const results = await aggregate(req);
-  const str_res = `{ "waitedMS": 0, "result": ${results}, "ok": 1 }`;
+  const strRes = `{ "waitedMS": 0, "result": ${results}, "ok": 1 }`;
   res.set('Content-Type', 'application/json');
-  res.write(str_res);
+  res.write(strRes);
   return res.end();
 });
 
