@@ -51,6 +51,7 @@ const alertFailureStart = ({
   id,
   message,
   alertType,
+  options,
   uuid = uniqueId(),
 }) =>
   ({
@@ -59,6 +60,7 @@ const alertFailureStart = ({
     id,
     message,
     uuid,
+    options,
     alertType,
   });
 
@@ -90,7 +92,7 @@ export default function reducer(state = initialState, action = {}) {
 export const getAlertsSelector = createSelector(
   [alertsSelector],
   alertState =>
-    alertState.filter(alertItem => get(alertItem, ['options', 'status']) !== '404')
+    alertState.filter(alertItem => get(alertItem, ['options', 'status']) !== 404)
 );
 
 // const delayFn = ms => new Promise(resolve => setTimeout(resolve, ms));
