@@ -9,6 +9,16 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.0.4] - 2017-10-12
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+  - Statement forwarding queries not matching. ([#LL-414](https://ht2labs.myjetbrains.com/youtrack/issue/LL-414))
+### Security
+### Migrations
+
 ## [2.0.3] - 2017-10-11
 ### Added
 ### Changed
