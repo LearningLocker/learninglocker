@@ -166,7 +166,6 @@ passport.use(
   })
 );
 
-// passport.authenticate('basic', { session: false })
 passport.use(
   'clientBasic',
   new BasicStrategy((clientId, clientSecret, done) => {
@@ -174,7 +173,12 @@ passport.use(
       if (err) return done(err);
       if (!client) return done(null, false);
       if (!client.isTrusted) return done(null, false);
-      client.authInfo = { client };
+      client.authInfo = {
+        client,
+        token: {
+          tokenType: 'client'
+        }
+      };
       if (client.api.basic_secret === clientSecret) return done(null, client);
       return done(null, false);
     });
