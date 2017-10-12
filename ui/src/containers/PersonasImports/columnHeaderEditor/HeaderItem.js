@@ -8,14 +8,14 @@ import { connect } from 'react-redux';
 import { fromJS } from 'immutable';
 import { updateModel } from 'ui/redux/modules/models';
 import { COLUMN_TYPES } from 'lib/constants/personasImport';
-import Checkbox from 'ui/components/Material/Checkbox';
-import { isNumber, map } from 'lodash';
+import { map } from 'lodash';
 import {
   hasRelatedField,
   getPossibleRelatedColumns,
   updateRelatedStructure,
   resetRelatedStructure,
-  isColumnOrderable
+  isColumnOrderable,
+  getPrimaryMaxPlusOne
 } from 'lib/helpers/personasImport';
 
 const schema = 'personasImport';
@@ -24,7 +24,9 @@ const headerItemHandlers = withHandlers({
   onColumnTypeChange: ({
     columnName,
     model,
-    updateModel: doUpdateModel
+    updateModel: doUpdateModel,
+    columnStructure,
+    structure
   }) => (event) => {
     const value = event.target.value;
 
@@ -33,13 +35,20 @@ const headerItemHandlers = withHandlers({
       columnName
     });
 
-    const newStructure = resetStructure.setIn([columnName, 'columnType'], value);
+    const newStructure =
+      resetStructure.setIn([columnName, 'columnType'], value);
+
+
+    const newStructureOrder = (isColumnOrderable({ columnStructure: columnStructure.toJS() })) ?
+      newStructure.setIn([columnName, 'primary'], getPrimaryMaxPlusOne({ structure }))
+    :
+      newStructure.deleteIn([columnName, 'primary']);
 
     doUpdateModel({
       schema,
       id: model.get('_id'),
       path: 'structure',
-      value: newStructure
+      value: newStructureOrder
     });
   },
   onPrimaryChange: ({
@@ -104,7 +113,6 @@ const headerItemHandlers = withHandlers({
 const renderHeaderItem = ({
   columnName,
   columnStructure,
-
   onColumnTypeChange,
   onPrimaryOrderChange,
   onRelatedColumnChange,
@@ -120,7 +128,7 @@ const renderHeaderItem = ({
           className="form-control"
           id={`${model.get('_id')}-${columnName}-order`}
           onChange={onPrimaryOrderChange}
-          // value={columnStructure.get('primary', )}
+          value={columnStructure.get('primary')}
           type="number" />
       </div>
     }

@@ -66,6 +66,7 @@ const render = ({
               <HeaderItem
                 columnName={name}
                 columnStructure={columnStructure}
+                structure={structure}
                 model={model} />
             </Card>
           )
