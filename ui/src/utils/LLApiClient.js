@@ -231,7 +231,21 @@ class _LLApiClient {
       },
       body: personaForm
     });
-  }
+  };
+
+  importPersonas = ({
+    id
+  }) => {
+    console.log('importPersonas');
+    return post({
+      url: formatUrl('/importpersonas'),
+      headers: {
+        Authorization: `Bearer ${this.getToken()}`,
+        ContentType: 'application/json'
+      },
+      body: { id },
+    });
+  };
 }
 
 const LLApiClient = _LLApiClient;

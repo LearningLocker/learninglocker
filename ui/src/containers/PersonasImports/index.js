@@ -19,7 +19,6 @@ const ImportList = compose(
 )(ModelList);
 
 const onAddModel = ({ addModel: doAddModel, userId }) => () => {
-  console.log('usedId: ', userId);
   doAddModel({
     schema,
     props: {

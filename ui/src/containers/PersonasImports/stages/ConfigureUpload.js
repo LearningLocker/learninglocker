@@ -1,5 +1,9 @@
 import React from 'react';
-import { compose, withProps } from 'recompose';
+import {
+  compose,
+  withProps,
+  withHandlers
+} from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import { Map, List } from 'immutable';
 import { modelsSchemaIdSelector } from 'ui/redux/selectors';
@@ -7,15 +11,28 @@ import { connect } from 'react-redux';
 
 import ModelAutoComplete from 'ui/containers/ModelAutoComplete';
 import ColumnHeaderEditor from 'ui/containers/PersonasImports/columnHeaderEditor';
+import {
+  importPersonas
+} from 'ui/redux/modules/persona';
 
 const schema = 'personasImport';
 const templateSchema = 'personasImportTemplate';
 
+const handlers = withHandlers({
+  handleImportPersonas: ({
+    model,
+    importPersonas: doImportPersonas
+  }) => () => {
+    doImportPersonas({
+      id: model.get('_id')
+    });
+  }
+});
+
 const renderTemplateSelector = ({
   templateId = null,
-}) => {
-
-  return (
+}) =>
+  (
     <div>
       <ModelAutoComplete
         schema={templateSchema}
@@ -29,12 +46,14 @@ const renderTemplateSelector = ({
       <button className="btn btn-primary">Save As</button>
     </div>
   );
-};
 
 const TemplateManager = compose(
 )(renderTemplateSelector);
 
-const render = ({ model }) =>
+const render = ({
+  model,
+  handleImportPersonas
+}) =>
   (
     <div>
       <div className="form-group">
@@ -47,7 +66,11 @@ const render = ({ model }) =>
           model={model} />
       </div>
       <div className="form-group">
-        <button className="btn btn-primary pull-right">Import Personas</button>
+        <button
+          className="btn btn-primary pull-right"
+          onClick={handleImportPersonas}>
+          Import Personas
+          </button>
       </div>
     </div>
   );
@@ -62,8 +85,9 @@ export default compose(
     (state, { schema: connectSchema, id }) => ({
       model: modelsSchemaIdSelector(connectSchema, id, { deep: true })(state)
     }),
-    {}
+    { importPersonas }
   ),
+  handlers
 )(
   render
 );

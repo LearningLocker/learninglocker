@@ -3,10 +3,12 @@ import { compose, withHandlers, withProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import IntialUploadForm from 'ui/containers/PersonasImports/stages/InitialUpload';
 import ConfigureUpload from 'ui/containers/PersonasImports/stages/ConfigureUpload';
+import moment from 'moment';
 
 import {
   STAGE_UPLOAD,
-  STAGE_CONFIGURE_FIELDS
+  STAGE_CONFIGURE_FIELDS,
+  STAGE_IMPORTED
 } from 'lib/constants/personasImport';
 
 const schema = 'personasImport';
@@ -43,6 +45,11 @@ const personasImportForm = ({
     {model.get('importStage') === STAGE_CONFIGURE_FIELDS &&
       <ConfigureUpload
         model={model} />
+    }
+    { model.get('importStage') === STAGE_IMPORTED &&
+    <div>
+      Imported on {moment(model.get('updatedAt')).format('ddd DD MMM YYYY h:mm:ss')}
+    </div>
     }
   </div>
   );

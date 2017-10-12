@@ -59,7 +59,7 @@ const render = ({
     <div
       className={styles.container}
       onScroll={onContainerScroll}>
-      <div className={styles.content}>;
+      <div className={styles.content}>
         {children}
       </div>
     </div>

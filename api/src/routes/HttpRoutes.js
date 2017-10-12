@@ -49,6 +49,7 @@ import * as routes from 'lib/constants/routes';
 
 const router = new express.Router();
 router.use(setNoCacheHeaders);
+
 router.get('', (req, res) => res.status(200).send('OK'));
 router.get(routes.VERSION, (req, res) => {
   Promise.all([
@@ -142,6 +143,12 @@ router.post(
   routes.UPLOADPERSONAS,
   passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
   ImportPersonasController.uploadPersonas
+);
+
+router.post(
+  routes.IMPORTPERSONAS,
+  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  ImportPersonasController.importPersonas
 );
 
 /**

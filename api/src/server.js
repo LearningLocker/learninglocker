@@ -21,8 +21,8 @@ app.options('*', corsMiddleware);
 app.use(bodyParser.json({ limit: '5mb' }));
 app.use(cookieParser());
 app.use(passport.initialize());
-app.use(HttpRoutes);
 app.use(personaService());
+app.use(HttpRoutes);
 
 if (process.env.API_PORT) {
   app.listen(process.env.API_PORT, (err) => {

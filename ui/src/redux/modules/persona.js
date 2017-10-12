@@ -7,12 +7,15 @@ import { normalize } from 'normalizr';
 import entityReviver from 'ui/redux/modules/models/entityReviver';
 import * as schemas from 'ui/utils/schemas';
 import { alert } from 'ui/redux/modules/alerts';
+import createSyncDuck from 'ui/utils/createAsyncDuck';
 
 
 const UPLOAD_PERSONAS = 'learninglocker/uploadpersona/UPLOAD_PERSONAS';
 const UPLOAD_PERSONAS_RESET = 'learninglocker/uploadpersona/UPLOAD_PERSONAS_RESET';
 const UPLOAD_PERSONAS_SUCCESS = 'learninglocker/uploadpersona/UPLOAD_PERSONAS_SUCCESS';
 const UPLOAD_PERSONAS_FAILURE = 'learninglocker/uploadpersona/UPLOAD_PERSONAS_FAILURE';
+
+const IMPORT_PERSONAS = 'learninglocker/uploadpersona/IMPORT_PERSONAS';
 
 const IN_PROGRESS = 'IN_PROGRESS';
 const COMPLETED = 'COMPLETED';
@@ -95,6 +98,33 @@ function* uploadPersonasSaga() {
   }
 }
 
+const importPersonasDuck = createSyncDuck({
+  actionName: IMPORT_PERSONAS,
+  doAction:
+    function* doAction({
+      id,
+      llClient
+    }) {
+      console.log('001 SHOULD HAPPEN');
+      const { status, body } = yield call(llClient.importPersonas, { id });
+      if (status >= 300) throw new Error(body.message || body);
+
+      const schemaClass = schemas.personasImport;
+
+      const normalizedModels = normalize(body, schemaClass);
+      const entities = entityReviver(normalizedModels);
+
+      yield put(mergeEntitiesActions.mergeEntitiesAction(
+        entities
+      ));
+    }
+});
+
+/*
+ * Actions
+ */
+export const importPersonas = importPersonasDuck.actions.start;
+
 /*
  * Reducers
  */
@@ -120,5 +150,6 @@ export default function reducer(state = initialState, action = {}) {
 }
 
 export const sagas = [
-  uploadPersonasSaga
+  uploadPersonasSaga,
+  ...importPersonasDuck.sagas
 ];
