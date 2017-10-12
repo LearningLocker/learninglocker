@@ -8,12 +8,14 @@ import { withModel } from 'ui/utils/hocs';
 import { Map, List } from 'immutable';
 import { modelsSchemaIdSelector } from 'ui/redux/selectors';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 
 import ModelAutoComplete from 'ui/containers/ModelAutoComplete';
 import ColumnHeaderEditor from 'ui/containers/PersonasImports/columnHeaderEditor';
 import {
   importPersonas
 } from 'ui/redux/modules/persona';
+import ValidationList from 'ui/components/ValidationList';
 
 const schema = 'personasImport';
 const templateSchema = 'personasImportTemplate';
@@ -59,11 +61,21 @@ const render = ({
       <div className="form-group">
         <TemplateManager />
       </div>
-      <div className="form-group">
+      <div
+        className={classNames({
+          'form-group': true,
+          'has-error': model.getIn(['errors', 'messages', 'structure'], false)
+        })}>
         <ColumnHeaderEditor
           csvHeaders={model.get('csvHeaders', new List())}
           structure={model.get('structure', new Map())}
           model={model} />
+
+        {model.getIn(['errors', 'messages', 'structure'], false) &&
+          (<span className="help-block">
+            <ValidationList errors={model.getIn(['errors', 'messages', 'structure'])} />
+          </span>)
+        }
       </div>
       <div className="form-group">
         <button

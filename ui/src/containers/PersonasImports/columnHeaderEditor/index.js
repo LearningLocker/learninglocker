@@ -2,14 +2,9 @@ import React from 'react';
 import { fromJS } from 'immutable';
 import {
   compose,
-  withHandlers
 } from 'recompose';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Card } from 'react-toolbox/lib/card';
-import {
-  reduce,
-  debounce
-} from 'lodash';
 import styles from './styles.css';
 import HeaderItem from './HeaderItem';
 import ScrollSnapper from './ScrollSnapper';

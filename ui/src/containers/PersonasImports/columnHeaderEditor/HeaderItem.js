@@ -114,11 +114,13 @@ const renderHeaderItem = ({
     <div>
       <h3>{columnName}</h3>
 
-      { isColumnOrderable({ columnName, structure: columnStructure }) && <div className="form-group">
+      { isColumnOrderable({ columnStructure: columnStructure.toJS() }) && <div className="form-group">
         <label htmlFor={`${model.get('_id')}-${columnName}-order`}>Order</label>
-        <text
+        <input
+          className="form-control"
           id={`${model.get('_id')}-${columnName}-order`}
           onChange={onPrimaryOrderChange}
+          // value={columnStructure.get('primary', )}
           type="number" />
       </div>
     }
