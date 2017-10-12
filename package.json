@@ -201,6 +201,7 @@
     "serve-favicon": "^2.3.0",
     "serve-file-download": "0.0.1",
     "sha1": "^1.1.1",
+    "sift": "^5.0.0",
     "source-map-support": "^0.4.10",
     "sqs-consumer": "^3.6.1",
     "stats-webpack-plugin": "^0.4.3",
