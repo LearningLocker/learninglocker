@@ -6,7 +6,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Deprecated
 ### Removed
 ### Fixed
-  - Non super admin users unable to create new organisationu ([#LL-415](https://ht2labs.myjetbrains.com/youtrack/issue/LL-415))
+  - Non super admin users unable to create new organisation ([#LL-415](https://ht2labs.myjetbrains.com/youtrack/issue/LL-415))
 
 ### Security
 ### Migrations
