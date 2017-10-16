@@ -72,7 +72,7 @@ export default class JsonTextArea extends Component {
 
   textarea = null
 
-  onChange = debounce((immutQuery) =>{
+  onChange = debounce((immutQuery) => {
     this.props.onChange(immutQuery);
   }, 620);
 

@@ -31,13 +31,10 @@ export const generateTableData = (results, labels, axes) => {
 
     series.reduce((axesReduction, axes2, axesKey) =>
 
-      axes2.reduce((seriesReduction, item) => {
-
-        return seriesReduction.setIn(
+      axes2.reduce((seriesReduction, item) => seriesReduction.setIn(
           [item.get('model'), seriesKey, getAxes(axesKey, axes)],
           item
-        );
-      }, axesReduction)
+        ), axesReduction)
     , reduction)
   , new OrderedMap());
 
