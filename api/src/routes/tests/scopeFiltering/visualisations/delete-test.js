@@ -24,32 +24,32 @@ describe('API HTTP DELETE visualisations route scope filtering', () => {
       .expect(204);
   };
 
-  it('should create inside the org when using all scope', async () => {
+  it('should delete inside the org when using all scope', async () => {
     const token = await createOrgToken([ALL]);
     await assertAction({ token });
   });
 
-  it('should create inside the org when using no scopes', async () => {
+  it('should delete inside the org when using no scopes', async () => {
     const token = await createOrgToken([]);
     await assertAction({ token });
   });
 
-  it('should create inside the org when using edit all scope', async () => {
+  it('should delete inside the org when using edit all scope', async () => {
     const token = await createOrgToken([EDIT_ALL_VISUALISATIONS]);
     await assertAction({ token });
   });
 
-  it('should create inside the org when using edit public scope', async () => {
+  it('should delete inside the org when using edit public scope', async () => {
     const token = await createOrgToken([EDIT_PUBLIC_VISUALISATIONS]);
     await assertAction({ token });
   });
 
-  it('should create inside the org when using owner org token', async () => {
+  it('should delete inside the org when using owner org token', async () => {
     const token = await createOwnerOrgToken();
     await assertAction({ token });
   });
 
-  it('should create inside the org when using site admin token', async () => {
+  it('should delete inside the org when using site admin token', async () => {
     const token = await createUserToken([SITE_ADMIN]);
     await assertAction({ token });
   });

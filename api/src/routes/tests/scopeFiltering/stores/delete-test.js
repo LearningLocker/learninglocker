@@ -42,9 +42,9 @@ describe('API HTTP DELETE stores route scope filtering', () => {
     await assertAuthorised({ token });
   });
 
-  it('should do action inside the org when using owner org token', async () => {
+  it('should not do action inside the org when using owner org token', async () => {
     const token = await createOwnerOrgToken();
-    await assertAuthorised({ token });
+    await assertUnauthorised({ token });
   });
 
   it('should do action inside the org when using site admin token', async () => {

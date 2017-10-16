@@ -38,9 +38,9 @@ describe('API HTTP POST stores route scope filtering', () => {
     await assertAuthorised({ token });
   });
 
-  it('should create inside the org when using owner org token', async () => {
+  it('should not create inside the org when using owner org token', async () => {
     const token = await createOwnerOrgToken();
-    await assertAuthorised({ token });
+    await assertUnauthorised({ token });
   });
 
   it('should create inside the org when using site admin token', async () => {
