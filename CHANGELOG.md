@@ -4,6 +4,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Added
   - Can now set the max times statement forwarding will retry.
 ### Changed
+ - Only allow sensible combinations of roles
 ### Deprecated
 ### Removed
 ### Fixed
