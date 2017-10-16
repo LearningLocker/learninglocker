@@ -5,6 +5,7 @@ import {
   EDIT_ALL_VISUALISATIONS,
   EDIT_PUBLIC_VISUALISATIONS
 } from 'lib/constants/orgScopes';
+import createClient from 'api/routes/tests/utils/models/createClient';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 import createUserToken from 'api/routes/tests/utils/tokens/createUserToken';
 import createOwnerOrgToken
@@ -26,33 +27,35 @@ describe('API HTTP DELETE visualisations route scope filtering', () => {
     isPublic,
     isOwner,
     bearerToken,
-    basicToken,
+    basicClient,
     expectedStatus = 204
   }) => {
     const visualisation = await createVisualisation(isPublic,
       isOwner ? TEST_USER_ID : objectId());
 
-    const authorization = bearerToken ?
-      `Bearer ${bearerToken}` :
-        `Basic ${basicToken}`;
-
-    return apiApp
+    const test = apiApp
       .delete(`${RESTIFY_PREFIX}/visualisation/${visualisation._id.toString()}`)
-      .set('Authorization', authorization)
-      .set('Content-Type', 'application/json')
-      .expect(expectedStatus);
+      .set('Content-Type', 'application/json');
+
+    if (bearerToken) {
+      test.set('Authorization', `Bearer ${bearerToken}`);
+    } else if (basicClient) {
+      test.auth(basicClient.api.basic_key, basicClient.api.basic_secret);
+    }
+
+    return test.expect(expectedStatus);
   };
 
   const assertPublicVisualisation = async ({
     bearerToken,
-    basicToken,
+    basicClient,
     expectedStatus = 204
   }) =>
     assertVisualisation({
       isPublic: true,
       isOwner: false,
       bearerToken,
-      basicToken,
+      basicClient,
       expectedStatus
     });
 
@@ -69,14 +72,14 @@ describe('API HTTP DELETE visualisations route scope filtering', () => {
 
   const assertPrivateVisualisation = async ({
     bearerToken,
-    basicToken,
+    basicClient,
     expectedStatus = 204
   }) =>
     assertVisualisation({
       isPublic: false,
       isOwner: false,
       bearerToken,
-      basicToken,
+      basicClient,
       expectedStatus
     });
 
@@ -90,8 +93,6 @@ describe('API HTTP DELETE visualisations route scope filtering', () => {
       bearerToken: token,
       expectedStatus
     });
-
-
 
   it('should delete inside the org when using all scope', async () => {
     const token = await createOrgToken([ALL], [], TEST_USER_ID);
@@ -141,15 +142,15 @@ describe('API HTTP DELETE visualisations route scope filtering', () => {
     await assertMyBearerPrivateVisualisation({ token, expectedStatus: 204 });
   });
 
-  // it('should delete when client basic has the ALL scope', async () => {
-  //   const token = ?
-  //   await assertPublicVisualisation({ basicToken: token, expectedStatus: 204 });
-  //   await assertPrivateVisualisation({ basicToken: token, expectedStatus: 204 });
-  // });
+  it('should delete when client basic has the ALL scope', async () => {
+    const basicClient = await createClient([ALL]);
+    await assertPublicVisualisation({ basicClient, expectedStatus: 204 });
+    await assertPrivateVisualisation({ basicClient, expectedStatus: 204 });
+  });
 
-  // it('should delete when client basic has no scopes', async () => {
-  //   const token = ?
-  //   await assertPublicVisualisation({ basicToken: token, expectedStatus: 404 });
-  //   await assertPrivateVisualisation({ basicToken: token, expectedStatus: 404 });
-  // });
+  it('should delete when client basic has no scopes', async () => {
+    const basicClient = await createClient();
+    await assertPublicVisualisation({ basicClient, expectedStatus: 403 });
+    await assertPrivateVisualisation({ basicClient, expectedStatus: 403 });
+  });
 });
