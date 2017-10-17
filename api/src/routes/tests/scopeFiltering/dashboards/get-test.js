@@ -3,8 +3,7 @@ import createDashboardToken from 'api/routes/tests/utils/tokens/createDashboardT
 import setup from 'api/routes/tests/utils/setup';
 import assertGetNodes from '../utils/assertGetNodes';
 
-
-describe.only('API HTTP GET dashboards route scope filtering', () => {
+describe('API HTTP GET dashboards route scope filtering', () => {
   const apiApp = setup();
   const assertNodes = assertGetNodes(apiApp, 'dashboard');
   const assertNode = modelId => assertGetNodes(apiApp, 'dashboard', modelId);

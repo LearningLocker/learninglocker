@@ -5,6 +5,8 @@ import {
   EDIT_ALL_VISUALISATIONS,
   EDIT_PUBLIC_VISUALISATIONS
 } from 'lib/constants/orgScopes';
+import createDashboard from 'api/routes/tests/utils/models/createDashboard';
+import createDashboardToken from 'api/routes/tests/utils/tokens/createDashboardToken';
 import createClient from 'api/routes/tests/utils/models/createClient';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 import createUserToken from 'api/routes/tests/utils/tokens/createUserToken';
@@ -20,7 +22,7 @@ import createVisualisation from '../utils/createVisualisation';
 
 const objectId = mongoose.Types.ObjectId;
 
-describe('API HTTP DELETE visualisations route scope filtering', () => {
+describe.only('API HTTP DELETE visualisations route scope filtering', () => {
   const apiApp = setup();
 
   const assertVisualisation = async({
@@ -152,5 +154,12 @@ describe('API HTTP DELETE visualisations route scope filtering', () => {
     const basicClient = await createClient();
     await assertPublicVisualisation({ basicClient, expectedStatus: 403 });
     await assertPrivateVisualisation({ basicClient, expectedStatus: 403 });
+  });
+
+  it('should fail to delete a dashboard using a dashboardToken', async () => {
+    const dashboard = await createDashboard({});
+    const dashboardToken = await createDashboardToken(dashboard);
+    await assertPublicVisualisation({ bearerToken: dashboardToken, expectedStatus: 403 });
+    await assertPrivateVisualisation({ bearerToken: dashboardToken, expectedStatus: 403 });
   });
 });
