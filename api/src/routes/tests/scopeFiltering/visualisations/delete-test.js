@@ -22,7 +22,7 @@ import createVisualisation from '../utils/createVisualisation';
 
 const objectId = mongoose.Types.ObjectId;
 
-describe.only('API HTTP DELETE visualisations route scope filtering', () => {
+describe('API HTTP DELETE visualisations route scope filtering', () => {
   const apiApp = setup();
 
   const assertVisualisation = async({

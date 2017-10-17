@@ -25,6 +25,6 @@ describe('API HTTP POST dashboards route scope filtering', () => {
   it('should fail to create a dashboard using a dashboardToken', async () => {
     const dashboard = await createDashboard({});
     const dashboardToken = await createDashboardToken(dashboard);
-    await assertCreate({ bearerToken: dashboardToken, expectedStatus: 403 });
+    return assertCreate({ bearerToken: dashboardToken, expectedStatus: 403 });
   });
 });
