@@ -25,8 +25,7 @@ const headerItemHandlers = withHandlers({
     columnName,
     model,
     updateModel: doUpdateModel,
-    columnStructure,
-    structure
+    // columnStructure,
   }) => (event) => {
     const value = event.target.value;
 
@@ -38,9 +37,8 @@ const headerItemHandlers = withHandlers({
     const newStructure =
       resetStructure.setIn([columnName, 'columnType'], value);
 
-
-    const newStructureOrder = (isColumnOrderable({ columnStructure: columnStructure.toJS() })) ?
-      newStructure.setIn([columnName, 'primary'], getPrimaryMaxPlusOne({ structure }))
+    const newStructureOrder = (isColumnOrderable({ columnStructure: newStructure.get(columnName).toJS() })) ?
+      newStructure.setIn([columnName, 'primary'], getPrimaryMaxPlusOne({ structure: newStructure }))
     :
       newStructure.deleteIn([columnName, 'primary']);
 
