@@ -246,12 +246,6 @@ const personasImport = new LLSchema('personasImport', {
 });
 personasImport.define({});
 
-const personasImportTemplate = new LLSchema('personasImportTemplate', {
-  idAttribute: '_id',
-  sortKey: 'updatedAt'
-});
-personasImportTemplate.define({});
-
 stream.define({
   outcomes: { type: arrayOf(streamOutcome), local: true },
   statements: { type: arrayOf(statement) }

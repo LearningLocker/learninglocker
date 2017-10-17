@@ -10,7 +10,6 @@ import { modelsSchemaIdSelector } from 'ui/redux/selectors';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 
-import ModelAutoComplete from 'ui/containers/ModelAutoComplete';
 import ColumnHeaderEditor from 'ui/containers/PersonasImports/columnHeaderEditor';
 import {
   importPersonas
@@ -18,7 +17,6 @@ import {
 import ValidationList from 'ui/components/ValidationList';
 
 const schema = 'personasImport';
-const templateSchema = 'personasImportTemplate';
 
 const handlers = withHandlers({
   handleImportPersonas: ({
@@ -31,26 +29,6 @@ const handlers = withHandlers({
   }
 });
 
-const renderTemplateSelector = ({
-  templateId = null,
-}) =>
-  (
-    <div>
-      <ModelAutoComplete
-        schema={templateSchema}
-        id={templateId}
-        parseOption={model => model.get('name')}
-        parseOptionTooltip={model => model.get('name')}
-        onChange={(event) => {
-          console.log('ModelAutoComplete onChange', event);
-        }} />
-      <button className="btn btn-primary">Save</button>
-      <button className="btn btn-primary">Save As</button>
-    </div>
-  );
-
-const TemplateManager = compose(
-)(renderTemplateSelector);
 
 const render = ({
   model,
@@ -58,9 +36,6 @@ const render = ({
 }) =>
   (
     <div>
-      <div className="form-group">
-        <TemplateManager />
-      </div>
       <div
         className={classNames({
           'form-group': true,
