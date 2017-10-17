@@ -21,7 +21,9 @@ process.on('SIGINT', () => {
 const targetUrl = `http://${config.apiHost}:${config.apiPort}`;
 const app = new Express();
 
-app.use(helmet());
+app.use(helmet({
+  frameguard: config.enableFrameguard
+}));
 
 const server = new http.Server(app);
 const proxy = httpProxy.createProxyServer({

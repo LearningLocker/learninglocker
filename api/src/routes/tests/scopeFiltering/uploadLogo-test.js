@@ -50,14 +50,14 @@ describe('UploadController.uploadLogo scope filtering', () => {
     await assertAuthorised(token);
   });
 
-  it('should allow action when MANAGE_ALL_ORGANISATIONS org scope is used', async () => {
+  it('should not allow action when MANAGE_ALL_ORGANISATIONS org scope is used', async () => {
     const token = await createOrgToken([MANAGE_ALL_ORGANISATIONS]);
-    await assertAuthorised(token);
+    await assertUnauthorised(token);
   });
 
-  it('should allow action when owner token is used', async () => {
+  it('should not allow action when owner token is used', async () => {
     const token = await createOwnerOrgToken();
-    await assertAuthorised(token);
+    await assertUnauthorised(token);
   });
 
   it('should allow action when SITE_ADMIN site scope is used', async () => {

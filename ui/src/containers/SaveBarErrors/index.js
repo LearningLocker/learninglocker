@@ -2,7 +2,7 @@ import React from 'react';
 import { compose, withHandlers } from 'recompose';
 import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { alertsSelector, deleteAlert } from 'ui/redux/modules/alerts';
+import { getAlertsSelector, deleteAlert } from 'ui/redux/modules/alerts';
 import styles from './styles.css';
 
 const onRemove = ({ deleteAlert: deleteAlert2 }) => key => () => deleteAlert2({ key });
@@ -25,7 +25,7 @@ const SaveBarErrors = ({
 const SaveBarComposed = compose(
   connect(
     state => ({
-      alerts: alertsSelector(state)
+      alerts: getAlertsSelector(state)
     }),
     {
       deleteAlert

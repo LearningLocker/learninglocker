@@ -54,9 +54,9 @@ describe('PersonaController.mergePersonas scope filtering', () => {
     await assertAuthorised(token);
   });
 
-  it('should allow action when owner token is used', async () => {
+  it('should not allow action when owner token is used', async () => {
     const token = await createOwnerOrgToken();
-    await assertAuthorised(token);
+    await assertUnauthorised(token);
   });
 
   it('should allow action when SITE_ADMIN site scope is used', async () => {
