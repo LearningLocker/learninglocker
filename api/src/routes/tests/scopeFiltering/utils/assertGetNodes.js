@@ -1,8 +1,8 @@
 import * as assert from 'assert';
 
-export default (apiApp, modelName) => ({ bearerToken, basicClient, expectedStatus = 200 }, nodes) => {
+export default (apiApp, modelName) => ({ bearerToken, basicClient, expectedStatus = 200, queryParams = '' }, nodes) => {
   const test = apiApp
-    .get(`/connection/${modelName}`);
+    .get(`/connection/${modelName}${queryParams}`);
 
   if (bearerToken) {
     test.set('Authorization', `Bearer ${bearerToken}`);
