@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ColumnHeaderEditorComponent should render 1`] = `
+<WithStyles(withHandlers(render))>
+  <ThemedCard
+    className="card"
+    composeTheme="deeply"
+    key="test1"
+  >
+    <Connect(withHandlers(renderHeaderItem))
+      columnName="test1"
+      columnStructure={
+        Object {
+          "columnName": "test1",
+        }
+      }
+      structure={
+        Object {
+          "test1": Object {
+            "columnName": "test1",
+          },
+          "test2": Object {
+            "columnName": "test2",
+          },
+        }
+      }
+    />
+  </ThemedCard>
+  <ThemedCard
+    className="card"
+    composeTheme="deeply"
+    key="test2"
+  >
+    <Connect(withHandlers(renderHeaderItem))
+      columnName="test2"
+      columnStructure={
+        Object {
+          "columnName": "test2",
+        }
+      }
+      structure={
+        Object {
+          "test1": Object {
+            "columnName": "test1",
+          },
+          "test2": Object {
+            "columnName": "test2",
+          },
+        }
+      }
+    />
+  </ThemedCard>
+  <ThemedCard
+    className="card"
+    composeTheme="deeply"
+    key="test3"
+  >
+    <Connect(withHandlers(renderHeaderItem))
+      columnName="test3"
+      columnStructure={
+        Object {
+          "columnName": "test3",
+          "columnType": "",
+          "primary": null,
+          "relatedColumn": null,
+        }
+      }
+      structure={
+        Object {
+          "test1": Object {
+            "columnName": "test1",
+          },
+          "test2": Object {
+            "columnName": "test2",
+          },
+        }
+      }
+    />
+  </ThemedCard>
+</WithStyles(withHandlers(render))>
+`;

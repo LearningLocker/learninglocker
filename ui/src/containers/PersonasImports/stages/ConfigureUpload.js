@@ -30,7 +30,7 @@ const handlers = withHandlers({
 });
 
 
-const render = ({
+export const ConfigureUploadComponent = ({
   model,
   handleImportPersonas
 }) =>
@@ -76,5 +76,5 @@ export default compose(
   ),
   handlers
 )(
-  render
+  ConfigureUploadComponent
 );

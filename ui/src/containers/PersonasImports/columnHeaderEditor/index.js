@@ -1,5 +1,4 @@
 import React from 'react';
-import { fromJS } from 'immutable';
 import {
   compose,
 } from 'recompose';
@@ -9,60 +8,16 @@ import styles from './styles.css';
 import HeaderItem from './HeaderItem';
 import ScrollSnapper from './ScrollSnapper';
 
-export const generateStructure = ({
-  csvHeaders,
-  structure
-}) => {
-  const structureMap = structure;
-
-  const structureMapKeys = structureMap.keySeq().toSet();
-  const csvHeadersSet = csvHeaders.toSet();
-  const missingHeaderKeys = csvHeadersSet.subtract(structureMapKeys);
-
-  const missingStructure = missingHeaderKeys
-    .toMap()
-    .mapKeys((key, value) => value)
-    .map((value, key) => (fromJS({
-      columnName: key,
-      columnType: '',
-      relatedColumn: null,
-      primary: null,
-    })));
-
-  const allStructureMap = structureMap.merge(missingStructure);
-
-  const out = allStructureMap
-    .sortBy(
-      (value, key) => key,
-      (keyA, keyB) => {
-        const keyAIndex = csvHeaders.indexOf(keyA);
-        const keyBIndex = csvHeaders.indexOf(keyB);
-        if (keyAIndex > keyBIndex) {
-          return 1;
-        }
-        return -1;
-      }
-    );
-
-  return out;
-};
-
-const render = ({
-  csvHeaders,
+export const ColumnHeaderEditorComponent = ({
   structure,
   model,
-}) => {
-  const renderStructure = generateStructure({
-    csvHeaders,
-    structure
-  });
-
-  return (
+}) =>
+  (
     <ScrollSnapper>
       {
-        renderStructure.map((columnStructure, name) =>
+        structure.map((columnStructure, name) =>
           (
-            <Card className={styles.card}>
+            <Card key={name} className={styles.card}>
               <HeaderItem
                 columnName={name}
                 columnStructure={columnStructure}
@@ -74,8 +29,7 @@ const render = ({
       }
     </ScrollSnapper>
   );
-};
 
 export default compose(
   withStyles(styles)
-)(render);
+)(ColumnHeaderEditorComponent);

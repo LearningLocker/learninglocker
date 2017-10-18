@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withProps, compose, withHandlers } from 'recompose';
-import { fromJS } from 'immutable';
+import { fromJS, Map } from 'immutable';
 import { withModels } from 'ui/utils/hocs';
 import ModelList from 'ui/containers/ModelList';
 import { addModel } from 'ui/redux/modules/models';
@@ -32,10 +32,10 @@ const handlers = withHandlers({
   onAddModel
 });
 
-const personaImports = ({
+export const PersonasImportsComponent = ({
   onAddModel: doOnAddModel
-}) => {
-  return (
+}) =>
+  (
     <div>
       <header id="topbar">
         <div className="heading heading-light">
@@ -52,14 +52,13 @@ const personaImports = ({
       <div className="row">
         <div className="col-md-12">
           <ImportList
-            filter={({})}
+            filter={new Map()}
             ModelForm={PersonasImportForm}
             getDescription={model => model.get('title', '~ Unnamed Import')} />
         </div>
       </div>
     </div>
   );
-};
 
 export default compose(
   connect(
@@ -69,4 +68,4 @@ export default compose(
     { addModel }
   ),
   handlers
-)(personaImports);
+)(PersonasImportsComponent);

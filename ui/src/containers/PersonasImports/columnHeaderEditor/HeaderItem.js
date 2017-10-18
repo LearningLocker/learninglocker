@@ -2,7 +2,6 @@ import React from 'react';
 import {
   compose,
   withHandlers,
-  setPropTypes
 } from 'recompose';
 import { connect } from 'react-redux';
 import { fromJS } from 'immutable';
@@ -16,7 +15,7 @@ import {
   resetRelatedStructure,
   isColumnOrderable,
   getPrimaryMaxPlusOne
-} from 'lib/helpers/personasImport';
+} from 'lib/services/importPersonas/personasImportHelpers';
 
 const schema = 'personasImport';
 
@@ -174,11 +173,6 @@ const renderHeaderItem = ({
   );
 
 export default compose(
-  setPropTypes({
-    columnName: String,
-    columnStructure: Object,
-    model: Object
-  }),
   connect(
     state => state,
     { updateModel }

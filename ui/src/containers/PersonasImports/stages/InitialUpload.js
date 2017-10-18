@@ -18,7 +18,7 @@ const FAILED = 'FAILED';
 const fileState = withState('file', 'setFile', {});
 
 
-const renderUploadButton = ({
+export const UploadButtonComponent = ({
   requestState,
   onSubmit,
 }) => {
@@ -62,7 +62,7 @@ const UploadButton =
     connect((state, { id }) => ({
       requestState: requestStateSelector({ id })(state)
     }), {})
-  )(renderUploadButton);
+  )(UploadButtonComponent);
 
 // ---------------------------
 
@@ -90,13 +90,13 @@ const handlers = withHandlers({
   }
 });
 
-const intialUploadFormRender = ({
+export const InitialUploadComponent = ({
   model,
   onSubmit,
   handleFileChange,
   file
-}) => {
-  return (<div>
+}) =>
+  (<div>
     <form className="form-group" onSubmit={onSubmit} encType="multipart/form-data">
       <label htmlFor={`${model.get('_id')}-file-selector`} className="btn btn-primary">
         <input
@@ -109,7 +109,7 @@ const intialUploadFormRender = ({
           placeholder="Upload the csv" />
 
         <strong>Upload personas CSV</strong>
-      </label><span> { file.name || ''}</span>
+      </label><span> {(file && file.name) || ''}</span>
       <br />
       <div>
         <ProgressBar
@@ -125,10 +125,10 @@ const intialUploadFormRender = ({
     <div className="form-group">
       {model.get('stage')}
     </div>
-  </div>);
-};
+  </div>
+);
 
-export default compose(
+const IntialUploadForm = compose(
   fileState,
   connect(
     state => ({
@@ -137,4 +137,6 @@ export default compose(
     { uploadPersonas }
   ),
   handlers,
-)(intialUploadFormRender);
+)(InitialUploadComponent);
+
+export default IntialUploadForm;

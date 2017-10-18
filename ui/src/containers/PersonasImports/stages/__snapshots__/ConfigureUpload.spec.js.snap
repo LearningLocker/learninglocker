@@ -1,0 +1,74 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConfigureUpload should render 1`] = `
+<div>
+  <div
+    className="form-group"
+  >
+    <WithStyles(render)
+      csvHeaders={
+        Array [
+          "test1",
+          "test2",
+        ]
+      }
+      model={
+        Object {
+          "csvHeaders": Array [
+            "test1",
+            "test2",
+          ],
+        }
+      }
+      structure={Object {}}
+    />
+  </div>
+  <div
+    className="form-group"
+  >
+    <button
+      className="btn btn-primary pull-right"
+    >
+      Import Personas
+    </button>
+  </div>
+</div>
+`;
+
+exports[`ConfigureUpload should render with errors 1`] = `
+<div>
+  <div
+    className="form-group has-error"
+  >
+    <WithStyles(render)
+      csvHeaders={Array []}
+      model={
+        Object {
+          "errors": Object {
+            "messages": Object {
+              "structure": "Structure is invalid",
+            },
+          },
+        }
+      }
+      structure={Object {}}
+    />
+    <span
+      className="help-block"
+    >
+      <WithStyles(ValidationList)
+        errors="Structure is invalid"
+      />
+    </span>
+  </div>
+  <div
+    className="form-group"
+  >
+    <button
+      className="btn btn-primary pull-right"
+    >
+      Import Personas
+    </button>
+  </div>
+</div>
+`;

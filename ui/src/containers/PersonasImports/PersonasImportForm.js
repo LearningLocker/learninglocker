@@ -24,7 +24,7 @@ const handlers = withHandlers({
   },
 });
 
-const personasImportForm = ({
+export const PersonasImportFormComponent = ({
   model,
   changeTitle
 }) =>
@@ -40,14 +40,16 @@ const personasImportForm = ({
     </div>
 
     {model.get('importStage') === STAGE_UPLOAD && <IntialUploadForm
+      className="initialUpload"
       model={model} />
     }
     {model.get('importStage') === STAGE_CONFIGURE_FIELDS &&
       <ConfigureUpload
+        className="configureUpload"
         model={model} />
     }
     { model.get('importStage') === STAGE_IMPORTED &&
-    <div>
+    <div className="stageImported">
       Imported on {moment(model.get('updatedAt')).format('ddd DD MMM YYYY h:mm:ss')}
     </div>
     }
@@ -61,4 +63,4 @@ export default compose(
   })),
   withModel,
   handlers,
-)(personasImportForm);
+)(PersonasImportFormComponent);
