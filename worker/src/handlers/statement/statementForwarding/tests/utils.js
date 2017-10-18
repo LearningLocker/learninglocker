@@ -21,7 +21,10 @@ const queueNames = [
 ];
 
 export const purgeBullQueues = () => {
-  if (process.env.QUEUE_PROVIDER !== 'BULL') {
+  if (
+    process.env.QUEUE_PROVIDER !== 'BULL' &&
+    process.env.QUEUE_PROVIDER !== 'REDIS'
+  ) {
     return Promise.resolve();
   }
 
@@ -70,6 +73,7 @@ export const purgeSQSQueues = () => { // eslint-disable-line import/prefer-defau
 
 export const purgeQueues = () => {
   switch (process.env.QUEUE_PROVIDER) {
+    case 'REDIS':
     case 'BULL':
       return purgeBullQueues();
     case 'SQS':

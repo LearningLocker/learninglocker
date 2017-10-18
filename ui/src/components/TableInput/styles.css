@@ -1,0 +1,20 @@
+.table {
+  margin-top: 0px; }
+
+.table > thead > tr > th {
+  padding-top: 10px;
+  padding-bottom: 9px; }
+
+.table > tbody > tr > td {
+  padding: 2px 0px;
+  vertical-align: middle; }
+  
+.table > tbody > tr > td input {
+  border: none;
+  box-shadow: none; }
+
+.textRight {
+  text-align: right; }
+
+.textInput {
+  padding: 1rem 0; }

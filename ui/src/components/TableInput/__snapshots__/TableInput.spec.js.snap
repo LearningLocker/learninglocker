@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TableInput Should render table input 1`] = `
+<span>
+  <table
+    className="table table-borderless table"
+  >
+    <thead>
+      <tr>
+        <th>
+          Column
+        </th>
+        <th>
+          Source
+        </th>
+        <th />
+      </tr>
+    </thead>
+    <tbody
+      id="models"
+    >
+      <tr>
+        <td>
+          <input
+            className="form-control"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onKeyDown={[Function]}
+            type="text"
+            value="test1"
+          />
+        </td>
+        <td>
+          <input
+            className="form-control"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onKeyDown={[Function]}
+            type="text"
+            value="test2"
+          />
+        </td>
+        <td
+          className="textRight"
+        >
+          <a
+            className="pull-right"
+            onClick={[Function]}
+          >
+            <i
+              className="icon ion-close"
+            />
+          </a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <a
+    className="btn btn-sm btn-inverse"
+    onClick={[Function]}
+    style={
+      Object {
+        "width": "33px",
+      }
+    }
+  >
+    <i
+      className="icon ion-plus"
+    />
+  </a>
+</span>
+`;
