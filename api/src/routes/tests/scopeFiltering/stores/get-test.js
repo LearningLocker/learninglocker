@@ -40,9 +40,9 @@ describe('API HTTP GET stores route scope filtering', () => {
     return assertNodes({ basicClient }, 1);
   });
 
-  it('should return no stores when using client basic with no scopes', async () => {
+  it('should return reject our request when using client basic with no scopes', async () => {
     const basicClient = await createClient();
     await createStore('561a679c0c5d017e4004714a');
-    return assertNodes({ basicClient, expectedStatus: 200 }, 0);
+    return assertNodes({ basicClient, expectedStatus: 403 });
   });
 });

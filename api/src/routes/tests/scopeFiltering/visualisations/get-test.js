@@ -6,6 +6,7 @@ import {
 import createClient from 'api/routes/tests/utils/models/createClient';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 import createUserToken from 'api/routes/tests/utils/tokens/createUserToken';
+import createDashboardToken from 'api/routes/tests/utils/tokens/createDashboardToken';
 import setup from 'api/routes/tests/utils/setup';
 import createVisualisation from '../utils/createVisualisation';
 import assertGetNodes from '../utils/assertGetNodes';
@@ -63,5 +64,19 @@ describe('API HTTP GET visualisations route scope filtering', () => {
     const basicClient = await createClient();
     await createVisualisations();
     return assertNodes({ basicClient, expectedStatus: 403 }, 0);
+  });
+
+  it('should return only visualisations attached to dashboard with dashboard token ', async () => {
+    const visualisation1 = await createVisualisation();
+    const visualisation2 = await createVisualisation();
+    await createVisualisation();
+    const dashboardToken = await createDashboardToken({ visualisationIds: [visualisation1._id, visualisation2._id] });
+    return assertNodes({ bearerToken: dashboardToken }, 2);
+  });
+
+  it('should return no visualisations with dashboard token with no visualisations', async () => {
+    await createVisualisation();
+    const dashboardToken = await createDashboardToken();
+    return assertNodes({ bearerToken: dashboardToken }, 0);
   });
 });

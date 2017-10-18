@@ -3,6 +3,8 @@ import {
   EDIT_ALL_VISUALISATIONS,
   EDIT_PUBLIC_VISUALISATIONS
 } from 'lib/constants/orgScopes';
+import createDashboard from 'api/routes/tests/utils/models/createDashboard';
+import createDashboardToken from 'api/routes/tests/utils/tokens/createDashboardToken';
 import createClient from 'api/routes/tests/utils/models/createClient';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 import createUserToken from 'api/routes/tests/utils/tokens/createUserToken';
@@ -68,5 +70,11 @@ describe('API HTTP POST visualisations route scope filtering', () => {
   it('should not create when client basic has no scopes', async () => {
     const basicClient = await createClient();
     await assertCreate({ basicClient, expectedStatus: 403 });
+  });
+
+  it('should fail to create a visualisation using a dashboardToken', async () => {
+    const dashboard = await createDashboard({});
+    const dashboardToken = await createDashboardToken(dashboard);
+    await assertCreate({ bearerToken: dashboardToken, expectedStatus: 403 });
   });
 });
