@@ -344,5 +344,4 @@ export {
   role,
   statementForwarding,
   personasImport,
-  personasImportTemplate,
 };

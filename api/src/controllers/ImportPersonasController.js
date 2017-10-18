@@ -4,7 +4,7 @@ import getFileAndFieldsFromRequest from 'api/controllers/utils/getFileAndFieldsF
 // import getFieldsFromRequest from 'api/controllers/utils/getFieldsFromRequest';
 
 import uploadPersonasService from 'lib/services/importPersonas/uploadPersonas';
-import importPresonasService from 'lib/services/importPersonas/importPersonas';
+import importPersonasService from 'lib/services/importPersonas/importPersonas';
 
 const uploadPersonas = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
@@ -24,7 +24,7 @@ const importPersonas = catchErrors(async (req, res) => {
 
   const { id } = req.body;
 
-  const personasImport = await importPresonasService({
+  const personasImport = await importPersonasService({
     id,
     authInfo,
     personaService: req.personaService

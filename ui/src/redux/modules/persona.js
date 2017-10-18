@@ -105,7 +105,6 @@ const importPersonasDuck = createSyncDuck({
       id,
       llClient
     }) {
-      console.log('001 SHOULD HAPPEN');
       const { status, body } = yield call(llClient.importPersonas, { id });
       if (status >= 300) throw new Error(body.message || body);
 

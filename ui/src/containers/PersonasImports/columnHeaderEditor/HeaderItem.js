@@ -7,7 +7,7 @@ import {
 import { connect } from 'react-redux';
 import { fromJS } from 'immutable';
 import { updateModel } from 'ui/redux/modules/models';
-import { COLUMN_TYPES } from 'lib/constants/personasImport';
+import { COLUMN_TYPES, COLUMN_TYPE_LABELS } from 'lib/constants/personasImport';
 import { map } from 'lodash';
 import {
   hasRelatedField,
@@ -138,10 +138,10 @@ const renderHeaderItem = ({
           className="form-control"
           onChange={onColumnTypeChange}
           value={columnStructure.get('columnType', '')} >
-          <option key="" value="">NOTHING</option>
+          <option key="" value="">Nothing</option>
           {
             COLUMN_TYPES.map(type => (
-              <option key={type} value={type}>{type}</option>
+              <option key={type} value={type}>{COLUMN_TYPE_LABELS[type]}</option>
             ))
           }
         </select>
