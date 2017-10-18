@@ -107,7 +107,7 @@ const headerItemHandlers = withHandlers({
   }
 });
 
-const renderHeaderItem = ({
+export const HeaderItemComponent = ({
   columnName,
   columnStructure,
   onColumnTypeChange,
@@ -178,4 +178,4 @@ export default compose(
     { updateModel }
   ),
   headerItemHandlers
-)(renderHeaderItem);
+)(HeaderItemComponent);

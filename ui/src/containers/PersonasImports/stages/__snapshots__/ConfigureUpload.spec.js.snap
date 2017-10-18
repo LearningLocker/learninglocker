@@ -5,7 +5,7 @@ exports[`ConfigureUpload should render 1`] = `
   <div
     className="form-group"
   >
-    <WithStyles(render)
+    <WithStyles(ColumnHeaderEditorComponent)
       csvHeaders={
         Array [
           "test1",
@@ -40,7 +40,7 @@ exports[`ConfigureUpload should render with errors 1`] = `
   <div
     className="form-group has-error"
   >
-    <WithStyles(render)
+    <WithStyles(ColumnHeaderEditorComponent)
       csvHeaders={Array []}
       model={
         Object {

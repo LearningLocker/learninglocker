@@ -1,0 +1,179 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HeaderItem should render 1`] = `
+<div>
+  <h3>
+    test1
+  </h3>
+  <div
+    className="form-group"
+  >
+    <label
+      htmlFor="1-test1-columnType"
+    >
+      Field type
+    </label>
+    <select
+      className="form-control"
+      id="1-test1-columnType"
+      value=""
+    >
+      <option
+        key=""
+        value=""
+      >
+        Nothing
+      </option>
+      <option
+        key="COLUMN_NAME"
+        value="COLUMN_NAME"
+      >
+        Persona name
+      </option>
+      <option
+        key="COLUMN_MBOX"
+        value="COLUMN_MBOX"
+      >
+        Identifier mbox
+      </option>
+      <option
+        key="COLUMN_MBOXSHA1SUM"
+        value="COLUMN_MBOXSHA1SUM"
+      >
+        Identifier mbox sha1sum
+      </option>
+      <option
+        key="COLUMN_OPENID"
+        value="COLUMN_OPENID"
+      >
+        Identifier open id
+      </option>
+      <option
+        key="COLUMN_ACCOUNT_KEY"
+        value="COLUMN_ACCOUNT_KEY"
+      >
+        Account home page
+      </option>
+      <option
+        key="COLUMN_ACCOUNT_VALUE"
+        value="COLUMN_ACCOUNT_VALUE"
+      >
+        Account name
+      </option>
+      <option
+        key="COLUMN_ATTRIBUTE_DATA"
+        value="COLUMN_ATTRIBUTE_DATA"
+      >
+        Attribute value
+      </option>
+      <option
+        key="COLUMN_ATTRIBUTE_DATA_KEY"
+        value="COLUMN_ATTRIBUTE_DATA_KEY"
+      >
+        Attribute key
+      </option>
+      <option
+        key="COLUMN_KEY"
+        value="COLUMN_KEY"
+      >
+        Identifier key
+      </option>
+      <option
+        key="COLUMN_VALUE"
+        value="COLUMN_VALUE"
+      >
+        Identifier value
+      </option>
+    </select>
+  </div>
+</div>
+`;
+
+exports[`HeaderItem should render with orderable and related column 1`] = `
+<div>
+  <h3>
+    test1
+  </h3>
+  <div
+    className="form-group"
+  >
+    <label
+      htmlFor="1-test1-columnType"
+    >
+      Field type
+    </label>
+    <select
+      className="form-control"
+      id="1-test1-columnType"
+      value=""
+    >
+      <option
+        key=""
+        value=""
+      >
+        Nothing
+      </option>
+      <option
+        key="COLUMN_NAME"
+        value="COLUMN_NAME"
+      >
+        Persona name
+      </option>
+      <option
+        key="COLUMN_MBOX"
+        value="COLUMN_MBOX"
+      >
+        Identifier mbox
+      </option>
+      <option
+        key="COLUMN_MBOXSHA1SUM"
+        value="COLUMN_MBOXSHA1SUM"
+      >
+        Identifier mbox sha1sum
+      </option>
+      <option
+        key="COLUMN_OPENID"
+        value="COLUMN_OPENID"
+      >
+        Identifier open id
+      </option>
+      <option
+        key="COLUMN_ACCOUNT_KEY"
+        value="COLUMN_ACCOUNT_KEY"
+      >
+        Account home page
+      </option>
+      <option
+        key="COLUMN_ACCOUNT_VALUE"
+        value="COLUMN_ACCOUNT_VALUE"
+      >
+        Account name
+      </option>
+      <option
+        key="COLUMN_ATTRIBUTE_DATA"
+        value="COLUMN_ATTRIBUTE_DATA"
+      >
+        Attribute value
+      </option>
+      <option
+        key="COLUMN_ATTRIBUTE_DATA_KEY"
+        value="COLUMN_ATTRIBUTE_DATA_KEY"
+      >
+        Attribute key
+      </option>
+      <option
+        key="COLUMN_KEY"
+        value="COLUMN_KEY"
+      >
+        Identifier key
+      </option>
+      <option
+        key="COLUMN_VALUE"
+        value="COLUMN_VALUE"
+      >
+        Identifier value
+      </option>
+    </select>
+  </div>
+</div>
+`;
