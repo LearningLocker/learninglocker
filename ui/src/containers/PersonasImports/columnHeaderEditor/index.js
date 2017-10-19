@@ -11,6 +11,7 @@ import ScrollSnapper from './ScrollSnapper';
 export const ColumnHeaderEditorComponent = ({
   structure,
   model,
+  disabled
 }) =>
   (
     <ScrollSnapper>
@@ -22,7 +23,8 @@ export const ColumnHeaderEditorComponent = ({
                 columnName={name}
                 columnStructure={columnStructure}
                 structure={structure}
-                model={model} />
+                model={model}
+                disabled={disabled} />
             </Card>
           )
         ).toList().toJS()

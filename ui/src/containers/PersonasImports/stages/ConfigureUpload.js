@@ -32,7 +32,8 @@ const handlers = withHandlers({
 
 export const ConfigureUploadComponent = ({
   model,
-  handleImportPersonas
+  handleImportPersonas,
+  disabled = false,
 }) =>
   (
     <div>
@@ -44,7 +45,8 @@ export const ConfigureUploadComponent = ({
         <ColumnHeaderEditor
           csvHeaders={model.get('csvHeaders', new List())}
           structure={model.get('structure', new Map())}
-          model={model} />
+          model={model}
+          disabled={disabled} />
 
         {model.getIn(['errors', 'messages', 'structure'], false) &&
           (<span className="help-block">
@@ -52,13 +54,15 @@ export const ConfigureUploadComponent = ({
           </span>)
         }
       </div>
-      <div className="form-group">
-        <button
-          className="btn btn-primary pull-right"
-          onClick={handleImportPersonas}>
-          Import Personas
-          </button>
-      </div>
+      {!disabled &&
+        <div className="form-group">
+          <button
+            className="btn btn-primary pull-right"
+            onClick={handleImportPersonas}>
+            Import Personas
+            </button>
+        </div>
+      }
     </div>
   );
 

@@ -49,9 +49,15 @@ export const PersonasImportFormComponent = ({
         model={model} />
     }
     { model.get('importStage') === STAGE_IMPORTED &&
-    <div className="stageImported">
-      Imported on {moment(model.get('importedAt')).format('ddd DD MMM YYYY h:mm:ss')}
-    </div>
+      <div className="stageImported">
+        <div>
+          Imported on {moment(model.get('importedAt')).format('ddd DD MMM YYYY h:mm:ss')}
+        </div>
+        <ConfigureUpload
+          className="configureUpload"
+          model={model}
+          disabled="true" />
+      </div>
     }
   </div>
   );

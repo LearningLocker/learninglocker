@@ -36,4 +36,21 @@ describe('HeaderItem', () => {
 
     expect(rendered).toMatchSnapshot();
   });
+
+  it('should render with orderable when disabled', () => {
+    const rendered = shallow(<HeaderItemComponent
+      columnName="test1"
+      columnStructure={fromJS({
+        1: {
+          columnName: 1,
+          columnType: COLUMN_MBOX
+        }
+      })}
+      model={fromJS({
+        _id: '1'
+      })}
+      disabled="true"/>);
+
+    expect(rendered).toMatchSnapshot();
+  });
 });

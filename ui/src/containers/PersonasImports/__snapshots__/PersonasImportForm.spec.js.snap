@@ -51,8 +51,22 @@ exports[`PersonasImportForm should render the form in STAGE_IMPORTED 1`] = `
   <div
     className="stageImported"
   >
-    Imported on 
-    Tue 31 Oct 2017 6:06:06
+    <div>
+      Imported on 
+      Tue 31 Oct 2017 6:06:06
+    </div>
+    <withProps(Connect(WithModel))
+      className="configureUpload"
+      disabled="true"
+      model={
+        Object {
+          "_id": "1",
+          "importStage": "STAGE_IMPORTED",
+          "importedAt": "2017-10-31T06:06:06Z",
+          "title": "1 title",
+        }
+      }
+    />
   </div>
 </div>
 `;

@@ -28,4 +28,15 @@ describe('ConfigureUpload', () => {
 
     expect(rendered).toMatchSnapshot();
   });
+
+  it('should render with disabled', () => {
+    const rendered = shallow(<ConfigureUploadComponent
+      model={fromJS({
+        csvHeaders: ['test1', 'test2']
+      })}
+      disabled="true"/>
+    );
+
+    expect(rendered).toMatchSnapshot();
+  });
 });

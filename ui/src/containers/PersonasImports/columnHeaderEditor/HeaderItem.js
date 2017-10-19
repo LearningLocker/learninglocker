@@ -116,7 +116,8 @@ export const HeaderItemComponent = ({
   onColumnTypeChange,
   onPrimaryOrderChange,
   onRelatedColumnChange,
-  model
+  model,
+  disabled
 }) =>
   (
     <div>
@@ -129,7 +130,8 @@ export const HeaderItemComponent = ({
           id={`${model.get('_id')}-${columnName}-order`}
           onChange={onPrimaryOrderChange}
           value={columnStructure.get('primary')}
-          type="number" />
+          type="number"
+          disabled={disabled} />
       </div>
     }
 
@@ -139,7 +141,8 @@ export const HeaderItemComponent = ({
           id={`${model.get('_id')}-${columnName}-columnType`}
           className="form-control"
           onChange={onColumnTypeChange}
-          value={columnStructure.get('columnType', '')} >
+          value={columnStructure.get('columnType', '')}
+          disabled={disabled} >
           <option key="" value="">Nothing</option>
           {
             COLUMN_TYPES.map(type => (
@@ -156,7 +159,8 @@ export const HeaderItemComponent = ({
             id={`${model.get('_id')}-${columnName}-relatedColumn`}
             className="form-control"
             onChange={onRelatedColumnChange}
-            value={columnStructure.get('relatedColumn', '')}>
+            value={columnStructure.get('relatedColumn', '')}
+            disabled={disabled} >
 
             <option disabled />
             {
