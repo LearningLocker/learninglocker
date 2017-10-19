@@ -36,10 +36,13 @@ const headerItemHandlers = withHandlers({
     const newStructure =
       resetStructure.setIn([columnName, 'columnType'], value);
 
-    const newStructureOrder = (isColumnOrderable({ columnStructure: newStructure.get(columnName).toJS() })) ?
-      newStructure.setIn([columnName, 'primary'], getPrimaryMaxPlusOne({ structure: newStructure }))
-    :
-      newStructure.deleteIn([columnName, 'primary']);
+    const isOrderable = isColumnOrderable({ columnStructure: newStructure.get(columnName).toJS() });
+    const newStructureOrder = isOrderable ?
+      newStructure.setIn(
+        [columnName, 'primary'],
+        getPrimaryMaxPlusOne({ structure: newStructure })
+      ) :
+        newStructure.setIn([columnName, 'primary'], null);
 
     doUpdateModel({
       schema,

@@ -1,21 +1,11 @@
-/*.container {
-  position: relative;
-  margin-left: -15px;
-  margin-right: -15px;
-}
-*/
 .content {
-  /*position: absolute;*/
-
   display: flex;
   flex-wrap: nowrap;
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 
 .container {
   position: relative;
-  /*margin-left: -15px;
-  margin-right: -15px;*/
 }
 
 .card {

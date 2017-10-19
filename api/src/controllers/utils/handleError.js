@@ -8,6 +8,7 @@ import InvalidRecalc from 'lib/errors/InvalidRecalc';
 import BaseError from 'lib/errors/BaseError';
 import logger from 'lib/logger';
 import EmptyCsvError from 'lib/errors/EmptyCsvError';
+import DuplicateCsvHeadersError from 'lib/errors/DuplicateCsvHeadersError';
 
 export default (res, err) => {
   logger.error(err);
@@ -24,6 +25,8 @@ export default (res, err) => {
     case InvalidRecalc:
       return res.status(400).send(err.message);
     case EmptyCsvError:
+      return res.status(400).send(err.message);
+    case DuplicateCsvHeadersError:
       return res.status(400).send(err.message);
     case Error:
     case BaseError:
