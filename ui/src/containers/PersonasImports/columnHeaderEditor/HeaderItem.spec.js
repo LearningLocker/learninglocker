@@ -3,13 +3,13 @@ import { shallow } from 'enzyme';
 import 'jest-enzyme';
 import { fromJS } from 'immutable';
 import {
-  HeaderItemComponent
-} from './HeaderItem';
-import {
   COLUMN_MBOX
 } from 'lib/constants/personasImport';
+import {
+  HeaderItemComponent
+} from './HeaderItem';
 
-describe.only('HeaderItem', () => {
+describe('HeaderItem', () => {
   it('should render', () => {
     const rendered = shallow(<HeaderItemComponent
       columnName="test1"
