@@ -46,7 +46,7 @@ describe('PersonasImportForm', () => {
         _id: '1',
         title: '1 title',
         importStage: STAGE_IMPORTED,
-        updatedAt: '2017-10-31T06:06:06Z'
+        importedAt: '2017-10-31T06:06:06Z'
       })} />
     );
     expect(
