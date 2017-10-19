@@ -5,7 +5,7 @@
 .idea/
 .tags
 .tmp
-*.csv
+storage/**/*.csv
 *.iml
 *.orig
 api/logs/*
