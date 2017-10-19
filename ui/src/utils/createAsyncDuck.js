@@ -87,7 +87,8 @@ export default function createAsyncDuck({
         ...args,
         message: err.message,
         options: {
-          status: err.status
+          status: err.status,
+          name: err.name,
         }
       }));
 
