@@ -50,7 +50,7 @@ export const PersonasImportFormComponent = ({
     }
     { model.get('importStage') === STAGE_IMPORTED &&
     <div className="stageImported">
-      Imported on {moment(model.get('updatedAt')).format('ddd DD MMM YYYY h:mm:ss')}
+      Imported on {moment(model.get('importedAt')).format('ddd DD MMM YYYY h:mm:ss')}
     </div>
     }
   </div>

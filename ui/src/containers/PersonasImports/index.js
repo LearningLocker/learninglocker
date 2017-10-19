@@ -13,7 +13,11 @@ const schema = 'personasImport';
 const ImportList = compose(
   withProps({
     schema,
-    sort: fromJS({ createdAt: -1, _id: -1 })
+    sort: fromJS({
+      importedAt: -1,
+      createdAt: -1,
+      _id: -1
+    })
   }),
   withModels
 )(ModelList);
