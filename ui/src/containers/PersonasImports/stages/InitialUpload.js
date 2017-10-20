@@ -21,6 +21,7 @@ const fileState = withState('file', 'setFile', {});
 export const UploadButtonComponent = ({
   requestState,
   onSubmit,
+  disabled = false
 }) => {
   switch (requestState) {
     case IN_PROGRESS:
@@ -50,7 +51,8 @@ export const UploadButtonComponent = ({
       return (
         <button
           onClick={onSubmit}
-          className="btn btn-primary pull-right">
+          className="btn btn-primary pull-right"
+          disabled={disabled}>
           <i className="icon ion-upload" /> Upload
         </button>
       );
@@ -79,9 +81,14 @@ const handlers = withHandlers({
       file
     });
   },
-  handleFileChange: ({ setFile }) => (event) => {
+  handleFileChange: ({
+    setFile,
+    setDisableUpload
+  }) => (event) => {
     const name = event.target.files[0].name;
     const handle = event.target.files[0];
+
+    setDisableUpload(false);
 
     setFile({
       name,
@@ -94,7 +101,8 @@ export const InitialUploadComponent = ({
   model,
   onSubmit,
   handleFileChange,
-  file
+  file,
+  disableUpload
 }) =>
   (<div>
     <form className="form-group" onSubmit={onSubmit} encType="multipart/form-data">
@@ -120,7 +128,8 @@ export const InitialUploadComponent = ({
     <div className="form-group">
       <UploadButton
         onSubmit={onSubmit}
-        id={model.get('_id')} />
+        id={model.get('_id')}
+        disabled={disableUpload} />
     </div>
     <div className="form-group">
       {model.get('stage')}
@@ -136,6 +145,7 @@ const IntialUploadForm = compose(
     }),
     { uploadPersonas }
   ),
+  withState('disableUpload', 'setDisableUpload', true),
   handlers,
 )(InitialUploadComponent);
 

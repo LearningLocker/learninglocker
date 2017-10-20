@@ -88,7 +88,7 @@ exports[`PersonasImportForm should render the form in STAGE_UPLOAD 1`] = `
       value="1 title"
     />
   </div>
-  <withState(Connect(withHandlers(InitialUploadComponent)))
+  <withState(Connect(withState(withHandlers(InitialUploadComponent))))
     className="initialUpload"
     model={
       Object {
