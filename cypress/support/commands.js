@@ -25,10 +25,10 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
 Cypress.Commands.add('resetState', () => {
-  return cy.exec('node cli/dist/server seed resetState', {
+  return cy.exec('node cli/dist/server seed reset', {
     env: {
       RUNTIME_NODE_ENV: 'test'
     },
     log: true
-  }).its('code').should('eq', 0);
+  });
 });
