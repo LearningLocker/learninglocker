@@ -29,7 +29,7 @@ describe('log in', () => {
     cy.location('pathname').should('include', 'organisation');
   });
 
-  it.only('should allready be loged in', () => {
+  it('should allready be loged in', () => {
 
     cy.exec('node --version', {
       log: true
@@ -39,44 +39,10 @@ describe('log in', () => {
 
     cy.resetState();
 
-    cy.exec('node cli/dist/server seed getToken', {
-      env: {
-        RUNTIME_NODE_ENV: 'test'
-      }
-    }).then((result) => {
-      const data = JSON.parse(result.stdout);
-      var organisationId = data.organisationId;
-      var userId = data.userId;
-
-      // cy.log('000', userId);
-
-      return {
-        cookies: data.cookies,
-        organisationId,
-        userId
-      };
-    }).then(function ({
-      cookies,
-      organisationId
-    }) {
-      // cy.log(cy.setCookie('key', 'value'));
-
-      return (Cypress.Promise.all(_.map(cookies, function (value, key) {
-        cy.log('001', key, value);
-        return cy.setCookie(key, value);
-      })).then((res) => {
-        cy.log('000', res);
-        return { organisationId };
-      }));
-
-      // return cy.setCookie('test6', 'test7').then(function () {
-      //   return { organisationId };
-      // });
-    }).then((args, b, c) => {
-      cy.log('args', args);
-      cy.log('b', b);
-      cy.log('c', c);
-      // cy.visit(`http://localhost:3000/organisation/${userId}`);
+    cy.beLoggedIn().then((args) => {
+      const { organisationId } = args;
+      cy.visit(`http://localhost:3000/organisation/${organisationId}`);
+      cy.location('pathname').should('include', 'organisation');
     });
   });
 });
