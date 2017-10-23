@@ -1,5 +1,3 @@
-var _ = require('lodash');
-
 describe('log in', () => {
   it('should log in', () => {
     // For some reason we need to call this first otherwise the seed command times out ???
