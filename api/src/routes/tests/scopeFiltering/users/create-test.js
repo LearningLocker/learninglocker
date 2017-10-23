@@ -20,13 +20,12 @@ import { RESTIFY_PREFIX } from 'lib/constants/routes';
 const objectId = mongoose.Types.ObjectId;
 const USER_TEST_EMAIL = 'test@test.com';
 
-describe('API HTTP POST users route scope filtering', () => {
+describe.only('API HTTP POST users route scope filtering', () => {
   const apiApp = setup();
 
   const assertCreate = ({ bearerToken, basicClient, expectedCode, additionalUserData = {} }) => {
     const test = apiApp
       .post(`${RESTIFY_PREFIX}/user`)
-
       .set('Content-Type', 'application/json');
 
     if (bearerToken) {
@@ -99,6 +98,46 @@ describe('API HTTP POST users route scope filtering', () => {
   it('should create inside the org when using basic client with ALL scopes', async () => {
     const basicClient = await createClient([ALL]);
     await assertAuthorised({ basicClient });
+  });
+
+  it('should create inside the org when using basic client with ALL scopes and additional orgs including the tokens org', async () => {
+    const otherOrg = objectId().toString();
+    const basicClient = await createClient([ALL]);
+    await assertAuthorised({ basicClient, additionalUserData: { organisations: [otherOrg, testId] } }).expect((res) => {
+      assert.deepEqual(res.body.organisations, [testId.toString()], 'Expected created user to have same organisations');
+    });
+  });
+
+  it('should create inside the org when using basic client with ALL scopes and additional orgs including the tokens org', async () => {
+    const otherOrg = objectId().toString();
+    const basicClient = await createClient([ALL]);
+    await assertCreate({ basicClient, additionalUserData: { organisations: [otherOrg] }, expectedCode: 400 });
+  });
+
+  it('should patch existing user inside the org when using basic client with ALL scopes and additional orgs including the tokens org and existing user is not in token org', async () => {
+    const newOrgId = objectId().toString();
+    const email = 'user1@test.com';
+    await createUser({ _id: null, email, organisations: [newOrgId] });
+
+    const basicClient = await createClient([ALL]);
+    const tokenOrgId = testId.toString();
+
+    await assertCreate({ basicClient, additionalUserData: { email, organisations: [tokenOrgId] }, expectedCode: 201 }).expect((res) => {
+      assert.deepEqual(res.body.organisations, [tokenOrgId, newOrgId], 'Expected created user to have same organisations');
+    });
+  });
+
+  it('should patch existing user inside the org when using basic client with ALL scopes and additional orgs including the tokens org and existing user is already in token org', async () => {
+    const tokenOrgId = testId.toString();
+    const newOrgID = objectId().toString();
+    const email = 'user1@test.com';
+    await createUser({ _id: null, email, organisations: [newOrgID, tokenOrgId] });
+
+    const basicClient = await createClient([ALL]);
+
+    await assertCreate({ basicClient, additionalUserData: { email, organisations: [tokenOrgId] }, expectedCode: 201 }).expect((res) => {
+      assert.deepEqual(res.body.organisations, [newOrgID, tokenOrgId], 'Expected created user to have same organisations');
+    });
   });
 
   it('should append organisation when POSTing existing user inside the org when using all scope ', async () => {
