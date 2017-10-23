@@ -6,13 +6,16 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Deprecated
 ### Removed
 ### Fixed
+### Security
+### Migrations
+
+## [2.0.5] - 2017-10-23
+### Security
   - Non super admin users unable to create new organisation ([#LL-415](https://ht2labs.myjetbrains.com/youtrack/issue/LL-415))
-  - Clients with appropraite scopes could not request certain models
+  - Clients with appropriate scopes could not request certain models
   - Clients without appropriate scopes can no longer see certain models
   - Prevent admins of one organisation amending anothers
 
-### Security
-### Migrations
 
 ## [2.0.4] - 2017-10-12
 ### Added
