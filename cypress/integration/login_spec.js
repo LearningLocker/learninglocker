@@ -65,7 +65,7 @@ describe('log in', () => {
     });
   });
 
-  it('should create admin which creates organisation', () => {
+  it.skip('should create admin which creates organisation', () => {
     cy.exec('node --version').then((result) => {
       cy.log('node version', result.stdout);
     });

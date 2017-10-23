@@ -39,8 +39,12 @@ addons:
     - g++-4.8
 
 script:
-  - npm run lint
-  - yarn test
+  - yarn build-all
+  - yarn start-test
+  - test-integration-run
+  - yarn stop-test
+  # - npm run lint
+  # - yarn test
 
 after_script:
   - pkill mongod
