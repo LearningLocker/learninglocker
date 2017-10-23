@@ -175,6 +175,7 @@ passport.use(
       if (!client.isTrusted) return done(null, false);
       client.authInfo = {
         client,
+        scopes: client.scopes,
         token: {
           tokenType: 'client'
         }
