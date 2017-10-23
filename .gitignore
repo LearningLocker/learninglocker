@@ -25,3 +25,4 @@ bootstrap.sh
 .vscode
 .tmp
 yarn-error.log
+cypress/screenshots/*
