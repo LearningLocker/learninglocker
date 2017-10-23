@@ -41,7 +41,7 @@ addons:
 script:
   - yarn build-all
   - yarn start-test
-  - test-integration-run
+  - yarn test-integration-run
   - yarn stop-test
   # - npm run lint
   # - yarn test
