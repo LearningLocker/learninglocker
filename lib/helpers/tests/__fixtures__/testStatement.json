@@ -1,0 +1,71 @@
+{
+  "refs": [],
+  "stored": "2017-10-12T10:48:35.262Z",
+  "active": true,
+  "completedForwardingQueue": [],
+  "failedForwardingLog": [],
+  "client": "592433ebce79a40338e0d8c4",
+  "lrs_id": "5943782ac3f34065c7b4132a",
+  "completedQueues": [
+    "STATEMENT_QUERYBUILDERCACHE_QUEUE",
+    "STATEMENT_PERSON_QUEUE",
+    "STATEMENT_FORWARDING_QUEUE",
+    "STATEMENT_JOURNEY_QUEUE"
+  ],
+  "hash": "92eb0cb27f53baf20d6918eda0e4bfe323bdb622",
+  "statement": {
+    "authority": {
+      "mbox": "mailto:hello@learninglocker.net",
+      "name": "New Client",
+      "objectType": "Agent"
+    },
+    "stored": "2017-10-12T10:48:35.262Z",
+    "actor": {
+      "objectType": "Agent",
+      "account": {
+        "homePage": "http://www.dave.com",
+        "name": "Dave30"
+      }
+    },
+    "timestamp": "2017-10-12T10:48:35.262Z",
+    "version": "1.0.0",
+    "id": "120d89af-90d9-4b94-a25a-952204ac0831",
+    "result": {
+      "score": {
+        "min": 0,
+        "max": 100,
+        "raw": 67,
+        "scaled": 0.67
+      }
+    },
+    "verb": {
+      "id": "http://adlnet.gov/expapi/verbs/commented",
+      "display": {
+        "en-GB": "completed"
+      }
+    },
+    "object": {
+      "objectType": "Activity",
+      "id": "https://acorncorp.com/training/Introduction",
+      "definition": {
+        "name": {
+          "en-GB": "Introduction"
+        },
+        "type": "http://adlnet.gov/expapi/activities/course"
+      }
+    }
+  },
+  "hasGeneratedId": true,
+  "deadForwardingQueue": [],
+  "voided": false,
+  "personaIdentifier": "59df443c6e7d52a3aa2454ed",
+  "processingQueues": [],
+  "person": {
+    "display": "Dave30 - http://www.dave.com (xAPI Account)",
+    "_id": "59df443c01de5e30d02d3e03"
+  },
+  "timestamp": "2017-10-12T10:48:35.262Z",
+  "organisation": "59198183d8ea540933227033",
+  "_id": "59df48837b1aa530c958e69d",
+  "pendingForwardingQueue": []
+}
