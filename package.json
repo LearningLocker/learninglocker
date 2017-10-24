@@ -28,15 +28,20 @@
     "start-worker-server": "node worker/dist/server",
     "start": "pm2 start pm2/all.json",
     "start-dev": "pm2 start pm2/dev-all.json",
+    "start-test": "pm2 start pm2/test-all.json",
     "restart": "pm2 restart pm2/all.json",
     "restart-dev": "pm2 restart pm2/dev-all.json",
+    "restart-test": "pm2 restart pm2/test-all.json",
     "stop": "pm2 delete pm2/all.json",
     "stop-dev": "pm2 delete pm2/dev-all.json",
+    "stop-test": "pm2 delete pm2/test-all.json",
     "lint": "eslint -c .eslintrc --fix ui/src api/src cli/src worker/src lib",
     "test-api": "mocha-webpack --exit --webpack-config \"api/testConfig.js\" \"api/src/**/*-test.js\"",
     "test-worker": "mocha-webpack --exit --webpack-config \"worker/testConfig.js\" \"worker/src/**/*-test.js\"",
     "test-lib": "mocha-webpack --exit --webpack-config \"api/testConfig.js\" \"lib/**/*-test.js\"",
     "test-ui": "jest --config ui/jest.config.json --env node",
+    "test-integration": "cypress open",
+    "test-integration-run": "cypress run",
     "test": "yarn test-api && yarn test-lib && yarn test-worker && yarn test-ui"
   },
   "dependencies": {
@@ -228,6 +233,7 @@
     "xapi-validation": "^1.0.2"
   },
   "devDependencies": {
+    "@cypress/webpack-preprocessor": "^1.0.2",
     "babel-jest": "^19.0.0",
     "babel-plugin-dynamic-import-node": "^1.0.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
@@ -237,6 +243,7 @@
     "clean-webpack-plugin": "^0.1.6",
     "cookie-parser": "^1.4.1",
     "css-loader": "^0.23.1",
+    "cypress": "^1.0.2",
     "enzyme": "^3.1.0",
     "enzyme-adapter-react-15": "^1.0.2",
     "eslint": "^3.6.1",

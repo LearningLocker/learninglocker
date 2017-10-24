@@ -1,6 +1,5 @@
 .DS_STORE
 .env
-.env
 .env.*
 .idea/
 .tags
@@ -25,3 +24,5 @@ bootstrap.sh
 .vscode
 .tmp
 yarn-error.log
+cypress/screenshots/*
+cypress/videos/*

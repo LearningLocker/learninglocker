@@ -77,6 +77,8 @@
     "__DEVTOOLS__": true,
     "__GOOGLE_ENABLED__": true,
     "socket": true,
-    "webpackIsomorphicTools": true
+    "webpackIsomorphicTools": true,
+    "cy": true,
+    "Cypress": true
   }
 }
