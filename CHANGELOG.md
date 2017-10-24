@@ -3,15 +3,22 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ## [unreleased]
 ### Added
   - Can now set the max times statement forwarding will retry.
+  - User integration tests
 ### Changed
  - Only allow sensible combinations of roles
 ### Deprecated
 ### Removed
 ### Fixed
-  - Non super admin users unable to create new organisation ([#LL-415](https://ht2labs.myjetbrains.com/youtrack/issue/LL-415))
-
 ### Security
 ### Migrations
+
+## [2.0.5] - 2017-10-23
+### Security
+  - Non super admin users unable to create new organisation ([#LL-415](https://ht2labs.myjetbrains.com/youtrack/issue/LL-415))
+  - Clients with appropriate scopes could not request certain models
+  - Clients without appropriate scopes can no longer see certain models
+  - Prevent admins of one organisation amending anothers
+
 
 ## [2.0.4] - 2017-10-12
 ### Added

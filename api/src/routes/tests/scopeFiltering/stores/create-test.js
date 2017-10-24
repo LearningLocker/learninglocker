@@ -11,7 +11,7 @@ import { RESTIFY_PREFIX } from 'lib/constants/routes';
 describe('API HTTP POST stores route scope filtering', () => {
   const apiApp = setup();
 
-  const assertCreate = async ({ bearerToken, basicClient, expectedCode }) => {
+  const assertCreate = ({ bearerToken, basicClient, expectedCode }) => {
     const test = apiApp
       .post(`${RESTIFY_PREFIX}/lrs`)
       .set('Content-Type', 'application/json');

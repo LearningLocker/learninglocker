@@ -72,10 +72,11 @@ const getLabel = (value) => {
 const SaveBar = ({
   saving
 }) => {
+  // saving = COMPLETED;
   const styles2 = omitBy(styles, isFunction);
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} save-bar`}>
       {saving && <ProgressBar
         className={styles2[saving.toLowerCase()]}
         mode={saving === IN_PROGRESS ? 'indeterminate' : 'determinate'}
