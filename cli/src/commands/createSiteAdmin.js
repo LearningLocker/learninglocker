@@ -81,20 +81,24 @@ async function ensureOrgScopeOnUser(user, org) {
   return await user.save();
 }
 
+export const createSiteAdmin = async (email, organisationName, password, options) => {
+  const forceUpdatePassword = options.forceUpdatePassword || false;
+
+  if (!(email && organisationName)) {
+    throw new Error('Username, password and organisationName required.');
+  }
+
+  const user = await findOrCreateUser(email, password);
+  const organisation = await findOrCreateOrganisation(user, organisationName);
+
+  await ensureSiteAdmin(user, password, forceUpdatePassword);
+  await ensureUserHasOrg(user, organisation);
+  await ensureOrgScopeOnUser(user, organisation);
+};
+
 export default async function (email, organisationName, password, options) {
   try {
-    const forceUpdatePassword = options.forceUpdatePassword || false;
-
-    if (!(email && organisationName)) {
-      throw new Error('Username, password and organisationName required.');
-    }
-
-    const user = await findOrCreateUser(email, password);
-    const organisation = await findOrCreateOrganisation(user, organisationName);
-
-    await ensureSiteAdmin(user, password, forceUpdatePassword);
-    await ensureUserHasOrg(user, organisation);
-    await ensureOrgScopeOnUser(user, organisation);
+    await createSiteAdmin(email, organisationName, password, options);
 
     process.exit();
   } catch (error) {
