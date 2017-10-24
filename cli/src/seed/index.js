@@ -57,7 +57,6 @@ export default async function (action) {
         break;
       }
       case 'getToken': {
-        logger.info('Getting auth token');
         await getToken();
         break;
       }

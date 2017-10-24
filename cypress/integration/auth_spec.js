@@ -27,15 +27,13 @@ describe('Authentication flow', () => {
     cy.location('pathname').should('include', 'organisation');
   });
 
-  it('should allready be loged in', () => {
+  it('should already be logged in', () => {
     cy.exec('node --version', {
       log: true
     }).then((result) => {
       cy.log('node version', result.stdout);
     });
-
     cy.resetState();
-
     cy.beLoggedIn().then((args) => {
       const { organisationId } = args;
       cy.visit(`http://localhost:3000/organisation/${organisationId}`);
