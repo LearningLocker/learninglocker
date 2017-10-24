@@ -18,29 +18,9 @@ describe('upload personas', () => {
 
       cy.get('input[placeholder="Short title of this import"]').invoke('val', 'Test import');
 
-      return cy.get('input[placeholder="Upload the csv"]').then((el) => {
-        return cy.fixture('personas.csv')
-          .then((blob) => {
-            const csvBlob = new Blob([blob], {
-              type: 'text/csv',
-              name: 'personas.csv'
-            });
-
-            const csvFile = new File([csvBlob], 'personas.csv');
-
-            el[0] = Object.defineProperty(el[0], 'files', {
-              configurable: true,
-              value: [csvFile]
-            });
-
-            el[0].dispatchEvent(new Event('change', {
-              bubbles: true,
-              target: {
-                files: [csvFile]
-              }
-            }));
-          });
-      });
+      cy.get('input[placeholder="Upload the csv"]').then(el =>
+        cy.uploadFixture('personas.csv', el)
+      );
     }).then(() => {
       cy.get('.ion-upload').last().click();
     }).then(() => {
@@ -55,36 +35,15 @@ describe('upload personas', () => {
     .then(() => {
       cy.contains('Imported on').should('be.visible');
       cy.get('input[id$="Email-order"]').should('have.value', '1');
+      cy.contains('~ personas.csv').click(); // minimise
     })
-
-
     .then(() => {
       // re upload should have the same structure
       cy.contains('#topbar button', 'Import').click();
 
-      return cy.get('input[placeholder="Upload the csv"]').then((el) =>
-        cy.fixture('personas.csv')
-          .then((blob) => {
-            const csvBlob = new Blob([blob], {
-              type: 'text/csv',
-              name: 'personas.csv'
-            });
-
-            const csvFile = new File([csvBlob], 'personas.csv');
-
-            el[0] = Object.defineProperty(el[0], 'files', {
-              configurable: true,
-              value: [csvFile]
-            });
-
-            el[0].dispatchEvent(new Event('change', {
-              bubbles: true,
-              target: {
-                files: [csvFile]
-              }
-            }));
-          });
-      });
+      cy.get('input[placeholder="Upload the csv"]').then(el =>
+        cy.uploadFixture('personas.csv', el)
+      );
     })
     .then(() => {
       cy.get('.ion-upload').last().click();

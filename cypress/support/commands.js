@@ -52,33 +52,31 @@ Cypress.Commands.add('beLoggedIn', () =>
 
 Cypress.Commands.add('uploadFixture', (
   fixturePath,
-  input, // Cypress promise
+  el,
   {
     type = 'text/csv',
     name
   } = {}
-) => {
-  input.then(el =>
-    cy.fixture(fixturePath).then((content) => {
-      name = name || path.basename(fixturePath);
+) =>
+  cy.fixture(fixturePath).then((content) => {
+    name = name || path.basename(fixturePath);
 
-      const contentBlob = new Blob([content], {
-        type
-      });
+    const contentBlob = new Blob([content], {
+      type
+    });
 
-      const file = new File([contentBlob], name);
+    const file = new File([contentBlob], name);
 
-      el[0] = Object.defineProperty(el[0], 'files', {
-        configurable: true,
-        value: [file]
-      });
+    el[0] = Object.defineProperty(el[0], 'files', {
+      configurable: true,
+      value: [file]
+    });
 
-      return el[0].dispatchEvent(new Event('change', {
-        bubbles: true,
-        target: {
-          files: [file]
-        }
-      }));
-    })
-  );
-});
+    el[0].dispatchEvent(new Event('change', {
+      bubbles: true,
+      target: {
+        files: [file]
+      }
+    }));
+  })
+);
