@@ -28,6 +28,8 @@ before_script:
   - mkdir ${PWD}/mongodb-linux-x86_64-${MONGODB}/data
   - ${PWD}/mongodb-linux-x86_64-${MONGODB}/bin/mongod --dbpath ${PWD}/mongodb-linux-x86_64-${MONGODB}/data --logpath ${PWD}/mongodb-linux-x86_64-${MONGODB}/mongodb.log --fork
   - npm install pm2 -g
+  - yarn build-all
+  - yarn start-test
 
 cache:
   directories:
@@ -41,12 +43,10 @@ addons:
     - g++-4.8
 
 script:
-  - yarn build-all
-  - yarn start-test
+  - npm run lint
+  - yarn test
   - yarn test-integration-run
-  - yarn stop-test
-  # - npm run lint
-  # - yarn test
 
 after_script:
   - pkill mongod
+  - yarn stop-test
