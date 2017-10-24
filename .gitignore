@@ -1,6 +1,5 @@
 .DS_STORE
 .env
-.env
 .env.*
 .idea/
 .tags

@@ -11,6 +11,7 @@ install:
   - tar xzf mongodb-linux-x86_64-${MONGODB}.tgz
   - ${PWD}/mongodb-linux-x86_64-${MONGODB}/bin/mongod --version
   - cp .env.example .env
+  - cp .env.example .env.test
   - yarn
 
 services:
