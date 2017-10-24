@@ -3,6 +3,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ## [unreleased]
 ### Added
   - Can now set the max times statement forwarding will retry.
+  - User integration tests
 ### Changed
  - Only allow sensible combinations of roles
 ### Deprecated
