@@ -43,7 +43,6 @@ addons:
 script:
   - yarn build-all
   - yarn start-test
-  - sleep 10
   - yarn test-integration-run
   - yarn stop-test
   # - npm run lint
