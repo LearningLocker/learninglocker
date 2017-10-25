@@ -31,7 +31,8 @@ const enhance = compose(
     state => ({
       isLoading: isLoadingSelector('dashboard', new Map())(state),
       userId: loggedInUserId(state),
-      params: routeNodeSelector('organisation.dashboards')(state).route.params
+      params: routeNodeSelector('organisation.dashboards')(state).route.params,
+      first: 300,
     }),
     { navigateTo: actions.navigateTo }
   ),
@@ -49,7 +50,7 @@ const enhance = compose(
       models,
       model
     }) => ({
-      modelsWithModel: !models.get(id) ? models.reverse().set(id, model).reverse() : models
+      modelsWithModel: !id || models.has(id) ? models : models.reverse().set(id, model).reverse()
     })
   ),
   withHandlers({
