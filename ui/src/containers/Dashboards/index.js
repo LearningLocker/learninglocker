@@ -6,7 +6,10 @@ import { connect } from 'react-redux';
 import { Map } from 'immutable';
 import { routeNodeSelector, actions } from 'redux-router5';
 import { withProps, compose, withHandlers } from 'recompose';
-import { withModels } from 'ui/utils/hocs';
+import {
+  withModels,
+  withModel
+} from 'ui/utils/hocs';
 import { loggedInUserId } from 'ui/redux/modules/auth';
 import Spinner from 'ui/components/Spinner';
 import Dashboard from 'ui/containers/Dashboard';
@@ -34,6 +37,12 @@ const enhance = compose(
   ),
   withProps({ schema: 'dashboard', filter: new Map() }),
   withModels,
+  withProps(({
+      params
+    }) => ({
+      id: params.dashboardId
+    })),
+  withModel,
   withHandlers({
     pushRoute: ({ navigateTo, params: { organisationId } }) => (dashboardId) => {
       navigateTo('organisation.data.dashboards.id', {
@@ -75,7 +84,8 @@ const render = ({
   handleAddDashboard,
   isLoading,
   models,
-  params
+  params,
+  model
 }) => {
   if (isLoading) {
     return renderSpinner();
@@ -99,6 +109,7 @@ const render = ({
 
   return (
     <Tabs index={activeTab} onChange={handleTabChange}>
+      {renderDashboard(params)(model)}
       {models.map(renderDashboard(params)).valueSeq()}
       <Tab label="Add" />
     </Tabs>
