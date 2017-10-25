@@ -43,6 +43,15 @@ const enhance = compose(
       id: params.dashboardId
     })),
   withModel,
+  withProps(
+    ({
+      id,
+      models,
+      model
+    }) => ({
+      modelsWithModel: !models.get(id) ? models.reverse().set(id, model).reverse() : models
+    })
+  ),
   withHandlers({
     pushRoute: ({ navigateTo, params: { organisationId } }) => (dashboardId) => {
       navigateTo('organisation.data.dashboards.id', {
@@ -62,8 +71,8 @@ const enhance = compose(
       });
       pushRoute(model.get('_id'));
     },
-    handleDashboardSwitch: ({ models, pushRoute }) => (tab) => {
-      const selectedDashboard = models.toList().get(tab);
+    handleDashboardSwitch: ({ modelsWithModel, pushRoute }) => (tab) => {
+      const selectedDashboard = modelsWithModel.toList().get(tab);
       pushRoute(selectedDashboard.get('_id'));
     }
   }),
@@ -83,16 +92,18 @@ const render = ({
   handleTabChange,
   handleAddDashboard,
   isLoading,
-  models,
+  // models,
   params,
-  model
+  // id,
+  // model,
+  modelsWithModel
 }) => {
   if (isLoading) {
     return renderSpinner();
   }
 
   // Render no dashboards.
-  if (models.size === 0) {
+  if (modelsWithModel.size === 0) {
     return (
       <h3>
         {"You don't have any dashboards yet! Add one to get started. "}
@@ -105,12 +116,11 @@ const render = ({
 
   // Render dashboards.
   const { dashboardId } = params;
-  const activeTab = models.toList().keyOf(models.get(dashboardId));
+  const activeTab = modelsWithModel.toList().keyOf(modelsWithModel.get(dashboardId));
 
   return (
     <Tabs index={activeTab} onChange={handleTabChange}>
-      {renderDashboard(params)(model)}
-      {models.map(renderDashboard(params)).valueSeq()}
+      {modelsWithModel.map(renderDashboard(params)).valueSeq()}
       <Tab label="Add" />
     </Tabs>
   );
