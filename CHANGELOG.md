@@ -12,6 +12,11 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+
+## [2.0.6] - 2017-10-26
+### Security
+  - Ensure all dashboards can load ([#LL-423](https://ht2labs.myjetbrains.com/youtrack/issue/LL-423))
+
 ## [2.0.5] - 2017-10-23
 ### Security
   - Non super admin users unable to create new organisation ([#LL-415](https://ht2labs.myjetbrains.com/youtrack/issue/LL-415))
