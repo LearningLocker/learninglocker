@@ -6,7 +6,10 @@ import { connect } from 'react-redux';
 import { Map } from 'immutable';
 import { routeNodeSelector, actions } from 'redux-router5';
 import { withProps, compose, withHandlers } from 'recompose';
-import { withModels } from 'ui/utils/hocs';
+import {
+  withModels,
+  withModel
+} from 'ui/utils/hocs';
 import { loggedInUserId } from 'ui/redux/modules/auth';
 import Spinner from 'ui/components/Spinner';
 import Dashboard from 'ui/containers/Dashboard';
@@ -28,12 +31,28 @@ const enhance = compose(
     state => ({
       isLoading: isLoadingSelector('dashboard', new Map())(state),
       userId: loggedInUserId(state),
-      params: routeNodeSelector('organisation.dashboards')(state).route.params
+      params: routeNodeSelector('organisation.dashboards')(state).route.params,
+      first: 300,
     }),
     { navigateTo: actions.navigateTo }
   ),
   withProps({ schema: 'dashboard', filter: new Map() }),
   withModels,
+  withProps(({
+      params
+    }) => ({
+      id: params.dashboardId
+    })),
+  withModel,
+  withProps(
+    ({
+      id,
+      models,
+      model
+    }) => ({
+      modelsWithModel: !id || models.has(id) ? models : models.reverse().set(id, model).reverse()
+    })
+  ),
   withHandlers({
     pushRoute: ({ navigateTo, params: { organisationId } }) => (dashboardId) => {
       navigateTo('organisation.data.dashboards.id', {
@@ -53,8 +72,8 @@ const enhance = compose(
       });
       pushRoute(model.get('_id'));
     },
-    handleDashboardSwitch: ({ models, pushRoute }) => (tab) => {
-      const selectedDashboard = models.toList().get(tab);
+    handleDashboardSwitch: ({ modelsWithModel, pushRoute }) => (tab) => {
+      const selectedDashboard = modelsWithModel.toList().get(tab);
       pushRoute(selectedDashboard.get('_id'));
     }
   }),
@@ -74,15 +93,18 @@ const render = ({
   handleTabChange,
   handleAddDashboard,
   isLoading,
-  models,
-  params
+  // models,
+  params,
+  // id,
+  // model,
+  modelsWithModel
 }) => {
   if (isLoading) {
     return renderSpinner();
   }
 
   // Render no dashboards.
-  if (models.size === 0) {
+  if (modelsWithModel.size === 0) {
     return (
       <h3>
         {"You don't have any dashboards yet! Add one to get started. "}
@@ -95,11 +117,11 @@ const render = ({
 
   // Render dashboards.
   const { dashboardId } = params;
-  const activeTab = models.toList().keyOf(models.get(dashboardId));
+  const activeTab = modelsWithModel.toList().keyOf(modelsWithModel.get(dashboardId));
 
   return (
     <Tabs index={activeTab} onChange={handleTabChange}>
-      {models.map(renderDashboard(params)).valueSeq()}
+      {modelsWithModel.map(renderDashboard(params)).valueSeq()}
       <Tab label="Add" />
     </Tabs>
   );
