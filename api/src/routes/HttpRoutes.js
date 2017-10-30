@@ -29,10 +29,10 @@ import Client from 'lib/models/client';
 import User from 'lib/models/user';
 import Organisation from 'lib/models/organisation';
 import Stream from 'lib/models/stream';
-import Persona from 'lib/models/persona';
+// import Persona from 'lib/models/persona';
 import Export from 'lib/models/export';
 import Download from 'lib/models/download';
-import PersonaIdentifier from 'lib/models/personaidentifier';
+// import PersonaIdentifier from 'lib/models/personaidentifier';
 import Query from 'lib/models/query';
 import ImportCsv from 'lib/models/importcsv';
 import ScoringScheme from 'lib/models/scoringscheme';
@@ -109,30 +109,33 @@ router.get(
 /**
 * Personas
 */
-router.post(
-  routes.MERGE_PERSONA,
-  passport.authenticate(['jwt'], DEFAULT_PASSPORT_OPTIONS),
-  PersonaController.mergePersona
+
+console.log('route: ', routes.CONNECTION_PERSONA);
+router.get(
+  routes.CONNECTION_PERSONA,
+  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  PersonaController.connection
 );
-router.post(
-  routes.ASSIGN_PERSONA,
-  passport.authenticate(['jwt'], DEFAULT_PASSPORT_OPTIONS),
-  PersonaController.assignPersona
-);
-router.post(
-  routes.CREATE_PERSONA_FROM_IDENTIFIER,
-  passport.authenticate(['jwt'], DEFAULT_PASSPORT_OPTIONS),
-  PersonaController.createPersonaFromIdentifier
-);
+
+// router.post(
+//   routes.MERGE_PERSONA,
+//   passport.authenticate(['jwt'], DEFAULT_PASSPORT_OPTIONS),
+//   PersonaController.mergePersona
+// );
+// router.post(
+//   routes.ASSIGN_PERSONA,
+//   passport.authenticate(['jwt'], DEFAULT_PASSPORT_OPTIONS),
+//   PersonaController.assignPersona
+// );
+// router.post(
+//   routes.CREATE_PERSONA_FROM_IDENTIFIER,
+//   passport.authenticate(['jwt'], DEFAULT_PASSPORT_OPTIONS),
+//   PersonaController.createPersonaFromIdentifier
+// );
 
 /**
  * UPLOADS
  */
-router.post(
-  routes.UPLOADPEOPLE,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
-  UploadController.uploadPeople
-);
 router.post(
   routes.UPLOADLOGO,
   passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
@@ -205,8 +208,8 @@ restify.serve(router, Organisation);
 restify.serve(router, Stream);
 restify.serve(router, Export);
 restify.serve(router, Download);
-restify.serve(router, Persona);
-restify.serve(router, PersonaIdentifier);
+// restify.serve(router, Persona);
+// restify.serve(router, PersonaIdentifier);
 restify.serve(router, Query);
 restify.serve(router, ImportCsv);
 restify.serve(router, ScoringScheme);
@@ -238,8 +241,8 @@ const generatedRouteModels = [
   Dashboard,
   Visualisation,
   Query,
-  Persona,
-  PersonaIdentifier,
+  // Persona,
+  // PersonaIdentifier,
   Export,
   Download,
   ImportCsv,
