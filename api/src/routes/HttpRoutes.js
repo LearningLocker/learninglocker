@@ -110,11 +110,20 @@ router.get(
 * Personas
 */
 
-console.log('route: ', routes.CONNECTION_PERSONA);
 router.get(
   routes.CONNECTION_PERSONA,
   passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
   PersonaController.connection
+);
+router.patch(
+  routes.UPDATE_PERSONA,
+  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  PersonaController.update
+);
+router.get(
+  routes.CONNECTION_PERSONA_IDENTIFIER,
+  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  PersonaController.getIdentifiers
 );
 
 // router.post(
