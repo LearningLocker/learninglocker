@@ -101,7 +101,7 @@ const getIdentifiers = catchErrors(async (req, res) => {
 
   const identifiers = await req.personaService.getIdentifiers({
     limit: first || last,
-    direction: before ? 'BACKWARDS' : 'FORWARDS',
+    direction: CursorDirection[before ? 'BACKWARDS' : 'FORWARDS'],
     sort,
     cursor: after || before,
     organisation: getOrgFromAuthInfo(authInfo),
@@ -175,11 +175,29 @@ const mergePersona = catchErrors(async(req, res) => {
   return res.status(200).send(result);
 });
 
+const deletePersona = catchErrors(async(req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'editAllScope',
+    authInfo
+  });
+
+  const result = await req.personaService.deletePersona({
+    organisation: getOrgFromAuthInfo(authInfo),
+    personaId: req.params.personaId
+  });
+
+  return res.status(200).send(result);
+});
+
 export default {
   connection,
   update,
   getIdentifiers,
   postIdentifier,
   getPersonaCount,
-  mergePersona
+  mergePersona,
+  deletePersona
 };
