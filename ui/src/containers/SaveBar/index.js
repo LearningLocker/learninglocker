@@ -40,8 +40,14 @@ export const savingSelector = () => createSelector(
     ).toList().map(model =>
       model.getIn(['requestState'])
     ),
-  (saving, uploadPersonasSaving) => {
-    saving = saving.concat(uploadPersonasSaving);
+  state => // uploadpeople
+    state.mergePersona.filter(model =>
+      model && model.getIn && !!model.getIn(['requestState'])
+    ).toList().map(model =>
+      model.getIn(['requestState'])
+    ),
+  (saving, uploadPersonasSaving, mergePersonaSaving) => {
+    saving = saving.concat(uploadPersonasSaving).concat(mergePersonaSaving);
 
     if (saving.includes(IN_PROGRESS)) {
       return IN_PROGRESS;

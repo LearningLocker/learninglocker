@@ -15,49 +15,12 @@ export default class PersonaIdentifier extends Component {
   render = () => {
     const { model } = this.props;
 
-    // const itemId = item.get('_id');
     const uniqueIdent = model.get('ifi');
-    // const otherIdents = model.get('ifis');
-
-
-    // const identifiers = otherIdents.map((ident, index) => {
-    //   const value = ident.get('value');
-    //   const renderedValue = typeof value === 'string' ? value : (
-    //     <pre>{JSON.stringify(value, null, 2) }</pre>
-    //   );
-    //   return (
-    //     <tr key={index}>
-    //       <td>{ident.get('key')}</td>
-    //       <td>{renderedValue}</td>
-    //     </tr>
-    //   );
-    // });
-
-    // <KeyValueIdent ident={uniqueIdent} />
-
-    // {(otherIdents.size > 0 &&
-    //       <div>
-    //         <h4 style={{ fontSize: '15px', fontWeight: 'bold' }}>Scorable data</h4>
-    //         <table className="table table-bordered table-striped">
-    //           <thead>
-    //             <tr>
-    //               <th>Key</th>
-    //               <th>Value</th>
-    //             </tr>
-    //           </thead>
-    //           <tbody>
-    //             { identifiers }
-    //           </tbody>
-    //         </table>
-    //       </div>
-    //     )}
 
     return (
       <div>
-        <h4 style={{ fontSize: '15px', fontWeight: 'bold' }}>Unique identifier</h4>
-        <KeyValueIdent ident={uniqueIdent} />
-        <br />
-        <hr />
+        <KeyValueIdent
+          ident={uniqueIdent} />
       </div>
     );
   }

@@ -125,6 +125,21 @@ router.get(
   passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
   PersonaController.getIdentifiers
 );
+router.post(
+  routes.CREATE_IDENTIFIER,
+  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  PersonaController.postIdentifier
+);
+router.get(
+  routes.GET_PERSONA_COUNT,
+  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  PersonaController.getPersonaCount
+);
+router.post(
+  routes.MERGE_PERSONA,
+  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  PersonaController.mergePersona
+);
 
 // router.post(
 //   routes.MERGE_PERSONA,

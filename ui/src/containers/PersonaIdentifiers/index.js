@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import PersonaIdentifier from 'ui/components/PersonaIdentifier';
 import { Map } from 'immutable';
 import { compose, renameProp, withProps, setPropTypes } from 'recompose';
-import { /*withSchema*/ withModels } from 'ui/utils/hocs';
+import { withModels } from 'ui/utils/hocs';
 
 const enhance = compose(
   setPropTypes({

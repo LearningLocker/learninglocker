@@ -27,8 +27,8 @@ class PersonaView extends Component {
   state = {
     showIdentifiers: false,
     showAddForm: false,
-    newKey: '',
-    newValue: ''
+    identifierType: 'mbox',
+    identifierValue: ''
   };
 
   handleToggle = () => {
@@ -43,26 +43,27 @@ class PersonaView extends Component {
   handleAdd = (e) => {
     e.preventDefault();
     const { model } = this.props;
-    const { newKey, newValue } = this.state;
+    const { identifierType, identifierValue } = this.state;
     const props = {
       organisation: model.get('organisation'),
-      uniqueIdentifier: {
-        key: newKey,
-        value: newValue
+      ifi: {
+        key: identifierType,
+        value: identifierValue
       },
-      identifers: [],
-      persona: model.get('_id')
+      persona: {
+        $oid: model.get('_id')
+      }
     };
     this.props.addModel({ schema: 'personaIdentifier', props });
     this.setState({ showAddForm: false });
   };
 
-  handleNewKeyChange = (newKey) => {
-    this.setState({ newKey });
+  handleIdentifierTypeChange = (identifierType) => {
+    this.setState({ identifierType });
   };
 
-  handleNewValueChange = (newValue) => {
-    this.setState({ newValue });
+  handleIdentifierValueChange = (identifierValue) => {
+    this.setState({ identifierValue });
   };
 
   setAttr = (attr, value) => {
@@ -106,43 +107,51 @@ class PersonaView extends Component {
 
   render = () => {
     const { model } = this.props;
-    const { showIdentifiers, showAddForm, newKey, newValue } = this.state;
+    const {
+      showIdentifiers,
+      showAddForm,
+      identifierType,
+      identifierValue
+    } = this.state;
     const showMergeForm = this.props.getMetadata('isMergeFormVisible', false);
     const nameId = uuid.v4();
 
     return (
-      <div>
-        <div className="form-group">
-          <label htmlFor={nameId} className="control-label">
-            Name
-          </label>
-          <input
-            id={nameId}
-            className="form-control"
-            placeholder="Name"
-            value={model.get('name')}
-            onChange={this.onChangeAttr.bind(null, 'name')} />
+      <div> {
+        showMergeForm ? (
+          <PersonaMergeForm schema={schema} id={model.get('_id')} />
+        ) : (
+        <div>
+          <div className="form-group">
+            <label htmlFor={nameId} className="control-label">
+              Name
+            </label>
+            <input
+              id={nameId}
+              className="form-control"
+              placeholder="Name"
+              value={model.get('name')}
+              onChange={this.onChangeAttr.bind(null, 'name')} />
+          </div>
+
+          {this.renderButtons()}
+
+          {showAddForm &&
+            <PersonaIdentifierForm
+              identifierType={identifierType}
+              identifierValue={identifierValue}
+              handleIdentifierTypeChange={this.handleIdentifierTypeChange}
+              handleIdentifierValueChange={this.handleIdentifierValueChange} />}
+
+          {showIdentifiers &&
+            <div>
+              <br />
+              <h4>Persona Identifiers</h4>
+              <hr />
+              <PersonaIdentifiers personaId={model.get('_id')} />
+            </div>}
         </div>
-
-        {showMergeForm &&
-          <PersonaMergeForm schema={schema} id={model.get('_id')} />}
-
-        {this.renderButtons()}
-
-        {showAddForm &&
-          <PersonaIdentifierForm
-            newKey={newKey}
-            newValue={newValue}
-            onKeyChange={this.handleNewKeyChange}
-            onValueChange={this.handleNewValueChange} />}
-
-        {showIdentifiers &&
-          <div>
-            <br />
-            <h4>Persona Identifiers</h4>
-            <hr />
-            <PersonaIdentifiers personaId={model.get('_id')} />
-          </div>}
+      )}
       </div>
     );
   };

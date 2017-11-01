@@ -6,6 +6,8 @@ import getFromQuery from 'api/utils/getFromQuery';
 import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import { MAX_TIME_MS, MAX_SCAN } from 'lib/models/plugins/addCRUDFunctions';
+import parseQuery from 'lib/helpers/parseQuery';
+import { CursorDirection } from 'personas/dist/service/constants';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -26,13 +28,15 @@ const connection = catchErrors(async (req, res) => {
   });
 
   const filter = {
-    ...getJSONFromQuery(req, 'filter', {}),
+    ...(await parseQuery(
+      getJSONFromQuery(req, 'filter', {})
+    )),
     ...scopeFilter
   };
 
   const personas = await req.personaService.getPersonas({
     limit: first || last,
-    direction: before ? 'BACKWARDS' : 'FORWARDS',
+    direction: CursorDirection[before ? 'BACKWARDS' : 'FORWARDS'],
     sort,
     cursor: after || before,
     organisation: getOrgFromAuthInfo(authInfo),
@@ -89,8 +93,6 @@ const getIdentifiers = catchErrors(async (req, res) => {
     ...inFilter
   } = getJSONFromQuery(req, 'filter', {});
 
-  console.log('000 persona', persona);
-
   const filter = {
     ...inFilter,
     persona: objectId(persona),
@@ -113,47 +115,71 @@ const getIdentifiers = catchErrors(async (req, res) => {
   return res.status(200).send(identifiers);
 });
 
-// TODO: remove/replace
-// const createPersonaFromIdentifier = catchErrors(async (req, res) => {
-//   const { personaIdentifierId } = req.query;
-//   const authInfo = getAuthFromRequest(req);
-//   const ident = await service.createPersonaFromIdent({
-//     authInfo,
-//     identId: personaIdentifierId
-//   });
-//   return res.status(200).json(ident).send();
-// });
+const postIdentifier = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
 
-// const assignPersona = catchErrors(async (req, res) => {
-//   const { personaId, personaIdentifierId } = req.query;
-//   const authInfo = getAuthFromRequest(req);
-//   const ident = await service.assignPersona({
-//     authInfo,
-//     personaId,
-//     identId: personaIdentifierId
-//   });
-//   return res.status(200).json(ident).send();
-// });
+  await getScopeFilter({
+    modelName: 'personasImport',
+    actionName: 'editAllScope',
+    authInfo
+  });
 
-// const mergePersona = catchErrors(async (req, res) => {
-//   const { mergePersonaFromId, mergePersonaToId } = req.query;
-//   const authInfo = getAuthFromRequest(req);
-//   const updateIdents = await service.mergePersonasWithAuth(
-//     authInfo,
-//     mergePersonaFromId,
-//     mergePersonaToId
-//   );
-//   return res.status(200).json(updateIdents).send();
-// });
+  const identifier = await req.personaService.createIdentifier({
+    ifi: req.body.ifi,
+    organisation: getOrgFromAuthInfo(authInfo),
+    persona: req.body.persona
+  });
+
+  return res.status(200).send(identifier);
+});
+
+const getPersonaCount = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  const scopeFilter = await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'viewAllScope',
+    authInfo
+  });
+
+  const userFilter = await parseQuery(req.query.query);
+
+  const filter = {
+    ...userFilter,
+    ...scopeFilter
+  };
+
+  const count = await req.personaService.getPersonaCount({
+    organisation: getOrgFromAuthInfo(authInfo),
+    filter
+  });
+
+  return res.status(200).send(count);
+});
+
+const mergePersona = catchErrors(async(req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'editAllScope',
+    authInfo
+  });
+
+  const result = await req.personaService.mergePersona({
+    organisation: getOrgFromAuthInfo(authInfo),
+    fromPersonaId: req.query.mergePersonaFromId,
+    toPersonaId: req.query.mergePersonaToId
+  });
+
+  return res.status(200).send(result);
+});
 
 export default {
   connection,
   update,
-  getIdentifiers
+  getIdentifiers,
+  postIdentifier,
+  getPersonaCount,
+  mergePersona
 };
-
-// export default {
-//   createPersonaFromIdentifier,
-//   assignPersona,
-//   mergePersona
-// };

@@ -24,7 +24,7 @@ export default combineReducers({
   pagination: recycleState(pagination, [LOGOUT, ORG_LOGOUT]),
   aggregation: recycleState(aggregation, [LOGOUT, ORG_LOGOUT]),
   models: recycleState(models, [LOGOUT, ORG_LOGOUT]),
-  uploadpeople: recycleState(uploadpeople, [LOGOUT, ORG_LOGOUT]),
+  mergePersona: recycleState(uploadpeople, [LOGOUT, ORG_LOGOUT]),
   exports: recycleState(exportsReducer, [LOGOUT, ORG_LOGOUT]),
   logo: recycleState(logo, [LOGOUT, ORG_LOGOUT]),
   statements: recycleState(statements, [LOGOUT, ORG_LOGOUT]),

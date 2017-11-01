@@ -12,7 +12,6 @@ import { routeNodeSelector } from 'redux-router5';
 import PersonaView from 'ui/containers/PersonaView';
 import ModelList from 'ui/containers/ModelList';
 import DeleteButton from 'ui/containers/DeleteButton';
-import PeopleImport from 'ui/containers/PeopleImport';
 import SearchBox from 'ui/containers/SearchBox';
 import ToggleMergeButton from 'ui/containers/ToggleMergeButton';
 
@@ -118,7 +117,6 @@ class PersonaManage extends Component {
               getDescription={model => this.getPersonaName(model)} />
           </div>
         </div>
-        <PeopleImport isOpened={openModal === true} {...popupProps} />
       </div>
     );
   };
