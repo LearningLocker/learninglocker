@@ -9,6 +9,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Deprecated
 ### Removed
 ### Fixed
+ - Couldn't see some visualisations when printing
 ### Security
 ### Migrations
 
