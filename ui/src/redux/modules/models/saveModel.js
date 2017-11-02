@@ -10,6 +10,7 @@ import { mergeEntities, updateModelErrors } from 'ui/redux/modules/models';
 import { actions as updateModelActions } from 'ui/redux/modules/models/updateModel';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 import { modelsSchemaIdSelector } from 'ui/redux/modules/models/selectors';
+import HttpError from 'ui/utils/errors/HttpError';
 
 export const ADD_TO_SAVE_QUEUE = 'learninglocker/models/ADD_TO_SAVE_QUEUE';
 
@@ -97,8 +98,9 @@ const saveModel = createAsyncDuck({
         yield put(updateModelErrors(schema, id, fromJS(errors)));
       }
 
-      const message = body.message || body;
-      throw new Error(message);
+      throw new HttpError(body.message || body, {
+        status
+      });
     }
     const result = normalize(body, schemaClass);
     const entities = entityReviver(result);

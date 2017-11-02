@@ -26,6 +26,8 @@ import migrateQueryBuilderCachesPath from 'cli/commands/migrateQueryBuilderCache
 import testStatementForwarding from 'cli/commands/testStatementForwarding';
 import testQueryBuilderCache from 'cli/commands/testQueryBuilderCache';
 
+import seed from 'cli/seed';
+
 
 program.version('0.0.1');
 
@@ -148,6 +150,10 @@ program
   .command('testQueryBuilderCache')
   .action(testQueryBuilderCache);
 // node cli/dist/server testQueryBuilderCache
+
+program.command('seed [action]')
+  .action(seed);
+// RUNTIME_NODE_ENV=test node cli/dist/server seed reset
 
 const dateType = val => new Date(val);
 

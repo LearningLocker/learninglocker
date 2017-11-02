@@ -21,7 +21,7 @@ const createMockStore = () => {
         case '@@redux/INIT':
           return data;
         default:
-         return;
+          return;
       }
     },
     mockState
