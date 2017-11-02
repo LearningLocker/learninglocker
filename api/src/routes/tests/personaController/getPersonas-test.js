@@ -47,7 +47,6 @@ describe('personaController getPersonas', () => {
       .set('Authorization', `Bearer ${token}`)
       .expect(200);
 
-    console.log('001', result.body);
     expect(result.body.edges[0].node.name).to.equal('Dave');
     expect(result.body.edges.length).to.equal(1);
   });
