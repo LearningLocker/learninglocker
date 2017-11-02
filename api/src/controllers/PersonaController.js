@@ -2,6 +2,7 @@ import * as service from 'lib/services/persona';
 import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
 import catchErrors from 'api/controllers/utils/catchErrors';
 
+// TODO: remove/replace
 const createPersonaFromIdentifier = catchErrors(async (req, res) => {
   const { personaIdentifierId } = req.query;
   const authInfo = getAuthFromRequest(req);

@@ -105,11 +105,12 @@ export default ({ status, statementId }, jobDone) => {
     logger.debug('NO STATUS', statementId);
     return Statement.findById(
       statementId,
-      (err, statement) =>
+      (err, statement) => {
         addStatementToPendingQueues(statement, queueDependencies, (err) => {
           if (err) logger.error('addStatementToPendingQueues error', err);
           if (jobDone) return jobDone(err);
-        })
+        });
+      }
     );
   } catch (err) {
     logger.error('statementHandler error', err);

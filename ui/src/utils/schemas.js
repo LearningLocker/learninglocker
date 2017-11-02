@@ -240,6 +240,12 @@ const role = new LLSchema('role', { idAttribute: '_id' });
 
 const globalError = new LLSchema('globalError', { idAttribute: '_id' });
 
+const personasImport = new LLSchema('personasImport', {
+  idAttribute: '_id',
+  sortKey: 'createdAt'
+});
+personasImport.define({});
+
 stream.define({
   outcomes: { type: arrayOf(streamOutcome), local: true },
   statements: { type: arrayOf(statement) }
@@ -336,5 +342,6 @@ export {
   aggregation,
   globalError,
   role,
-  statementForwarding
+  statementForwarding,
+  personasImport,
 };

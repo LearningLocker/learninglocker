@@ -22,6 +22,7 @@ const createMockStore = ({
         }
       }
     }),
+    uploadPersonas: fromJS({}),
     alerts: new List()
   };
 
