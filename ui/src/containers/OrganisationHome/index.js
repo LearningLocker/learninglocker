@@ -45,17 +45,9 @@ const renderPage = (routeName) => {
     }));
   }
 
-  // TODO: remove/replace
   if (testRoute('organisation.people.manage')) {
     return React.createElement(createAsyncComponent({
       loader: System.import('ui/containers/PersonaManage')
-    }));
-  }
-
-  // TODO: remove/replace
-  if (testRoute('organisation.people.reconcile')) {
-    return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/PersonaReconcile')
     }));
   }
 

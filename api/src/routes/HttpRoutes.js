@@ -156,22 +156,6 @@ router.get(
   PersonaController.getPersona
 );
 
-// router.post(
-//   routes.MERGE_PERSONA,
-//   passport.authenticate(['jwt'], DEFAULT_PASSPORT_OPTIONS),
-//   PersonaController.mergePersona
-// );
-// router.post(
-//   routes.ASSIGN_PERSONA,
-//   passport.authenticate(['jwt'], DEFAULT_PASSPORT_OPTIONS),
-//   PersonaController.assignPersona
-// );
-// router.post(
-//   routes.CREATE_PERSONA_FROM_IDENTIFIER,
-//   passport.authenticate(['jwt'], DEFAULT_PASSPORT_OPTIONS),
-//   PersonaController.createPersonaFromIdentifier
-// );
-
 /**
  * UPLOADS
  */
