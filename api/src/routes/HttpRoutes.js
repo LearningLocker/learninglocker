@@ -145,6 +145,16 @@ router.delete(
   passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
   PersonaController.deletePersona
 );
+router.post(
+  routes.ADD_PERSONA,
+  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  PersonaController.addPersona
+);
+router.get(
+  routes.GET_PERSONA,
+  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  PersonaController.getPersona
+);
 
 // router.post(
 //   routes.MERGE_PERSONA,

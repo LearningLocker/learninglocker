@@ -130,7 +130,7 @@ class PersonaView extends Component {
               id={nameId}
               className="form-control"
               placeholder="Name"
-              value={model.get('name')}
+              value={model.get('name') || ''}
               onChange={this.onChangeAttr.bind(null, 'name')} />
           </div>
 

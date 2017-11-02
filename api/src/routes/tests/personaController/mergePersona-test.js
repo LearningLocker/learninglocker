@@ -62,7 +62,7 @@ describe('PersonaController.mergePersona', () => {
     const mergePersonaFromId = personas[0]._id.toString();
     const mergePersonaToId = personas[1]._id.toString();
 
-    const res = await mergePersona({
+    await mergePersona({
       mergePersonaFromId,
       mergePersonaToId,
       expectedCode: 200

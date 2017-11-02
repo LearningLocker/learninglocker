@@ -8,6 +8,7 @@ import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import { MAX_TIME_MS, MAX_SCAN } from 'lib/models/plugins/addCRUDFunctions';
 import parseQuery from 'lib/helpers/parseQuery';
 import { CursorDirection } from 'personas/dist/service/constants';
+import { isUndefined, omitBy } from 'lodash';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -95,17 +96,18 @@ const getIdentifiers = catchErrors(async (req, res) => {
 
   const filter = {
     ...inFilter,
-    persona: objectId(persona),
+    persona: persona ? objectId(persona) : undefined,
     ...scopeFilter
   };
+  const filterNoUndefined = omitBy(filter, isUndefined);
 
   const identifiers = await req.personaService.getIdentifiers({
-    limit: first || last,
+    limit: first || last || 10,
     direction: CursorDirection[before ? 'BACKWARDS' : 'FORWARDS'],
     sort,
     cursor: after || before,
     organisation: getOrgFromAuthInfo(authInfo),
-    filter,
+    filter: filterNoUndefined,
     project,
     hint,
     maxTimeMS: MAX_TIME_MS,
@@ -124,7 +126,7 @@ const postIdentifier = catchErrors(async (req, res) => {
     authInfo
   });
 
-  const identifier = await req.personaService.createIdentifier({
+  const { identifier } = await req.personaService.createIdentifier({
     ifi: req.body.ifi,
     organisation: getOrgFromAuthInfo(authInfo),
     persona: req.body.persona
@@ -192,6 +194,38 @@ const deletePersona = catchErrors(async(req, res) => {
   return res.status(200).send(result);
 });
 
+const addPersona = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+  await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'editAllScope',
+    authInfo
+  });
+
+  const { persona } = await req.personaService.createPersona({
+    organisation: getOrgFromAuthInfo(authInfo),
+    name: req.body.name
+  });
+
+  return res.status(200).send(persona);
+});
+
+const getPersona = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+  await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'viewAllScope',
+    authInfo
+  });
+
+  const { persona } = await req.personaService.getPersona({
+    organisation: getOrgFromAuthInfo(authInfo),
+    personaId: req.params.personaId
+  });
+
+  return res.status(200).send(persona);
+});
+
 export default {
   connection,
   update,
@@ -199,5 +233,7 @@ export default {
   postIdentifier,
   getPersonaCount,
   mergePersona,
-  deletePersona
+  deletePersona,
+  addPersona,
+  getPersona
 };
