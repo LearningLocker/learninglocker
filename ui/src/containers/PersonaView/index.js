@@ -5,6 +5,7 @@ import { withProps, compose } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import { addModel } from 'ui/redux/modules/models';
 import PersonaIdentifierForm from 'ui/components/PersonaIdentifierForm';
+import PersonaAttributeForm from 'ui/components/PersonaAttributeForm';
 import PersonaMergeForm from 'ui/components/PersonaMergeForm';
 import PersonaIdentifiers from 'ui/containers/PersonaIdentifiers';
 import PersonaAttributes from 'ui/containers/PersonaAttributes';
@@ -29,8 +30,11 @@ class PersonaView extends Component {
     showIdentifiers: false,
     showAttributes: false,
     showAddForm: false,
+    showSetAttributeForm: false,
     identifierType: 'mbox',
-    identifierValue: ''
+    identifierValue: '',
+    attributeKey: '',
+    attributeValue: ''
   };
 
   handleToggle = () => {
@@ -45,6 +49,11 @@ class PersonaView extends Component {
     e.preventDefault();
     this.setState({ showAddForm: true });
   };
+
+  handleShowSetAttributeForm = (e) => {
+    e.preventDefault();
+    this.setState({ showSetAttributeForm: !this.state.showSetAttributeForm });
+  }
 
   handleAdd = (e) => {
     e.preventDefault();
@@ -64,12 +73,36 @@ class PersonaView extends Component {
     this.setState({ showAddForm: false });
   };
 
+  handleSetAttribute = (e) => {
+    e.preventDefault();
+    const { model } = this.props;
+    const { attributeKey, attributeValue } = this.state;
+    const props = {
+      organisation: model.get('organisation'),
+      key: attributeKey,
+      value: attributeValue,
+      personaId: {
+        $oid: model.get('_id')
+      }
+    };
+    this.props.addModel({ schema: 'personaAttribute', props });
+    this.setState({ showSetAttributeForm: false });
+  }
+
   handleIdentifierTypeChange = (identifierType) => {
     this.setState({ identifierType });
   };
 
   handleIdentifierValueChange = (identifierValue) => {
     this.setState({ identifierValue });
+  };
+
+  handleAttributeKeyChange = (attributeKey) => {
+    this.setState({ attributeKey });
+  };
+
+  handleAttributeValueChange = (attributeValue) => {
+    this.setState({ attributeValue });
   };
 
   setAttr = (attr, value) => {
@@ -81,7 +114,12 @@ class PersonaView extends Component {
   };
 
   renderButtons = () => {
-    const { showAddForm, showIdentifiers, showAttributes } = this.state;
+    const {
+      showAddForm,
+      showIdentifiers,
+      showAttributes,
+      showSetAttributeForm
+    } = this.state;
     const identityIconClasses = classNames({
       icon: true,
       'ion-chevron-right': !showIdentifiers,
@@ -124,6 +162,20 @@ class PersonaView extends Component {
           onClick={this.handleAttributesToggle} >
           <i className={attributesIconClasses} /> View attributes
         </button>
+
+        {' '}
+
+        { showSetAttributeForm ?
+          <a className="btn btn-inverse btn-sm" onClick={this.handleSetAttribute}>
+            <i className="fa fa-floppy-o" /> Save attribute
+          </a>
+          :
+          <a
+            className="btn btn-inverse btn-sm"
+            onClick={this.handleShowSetAttributeForm}>
+              <i className="ion ion-plus" /> Set attribute
+          </a>
+        }
       </div>
     );
   };
@@ -135,7 +187,10 @@ class PersonaView extends Component {
       showAttributes,
       showAddForm,
       identifierType,
-      identifierValue
+      identifierValue,
+      showSetAttributeForm,
+      attributeKey,
+      attributeValue,
     } = this.state;
     const showMergeForm = this.props.getMetadata('isMergeFormVisible', false);
     const nameId = uuid.v4();
@@ -174,6 +229,15 @@ class PersonaView extends Component {
               <hr />
               <PersonaIdentifiers personaId={model.get('_id')} />
             </div>}
+
+          {showSetAttributeForm &&
+            <PersonaAttributeForm
+              attributeKey={attributeKey}
+              attributeValue={attributeValue}
+              handleAttributeKeyChange={this.handleAttributeKeyChange}
+              handleAttributeValueChange={this.handleAttributeValueChange}
+            />
+          }
 
           {showAttributes &&
             <div>

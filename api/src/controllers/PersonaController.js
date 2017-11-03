@@ -8,7 +8,11 @@ import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import { MAX_TIME_MS, MAX_SCAN } from 'lib/models/plugins/addCRUDFunctions';
 import parseQuery from 'lib/helpers/parseQuery';
 import { CursorDirection } from 'personas/dist/service/constants';
-import { isUndefined, omitBy } from 'lodash';
+import {
+  isUndefined,
+  omitBy,
+  toString
+} from 'lodash';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -270,6 +274,29 @@ const getAttributes = catchErrors(async (req, res) => {
   return res.status(200).send(attributes);
 });
 
+const postAttribute = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  await getScopeFilter({
+    modelName: 'personasImport',
+    actionName: 'editAllScope',
+    authInfo
+  });
+
+  const parsedBody = await parseQuery(
+    req.body
+  );
+
+  const { attribute } = await req.personaService.overwritePersonaAttribute({
+    organisation: getOrgFromAuthInfo(authInfo),
+    personaId: toString(parsedBody.personaId),
+    key: parsedBody.key,
+    value: parsedBody.value
+  });
+
+  return res.status(200).send(attribute);
+});
+
 export default {
   connection,
   update,
@@ -281,4 +308,5 @@ export default {
   addPersona,
   getPersona,
   getAttributes,
+  postAttribute
 };
