@@ -226,6 +226,50 @@ const getPersona = catchErrors(async (req, res) => {
   return res.status(200).send(persona);
 });
 
+const getAttributes = catchErrors(async (req, res) => {
+  const { before, after } = req.query;
+
+  const sort = getJSONFromQuery(req, 'sort', { _id: 1 });
+  const hint = getJSONFromQuery(req, 'hint', undefined);
+  const project = getJSONFromQuery(req, 'project', undefined);
+  const first = getFromQuery(req, 'first', undefined, parseInt);
+  const last = getFromQuery(req, 'last', undefined, parseInt);
+  const authInfo = getAuthFromRequest(req);
+
+  const scopeFilter = await getScopeFilter({
+    modelName: 'personasImport',
+    actionName: 'viewAllScope',
+    authInfo
+  });
+
+  const {
+    personaId,
+    ...inFilter
+  } = getJSONFromQuery(req, 'filter', {});
+
+  const filter = {
+    ...inFilter,
+    personaId: personaId ? objectId(personaId) : undefined,
+    ...scopeFilter
+  };
+  const filterNoUndefined = omitBy(filter, isUndefined);
+
+  const attributes = await req.personaService.getAttributes({
+    limit: first || last || 10,
+    direction: CursorDirection[before ? 'BACKWARDS' : 'FORWARDS'],
+    sort,
+    cursor: after || before,
+    organisation: getOrgFromAuthInfo(authInfo),
+    filter: filterNoUndefined,
+    project,
+    hint,
+    maxTimeMS: MAX_TIME_MS,
+    maxScan: MAX_SCAN
+  });
+
+  return res.status(200).send(attributes);
+});
+
 export default {
   connection,
   update,
@@ -235,5 +279,6 @@ export default {
   mergePersona,
   deletePersona,
   addPersona,
-  getPersona
+  getPersona,
+  getAttributes,
 };

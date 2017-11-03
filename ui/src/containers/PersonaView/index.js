@@ -7,6 +7,7 @@ import { addModel } from 'ui/redux/modules/models';
 import PersonaIdentifierForm from 'ui/components/PersonaIdentifierForm';
 import PersonaMergeForm from 'ui/components/PersonaMergeForm';
 import PersonaIdentifiers from 'ui/containers/PersonaIdentifiers';
+import PersonaAttributes from 'ui/containers/PersonaAttributes';
 import { Map } from 'immutable';
 import classNames from 'classnames';
 import uuid from 'uuid';
@@ -26,6 +27,7 @@ class PersonaView extends Component {
 
   state = {
     showIdentifiers: false,
+    showAttributes: false,
     showAddForm: false,
     identifierType: 'mbox',
     identifierValue: ''
@@ -33,6 +35,10 @@ class PersonaView extends Component {
 
   handleToggle = () => {
     this.setState({ showIdentifiers: !this.state.showIdentifiers });
+  };
+
+  handleAttributesToggle = () => {
+    this.setState({ showAttributes: !this.state.showAttributes });
   };
 
   handleShowAddForm = (e) => {
@@ -75,11 +81,17 @@ class PersonaView extends Component {
   };
 
   renderButtons = () => {
-    const { showAddForm, showIdentifiers } = this.state;
+    const { showAddForm, showIdentifiers, showAttributes } = this.state;
     const identityIconClasses = classNames({
       icon: true,
       'ion-chevron-right': !showIdentifiers,
       'ion-chevron-down': showIdentifiers
+    });
+
+    const attributesIconClasses = classNames({
+      icon: true,
+      'ion-chevron-right': !showAttributes,
+      'ion-chevron-down': showAttributes
     });
 
     return (
@@ -90,6 +102,7 @@ class PersonaView extends Component {
           onClick={this.handleToggle}>
           <i className={identityIconClasses} /> View identity information
         </button>
+
         {' '}
 
         {showAddForm
@@ -100,7 +113,17 @@ class PersonaView extends Component {
             className="btn btn-inverse btn-sm"
             onClick={this.handleShowAddForm}>
               <i className="ion ion-plus" /> Add identifier
-            </a>}
+            </a>
+        }
+
+        {' '}
+
+        <button
+          id="toggleAttributes"
+          className="btn btn-inverse btn-sm"
+          onClick={this.handleAttributesToggle} >
+          <i className={attributesIconClasses} /> View attributes
+        </button>
       </div>
     );
   };
@@ -109,6 +132,7 @@ class PersonaView extends Component {
     const { model } = this.props;
     const {
       showIdentifiers,
+      showAttributes,
       showAddForm,
       identifierType,
       identifierValue
@@ -150,6 +174,15 @@ class PersonaView extends Component {
               <hr />
               <PersonaIdentifiers personaId={model.get('_id')} />
             </div>}
+
+          {showAttributes &&
+            <div>
+              <br />
+              <h4>Persona Attributes</h4>
+              <hr />
+              <PersonaAttributes personaId={model.get('_id')} />
+            </div>
+          }
         </div>
       )}
       </div>
