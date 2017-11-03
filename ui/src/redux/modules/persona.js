@@ -8,6 +8,7 @@ import entityReviver from 'ui/redux/modules/models/entityReviver';
 import * as schemas from 'ui/utils/schemas';
 import { alert } from 'ui/redux/modules/alerts';
 import createSyncDuck from 'ui/utils/createAsyncDuck';
+import { clearModelsCache } from 'ui/redux/modules/pagination';
 
 
 const UPLOAD_PERSONAS = 'learninglocker/uploadpersona/UPLOAD_PERSONAS';
@@ -116,6 +117,8 @@ const importPersonasDuck = createSyncDuck({
       yield put(mergeEntitiesActions.mergeEntitiesAction(
         entities
       ));
+
+      yield put(clearModelsCache({ schema: 'persona' }));
     }
 });
 

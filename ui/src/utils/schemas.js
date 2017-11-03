@@ -169,6 +169,7 @@ const query = new LLSchema('query', { idAttribute: '_id', sortKey: 'updatedAt' }
 });
 const identifer = new LLSchema('identifer', { idAttribute: '_id' });
 const personaIdentifier = new LLSchema('personaIdentifier', { idAttribute: '_id', sortKey: 'updatedAt' });
+const personaAttribute = new LLSchema('personaAttribute', { idAttribute: '_id' });
 const scoredPersonas = new LLSchema('scoredPersonas', { idAttribute: '_id' });
 const scoringscheme = new LLSchema('scoringscheme', { idAttribute: '_id', sortKey: 'updatedAt' });
 const importcsv = new LLSchema('importcsv', { idAttribute: '_id', sortKey: 'updatedAt' });
@@ -329,6 +330,7 @@ export {
   persona,
   query,
   identifer,
+  personaAttribute,
   personaIdentifier,
   scoredPersonas,
   scoringscheme,

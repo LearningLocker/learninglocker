@@ -4,24 +4,30 @@ import { MANAGE_ALL_PERSONAS } from 'lib/constants/orgScopes';
 import setup from 'api/routes/tests/utils/setup';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 import createOwnerOrgToken from 'api/routes/tests/utils/tokens/createOwnerOrgToken';
+import testId from 'api/routes/tests/utils/testId';
+import { STAGE_UPLOAD } from 'lib/constants/personasImport';
+import PersonasImport from 'lib/models/personasImport';
+import { toString } from 'lodash';
 
 const TEST_FILE = `${process.cwd()}/api/src/routes/tests/fixtures/people.csv`;
 
 describe('UploadController.uploadPeople scope filtering', () => {
   const apiApp = setup();
 
-  const uploadPeople = async ({ expectedCode, token }) =>
-    new Promise((resolve, reject) => {
-      apiApp
-        .post(routes.UPLOADPEOPLE)
-        .set('Authorization', `Bearer ${token}`)
-        .attach('csv', TEST_FILE)
-        .expect(expectedCode)
-        .end((err, res) => {
-          if (err) return reject(err);
-          resolve(res);
-        });
+  const uploadPeople = async ({ expectedCode, token }) => {
+    const personaImport = await PersonasImport.create({
+      title: 'test',
+      organisation: testId,
+      importStage: STAGE_UPLOAD
     });
+
+    await apiApp
+      .post(routes.UPLOADPERSONAS)
+      .set('Authorization', `Bearer ${token}`)
+      .field('id', toString(personaImport._id))
+      .attach('csv', TEST_FILE)
+      .expect(expectedCode);
+  };
 
   const assertUnauthorised = async token =>
     uploadPeople({

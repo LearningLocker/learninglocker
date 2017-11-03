@@ -11,7 +11,7 @@ const KeyValueIdent = ({ ident }) => {
 
   return (
     <div>
-      <div><strong>Field:</strong> <code>{ ident.get('key') }</code></div>
+      <div><strong>Type: </strong><code>{ ident.get('key') }</code></div>
       <div><strong>Value: </strong>{ renderedValue }</div>
     </div>
   );
