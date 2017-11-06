@@ -7,9 +7,6 @@ import {
   MERGE_PERSONA_FAILURE,
   MERGE_PERSONA_DONE,
 } from 'ui/redux/modules/models';
-import {
-  actions
-} from 'ui/redux/modules/models/saveModel';
 import * as clearModelsCacheDuck from 'ui/redux/modules/pagination/clearModelsCache';
 
 const MERGE_PERSONA = 'learninglocker/mergepersona/MERGE_PERSONA';
