@@ -1,6 +1,4 @@
-import * as http from 'http';
-import * as https from 'https';
-import * as URL from 'url';
+import * as popsicle from 'popsicle';
 import { assign } from 'lodash';
 import { Map } from 'immutable';
 import logger from 'lib/logger';
@@ -9,70 +7,56 @@ import mongoose from 'mongoose';
 import StatementForwarding from 'lib/models/statementForwarding';
 import ForwardingRequestError from
   'worker/handlers/statement/statementForwarding/ForwardingRequestError';
+import {
+  STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE,
+} from 'lib/constants/statements';
+import * as Queue from 'lib/services/queue';
 
 const objectId = mongoose.Types.ObjectId;
 
 const generateHeaders = (statementContent, statementForwarding) => {
-  const headers1 = new Map({
+  const headersWithLength = new Map({
     'Content-Type': 'application/json',
     'Content-Length': Buffer.byteLength(statementContent)
   });
-  const statementForwarding2 = new StatementForwarding(statementForwarding);
-  const headers2 = headers1.merge(statementForwarding2.getAuthHeaders());
-  return headers2.toJS();
+  const statementForwardingModel = new StatementForwarding(statementForwarding);
+  const headersWithAuthAndLength =
+    headersWithLength.merge(statementForwardingModel.getAuthHeaders());
+
+  const headersWithAuthAndLengthAndHeaders =
+    headersWithAuthAndLength.merge(statementForwardingModel.getHeaders());
+
+  return headersWithAuthAndLengthAndHeaders.toJS();
 };
 
-const sendRequest = (statement, statementForwarding) => {
+const sendRequest = async (statement, statementForwarding) => {
   const urlString = `${statementForwarding.configuration
     .protocol}://${statementForwarding.configuration.url}`;
-
-
-  const url = URL.parse(urlString);
 
   const statementContent = JSON.stringify(statement);
 
   const headers = generateHeaders(statementContent, statementForwarding);
 
-  const promise = new Promise((resolve, reject) => {
-    const requestHandler = url.protocol === 'https:' ? https : http;
-    const request = requestHandler.request(
-      {
-        host: url.hostname,
-        path: url.path,
-        port: url.port,
-        method: 'POST',
-        headers,
-        timeout: 16000
-      },
-      (response) => {
-        let responseData = '';
-        response.on('data', (data) => {
-          responseData = responseData.concat(data.toString());
-        });
-
-        response.on('end', () => {
-          if (!(response.statusCode >= 200 && response.statusCode < 300)) {
-            reject(new ForwardingRequestError(
-              `Status code didn't return 200 (${response.statusCode})`,
-              responseData,
-            ));
-            return;
-          }
-
-          resolve();
-        });
-      }
-    );
-
-    request.on('error', (err) => {
-      if (err) reject(err);
-    });
-
-    request.write(statementContent);
-    request.end();
+  const request = popsicle.request({
+    method: 'POST',
+    body: statement,
+    url: urlString,
+    headers,
+    timeout: 16000,
+    options: {
+      followRedirects: (() => true)
+    }
   });
 
-  return promise;
+  const response = await request;
+  if (!(response.status >= 200 && response.status < 400)) {
+    throw new ForwardingRequestError(
+      `Status code was invalid: (${response.status})`,
+      response.body,
+    );
+  }
+
+  return request;
 };
 
 const setPendingStatements = (statement, statementForwardingId) =>
@@ -92,66 +76,93 @@ const setCompleteStatements = (statement, statementForwardingId) =>
     }
   });
 
-const statementForwardingRequestHandler = (
+const statementForwardingRequestHandler = async (
   { statement, statementForwarding },
-  done
+  done,
+  {
+    queue = Queue
+  } = {}
 ) => {
-  const updatePendingPromise = setPendingStatements(
-    statement,
-    statementForwarding._id
-  );
+  try {
+    await setPendingStatements(
+      statement,
+      statementForwarding._id
+    );
 
-  const sendRequestPromise = sendRequest(
-    statement.statement,
-    statementForwarding
-  )
-    .then(() =>
-      // set to complete
-      updatePendingPromise
-        .then(() => setCompleteStatements(statement, statementForwarding._id))
-        .then(() => {
-          logger.debug(
-            `SUCCESS sending statement to ${statementForwarding.configuration.url}`
-          );
-          done();
-        })
-    )
-    .catch((err) => {
-      logger.info(
-        `FAILED sending stetement to ${statementForwarding.configuration.url}`,
-        err
-      );
+    await sendRequest(
+      statement.statement,
+      statementForwarding
+    );
 
-      let update = {
-        timestamp: new Date(),
-        statementForwarding_id: objectId(statementForwarding._id),
-        message: err.toString()
-      };
+    await setCompleteStatements(statement, statementForwarding._id);
 
-      if (err.messageBody) {
-        update = assign({}, update, {
-          messageBody: err.messageBody
-        });
-      }
+    logger.debug(
+      `SUCCESS sending statement ${statement._id} to ${statementForwarding.configuration.url}`
+    );
 
-      const updateFailedLogPromise = Statement.findByIdAndUpdate(
+    done();
+  } catch (err) {
+    logger.info(
+      `FAILED sending statement ${statement._id} to ${statementForwarding.configuration.url}`,
+      err
+    );
+    
+    let update = {
+      timestamp: new Date(),
+      statementForwarding_id: objectId(statementForwarding._id),
+      message: err.toString()
+    };
+
+    if (err.messageBody) {
+      update = assign({}, update, {
+        messageBody: err.messageBody
+      });
+    }
+
+    try {
+      const updatedStatement = await Statement.findByIdAndUpdate(
         statement._id,
         {
           $addToSet: {
             failedForwardingLog: update
           }
+        },
+        {
+          new: true,
         }
-      ).catch((err) => {
-        logger.error('Failed updating failedForwardingLog', err);
-      });
+      );
 
-      Promise.all([updatePendingPromise, updateFailedLogPromise]).then(() => {
-        done(err);
-      });
-    });
+      if (
+        updatedStatement.failedForwardingLog.length <=
+          statementForwarding.configuration.maxRetries
+      ) {
+        logger.info(`SENDING statement ${updatedStatement._id} to ${STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE}`);
+        queue.publish({
+          queueName: STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE,
+          payload: {
+            status: STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE,
+            statement: updatedStatement,
+            statementForwarding
+          }
+        }, (err) => {
+          if (err) {
+            logger.error(`FAILED sending statement ${updatedStatement._id} to ${STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE}`, err);
+            done(err);
+            throw new Error('Error publishing to queue');
+          }
+          done();
+          return;
+        });
+      } else {
+        logger.info(`SENT statement ${updatedStatement._id} to ${STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE}`);
+        done(err); // failed, let redrive send to dead letter queue
+      }
+    } catch (err) {
+      logger.error('Failed updating failedForwardingLog', err);
+    }
+  }
 
-  const outPromise = Promise.all([updatePendingPromise, sendRequestPromise]);
-  return outPromise;
+  return [statement._id];
 };
 
 export default statementForwardingRequestHandler;

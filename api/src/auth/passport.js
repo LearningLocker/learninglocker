@@ -15,6 +15,7 @@ import User from 'lib/models/user';
 import Dashboard from 'lib/models/dashboard';
 import { AUTH_JWT_GOOGLE_CALLBACK } from 'lib/constants/routes';
 import { getCookieNameStartsWith, getCookieName } from 'ui/utils/auth';
+import Unauthorized from 'lib/errors/Unauthorised';
 
 import {
   createOrgTokenPayload,
@@ -80,7 +81,7 @@ async function verifyToken(token, done) {
     const iTokenToVerify2 = iTokenToVerify.filter((value, key) => key !== 'filter');
 
     if (!iExpectedToken2.toMap().equals(iTokenToVerify2.toMap())) {
-      throw new Error('Unverified token');
+      throw new Unauthorized('Unverified token');
     }
     const auth = {
       ...(user ? user.toObject() : {}),
@@ -165,7 +166,6 @@ passport.use(
   })
 );
 
-// passport.authenticate('basic', { session: false })
 passport.use(
   'clientBasic',
   new BasicStrategy((clientId, clientSecret, done) => {
@@ -173,7 +173,13 @@ passport.use(
       if (err) return done(err);
       if (!client) return done(null, false);
       if (!client.isTrusted) return done(null, false);
-      client.authInfo = { client };
+      client.authInfo = {
+        client,
+        scopes: client.scopes,
+        token: {
+          tokenType: 'client'
+        }
+      };
       if (client.api.basic_secret === clientSecret) return done(null, client);
       return done(null, false);
     });

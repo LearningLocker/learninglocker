@@ -28,13 +28,13 @@ describe('API HTTP statements route scope filtering', () => {
   it('should return statements inside the org when using org token', async () => {
     const token = await createOrgToken([ALL]);
     await createStatement();
-    return assertNodes(token, 1);
+    return assertNodes({ bearerToken: token }, 1);
   });
 
   it('should not return statements outside the org when using org token', async () => {
     const token = await createOrgToken([ALL]);
     await createStatement({}, '561a679c0c5d017e4004714a');
-    return assertNodes(token, 0);
+    return assertNodes({ bearerToken: token }, 0);
   });
 
   it('should return statements inside the filter when using org token', async () => {
@@ -42,7 +42,7 @@ describe('API HTTP statements route scope filtering', () => {
     const orgFilter = createFilter({ $eq: TEST_MBOX });
     const token = await createFilteredOrgToken(scopes, orgFilter);
     await createStatement(createContextTeam(TEST_MBOX));
-    return assertNodes(token, 1);
+    return assertNodes({ bearerToken: token }, 1);
   });
 
   it('should not return statements outside the filter when using org token', async () => {
@@ -50,6 +50,6 @@ describe('API HTTP statements route scope filtering', () => {
     const orgFilter = createFilter({ $ne: TEST_MBOX });
     const token = await createFilteredOrgToken(scopes, orgFilter);
     await createStatement(createContextTeam(TEST_MBOX));
-    return assertNodes(token, 0);
+    return assertNodes({ bearerToken: token }, 0);
   });
 });

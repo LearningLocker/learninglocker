@@ -9,4 +9,19 @@
   margin-top: 10px;
   border-left: 1px solid #eee; }
 
+.exportOutputPreview {
+  margin-top: 11px;
+}
 
+@media (max-width: 991px) {
+
+  .exportOutputPreview {
+    display: none;
+  }
+}
+
+@media (max-width: 991px) {
+  .projectionInput {
+    margin-right: 0px;
+  }
+}

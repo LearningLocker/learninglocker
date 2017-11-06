@@ -5,7 +5,7 @@ server {
 
   access_log  /var/log/nginx/access.log;
 
-  root /PHP_SITE_ROOT/public;
+  root /SITE_ROOT/ui/dist/public;
 
   # xAPI endpoints
   location ~* ^/data/xAPI(.*)$ {
@@ -14,7 +14,6 @@ server {
 
   # All other traffic directed to statics or Node server
   location / {
-    root /SITE_ROOT/ui/dist/public;
     try_files $uri @node_server;
   }
 

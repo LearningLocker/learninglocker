@@ -28,13 +28,14 @@ export default function reducer(state = initialState, action = {}) {
 /*
  * Actions
  */
-export const setInMetadata = ({ schema, id, path, value }) => ({
-  type: SET_IN_METADATA,
-  schema,
-  id,
-  path,
-  value,
-});
+export const setInMetadata = ({ schema, id, path, value }) =>
+  ({
+    type: SET_IN_METADATA,
+    schema,
+    id,
+    path,
+    value,
+  });
 
 export const deleteInMetadata = ({ schema, id, path }) => ({
   type: DELETE_IN_METADATA,
