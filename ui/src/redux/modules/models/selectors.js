@@ -46,10 +46,16 @@ const remoteModelSchemaIdSelector = (schema, id) => createSelector(
  * @param {String} schema e.g 'user'
  * @param {String} id e.g '58b6e794824d4624fc68f6b3'
  */
-const modelsSchemaIdSelector = (schema, id) => createSelector(
+const modelsSchemaIdSelector = (schema, id, { deep } = {}) => createSelector(
   [localModelSchemaIdSelector(schema, id), remoteModelSchemaIdSelector(schema, id)],
   (localModel = new Map(), remoteModel = new Map()) => {
-    const out = remoteModel.merge(localModel);
+    let out;
+    if (deep) {
+      out = remoteModel.mergeDeep(localModel);
+    } else {
+      out = remoteModel.merge(localModel);
+    }
+
     return out;
   }
 );

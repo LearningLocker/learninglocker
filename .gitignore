@@ -1,11 +1,11 @@
 .DS_STORE
 .env
+.env
 .env.*
 .idea/
 .tags
 .tmp
-*.csv
-*.log
+storage/**/*.csv
 *.iml
 *.orig
 api/logs/*

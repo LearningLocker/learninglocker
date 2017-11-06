@@ -213,6 +213,39 @@ class _LLApiClient {
       personaIdentifierId,
     }
   });
+
+  personasUpload = ({
+    id,
+    file
+  }) => {
+    const personaForm = form({
+      id,
+      file: file.handle
+    });
+    return post({
+      url: formatUrl('/uploadpersonas'),
+      headers: {
+        Authorization: `Bearer ${this.getToken()}`,
+        ContentType: 'multipart/form-data; boundary=,',
+        Accept: 'text/csv'
+      },
+      body: personaForm
+    });
+  };
+
+  importPersonas = ({
+    id
+  }) => {
+    console.log('importPersonas');
+    return post({
+      url: formatUrl('/importpersonas'),
+      headers: {
+        Authorization: `Bearer ${this.getToken()}`,
+        ContentType: 'application/json'
+      },
+      body: { id },
+    });
+  };
 }
 
 const LLApiClient = _LLApiClient;

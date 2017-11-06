@@ -12,7 +12,7 @@ import SaveBarErrors from 'ui/containers/SaveBarErrors';
 import styles from './styles.css';
 
 export const savingSelector = () => createSelector(
-  state =>
+  state => // models
     state.models.map(model =>
       model.filter(item =>
         item && item.getIn &&
@@ -32,8 +32,17 @@ export const savingSelector = () => createSelector(
       });
 
       return out;
-    }),
-  (saving) => {
+    })
+  ,
+  state => // uploadPersonas
+    state.uploadPersonas.filter(model =>
+      model && model.getIn && !!model.getIn(['requestState'])
+    ).toList().map(model =>
+      model.getIn(['requestState'])
+    ),
+  (saving, uploadPersonasSaving) => {
+    saving = saving.concat(uploadPersonasSaving);
+
     if (saving.includes(IN_PROGRESS)) {
       return IN_PROGRESS;
     }

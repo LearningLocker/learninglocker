@@ -21,6 +21,7 @@ import StatementController from 'api/controllers/StatementController';
 import PersonaController from 'api/controllers/PersonaController';
 import generateConnectionController from 'api/controllers/ConnectionController';
 import generateIndexesController from 'api/controllers/IndexesController';
+import ImportPersonasController from 'api/controllers/ImportPersonasController';
 
 // REST
 import LRS from 'lib/models/lrs';
@@ -42,10 +43,13 @@ import Dashboard from 'lib/models/dashboard';
 import QueryBuilderCache from 'lib/models/querybuildercache';
 import QueryBuilderCacheValue from 'lib/models/querybuildercachevalue';
 import Role from 'lib/models/role';
+import PersonasImport from 'lib/models/personasImport';
+import PersonasImportTemplate from 'lib/models/personasImportTemplate';
 import * as routes from 'lib/constants/routes';
 
 const router = new express.Router();
 router.use(setNoCacheHeaders);
+
 router.get('', (req, res) => res.status(200).send('OK'));
 router.get(routes.VERSION, (req, res) => {
   Promise.all([
@@ -135,6 +139,18 @@ router.post(
   UploadController.uploadLogo
 );
 
+router.post(
+  routes.UPLOADPERSONAS,
+  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  ImportPersonasController.uploadPersonas
+);
+
+router.post(
+  routes.IMPORTPERSONAS,
+  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  ImportPersonasController.importPersonas
+);
+
 /**
  * DOWNLOADS
  */
@@ -204,6 +220,8 @@ restify.serve(router, StatementForwarding);
 restify.serve(router, QueryBuilderCache);
 restify.serve(router, QueryBuilderCacheValue);
 restify.serve(router, Role);
+restify.serve(router, PersonasImport);
+restify.serve(router, PersonasImportTemplate);
 
 /**
  * CONNECTIONS and INDEXES
@@ -225,7 +243,9 @@ const generatedRouteModels = [
   Export,
   Download,
   ImportCsv,
-  Role
+  Role,
+  PersonasImport,
+  PersonasImportTemplate
 ];
 
 const generateConnectionsRoute = (model, routeSuffix, authentication) => {
