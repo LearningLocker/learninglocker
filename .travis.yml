@@ -11,6 +11,7 @@ install:
   - tar xzf mongodb-linux-x86_64-${MONGODB}.tgz
   - ${PWD}/mongodb-linux-x86_64-${MONGODB}/bin/mongod --version
   - cp .env.example .env
+  - cp .env.example .env.test
   - yarn
 
 services:
@@ -26,6 +27,8 @@ before_install:
 before_script:
   - mkdir ${PWD}/mongodb-linux-x86_64-${MONGODB}/data
   - ${PWD}/mongodb-linux-x86_64-${MONGODB}/bin/mongod --dbpath ${PWD}/mongodb-linux-x86_64-${MONGODB}/data --logpath ${PWD}/mongodb-linux-x86_64-${MONGODB}/mongodb.log --fork
+  - npm install pm2 -g
+  - yarn build-all
 
 cache:
   directories:
@@ -41,6 +44,10 @@ addons:
 script:
   - npm run lint
   - yarn test
+  # Integration tests.
+  - yarn start-test
+  - yarn test-integration-run
 
 after_script:
   - pkill mongod
+  - yarn stop-test

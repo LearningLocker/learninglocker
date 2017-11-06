@@ -94,21 +94,21 @@ class ExportForm extends Component {
 
     return (
       <div>
-        <div className={styles.exportForm}>
+        <div className={`${styles.exportForm} row rowadding`}>
           {rawMode ? (
-            <div className="col-md-12">
+            <div className="col-xs-12">
               <ProjectionInput
                 projection={activeProjection}
                 onChange={this.onChangeProjection}
                 rawMode />
             </div>
           ) : [
-            <div className="col-md-6" key="export-projection">
+            <div className={`col-md-6 col-xs-12 ${styles.projectionInput}`} key="export-projection">
               <ProjectionInput
                 projection={activeProjection}
                 onChange={this.onChangeProjection} />
             </div>,
-            <div className="col-md-6" key="export-preview">
+            <div className={`col-md-6 ${styles.exportOutputPreview}`} key="export-preview">
               <ExportOutputPreview
                 filter={pipelines.getIn([activeIndex, 0, '$match'], new Map())}
                 project={activeProjection}

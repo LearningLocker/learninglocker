@@ -144,9 +144,9 @@ describe('ExportController.exportStatements scope filtering', () => {
   });
 
   // Tests for owner.
-  it('should allow action when org owner and not owner', async () => {
+  it('should not allow action when org owner and not owner', async () => {
     const token = await createOwnerOrgToken();
-    await assertAuthorised({ token, ownerId: FAKE_ID });
+    await assertNotFound({ token, ownerId: FAKE_ID });
   });
 
   it('should allow action when org owner and is owner', async () => {
@@ -154,9 +154,9 @@ describe('ExportController.exportStatements scope filtering', () => {
     await assertAuthorised({ token, ownerId: OWNER_ID });
   });
 
-  it('should allow action when org owner and is public', async () => {
+  it('should not allow action when org owner and is public', async () => {
     const token = await createOwnerOrgToken();
-    await assertAuthorised({ token, ownerId: FAKE_ID, isPublic: true });
+    await assertNotFound({ token, ownerId: FAKE_ID, isPublic: true });
   });
 
   it('should not allow action when org owner and is outside org', async () => {

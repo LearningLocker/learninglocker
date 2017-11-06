@@ -82,7 +82,8 @@ describe('Statement Forwarding Request', () => {
       configuration: {
         protocol: 'http',
         url: 'localhost:3101/',
-        method: 'POST'
+        method: 'POST',
+        headers: '{"testHeader1": "testHeaderValue1"}'
       }
     };
 
@@ -94,7 +95,11 @@ describe('Statement Forwarding Request', () => {
       }
     };
 
-    const request = nock('http://localhost:3101/')
+    const request = nock('http://localhost:3101/', {
+      reqheaders: {
+        testHeader1: 'testHeaderValue1'
+      }
+    })
       .post('/', {
         test: 'test'
       })

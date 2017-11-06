@@ -17,9 +17,7 @@ import {
 
 export default (WrappedComponent) => {
   class WithModels extends Component {
-    componentWillMount = () => {
-      return this.fetchModels(this.props);
-    }
+    componentWillMount = () => this.fetchModels(this.props)
 
     componentWillReceiveProps = nextProps =>
       this.fetchModels(nextProps);

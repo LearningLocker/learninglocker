@@ -1,8 +1,12 @@
+import boolean from 'boolean';
+import defaultTo from 'lodash/defaultTo';
+
 const title = 'Learning Locker';
 const description = 'The open source learning record store';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const host = process.env.UI_HOST || '127.0.0.1';
+const enableFrameguard = boolean(defaultTo(process.env.ENABLE_FRAMEGUARD, true));
 const port = parseInt(process.env.UI_PORT, 10);
 const devPort = 3131;
 const assetPort = isProduction ? port : devPort;
@@ -20,6 +24,7 @@ export default {
   assetPath,
   apiHost: process.env.API_HOST || '127.0.0.1',
   apiPort: parseInt(process.env.API_PORT, 10),
+  enableFrameguard,
   app: {
     title,
     description,
