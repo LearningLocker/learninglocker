@@ -161,7 +161,7 @@ router.get(
   PersonaController.getAttributes
 );
 router.post(
-  routes.POST_PERSONA,
+  routes.POST_PERSONA_ATTRIBUTE,
   passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
   PersonaController.postAttribute
 );
