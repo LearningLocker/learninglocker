@@ -42,7 +42,7 @@ describe('personaController postAttribute', () => {
       name: 'Dave'
     });
 
-    const result = await apiApp.post(routes.POST_PERSONA)
+    const result = await apiApp.post(routes.POST_PERSONA_ATTRIBUTE)
       .set('Authorization', `Bearer ${token}`)
       .send({
         key: 'hair',
