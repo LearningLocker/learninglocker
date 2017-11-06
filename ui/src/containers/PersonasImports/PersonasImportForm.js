@@ -50,21 +50,23 @@ export const PersonasImportFormComponent = ({
     }
     { model.get('importStage') === STAGE_IMPORTED &&
       <div className="stageImported">
-        <div>
-          Imported on {moment(model.get('importedAt')).format('ddd DD MMM YYYY h:mm:ss')}.<br />
-          merged: {model.getIn(['result', 'merged'], 0)}<br />
-          created: {model.getIn(['result', 'created'])}
-        </div>
         <ConfigureUpload
           className="configureUpload"
           model={model}
           disabled="true" />
+        <blockquote>
+          <h4>Imported on {moment(model.get('importedAt')).format('ddd DD MMM YYYY h:mm:ss')}.</h4>
+          <p>
+            <b>Merged: {model.getIn(['result', 'merged'], 0)} personas<br /></b>
+            <b>Created: {model.getIn(['result', 'created'])} new components</b>
+          </p>
+        </blockquote>
       </div>
     }
   </div>
   );
 
-export default compose(
+const PersonasImportForm = compose(
   withProps(({ model }) => ({
     schema,
     id: model.get('_id')
@@ -72,3 +74,5 @@ export default compose(
   withModel,
   handlers,
 )(PersonasImportFormComponent);
+
+export default PersonasImportForm;
