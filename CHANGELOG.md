@@ -4,7 +4,10 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Added
   - Migration funcionality ([#LL-395](https://ht2labs.myjetbrains.com/youtrack/issue/LL-395))
   - Can now set the max times statement forwarding will retry.
+  - Legend added to X vs Y charts ([#LL-322](https://ht2labs.myjetbrains.com/youtrack/issue/LL-322))
+  - Prevents deleting a role if assigned to a user, added error alerts ([#LL-353](https://ht2labs.myjetbrains.com/youtrack/issue/LL-353))
   - User integration tests
+
 ### Changed
  - Only allow sensible combinations of roles
 ### Deprecated
