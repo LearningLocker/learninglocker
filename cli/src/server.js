@@ -26,8 +26,9 @@ import migrateQueryBuilderCachesPath from 'cli/commands/migrateQueryBuilderCache
 import testStatementForwarding from 'cli/commands/testStatementForwarding';
 import testQueryBuilderCache from 'cli/commands/testQueryBuilderCache';
 
-import seed from 'cli/seed';
+import migrateMongo, { MIGRATIONS_PATH } from 'cli/migrateMongo';
 
+import seed from 'cli/seed';
 
 program.version('0.0.1');
 
@@ -170,5 +171,14 @@ program
 .option('-b, --batchSize [batchSize]', 'Batch size..')
 .action(batchJobs);
 // node cli/dist/server batchJobs
+
+program
+  .command('migrateMongo')
+  .action(migrateMongo)
+  .usage(`Runs migrations stored in ${MIGRATIONS_PATH}`)
+  .option('-u, --up [up]', 'Optional, runs up migrations up to [up file name], also accepts [\'next\'], [up] arg is optional')
+  .option('-d, --down <down>', 'Optional, runs down migration down to [down file name], also accepts [\'last\']')
+  .option('-i, --info [info]', 'Display the state of the migrations, optional [\'v\'|\'verobes\']');
+// node cli/dist/server migrateMongo
 
 program.parse(process.argv);

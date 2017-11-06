@@ -2,6 +2,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [unreleased]
 ### Added
+  - Migration funcionality ([#LL-395](https://ht2labs.myjetbrains.com/youtrack/issue/LL-395))
   - Can now set the max times statement forwarding will retry.
   - User integration tests
 ### Changed
