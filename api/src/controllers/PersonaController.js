@@ -16,7 +16,7 @@ import {
 
 const objectId = mongoose.Types.ObjectId;
 
-const connection = catchErrors(async (req, res) => {
+const personaConnection = catchErrors(async (req, res) => {
   const { before, after } = req.query;
 
   const sort = getJSONFromQuery(req, 'sort', { _id: 1 });
@@ -54,7 +54,8 @@ const connection = catchErrors(async (req, res) => {
 
   return res.status(200).send(personas);
 });
-const update = catchErrors(async (req, res) => {
+
+const updatePersona = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
   const personaId = req.params.personaId; // getFromQuery(req, '_id', undefined);
   const newName = req.body.name;
@@ -77,7 +78,7 @@ const update = catchErrors(async (req, res) => {
   });
 });
 
-const getIdentifiers = catchErrors(async (req, res) => {
+const personaIdentifierConnection = catchErrors(async (req, res) => {
   const { before, after } = req.query;
 
   const sort = getJSONFromQuery(req, 'sort', { _id: 1 });
@@ -121,7 +122,7 @@ const getIdentifiers = catchErrors(async (req, res) => {
   return res.status(200).send(identifiers);
 });
 
-const postIdentifier = catchErrors(async (req, res) => {
+const addPersonaIdentifier = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
@@ -139,7 +140,7 @@ const postIdentifier = catchErrors(async (req, res) => {
   return res.status(200).send(identifier);
 });
 
-const getPersonaCount = catchErrors(async (req, res) => {
+const personaCount = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   const scopeFilter = await getScopeFilter({
@@ -230,7 +231,7 @@ const getPersona = catchErrors(async (req, res) => {
   return res.status(200).send(persona);
 });
 
-const getAttributes = catchErrors(async (req, res) => {
+const personaAttributeConnection = catchErrors(async (req, res) => {
   const { before, after } = req.query;
 
   const sort = getJSONFromQuery(req, 'sort', { _id: 1 });
@@ -274,7 +275,7 @@ const getAttributes = catchErrors(async (req, res) => {
   return res.status(200).send(attributes);
 });
 
-const postAttribute = catchErrors(async (req, res) => {
+const addPersonaAttribute = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
@@ -298,15 +299,26 @@ const postAttribute = catchErrors(async (req, res) => {
 });
 
 export default {
-  connection,
-  update,
-  getIdentifiers,
-  postIdentifier,
-  getPersonaCount,
-  mergePersona,
-  deletePersona,
-  addPersona,
   getPersona,
-  getAttributes,
-  postAttribute
+  updatePersona,
+  addPersona,
+  deletePersona,
+  personaCount,
+  personaConnection,
+
+  getPersonaIdentifier,
+  updatePersonaIdentifier,
+  addPersonaIdentifier,
+  deletePersonaIdentifier,
+  personaIdentifierCount,
+  personaIdentifierConnection,
+
+  getPersonaAttribute,
+  updatePersonaAttribute,
+  addPersonaAttribute,
+  deletePersonaAttribute,
+  personaAttributeCount,
+  personaAttributeConnection,
+
+  mergePersona,
 };

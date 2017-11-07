@@ -18,7 +18,6 @@ import UploadController from 'api/controllers/UploadController';
 import DownloadController from 'api/controllers/DownloadController';
 import ExportController from 'api/controllers/ExportController';
 import StatementController from 'api/controllers/StatementController';
-import PersonaController from 'api/controllers/PersonaController';
 import generateConnectionController from 'api/controllers/ConnectionController';
 import generateIndexesController from 'api/controllers/IndexesController';
 import ImportPersonasController from 'api/controllers/ImportPersonasController';
@@ -43,6 +42,9 @@ import QueryBuilderCacheValue from 'lib/models/querybuildercachevalue';
 import Role from 'lib/models/role';
 import PersonasImport from 'lib/models/personasImport';
 import PersonasImportTemplate from 'lib/models/personasImportTemplate';
+import personaRESTHandler from 'api/routes/personas/personaRESTHandler';
+import personaIdentifierRESTHandler from 'api/routes/personas/personaIdentifierRESTHandler';
+import personaAttributeRESTHandler from 'api/routes/personas/personaAttributeRESTHandler';
 import * as routes from 'lib/constants/routes';
 
 const router = new express.Router();
@@ -56,10 +58,10 @@ router.get(routes.VERSION, (req, res) => {
     new Promise(resolve => git.branch(resolve)),
     new Promise(resolve => git.tag(resolve))
   ])
-    .then(([short, long, branch, tag]) => {
-      jsonSuccess(res)({ short, long, branch, tag });
-    })
-    .catch(serverError(res));
+  .then(([short, long, branch, tag]) => {
+    jsonSuccess(res)({ short, long, branch, tag });
+  })
+  .catch(serverError(res));
 });
 
 /**
@@ -105,64 +107,11 @@ router.get(
 );
 
 /**
-* Personas
-*/
-
-router.get(
-  routes.CONNECTION_PERSONA,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
-  PersonaController.connection
-);
-router.patch(
-  routes.UPDATE_PERSONA,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
-  PersonaController.update
-);
-router.get(
-  routes.CONNECTION_PERSONA_IDENTIFIER,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
-  PersonaController.getIdentifiers
-);
-router.post(
-  routes.CREATE_IDENTIFIER,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
-  PersonaController.postIdentifier
-);
-router.get(
-  routes.GET_PERSONA_COUNT,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
-  PersonaController.getPersonaCount
-);
-router.post(
-  routes.MERGE_PERSONA,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
-  PersonaController.mergePersona
-);
-router.delete(
-  routes.DELETE_PERSONA,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
-  PersonaController.deletePersona
-);
-router.post(
-  routes.ADD_PERSONA,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
-  PersonaController.addPersona
-);
-router.get(
-  routes.GET_PERSONA,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
-  PersonaController.getPersona
-);
-router.get(
-  routes.GET_ATTRIBUTES,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
-  PersonaController.getAttributes
-);
-router.post(
-  routes.POST_PERSONA_ATTRIBUTE,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
-  PersonaController.postAttribute
-);
+ * Personas
+ */
+router.use(personaRESTHandler);
+router.use(personaIdentifierRESTHandler);
+router.use(personaAttributeRESTHandler);
 
 /**
  * UPLOADS
