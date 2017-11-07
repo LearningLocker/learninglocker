@@ -7,7 +7,7 @@ import createPersonaService from 'personas/dist/service';
 import setup from 'api/routes/tests/utils/setup';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 
-describe.only('personaController getPersona', () => {
+describe('personaController getPersonaOnly', () => {
   const apiApp = setup();
   let token;
 

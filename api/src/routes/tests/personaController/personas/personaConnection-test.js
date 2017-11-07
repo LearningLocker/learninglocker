@@ -8,8 +8,7 @@ import setup from 'api/routes/tests/utils/setup';
 import * as routes from 'lib/constants/routes';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 
-
-describe('personaController getPersonas', () => {
+describe('personaController personaConnection', () => {
   const apiApp = setup();
   let token;
 
@@ -37,7 +36,7 @@ describe('personaController getPersonas', () => {
   });
 
 
-  it('should get a personas', async () => {
+  it('should get a persona', async () => {
     await personaService.createPersona({
       organisation: testId,
       name: 'Dave'
