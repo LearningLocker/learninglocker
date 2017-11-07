@@ -1,8 +1,13 @@
 import React, { PropTypes } from 'react';
 import PersonaIdentifier from 'ui/components/PersonaIdentifier';
+import PersonaIdentifierForm from 'ui/components/PersonaIdentifierForm';
 import { Map } from 'immutable';
-import { compose, renameProp, withProps, setPropTypes } from 'recompose';
+import { compose, renameProp, withProps, setPropTypes, withState } from 'recompose';
 import { withModels } from 'ui/utils/hocs';
+
+
+// {showAddForm &&
+//
 
 const enhance = compose(
   setPropTypes({
@@ -17,7 +22,8 @@ const enhance = compose(
       }),
   ),
   withModels,
-  renameProp('models', 'personaIdentifiers')
+  renameProp('models', 'personaIdentifiers'),
+  withState('showAddForm', 'setShowAddForm', false)
 );
 
 const renderItems = items => items.map((item) => {
@@ -27,8 +33,29 @@ const renderItems = items => items.map((item) => {
   return null;
 }).valueSeq();
 
-const personaIdentifiers = ({
-  personaIdentifiers: personaIdentifiers2
-}) => (<div>{renderItems(personaIdentifiers2)}</div>);
+const renderAddForm = ({ showAddForm, setShowAddForm }) => (
+  showAddForm ? (
+    <PersonaIdentifierForm />
+  ) : (
+    <div className="clearfix">
+      <button
+        className="btn btn-primary btn-sm pull-right"
+        onClick={setShowAddForm.bind(null, true)}>
+        <i className="ion ion-plus" /> Add identity
+      </button>
+    </div>
+  )
+);
 
-export default enhance(personaIdentifiers);
+const PersonaIdentifiersComponent = ({
+  personaIdentifiers,
+  showAddForm,
+  setShowAddForm
+}) => (
+  <div>
+    {renderAddForm({ showAddForm, setShowAddForm })}
+    {renderItems(personaIdentifiers)}
+  </div>
+);
+
+export default enhance(PersonaIdentifiersComponent);

@@ -2,16 +2,15 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { withProps, compose } from 'recompose';
+import { Map } from 'immutable';
+import Tabs from 'ui/components/Material/Tabs';
+import { Tab } from 'react-toolbox/lib/tabs';
+import uuid from 'uuid';
 import { withModel } from 'ui/utils/hocs';
 import { addModel } from 'ui/redux/modules/models';
-import PersonaIdentifierForm from 'ui/components/PersonaIdentifierForm';
-import PersonaAttributeForm from 'ui/components/PersonaAttributeForm';
 import PersonaMergeForm from 'ui/components/PersonaMergeForm';
 import PersonaIdentifiers from 'ui/containers/PersonaIdentifiers';
 import PersonaAttributes from 'ui/containers/PersonaAttributes';
-import { Map } from 'immutable';
-import classNames from 'classnames';
-import uuid from 'uuid';
 
 const schema = 'persona';
 
@@ -34,9 +33,13 @@ class PersonaView extends Component {
     identifierType: 'mbox',
     identifierValue: '',
     attributeKey: '',
-    attributeValue: ''
+    attributeValue: '',
+    activeTab: 0
   };
 
+  handleTabChange = (activeTab) => {
+    this.setState({ activeTab });
+  }
   handleToggle = () => {
     this.setState({ showIdentifiers: !this.state.showIdentifiers });
   };
@@ -113,142 +116,48 @@ class PersonaView extends Component {
     this.setAttr(attr, e.target.value);
   };
 
-  renderButtons = () => {
-    const {
-      showAddForm,
-      showIdentifiers,
-      showAttributes,
-      showSetAttributeForm
-    } = this.state;
-    const identityIconClasses = classNames({
-      icon: true,
-      'ion-chevron-right': !showIdentifiers,
-      'ion-chevron-down': showIdentifiers
-    });
-
-    const attributesIconClasses = classNames({
-      icon: true,
-      'ion-chevron-right': !showAttributes,
-      'ion-chevron-down': showAttributes
-    });
+  renderDetails = () => {
+    const { model } = this.props;
+    const { activeTab } = this.state;
+    const nameId = uuid.v4();
 
     return (
       <div>
-        <button
-          id="toggle"
-          className="btn btn-inverse btn-sm"
-          onClick={this.handleToggle}>
-          <i className={identityIconClasses} /> View identity information
-        </button>
+        <div className="form-group">
+          <label htmlFor={nameId} className="control-label">
+            Name
+          </label>
+          <input
+            id={nameId}
+            className="form-control"
+            placeholder="Name"
+            value={model.get('name') || ''}
+            onChange={this.onChangeAttr.bind(null, 'name')} />
+        </div>
 
-        {' '}
-
-        {showAddForm
-          ? <a className="btn btn-inverse btn-sm" onClick={this.handleAdd}>
-              <i className="fa fa-floppy-o" /> Save identifier
-            </a>
-          : <a
-            className="btn btn-inverse btn-sm"
-            onClick={this.handleShowAddForm}>
-              <i className="ion ion-plus" /> Add identifier
-            </a>
-        }
-
-        {' '}
-
-        <button
-          id="toggleAttributes"
-          className="btn btn-inverse btn-sm"
-          onClick={this.handleAttributesToggle} >
-          <i className={attributesIconClasses} /> View attributes
-        </button>
-
-        {' '}
-
-        { showSetAttributeForm ?
-          <a className="btn btn-inverse btn-sm" onClick={this.handleSetAttribute}>
-            <i className="fa fa-floppy-o" /> Save attribute
-          </a>
-          :
-          <a
-            className="btn btn-inverse btn-sm"
-            onClick={this.handleShowSetAttributeForm}>
-              <i className="ion ion-plus" /> Set attribute
-          </a>
-        }
+        <Tabs index={activeTab} onChange={this.handleTabChange}>
+          <Tab label="Identities">
+            <PersonaIdentifiers personaId={model.get('_id')} />
+          </Tab>
+          <Tab label="Attributes">
+            <PersonaAttributes personaId={model.get('_id')} />
+          </Tab>
+        </Tabs>
       </div>
     );
-  };
+  }
 
   render = () => {
     const { model } = this.props;
-    const {
-      showIdentifiers,
-      showAttributes,
-      showAddForm,
-      identifierType,
-      identifierValue,
-      showSetAttributeForm,
-      attributeKey,
-      attributeValue,
-    } = this.state;
     const showMergeForm = this.props.getMetadata('isMergeFormVisible', false);
-    const nameId = uuid.v4();
 
     return (
       <div> {
         showMergeForm ? (
           <PersonaMergeForm schema={schema} id={model.get('_id')} />
         ) : (
-        <div>
-          <div className="form-group">
-            <label htmlFor={nameId} className="control-label">
-              Name
-            </label>
-            <input
-              id={nameId}
-              className="form-control"
-              placeholder="Name"
-              value={model.get('name') || ''}
-              onChange={this.onChangeAttr.bind(null, 'name')} />
-          </div>
-
-          {this.renderButtons()}
-
-          {showAddForm &&
-            <PersonaIdentifierForm
-              identifierType={identifierType}
-              identifierValue={identifierValue}
-              handleIdentifierTypeChange={this.handleIdentifierTypeChange}
-              handleIdentifierValueChange={this.handleIdentifierValueChange} />}
-
-          {showIdentifiers &&
-            <div>
-              <br />
-              <h4>Persona Identifiers</h4>
-              <hr />
-              <PersonaIdentifiers personaId={model.get('_id')} />
-            </div>}
-
-          {showSetAttributeForm &&
-            <PersonaAttributeForm
-              attributeKey={attributeKey}
-              attributeValue={attributeValue}
-              handleAttributeKeyChange={this.handleAttributeKeyChange}
-              handleAttributeValueChange={this.handleAttributeValueChange}
-            />
-          }
-
-          {showAttributes &&
-            <div>
-              <br />
-              <h4>Persona Attributes</h4>
-              <hr />
-              <PersonaAttributes personaId={model.get('_id')} />
-            </div>
-          }
-        </div>
-      )}
+          this.renderDetails()
+        )}
       </div>
     );
   };

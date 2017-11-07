@@ -5,20 +5,23 @@ import { Map } from 'immutable';
 const KeyValueIdent = ({ ident }) => {
   const value = ident.get('value');
 
-  const renderedValue = typeof value === 'string' ? (<code>{value}</code>) : (
-    <pre>{JSON.stringify(value, null, 2) }</pre>
-  );
+  const renderedValue =
+    typeof value === 'string' ? (
+      <code>{value}</code>
+    ) : (
+      <pre>{JSON.stringify(value, null, 2)}</pre>
+    );
 
   return (
-    <div>
-      <div><strong>Type: </strong><code>{ ident.get('key') }</code></div>
-      <div><strong>Value: </strong>{ renderedValue }</div>
-    </div>
+    <dl className="dl-horizontal">
+      <dt>{ident.get('key')}</dt>
+      <dd>{renderedValue}</dd>
+    </dl>
   );
 };
 
 KeyValueIdent.propTypes = {
-  ident: PropTypes.instanceOf(Map),
+  ident: PropTypes.instanceOf(Map)
 };
 
 export default KeyValueIdent;
