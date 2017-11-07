@@ -20,7 +20,6 @@ describe('Query builder cache handler test', () => {
   });
 
   beforeEach('Set up caches and statements for testing', async () => {
-
     await promisify(queryBuilderCacheDBHelper.cleanUp)();
     await promisify(queryBuilderCacheDBHelper.prepare)();
   });
