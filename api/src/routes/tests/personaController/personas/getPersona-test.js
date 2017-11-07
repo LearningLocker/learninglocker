@@ -5,11 +5,9 @@ import mongoModelsRepo from 'personas/dist/mongoModelsRepo';
 import config from 'personas/dist/config';
 import createPersonaService from 'personas/dist/service';
 import setup from 'api/routes/tests/utils/setup';
-import * as routes from 'lib/constants/routes';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 
-
-describe('personaController getPersona', () => {
+describe.only('personaController getPersona', () => {
   const apiApp = setup();
   let token;
 
@@ -37,16 +35,33 @@ describe('personaController getPersona', () => {
   });
 
 
-  it('should get a persona', async () => {
+  it('should get a single persona', async () => {
     const { persona } = await personaService.createPersona({
       organisation: testId,
       name: 'Dave'
     });
 
-    const result = await apiApp.get(routes.GET_PERSONA.replace(/:personaId/, persona.id))
+    const result = await apiApp.get(`/v2/persona/${persona.id}`)
       .set('Authorization', `Bearer ${token}`)
       .expect(200);
 
     expect(result.body.name).to.equal('Dave');
+  });
+
+  it('should get multiple personas', async () => {
+    await personaService.createPersona({
+      organisation: testId,
+      name: 'Dave1'
+    });
+    await personaService.createPersona({
+      organisation: testId,
+      name: 'Dave2'
+    });
+
+    const result = await apiApp.get('/v2/persona')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+
+    expect(result.body.length).to.equal(2);
   });
 });

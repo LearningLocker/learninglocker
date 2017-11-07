@@ -298,6 +298,27 @@ const addPersonaAttribute = catchErrors(async (req, res) => {
   return res.status(200).send(attribute);
 });
 
+const getPersonaIdentifier = catchErrors(async (req, res) => {
+});
+
+const updatePersonaIdentifier = catchErrors(async (req, res) => {
+});
+
+const deletePersonaIdentifier = catchErrors(async (req, res) => {
+});
+
+const personaIdentifierCount = catchErrors(async (req, res) => {
+});
+
+const getPersonaAttribute = catchErrors(async (req, res) => {
+});
+const updatePersonaAttribute = catchErrors(async (req, res) => {
+});
+const deletePersonaAttribute = catchErrors(async (req, res) => {
+});
+const personaAttributeCount = catchErrors(async (req, res) => {
+});
+
 export default {
   getPersona,
   updatePersona,
