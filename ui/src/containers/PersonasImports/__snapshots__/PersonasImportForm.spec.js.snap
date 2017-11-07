@@ -51,10 +51,6 @@ exports[`PersonasImportForm should render the form in STAGE_IMPORTED 1`] = `
   <div
     className="stageImported"
   >
-    <div>
-      Imported on 
-      Tue 31 Oct 2017 6:06:06
-    </div>
     <withProps(Connect(WithModel))
       className="configureUpload"
       disabled="true"
@@ -67,6 +63,24 @@ exports[`PersonasImportForm should render the form in STAGE_IMPORTED 1`] = `
         }
       }
     />
+    <blockquote>
+      <h4>
+        Imported on 
+        Tue 31 Oct 2017 6:06:06
+      </h4>
+      <p>
+        <b>
+          Merged: 
+          0
+           personas
+          <br />
+        </b>
+        <b>
+          Created: 
+           new components
+        </b>
+      </p>
+    </blockquote>
   </div>
 </div>
 `;

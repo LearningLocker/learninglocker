@@ -19,7 +19,6 @@ exports[`HeaderItem should render 1`] = `
       value=""
     >
       <option
-        key=""
         value=""
       >
         Nothing
@@ -65,24 +64,6 @@ exports[`HeaderItem should render 1`] = `
         value="COLUMN_ATTRIBUTE_DATA"
       >
         Attribute value
-      </option>
-      <option
-        key="COLUMN_ATTRIBUTE_DATA_KEY"
-        value="COLUMN_ATTRIBUTE_DATA_KEY"
-      >
-        Attribute key
-      </option>
-      <option
-        key="COLUMN_KEY"
-        value="COLUMN_KEY"
-      >
-        Identifier key
-      </option>
-      <option
-        key="COLUMN_VALUE"
-        value="COLUMN_VALUE"
-      >
-        Identifier value
       </option>
     </select>
   </div>
@@ -108,7 +89,6 @@ exports[`HeaderItem should render with orderable and related column 1`] = `
       value=""
     >
       <option
-        key=""
         value=""
       >
         Nothing
@@ -154,24 +134,6 @@ exports[`HeaderItem should render with orderable and related column 1`] = `
         value="COLUMN_ATTRIBUTE_DATA"
       >
         Attribute value
-      </option>
-      <option
-        key="COLUMN_ATTRIBUTE_DATA_KEY"
-        value="COLUMN_ATTRIBUTE_DATA_KEY"
-      >
-        Attribute key
-      </option>
-      <option
-        key="COLUMN_KEY"
-        value="COLUMN_KEY"
-      >
-        Identifier key
-      </option>
-      <option
-        key="COLUMN_VALUE"
-        value="COLUMN_VALUE"
-      >
-        Identifier value
       </option>
     </select>
   </div>
@@ -198,7 +160,6 @@ exports[`HeaderItem should render with orderable when disabled 1`] = `
       value=""
     >
       <option
-        key=""
         value=""
       >
         Nothing
@@ -244,24 +205,6 @@ exports[`HeaderItem should render with orderable when disabled 1`] = `
         value="COLUMN_ATTRIBUTE_DATA"
       >
         Attribute value
-      </option>
-      <option
-        key="COLUMN_ATTRIBUTE_DATA_KEY"
-        value="COLUMN_ATTRIBUTE_DATA_KEY"
-      >
-        Attribute key
-      </option>
-      <option
-        key="COLUMN_KEY"
-        value="COLUMN_KEY"
-      >
-        Identifier key
-      </option>
-      <option
-        key="COLUMN_VALUE"
-        value="COLUMN_VALUE"
-      >
-        Identifier value
       </option>
     </select>
   </div>
