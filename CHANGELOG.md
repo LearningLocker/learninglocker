@@ -17,9 +17,15 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Migrations
 
 
+## [2.0.7] - 2017-11-08
+### Fixes
+ - Couldn't see some visualisations when printing
+
+
 ## [2.0.6] - 2017-10-26
 ### Security
   - Ensure all dashboards can load ([#LL-423](https://ht2labs.myjetbrains.com/youtrack/issue/LL-423))
+
 
 ## [2.0.5] - 2017-10-23
 ### Security
