@@ -149,7 +149,9 @@ const personaCount = catchErrors(async (req, res) => {
     authInfo
   });
 
-  const userFilter = await parseQuery(req.query.query);
+  const userFilter = await parseQuery(req.query.query, {
+    organisation: getOrgFromAuthInfo(authInfo)
+  });
 
   const filter = {
     ...userFilter,
@@ -285,7 +287,10 @@ const addPersonaAttribute = catchErrors(async (req, res) => {
   });
 
   const parsedBody = await parseQuery(
-    req.body
+    req.body,
+    {
+      organisation: getOrgFromAuthInfo(authInfo)
+    }
   );
 
   const { attribute } = await req.personaService.overwritePersonaAttribute({
