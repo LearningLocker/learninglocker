@@ -13,6 +13,7 @@ import {
   omitBy,
   toString
 } from 'lodash';
+import updateQueryBuilderCache from 'lib/services/importPersonas/updateQueryBuilderCache';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -298,6 +299,11 @@ const addPersonaAttribute = catchErrors(async (req, res) => {
     personaId: toString(parsedBody.personaId),
     key: parsedBody.key,
     value: parsedBody.value
+  });
+
+  updateQueryBuilderCache({
+    attributes: [attribute],
+    organisation: getOrgFromAuthInfo(authInfo)
   });
 
   return res.status(200).send(attribute);
