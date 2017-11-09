@@ -49,8 +49,8 @@ const handleStatement = personaService => async (statement) => {
 
 const handleStatements = personaService => (statements) => {
   if (_.isArray(statements)) {
-    const handleStatementWithPersonaservice = handleStatement(personaService);
-    return Promise.all(_.map(statements, handleStatementWithPersonaservice));
+    const handleStatementWithPersonaService = handleStatement(personaService);
+    return Promise.all(_.map(statements, handleStatementWithPersonaService));
   }
   return handleStatement(personaService)(statements);
 };
