@@ -15,6 +15,7 @@ const enhance = compose(
       ({
         filter: new Map({ personaId }),
         schema: 'personaAttribute',
+        first: 100,
       }),
   ),
   withModels,
