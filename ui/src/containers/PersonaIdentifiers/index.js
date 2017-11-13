@@ -40,7 +40,7 @@ const renderAddForm = ({ showAddForm, setShowAddForm }) => (
     <div className="clearfix">
       <button
         className="btn btn-primary btn-sm pull-right"
-        onClick={setShowAddForm.bind(null, true)}>
+        onClick={() => setShowAddForm(true)}>
         <i className="ion ion-plus" /> Add identity
       </button>
     </div>
