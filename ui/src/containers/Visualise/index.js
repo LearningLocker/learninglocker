@@ -4,7 +4,7 @@ import { withProps, compose } from 'recompose';
 import { Map, fromJS } from 'immutable';
 import { queryStringToQuery, modelQueryStringSelector } from 'ui/redux/modules/search';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { withModels } from 'ui/utils/hocs';
+import { withModels, withModel } from 'ui/utils/hocs';
 import { addModel } from 'ui/redux/modules/models';
 import { loggedInUserId } from 'ui/redux/modules/auth';
 import SearchBox from 'ui/containers/SearchBox';
@@ -12,6 +12,7 @@ import ModelList from 'ui/containers/ModelList';
 import VisualiseForm from 'ui/containers/VisualiseForm';
 import DeleteButton from 'ui/containers/DeleteButton';
 import PrivacyToggleButton from 'ui/containers/PrivacyToggleButton';
+import { routeNodeSelector } from 'redux-router5';
 import styles from './visualise.css';
 
 const schema = 'visualisation';
@@ -20,7 +21,8 @@ const VisualisationList = compose(
     schema,
     sort: fromJS({ createdAt: -1, _id: -1 })
   }),
-  withModels
+  withModels,
+  withModel
 )(ModelList);
 
 class Visualise extends Component {
@@ -28,11 +30,12 @@ class Visualise extends Component {
     userId: PropTypes.string,
     addModel: PropTypes.func,
     searchString: PropTypes.string,
+    visualisationId: PropTypes.string, // optional
   };
 
   state = {
     criteria: ''
-  }
+  };
 
   onClickAdd = () => {
     this.addButton.blur();
@@ -45,35 +48,37 @@ class Visualise extends Component {
     });
   }
 
-  render = () => (
-    <div>
-      <header id="topbar">
-        <div className="heading heading-light">
-          <span className="pull-right open_panel_btn">
-            <button
-              className="btn btn-primary btn-sm"
-              ref={(ref) => { this.addButton = ref; }}
-              onClick={this.onClickAdd}>
-              <i className="ion ion-plus" /> Add new
-            </button>
-          </span>
-          <span className="pull-right open_panel_btn" style={{ width: '25%' }}>
-            <SearchBox schema={schema} />
-          </span>
-          Visualise
-        </div>
-      </header>
-      <div className="row">
-        <div className="col-md-12">
-          <VisualisationList
-            filter={queryStringToQuery(this.props.searchString, schema)}
-            ModelForm={VisualiseForm}
-            buttons={[PrivacyToggleButton, DeleteButton]}
-            getDescription={model => model.get('description') || '~ Unnamed Visualisation'} />
+  render = () =>
+    (
+      <div>
+        <header id="topbar">
+          <div className="heading heading-light">
+            <span className="pull-right open_panel_btn">
+              <button
+                className="btn btn-primary btn-sm"
+                ref={(ref) => { this.addButton = ref; }}
+                onClick={this.onClickAdd}>
+                <i className="ion ion-plus" /> Add new
+              </button>
+            </span>
+            <span className="pull-right open_panel_btn" style={{ width: '25%' }}>
+              <SearchBox schema={schema} />
+            </span>
+            Visualise
+          </div>
+        </header>
+        <div className="row">
+          <div className="col-md-12">
+            <VisualisationList
+              id={this.props.visualisationId}
+              filter={queryStringToQuery(this.props.searchString, schema)}
+              ModelForm={VisualiseForm}
+              buttons={[PrivacyToggleButton, DeleteButton]}
+              getDescription={model => model.get('description') || '~ Unnamed Visualisation'} />
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
 }
 
 export default compose(
@@ -81,5 +86,10 @@ export default compose(
   connect(state => ({
     userId: loggedInUserId(state),
     searchString: modelQueryStringSelector(schema)(state),
+    visualisationId:
+      routeNodeSelector('organisation.data.visualise.visualisation')(state)
+        .route
+        .params
+        .visualisationId
   }), { addModel })
 )(Visualise);

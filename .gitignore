@@ -26,3 +26,4 @@ bootstrap.sh
 yarn-error.log
 cypress/screenshots/*
 cypress/videos/*
+debug/*
