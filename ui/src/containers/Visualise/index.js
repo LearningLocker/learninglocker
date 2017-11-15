@@ -12,9 +12,12 @@ import ModelList from 'ui/containers/ModelList';
 import VisualiseForm from 'ui/containers/VisualiseForm';
 import DeleteButton from 'ui/containers/DeleteButton';
 import PrivacyToggleButton from 'ui/containers/PrivacyToggleButton';
+import VisualisationTypeIcon from './VisualisationTypeIcon';
 import styles from './visualise.css';
 
+
 const schema = 'visualisation';
+
 const VisualisationList = compose(
   withProps({
     schema,
@@ -68,7 +71,7 @@ class Visualise extends Component {
           <VisualisationList
             filter={queryStringToQuery(this.props.searchString, schema)}
             ModelForm={VisualiseForm}
-            buttons={[PrivacyToggleButton, DeleteButton]}
+            buttons={[VisualisationTypeIcon, PrivacyToggleButton, DeleteButton]}
             getDescription={model => model.get('description') || '~ Unnamed Visualisation'} />
         </div>
       </div>
