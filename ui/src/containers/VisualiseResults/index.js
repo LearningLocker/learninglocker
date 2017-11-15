@@ -16,15 +16,12 @@ import {
   COUNTER,
   PIE,
 } from 'ui/utils/constants';
+import SourceResults from 'ui/containers/VisualiseResults/SourceResults';
 import styles from './visualiseresults.css';
 
-export default compose(
-  withStyles(styles),
-  withProps({
-    schema: 'visualisation'
-  }),
-  withModel
-)(({ model }) => {
+const VisualisationComponent = ({
+  model
+}) => {
   const visualisationType = model.get('type');
   const visualisationId = model.get('_id');
 
@@ -44,4 +41,23 @@ export default compose(
     default:
       return <noscript />;
   }
-});
+};
+
+export default compose(
+  withStyles(styles),
+  withProps({
+    schema: 'visualisation'
+  }),
+  withModel
+)(({
+  model
+}) =>
+  (
+    <div className={styles.visualiseResultsContainer}>
+      {!model.get('source') && <VisualisationComponent model={model} />}
+      {model.get('source') &&
+        <SourceResults id={model.get('_id')} />
+      }
+    </div>
+  )
+);
