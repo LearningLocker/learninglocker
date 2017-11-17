@@ -19,6 +19,7 @@ describe('personaController getPersonaOnly', () => {
       process.env.MONGODB_PATH,
       config.mongoModelsRepo.options
     );
+
     personaService = createPersonaService({
       repo: mongoModelsRepo({
         db: mongoClientPromise

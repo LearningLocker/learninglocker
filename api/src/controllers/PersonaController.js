@@ -39,7 +39,7 @@ const personaConnection = catchErrors(async (req, res) => {
     ...scopeFilter
   };
 
-  const personas = await req.personaService.getPersonas({
+  const personas = await req.personaService.getPersonasConnection({
     limit: first || last,
     direction: CursorDirection[before ? 'BACKWARDS' : 'FORWARDS'],
     sort,
