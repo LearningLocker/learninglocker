@@ -9,7 +9,7 @@ const router = new express.Router();
 router.get(
   routes.PERSONA_IDENTIFIER,
   passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
-  PersonaController.getPersonaIdentifier
+  PersonaController.getPersonaIdentifiers
 );
 router.get(
   routes.PERSONA_IDENTIFIER_ID,
