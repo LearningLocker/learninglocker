@@ -38,7 +38,7 @@ const getOutstandingMigrations = async ({ down, up, migrations }) => {
         updatedAt: -1
       });
 
-    const toRunMigrations2 = toRunMigrations.map(model => {
+    const toRunMigrations2 = toRunMigrations.map((model) => {
       if (!migrations.get(model.key)) {
         throw new Error(`Migration ${model.key} not found in migrations`);
       }
@@ -89,7 +89,7 @@ const checkRunMigrations = async ({ migrations }) => {
     throw new Error('Db does not match the migrations');
   }
 
-  allMigrations.forEach(item => {
+  allMigrations.forEach((item) => {
     const dbMigration = item[0];
     const actualMigration = item[1];
 
@@ -170,7 +170,7 @@ const displayInfo = async ({ info, migrations }) => {
   }
 };
 
-export default async function({ down, up, info, migrations = v2Migrations }, next = null) {
+export default async function ({ down, up, info, migrations = v2Migrations }, next = null) {
   try {
     if (info) {
       await displayInfo({ info, migrations });

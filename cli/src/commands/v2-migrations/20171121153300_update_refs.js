@@ -1,5 +1,4 @@
 import highland from 'highland';
-import logger from 'lib/logger';
 import Statement from 'lib/models/statement';
 import union from 'lodash/union';
 import {
@@ -13,7 +12,7 @@ import {
 import getRegistrationsFromStatement from 'xapi-statements/dist/service/storeStatements/queriables/getRegistrationsFromStatement';
 import getVerbsFromStatement from 'xapi-statements/dist/service/storeStatements/queriables/getVerbsFromStatement';
 
-const getQueriables = doc => {
+const getQueriables = (doc) => {
   const statement = doc.statement;
   const refs = doc.refs ? doc.refs : [];
   const statementRefs = refs.map(ref => ref.statement);
@@ -30,9 +29,9 @@ const getQueriables = doc => {
   };
 };
 
-const migrateStatementsBatch = statements => {
+const migrateStatementsBatch = (statements) => {
   const bulkOp = Statement.collection.initializeUnorderedBulkOp();
-  statements.forEach(doc => {
+  statements.forEach((doc) => {
     const queriables = getQueriables(doc);
     const update = {
       $addToSet: {
@@ -49,12 +48,10 @@ const migrateStatementsBatch = statements => {
   return highland(bulkOp.execute());
 };
 
-const processStream = stream => {
-  return new Promise((resolve, reject) => {
-    stream.on('error', reject);
-    stream.apply(resolve);
-  });
-};
+const processStream = stream => new Promise((resolve, reject) => {
+  stream.on('error', reject);
+  stream.apply(resolve);
+});
 
 const up = async () => {
   const batchSize = 10;
