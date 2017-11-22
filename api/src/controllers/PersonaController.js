@@ -369,7 +369,7 @@ const getPersonas = catchErrors(async (req, res) => {
 });
 
 const deletePersonaIdentifier = catchErrors(async (req, res) => {
-  const authInfo = getAuthFromRequest(req);
+  const authInfo = getAuthFromReque()st(req);
 
   await getScopeFilter({
     modelName: 'persona',
@@ -382,10 +382,31 @@ const deletePersonaIdentifier = catchErrors(async (req, res) => {
     id: req.params.personaIdentifierId
   });
 
-  return res.status(200);
+  return res.status(200).send();
 });
 
 const personaIdentifierCount = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  const scopeFilter = await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'viewAllScope',
+    authInfo
+  });
+
+  const userFilter = await parseQuery(req.query.query);
+
+  const filter = {
+    ...userFilter,
+    ...scopeFilter
+  };
+
+  const count = await req.personaService.getPersonaIdentifierCount({
+    organisation: getOrgFromAuthInfo(authInfo),
+    filter
+  });
+
+  return res.status(200).send(count);
 });
 
 const getPersonaAttribute = catchErrors(async (req, res) => {
@@ -425,8 +446,43 @@ const updatePersonaAttribute = catchErrors(async (req, res) => {
   return res.status(200).send(attribute);
 });
 const deletePersonaAttribute = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'editAllScope',
+    authInfo
+  });
+
+  await req.personaService.deletePersonaAttribute({
+    organisation: getOrgFromAuthInfo(authInfo),
+    id: req.params.personaAttributeId
+  });
+
+  return res.status(200).send();
 });
 const personaAttributeCount = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  const scopeFilter = await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'viewAllScope',
+    authInfo
+  });
+
+  const userFilter = await parseQuery(req.query.query);
+
+  const filter = {
+    ...userFilter,
+    ...scopeFilter
+  };
+
+  const count = await req.personaService.getPersonaAttributeCount({
+    organisation: getOrgFromAuthInfo(authInfo),
+    filter
+  });
+
+  return res.status(200).send(count);
 });
 
 export default {
