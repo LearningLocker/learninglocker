@@ -343,6 +343,8 @@ const personaIdentifierCount = catchErrors(async (req, res) => {
 
 const getPersonaAttribute = catchErrors(async (req, res) => {
 });
+const getPersonaAttributes = catchErrors(async (req, res) => {
+});
 const updatePersonaAttribute = catchErrors(async (req, res) => {
 });
 const deletePersonaAttribute = catchErrors(async (req, res) => {
