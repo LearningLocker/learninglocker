@@ -12,7 +12,7 @@ import {
 import getRegistrationsFromStatement from 'xapi-statements/dist/service/storeStatements/queriables/getRegistrationsFromStatement';
 import getVerbsFromStatement from 'xapi-statements/dist/service/storeStatements/queriables/getVerbsFromStatement';
 
-const getQueriables = (doc) => {
+const getQueriables = doc => {
   const statement = doc.statement;
   const refs = doc.refs ? doc.refs : [];
   const statementRefs = refs.map(ref => ref.statement);
@@ -29,9 +29,9 @@ const getQueriables = (doc) => {
   };
 };
 
-const migrateStatementsBatch = (statements) => {
+const migrateStatementsBatch = statements => {
   const bulkOp = Statement.collection.initializeUnorderedBulkOp();
-  statements.forEach((doc) => {
+  statements.forEach(doc => {
     const queriables = getQueriables(doc);
     const update = {
       $addToSet: {
@@ -48,10 +48,26 @@ const migrateStatementsBatch = (statements) => {
   return highland(bulkOp.execute());
 };
 
-const processStream = stream => new Promise((resolve, reject) => {
-  stream.on('error', reject);
-  stream.apply(resolve);
-});
+const processStream = stream =>
+  new Promise((resolve, reject) => {
+    stream.on('error', reject);
+    stream.apply(resolve);
+  });
+
+const createIndexes = keys => {
+  return keys.map(createIndex);
+};
+
+const createIndex = key => {
+  return Statement.collection.createIndex(
+    {
+      organisation: 1,
+      lrs_id: 1,
+      [key]: 1
+    },
+    { background: true }
+  );
+};
 
 const up = async () => {
   const batchSize = 10;
@@ -59,6 +75,14 @@ const up = async () => {
   const statementStream = highland(Statement.find(query).cursor());
   const migrationStream = statementStream.batch(batchSize).flatMap(migrateStatementsBatch);
   await processStream(migrationStream);
+  createIndexes([
+    'activities',
+    'agents',
+    'registrations',
+    'relatedActivities',
+    'relatedAgents',
+    'verbs'
+  ]);
 };
 
 const down = async () => {
