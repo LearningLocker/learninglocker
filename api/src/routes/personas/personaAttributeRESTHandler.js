@@ -14,7 +14,7 @@ router.get(
 router.get(
   routes.PERSONA_ATTRIBUTE,
   passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
-  PersonaController.getPersonaAttribute
+  PersonaController.getPersonaAttributes
 );
 router.get(
   routes.PERSONA_ATTRIBUTE_ID,
