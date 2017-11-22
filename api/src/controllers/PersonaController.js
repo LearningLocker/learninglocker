@@ -409,6 +409,20 @@ const getPersonaAttributes = catchErrors(async (req, res) => {
 });
 
 const updatePersonaAttribute = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'viewAllScope',
+    authInfo
+  });
+
+  const { attribute } = await req.personaService.overwritePersonaAttribute({
+    ...req.body,
+    organisation: getOrgFromAuthInfo(authInfo),
+  });
+
+  return res.status(200).send(attribute);
 });
 const deletePersonaAttribute = catchErrors(async (req, res) => {
 });

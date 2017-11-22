@@ -8,14 +8,11 @@ import setup from 'api/routes/tests/utils/setup';
 import * as routes from 'lib/constants/routes';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 
-describe('updatePresonaIdentifier', () => {
+describe('updatePersonaAttribute', () => {
   const apiApp = setup();
-  let token;
 
   let personaService;
   before(async () => {
-    token = await createOrgToken();
-
     const mongoClientPromise = MongoClient.connect(
       process.env.MONGODB_PATH,
       config.mongoModelsRepo.options
@@ -35,35 +32,58 @@ describe('updatePresonaIdentifier', () => {
     await personaService.clearService();
   });
 
-  it('Should update an identifier', async () => {
+  it('Should create an attribute', async () => {
+    const token = await createOrgToken();
+
     const { persona } = await personaService.createPersona({
       organisation: testId,
       name: 'Dave'
     });
 
-    const { identifier } = await personaService.createIdentifier({
-      ifi: {
-        key: 'mbox',
-        value: 'test@test.com'
-      },
-      organisation: testId,
-      persona: persona.id
-    });
-
     const result = await apiApp.post(
-      routes.PERSONA_IDENTIFIER_ID.replace(':personaIdentifierId', identifier.id)
+      routes.PERSONA_ATTRIBUTE
     )
       .set('Authorization', `Bearer ${token}`)
       .send({
-        ifi: {
-          key: 'mbox',
-          value: 'test2@test2.com'
-        },
-        persona: persona.id
+        key: 'testkey',
+        value: 'testvalue',
+        personaId: persona.id
       })
       .expect(200);
 
-    expect(result.body.ifi.value).to.equal('test2@test2.com');
-    expect(result.body.persona).to.equal(persona.id);
+    expect(result.body.key).to.equal('testkey');
+    expect(result.body.value).to.equal('testvalue');
+    expect(result.body.personaId).to.equal(persona.id);
+  });
+
+  it('Should update an attribute', async () => {
+    const token = await createOrgToken();
+
+    const { persona } = await personaService.createPersona({
+      organisation: testId,
+      name: 'Dave'
+    });
+
+    const { attribute } = await personaService.overwritePersonaAttribute({
+      key: 'testkey',
+      value: 'testvalue',
+      organisation: testId,
+      personaId: persona.id
+    });
+
+    const result = await apiApp.post(
+      routes.PERSONA_ATTRIBUTE_ID.replace(':personaAttributeId', attribute.id)
+    )
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        key: 'testkey',
+        value: 'testvalue',
+        personaId: persona.id,
+      })
+      .expect(200);
+
+    expect(result.body.key).to.equal('testkey');
+    expect(result.body.value).to.equal('testvalue');
+    expect(result.body.personaId).to.equal(persona.id);
   });
 });
