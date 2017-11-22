@@ -1,5 +1,3 @@
-import Statement from 'lib/models/statement';
-import Client from 'lib/models/client';
 import { getConnection } from 'lib/connections/mongoose';
 import logger from 'lib/logger';
 
@@ -8,15 +6,8 @@ const createIndex = (collection, name, index, opts = {}) => {
   return collection.createIndex(index, { name, background: true, ...opts });
 };
 
-const createUnique = (collection, name, index, opts = {}) => {
-  return createIndex(collection, name, index, { unique: true, ...opts });
-};
-
-const createIndexes = (collection, indexes) => {
-  return indexes.map(index => {
-    return createIndex(collection, index);
-  });
-};
+const createUnique = (collection, name, index, opts = {}) =>
+  createIndex(collection, name, index, { unique: true, ...opts });
 
 const createStatementIndexes = connection => {
   const stmts = connection.collection('statements');
@@ -26,15 +17,12 @@ const createStatementIndexes = connection => {
   const objectTypeIndex = { 'statement.object.objectType': 1 };
   const accountIndex = { 'statement.actor.account.name': 1, 'statement.actor.account.homePage': 1 };
 
-  const createIndexWithOrg = (name, index) => {
-    return createIndex(stmts, `org_${name}`, { organisation: 1, ...index });
-  };
-  const createIndexWithStore = (name, index) => {
-    return createIndexWithOrg(`lrs_${name}`, { lrs_id: 1, ...index });
-  };
-  const createIndexWithVoid = (name, index) => {
-    return createIndexWithStore(`voided_${name}`, { voided: 1, ...index });
-  };
+  const createIndexWithOrg = (name, index) =>
+    createIndex(stmts, `org_${name}`, { organisation: 1, ...index });
+  const createIndexWithStore = (name, index) =>
+    createIndexWithOrg(`lrs_${name}`, { lrs_id: 1, ...index });
+  const createIndexWithVoid = (name, index) =>
+    createIndexWithStore(`voided_${name}`, { voided: 1, ...index });
 
   createIndexWithOrg('objId_objType', { ...objectIdIndex, ...objectTypeIndex });
   createIndexWithVoid('verbId_objType', { ...verbIdIndex, ...objectTypeIndex });
