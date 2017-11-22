@@ -386,6 +386,27 @@ const deletePersonaIdentifier = catchErrors(async (req, res) => {
 });
 
 const personaIdentifierCount = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  const scopeFilter = await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'viewAllScope',
+    authInfo
+  });
+
+  const userFilter = await parseQuery(req.query.query);
+
+  const filter = {
+    ...userFilter,
+    ...scopeFilter
+  };
+
+  const count = await req.personaService.getPersonaIdentifierCount({
+    organisation: getOrgFromAuthInfo(authInfo),
+    filter
+  });
+
+  return res.status(200).send(count);
 });
 
 const getPersonaAttribute = catchErrors(async (req, res) => {
