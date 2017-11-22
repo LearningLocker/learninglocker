@@ -369,6 +369,20 @@ const getPersonas = catchErrors(async (req, res) => {
 });
 
 const deletePersonaIdentifier = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'editAllScope',
+    authInfo
+  });
+
+  await req.personaService.getPersonas({
+    organisation: getOrgFromAuthInfo,
+    id: req.params.personaIdentifierId
+  });
+
+  return res.status(200);
 });
 
 const personaIdentifierCount = catchErrors(async (req, res) => {
