@@ -29,11 +29,11 @@ const createStatementIndexes = connection => {
   createIndexWithVoid('verbId_objId', { ...verbIdIndex, ...objectIdIndex });
   createIndexWithVoid('mbox', { 'statement.actor.mbox': 1 });
   createIndexWithVoid('account', accountIndex);
-  createIndexWithVoid('timestamp_id', { timestamp: -1, _id: -1 });
-  createIndexWithVoid('stored_id', { stored: -1, _id: -1 });
+  createIndexWithVoid('timestamp__id', { timestamp: -1, _id: -1 });
+  createIndexWithVoid('stored__id', { stored: -1, _id: -1 });
   createIndexWithStore('statementId', { 'statement.id': 1 });
-  createIndexWithOrg('timestamp_id', { timestamp: -1, _id: 1 });
-  createIndexWithOrg('stored_id', { stored: -1, _id: 1 });
+  createIndexWithOrg('timestamp__id', { timestamp: -1, _id: 1 });
+  createIndexWithOrg('stored__id', { stored: -1, _id: 1 });
   createIndexWithOrg('objId', objectIdIndex);
   createIndexWithOrg('verbId_objId', { ...verbIdIndex, ...objectIdIndex });
   createIndexWithOrg('ident', { personaIdentifier: 1 });
