@@ -390,8 +390,24 @@ const personaIdentifierCount = catchErrors(async (req, res) => {
 
 const getPersonaAttribute = catchErrors(async (req, res) => {
 });
+
 const getPersonaAttributes = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'viewAllScope',
+    authInfo
+  });
+
+  const { attributes } = await req.personaService.getPersonaAttributes({
+    ...req.query,
+    organisation: getOrgFromAuthInfo(authInfo),
+  });
+
+  return res.status(200).send(attributes);
 });
+
 const updatePersonaAttribute = catchErrors(async (req, res) => {
 });
 const deletePersonaAttribute = catchErrors(async (req, res) => {
@@ -417,6 +433,7 @@ export default {
   personaIdentifierConnection,
 
   getPersonaAttribute,
+  getPersonaAttributes,
   updatePersonaAttribute,
   addPersonaAttribute,
   deletePersonaAttribute,
