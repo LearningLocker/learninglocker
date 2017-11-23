@@ -97,6 +97,7 @@ async function verifyToken(token, done) {
 }
 
 passport.use('jwt', new BearerStrategy(verifyToken));
+
 passport.use(
   'jwt-cookie',
   new CustomStrategy((req, done) => {
