@@ -43,8 +43,7 @@
     "test-ui": "jest --config ui/jest.config.json --env node",
     "test": "yarn test-api && yarn test-lib && yarn test-worker && yarn test-ui && yarn test-cli",
     "test-integration": "cypress open",
-    "test-integration-run": "cypress run",
-    "test": "yarn test-api && yarn test-lib && yarn test-worker && yarn test-ui"
+    "test-integration-run": "cypress run"
   },
   "dependencies": {
     "@newrelic/native-metrics": "^2.1.0",
