@@ -5,7 +5,7 @@ import map from 'lodash/map';
 import reject from 'lodash/reject';
 import isEmpty from 'lodash/isEmpty';
 import toString from 'lodash/toString';
-import { ALL } from 'lib/constants/scopes';
+import { VIEW_SHAREABLE_DASHBOARD } from 'lib/constants/scopes';
 import Role from 'lib/models/role';
 import getActiveOrgSettings from 'api/utils/getActiveOrgSettings';
 
@@ -15,7 +15,7 @@ const getUserScopes = user =>
   user.scopes;
 
 const getDashboardScopes = () =>
-  [ALL];
+  [VIEW_SHAREABLE_DASHBOARD];
 
 const getVisualisationIdsFromDashboard = (dashboard) => {
   let visualisationIds = map(dashboard.widgets, 'visualisation');

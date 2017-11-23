@@ -47,8 +47,8 @@ export default async () => {
     try {
       const organisationSettings = user.organisationSettings.map((organisationSetting) => {
         const orgId = organisationSetting.organisation.toString();
-        const isAdmin = includes(organisationSetting, ALL);
-        const isObserver = includes(organisationSetting, OBSERVER);
+        const isAdmin = includes(organisationSetting.scopes, ALL);
+        const isObserver = includes(organisationSetting.scopes, OBSERVER);
         const orgRoles = orgRolesMap[orgId];
         const roles = [
           ...(orgRoles && isAdmin ? [orgRoles.adminId] : []),

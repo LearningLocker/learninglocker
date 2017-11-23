@@ -192,11 +192,12 @@ th {
   *,
   *:before,
   *:after {
-    color: #000 !important;
     text-shadow: none !important;
-    background: transparent !important;
     -webkit-box-shadow: none !important;
-            box-shadow: none !important;
+    box-shadow: none !important;
+  }
+  body,#app {
+    background: transparent !important;
   }
   a,
   a:visited {
@@ -11607,4 +11608,12 @@ a.dark-link {
   font-feature-settings: "liga" 1;
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
+}
+
+.row-no-padding > div:first-child {
+  padding-left: 0px;
+}
+
+.row-no-padding > div:last-child {
+  padding-right: 0px;
 }
