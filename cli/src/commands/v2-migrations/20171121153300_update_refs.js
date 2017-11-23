@@ -54,10 +54,6 @@ const processStream = stream =>
     stream.apply(resolve);
   });
 
-const createIndexes = keys => {
-  return keys.map(createIndex);
-};
-
 const createIndex = key => {
   return Statement.collection.createIndex(
     {
@@ -67,6 +63,10 @@ const createIndex = key => {
     },
     { background: true }
   );
+};
+
+const createIndexes = keys => {
+  return keys.map(createIndex);
 };
 
 const up = async () => {
