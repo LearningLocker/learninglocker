@@ -87,36 +87,4 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Fixed
  - Adds VERSION file
 ### Security
-<<<<<<< HEAD
-
-## [2.3.0.4] - 2017-04-11
-### Fixed
- - Newly created orgs didn't show until user logged out and in ([#LL-172](https://ht2labs.myjetbrains.com/youtrack/issue/LL-172))
- - Allow from headers in embeddable dashboards ([#LL-169](https://ht2labs.myjetbrains.com/youtrack/issue/LL-169))
-
-## [2.3.0.1] - 2017-04-04
-### Fixed
- - Icons being replaced with text in some places ([#LL-166](https://ht2labs.myjetbrains.com/youtrack/issue/LL-166))
-
-## [2.3.0] - 2017-04-04
-### Added
-- Embedded dashboards. Can be shared anywhere or with specific domains ([#LL-60](https://ht2labs.myjetbrains.com/youtrack/issue/LL-60))
-- Saved queries. Can be partially or completely applied.
-- Search to login page for people with a lot of organisations
-- Logging into an org directly by going to the route if you are already logged in
-- A more fine grained scoping layer to prepare for 2.4
-- Owner and created at are always visible on models
-- Added query editor to the export ui, this is a temporary feature while we work on improving exports
-
-### Changed
-- Allow up to 500,000 records in an export, was 100,000
-- Smarter logic around data fetching resulting in less server load and faster time to data (debouncing, preventing duplicate requests)
-- Assets now chunked into per page bundles, you don’t have to load the whole site to see a single page
-
-### Fixed
-- Scrolling down really far in a journey visualisation sometimes stopped loading more results
-- Removing a user from an organisation could actually delete them
-- Setting a Journey to inactive wouldn’t actually stop it processing new statements ([#LL-139](https://ht2labs.myjetbrains.com/youtrack/issue/LL-139))
-=======
 ### Migrations
->>>>>>> release/v2.1.0
