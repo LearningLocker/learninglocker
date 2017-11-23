@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Map } from 'immutable';
-import { compose, renameProp, withProps, setPropTypes, withState } from 'recompose';
+import { compose, renameProp, withProps, setPropTypes, withStateHandlers } from 'recompose';
 import { withModels } from 'ui/utils/hocs';
 import KeyValueIdent from 'ui/components/KeyValueIdent';
 import PersonaAttributeForm from 'ui/components/PersonaAttributeForm';
@@ -20,7 +20,13 @@ const enhance = compose(
   ),
   withModels,
   renameProp('models', 'attributes'),
-  withState('showAddForm', 'setShowAddForm', false)
+  withStateHandlers(
+    () => ({ showAddForm: false }),
+    {
+      setShowAddFormFalse: () => () => ({ showAddForm: false }),
+      setShowAddFormTrue: () => () => ({ showAddForm: true }),
+    }
+  )
 );
 
 const renderItems = items => items.map((item) => {
@@ -33,14 +39,14 @@ const renderItems = items => items.map((item) => {
   return null;
 }).valueSeq();
 
-const renderAddForm = ({ showAddForm, setShowAddForm }) => (
+const renderAddForm = ({ showAddForm, setShowAddFormTrue, setShowAddFormFalse }) => (
   showAddForm ? (
-    <PersonaAttributeForm onDone={setShowAddForm.bind(null, false)} />
+    <PersonaAttributeForm onDone={setShowAddFormFalse} />
   ) : (
     <div className="clearfix">
       <button
         className="btn btn-primary btn-sm pull-right"
-        onClick={setShowAddForm.bind(null, true)}>
+        onClick={setShowAddFormTrue}>
         <i className="ion ion-plus" /> Add attribute
       </button>
     </div>
@@ -50,10 +56,11 @@ const renderAddForm = ({ showAddForm, setShowAddForm }) => (
 const personaAttributes = ({
   attributes,
   showAddForm,
-  setShowAddForm
+  setShowAddFormTrue,
+  setShowAddFormFalse
 }) => (
   <div>
-    {renderAddForm({ showAddForm, setShowAddForm })}
+    {renderAddForm({ showAddForm, setShowAddFormTrue, setShowAddFormFalse })}
     {renderItems(attributes)}
   </div>
 );

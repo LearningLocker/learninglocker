@@ -369,7 +369,7 @@ const getPersonas = catchErrors(async (req, res) => {
 });
 
 const deletePersonaIdentifier = catchErrors(async (req, res) => {
-  const authInfo = getAuthFromReque()st(req);
+  const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
     modelName: 'persona',

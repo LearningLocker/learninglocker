@@ -1,26 +1,22 @@
 import React from 'react';
-import { compose, withHandlers } from 'recompose';
+import { compose, withStateHandlers } from 'recompose';
 
-const handlers = withHandlers({
-  onAttributeKeyChange: ({
-    handleAttributeKeyChange,
-  }) => (event) => {
-    const value = event.target.value;
-    handleAttributeKeyChange(value);
-  },
-  onAttributeValueChange: ({
-    handleAttributeValueChange,
-  }) => (event) => {
-    const value = event.target.value;
-    handleAttributeValueChange(value);
+const handlers = withStateHandlers(
+  ({ attribute = {} }) => ({
+    key: attribute.key,
+    value: attribute.value
+  }),
+  {
+    changeKey: () => event => ({ key: event.target.value }),
+    changeValue: () => event => ({ value: event.target.value }),
   }
-});
+);
 
 const PersonaAttributeFormComponent = ({
-  onAttributeKeyChange,
-  onAttributeValueChange,
-  attributeKey,
-  attributeValue
+  changeKey,
+  changeValue,
+  key,
+  value
 }) => {
   return (
     <form>
@@ -32,9 +28,9 @@ const PersonaAttributeFormComponent = ({
         <input
           id="persona-attribute-key-form"
           className="form-control"
-          onChange={onAttributeKeyChange}
+          onChange={changeKey}
           type="text"
-          value={attributeKey} />
+          value={key} />
       </div>
 
       <div className="form-group">
@@ -45,9 +41,9 @@ const PersonaAttributeFormComponent = ({
         <input
           id="persona-attribute-value-form"
           className="form-control"
-          onChange={onAttributeValueChange}
+          onChange={changeValue}
           type="text"
-          value={attributeValue} />
+          value={value} />
       </div>
     </form>
   );
