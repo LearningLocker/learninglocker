@@ -10,7 +10,6 @@ import {
   RESTIFY_DEFAULTS,
   setNoCacheHeaders
 } from 'lib/constants/auth';
-import handleError from 'api/controllers/utils/handleError';
 
 // CONTROLLERS
 import AuthController from 'api/controllers/AuthController';
