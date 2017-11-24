@@ -12,12 +12,11 @@ import {
 import getRegistrationsFromStatement from 'xapi-statements/dist/service/storeStatements/queriables/getRegistrationsFromStatement';
 import getVerbsFromStatement from 'xapi-statements/dist/service/storeStatements/queriables/getVerbsFromStatement';
 
-const getQueriables = doc => {
+const getQueriables = (doc) => {
   const statement = doc.statement;
   const refs = doc.refs ? doc.refs : [];
   const statementRefs = refs.map(ref => ref.statement);
   const statements = [statement, ...statementRefs];
-  console.log(statements);
 
   return {
     activities: union(...statements.map(getActivitiesFromStatement)),
@@ -29,9 +28,9 @@ const getQueriables = doc => {
   };
 };
 
-const migrateStatementsBatch = statements => {
+const migrateStatementsBatch = (statements) => {
   const bulkOp = Statement.collection.initializeUnorderedBulkOp();
-  statements.forEach(doc => {
+  statements.forEach((doc) => {
     const queriables = getQueriables(doc);
     const update = {
       $addToSet: {
@@ -54,7 +53,7 @@ const processStream = stream =>
     stream.apply(resolve);
   });
 
-const createIndex = key => {
+const createIndex = (key) => {
   return Statement.collection.createIndex(
     {
       organisation: 1,
@@ -65,9 +64,7 @@ const createIndex = key => {
   );
 };
 
-const createIndexes = keys => {
-  return keys.map(createIndex);
-};
+const createIndexes = keys => keys.map(createIndex);
 
 const up = async () => {
   const batchSize = 10;

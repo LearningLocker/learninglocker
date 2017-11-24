@@ -177,6 +177,7 @@ export default async function ({ down, up, info, migrations = v2Migrations }, ne
     } else {
       await doMigrations({ down, up, migrations });
     }
+    process.exit();
   } catch (err) {
     if (next) {
       next(err);
