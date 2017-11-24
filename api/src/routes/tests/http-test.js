@@ -3,6 +3,7 @@ import supertestApi from 'lib/connections/supertestApi';
 import * as routes from 'lib/constants/routes';
 import { getConnection } from 'lib/connections/mongoose';
 import { createOrgJWT, createUserJWT } from 'api/auth/jwt';
+import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 import DBHelper from './DBHelper';
 
 const connection = getConnection();
@@ -103,18 +104,22 @@ describe('API HTTP Route tests', () => {
     });
   });
 
-  describe.skip('statement routes', () => {
+  describe('statement routes', () => {
     describe('Call on statements/aggregation', () => {
+      beforeEach('create organisation and jwt token', async () => {
+        orgJwtToken = await createOrgToken(['ALL'], [], '561a679c0c5d017e4004714e');
+      });
+
       it('should return 200 with token auth', (done) => {
         apiApp
-          .get(routes.STATEMENTS_AGGREGATE)
-          .set('Authorization', `Bearer ${jwtToken}`)
+          .get(`${routes.STATEMENTS_AGGREGATE}?pipeline=[]`)
+          .set('Authorization', `Bearer ${orgJwtToken}`)
           .expect(200, done);
       });
 
       it('should return 200 with clientBasic auth', (done) => {
         apiApp
-          .get(routes.STATEMENTS_AGGREGATE)
+          .get(`${routes.STATEMENTS_AGGREGATE}?pipeline=[]`)
           .auth(db.client.api.basic_key, db.client.api.basic_secret)
           .expect(200, done);
       });
@@ -122,15 +127,11 @@ describe('API HTTP Route tests', () => {
   });
 
   describe('GET organisations', () => {
-    before('create organisation and jwt token', async () => {
-      orgJwtToken = await createOrgJWT(
-        db.user,
-        db.user.organisations[0],
-        provider
-      );
+    beforeEach('create organisation and jwt token', async () => {
+      orgJwtToken = await createOrgToken(['ALL'], [], '561a679c0c5d017e4004714e');
     });
 
-    it.skip('should get all statements in the org', (done) => {
+    it('should GET all organisations', (done) => {
       apiApp
         .get(`${routes.RESTIFY_PREFIX}/organisation`)
         .set('Authorization', `Bearer ${orgJwtToken}`)

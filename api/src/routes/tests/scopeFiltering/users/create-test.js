@@ -20,7 +20,7 @@ import { RESTIFY_PREFIX } from 'lib/constants/routes';
 const objectId = mongoose.Types.ObjectId;
 const USER_TEST_EMAIL = 'test@test.com';
 
-describe.only('API HTTP POST users route scope filtering', () => {
+describe('API HTTP POST users route scope filtering', () => {
   const apiApp = setup();
 
   const assertCreate = ({ bearerToken, basicClient, expectedCode, additionalUserData = {} }) => {
