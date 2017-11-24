@@ -2,14 +2,19 @@ import { expect } from 'chai';
 import supertestApi from 'lib/connections/supertestApi';
 import * as routes from 'lib/constants/routes';
 import { getConnection } from 'lib/connections/mongoose';
-import { createOrgJWT, createUserJWT } from 'api/auth/jwt';
+import { createUserJWT } from 'api/auth/jwt';
+import Statement from 'lib/models/statement';
+import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
+import testId from 'api/routes/tests/utils/testId';
 import DBHelper from './DBHelper';
+
 
 const connection = getConnection();
 const apiApp = supertestApi();
 
 const db = new DBHelper();
 
+let statement;
 let jwtToken;
 let orgJwtToken;
 const provider = 'native';
@@ -103,18 +108,44 @@ describe('API HTTP Route tests', () => {
     });
   });
 
-  describe.skip('statement routes', () => {
+  describe('statement routes', () => {
     describe('Call on statements/aggregation', () => {
-      it('should return 200 with token auth', (done) => {
-        apiApp
-          .get(routes.STATEMENTS_AGGREGATE)
-          .set('Authorization', `Bearer ${jwtToken}`)
-          .expect(200, done);
+      beforeEach('create organisation and jwt token', async () => {
+        orgJwtToken = await createOrgToken(['ALL'], [], '561a679c0c5d017e4004714e');
+
+        statement = await Statement.create({
+          organisation: testId,
+          statement: {
+            context: {
+              extensions: {
+                'http://example&46;org': 'testing'
+              }
+            }
+          }
+        });
+
+        console.log(statement);
+      });
+
+      it.only('should return 200 with token auth', async () => {
+        const { body } = await apiApp
+          .get(`${routes.STATEMENTS_AGGREGATE}?pipeline=[]`)
+          .set('Authorization', `Bearer ${orgJwtToken}`)
+          .expect(200);
+
+        expect(body).to.have.lengthOf(1);
+        expect(body[0].statement).to.deep.equal({
+          context: {
+            extensions: {
+              'http://example.org': 'testing'
+            }
+          }
+        });
       });
 
       it('should return 200 with clientBasic auth', (done) => {
         apiApp
-          .get(routes.STATEMENTS_AGGREGATE)
+          .get(`${routes.STATEMENTS_AGGREGATE}?pipeline=[]`)
           .auth(db.client.api.basic_key, db.client.api.basic_secret)
           .expect(200, done);
       });
@@ -122,18 +153,10 @@ describe('API HTTP Route tests', () => {
   });
 
   describe('GET organisations', () => {
-    before('create organisation and jwt token', async () => {
-      orgJwtToken = await createOrgJWT(
-        db.user,
-        db.user.organisations[0],
-        provider
-      );
-    });
-
-    it.skip('should get all statements in the org', (done) => {
+    it('should GET all organisations', (done) => {
       apiApp
         .get(`${routes.RESTIFY_PREFIX}/organisation`)
-        .set('Authorization', `Bearer ${orgJwtToken}`)
+        .set('Authorization', `Bearer ${jwtToken}`)
         .expect(200, done);
     });
   });
