@@ -43,7 +43,9 @@
     "test-ui": "jest --config ui/jest.config.json --env node",
     "test": "yarn test-api && yarn test-lib && yarn test-worker && yarn test-ui && yarn test-cli",
     "test-integration": "cypress open",
-    "test-integration-run": "cypress run"
+    "test-integration-run": "cypress run",
+    "migrate": "node cli/dist/server migrateMongo --up",
+    "rollback": "node cli/dist/server migrateMongo --down last"
   },
   "dependencies": {
     "@newrelic/native-metrics": "^2.1.0",
