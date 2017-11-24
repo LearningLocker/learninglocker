@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Map } from 'immutable';
-import { compose, renameProp, withProps, setPropTypes, withStateHandlers } from 'recompose';
+import { compose, renameProp, withProps, setPropTypes, withStateHandlers, withHandlers } from 'recompose';
 import { withModels } from 'ui/utils/hocs';
 import KeyValueIdent from 'ui/components/KeyValueIdent';
 import PersonaAttributeForm from 'ui/components/PersonaAttributeForm';
@@ -26,41 +26,51 @@ const enhance = compose(
       setShowAddFormFalse: () => () => ({ showAddForm: false }),
       setShowAddFormTrue: () => () => ({ showAddForm: true }),
     }
-  )
+  ),
+  withHandlers({
+    onSubmit: ({ addModel, setShowAddFormFalse, personaId }) => ({ key, value }) => {
+      addModel({ props: { key, value, personaId } });
+      setShowAddFormFalse();
+    }
+  })
 );
 
 const renderItems = items => items.map((item) => {
   if (typeof item !== 'string') {
-    return (<div>
+    return (
       <KeyValueIdent
-        ident={item} />
-    </div>);
+        key={item.get('_id')}
+        ident={item}
+        id={item.get('_id')}
+        schema="personaAttribute" />
+    );
   }
   return null;
 }).valueSeq();
 
-const renderAddForm = ({ showAddForm, setShowAddFormTrue, setShowAddFormFalse }) => (
-  showAddForm ? (
-    <PersonaAttributeForm onDone={setShowAddFormFalse} />
-  ) : (
-    <div className="clearfix">
+const renderAddForm = ({ showAddForm, setShowAddFormTrue, setShowAddFormFalse, onSubmit }) => (
+  <dl className="dl-horizontal clearfix">{
+    showAddForm ? (
+      <PersonaAttributeForm onCancel={setShowAddFormFalse} onSubmit={onSubmit} />
+    ) : (
       <button
         className="btn btn-primary btn-sm pull-right"
         onClick={setShowAddFormTrue}>
         <i className="ion ion-plus" /> Add attribute
       </button>
-    </div>
-  )
+    )
+  }</dl>
 );
 
 const personaAttributes = ({
   attributes,
   showAddForm,
+  onSubmit,
   setShowAddFormTrue,
   setShowAddFormFalse
 }) => (
   <div>
-    {renderAddForm({ showAddForm, setShowAddFormTrue, setShowAddFormFalse })}
+    {renderAddForm({ showAddForm, setShowAddFormTrue, setShowAddFormFalse, onSubmit })}
     {renderItems(attributes)}
   </div>
 );

@@ -1,54 +1,76 @@
 import React from 'react';
-import { compose, withStateHandlers } from 'recompose';
+import { Map } from 'immutable';
+import { compose, withStateHandlers, withHandlers } from 'recompose';
 
-const handlers = withStateHandlers(
-  ({ attribute = {} }) => ({
-    key: attribute.key,
-    value: attribute.value
+const stateHandlers = withStateHandlers(
+  ({ attribute = new Map() }) => ({
+    attributeKey: attribute.get('key', ''),
+    attributeValue: attribute.get('value', '')
   }),
   {
-    changeKey: () => event => ({ key: event.target.value }),
-    changeValue: () => event => ({ value: event.target.value }),
+    onChangeKey: () => event => ({ attributeKey: event.target.value }),
+    onChangeValue: () => event => ({ attributeValue: event.target.value }),
   }
 );
 
-const PersonaAttributeFormComponent = ({
-  changeKey,
-  changeValue,
-  key,
-  value
-}) => {
-  return (
-    <form>
-      <div className="form-group">
-        <label
-          htmlFor="persona-attribute-key-form" >
-            Key
-        </label>
-        <input
-          id="persona-attribute-key-form"
-          className="form-control"
-          onChange={changeKey}
-          type="text"
-          value={key} />
-      </div>
+const withOnCancelHandler = withHandlers({
+  onClickCancel: ({ onCancel }) => (event) => {
+    event.preventDefault();
+    onCancel();
+  }
+});
 
-      <div className="form-group">
-        <label
-          htmlFor="persona-attribute-value-form" >
-            Value
-        </label>
-        <input
-          id="persona-attribute-value-form"
-          className="form-control"
-          onChange={changeValue}
-          type="text"
-          value={value} />
-      </div>
-    </form>
-  );
-};
+const withOnSubmitHandler = withHandlers({
+  onClickSubmit: ({ onSubmit, attributeKey, attributeValue }) => (event) => {
+    event.preventDefault();
+    onSubmit({ key: attributeKey, value: attributeValue });
+  }
+});
+
+const PersonaAttributeFormComponent = ({
+  onChangeKey,
+  onChangeValue,
+  onClickCancel,
+  onClickSubmit,
+  attributeKey,
+  attributeValue
+}) => (
+  <form className="form-inline">
+    <div className="form-group">
+      <input
+        autoFocus
+        id="persona-attribute-key-form"
+        className="form-control"
+        onChange={onChangeKey}
+        placeholder="Key"
+        type="text"
+        value={attributeKey} />
+    </div>
+
+    <div className="form-group">
+      <input
+        id="persona-attribute-value-form"
+        className="form-control"
+        onChange={onChangeValue}
+        placeholder="Value"
+        type="text"
+        value={attributeValue} />
+    </div>
+    <button
+      className="btn btn-primary btn-sm pull-right"
+      onClick={onClickSubmit} >
+      <i className="ion ion-plus" /> Submit
+    </button>
+    <button
+      className="btn btn-primary btn-sm pull-right"
+      onClick={onClickCancel} >
+      <i className="ion ion-plus" /> Cancel
+    </button>
+  </form>
+);
 
 export default compose(
-  handlers
+  stateHandlers,
+  withOnCancelHandler,
+  withOnSubmitHandler
 )(PersonaAttributeFormComponent);
