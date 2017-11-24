@@ -71,8 +71,15 @@ class Visualise extends Component {
           <VisualisationList
             filter={queryStringToQuery(this.props.searchString, schema)}
             ModelForm={VisualiseForm}
-            buttons={[VisualisationTypeIcon, PrivacyToggleButton, DeleteButton]}
-            getDescription={model => model.get('description') || '~ Unnamed Visualisation'} />
+            buttons={[PrivacyToggleButton, DeleteButton]}
+            getDescription={model => (
+              <span>
+                <span style={{ paddingRight: 5 }}>
+                  <VisualisationTypeIcon id={model.get('_id')} />
+                </span>
+                { model.get('description') || '~ Unnamed Visualisation'}
+              </span>
+            )} />
         </div>
       </div>
     </div>

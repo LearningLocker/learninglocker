@@ -10,7 +10,7 @@ describe('VisualiseIcon', () => {
     const result = ReactTestRenderer.create(
       <VisualiseIconWrapper
         className="visualisationSmall"
-        isSmall="true"
+        isSmall
         type="XVSY" />
     ).toJSON();
 
