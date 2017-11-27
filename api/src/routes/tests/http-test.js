@@ -127,7 +127,7 @@ describe('API HTTP Route tests', () => {
         console.log(statement);
       });
 
-      it.only('should return 200 with token auth', async () => {
+      it('should return 200 with token auth', async () => {
         const { body } = await apiApp
           .get(`${routes.STATEMENTS_AGGREGATE}?pipeline=[]`)
           .set('Authorization', `Bearer ${orgJwtToken}`)
