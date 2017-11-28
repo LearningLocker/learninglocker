@@ -11,6 +11,7 @@ import mongoose from 'mongoose';
 import * as Queue from 'lib/services/queue';
 import logger from 'lib/logger';
 import mongoFilteringInMemory from 'lib/helpers/mongoFilteringInMemory';
+import parseQuery from 'lib/helpers/parseQuery';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -21,14 +22,15 @@ export default wrapHandlerForStatement(STATEMENT_FORWARDING_QUEUE, (statement, d
     organisation: objectId(statement.organisation),
     active: true
   }).then((statementForwardings) => {
-    const promises = map(statementForwardings, (statementForwarding) => {
+    const promises = map(statementForwardings, async (statementForwarding) => {
       const queueName = STATEMENT_FORWARDING_REQUEST_QUEUE;
 
       const query = statementForwarding.query && JSON.parse(statementForwarding.query);
+      const parsedQuery = await parseQuery(query);
 
       return new Promise((resolve, reject) => {
-        const theQuery = query && (query.$match || query);
-        if (theQuery && !mongoFilteringInMemory(theQuery)(statement)) {
+        const theParsedQuery = parsedQuery && (parsedQuery.$match || parsedQuery);
+        if (theParsedQuery && !mongoFilteringInMemory(theParsedQuery)(statement)) {
           return resolve();
         }
 

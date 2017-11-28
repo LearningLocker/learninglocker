@@ -4,7 +4,10 @@ server {
   server_name  SITE_URL;
 
   access_log  /var/log/nginx/access.log;
-
+  
+  # Max request size
+  client_max_body_size 20M;
+  
   root /SITE_ROOT/ui/dist/public;
 
   # xAPI endpoints

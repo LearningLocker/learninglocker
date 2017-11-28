@@ -1,11 +1,13 @@
 import logger from 'lib/logger';
-import Persona from 'lib/models/persona';
+import { getConnection } from 'lib/connections/mongoose';
 
 const up = async () => {
+  const connection = getConnection();
+  const collection = connection.collection('personas');
   const filter = {};
   const update = { $unset: { personaIdentifiers: '' } };
   const opts = { multi: true };
-  await Persona.collection.update(filter, update, opts);
+  await collection.update(filter, update, opts);
 };
 
 const down = async () => {
