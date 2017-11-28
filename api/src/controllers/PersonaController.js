@@ -434,13 +434,14 @@ const updatePersonaAttribute = catchErrors(async (req, res) => {
 
   await getScopeFilter({
     modelName: 'persona',
-    actionName: 'viewAllScope',
+    actionName: 'editAllScope',
     authInfo
   });
 
   const { attribute } = await req.personaService.overwritePersonaAttribute({
     ...req.body,
     organisation: getOrgFromAuthInfo(authInfo),
+    id: req.params.personaAttributeId
   });
 
   return res.status(200).send(attribute);
