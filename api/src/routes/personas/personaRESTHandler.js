@@ -7,6 +7,11 @@ import PersonaController from 'api/controllers/PersonaController';
 const router = new express.Router();
 
 router.get(
+  routes.PERSONA_COUNT,
+  passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
+  PersonaController.personaCount
+);
+router.get(
   routes.PERSONA,
   passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
   PersonaController.getPersonas
@@ -47,14 +52,15 @@ router.delete(
   PersonaController.deletePersona
 );
 router.get(
-  routes.PERSONA_COUNT,
-  passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
-  PersonaController.personaCount
-);
-router.get(
   routes.CONNECTION_PERSONA,
   passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
   PersonaController.personaConnection
+);
+
+router.post(
+  routes.MERGE_PERSONA,
+  passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
+  PersonaController.mergePersona
 );
 
 export default router;

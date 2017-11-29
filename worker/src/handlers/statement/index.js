@@ -49,7 +49,6 @@ export default (
 }
 ) => {
   const personaService = getPersonaService();
-  
   // GET NOTIFICATIONS FROM V1. Keep this until statement API is moved to node
   listenForV1();
 
@@ -63,11 +62,6 @@ export default (
   Queue.subscribe({
     queueName: STATEMENT_EXTRACT_PERSONAS_QUEUE,
     handler: extractPersonasHandler(personaService)
-  }, handleResponse);
-
-  Queue.subscribe({
-    queueName: STATEMENT_EXTRACT_PERSONAS_QUEUE,
-    handler: extractPersonasHandler
   }, handleResponse);
 
   Queue.subscribe({

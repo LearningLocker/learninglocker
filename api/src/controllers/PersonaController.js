@@ -13,6 +13,7 @@ import {
   omitBy,
   toString
 } from 'lodash';
+import { reasignPersonaStatements } from 'lib/services/persona';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -177,6 +178,12 @@ const mergePersona = catchErrors(async(req, res) => {
     organisation: getOrgFromAuthInfo(authInfo),
     fromPersonaId: req.query.mergePersonaFromId,
     toPersonaId: req.query.mergePersonaToId
+  });
+
+  await reasignPersonaStatements({
+    fromId: req.query.mergePersonaFromId,
+    toId: req.query.mergePersonaToId,
+    organisation: getOrgFromAuthInfo(authInfo)
   });
 
   return res.status(200).send(result);
