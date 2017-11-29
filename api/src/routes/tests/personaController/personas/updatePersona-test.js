@@ -43,7 +43,7 @@ describe('personaController update', () => {
       name: 'Dave'
     });
 
-    const result = await apiApp.patch(routes.UPDATE_PERSONA.replace(/:personaId/, persona.id))
+    const result = await apiApp.patch(routes.PERSONA_ID.replace(/:personaId/, persona.id))
       .set('Authorization', `Bearer ${token}`)
       .send({
         personaId: persona.id,
