@@ -16,6 +16,12 @@ server {
   }
 
   # API endpoints
+  location = /api {
+    rewrite /api / break;
+    proxy_redirect off;
+    proxy_pass http://127.0.0.1:API_PORT;
+  }
+
   location ~* ^/api(.*)$ {
     proxy_pass http://127.0.0.1:API_PORT$1$is_args$args;
     proxy_http_version 1.1;
