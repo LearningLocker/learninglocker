@@ -409,7 +409,7 @@ const personaIdentifierCount = catchErrors(async (req, res) => {
   return res.status(200).send(count);
 });
 
-const getPersonaAttribute = catchErrors(async (req, res) => {
+const getPersonaAttribute = catchErrors(async (/* req, res */) => {
 });
 
 const getPersonaAttributes = catchErrors(async (req, res) => {
