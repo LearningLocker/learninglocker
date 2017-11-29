@@ -46,7 +46,7 @@ describe('personaController getPersonaCount', () => {
       name: 'Dave1'
     });
 
-    const result = await apiApp.get(routes.GET_PERSONA_COUNT)
+    const result = await apiApp.get(routes.PERSONA_COUNT)
       .set('Authorization', `Bearer ${token}`)
       .expect(200);
 
