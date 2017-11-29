@@ -9,7 +9,7 @@ import * as routes from 'lib/constants/routes';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 
 
-describe('personaController getAttributes', () => {
+describe('personaController getAttributesConnection', () => {
   const apiApp = setup();
   let token;
 
@@ -49,7 +49,7 @@ describe('personaController getAttributes', () => {
       value: 'blond',
     });
 
-    const result = await apiApp.get(routes.GET_ATTRIBUTES)
+    const result = await apiApp.get(routes.CONNECTION_PERSONA_ATTRIBUTE)
       .set('Authorization', `Bearer ${token}`)
       .expect(200);
 
@@ -81,7 +81,7 @@ describe('personaController getAttributes', () => {
       personaId: persona2.id
     });
 
-    const result = await apiApp.get(routes.GET_ATTRIBUTES)
+    const result = await apiApp.get(routes.CONNECTION_PERSONA_ATTRIBUTE)
       .set('Authorization', `Bearer ${token}`)
       .query({ filter: JSON.stringify({
         personaId: persona2.id
