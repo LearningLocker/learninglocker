@@ -377,8 +377,8 @@ const deletePersonaIdentifier = catchErrors(async (req, res) => {
     authInfo
   });
 
-  await req.personaService.getPersonas({
-    organisation: getOrgFromAuthInfo,
+  await req.personaService.deletePersonaIdentifier({
+    organisation: getOrgFromAuthInfo(authInfo),
     id: req.params.personaIdentifierId
   });
 
