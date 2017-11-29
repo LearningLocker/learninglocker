@@ -73,6 +73,13 @@ const updatePersona = catchErrors(async (req, res) => {
     name: newName
   });
 
+  // Updates the name
+  await reasignPersonaStatements({
+    organisation: getOrgFromAuthInfo(authInfo),
+    toId: personaId,
+    fromId: personaId
+  });
+
   return res.status(200).send({
     ...persona,
     _id: persona.id
