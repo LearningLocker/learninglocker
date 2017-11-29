@@ -40,7 +40,7 @@ const personaConnection = catchErrors(async (req, res) => {
     ...scopeFilter
   };
 
-  const personas = await req.personaService.getPersonas({
+  const personas = await req.personaService.getPersonasConnection({
     limit: first || last,
     direction: CursorDirection[before ? 'BACKWARDS' : 'FORWARDS'],
     sort,
@@ -310,28 +310,195 @@ const addPersonaAttribute = catchErrors(async (req, res) => {
 });
 
 const getPersonaIdentifier = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'viewAllScope',
+    authInfo
+  });
+
+  const { identifier } = await req.personaService.getIdentifier({
+    organisation: getOrgFromAuthInfo(authInfo),
+    id: req.params.personaIdentifierId
+  });
+
+  return res.status(200).send(identifier);
+});
+
+const getPersonaIdentifiers = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'viewAllScope',
+    authInfo
+  });
+
+  const { identifiers } = await req.personaService.getPersonaIdentifiers({
+    ...req.query,
+    organisation: getOrgFromAuthInfo(authInfo),
+  });
+
+  return res.status(200).send(identifiers);
 });
 
 const updatePersonaIdentifier = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'viewAllScope',
+    authInfo
+  });
+
+  const { identifier } = await req.personaService.overwriteIdentifier({
+    organisation: getOrgFromAuthInfo(authInfo),
+    id: req.params.personaIdentifierId,
+    ifi: req.body.ifi,
+    persona: req.body.persona
+  });
+
+  return res.status(200).send(identifier);
+});
+
+const getPersonas = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'viewAllScope',
+    authInfo
+  });
+
+  const { personas } = await req.personaService.getPersonas({
+    ...req.query,
+    organisation: getOrgFromAuthInfo(authInfo)
+  });
+
+  return res.status(200).send(personas);
 });
 
 const deletePersonaIdentifier = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'editAllScope',
+    authInfo
+  });
+
+  await req.personaService.deletePersonaIdentifier({
+    organisation: getOrgFromAuthInfo(authInfo),
+    id: req.params.personaIdentifierId
+  });
+
+  return res.status(200).send();
 });
 
 const personaIdentifierCount = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  const scopeFilter = await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'viewAllScope',
+    authInfo
+  });
+
+  const userFilter = await parseQuery(req.query.query);
+
+  const filter = {
+    ...userFilter,
+    ...scopeFilter
+  };
+
+  const count = await req.personaService.getPersonaIdentifierCount({
+    organisation: getOrgFromAuthInfo(authInfo),
+    filter
+  });
+
+  return res.status(200).send(count);
 });
 
-const getPersonaAttribute = catchErrors(async (req, res) => {
+const getPersonaAttribute = catchErrors(async (/* req, res */) => {
 });
+
+const getPersonaAttributes = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'viewAllScope',
+    authInfo
+  });
+
+  const { attributes } = await req.personaService.getPersonaAttributes({
+    ...req.query,
+    organisation: getOrgFromAuthInfo(authInfo),
+  });
+
+  return res.status(200).send(attributes);
+});
+
 const updatePersonaAttribute = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'viewAllScope',
+    authInfo
+  });
+
+  const { attribute } = await req.personaService.overwritePersonaAttribute({
+    ...req.body,
+    organisation: getOrgFromAuthInfo(authInfo),
+  });
+
+  return res.status(200).send(attribute);
 });
 const deletePersonaAttribute = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'editAllScope',
+    authInfo
+  });
+
+  await req.personaService.deletePersonaAttribute({
+    organisation: getOrgFromAuthInfo(authInfo),
+    id: req.params.personaAttributeId
+  });
+
+  return res.status(200).send();
 });
 const personaAttributeCount = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  const scopeFilter = await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'viewAllScope',
+    authInfo
+  });
+
+  const userFilter = await parseQuery(req.query.query);
+
+  const filter = {
+    ...userFilter,
+    ...scopeFilter
+  };
+
+  const count = await req.personaService.getPersonaAttributeCount({
+    organisation: getOrgFromAuthInfo(authInfo),
+    filter
+  });
+
+  return res.status(200).send(count);
 });
 
 export default {
   getPersona,
+  getPersonas,
   updatePersona,
   addPersona,
   deletePersona,
@@ -339,6 +506,7 @@ export default {
   personaConnection,
 
   getPersonaIdentifier,
+  getPersonaIdentifiers,
   updatePersonaIdentifier,
   addPersonaIdentifier,
   deletePersonaIdentifier,
@@ -346,6 +514,7 @@ export default {
   personaIdentifierConnection,
 
   getPersonaAttribute,
+  getPersonaAttributes,
   updatePersonaAttribute,
   addPersonaAttribute,
   deletePersonaAttribute,

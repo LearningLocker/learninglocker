@@ -1,8 +1,9 @@
 /* eslint-disable react/jsx-indent */
 import React, { PropTypes } from 'react';
 import { Map } from 'immutable';
+import DeleteButton from 'ui/containers/DeleteButton';
 
-const KeyValueIdent = ({ ident }) => {
+const KeyValueIdent = ({ ident, id, schema }) => {
   const value = ident.get('value');
 
   const renderedValue =
@@ -13,9 +14,12 @@ const KeyValueIdent = ({ ident }) => {
     );
 
   return (
-    <dl className="dl-horizontal">
+    <dl className="dl-horizontal clearfix">
       <dt>{ident.get('key')}</dt>
-      <dd>{renderedValue}</dd>
+      <dd>
+        {renderedValue}
+        <DeleteButton schema={schema} id={id} className="pull-right" small />
+      </dd>
     </dl>
   );
 };

@@ -1,6 +1,5 @@
 import testId from 'api/routes/tests/utils/testId';
 import { MongoClient } from 'mongodb';
-import { expect } from 'chai';
 import mongoModelsRepo from 'personas/dist/mongoModelsRepo';
 import config from 'personas/dist/config';
 import createPersonaService from 'personas/dist/service';
@@ -8,7 +7,7 @@ import setup from 'api/routes/tests/utils/setup';
 import * as routes from 'lib/constants/routes';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 
-describe('personaController getPersonaCount', () => {
+describe('deletePresonaAttribute', () => {
   const apiApp = setup();
   let token;
 
@@ -35,21 +34,22 @@ describe('personaController getPersonaCount', () => {
     await personaService.clearService();
   });
 
-
-  it('should get the right count', async () => {
-    await personaService.createPersona({
+  it('should delete a persona attribute', async () => {
+    const { persona } = await personaService.createPersona({
       organisation: testId,
-      name: 'Dave1'
-    });
-    await personaService.createPersona({
-      organisation: testId,
-      name: 'Dave1'
+      name: 'Dave'
     });
 
-    const result = await apiApp.get(routes.PERSONA_COUNT)
-      .set('Authorization', `Bearer ${token}`)
+    const { attribute } = await personaService.overwritePersonaAttribute({
+      key: 'test1',
+      value: 'test2',
+      organisation: testId,
+      personaId: persona.id
+    });
+
+    await apiApp.delete(
+      routes.PERSONA_ATTRIBUTE_ID.replace(':personaAttributeId', attribute.id)
+    ).set('Authorization', `Bearer ${token}`)
       .expect(200);
-
-    expect(result.body.count).to.equal(2);
   });
 });

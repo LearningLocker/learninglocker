@@ -8,7 +8,6 @@ import setup from 'api/routes/tests/utils/setup';
 import * as routes from 'lib/constants/routes';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 
-
 describe('personaController addPersona', () => {
   const apiApp = setup();
   let token;
@@ -36,7 +35,7 @@ describe('personaController addPersona', () => {
   });
 
   it('should create a persona', async () => {
-    const result = await apiApp.post(routes.ADD_PERSONA)
+    const result = await apiApp.post(routes.PERSONA)
       .set('Authorization', `Bearer ${token}`)
       .send({
         name: 'Dave'
@@ -54,7 +53,7 @@ describe('personaController addPersona', () => {
   });
 
   it('should create a persona with no body', async () => {
-    const result = await apiApp.post(routes.ADD_PERSONA)
+    const result = await apiApp.post(routes.PERSONA)
       .set('Authorization', `Bearer ${token}`)
       .expect(200);
 

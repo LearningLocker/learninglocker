@@ -8,7 +8,7 @@ import setup from 'api/routes/tests/utils/setup';
 import * as routes from 'lib/constants/routes';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 
-describe('personaController getPersonaCount', () => {
+describe('personaController getPersonaAttributeCount', () => {
   const apiApp = setup();
   let token;
 
@@ -37,16 +37,26 @@ describe('personaController getPersonaCount', () => {
 
 
   it('should get the right count', async () => {
-    await personaService.createPersona({
-      organisation: testId,
-      name: 'Dave1'
-    });
-    await personaService.createPersona({
+    const { persona } = await personaService.createPersona({
       organisation: testId,
       name: 'Dave1'
     });
 
-    const result = await apiApp.get(routes.PERSONA_COUNT)
+    await personaService.overwritePersonaAttribute({
+      organisation: testId,
+      key: 'test1',
+      value: 'test1',
+      personaId: persona.id
+    });
+
+    await personaService.overwritePersonaAttribute({
+      organisation: testId,
+      key: 'test2',
+      value: 'test2',
+      personaId: persona.id
+    });
+
+    const result = await apiApp.get(routes.PERSONA_ATTRIBUTE_COUNT)
       .set('Authorization', `Bearer ${token}`)
       .expect(200);
 

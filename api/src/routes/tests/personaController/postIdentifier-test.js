@@ -43,7 +43,7 @@ describe('personaController postIdentifier', () => {
       name: 'Dave'
     });
 
-    const result = await apiApp.post(routes.CREATE_IDENTIFIER)
+    const result = await apiApp.post(routes.PERSONA_IDENTIFIER)
       .set('Authorization', `Bearer ${token}`)
       .send({
         ifi: {
