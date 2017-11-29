@@ -8,7 +8,7 @@ import setup from 'api/routes/tests/utils/setup';
 import * as routes from 'lib/constants/routes';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 
-describe('personaController getPersonaCount', () => {
+describe('updatePresonaIdentifier', () => {
   const apiApp = setup();
   let token;
 
@@ -35,21 +35,35 @@ describe('personaController getPersonaCount', () => {
     await personaService.clearService();
   });
 
-
-  it('should get the right count', async () => {
-    await personaService.createPersona({
+  it('Should update an identifier', async () => {
+    const { persona } = await personaService.createPersona({
       organisation: testId,
-      name: 'Dave1'
-    });
-    await personaService.createPersona({
-      organisation: testId,
-      name: 'Dave1'
+      name: 'Dave'
     });
 
-    const result = await apiApp.get(routes.PERSONA_COUNT)
+    const { identifier } = await personaService.createIdentifier({
+      ifi: {
+        key: 'mbox',
+        value: 'test@test.com'
+      },
+      organisation: testId,
+      persona: persona.id
+    });
+
+    const result = await apiApp.post(
+      routes.PERSONA_IDENTIFIER_ID.replace(':personaIdentifierId', identifier.id)
+    )
       .set('Authorization', `Bearer ${token}`)
+      .send({
+        ifi: {
+          key: 'mbox',
+          value: 'test2@test2.com'
+        },
+        persona: persona.id
+      })
       .expect(200);
 
-    expect(result.body.count).to.equal(2);
+    expect(result.body.ifi.value).to.equal('test2@test2.com');
+    expect(result.body.persona).to.equal(persona.id);
   });
 });

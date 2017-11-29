@@ -1,13 +1,9 @@
 import React, { PropTypes } from 'react';
-import PersonaIdentifier from 'ui/components/PersonaIdentifier';
+import KeyValueIdent from 'ui/components/KeyValueIdent';
 import PersonaIdentifierForm from 'ui/components/PersonaIdentifierForm';
 import { Map } from 'immutable';
-import { compose, renameProp, withProps, setPropTypes, withState } from 'recompose';
+import { compose, renameProp, withProps, setPropTypes, withStateHandlers } from 'recompose';
 import { withModels } from 'ui/utils/hocs';
-
-
-// {showAddForm &&
-//
 
 const enhance = compose(
   setPropTypes({
@@ -23,37 +19,50 @@ const enhance = compose(
   ),
   withModels,
   renameProp('models', 'personaIdentifiers'),
-  withState('showAddForm', 'setShowAddForm', false)
+  withStateHandlers(
+    () => ({ showAddForm: false }),
+    {
+      setShowAddFormFalse: () => () => ({ showAddForm: false }),
+      setShowAddFormTrue: () => () => ({ showAddForm: true }),
+    }
+  ),
 );
 
 const renderItems = items => items.map((item) => {
   if (typeof item !== 'string') {
-    return <PersonaIdentifier model={item} key={item.get('_id')} />;
+    return (
+      <KeyValueIdent
+        ident={item.get('ifi')}
+        key={item.get('_id')}
+        schema="personaIdentifer"
+        id={item.get('_id')} />
+    );
   }
   return null;
 }).valueSeq();
 
-const renderAddForm = ({ showAddForm, setShowAddForm }) => (
-  showAddForm ? (
-    <PersonaIdentifierForm />
-  ) : (
-    <div className="clearfix">
+const renderAddForm = ({ showAddForm, setShowAddFormFalse, setShowAddFormTrue }) => (
+  <dl className="dl-horizontal clearfix">{
+    showAddForm ? (
+      <PersonaIdentifierForm onCancel={setShowAddFormFalse} />
+    ) : (
       <button
         className="btn btn-primary btn-sm pull-right"
-        onClick={setShowAddForm.bind(null, true)}>
+        onClick={setShowAddFormTrue}>
         <i className="ion ion-plus" /> Add identity
       </button>
-    </div>
-  )
+    )
+  }</dl>
 );
 
 const PersonaIdentifiersComponent = ({
   personaIdentifiers,
   showAddForm,
-  setShowAddForm
+  setShowAddFormFalse,
+  setShowAddFormTrue
 }) => (
   <div>
-    {renderAddForm({ showAddForm, setShowAddForm })}
+    {renderAddForm({ showAddForm, setShowAddFormFalse, setShowAddFormTrue })}
     {renderItems(personaIdentifiers)}
   </div>
 );

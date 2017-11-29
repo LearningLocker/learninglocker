@@ -188,8 +188,6 @@ restify.serve(router, Organisation);
 restify.serve(router, Stream);
 restify.serve(router, Export);
 restify.serve(router, Download);
-// restify.serve(router, Persona);
-// restify.serve(router, PersonaIdentifier);
 restify.serve(router, Query);
 restify.serve(router, ImportCsv);
 restify.serve(router, ScoringScheme);
@@ -221,8 +219,6 @@ const generatedRouteModels = [
   Dashboard,
   Visualisation,
   Query,
-  // Persona,
-  // PersonaIdentifier,
   Export,
   Download,
   ImportCsv,

@@ -8,14 +8,13 @@ import setup from 'api/routes/tests/utils/setup';
 import * as routes from 'lib/constants/routes';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 
-describe('personaController getPersonaCount', () => {
+describe('getPersonas', () => {
   const apiApp = setup();
   let token;
 
   let personaService;
-  before(async () => {
-    token = await createOrgToken();
 
+  before(async () => {
     const mongoClientPromise = MongoClient.connect(
       process.env.MONGODB_PATH,
       config.mongoModelsRepo.options
@@ -29,27 +28,25 @@ describe('personaController getPersonaCount', () => {
 
   beforeEach(async () => {
     await personaService.clearService();
+
+    token = await createOrgToken();
+
+    await personaService.createPersona({
+      organisation: testId,
+      name: 'Dave'
+    });
   });
 
   after(async () => {
     await personaService.clearService();
   });
 
-
-  it('should get the right count', async () => {
-    await personaService.createPersona({
-      organisation: testId,
-      name: 'Dave1'
-    });
-    await personaService.createPersona({
-      organisation: testId,
-      name: 'Dave1'
-    });
-
-    const result = await apiApp.get(routes.PERSONA_COUNT)
+  it('Should get personas', async () => {
+    const result = await apiApp.get(routes.PERSONA)
       .set('Authorization', `Bearer ${token}`)
       .expect(200);
 
-    expect(result.body.count).to.equal(2);
+    expect(result.body[0].name).to.equal('Dave');
+    expect(result.body.length).to.equal(1);
   });
 });

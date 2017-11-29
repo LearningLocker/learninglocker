@@ -35,7 +35,7 @@ describe('upload personas', () => {
     .then(() => {
       cy.contains('Imported on').should('be.visible');
       cy.get('input[id$="Email-order"]').should('have.value', '1');
-      cy.contains('~ personas.csv').click(); // minimise
+      cy.contains('personas.csv').click(); // minimise
     })
     .then(() => {
       // re upload should have the same structure
