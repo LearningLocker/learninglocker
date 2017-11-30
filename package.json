@@ -2,7 +2,7 @@
   "name": "learning_locker",
   "description": "An open source learning record store",
   "license": "GPL-3.0",
-  "version": "2.0.6",
+  "version": "2.2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LearningLocker/learninglocker"
@@ -39,10 +39,13 @@
     "test-api": "mocha-webpack --exit --webpack-config \"api/testConfig.js\" \"api/src/**/*-test.js\"",
     "test-worker": "mocha-webpack --exit --webpack-config \"worker/testConfig.js\" \"worker/src/**/*-test.js\"",
     "test-lib": "mocha-webpack --exit --webpack-config \"api/testConfig.js\" \"lib/**/*-test.js\"",
+    "test-cli": "mocha-webpack --exit --webpack-config \"cli/testConfig.js\" \"cli/**/*-test.js\"",
     "test-ui": "jest --config ui/jest.config.json --env node",
+    "test": "yarn test-api && yarn test-lib && yarn test-worker && yarn test-ui",
     "test-integration": "cypress open",
     "test-integration-run": "cypress run",
-    "test": "yarn test-api && yarn test-lib && yarn test-worker && yarn test-ui"
+    "migrate": "node cli/dist/server migrateMongo --up",
+    "rollback": "node cli/dist/server migrateMongo --down last"
   },
   "dependencies": {
     "@newrelic/native-metrics": "^2.1.0",
@@ -230,6 +233,7 @@
     "webpack-node-externals": "^1.5.4",
     "winston": "^2.1.1",
     "winston-aws-cloudwatch": "^1.5.0",
+    "xapi-statements": "^5.0.1",
     "xapi-validation": "^1.0.2"
   },
   "devDependencies": {

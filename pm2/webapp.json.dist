@@ -1,0 +1,32 @@
+{
+  "apps": [
+    {
+      "name": "API",
+      "script": "api/dist/server",
+      "cwd": "{INSTALL_DIR}",
+      "output": "{LOG_DIR}/api_stdout.log",
+      "error": "{LOG_DIR}/api_stderr.log",
+      "pid": "{PID_DIR}/api.pid",
+      "instances": 1,
+      "exec_mode": "cluster",
+      "wait_ready": true,
+      "listen_timeout": 30000,
+      "watch": [".env"],
+      "max_memory_restart" : "500M"
+    },
+    {
+      "name": "UIServer",
+      "script": "ui/dist/server",
+      "cwd": "{INSTALL_DIR}",
+      "output": "{LOG_DIR}/ui_stdout.log",
+      "error": "{LOG_DIR}/ui_stderr.log",
+      "pid": "{PID_DIR}/ui.pid",
+      "instances": 1,
+      "exec_mode": "cluster",
+      "wait_ready": true,
+      "listen_timeout": 30000,
+      "watch": [".env"],
+      "max_memory_restart" : "500M"
+    }
+  ]
+}
