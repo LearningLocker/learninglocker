@@ -96,7 +96,7 @@ describe('Extract persona handler', () => {
     expect(statement.personaIdentifier.toString()).to.equal(identifierId);
   }).timeout(5000);
 
-  it.only('Should extract a persona if statements are in an array', async () => {
+  it('Should extract a persona if statements are in an array', async () => {
     await Statement.create(testStatement);
 
     console.log('101', statementId);
