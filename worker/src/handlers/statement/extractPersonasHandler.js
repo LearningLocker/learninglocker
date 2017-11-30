@@ -39,9 +39,15 @@ const handleStatement = personaService => async (statement) => {
     personaName: statement.statement.actor.name,
   });
 
+  const { persona } = await personaService.getPersona({
+    organisation: statement.organisation,
+    personaId
+  });
+
   statement.personaIdentifier = identifierId;
   statement.person = {
-    _id: personaId
+    _id: personaId,
+    display: persona.name
   };
 
   await statement.save();

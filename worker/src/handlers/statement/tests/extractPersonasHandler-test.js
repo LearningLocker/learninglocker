@@ -93,6 +93,7 @@ describe('Extract persona handler', () => {
     const statement = await Statement.findById(objectId(statementId));
 
     expect(statement.person._id.toString()).to.equal(personaId);
+    expect(statement.person.display).to.equal('Juan Morales');
     expect(statement.personaIdentifier.toString()).to.equal(identifierId);
   }).timeout(5000);
 
