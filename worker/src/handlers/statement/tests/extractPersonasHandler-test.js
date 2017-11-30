@@ -2,7 +2,7 @@ import Statement from 'lib/models/statement';
 import mongoose from 'mongoose';
 import { expect } from 'chai';
 import async from 'async';
-import Promise from 'bluebird';
+import Promise, { promisify } from 'bluebird';
 import {
   STATEMENT_JOURNEY_QUEUE,
   STATEMENT_QUERYBUILDERCACHE_QUEUE,
@@ -149,7 +149,7 @@ describe('Extract persona handler', () => {
 
     const statement = await Statement.findById(statementId);
 
-    await extractPersonasStatementHandler(personaFacade)([statement]);
+    await promisify(extractPersonasStatementHandler(personaFacade))([statement]);
 
     const { personaId, identifierId } = await personaFacade.getIdentifierByIfi({
       organisation: organisationId,
