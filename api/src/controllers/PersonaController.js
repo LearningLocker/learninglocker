@@ -409,7 +409,21 @@ const personaIdentifierCount = catchErrors(async (req, res) => {
   return res.status(200).send(count);
 });
 
-const getPersonaAttribute = catchErrors(async (/* req, res */) => {
+const getPersonaAttribute = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  await getScopeFilter({
+    modelName: 'persona',
+    actionName: 'viewAllScope',
+    authInfo
+  });
+
+  const { attribute } = await req.personaService.getAttribute({
+    organisation: getOrgFromAuthInfo(authInfo),
+    id: req.params.personaAttributeId
+  });
+
+  return res.status(200).send(attribute);
 });
 
 const getPersonaAttributes = catchErrors(async (req, res) => {
