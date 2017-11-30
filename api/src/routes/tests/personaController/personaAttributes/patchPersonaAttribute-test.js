@@ -7,7 +7,7 @@ import setup from 'api/routes/tests/utils/setup';
 import * as routes from 'lib/constants/routes';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 
-describe.only('patchPresonaAttributes', () => {
+describe('patchPresonaAttributes', () => {
   const apiApp = setup();
   let token;
 
