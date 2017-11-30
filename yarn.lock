@@ -8108,9 +8108,9 @@ performance-now@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
 
-personas@^1.4.3:
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/personas/-/personas-1.4.3.tgz#edc30d1ce160fea33e04997c64f3318c4eca9ea7"
+personas@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/personas/-/personas-1.5.0.tgz#06b13d684b18aa0f97b6dcba1b50281832b1f852"
   dependencies:
     aws-sdk "^2.74.0"
     bluebird "^3.5.0"
