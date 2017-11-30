@@ -1,5 +1,6 @@
 describe('manage personas', () => {
-  it('should be able to add a persona', () => {
+  // This is skipped as no way to edit identifiers currently.
+  it.skip('should be able to add a persona', () => {
     cy.exec('node --version', {
       log: true
     }).then((result) => {

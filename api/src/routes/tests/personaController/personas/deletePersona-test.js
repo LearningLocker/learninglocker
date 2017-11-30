@@ -44,7 +44,7 @@ describe('personaController deletePersona', () => {
       name: 'Dave'
     });
 
-    await apiApp.delete(routes.DELETE_PERSONA.replace(/:personaId/, persona.id))
+    await apiApp.delete(routes.PERSONA_ID.replace(/:personaId/, persona.id))
       .set('Authorization', `Bearer ${token}`)
       .expect(200);
 

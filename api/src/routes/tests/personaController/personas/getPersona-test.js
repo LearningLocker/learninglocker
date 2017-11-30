@@ -13,8 +13,6 @@ describe('personaController getPersonaOnly', () => {
 
   let personaService;
   before(async () => {
-    token = await createOrgToken();
-
     const mongoClientPromise = MongoClient.connect(
       process.env.MONGODB_PATH,
       config.mongoModelsRepo.options
@@ -28,6 +26,7 @@ describe('personaController getPersonaOnly', () => {
   });
 
   beforeEach(async () => {
+    token = await createOrgToken();
     await personaService.clearService();
   });
 

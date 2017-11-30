@@ -38,11 +38,11 @@ describe('getPresonaAttributes', () => {
     });
     persona = tempPersona;
 
-    const { attribute: tempAttribute } = await personaService.createAttribute({
+    const { attribute: tempAttribute } = await personaService.overwritePersonaAttribute({
       key: 'testkey',
       value: 'testvalue',
       organisation: testId,
-      persona: persona.id
+      personaId: persona.id
     });
 
     attribute = tempAttribute;
@@ -52,11 +52,11 @@ describe('getPresonaAttributes', () => {
       name: 'Dave 2'
     });
 
-    await personaService.createAttribute({
+    await personaService.overwritePersonaAttribute({
       key: 'testkey',
       value: 'testvalue',
       organisation: testId,
-      persona: persona2.id
+      personaId: persona2.id
     });
   });
 
@@ -65,22 +65,22 @@ describe('getPresonaAttributes', () => {
   });
 
   it('Should get persona attributes', async () => {
-    const result = await apiApp.get(routes.PERSONA_IDENTIFIER)
+    const result = await apiApp.get(routes.PERSONA_ATTRIBUTE)
       .set('Authorization', `Bearer ${token}`)
       .expect(200);
 
     expect(result.body[0].key).to.equal('testkey');
     expect(result.body[0].value).to.equal('testvalue');
     expect(result.body[0].id).to.equal(attribute.id);
-    expect(result.body[0].persona).to.equal(persona.id);
+    expect(result.body[0].personaId).to.equal(persona.id);
     expect(result.body[0].organisation).to.equal(testId);
     expect(result.body.length).to.equal(2);
   });
 
   it('should only get attributes for provided persona', async () => {
-    const result = await apiApp.get(routes.PERSONA_IDENTIFIER)
+    const result = await apiApp.get(routes.PERSONA_ATTRIBUTE)
       .set('Authorization', `Bearer ${token}`)
-      .query({ persona: persona.id })
+      .query({ personaId: persona.id })
       .expect(200);
 
     expect(result.body.length).to.equal(1);

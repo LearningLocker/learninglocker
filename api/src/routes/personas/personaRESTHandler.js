@@ -56,6 +56,11 @@ router.get(
   passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
   PersonaController.personaConnection
 );
+router.post(
+  routes.MERGE_PERSONA,
+  passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
+  PersonaController.mergePersona
+);
 
 router.post(
   routes.MERGE_PERSONA,
