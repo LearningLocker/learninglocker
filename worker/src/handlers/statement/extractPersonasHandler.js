@@ -47,11 +47,12 @@ const handleStatement = personaService => async (statement) => {
   await statement.save();
 };
 
-const handleStatements = (statements) => {
+const handleStatements = personaService => (statements) => {
   if (_.isArray(statements)) {
-    return Promise.all(_.map(statements, handleStatement));
+    const handleStatementWithPersonaService = handleStatement(personaService);
+    return Promise.all(_.map(statements, handleStatementWithPersonaService));
   }
-  return handleStatement(statements);
+  return handleStatement(personaService)(statements);
 };
 
 export const extractPersonasStatementHandler = personaService =>

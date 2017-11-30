@@ -2,14 +2,16 @@ import Statement from 'lib/models/statement';
 import mongoose from 'mongoose';
 import { expect } from 'chai';
 import async from 'async';
-import Promise from 'bluebird';
+import Promise, { promisify } from 'bluebird';
 import {
   STATEMENT_JOURNEY_QUEUE,
   STATEMENT_QUERYBUILDERCACHE_QUEUE,
   STATEMENT_EXTRACT_PERSONAS_QUEUE,
   STATEMENT_FORWARDING_QUEUE
 } from 'lib/constants/statements';
-import extractPersonasHandler from '../extractPersonasHandler';
+import extractPersonasHandler, {
+  extractPersonasStatementHandler
+} from '../extractPersonasHandler';
 import { getPersonaService } from '../index';
 
 const objectId = mongoose.Types.ObjectId;
@@ -94,6 +96,35 @@ describe('Extract persona handler', () => {
     expect(statement.personaIdentifier.toString()).to.equal(identifierId);
   }).timeout(5000);
 
+  it('Should extract a persona if statements are in an array', async () => {
+    await Statement.create(testStatement);
+
+    console.log('101', statementId);
+    await Promise.promisify(
+      extractPersonasHandler(personaFacade)
+    )({ statementId });
+
+    const { personaId, identifierId } = await personaFacade.getIdentifierByIfi({
+      organisation: organisationId,
+      ifi: {
+        key: 'mbox',
+        value: 'mailto:juanmorales@acorncorp.com',
+      }
+    });
+
+    const { persona } = await personaFacade.getPersona({
+      organisation: organisationId,
+      personaId
+    });
+
+    expect(persona.name).to.equal('Juan Morales');
+
+    const statement = await Statement.findById(objectId(statementId));
+
+    expect(statement.person._id.toString()).to.equal(personaId);
+    expect(statement.personaIdentifier.toString()).to.equal(identifierId);
+  });
+
   it(
     'Should add a persona to an identifier if the identifier and persona exists',
   async () => {
@@ -116,9 +147,9 @@ describe('Extract persona handler', () => {
 
     // Add the identifier
 
-    await Promise.promisify(
-      extractPersonasHandler(personaFacade)
-    )({ statementId });
+    const statement = await Statement.findById(statementId);
+
+    await promisify(extractPersonasStatementHandler(personaFacade))([statement]);
 
     const { personaId, identifierId } = await personaFacade.getIdentifierByIfi({
       organisation: organisationId,
@@ -135,9 +166,9 @@ describe('Extract persona handler', () => {
 
     expect(persona.name).to.equal('Lucky');
 
-    const statement = await Statement.findById(objectId(statementId));
+    const statement2 = await Statement.findById(objectId(statementId));
 
-    expect(statement.person._id.toString()).to.equal(personaId);
-    expect(statement.personaIdentifier.toString()).to.equal(identifierId);
+    expect(statement2.person._id.toString()).to.equal(personaId);
+    expect(statement2.personaIdentifier.toString()).to.equal(identifierId);
   }).timeout(5000);
 });

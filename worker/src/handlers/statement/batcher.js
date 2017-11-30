@@ -13,6 +13,7 @@ import logger from 'lib/logger';
 import Statement from 'lib/models/statement';
 import highland from 'highland';
 import Promise from 'bluebird';
+import getService from 'lib/connections/personaService';
 
 export default function (query, jobType, batchSize = 1000) {
   let jobHandler;
@@ -26,7 +27,7 @@ export default function (query, jobType, batchSize = 1000) {
       jobHandler = queryBuilderCacheStatementHandler;
       break;
     case STATEMENT_EXTRACT_PERSONAS_QUEUE:
-      jobHandler = extractPersonasStatementHandler;
+      jobHandler = extractPersonasStatementHandler(getService());
       break;
   }
 
@@ -43,7 +44,7 @@ export default function (query, jobType, batchSize = 1000) {
   let totalHandled = 0;
   logger.info(`Batching in groups of ${batchSize}`);
 
-  const statementStream = highland(Statement.find(query).lean().batchSize(batchSize).cursor());
+  const statementStream = highland(Statement.find(query).batchSize(batchSize).cursor());
 
   const handler = statementStream.batch(Number(batchSize)).flatMap((statements) => {
     const updateIDs = map(statements, statement => statement._id);
