@@ -13,6 +13,7 @@ import {
   omitBy,
   toString
 } from 'lodash';
+import updateQueryBuilderCache from 'lib/services/importPersonas/updateQueryBuilderCache';
 import { reasignPersonaStatements } from 'lib/services/persona';
 
 const objectId = mongoose.Types.ObjectId;
@@ -157,7 +158,9 @@ const personaCount = catchErrors(async (req, res) => {
     authInfo
   });
 
-  const userFilter = await parseQuery(req.query.query);
+  const userFilter = await parseQuery(req.query.query, {
+    organisation: getOrgFromAuthInfo(authInfo)
+  });
 
   const filter = {
     ...userFilter,
@@ -299,7 +302,10 @@ const addPersonaAttribute = catchErrors(async (req, res) => {
   });
 
   const parsedBody = await parseQuery(
-    req.body
+    req.body,
+    {
+      organisation: getOrgFromAuthInfo(authInfo)
+    }
   );
 
   const { attribute } = await req.personaService.overwritePersonaAttribute({
@@ -307,6 +313,11 @@ const addPersonaAttribute = catchErrors(async (req, res) => {
     personaId: toString(parsedBody.personaId),
     key: parsedBody.key,
     value: parsedBody.value
+  });
+
+  updateQueryBuilderCache({
+    attributes: [attribute],
+    organisation: getOrgFromAuthInfo(authInfo)
   });
 
   return res.status(200).send(attribute);
