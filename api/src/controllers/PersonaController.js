@@ -13,6 +13,7 @@ import {
   omitBy,
   toString
 } from 'lodash';
+import { reasignPersonaStatements } from 'lib/services/persona';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -70,6 +71,13 @@ const updatePersona = catchErrors(async (req, res) => {
     organisation: getOrgFromAuthInfo(authInfo),
     personaId,
     name: newName
+  });
+
+  // Updates the name
+  await reasignPersonaStatements({
+    organisation: getOrgFromAuthInfo(authInfo),
+    toId: personaId,
+    fromId: personaId
   });
 
   return res.status(200).send({
@@ -177,6 +185,12 @@ const mergePersona = catchErrors(async(req, res) => {
     organisation: getOrgFromAuthInfo(authInfo),
     fromPersonaId: req.query.mergePersonaFromId,
     toPersonaId: req.query.mergePersonaToId
+  });
+
+  await reasignPersonaStatements({
+    fromId: req.query.mergePersonaFromId,
+    toId: req.query.mergePersonaToId,
+    organisation: getOrgFromAuthInfo(authInfo)
   });
 
   return res.status(200).send(result);
@@ -434,13 +448,14 @@ const updatePersonaAttribute = catchErrors(async (req, res) => {
 
   await getScopeFilter({
     modelName: 'persona',
-    actionName: 'viewAllScope',
+    actionName: 'editAllScope',
     authInfo
   });
 
   const { attribute } = await req.personaService.overwritePersonaAttribute({
     ...req.body,
     organisation: getOrgFromAuthInfo(authInfo),
+    id: req.params.personaAttributeId
   });
 
   return res.status(200).send(attribute);
