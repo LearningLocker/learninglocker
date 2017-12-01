@@ -19,7 +19,8 @@ const migrateIdentifierBatch = (docs) => {
   docs.forEach((doc) => {
     doc.identifiers.forEach(({ key, value }) => {
       const personaId = doc.persona;
-      const attribute = { personaId, key, value };
+      const organisation = doc.organisation;
+      const attribute = { personaId, organisation, key, value };
       bulkOp.insert(attribute);
     });
   });
@@ -47,8 +48,14 @@ const updateIdentifierFields = async () => {
 };
 
 const cloneIdentifiersToNewCollection = async () => {
-  const pipeline = [{ $match: {} }, { $out: newIdentsCollectionName }];
-  await connection.collection(oldIdentsCollectionName).aggregate(pipeline);
+  const pipeline = [{ $match: {} }];
+  await new Promise((resolve, reject) => {
+    connection.collection(oldIdentsCollectionName).aggregate(pipeline, { out: newIdentsCollectionName }, (err) => {
+      console.log('Error: ', err);
+      if (err) return reject(err);
+      resolve();
+    });
+  });
 };
 
 const up = async () => {
@@ -59,7 +66,8 @@ const up = async () => {
 };
 
 const down = async () => {
-  logger.info('Not implemented');
+  logger.info('Dropping persona attributes');
+  connection.collection(attributesCollectionName).drop();
 };
 
 export default { up, down };
