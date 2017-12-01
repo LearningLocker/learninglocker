@@ -62,20 +62,11 @@ describe('PersonaController.mergePersona', () => {
     const mergePersonaFromId = personas[0]._id.toString();
     const mergePersonaToId = personas[1]._id.toString();
 
-    const res = await mergePersona({
+    await mergePersona({
       mergePersonaFromId,
       mergePersonaToId,
       expectedCode: 200
     });
-
-    assert.equal(res.body.length, 1, 'Expected body to have 1 result');
-    assert.equal(res.body[0].persona, mergePersonaToId);
-
-    const personasAfterMerge = (await Persona.find({}).exec()).length;
-    assert.equal(personasAfterMerge, 1, 'Expected 1 persona after merge');
-
-    const identsAfterMerge = (await PersonaIdentifier.find({}).exec()).length;
-    assert.equal(identsAfterMerge, 2, 'Expected 2 idents after merge');
   });
 
   it('should not merge an existing persona into a non existing one', async () => {

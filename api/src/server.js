@@ -6,6 +6,7 @@ import passport from 'api/auth/passport';
 import HttpRoutes from 'api/routes/HttpRoutes';
 import logger from 'lib/logger';
 import { install } from 'source-map-support';
+import personaService from 'api/utils/expressPersonaService';
 
 install();
 
@@ -20,6 +21,7 @@ app.options('*', corsMiddleware);
 app.use(bodyParser.json({ limit: '5mb' }));
 app.use(cookieParser());
 app.use(passport.initialize());
+app.use(personaService());
 app.use(HttpRoutes);
 
 if (process.env.API_PORT) {

@@ -169,6 +169,7 @@ const query = new LLSchema('query', { idAttribute: '_id', sortKey: 'updatedAt' }
 });
 const identifer = new LLSchema('identifer', { idAttribute: '_id' });
 const personaIdentifier = new LLSchema('personaIdentifier', { idAttribute: '_id', sortKey: 'updatedAt' });
+const personaAttribute = new LLSchema('personaAttribute', { idAttribute: '_id' });
 const scoredPersonas = new LLSchema('scoredPersonas', { idAttribute: '_id' });
 const scoringscheme = new LLSchema('scoringscheme', { idAttribute: '_id', sortKey: 'updatedAt' });
 const importcsv = new LLSchema('importcsv', { idAttribute: '_id', sortKey: 'updatedAt' });
@@ -239,6 +240,12 @@ const aggregation = new LLSchema('aggregation', { idAttribute: model => (
 const role = new LLSchema('role', { idAttribute: '_id' });
 
 const globalError = new LLSchema('globalError', { idAttribute: '_id' });
+
+const personasImport = new LLSchema('personasImport', {
+  idAttribute: '_id',
+  sortKey: 'createdAt'
+});
+personasImport.define({});
 
 stream.define({
   outcomes: { type: arrayOf(streamOutcome), local: true },
@@ -323,6 +330,7 @@ export {
   persona,
   query,
   identifer,
+  personaAttribute,
   personaIdentifier,
   scoredPersonas,
   scoringscheme,
@@ -336,5 +344,6 @@ export {
   aggregation,
   globalError,
   role,
-  statementForwarding
+  statementForwarding,
+  personasImport,
 };

@@ -1,8 +1,9 @@
 import React, { PropTypes } from 'react';
-import PersonaIdentifier from 'ui/components/PersonaIdentifier';
+import KeyValueIdent from 'ui/components/KeyValueIdent';
+import PersonaIdentifierForm from 'ui/components/PersonaIdentifierForm';
 import { Map } from 'immutable';
-import { compose, renameProp, withProps, setPropTypes } from 'recompose';
-import { withSchema } from 'ui/utils/hocs';
+import { compose, renameProp, withProps, setPropTypes, withStateHandlers } from 'recompose';
+import { withModels } from 'ui/utils/hocs';
 
 const enhance = compose(
   setPropTypes({
@@ -11,21 +12,59 @@ const enhance = compose(
   }),
   withProps(
     ({ personaId }) =>
-    ({ filter: new Map({ persona: personaId }) })
+      ({
+        filter: new Map({ persona: personaId }),
+        schema: 'personaIdentifier',
+      }),
   ),
-  withSchema('personaIdentifier'),
-  renameProp('models', 'personaIdentifiers')
+  withModels,
+  renameProp('models', 'personaIdentifiers'),
+  withStateHandlers(
+    () => ({ showAddForm: false }),
+    {
+      setShowAddFormFalse: () => () => ({ showAddForm: false }),
+      setShowAddFormTrue: () => () => ({ showAddForm: true }),
+    }
+  ),
 );
 
 const renderItems = items => items.map((item) => {
   if (typeof item !== 'string') {
-    return <PersonaIdentifier model={item} key={item.get('_id')} />;
+    return (
+      <KeyValueIdent
+        ident={item.get('ifi')}
+        key={item.get('_id')}
+        schema="personaIdentifer"
+        id={item.get('_id')} />
+    );
   }
   return null;
 }).valueSeq();
 
-const personaIdentifiers = ({
-  personaIdentifiers: personaIdentifiers2
-}) => (<div>{renderItems(personaIdentifiers2)}</div>);
+const renderAddForm = ({ showAddForm, setShowAddFormFalse, setShowAddFormTrue }) => (
+  <dl className="dl-horizontal clearfix">{
+    showAddForm ? (
+      <PersonaIdentifierForm onCancel={setShowAddFormFalse} />
+    ) : (
+      <button
+        className="btn btn-primary btn-sm pull-right"
+        onClick={setShowAddFormTrue}>
+        <i className="ion ion-plus" /> Add identity
+      </button>
+    )
+  }</dl>
+);
 
-export default enhance(personaIdentifiers);
+const PersonaIdentifiersComponent = ({
+  personaIdentifiers,
+  showAddForm,
+  setShowAddFormFalse,
+  setShowAddFormTrue
+}) => (
+  <div>
+    {renderAddForm({ showAddForm, setShowAddFormFalse, setShowAddFormTrue })}
+    {renderItems(personaIdentifiers)}
+  </div>
+);
+
+export default enhance(PersonaIdentifiersComponent);

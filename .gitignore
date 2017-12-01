@@ -1,10 +1,13 @@
 .DS_STORE
 .env
+.env
 .env.*
 .idea/
 .tags
 .tmp
+storage/**/*.csv
 *.csv
+*.log
 *.iml
 *.orig
 api/logs/*
@@ -26,3 +29,4 @@ bootstrap.sh
 yarn-error.log
 cypress/screenshots/*
 cypress/videos/*
+debug/*

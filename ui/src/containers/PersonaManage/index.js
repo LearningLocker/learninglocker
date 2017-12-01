@@ -12,7 +12,6 @@ import { routeNodeSelector } from 'redux-router5';
 import PersonaView from 'ui/containers/PersonaView';
 import ModelList from 'ui/containers/ModelList';
 import DeleteButton from 'ui/containers/DeleteButton';
-import PeopleImport from 'ui/containers/PeopleImport';
 import SearchBox from 'ui/containers/SearchBox';
 import ToggleMergeButton from 'ui/containers/ToggleMergeButton';
 
@@ -27,7 +26,6 @@ const PersonaList = compose(
 
 class PersonaManage extends Component {
   static propTypes = {
-    organisationId: PropTypes.string,
     addModel: PropTypes.func
   };
 
@@ -38,20 +36,6 @@ class PersonaManage extends Component {
       criteria: ''
     };
   }
-
-  getOrganisationId = () => this.props.params.organisationId;
-
-  openModal = () => {
-    this.setState({
-      openModal: true
-    });
-  };
-
-  closeModal = () => {
-    this.setState({
-      openModal: null
-    });
-  };
 
   getPersonaName = person => person.get('name');
 
@@ -71,25 +55,11 @@ class PersonaManage extends Component {
     });
   };
 
-  render = () => {
-    const { openModal } = this.state;
-    const organisationId = this.getOrganisationId();
-    const popupProps = {
-      organisationId,
-      onClickClose: this.closeModal
-    };
-
-    return (
+  render = () =>
+    (
       <div>
         <header id="topbar">
           <div className="heading heading-light">
-            <span className="pull-right open_panel_btn">
-              <button
-                className="btn btn-primary btn-sm"
-                onClick={this.openModal.bind(null)}>
-                <i className="ion ion-upload" /> Import people
-              </button>
-            </span>
             <span className="pull-right open_panel_btn">
               <button
                 className="btn btn-primary btn-sm"
@@ -118,10 +88,8 @@ class PersonaManage extends Component {
               getDescription={model => this.getPersonaName(model)} />
           </div>
         </div>
-        <PeopleImport isOpened={openModal === true} {...popupProps} />
       </div>
     );
-  };
 }
 
 export default connect(

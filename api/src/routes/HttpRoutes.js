@@ -17,9 +17,9 @@ import UploadController from 'api/controllers/UploadController';
 import DownloadController from 'api/controllers/DownloadController';
 import ExportController from 'api/controllers/ExportController';
 import StatementController from 'api/controllers/StatementController';
-import PersonaController from 'api/controllers/PersonaController';
 import generateConnectionController from 'api/controllers/ConnectionController';
 import generateIndexesController from 'api/controllers/IndexesController';
+import ImportPersonasController from 'api/controllers/ImportPersonasController';
 
 // REST
 import LRS from 'lib/models/lrs';
@@ -27,10 +27,8 @@ import Client from 'lib/models/client';
 import User from 'lib/models/user';
 import Organisation from 'lib/models/organisation';
 import Stream from 'lib/models/stream';
-import Persona from 'lib/models/persona';
 import Export from 'lib/models/export';
 import Download from 'lib/models/download';
-import PersonaIdentifier from 'lib/models/personaidentifier';
 import Query from 'lib/models/query';
 import ImportCsv from 'lib/models/importcsv';
 import ScoringScheme from 'lib/models/scoringscheme';
@@ -41,10 +39,16 @@ import Dashboard from 'lib/models/dashboard';
 import QueryBuilderCache from 'lib/models/querybuildercache';
 import QueryBuilderCacheValue from 'lib/models/querybuildercachevalue';
 import Role from 'lib/models/role';
+import PersonasImport from 'lib/models/personasImport';
+import PersonasImportTemplate from 'lib/models/personasImportTemplate';
+import personaRESTHandler from 'api/routes/personas/personaRESTHandler';
+import personaIdentifierRESTHandler from 'api/routes/personas/personaIdentifierRESTHandler';
+import personaAttributeRESTHandler from 'api/routes/personas/personaAttributeRESTHandler';
 import * as routes from 'lib/constants/routes';
 
 const router = new express.Router();
 router.use(setNoCacheHeaders);
+
 router.get('', (req, res) => res.status(200).send('OK'));
 router.get(routes.VERSION, (req, res) => {
   Promise.all([
@@ -53,10 +57,10 @@ router.get(routes.VERSION, (req, res) => {
     new Promise(resolve => git.branch(resolve)),
     new Promise(resolve => git.tag(resolve))
   ])
-    .then(([short, long, branch, tag]) => {
-      jsonSuccess(res)({ short, long, branch, tag });
-    })
-    .catch(serverError(res));
+  .then(([short, long, branch, tag]) => {
+    jsonSuccess(res)({ short, long, branch, tag });
+  })
+  .catch(serverError(res));
 });
 
 /**
@@ -102,36 +106,31 @@ router.get(
 );
 
 /**
-* Personas
-*/
-router.post(
-  routes.MERGE_PERSONA,
-  passport.authenticate(['jwt'], DEFAULT_PASSPORT_OPTIONS),
-  PersonaController.mergePersona
-);
-router.post(
-  routes.ASSIGN_PERSONA,
-  passport.authenticate(['jwt'], DEFAULT_PASSPORT_OPTIONS),
-  PersonaController.assignPersona
-);
-router.post(
-  routes.CREATE_PERSONA_FROM_IDENTIFIER,
-  passport.authenticate(['jwt'], DEFAULT_PASSPORT_OPTIONS),
-  PersonaController.createPersonaFromIdentifier
-);
+ * Personas
+ */
+router.use(personaRESTHandler);
+router.use(personaIdentifierRESTHandler);
+router.use(personaAttributeRESTHandler);
 
 /**
  * UPLOADS
  */
 router.post(
-  routes.UPLOADPEOPLE,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
-  UploadController.uploadPeople
-);
-router.post(
   routes.UPLOADLOGO,
   passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
   UploadController.uploadLogo
+);
+
+router.post(
+  routes.UPLOADPERSONAS,
+  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  ImportPersonasController.uploadPersonas
+);
+
+router.post(
+  routes.IMPORTPERSONAS,
+  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  ImportPersonasController.importPersonas
 );
 
 /**
@@ -188,8 +187,6 @@ restify.serve(router, Organisation);
 restify.serve(router, Stream);
 restify.serve(router, Export);
 restify.serve(router, Download);
-restify.serve(router, Persona);
-restify.serve(router, PersonaIdentifier);
 restify.serve(router, Query);
 restify.serve(router, ImportCsv);
 restify.serve(router, ScoringScheme);
@@ -203,6 +200,8 @@ restify.serve(router, StatementForwarding);
 restify.serve(router, QueryBuilderCache);
 restify.serve(router, QueryBuilderCacheValue);
 restify.serve(router, Role);
+restify.serve(router, PersonasImport);
+restify.serve(router, PersonasImportTemplate);
 
 /**
  * CONNECTIONS and INDEXES
@@ -219,12 +218,12 @@ const generatedRouteModels = [
   Dashboard,
   Visualisation,
   Query,
-  Persona,
-  PersonaIdentifier,
   Export,
   Download,
   ImportCsv,
-  Role
+  Role,
+  PersonasImport,
+  PersonasImportTemplate
 ];
 
 const generateConnectionsRoute = (model, routeSuffix, authentication) => {
