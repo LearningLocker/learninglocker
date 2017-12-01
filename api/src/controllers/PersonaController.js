@@ -63,7 +63,7 @@ const updatePersona = catchErrors(async (req, res) => {
   const newName = req.body.name;
 
   await getScopeFilter({
-    modelName: 'personasImport',
+    modelName: 'persona',
     actionName: 'edit',
     authInfo
   });
@@ -98,7 +98,7 @@ const personaIdentifierConnection = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   const scopeFilter = await getScopeFilter({
-    modelName: 'personasImport',
+    modelName: 'personasIdentifier',
     actionName: 'view',
     authInfo
   });
@@ -135,7 +135,7 @@ const addPersonaIdentifier = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'personasImport',
+    modelName: 'personasIdentifier',
     actionName: 'edit',
     authInfo
   });
@@ -259,7 +259,7 @@ const personaAttributeConnection = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   const scopeFilter = await getScopeFilter({
-    modelName: 'personasImport',
+    modelName: 'personasAttribute',
     actionName: 'view',
     authInfo
   });
@@ -296,7 +296,7 @@ const addPersonaAttribute = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'personasImport',
+    modelName: 'personasAttribute',
     actionName: 'edit',
     authInfo
   });
@@ -327,7 +327,7 @@ const getPersonaIdentifier = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: 'personasIdentifier',
     actionName: 'view',
     authInfo
   });
@@ -344,7 +344,7 @@ const getPersonaIdentifiers = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: 'personasIdentifier',
     actionName: 'view',
     authInfo
   });
@@ -361,7 +361,7 @@ const updatePersonaIdentifier = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: 'personasIdentifier',
     actionName: 'view',
     authInfo
   });
@@ -397,7 +397,7 @@ const deletePersonaIdentifier = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: 'personasIdentifier',
     actionName: 'edit',
     authInfo
   });
@@ -414,7 +414,7 @@ const personaIdentifierCount = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   const scopeFilter = await getScopeFilter({
-    modelName: 'persona',
+    modelName: 'personasIdentifier',
     actionName: 'view',
     authInfo
   });
@@ -438,7 +438,7 @@ const getPersonaAttribute = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: 'personasAttribute',
     actionName: 'viewAllScope',
     authInfo
   });
@@ -455,7 +455,7 @@ const getPersonaAttributes = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: 'personasAttribute',
     actionName: 'view',
     authInfo
   });
@@ -472,7 +472,7 @@ const updatePersonaAttribute = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: 'personasAttribute',
     actionName: 'edit',
     authInfo
   });
@@ -489,7 +489,7 @@ const deletePersonaAttribute = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: 'personasAttribute',
     actionName: 'edit',
     authInfo
   });
@@ -505,7 +505,7 @@ const personaAttributeCount = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   const scopeFilter = await getScopeFilter({
-    modelName: 'persona',
+    modelName: 'personasAttribute',
     actionName: 'view',
     authInfo
   });
