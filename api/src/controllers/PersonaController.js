@@ -366,7 +366,7 @@ const updatePersonaIdentifier = catchErrors(async (req, res) => {
     authInfo
   });
 
-  const { identifier } = await req.personaService.overwriteIdentifier({
+  const { identifier } = await req.personaService.updateIdentifier({
     organisation: getOrgFromAuthInfo(authInfo),
     id: req.params.personaIdentifierId,
     ifi: req.body.ifi,

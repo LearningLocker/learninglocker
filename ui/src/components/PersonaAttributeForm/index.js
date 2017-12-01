@@ -33,41 +33,50 @@ const PersonaAttributeFormComponent = ({
   onClickCancel,
   onClickSubmit,
   attributeKey,
-  attributeValue
-}) => (
-  <form className="form-inline">
-    <div className="form-group">
-      <input
-        autoFocus
-        id="persona-attribute-key-form"
-        className="form-control"
-        onChange={onChangeKey}
-        placeholder="Key"
-        type="text"
-        value={attributeKey} />
-    </div>
+  attributeValue,
+  isEdit,
+}) => {
+  return (
+    <form className="form-inline">
+      <div className="form-group">
+        {!isEdit && <input
+          autoFocus
+          id="persona-attribute-key-form"
+          className="form-control"
+          onChange={onChangeKey}
+          placeholder="Key"
+          type="text"
+          value={attributeKey} />
+        }
+        {isEdit && <dl className="dl-horizontal clearfix">
+          <dt>
+            {attributeKey}
+          </dt>
+        </dl>}
+      </div>
 
-    <div className="form-group">
-      <input
-        id="persona-attribute-value-form"
-        className="form-control"
-        onChange={onChangeValue}
-        placeholder="Value"
-        type="text"
-        value={attributeValue} />
-    </div>
-    <button
-      className="btn btn-primary btn-sm pull-right"
-      onClick={onClickSubmit} >
-      <i className="ion ion-plus" /> Submit
-    </button>
-    <button
-      className="btn btn-primary btn-sm pull-right"
-      onClick={onClickCancel} >
-      <i className="ion ion-plus" /> Cancel
-    </button>
-  </form>
-);
+      <div className="form-group">
+        <input
+          id="persona-attribute-value-form"
+          className="form-control"
+          onChange={onChangeValue}
+          placeholder="Value"
+          type="text"
+          value={attributeValue} />
+      </div>
+      <button
+        className="btn btn-primary btn-sm pull-right"
+        onClick={onClickSubmit} >
+        <i className="ion ion-plus" /> Submit
+      </button>
+      <button
+        className="btn btn-primary btn-sm pull-right"
+        onClick={onClickCancel} >
+        <i className="ion ion-plus" /> Cancel
+      </button>
+    </form>
+  );
+};
 
 export default compose(
   stateHandlers,

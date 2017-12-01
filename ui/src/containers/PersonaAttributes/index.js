@@ -68,11 +68,12 @@ const personaAttributes = ({
   onSubmit,
   setShowAddFormTrue,
   setShowAddFormFalse
-}) => (
-  <div>
-    {renderAddForm({ showAddForm, setShowAddFormTrue, setShowAddFormFalse, onSubmit })}
-    {renderItems(attributes)}
-  </div>
-);
+}) =>
+  (
+    <div>
+      {renderAddForm({ showAddForm, setShowAddFormTrue, setShowAddFormFalse, onSubmit })}
+      {renderItems(attributes)}
+    </div>
+  );
 
 export default enhance(personaAttributes);

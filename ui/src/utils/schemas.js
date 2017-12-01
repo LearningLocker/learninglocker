@@ -46,7 +46,7 @@ class LLSchema extends Schema {
   }
 }
 
-const user = new LLSchema('user', { idAttribute: '_id', sortKey: 'updatedAt' }, {
+const user = new LLSchema('user', { idAttribute: () => '_id', sortKey: 'updatedAt' }, {
   preSave: model =>
     model.update('organisationSettings', new List(), orgSettings =>
       orgSettings.map(orgSetting =>
@@ -168,8 +168,28 @@ const query = new LLSchema('query', { idAttribute: '_id', sortKey: 'updatedAt' }
   ))
 });
 const identifer = new LLSchema('identifer', { idAttribute: '_id' });
-const personaIdentifier = new LLSchema('personaIdentifier', { idAttribute: '_id', sortKey: 'updatedAt' });
-const personaAttribute = new LLSchema('personaAttribute', { idAttribute: '_id' });
+const personaIdentifier = new LLSchema('personaIdentifier',
+  { idAttribute: entity => entity._id || entity.id, sortKey: 'updatedAt' },
+  {
+    reviver: (key, value) => {
+      if (key) {
+        return value.toMap();
+      }
+      return value.toMap().set('_id', value.get('_id') || value.get('id'));
+    }
+  }
+);
+const personaAttribute = new LLSchema('personaAttribute',
+  { idAttribute: entity => entity._id || entity.id },
+  {
+    reviver: (key, value) => {
+      if (key) {
+        return value.toMap();
+      }
+      value.toMap().set('_id', key.get('_id') || value.get('id'));
+    }
+  }
+);
 const scoredPersonas = new LLSchema('scoredPersonas', { idAttribute: '_id' });
 const scoringscheme = new LLSchema('scoringscheme', { idAttribute: '_id', sortKey: 'updatedAt' });
 const importcsv = new LLSchema('importcsv', { idAttribute: '_id', sortKey: 'updatedAt' });

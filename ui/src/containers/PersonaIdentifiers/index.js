@@ -33,8 +33,9 @@ const renderItems = items => items.map((item) => {
     return (
       <KeyValueIdent
         ident={item.get('ifi')}
+        path={['ifi']}
         key={item.get('_id')}
-        schema="personaIdentifer"
+        schema="personaIdentifier"
         id={item.get('_id')} />
     );
   }
