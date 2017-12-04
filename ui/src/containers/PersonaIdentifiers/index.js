@@ -2,7 +2,14 @@ import React, { PropTypes } from 'react';
 import KeyValueIdent from 'ui/components/KeyValueIdent';
 import PersonaIdentifierForm from 'ui/components/PersonaIdentifierForm';
 import { Map } from 'immutable';
-import { compose, renameProp, withProps, setPropTypes, withStateHandlers } from 'recompose';
+import {
+  compose,
+  renameProp,
+  withProps,
+  setPropTypes,
+  withStateHandlers,
+  withHandlers
+} from 'recompose';
 import { withModels } from 'ui/utils/hocs';
 
 const enhance = compose(
@@ -26,6 +33,18 @@ const enhance = compose(
       setShowAddFormTrue: () => () => ({ showAddForm: true }),
     }
   ),
+  withHandlers({
+    onSubmit: ({ addModel, setShowAddFormFalse, personaId }) => ({ type, value }) => {
+      addModel({
+        props: {
+          ifi: {
+            [type]: value, personaId
+          }
+        }
+      });
+      setShowAddFormFalse();
+    }
+  })
 );
 
 const renderItems = items => items.map((item) => {
@@ -42,10 +61,17 @@ const renderItems = items => items.map((item) => {
   return null;
 }).valueSeq();
 
-const renderAddForm = ({ showAddForm, setShowAddFormFalse, setShowAddFormTrue }) => (
+const renderAddForm = ({
+  showAddForm,
+  setShowAddFormFalse,
+  setShowAddFormTrue,
+  onSubmit
+}) => (
   <dl className="dl-horizontal clearfix">{
     showAddForm ? (
-      <PersonaIdentifierForm onCancel={setShowAddFormFalse} />
+      <PersonaIdentifierForm
+        onCancel={setShowAddFormFalse}
+        onSubmit={onSubmit} />
     ) : (
       <button
         className="btn btn-primary btn-sm pull-right"
@@ -60,10 +86,11 @@ const PersonaIdentifiersComponent = ({
   personaIdentifiers,
   showAddForm,
   setShowAddFormFalse,
-  setShowAddFormTrue
+  setShowAddFormTrue,
+  onSubmit
 }) => (
   <div>
-    {renderAddForm({ showAddForm, setShowAddFormFalse, setShowAddFormTrue })}
+    {renderAddForm({ showAddForm, setShowAddFormFalse, setShowAddFormTrue, onSubmit })}
     {renderItems(personaIdentifiers)}
   </div>
 );

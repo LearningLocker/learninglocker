@@ -186,7 +186,7 @@ const personaAttribute = new LLSchema('personaAttribute',
       if (key) {
         return value.toMap();
       }
-      value.toMap().set('_id', key.get('_id') || value.get('id'));
+      return value.toMap().set('_id', value.get('_id') || value.get('id'));
     }
   }
 );

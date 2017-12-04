@@ -1,5 +1,22 @@
 import React from 'react';
-import { compose, withHandlers } from 'recompose';
+import { compose, withHandlers, withStateHandlers } from 'recompose';
+
+const stateHandlers = withStateHandlers(
+  () => ({
+    identifierValue: '',
+    identifierType: 'mbox'
+  }),
+  {
+    handleIdentifierValueChange: () => (value) => {
+      return ({
+        identifierValue: value
+      });
+    },
+    handleIdentifierTypeChange: () => value => ({
+      identifierType: value
+    })
+  }
+);
 
 const handlers = withHandlers({
   onIdentifierTypeChange: ({
@@ -18,7 +35,6 @@ const handlers = withHandlers({
         handleIdentifierValueChange('');
       }
     },
-
   onIdentifierValueChange: ({
     handleIdentifierValueChange,
   }) => (event) => {
@@ -42,6 +58,19 @@ const handlers = withHandlers({
     const value = event.target.value;
     identifierValue.name = value;
     handleIdentifierValueChange(identifierValue);
+  },
+
+  submit: ({
+    identifierValue,
+    identifierType,
+    onSubmit
+  }) => (event) => {
+    event.preventDefault();
+
+    onSubmit({
+      type: identifierType,
+      value: identifierValue
+    });
   }
 });
 
@@ -51,8 +80,12 @@ const PersonaIdentifierFormComponent = ({
   onIdentifierValueHomePageChange,
   onIdentifierValueNameChange,
   identifierType,
-  identifierValue
-}) => (
+  identifierValue,
+  submit,
+  onSubmit
+}) => {
+  console.log('101', onSubmit);
+  return (
   <form>
     <div className="form-group">
       <label
@@ -115,9 +148,16 @@ const PersonaIdentifierFormComponent = ({
         </div>
       </div>
     }
+    <button
+      className="btn btn-primary"
+      onClick={submit}>
+      Submit
+    </button>
   </form>
 );
+};
 
 export default compose(
+  stateHandlers,
   handlers
 )(PersonaIdentifierFormComponent);
