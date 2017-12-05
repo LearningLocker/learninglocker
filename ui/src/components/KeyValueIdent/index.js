@@ -46,7 +46,8 @@ const KeyValueIdent = ({
   onEdit,
   isEdit,
   onSubmit,
-  onCancel
+  onCancel,
+  deleteButton = true,
 }) => {
   const value = ident.get('value');
 
@@ -63,7 +64,9 @@ const KeyValueIdent = ({
       <dt>{ident.get('key')}</dt>
       <dd>
         {renderedValue}
-        <DeleteButton schema={schema} id={id} className="pull-right" small />
+        {deleteButton &&
+          <DeleteButton schema={schema} id={id} className="pull-right" small />
+        }
         <EditButton onEdit={onEdit} id={id} className="btn btn-primary pull-right" />
       </dd>
     </dl>}

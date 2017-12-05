@@ -55,7 +55,8 @@ const renderItems = items => items.map((item) => {
         path={['ifi']}
         key={item.get('_id')}
         schema="personaIdentifier"
-        id={item.get('_id')} />
+        id={item.get('_id')}
+        deleteButton={false} />
     );
   }
   return null;
