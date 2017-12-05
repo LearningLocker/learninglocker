@@ -41,8 +41,8 @@ const renderPersonaIdentifiers = ({
       <table className={styles.table}>
         <thead>
           <tr>
-            <th className={styles.td}>Type</th>
-            <th className={styles.td}>Value</th>
+            <th className={styles.td}>Identifier Type</th>
+            <th className={styles.td}>Identifier Value</th>
             <th className={classNames(styles.td, styles.actions)}>Actions</th>
           </tr>
         </thead>

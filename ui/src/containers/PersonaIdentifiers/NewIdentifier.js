@@ -67,7 +67,11 @@ const renderNewIdentifier = ({
         <TypeEditor value={identifierType} onChange={handleTypeChange} />
       </td>
       <td className={styles.td}>
-        <IfiEditor identifierType={identifierType} value={identifierValue} onChange={setIdentifierValue} />
+        <IfiEditor
+          identifierType={identifierType}
+          value={identifierValue}
+          onChange={setIdentifierValue}
+          onSave={handleSave} />
       </td>
       <td className={classNames(styles.td, styles.actions)}>
         <SaveIconButton onClick={handleSave} />

@@ -41,7 +41,8 @@ const renderChangingAttribute = ({
         <IfiEditor
           identifierType={model.getIn(['ifi', 'key'])}
           value={identifierValue}
-          onChange={setIdentifierValue} />
+          onChange={setIdentifierValue}
+          onSave={handleSave} />
       </td>
       <td className={classNames(styles.td, styles.actions)}>
         <SaveIconButton onClick={handleSave} />

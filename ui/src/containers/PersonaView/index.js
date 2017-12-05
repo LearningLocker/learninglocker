@@ -136,7 +136,7 @@ class PersonaView extends Component {
         </div>
 
         <Tabs index={activeTab} onChange={this.handleTabChange}>
-          <Tab label="Identities">
+          <Tab label="Identifiers">
             <PersonaIdentifiers personaId={model.get('_id')} />
           </Tab>
           <Tab label="Attributes">
@@ -156,8 +156,8 @@ class PersonaView extends Component {
         showMergeForm ? (
           <PersonaMergeForm schema={schema} id={model.get('_id')} />
         ) : (
-          this.renderDetails()
-        )}
+            this.renderDetails()
+          )}
       </div>
     );
   };

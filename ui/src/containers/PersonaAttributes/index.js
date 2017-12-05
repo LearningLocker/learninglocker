@@ -39,8 +39,8 @@ const renderPersonaAttributes = ({
       <table className={styles.table}>
         <thead>
           <tr>
-            <th className={styles.td}>Key</th>
-            <th className={styles.td}>Value</th>
+            <th className={styles.td}>Attribute Name</th>
+            <th className={styles.td}>Attribute Value</th>
             <th className={classNames(styles.td, styles.actions)}>Actions</th>
           </tr>
         </thead>

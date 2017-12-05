@@ -8,16 +8,17 @@ const enhanceIfiEditor = compose(
     identifierType: PropTypes.oneOf(['mbox', 'mbox_sha1sum', 'openid', 'account']).isRequired,
     value: PropTypes.any.isRequired,
     onChange: PropTypes.func.isRequired,
+    onSave: PropTypes.func.isRequired,
   }),
 );
 
-const renderIfiEditor = ({ identifierType, value, onChange }) => {
+const renderIfiEditor = ({ identifierType, value, onChange, onSave }) => {
   return (identifierType === 'account'
     ? (
-      <IfiAccountEditor value={value} onChange={onChange} />
+      <IfiAccountEditor value={value} onChange={onChange} onSave={onSave} />
     )
     : (
-      <IfiValueEditor value={value} onChange={onChange} />
+      <IfiValueEditor value={value} onChange={onChange} onSave={onSave} />
     )
   );
 };
