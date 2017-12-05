@@ -33,7 +33,7 @@ const personaConnection = catchErrors(async (req, res) => {
     ...scopeFilter
   };
 
-  const personas = await req.personaService.getPersonasConnection({
+  const params = {
     limit: first || last || 10,
     direction: CursorDirection[before ? 'BACKWARDS' : 'FORWARDS'],
     sort,
@@ -44,7 +44,9 @@ const personaConnection = catchErrors(async (req, res) => {
     hint,
     maxTimeMS: MAX_TIME_MS,
     maxScan: MAX_SCAN
-  });
+  };
+
+  const personas = await req.personaService.getPersonasConnection(params);
 
   return res.status(200).send(personas);
 });

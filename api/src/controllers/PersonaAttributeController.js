@@ -16,6 +16,8 @@ import {
 
 const objectId = mongoose.Types.ObjectId;
 
+const MODEL_NAME = 'personaAttribute';
+
 const personaAttributeConnection = catchErrors(async (req, res) => {
   const { before, after } = req.query;
 
@@ -27,7 +29,7 @@ const personaAttributeConnection = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   const scopeFilter = await getScopeFilter({
-    modelName: 'persona',
+    modelName: MODEL_NAME,
     actionName: 'view',
     authInfo
   });
@@ -64,7 +66,7 @@ const addPersonaAttribute = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: MODEL_NAME,
     actionName: 'edit',
     authInfo
   });
@@ -95,7 +97,7 @@ const getPersonaAttribute = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: MODEL_NAME,
     actionName: 'viewAllScope',
     authInfo
   });
@@ -112,7 +114,7 @@ const getPersonaAttributes = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: MODEL_NAME,
     actionName: 'view',
     authInfo
   });
@@ -129,7 +131,7 @@ const updatePersonaAttribute = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: MODEL_NAME,
     actionName: 'edit',
     authInfo
   });
@@ -146,7 +148,7 @@ const deletePersonaAttribute = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: MODEL_NAME,
     actionName: 'edit',
     authInfo
   });
@@ -162,7 +164,7 @@ const personaAttributeCount = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   const scopeFilter = await getScopeFilter({
-    modelName: 'persona',
+    modelName: MODEL_NAME,
     actionName: 'view',
     authInfo
   });
