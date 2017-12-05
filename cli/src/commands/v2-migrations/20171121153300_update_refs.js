@@ -27,7 +27,8 @@ const getQueriables = (doc) => {
       verbs: union(...statements.map(getVerbsFromStatement))
     };
   } catch (err) {
-    console.log('Errorer on statement: ', doc);
+    console.log('Error on statement: ', doc);
+    console.error(err);
     throw err;
   }
 };
