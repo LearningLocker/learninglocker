@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Map } from 'immutable';
 import classNames from 'classnames';
+import decodeDot from 'lib/helpers/decodeDot';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import styles from './styles.css';
 
@@ -23,7 +24,7 @@ class CollapsedSection extends Component {
 
   render = () => {
     const { section } = this.props;
-    const title = section.get('title', '');
+    const title = decodeDot(section.get('title', ''));
     const containsCriteria = this.props.used;
     const classes = classNames(styles.collapsedSection, {
       [styles.usedCollapsedSection]: containsCriteria,

@@ -54,9 +54,13 @@
     "radix": 0,
     "no-constant-condition": 0,
     "no-const-assign": 0, // seems to be buggy, triggers on let
+    "no-only-tests/no-only-tests": 2,
   },
   "plugins": [
-    "react", "import", "jest"
+    "react",
+    "import",
+    "jest",
+    "no-only-tests"
   ],
   "settings": {
     "import/parser": "babel-eslint",

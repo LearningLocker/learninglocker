@@ -9,6 +9,7 @@ import aggregation from 'ui/redux/modules/aggregation';
 import statements from 'ui/redux/modules/statements';
 import search from 'ui/redux/modules/search';
 import uploadpeople from 'ui/redux/modules/people';
+import uploadPersona from 'ui/redux/modules/persona';
 import exportsReducer from 'ui/redux/modules/exports';
 import logo from 'ui/redux/modules/logo';
 import clientIds from 'ui/redux/modules/clientIds';
@@ -23,7 +24,7 @@ export default combineReducers({
   pagination: recycleState(pagination, [LOGOUT, ORG_LOGOUT]),
   aggregation: recycleState(aggregation, [LOGOUT, ORG_LOGOUT]),
   models: recycleState(models, [LOGOUT, ORG_LOGOUT]),
-  uploadpeople: recycleState(uploadpeople, [LOGOUT, ORG_LOGOUT]),
+  mergePersona: recycleState(uploadpeople, [LOGOUT, ORG_LOGOUT]),
   exports: recycleState(exportsReducer, [LOGOUT, ORG_LOGOUT]),
   logo: recycleState(logo, [LOGOUT, ORG_LOGOUT]),
   statements: recycleState(statements, [LOGOUT, ORG_LOGOUT]),
@@ -32,6 +33,7 @@ export default combineReducers({
   clientIds: recycleState(clientIds, [LOGOUT, ORG_LOGOUT]),
   queries: recycleState(queries, [LOGOUT, ORG_LOGOUT]),
   metadata: recycleState(metadata, [LOGOUT, ORG_LOGOUT]),
+  uploadPersonas: recycleState(uploadPersona, [LOGOUT, ORG_LOGOUT]),
   alerts: recycleState(alerts, [LOGOUT, ORG_LOGOUT]),
   app,
   router: router5Reducer

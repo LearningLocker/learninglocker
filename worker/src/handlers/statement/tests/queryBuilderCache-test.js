@@ -5,6 +5,7 @@ import * as models from 'lib/models';
 import { getConnection } from 'lib/connections/mongoose';
 import { getAtPath } from 'lib/services/querybuildercache/getCachesFromStatement';
 import QueryBuilderCacheDBHelper from 'worker/handlers/statement/tests/queryBuilderCacheDBHelper';
+import { promisify } from 'bluebird';
 
 const queryBuilderCacheDBHelper = new QueryBuilderCacheDBHelper();
 
@@ -18,8 +19,9 @@ describe('Query builder cache handler test', () => {
     }
   });
 
-  beforeEach('Set up caches and statements for testing', (done) => {
-    queryBuilderCacheDBHelper.prepare(done);
+  beforeEach('Set up caches and statements for testing', async () => {
+    await promisify(queryBuilderCacheDBHelper.cleanUp)();
+    await promisify(queryBuilderCacheDBHelper.prepare)();
   });
 
   afterEach('Clear db collections', (done) => {

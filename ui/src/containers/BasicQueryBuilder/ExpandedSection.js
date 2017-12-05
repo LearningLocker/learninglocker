@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { compose, withProps } from 'recompose';
 import { Map, List } from 'immutable';
 import { merge, map, maxBy, size } from 'lodash';
+import decodeDot from 'lib/helpers/decodeDot';
 import { operators, getAvailableSection } from 'ui/redux/modules/queryBuilder';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { withModels } from 'ui/utils/hocs';
@@ -129,7 +130,7 @@ class ExpandedSection extends Component {
 
   render = () => {
     const { section } = this.props;
-    const title = section.get('title', '');
+    const title = decodeDot(section.get('title', ''));
     const children = section.get('children', new Map());
     const hasCriteria = section.has('operators');
 

@@ -1,58 +1,42 @@
 import logger from 'lib/logger';
 import migration from 'cli/migrateMongo/models/migration';
-import {
-  isBoolean,
-  isString,
-  map,
-} from 'lodash';
+import { isBoolean, isString, map } from 'lodash';
 import v2Migrations from 'cli/commands/v2-migrations';
-import {
-  OrderedMap,
-  List
-} from 'immutable';
+import { OrderedMap, List } from 'immutable';
 import migrate from './migrate';
 
-const getOutstandingMigrations = async ({
-  down,
-  up,
-  migrations,
-}) => {
-  const lastMigration = await migration.findOne({}).sort({
-    updatedAt: -1
-  });
+const getOutstandingMigrations = async ({ down, up, migrations }) => {
+  const lastMigration = await migration.findOne({}).sort({ updatedAt: -1 });
 
   const lastKey = lastMigration ? lastMigration.key : null;
   if (down) {
     if (!isString(down)) {
-      throw new Error('down should be a string, either \'last\' or the target migration');
+      throw new Error("down should be a string, either 'last' or the target migration");
     }
     if (!lastMigration) {
       throw new Error('No migrations have been run, ergo down is invalid');
     }
 
     if (down === 'last' || down === 'previous') {
-      return new OrderedMap().set(
-        lastKey,
-        migrations.get(lastKey)
-      );
+      return new OrderedMap().set(lastKey, migrations.get(lastKey));
     }
 
-    const firstMigration = await migration.findOne({
-      key: down
-    });
+    const firstMigration = await migration.findOne({ key: down });
 
     if (!firstMigration) {
       throw new Error(`Down key (${down}) not found in the database`);
     }
 
-    const toRunMigrations = await migration.find({
-      updatedAt: {
-        $gte: firstMigration.updatedAt,
-        $lte: lastMigration.updatedAt
-      },
-    }).sort({
-      updatedAt: -1
-    });
+    const toRunMigrations = await migration
+      .find({
+        updatedAt: {
+          $gte: firstMigration.updatedAt,
+          $lte: lastMigration.updatedAt
+        }
+      })
+      .sort({
+        updatedAt: -1
+      });
 
     const toRunMigrations2 = toRunMigrations.map((model) => {
       if (!migrations.get(model.key)) {
@@ -64,18 +48,13 @@ const getOutstandingMigrations = async ({
     return new OrderedMap(toRunMigrations2);
   }
 
-  const outstandingMigrations = lastKey ?
-    migrations
-      .skipUntil((item, key) => key === lastKey)
-      .slice(1)
-    :
-    migrations;
+  const outstandingMigrations = lastKey
+    ? migrations.skipUntil((item, key) => key === lastKey).slice(1)
+    : migrations;
 
   if (up && !isBoolean(up)) {
     if (up === 'next' && lastKey) {
-      const upMigrations = migrations
-        .skipUntil((item, key) => key === lastKey)
-        .slice(1, 2);
+      const upMigrations = migrations.skipUntil((item, key) => key === lastKey).slice(1, 2);
 
       if (upMigrations.size === 0) {
         throw new Error('No outstanding migrations');
@@ -103,9 +82,7 @@ const getOutstandingMigrations = async ({
 
 const checkRunMigrations = async ({ migrations }) => {
   const dbMigrations = new List(await migration.find({}));
-
   const actualMigrations = new List(migrations);
-
   const allMigrations = dbMigrations.zip(actualMigrations);
 
   if (allMigrations.size !== dbMigrations.size) {
@@ -121,19 +98,16 @@ const checkRunMigrations = async ({ migrations }) => {
     }
 
     if (
-      dbMigration.upFn.toString().replace(/\s/g) !==
-        actualMigration[1].up.toString().replace(/\s/g)
+      dbMigration.upFn.toString().replace(/\s/g) !== actualMigration[1].up.toString().replace(/\s/g)
     ) {
-      throw new Error(`db up migration for (${actualMigration[0]}) does not match the function that was run`);
+      throw new Error(
+        `db up migration for (${actualMigration[0]}) does not match the function that was run`
+      );
     }
   });
 };
 
-const doMigrations = async ({
-  down,
-  up,
-  migrations,
-}) => {
+const doMigrations = async ({ down, up, migrations }) => {
   if (down && isBoolean(down)) {
     throw new Error('down must take a target file name');
   }
@@ -143,28 +117,21 @@ const doMigrations = async ({
   }
 
   if (!down) {
-    await checkRunMigrations({
-      migrations
-    });
+    await checkRunMigrations({ migrations });
   }
 
-  const migrationsToRun = await getOutstandingMigrations({
-    down,
-    up,
-    migrations,
-  });
+  const migrationsToRun = await getOutstandingMigrations({ down, up, migrations });
 
   if (migrationsToRun.size === 0) {
     logger.info('No migrations to run');
     return;
   }
 
-  logger.info(`Running ${down ? 'down' : 'up'} migrations on:\n\t\t${migrationsToRun.keySeq().join('\n\t\t')}`);
+  logger.info(
+    `Running ${down ? 'down' : 'up'} migrations on:\n\t\t${migrationsToRun.keySeq().join('\n\t\t')}`
+  );
 
-  await migrate({
-    migrations: migrationsToRun,
-    down,
-  });
+  await migrate({ migrations: migrationsToRun, down });
 };
 
 const displayInfo = async ({ info, migrations }) => {
@@ -190,50 +157,35 @@ const displayInfo = async ({ info, migrations }) => {
     }
   }
 
-  const outstandingMigrations = await getOutstandingMigrations({
-    migrations
-  });
+  const outstandingMigrations = await getOutstandingMigrations({ migrations });
 
   if (outstandingMigrations.size > 0) {
-    logger.info(`Outstanding migrations:\n\t\t${outstandingMigrations.keySeq().toJS().join('\n\t\t')}`);
+    const outstandingMigrationsString = outstandingMigrations
+      .keySeq()
+      .toJS()
+      .join('\n\t\t');
+    logger.info(`Outstanding migrations:\n\t\t${outstandingMigrationsString}`);
   } else {
     logger.info('No outstanding migrations');
   }
 };
 
-export default async function (
-  {
-    down,
-    up,
-    info,
-    migrations = v2Migrations,
-  },
-  next = null
-) {
-  let err;
+export default async function ({ down, up, info, migrations = v2Migrations }, next = null) {
   try {
     if (info) {
-      await displayInfo({
-        info,
-        migrations
-      });
+      await displayInfo({ info, migrations });
     } else {
-      await doMigrations({
-        down,
-        up,
-        migrations
-      });
-    }
-  } catch (err2) {
-    err = err2;
-  }
-
-  if (next) {
-    next(err);
-  } else {
-    if (err) {
-      console.error(err);
+      await doMigrations({ down, up, migrations });
     }
     process.exit();
+  } catch (err) {
+    if (next) {
+      next(err);
+    } else {
+      if (err) {
+        console.error(err);
+      }
+      process.exit();
+    }
   }
-};
+}

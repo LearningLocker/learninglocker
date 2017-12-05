@@ -2,14 +2,15 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { withProps, compose } from 'recompose';
+import { Map } from 'immutable';
+import Tabs from 'ui/components/Material/Tabs';
+import { Tab } from 'react-toolbox/lib/tabs';
+import uuid from 'uuid';
 import { withModel } from 'ui/utils/hocs';
 import { addModel } from 'ui/redux/modules/models';
-import PersonaIdentifierForm from 'ui/components/PersonaIdentifierForm';
 import PersonaMergeForm from 'ui/components/PersonaMergeForm';
 import PersonaIdentifiers from 'ui/containers/PersonaIdentifiers';
-import { Map } from 'immutable';
-import classNames from 'classnames';
-import uuid from 'uuid';
+import PersonaAttributes from 'ui/containers/PersonaAttributes';
 
 const schema = 'persona';
 
@@ -26,13 +27,25 @@ class PersonaView extends Component {
 
   state = {
     showIdentifiers: false,
+    showAttributes: false,
     showAddForm: false,
-    newKey: '',
-    newValue: ''
+    showSetAttributeForm: false,
+    identifierType: 'mbox',
+    identifierValue: '',
+    attributeKey: '',
+    attributeValue: '',
+    activeTab: 0
   };
 
+  handleTabChange = (activeTab) => {
+    this.setState({ activeTab });
+  }
   handleToggle = () => {
     this.setState({ showIdentifiers: !this.state.showIdentifiers });
+  };
+
+  handleAttributesToggle = () => {
+    this.setState({ showAttributes: !this.state.showAttributes });
   };
 
   handleShowAddForm = (e) => {
@@ -40,29 +53,59 @@ class PersonaView extends Component {
     this.setState({ showAddForm: true });
   };
 
+  handleShowSetAttributeForm = (e) => {
+    e.preventDefault();
+    this.setState({ showSetAttributeForm: !this.state.showSetAttributeForm });
+  }
+
   handleAdd = (e) => {
     e.preventDefault();
     const { model } = this.props;
-    const { newKey, newValue } = this.state;
+    const { identifierType, identifierValue } = this.state;
     const props = {
       organisation: model.get('organisation'),
-      uniqueIdentifier: {
-        key: newKey,
-        value: newValue
+      ifi: {
+        key: identifierType,
+        value: identifierValue
       },
-      identifers: [],
-      persona: model.get('_id')
+      persona: {
+        $oid: model.get('_id')
+      }
     };
     this.props.addModel({ schema: 'personaIdentifier', props });
     this.setState({ showAddForm: false });
   };
 
-  handleNewKeyChange = (newKey) => {
-    this.setState({ newKey });
+  handleSetAttribute = (e) => {
+    e.preventDefault();
+    const { model } = this.props;
+    const { attributeKey, attributeValue } = this.state;
+    const props = {
+      organisation: model.get('organisation'),
+      key: attributeKey,
+      value: attributeValue,
+      personaId: {
+        $oid: model.get('_id')
+      }
+    };
+    this.props.addModel({ schema: 'personaAttribute', props });
+    this.setState({ showSetAttributeForm: false });
+  }
+
+  handleIdentifierTypeChange = (identifierType) => {
+    this.setState({ identifierType });
   };
 
-  handleNewValueChange = (newValue) => {
-    this.setState({ newValue });
+  handleIdentifierValueChange = (identifierValue) => {
+    this.setState({ identifierValue });
+  };
+
+  handleAttributeKeyChange = (attributeKey) => {
+    this.setState({ attributeKey });
+  };
+
+  handleAttributeValueChange = (attributeValue) => {
+    this.setState({ attributeValue });
   };
 
   setAttr = (attr, value) => {
@@ -73,41 +116,9 @@ class PersonaView extends Component {
     this.setAttr(attr, e.target.value);
   };
 
-  renderButtons = () => {
-    const { showAddForm, showIdentifiers } = this.state;
-    const identityIconClasses = classNames({
-      icon: true,
-      'ion-chevron-right': !showIdentifiers,
-      'ion-chevron-down': showIdentifiers
-    });
-
-    return (
-      <div>
-        <button
-          id="toggle"
-          className="btn btn-inverse btn-sm"
-          onClick={this.handleToggle}>
-          <i className={identityIconClasses} /> View identity information
-        </button>
-        {' '}
-
-        {showAddForm
-          ? <a className="btn btn-inverse btn-sm" onClick={this.handleAdd}>
-              <i className="fa fa-floppy-o" /> Save identifier
-            </a>
-          : <a
-            className="btn btn-inverse btn-sm"
-            onClick={this.handleShowAddForm}>
-              <i className="ion ion-plus" /> Add identifier
-            </a>}
-      </div>
-    );
-  };
-
-  render = () => {
+  renderDetails = () => {
     const { model } = this.props;
-    const { showIdentifiers, showAddForm, newKey, newValue } = this.state;
-    const showMergeForm = this.props.getMetadata('isMergeFormVisible', false);
+    const { activeTab } = this.state;
     const nameId = uuid.v4();
 
     return (
@@ -120,29 +131,33 @@ class PersonaView extends Component {
             id={nameId}
             className="form-control"
             placeholder="Name"
-            value={model.get('name')}
+            value={model.get('name') || ''}
             onChange={this.onChangeAttr.bind(null, 'name')} />
         </div>
 
-        {showMergeForm &&
-          <PersonaMergeForm schema={schema} id={model.get('_id')} />}
-
-        {this.renderButtons()}
-
-        {showAddForm &&
-          <PersonaIdentifierForm
-            newKey={newKey}
-            newValue={newValue}
-            onKeyChange={this.handleNewKeyChange}
-            onValueChange={this.handleNewValueChange} />}
-
-        {showIdentifiers &&
-          <div>
-            <br />
-            <h4>Persona Identifiers</h4>
-            <hr />
+        <Tabs index={activeTab} onChange={this.handleTabChange}>
+          <Tab label="Identities">
             <PersonaIdentifiers personaId={model.get('_id')} />
-          </div>}
+          </Tab>
+          <Tab label="Attributes">
+            <PersonaAttributes personaId={model.get('_id')} />
+          </Tab>
+        </Tabs>
+      </div>
+    );
+  }
+
+  render = () => {
+    const { model } = this.props;
+    const showMergeForm = this.props.getMetadata('isMergeFormVisible', false);
+
+    return (
+      <div> {
+        showMergeForm ? (
+          <PersonaMergeForm schema={schema} id={model.get('_id')} />
+        ) : (
+          this.renderDetails()
+        )}
       </div>
     );
   };
