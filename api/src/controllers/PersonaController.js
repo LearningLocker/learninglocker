@@ -343,13 +343,11 @@ const getPersonaIdentifier = catchErrors(async (req, res) => {
 const getPersonaIdentifiers = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
-  console.log('001');
   await getScopeFilter({
     modelName: 'persona',
     actionName: 'view',
     authInfo
   });
-  console.log('002');
 
   const { identifiers } = await req.personaService.getPersonaIdentifiers({
     ...req.query,
