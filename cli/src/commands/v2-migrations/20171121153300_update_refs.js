@@ -15,17 +15,21 @@ import getVerbsFromStatement from 'xapi-statements/dist/service/storeStatements/
 const getQueriables = (doc) => {
   const statement = doc.statement;
   const refs = doc.refs ? doc.refs : [];
-  const statementRefs = refs.map(ref => ref.statement);
-  const statements = [statement, ...statementRefs];
+  const statements = [statement, ...refs];
 
-  return {
-    activities: union(...statements.map(getActivitiesFromStatement)),
-    agents: union(...statements.map(getAgentsFromStatement)),
-    registrations: union(...statements.map(getRegistrationsFromStatement)),
-    relatedActivities: union(...statements.map(getRelatedActivitiesFromStatement)),
-    relatedAgents: union(...statements.map(getRelatedAgentsFromStatement)),
-    verbs: union(...statements.map(getVerbsFromStatement))
-  };
+  try {
+    return {
+      activities: union(...statements.map(getActivitiesFromStatement)),
+      agents: union(...statements.map(getAgentsFromStatement)),
+      registrations: union(...statements.map(getRegistrationsFromStatement)),
+      relatedActivities: union(...statements.map(getRelatedActivitiesFromStatement)),
+      relatedAgents: union(...statements.map(getRelatedAgentsFromStatement)),
+      verbs: union(...statements.map(getVerbsFromStatement))
+    };
+  } catch (err) {
+    console.log('Errorer on statement: ', doc);
+    throw err;
+  }
 };
 
 const migrateStatementsBatch = (statements) => {
