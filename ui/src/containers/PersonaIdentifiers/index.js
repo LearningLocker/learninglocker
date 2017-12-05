@@ -24,6 +24,7 @@ const enhancePersonaIdentifiers = compose(
   withStyles(styles)
 );
 
+<<<<<<< HEAD
 const renderPersonaIdentifiers = ({
   personaId,
   models,
@@ -66,5 +67,21 @@ const renderPersonaIdentifiers = ({
     </div>
   );
 };
+=======
+const renderItems = items => items.map((item) => {
+  if (typeof item !== 'string') {
+    return (
+      <KeyValueIdent
+        ident={item.get('ifi')}
+        path={['ifi']}
+        key={item.get('_id')}
+        schema="personaIdentifier"
+        id={item.get('_id')}
+        deleteButton={false} />
+    );
+  }
+  return null;
+}).valueSeq();
+>>>>>>> be8786fe1fee09ccf81079c814c21b22d41a4208
 
 export default enhancePersonaIdentifiers(renderPersonaIdentifiers);
