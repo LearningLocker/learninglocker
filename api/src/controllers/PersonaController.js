@@ -140,13 +140,11 @@ const addPersonaIdentifier = catchErrors(async (req, res) => {
     authInfo
   });
 
-  console.log('001', req.body);
   const { identifier } = await req.personaService.createIdentifier({
     ifi: req.body.ifi,
     organisation: getOrgFromAuthInfo(authInfo),
     persona: req.body.persona
   });
-  console.log('002', identifier);
 
   return res.status(200).send(identifier);
 });

@@ -21,3 +21,7 @@
 .input {
   width: 100%;
 }
+
+.key {
+  font-weight: bold;
+}

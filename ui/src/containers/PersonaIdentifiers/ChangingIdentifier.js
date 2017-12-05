@@ -3,49 +3,45 @@ import classNames from 'classnames';
 import { Map } from 'immutable';
 import DebounceInput from 'react-debounce-input';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { compose, withState, withProps } from 'recompose';
+import { compose, withState, withProps, withHandlers } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import SaveIconButton from 'ui/components/IconButton/SaveIconButton';
 import CancelIconButton from 'ui/components/IconButton/CancelIconButton';
 import styles from './styles.css';
+import IfiEditor from './IfiEditor';
 
 const enhanceChangingAttribute = compose(
   withProps({ schema: 'personaIdentifier' }),
   withModel,
-  withState('attributeValue', 'setAttributeValue', ({ model }) => {
-    return model.get('value', '');
+  withState('identifierValue', 'setIdentifierValue', ({ model }) => {
+    return model.getIn(['ifi', 'value'], '');
   }),
-  withStyles(styles)
+  withStyles(styles),
+  withHandlers({
+    handleSave: ({ saveModel, setMetadata, model, identifierValue }) => () => {
+      saveModel({ attrs: model.setIn(['ifi', 'value'], identifierValue) });
+      setMetadata('isChanging', false);
+    },
+  })
 );
 
 const renderChangingAttribute = ({
   model,
   setMetadata,
-  attributeValue,
-  setAttributeValue,
-  saveModel,
+  identifierValue,
+  setIdentifierValue,
+  handleSave,
 }) => {
-  const handleSave = () => {
-    saveModel({ attrs: new Map({ value: attributeValue }) });
-    setMetadata('isChanging', false);
-  };
-  const handleEnterSave = (e) => {
-    if (e.keyCode === 13) {
-      handleSave();
-    }
-  };
   return (
     <tr>
       <td className={styles.td}>
-        {model.get('key', '')}
+        {model.getIn(['ifi', 'key'])}
       </td>
       <td className={styles.td}>
-        <input
-          value={attributeValue}
-          onChange={(e) => setAttributeValue(e.target.value)}
-          placeholder="value"
-          onKeyDown={handleEnterSave}
-          className={styles.input} />
+        <IfiEditor
+          identifierType={model.getIn(['ifi', 'key'])}
+          value={identifierValue}
+          onChange={setIdentifierValue} />
       </td>
       <td className={classNames(styles.td, styles.actions)}>
         <SaveIconButton onClick={handleSave} />

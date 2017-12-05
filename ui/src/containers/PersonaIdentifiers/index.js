@@ -14,7 +14,7 @@ const enhancePersonaIdentifiers = compose(
     personaId: PropTypes.string.isRequired,
   }),
   withProps(({ personaId }) => ({
-    filter: new Map({ personaId }),
+    filter: new Map({ persona: personaId }),
     schema: 'personaIdentifier',
     first: 100,
     sort: new Map({ _id: -1 }),
@@ -54,13 +54,15 @@ const renderPersonaIdentifiers = ({
                   ifi: new Map({ key, value }),
                   persona: personaId,
                 });
-                console.log(props.toJS());
                 addModel({ props });
               }}
               onCancel={() => {
                 changeNewIdentifierVisibility(false)
               }} />
           )}
+          {models.map((model) => {
+            return <ExistingIdentifier id={model.get('_id')} />;
+          }).valueSeq()}
         </tbody>
       </table>
     </div>

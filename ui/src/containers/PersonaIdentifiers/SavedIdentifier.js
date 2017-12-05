@@ -7,20 +7,40 @@ import EditIconButton from 'ui/components/IconButton/EditIconButton';
 import DeleteIconButton from 'ui/components/IconButton/DeleteIconButton';
 import styles from './styles.css';
 
-const enhanceChangingAttribute = compose(
-  withProps({ schema: 'personaAttribute' }),
+const enhanceSavedIdentifier = compose(
+  withProps({ schema: 'personaIdentifier' }),
   withModel,
   withStyles(styles)
 );
 
-const renderSavedAttribute = ({ model, setMetadata, deleteModel }) => {
+const renderAccountValue = ({ identifierValue }) => {
+  return (
+    <div>
+      <div>
+        <span className={styles.key}>Home Page: </span>
+        <span className={styles.value}>{identifierValue.get('homePage')}</span>
+      </div>
+      <div>
+        <span className={styles.key}>Name: </span>
+        <span className={styles.value}>{identifierValue.get('name')}</span>
+      </div>
+    </div>
+  );
+};
+
+const renderSavedIdentifier = ({ model, setMetadata, deleteModel }) => {
+  const identifierType = model.getIn(['ifi', 'key']);
+  const identifierValue = model.getIn(['ifi', 'value']);
   return (
     <tr>
       <td className={styles.td}>
-        {model.get('key', '')}
+        {identifierType}
       </td>
       <td className={styles.td}>
-        {model.get('value', '')}
+        {identifierType !== 'account'
+          ? identifierValue
+          : renderAccountValue({ identifierValue })
+        }
       </td>
       <td className={classNames(styles.td, styles.actions)}>
         <EditIconButton onClick={() => {
@@ -34,4 +54,4 @@ const renderSavedAttribute = ({ model, setMetadata, deleteModel }) => {
   );
 };
 
-export default enhanceChangingAttribute(renderSavedAttribute);
+export default enhanceSavedIdentifier(renderSavedIdentifier);
