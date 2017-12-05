@@ -1,79 +1,67 @@
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 import { Map } from 'immutable';
-import { compose, renameProp, withProps, setPropTypes, withStateHandlers, withHandlers } from 'recompose';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { compose, withProps, setPropTypes, withState } from 'recompose';
 import { withModels } from 'ui/utils/hocs';
-import KeyValueIdent from 'ui/components/KeyValueIdent';
-import PersonaAttributeForm from 'ui/components/PersonaAttributeForm';
+import AddTextIconButton from 'ui/components/TextIconButton/AddTextIconButton';
+import styles from './styles.css';
+import NewAttribute from './NewAttribute';
+import ExistingAttribute from './ExistingAttribute';
 
-const enhance = compose(
+const enhancePersonaAttributes = compose(
   setPropTypes({
-    personaId: PropTypes.string,
-    attributes: PropTypes.instanceOf(Map),
+    personaId: PropTypes.string.isRequired,
   }),
-  withProps(
-    ({ personaId }) =>
-      ({
-        filter: new Map({ personaId }),
-        schema: 'personaAttribute',
-        first: 100,
-      }),
-  ),
+  withProps(({ personaId }) => ({
+    filter: new Map({ personaId }),
+    schema: 'personaAttribute',
+    first: 100,
+    sort: new Map({ _id: -1 }),
+  })),
   withModels,
-  renameProp('models', 'attributes'),
-  withStateHandlers(
-    () => ({ showAddForm: false }),
-    {
-      setShowAddFormFalse: () => () => ({ showAddForm: false }),
-      setShowAddFormTrue: () => () => ({ showAddForm: true }),
-    }
-  ),
-  withHandlers({
-    onSubmit: ({ addModel, setShowAddFormFalse, personaId }) => ({ key, value }) => {
-      addModel({ props: { key, value, personaId } });
-      setShowAddFormFalse();
-    }
-  })
+  withState('isNewAttributeVisible', 'changeNewAttributeVisibility', false),
+  withStyles(styles)
 );
 
-const renderItems = items => items.map((item) => {
-  if (typeof item !== 'string') {
-    return (
-      <KeyValueIdent
-        key={item.get('_id')}
-        ident={item}
-        id={item.get('_id')}
-        schema="personaAttribute" />
-    );
-  }
-  return null;
-}).valueSeq();
-
-const renderAddForm = ({ showAddForm, setShowAddFormTrue, setShowAddFormFalse, onSubmit }) => (
-  <dl className="dl-horizontal clearfix">{
-    showAddForm ? (
-      <PersonaAttributeForm onCancel={setShowAddFormFalse} onSubmit={onSubmit} />
-    ) : (
-      <button
-        className="btn btn-primary btn-sm pull-right"
-        onClick={setShowAddFormTrue}>
-        <i className="ion ion-plus" /> Add attribute
-      </button>
-    )
-  }</dl>
-);
-
-const personaAttributes = ({
-  attributes,
-  showAddForm,
-  onSubmit,
-  setShowAddFormTrue,
-  setShowAddFormFalse
-}) =>
-  (
+const renderPersonaAttributes = ({
+  personaId,
+  models,
+  isNewAttributeVisible,
+  changeNewAttributeVisibility,
+  addModel,
+}) => {
+  return (
     <div>
-      {renderAddForm({ showAddForm, setShowAddFormTrue, setShowAddFormFalse, onSubmit })}
-      {renderItems(attributes)}
+      <div className={styles.buttons}>
+        <AddTextIconButton text="Add Attribute" onClick={() => changeNewAttributeVisibility(true)} />
+      </div>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th className={styles.td}>Key</th>
+            <th className={styles.td}>Value</th>
+            <th className={classNames(styles.td, styles.actions)}>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {!isNewAttributeVisible ? null : (
+            <NewAttribute
+              onAdd={(key, value) => {
+                const props = new Map({ key, value, personaId });
+                addModel({ props });
+              }}
+              onCancel={() => {
+                changeNewAttributeVisibility(false)
+              }} />
+          )}
+          {models.map((model) => {
+            return <ExistingAttribute id={model.get('_id')} />;
+          }).valueSeq()}
+        </tbody>
+      </table>
     </div>
   );
+};
 
-export default enhance(personaAttributes);
+export default enhancePersonaAttributes(renderPersonaAttributes);

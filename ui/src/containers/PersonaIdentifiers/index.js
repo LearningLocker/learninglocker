@@ -1,98 +1,70 @@
 import React, { PropTypes } from 'react';
-import KeyValueIdent from 'ui/components/KeyValueIdent';
-import PersonaIdentifierForm from 'ui/components/PersonaIdentifierForm';
+import classNames from 'classnames';
 import { Map } from 'immutable';
-import {
-  compose,
-  renameProp,
-  withProps,
-  setPropTypes,
-  withStateHandlers,
-  withHandlers
-} from 'recompose';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { compose, withProps, setPropTypes, withState } from 'recompose';
 import { withModels } from 'ui/utils/hocs';
+import AddTextIconButton from 'ui/components/TextIconButton/AddTextIconButton';
+import styles from './styles.css';
+import NewIdentifier from './NewIdentifier';
+import ExistingIdentifier from './ExistingIdentifier';
 
-const enhance = compose(
+const enhancePersonaIdentifiers = compose(
   setPropTypes({
-    personaId: PropTypes.string,
-    personaIdentifiers: PropTypes.instanceOf(Map),
+    personaId: PropTypes.string.isRequired,
   }),
-  withProps(
-    ({ personaId }) =>
-      ({
-        filter: new Map({ persona: personaId }),
-        schema: 'personaIdentifier',
-      }),
-  ),
+  withProps(({ personaId }) => ({
+    filter: new Map({ personaId }),
+    schema: 'personaIdentifier',
+    first: 100,
+    sort: new Map({ _id: -1 }),
+  })),
   withModels,
-  renameProp('models', 'personaIdentifiers'),
-  withStateHandlers(
-    () => ({ showAddForm: false }),
-    {
-      setShowAddFormFalse: () => () => ({ showAddForm: false }),
-      setShowAddFormTrue: () => () => ({ showAddForm: true }),
-    }
-  ),
-  withHandlers({
-    onSubmit: ({ addModel, setShowAddFormFalse, personaId }) => ({ type, value }) => {
-      addModel({
-        props: {
-          ifi: {
-            [type]: value, personaId
-          }
-        }
-      });
-      setShowAddFormFalse();
-    }
-  })
+  withState('isNewIdentifierVisible', 'changeNewIdentifierVisibility', false),
+  withStyles(styles)
 );
 
-const renderItems = items => items.map((item) => {
-  if (typeof item !== 'string') {
-    return (
-      <KeyValueIdent
-        ident={item.get('ifi')}
-        path={['ifi']}
-        key={item.get('_id')}
-        schema="personaIdentifier"
-        id={item.get('_id')} />
-    );
-  }
-  return null;
-}).valueSeq();
+const renderPersonaIdentifiers = ({
+  personaId,
+  models,
+  isNewIdentifierVisible,
+  changeNewIdentifierVisibility,
+  addModel,
+}) => {
+  return (
+    <div>
+      <div className={styles.buttons}>
+        <AddTextIconButton
+          text="Add Identifier"
+          onClick={() => changeNewIdentifierVisibility(true)} />
+      </div>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th className={styles.td}>Type</th>
+            <th className={styles.td}>Value</th>
+            <th className={classNames(styles.td, styles.actions)}>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {!isNewIdentifierVisible ? null : (
+            <NewIdentifier
+              onAdd={(key, value) => {
+                const props = new Map({
+                  ifi: new Map({ key, value }),
+                  persona: personaId,
+                });
+                console.log(props.toJS());
+                addModel({ props });
+              }}
+              onCancel={() => {
+                changeNewIdentifierVisibility(false)
+              }} />
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+};
 
-const renderAddForm = ({
-  showAddForm,
-  setShowAddFormFalse,
-  setShowAddFormTrue,
-  onSubmit
-}) => (
-  <dl className="dl-horizontal clearfix">{
-    showAddForm ? (
-      <PersonaIdentifierForm
-        onCancel={setShowAddFormFalse}
-        onSubmit={onSubmit} />
-    ) : (
-      <button
-        className="btn btn-primary btn-sm pull-right"
-        onClick={setShowAddFormTrue}>
-        <i className="ion ion-plus" /> Add identity
-      </button>
-    )
-  }</dl>
-);
-
-const PersonaIdentifiersComponent = ({
-  personaIdentifiers,
-  showAddForm,
-  setShowAddFormFalse,
-  setShowAddFormTrue,
-  onSubmit
-}) => (
-  <div>
-    {renderAddForm({ showAddForm, setShowAddFormFalse, setShowAddFormTrue, onSubmit })}
-    {renderItems(personaIdentifiers)}
-  </div>
-);
-
-export default enhance(PersonaIdentifiersComponent);
+export default enhancePersonaIdentifiers(renderPersonaIdentifiers);
