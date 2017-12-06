@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, setPropTypes, withState } from 'recompose';
-import SaveIconButton from 'ui/components/IconButton/SaveIconButton';
+import AddIconButton from 'ui/components/IconButton/AddIconButton';
 import CancelIconButton from 'ui/components/IconButton/CancelIconButton';
 import styles from './styles.css';
 
@@ -25,7 +25,7 @@ const renderNewAttribute = ({
   onCancel,
 }) => {
   let keyRef = null;
-  const handleSave = () => {
+  const handleAdd = () => {
     keyRef.focus();
     onAdd(attributeKey, attributeValue);
     setAttributeKey('');
@@ -33,7 +33,7 @@ const renderNewAttribute = ({
   };
   const handleEnterSave = (e) => {
     if (e.keyCode === 13) {
-      handleSave();
+      handleAdd();
     }
   };
   return (
@@ -58,7 +58,7 @@ const renderNewAttribute = ({
           className={classNames(styles.input, 'form-control')} />
       </td>
       <td className={classNames(styles.td, styles.actions)}>
-        <SaveIconButton onClick={handleSave} />
+        <AddIconButton onClick={handleAdd} />
         <CancelIconButton onClick={onCancel} />
       </td>
     </tr>

@@ -3,7 +3,7 @@ import { Map } from 'immutable';
 import classNames from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, setPropTypes, withState, withHandlers } from 'recompose';
-import SaveIconButton from 'ui/components/IconButton/SaveIconButton';
+import AddIconButton from 'ui/components/IconButton/AddIconButton';
 import CancelIconButton from 'ui/components/IconButton/CancelIconButton';
 import styles from './styles.css';
 import TypeEditor from './TypeEditor';
@@ -17,7 +17,7 @@ const enhanceNewIdentifier = compose(
   withState('identifierType', 'setIdentifierType', 'mbox'),
   withState('identifierValue', 'setIdentifierValue', ''),
   withHandlers({
-    handleSave: ({
+    handleAdd: ({
       onAdd,
       identifierType,
       identifierValue,
@@ -58,7 +58,7 @@ const renderNewIdentifier = ({
   identifierValue,
   handleTypeChange,
   setIdentifierValue,
-  handleSave,
+  handleAdd,
   onCancel,
 }) => {
   return (
@@ -71,10 +71,10 @@ const renderNewIdentifier = ({
           identifierType={identifierType}
           value={identifierValue}
           onChange={setIdentifierValue}
-          onSave={handleSave} />
+          onSave={handleAdd} />
       </td>
       <td className={classNames(styles.td, styles.actions)}>
-        <SaveIconButton onClick={handleSave} />
+        <AddIconButton onClick={handleAdd} />
         <CancelIconButton onClick={onCancel} />
       </td>
     </tr>
