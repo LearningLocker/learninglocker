@@ -1,23 +1,52 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import DebounceInput from 'react-debounce-input';
-import { compose, setPropTypes, withProps } from 'recompose';
+import { compose, withProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
-import SaveIconButton from 'ui/components/IconButton/SaveIconButton';
+import EditIconButton from 'ui/components/IconButton/EditIconButton';
 import DeleteIconButton from 'ui/components/IconButton/DeleteIconButton';
 import styles from './styles.css';
-import ChangingIdentifier from './ChangingIdentifier';
-import SavedIdentifier from './SavedIdentifier';
 
-const enhanceExistingIdentifier = compose(
+const enhanceSavedIdentifier = compose(
   withProps({ schema: 'personaIdentifier' }),
-  withModel
+  withModel,
+  withStyles(styles)
 );
 
-const renderExistingIdentifier = ({ id, getMetadata, setMetadata }) => {
-  const isChanging = getMetadata('isChanging', false);
-  return isChanging ? <ChangingIdentifier id={id} /> : <SavedIdentifier id={id} />;
+const renderAccountValue = ({ identifierValue }) => {
+  return (
+    <div>
+      <div>
+        <span className={styles.key}>Home Page: </span>
+        <span className={styles.value}>{identifierValue.get('homePage')}</span>
+      </div>
+      <div>
+        <span className={styles.key}>Name: </span>
+        <span className={styles.value}>{identifierValue.get('name')}</span>
+      </div>
+    </div>
+  );
 };
 
-export default enhanceExistingIdentifier(renderExistingIdentifier);
+const renderSavedIdentifier = ({ model, deleteModel }) => {
+  const identifierType = model.getIn(['ifi', 'key']);
+  const identifierValue = model.getIn(['ifi', 'value']);
+  return (
+    <tr>
+      <td className={styles.td}>
+        {identifierType}
+      </td>
+      <td className={styles.td}>
+        {identifierType !== 'account'
+          ? identifierValue
+          : renderAccountValue({ identifierValue })
+        }
+      </td>
+      <td className={classNames(styles.td, styles.actions)}>
+        <DeleteIconButton onConfirm={deleteModel} target="identifier" />
+      </td>
+    </tr>
+  );
+};
+
+export default enhanceSavedIdentifier(renderSavedIdentifier);

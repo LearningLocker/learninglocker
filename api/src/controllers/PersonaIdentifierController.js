@@ -12,6 +12,7 @@ import {
   isUndefined,
   omitBy,
 } from 'lodash';
+import { replaceId, replaceIds } from 'api/controllers/utils/replaceIds';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -74,7 +75,7 @@ const addPersonaIdentifier = catchErrors(async (req, res) => {
     persona: req.body.persona
   });
 
-  return res.status(200).send(identifier);
+  return res.status(200).send(replaceId(identifier));
 });
 
 const getPersonaIdentifier = catchErrors(async (req, res) => {
@@ -91,7 +92,7 @@ const getPersonaIdentifier = catchErrors(async (req, res) => {
     id: req.params.personaIdentifierId
   });
 
-  return res.status(200).send(identifier);
+  return res.status(200).send(replaceId(identifier));
 });
 
 const getPersonaIdentifiers = catchErrors(async (req, res) => {
@@ -108,7 +109,7 @@ const getPersonaIdentifiers = catchErrors(async (req, res) => {
     organisation: getOrgFromAuthInfo(authInfo),
   });
 
-  return res.status(200).send(identifiers);
+  return res.status(200).send(replaceIds(identifiers));
 });
 
 const updatePersonaIdentifier = catchErrors(async (req, res) => {
@@ -127,7 +128,7 @@ const updatePersonaIdentifier = catchErrors(async (req, res) => {
     persona: req.body.persona
   });
 
-  return res.status(200).send(identifier);
+  return res.status(200).send(replaceId(identifier));
 });
 
 const deletePersonaIdentifier = catchErrors(async (req, res) => {
