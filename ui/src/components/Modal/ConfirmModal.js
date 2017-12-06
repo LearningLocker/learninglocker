@@ -20,17 +20,6 @@ const enhanceConfirmModal = compose(
   })
 );
 
-const renderModalTitle = ({ title, onCancel }) => {
-  return (
-    <div className="modal-header modal-header-bg">
-      <button type="button" className="close" aria-label="Close" onClick={onCancel}>
-        <span aria-hidden="true">&times;</span>
-      </button>
-      <h4 className="modal-title">{title}</h4>
-    </div>
-  );
-};
-
 const renderModalMessage = ({ message }) => {
   return (
     <div
