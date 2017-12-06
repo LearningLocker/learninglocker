@@ -19,7 +19,7 @@ const schema = 'persona';
 const PersonaList = compose(
   withProps({
     schema,
-    sort: fromJS({ createdAt: -1, _id: -1 })
+    sort: fromJS({ _id: -1 })
   }),
   withModels
 )(ModelList);

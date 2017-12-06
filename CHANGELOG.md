@@ -2,20 +2,45 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [unreleased]
 ### Added
-  - Can now set the max times statement forwarding will retry.
-  - User integration tests
 ### Changed
- - Only allow sensible combinations of roles
 ### Deprecated
 ### Removed
 ### Fixed
 ### Security
 ### Migrations
 
+## [2.2.0]
+### Changed
+#### Personas refactor
+  - Personas, identifiers and their attributes split into separate models
+  - Provides much more control over identifiers and attributes via the API and UI
+  - Improved CSV upload tool
+  - Improved persona creation performance
+
+### Migrations
+This update requires a migration which can be run using `yarn migrate`. If installing via the deploy script this will automatically be done.
+
+## [2.1.0] - 2017-11-23
+### Added
+  - Migration funcionality ([#LL-395](https://ht2labs.myjetbrains.com/youtrack/issue/LL-395))
+  - Can now set the max times statement forwarding will retry.
+  - Legend added to X vs Y charts ([#LL-322](https://ht2labs.myjetbrains.com/youtrack/issue/LL-322))
+  - Prevents deleting a role if assigned to a user, added error alerts ([#LL-353](https://ht2labs.myjetbrains.com/youtrack/issue/LL-353))
+  - User integration tests
+### Fixed
+ - Client auth not working with some APIs ([#LL-367](https://ht2labs.myjetbrains.com/youtrack/issue/LL-367))
+### Changed
+ - Only allow sensible combinations of roles
+
+## [2.0.7] - 2017-11-08
+### Fixes
+ - Couldn't see some visualisations when printing
+
 
 ## [2.0.6] - 2017-10-26
 ### Security
   - Ensure all dashboards can load ([#LL-423](https://ht2labs.myjetbrains.com/youtrack/issue/LL-423))
+
 
 ## [2.0.5] - 2017-10-23
 ### Security

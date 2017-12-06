@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
 import catchErrors from 'api/controllers/utils/catchErrors';
 import getJSONFromQuery from 'api/utils/getJSONFromQuery';
@@ -8,15 +7,8 @@ import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import { MAX_TIME_MS, MAX_SCAN } from 'lib/models/plugins/addCRUDFunctions';
 import parseQuery from 'lib/helpers/parseQuery';
 import { CursorDirection } from 'personas/dist/service/constants';
-import {
-  isUndefined,
-  omitBy,
-  toString
-} from 'lodash';
-import updateQueryBuilderCache from 'lib/services/importPersonas/updateQueryBuilderCache';
-import { reasignPersonaStatements } from 'lib/services/persona';
 
-const objectId = mongoose.Types.ObjectId;
+import { reasignPersonaStatements } from 'lib/services/persona';
 
 const personaConnection = catchErrors(async (req, res) => {
   const { before, after } = req.query;
@@ -41,8 +33,8 @@ const personaConnection = catchErrors(async (req, res) => {
     ...scopeFilter
   };
 
-  const personas = await req.personaService.getPersonasConnection({
-    limit: first || last,
+  const params = {
+    limit: first || last || 10,
     direction: CursorDirection[before ? 'BACKWARDS' : 'FORWARDS'],
     sort,
     cursor: after || before,
@@ -52,7 +44,9 @@ const personaConnection = catchErrors(async (req, res) => {
     hint,
     maxTimeMS: MAX_TIME_MS,
     maxScan: MAX_SCAN
-  });
+  };
+
+  const personas = await req.personaService.getPersonasConnection(params);
 
   return res.status(200).send(personas);
 });
@@ -63,7 +57,7 @@ const updatePersona = catchErrors(async (req, res) => {
   const newName = req.body.name;
 
   await getScopeFilter({
-    modelName: 'personasImport',
+    modelName: 'persona',
     actionName: 'edit',
     authInfo
   });
@@ -87,6 +81,7 @@ const updatePersona = catchErrors(async (req, res) => {
   });
 });
 
+<<<<<<< HEAD
 const personaIdentifierConnection = catchErrors(async (req, res) => {
   const { before, after } = req.query;
 
@@ -176,6 +171,9 @@ const personaCount = catchErrors(async (req, res) => {
 });
 
 const mergePersona = catchErrors(async (req, res) => {
+=======
+const mergePersona = catchErrors(async(req, res) => {
+>>>>>>> origin/feature-personas
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
@@ -248,6 +246,7 @@ const getPersona = catchErrors(async (req, res) => {
   return res.status(200).send(persona);
 });
 
+<<<<<<< HEAD
 const personaAttributeConnection = catchErrors(async (req, res) => {
   const { before, after } = req.query;
 
@@ -376,6 +375,8 @@ const updatePersonaIdentifier = catchErrors(async (req, res) => {
   return res.status(200).send(identifier);
 });
 
+=======
+>>>>>>> origin/feature-personas
 const getPersonas = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
@@ -393,24 +394,7 @@ const getPersonas = catchErrors(async (req, res) => {
   return res.status(200).send(personas);
 });
 
-const deletePersonaIdentifier = catchErrors(async (req, res) => {
-  const authInfo = getAuthFromRequest(req);
-
-  await getScopeFilter({
-    modelName: 'persona',
-    actionName: 'edit',
-    authInfo
-  });
-
-  await req.personaService.deletePersonaIdentifier({
-    organisation: getOrgFromAuthInfo(authInfo),
-    id: req.params.personaIdentifierId
-  });
-
-  return res.status(200).send();
-});
-
-const personaIdentifierCount = catchErrors(async (req, res) => {
+const personaCount = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   const scopeFilter = await getScopeFilter({
@@ -419,105 +403,16 @@ const personaIdentifierCount = catchErrors(async (req, res) => {
     authInfo
   });
 
-  const userFilter = await parseQuery(req.query.query);
+  const userFilter = await parseQuery(req.query.query, {
+    organisation: getOrgFromAuthInfo(authInfo)
+  });
 
   const filter = {
     ...userFilter,
     ...scopeFilter
   };
 
-  const count = await req.personaService.getPersonaIdentifierCount({
-    organisation: getOrgFromAuthInfo(authInfo),
-    filter
-  });
-
-  return res.status(200).send(count);
-});
-
-const getPersonaAttribute = catchErrors(async (req, res) => {
-  const authInfo = getAuthFromRequest(req);
-
-  await getScopeFilter({
-    modelName: 'persona',
-    actionName: 'viewAllScope',
-    authInfo
-  });
-
-  const { attribute } = await req.personaService.getAttribute({
-    organisation: getOrgFromAuthInfo(authInfo),
-    id: req.params.personaAttributeId
-  });
-
-  return res.status(200).send(attribute);
-});
-
-const getPersonaAttributes = catchErrors(async (req, res) => {
-  const authInfo = getAuthFromRequest(req);
-
-  await getScopeFilter({
-    modelName: 'persona',
-    actionName: 'view',
-    authInfo
-  });
-
-  const { attributes } = await req.personaService.getPersonaAttributes({
-    ...req.query,
-    organisation: getOrgFromAuthInfo(authInfo),
-  });
-
-  return res.status(200).send(attributes);
-});
-
-const updatePersonaAttribute = catchErrors(async (req, res) => {
-  const authInfo = getAuthFromRequest(req);
-
-  await getScopeFilter({
-    modelName: 'persona',
-    actionName: 'edit',
-    authInfo
-  });
-
-  const { attribute } = await req.personaService.overwritePersonaAttribute({
-    ...req.body,
-    organisation: getOrgFromAuthInfo(authInfo),
-    id: req.params.personaAttributeId
-  });
-
-  return res.status(200).send(attribute);
-});
-const deletePersonaAttribute = catchErrors(async (req, res) => {
-  const authInfo = getAuthFromRequest(req);
-
-  await getScopeFilter({
-    modelName: 'persona',
-    actionName: 'edit',
-    authInfo
-  });
-
-  await req.personaService.deletePersonaAttribute({
-    organisation: getOrgFromAuthInfo(authInfo),
-    id: req.params.personaAttributeId
-  });
-
-  return res.status(200).send();
-});
-const personaAttributeCount = catchErrors(async (req, res) => {
-  const authInfo = getAuthFromRequest(req);
-
-  const scopeFilter = await getScopeFilter({
-    modelName: 'persona',
-    actionName: 'view',
-    authInfo
-  });
-
-  const userFilter = await parseQuery(req.query.query);
-
-  const filter = {
-    ...userFilter,
-    ...scopeFilter
-  };
-
-  const count = await req.personaService.getPersonaAttributeCount({
+  const count = await req.personaService.getPersonaCount({
     organisation: getOrgFromAuthInfo(authInfo),
     filter
   });
@@ -533,22 +428,6 @@ export default {
   deletePersona,
   personaCount,
   personaConnection,
-
-  getPersonaIdentifier,
-  getPersonaIdentifiers,
-  updatePersonaIdentifier,
-  addPersonaIdentifier,
-  deletePersonaIdentifier,
-  personaIdentifierCount,
-  personaIdentifierConnection,
-
-  getPersonaAttribute,
-  getPersonaAttributes,
-  updatePersonaAttribute,
-  addPersonaAttribute,
-  deletePersonaAttribute,
-  personaAttributeCount,
-  personaAttributeConnection,
 
   mergePersona,
 };
