@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
-import EditIconButton from 'ui/components/IconButton/EditIconButton';
+import IconButton from 'ui/components/IconButton/IconButton';
 import DeleteIconButton from 'ui/components/IconButton/DeleteIconButton';
 import styles from './styles.css';
 
@@ -12,6 +12,14 @@ const enhanceSavedIdentifier = compose(
   withModel,
   withStyles(styles)
 );
+
+const renderValue = ({ identifierValue, identifierType }) => {
+  if (identifierType === 'account') {
+    return renderAccountValue({ identifierValue });
+  } else {
+    return identifierValue;
+  }
+};
 
 const renderAccountValue = ({ identifierValue }) => {
   return (
@@ -37,12 +45,17 @@ const renderSavedIdentifier = ({ model, deleteModel }) => {
         {identifierType}
       </td>
       <td className={styles.td}>
-        {identifierType !== 'account'
-          ? identifierValue
-          : renderAccountValue({ identifierValue })
-        }
+        {renderValue({ identifierValue, identifierType })}
       </td>
       <td className={classNames(styles.td, styles.actions)}>
+        <IconButton
+          title="Assign to existing Persona"
+          icon="icon ion-person-stalker"
+          onClick={() => { }} />
+        <IconButton
+          title="Assign to new Persona"
+          icon="icon ion-person-add"
+          onClick={() => { }} />
         <DeleteIconButton onConfirm={deleteModel} target="identifier" />
       </td>
     </tr>
