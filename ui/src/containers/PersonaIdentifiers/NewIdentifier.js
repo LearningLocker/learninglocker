@@ -26,7 +26,7 @@ const enhanceNewIdentifier = compose(
         onAdd(identifierType, identifierValue);
         if (identifierType === 'account') {
           setIdentifierValue(new Map({
-            homePage: identifierValue.get('homePage'),
+            homePage: '',
             name: '',
           }));
         } else {
@@ -61,6 +61,11 @@ const renderNewIdentifier = ({
   handleAdd,
   onCancel,
 }) => {
+  let firstInputRef = null;
+  const handleAddAndReset = () => {
+    firstInputRef.focus();
+    handleAdd();
+  };
   return (
     <tr>
       <td className={styles.td}>
@@ -71,10 +76,13 @@ const renderNewIdentifier = ({
           identifierType={identifierType}
           value={identifierValue}
           onChange={setIdentifierValue}
-          onSave={handleAdd} />
+          onSave={handleAddAndReset}
+          refFirstInput={(input) => {
+            firstInputRef = input
+          }} />
       </td>
       <td className={classNames(styles.td, styles.actions)}>
-        <AddIconButton onClick={handleAdd} />
+        <AddIconButton onClick={handleAddAndReset} />
         <CancelIconButton onClick={onCancel} />
       </td>
     </tr>

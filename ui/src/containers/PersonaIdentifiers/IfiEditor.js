@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { compose, setPropTypes } from 'recompose';
+import { compose, setPropTypes, defaultProps } from 'recompose';
 import IfiAccountEditor from './IfiAccountEditor';
 import IfiValueEditor from './IfiValueEditor';
 
@@ -9,16 +9,28 @@ const enhanceIfiEditor = compose(
     value: PropTypes.any.isRequired,
     onChange: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired,
+    refFirstInput: PropTypes.func,
   }),
+  defaultProps({
+    refFirstInput: () => { },
+  })
 );
 
-const renderIfiEditor = ({ identifierType, value, onChange, onSave }) => {
+const renderIfiEditor = ({ identifierType, value, onChange, onSave, refFirstInput }) => {
   return (identifierType === 'account'
     ? (
-      <IfiAccountEditor value={value} onChange={onChange} onSave={onSave} />
+      <IfiAccountEditor
+        value={value}
+        onChange={onChange}
+        onSave={onSave}
+        refHomePageInput={refFirstInput} />
     )
     : (
-      <IfiValueEditor value={value} onChange={onChange} onSave={onSave} />
+      <IfiValueEditor
+        value={value}
+        onChange={onChange}
+        onSave={onSave}
+        refValueInput={refFirstInput} />
     )
   );
 };

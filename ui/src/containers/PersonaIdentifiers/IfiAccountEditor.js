@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Map } from 'immutable';
 import classNames from 'classnames';
-import { compose, setPropTypes, withHandlers } from 'recompose';
+import { compose, setPropTypes, withHandlers, defaultProps } from 'recompose';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import styles from './styles.css';
 
@@ -10,6 +10,12 @@ const enhanceIdentifierTypeEditor = compose(
     value: PropTypes.instanceOf(Map),
     onChange: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired,
+    refHomePageInput: PropTypes.func,
+    refNameInput: PropTypes.func,
+  }),
+  defaultProps({
+    refHomePageInput: () => { },
+    refNameInput: () => { },
   }),
   withStyles(styles),
   withHandlers({
@@ -21,7 +27,13 @@ const enhanceIdentifierTypeEditor = compose(
   })
 );
 
-const renderIdentifierTypeEditor = ({ value, onChange, handleEnterSave }) => {
+const renderIdentifierTypeEditor = ({
+  value,
+  onChange,
+  handleEnterSave,
+  refHomePageInput,
+  refNameInput,
+}) => {
   return (
     <div>
       <input
@@ -29,13 +41,15 @@ const renderIdentifierTypeEditor = ({ value, onChange, handleEnterSave }) => {
         onChange={(e) => onChange(value.set('homePage', e.target.value))}
         placeholder="Home Page"
         className={classNames(styles.input, 'form-control')}
-        onKeyDown={handleEnterSave} />
+        onKeyDown={handleEnterSave}
+        ref={refHomePageInput} />
       <input
         value={value.get('name')}
         onChange={(e) => onChange(value.set('name', e.target.value))}
         placeholder="Name"
         className={classNames(styles.input, 'form-control')}
-        onKeyDown={handleEnterSave} />
+        onKeyDown={handleEnterSave}
+        ref={refNameInput} />
     </div>
   );
 };
