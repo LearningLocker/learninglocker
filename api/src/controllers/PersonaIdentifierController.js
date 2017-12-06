@@ -15,6 +15,8 @@ import {
 
 const objectId = mongoose.Types.ObjectId;
 
+const MODEL_NAME = 'personaIdentifier';
+
 const personaIdentifierConnection = catchErrors(async (req, res) => {
   const { before, after } = req.query;
 
@@ -26,7 +28,7 @@ const personaIdentifierConnection = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   const scopeFilter = await getScopeFilter({
-    modelName: 'persona',
+    modelName: MODEL_NAME,
     actionName: 'view',
     authInfo
   });
@@ -63,8 +65,8 @@ const addPersonaIdentifier = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
-    actionName: 'edit',
+    modelName: MODEL_NAME,
+    actionName: 'create',
     authInfo
   });
 
@@ -81,7 +83,7 @@ const getPersonaIdentifier = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: MODEL_NAME,
     actionName: 'view',
     authInfo
   });
@@ -98,7 +100,7 @@ const getPersonaIdentifiers = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: MODEL_NAME,
     actionName: 'view',
     authInfo
   });
@@ -115,8 +117,8 @@ const updatePersonaIdentifier = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
-    actionName: 'view',
+    modelName: MODEL_NAME,
+    actionName: 'edit',
     authInfo
   });
 
@@ -134,8 +136,8 @@ const deletePersonaIdentifier = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
-    actionName: 'edit',
+    modelName: MODEL_NAME,
+    actionName: 'delete',
     authInfo
   });
 
@@ -151,7 +153,7 @@ const personaIdentifierCount = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   const scopeFilter = await getScopeFilter({
-    modelName: 'persona',
+    modelName: MODEL_NAME,
     actionName: 'view',
     authInfo
   });
