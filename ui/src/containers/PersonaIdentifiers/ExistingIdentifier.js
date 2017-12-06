@@ -13,14 +13,6 @@ const enhanceSavedIdentifier = compose(
   withStyles(styles)
 );
 
-const renderValue = ({ identifierValue, identifierType }) => {
-  if (identifierType === 'account') {
-    return renderAccountValue({ identifierValue });
-  } else {
-    return identifierValue;
-  }
-};
-
 const renderAccountValue = ({ identifierValue }) => {
   return (
     <div>
@@ -34,6 +26,14 @@ const renderAccountValue = ({ identifierValue }) => {
       </div>
     </div>
   );
+};
+
+const renderValue = ({ identifierValue, identifierType }) => {
+  if (identifierType === 'account') {
+    return renderAccountValue({ identifierValue });
+  } else {
+    return identifierValue;
+  }
 };
 
 const renderSavedIdentifier = ({ model, deleteModel }) => {
