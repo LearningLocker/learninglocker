@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { compose, withProps, setPropTypes } from 'recompose';
-import ConfirmModal from './ConfirmModal';
+import ConfirmModal from 'ui/components/Modal/ConfirmModal';
 
 const enhanceConfirmModal = compose(
   setPropTypes({

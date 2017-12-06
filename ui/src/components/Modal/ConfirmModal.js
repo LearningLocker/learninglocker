@@ -5,6 +5,7 @@ import { compose, setPropTypes, defaultProps } from 'recompose';
 import { lowerCase } from 'lodash';
 import { deleteModel } from 'ui/redux/modules/models';
 import TextIconButton from 'ui/components/TextIconButton/TextIconButton';
+import Modal from 'ui/components/Modal/Modal';
 
 const enhanceConfirmModal = compose(
   setPropTypes({
@@ -40,25 +41,21 @@ const renderModalMessage = ({ message }) => {
   );
 };
 
+const renderModalActions = ({ onConfirm, onCancel }) => {
+  return (
+    <div className="modal-footer" style={{ textAlign: 'center' }}>
+      <TextIconButton text="Confirm" icon="icon ion-checkmark" onClick={onConfirm} />
+      <TextIconButton text="Cancel" icon="icon ion-close-round" onClick={onCancel} />
+    </div>
+  );
+};
+
 const renderConfirmModal = ({ isOpen, title, message, onConfirm, onCancel }) => {
   return (
-    <Portal isOpened={isOpen}>
-      <span>
-        <div className="modal animated fast fadeIn">
-          <div className="modal-dialog">
-            <div className="modal-content">
-              {renderModalTitle({ title, onCancel })}
-              {renderModalMessage({ message })}
-              <div className="modal-footer" style={{ textAlign: 'center' }}>
-                <TextIconButton text="Confirm" icon="icon ion-checkmark" onClick={onConfirm} />
-                <TextIconButton text="Cancel" icon="icon ion-close-round" onClick={onCancel} />
-              </div>
-            </div>
-          </div>
-          <div className="modal-backdrop" onClick={onCancel} />
-        </div>
-      </span>
-    </Portal>
+    <Modal isOpen={isOpen} title={title} onCancel={onCancel}>
+      {renderModalMessage({ message })}
+      {renderModalActions({ onConfirm, onCancel })}
+    </Modal>
   );
 };
 

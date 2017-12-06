@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { compose, withProps, setPropTypes, withState } from 'recompose';
 import IconButton from './IconButton';
-import ConfirmDeleteModal from 'ui/components/ConfirmModal/ConfirmDeleteModal';
+import ConfirmDeleteModal from 'ui/components/Modal/ConfirmDeleteModal';
 
 const enhanceIconButton = compose(
   setPropTypes({
