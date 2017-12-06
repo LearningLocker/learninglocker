@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, setPropTypes, withState, withHandlers } from 'recompose';
 import SaveIconButton from 'ui/components/IconButton/SaveIconButton';
-import DeleteIconButton from 'ui/components/IconButton/DeleteIconButton';
+import CancelIconButton from 'ui/components/IconButton/CancelIconButton';
 import styles from './styles.css';
 import TypeEditor from './TypeEditor';
 import IfiEditor from './IfiEditor';
@@ -75,7 +75,7 @@ const renderNewIdentifier = ({
       </td>
       <td className={classNames(styles.td, styles.actions)}>
         <SaveIconButton onClick={handleSave} />
-        <DeleteIconButton onClick={onCancel} />
+        <CancelIconButton onClick={onCancel} />
       </td>
     </tr>
   );

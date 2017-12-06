@@ -46,9 +46,7 @@ const renderSavedIdentifier = ({ model, setMetadata, deleteModel }) => {
         <EditIconButton onClick={() => {
           setMetadata('isChanging', true)
         }} />
-        <DeleteIconButton onClick={() => {
-          deleteModel();
-        }} />
+        <DeleteIconButton onConfirm={deleteModel} target="identifier" />
       </td>
     </tr>
   );
