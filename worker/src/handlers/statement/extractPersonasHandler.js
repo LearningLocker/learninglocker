@@ -39,6 +39,10 @@ const updateAllMatchingStatements = async ({
     filter = {
       'statement.actor.mbox': get(actor, 'mbox')
     };
+  } else if (has(actor, 'mbox_sha1sum')) {
+    filter = {
+      'statement.actor.mbox_sha1sum': get(actor, 'mbox_sha1sum')
+    };
   } else if (has(actor, 'openid')) {
     filter = {
       'statement.actor.openid': get(actor, 'openid')
