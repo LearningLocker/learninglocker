@@ -172,4 +172,35 @@ describe('Extract persona handler', () => {
     expect(statement2.person._id.toString()).to.equal(personaId);
     expect(statement2.personaIdentifier.toString()).to.equal(identifierId);
   }).timeout(5000);
+
+  it('should update matching statements with new persona id and identifier id', async () => {
+    await Statement.create(testStatement);
+
+    const queueStatementId = '561a679c0c5d017e40047151';
+
+    const queueStatement = {
+      ...testStatement,
+      _id: queueStatementId
+    };
+    await Statement.create(queueStatement);
+
+    // RUN
+    await Promise.promisify(
+      extractPersonasHandler(personaFacade)
+    )({ statementId: queueStatementId });
+
+    // TEST
+    const statement1 = await Statement.findById(objectId(statementId));
+    const statement2 = await Statement.findById(objectId(queueStatementId));
+
+    expect(statement1.person._id.toString()).to.equal(
+      statement2.person._id.toString()
+    );
+    expect(statement1.personaIdentifier.toString()).to.equal(
+      statement2.personaIdentifier.toString()
+    );
+    expect(statement1.person.display).to.equal(
+      statement2.person.display
+    );
+  }).timeout(5000);
 });
