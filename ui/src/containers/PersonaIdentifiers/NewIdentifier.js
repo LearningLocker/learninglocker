@@ -69,7 +69,10 @@ const renderNewIdentifier = ({
   return (
     <tr>
       <td className={styles.td}>
-        <TypeEditor value={identifierType} onChange={handleTypeChange} />
+        <TypeEditor value={identifierType} onChange={(type) => {
+          handleTypeChange(type);
+          firstInputRef.focus();
+        }} />
       </td>
       <td className={styles.td}>
         <IfiEditor
