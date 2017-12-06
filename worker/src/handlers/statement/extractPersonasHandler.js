@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
+import Statement from 'lib/models/statement';
 import wrapHandlerForStatement from 'worker/handlers/statement/wrapHandlerForStatement';
 import { STATEMENT_EXTRACT_PERSONAS_QUEUE } from 'lib/constants/statements';
 
@@ -27,6 +28,20 @@ const getIfiFromActor = (actor) => {
   }
 };
 
+const updateAllMatchingStatements = async ({
+  actor, // actor to match
+  person, // persona to set on statement
+  personaIdentifier // identifier to set on statement
+}) =>
+  await Statement.update({
+    'statement.actor': actor
+  }, {
+    person,
+    personaIdentifier
+  }, {
+    multi: true
+  });
+
 const handleStatement = personaService => async (statement) => {
   const ifi = getIfiFromActor(statement.statement.actor);
 
@@ -51,6 +66,12 @@ const handleStatement = personaService => async (statement) => {
   };
 
   await statement.save();
+
+  await updateAllMatchingStatements({
+    actor: statement.statement.actor,
+    person: statement.person,
+    personaIdentifier: identifierId
+  });
 };
 
 const handleStatements = personaService => (statements) => {
