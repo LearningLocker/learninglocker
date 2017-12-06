@@ -173,7 +173,7 @@ describe('Extract persona handler', () => {
     expect(statement2.personaIdentifier.toString()).to.equal(identifierId);
   }).timeout(5000);
 
-  it.only('should update matching statements with new persona id and identifier id', async () => {
+  it('should update matching statements with new persona id and identifier id', async () => {
     await Statement.create(testStatement);
 
     const queueStatementId = '561a679c0c5d017e40047151';
