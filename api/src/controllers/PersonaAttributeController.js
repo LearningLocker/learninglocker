@@ -81,7 +81,7 @@ const addPersonaAttribute = catchErrors(async (req, res) => {
 
   const { attribute } = await req.personaService.overwritePersonaAttribute({
     organisation: getOrgFromAuthInfo(authInfo),
-    personaId: toString(parsedBody.personaId),
+    personaId: parsedBody.personaId,
     key: parsedBody.key,
     value: parsedBody.value
   });
