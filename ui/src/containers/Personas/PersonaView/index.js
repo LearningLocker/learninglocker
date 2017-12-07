@@ -45,6 +45,9 @@ const render = ({ model, getMetadata, activeTab, setActiveTab, updateModel }) =>
           <Tab label="Attributes">
             <PersonaAttributes personaId={model.get('_id')} />
           </Tab>
+          <Tab label="Merge">
+            <PersonaMergeForm id={model.get('_id')} />
+          </Tab>
         </Tabs>
       </div>
     );

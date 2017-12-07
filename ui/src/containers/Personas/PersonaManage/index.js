@@ -13,7 +13,6 @@ import PersonaView from 'ui/containers/Personas/PersonaView';
 import ModelList from 'ui/containers/ModelList';
 import DeleteButton from 'ui/containers/DeleteButton';
 import SearchBox from 'ui/containers/SearchBox';
-import ToggleMergeButton from 'ui/containers/ToggleMergeButton';
 
 const schema = 'persona';
 const PersonaList = compose(
@@ -83,7 +82,6 @@ class PersonaManage extends Component {
             <PersonaList
               filter={queryStringToQuery(this.props.searchString, schema)}
               ModelForm={PersonaView}
-              buttons={[ToggleMergeButton, DeleteButton]}
               saveParams={{ populate: 'personaIdentifiers' }}
               getDescription={model => this.getPersonaName(model)} />
           </div>

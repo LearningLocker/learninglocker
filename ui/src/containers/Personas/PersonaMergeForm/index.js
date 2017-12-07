@@ -3,7 +3,7 @@ import { fromJS, Map } from 'immutable';
 import { compose, withHandlers, withProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import ModelAutoComplete from 'ui/containers/ModelAutoComplete';
-import MergePersonaButton from 'ui/containers/MergePersonaButton';
+import PersonaMergeButton from 'ui/containers/Personas/PersonaMergeButton';
 import PersonaIdentifiers from 'ui/containers/Personas/PersonaIdentifiers';
 
 const searchStringToFilter = (searchString) => {
@@ -36,7 +36,7 @@ const render = ({ id, hasMetadata, getMetadata, handleMergeTargetChange }) => {
       <form>
         <div className="form-group">
           <span className="control-label">
-            Merge persona identifiers from
+            Merge identifiers and attributes from
           </span>
           <ModelAutoComplete
             filter={fromJS({
@@ -51,7 +51,7 @@ const render = ({ id, hasMetadata, getMetadata, handleMergeTargetChange }) => {
             onChange={handleMergeTargetChange} />
         </div>
       </form>
-      {hasTarget && <MergePersonaButton id={id} />}
+      {hasTarget && <PersonaMergeButton id={id} />}
       {hasTarget && <PersonaIdentifiers personaId={mergeTargetId} />}
     </div>
   );
