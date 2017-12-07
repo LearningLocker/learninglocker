@@ -45,7 +45,7 @@ const renderChangingAttribute = ({
           onChange={(e) => setAttributeValue(e.target.value)}
           placeholder="value"
           onKeyDown={handleEnterSave}
-          className={classNames(styles.input, 'form-control')} />
+          className="form-control" />
       </td>
       <td className={classNames(styles.td, styles.actions)}>
         <SaveIconButton onClick={handleSave} />

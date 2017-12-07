@@ -30,7 +30,7 @@ const renderIdentifierTypeEditor = ({ value, onChange, handleKeyDown, refValueIn
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder="Identifier Value"
-      className={classNames(styles.input, 'form-control')}
+      className="form-control"
       onKeyDown={handleKeyDown}
       ref={refValueInput} />
   );

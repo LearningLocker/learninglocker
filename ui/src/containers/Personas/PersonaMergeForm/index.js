@@ -1,10 +1,10 @@
 import React from 'react';
 import { fromJS, Map } from 'immutable';
-import { compose, withHandlers } from 'recompose';
+import { compose, withHandlers, withProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
-import PersonaIdentifiers from 'ui/containers/PersonaIdentifiers';
 import ModelAutoComplete from 'ui/containers/ModelAutoComplete';
 import MergePersonaButton from 'ui/containers/MergePersonaButton';
+import PersonaIdentifiers from 'ui/containers/Personas/PersonaIdentifiers';
 
 const searchStringToFilter = (searchString) => {
   switch (searchString) {
@@ -18,6 +18,7 @@ const searchStringToFilter = (searchString) => {
 const sort = new Map({ name: 1, _id: 1 });
 
 const enhance = compose(
+  withProps({ schema: 'persona' }),
   withModel,
   withHandlers({
     handleMergeTargetChange: ({ setMetadata }) => (persona) => {

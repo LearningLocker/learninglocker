@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import React, { Component, PropTypes } from 'react';
 import { compose, setPropTypes, defaultProps } from 'recompose';
-import styles from './styles.css'
+import styles from './styles.css';
 
 const enhanceIconButton = compose(
   setPropTypes({

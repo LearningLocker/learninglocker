@@ -9,12 +9,11 @@ import { Map, List } from 'immutable';
 import { modelsSchemaIdSelector } from 'ui/redux/selectors';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-
-import ColumnHeaderEditor from 'ui/containers/PersonasImports/columnHeaderEditor';
 import {
   importPersonas
 } from 'ui/redux/modules/persona';
 import ValidationList from 'ui/components/ValidationList';
+import ColumnHeaderEditor from '../columnHeaderEditor';
 
 const schema = 'personasImport';
 
@@ -23,10 +22,10 @@ const handlers = withHandlers({
     model,
     importPersonas: doImportPersonas
   }) => () => {
-    doImportPersonas({
-      id: model.get('_id')
-    });
-  }
+      doImportPersonas({
+        id: model.get('_id')
+      });
+    }
 });
 
 
@@ -81,4 +80,4 @@ export default compose(
   handlers
 )(
   ConfigureUploadComponent
-);
+  );

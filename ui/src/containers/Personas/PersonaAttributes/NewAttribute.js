@@ -43,7 +43,7 @@ const renderNewAttribute = ({
           value={attributeKey}
           onChange={(e) => setAttributeKey(e.target.value)}
           placeholder="Attribute Name"
-          className={classNames(styles.input, 'form-control')}
+          className="form-control"
           onKeyDown={handleEnterSave}
           ref={(input) => {
             keyRef = input;

@@ -1,8 +1,8 @@
 import React from 'react';
 import { compose, withHandlers, withProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
-import IntialUploadForm from 'ui/containers/PersonasImports/stages/InitialUpload';
-import ConfigureUpload from 'ui/containers/PersonasImports/stages/ConfigureUpload';
+import IntialUploadForm from 'ui/containers/Personas/PersonasImports/stages/InitialUpload';
+import ConfigureUpload from 'ui/containers/Personas/PersonasImports/stages/ConfigureUpload';
 import moment from 'moment';
 
 import {
@@ -48,7 +48,7 @@ export const PersonasImportFormComponent = ({
         className="configureUpload"
         model={model} />
     }
-    { model.get('importStage') === STAGE_IMPORTED &&
+    {model.get('importStage') === STAGE_IMPORTED &&
       <div className="stageImported">
         <ConfigureUpload
           className="configureUpload"

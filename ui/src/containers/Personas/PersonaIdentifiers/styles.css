@@ -18,6 +18,6 @@
   width: 16%
 }
 
-.input {
-  width: 100%;
+.key {
+  font-weight: bold;
 }

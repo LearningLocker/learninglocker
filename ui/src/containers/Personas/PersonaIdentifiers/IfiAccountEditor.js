@@ -40,14 +40,14 @@ const renderIdentifierTypeEditor = ({
         value={value.get('homePage')}
         onChange={(e) => onChange(value.set('homePage', e.target.value))}
         placeholder="Home Page"
-        className={classNames(styles.input, 'form-control')}
+        className="form-control"
         onKeyDown={handleEnterSave}
         ref={refHomePageInput} />
       <input
         value={value.get('name')}
         onChange={(e) => onChange(value.set('name', e.target.value))}
         placeholder="Name"
-        className={classNames(styles.input, 'form-control')}
+        className="form-control"
         onKeyDown={handleEnterSave}
         ref={refNameInput} />
     </div>
