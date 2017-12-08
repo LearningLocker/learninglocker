@@ -1,4 +1,3 @@
-import { getConnection } from 'lib/connections/mongoose';
 import logger from 'lib/logger';
 import personasService from 'personas/dist/service';
 
