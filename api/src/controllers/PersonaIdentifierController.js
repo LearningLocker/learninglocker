@@ -13,7 +13,6 @@ import {
   isUndefined,
   omitBy,
 } from 'lodash';
-import { identifer } from 'ui/src/utils/schemas';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -77,8 +76,14 @@ const addPersonaIdentifier = catchErrors(async (req, res) => {
     organisation: getOrgFromAuthInfo(authInfo),
     persona: req.body.persona,
   });
+  return res.status(200).send(identifier);
 });
 
+/**
+ * Upsert a personaIdentifier
+ * Creates if does not exist and assigns to new persona
+ * Updates
+ */
 const upsertPersonaIdentifier = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
@@ -108,20 +113,12 @@ const upsertPersonaIdentifier = catchErrors(async (req, res) => {
     }
   }
 
-  const { identifier } = await req.personaService.createIdentifier({
+  // otherwise update the identifier's persona
+  const { identifier } = await req.personaService.overwriteIdentifier({
     ifi: req.body.ifi,
     organisation: getOrgFromAuthInfo(authInfo),
-    persona: req.body.persona
+    persona: toPersona
   });
-  // if the identifier exists and we want to update the persona
-  if (identifer.persona !== toPersona) {
-    const { identifier: updatedIdentifier } = await req.personaService.setIdentifierPersona({
-      organisation: getOrgFromAuthInfo(authInfo),
-      id: req.params.personaIdentifierId,
-      persona: toPersona
-    });
-    return res.status(200).send(updatedIdentifier);
-  }
   return res.status(200).send(identifier);
 });
 
@@ -159,6 +156,10 @@ const getPersonaIdentifiers = catchErrors(async (req, res) => {
   return res.status(200).send(identifiers);
 });
 
+/**
+ * Update the personaIdentifier
+ * Only the persona can be changed via this method
+ */
 const updatePersonaIdentifier = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
