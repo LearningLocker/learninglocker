@@ -32,7 +32,7 @@ export default (res, err) => {
     });
   }
   if (err instanceof PersonaConflict) {
-    return res.status(404).send({
+    return res.status(400).send({
       errorId,
       message: 'This model already exists'
     });
