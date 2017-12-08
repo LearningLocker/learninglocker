@@ -5,7 +5,7 @@ import UnauthorisedQueryError from 'lib/errors/UnauthorisedQueryError';
 import InvalidRecalc from 'lib/errors/InvalidRecalc';
 import BaseError from 'lib/errors/BaseError';
 import logger from 'lib/logger';
-import defaultTo from 'lodash/defaulTo';
+import defaultTo from 'lodash/defaultTo';
 import EmptyCsvError from 'lib/errors/EmptyCsvError';
 import DuplicateCsvHeadersError from 'lib/errors/DuplicateCsvHeadersError';
 import { v4 as uuid } from 'uuid';
