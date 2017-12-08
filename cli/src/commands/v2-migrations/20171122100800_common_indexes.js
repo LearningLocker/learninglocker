@@ -9,7 +9,7 @@ const createIndex = (collection, name, index, opts = {}) => {
 const createUnique = (collection, name, index, opts = {}) =>
   createIndex(collection, name, index, { unique: true, ...opts });
 
-const createStatementIndexes = connection => {
+const createStatementIndexes = (connection) => {
   const stmts = connection.collection('statements');
 
   const objectIdIndex = { 'statement.object.id': 1 };
@@ -42,12 +42,12 @@ const createStatementIndexes = connection => {
   createUnique(stmts, 'org_lrs_hash', { organisation: 1, lrs_id: 1, hash: 1 });
 };
 
-const createClientIndexes = connection => {
+const createClientIndexes = (connection) => {
   const clients = connection.collection('client');
   createUnique(clients, 'apiKey_apiSecret', { 'api.basic_key': 1, 'api.basic_secret': 1 });
 };
 
-const createActivityIndexes = connection => {
+const createActivityIndexes = (connection) => {
   const fullActivities = connection.collection('fullActivities');
   const activityIndex = { organisationId: 1, lrsId: 1, activityId: 1 };
   createUnique(fullActivities, 'orgId_lrsId_activityId', activityIndex);
