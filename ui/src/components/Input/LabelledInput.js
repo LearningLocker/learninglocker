@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { compose, setPropTypes, defaultProps } from 'recompose';
 import { v4 as uuid } from 'uuid';
+import Input from './Input';
 
 const enhance = compose(
   setPropTypes({
@@ -15,16 +16,11 @@ const enhance = compose(
 );
 
 const render = ({ label, value, onChange, placeholder }) => {
-  const htmlFor = uuid();
+  const inputId = uuid();
   return (
     <div className="form-group">
-      <label htmlFor={htmlFor} className="control-label">{label}</label>
-      <input
-        id={htmlFor}
-        className="form-control"
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange} />
+      <label htmlFor={inputId} className="control-label">{label}</label>
+      <Input id={inputId} placeholder={placeholder} value={value} onChange={onChange} />
     </div>
   );
 };

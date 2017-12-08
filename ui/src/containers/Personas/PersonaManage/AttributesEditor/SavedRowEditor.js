@@ -7,9 +7,10 @@ import { compose, withState, withProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import SaveIconButton from 'ui/components/IconButton/SaveIconButton';
 import CancelIconButton from 'ui/components/IconButton/CancelIconButton';
-import styles from './styles.css';
+import Input from 'ui/components/Input/Input';
+import styles from '../styles.css';
 
-const enhanceChangingAttribute = compose(
+const enhance = compose(
   withProps({ schema: 'personaAttribute' }),
   withModel,
   withState('attributeValue', 'setAttributeValue', ({ model }) => {
@@ -18,43 +19,37 @@ const enhanceChangingAttribute = compose(
   withStyles(styles)
 );
 
-const renderChangingAttribute = ({
+const render = ({
   model,
   setMetadata,
   attributeValue,
   setAttributeValue,
   saveModel,
 }) => {
+  const key = model.get('key', '');
   const handleSave = () => {
     saveModel({ attrs: new Map({ value: attributeValue }) });
     setMetadata('isChanging', false);
   };
-  const handleEnterSave = (e) => {
-    if (e.keyCode === 13) {
-      handleSave();
-    }
+  const handleCancelEdit = () => {
+    setMetadata('isChanging', false);
   };
   return (
     <tr>
+      <td className={styles.td}>{key}</td>
       <td className={styles.td}>
-        {model.get('key', '')}
-      </td>
-      <td className={styles.td}>
-        <input
+        <Input
           value={attributeValue}
-          onChange={(e) => setAttributeValue(e.target.value)}
           placeholder="value"
-          onKeyDown={handleEnterSave}
-          className="form-control" />
+          onChange={setAttributeValue}
+          onSubmit={handleSave} />
       </td>
       <td className={classNames(styles.td, styles.actions)}>
         <SaveIconButton onClick={handleSave} />
-        <CancelIconButton onClick={() => {
-          setMetadata('isChanging', false);
-        }} />
+        <CancelIconButton onClick={handleCancelEdit} />
       </td>
     </tr>
   );
 };
 
-export default enhanceChangingAttribute(renderChangingAttribute);
+export default enhance(render);

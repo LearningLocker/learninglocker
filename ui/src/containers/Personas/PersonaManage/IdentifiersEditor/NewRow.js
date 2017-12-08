@@ -2,63 +2,29 @@ import React, { PropTypes } from 'react';
 import { Map } from 'immutable';
 import classNames from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { compose, setPropTypes, withState, withHandlers } from 'recompose';
+import { compose, setPropTypes, withState } from 'recompose';
 import AddIconButton from 'ui/components/IconButton/AddIconButton';
 import CancelIconButton from 'ui/components/IconButton/CancelIconButton';
-import styles from './styles.css';
+import styles from '../styles.css';
 import TypeEditor from './TypeEditor';
-import IfiEditor from './IfiEditor';
+import IfiEditor from '../IfiEditor';
 
-const enhanceNewIdentifier = compose(
+const enhance = compose(
   setPropTypes({
     onAdd: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
   }),
   withState('identifierType', 'setIdentifierType', 'mbox'),
   withState('identifierValue', 'setIdentifierValue', ''),
-  withHandlers({
-    handleAdd: ({
-      onAdd,
-      identifierType,
-      identifierValue,
-      setIdentifierValue,
-    }) => () => {
-        onAdd(identifierType, identifierValue);
-        if (identifierType === 'account') {
-          setIdentifierValue(new Map({
-            homePage: '',
-            name: '',
-          }));
-        } else {
-          setIdentifierValue('');
-        }
-      },
-    handleTypeChange: ({
-      identifierType,
-      identifierValue,
-      setIdentifierType,
-      setIdentifierValue,
-    }) => (type) => {
-        if (type === 'account') {
-          setIdentifierValue(new Map({
-            homePage: '',
-            name: identifierValue,
-          }));
-        } else if (identifierType === 'account') {
-          setIdentifierValue(identifierValue.get('name'));
-        }
-        setIdentifierType(type);
-      },
-  }),
   withStyles(styles),
 );
 
-const renderNewIdentifier = ({
-  identifierType,
+const render = ({
   identifierValue,
-  handleTypeChange,
+  identifierType,
   setIdentifierValue,
-  handleAdd,
+  setIdentifierType,
+  onAdd,
   onCancel,
 }) => {
   let firstInputRef = null;
@@ -66,13 +32,33 @@ const renderNewIdentifier = ({
     firstInputRef.focus();
     handleAdd();
   };
+  const handleTypeChange = (type) => {
+    if (type === 'account') {
+      setIdentifierValue(new Map({
+        homePage: '',
+        name: identifierValue,
+      }));
+    } else if (identifierType === 'account') {
+      setIdentifierValue(identifierValue.get('name'));
+    }
+    setIdentifierType(type);
+    firstInputRef.focus();
+  };
+  const handleAdd = () => {
+    onAdd(identifierType, identifierValue);
+    if (identifierType === 'account') {
+      setIdentifierValue(new Map({
+        homePage: '',
+        name: '',
+      }));
+    } else {
+      setIdentifierValue('');
+    }
+  };
   return (
     <tr>
       <td className={styles.td}>
-        <TypeEditor value={identifierType} onChange={(type) => {
-          handleTypeChange(type);
-          firstInputRef.focus();
-        }} />
+        <TypeEditor value={identifierType} onChange={handleTypeChange} />
       </td>
       <td className={styles.td}>
         <IfiEditor
@@ -92,4 +78,4 @@ const renderNewIdentifier = ({
   );
 };
 
-export default enhanceNewIdentifier(renderNewIdentifier);
+export default enhance(render);

@@ -3,7 +3,7 @@ import { compose, setPropTypes, defaultProps } from 'recompose';
 import IfiAccountEditor from './IfiAccountEditor';
 import IfiValueEditor from './IfiValueEditor';
 
-const enhanceIfiEditor = compose(
+const enhance = compose(
   setPropTypes({
     identifierType: PropTypes.oneOf(['mbox', 'mbox_sha1sum', 'openid', 'account']).isRequired,
     value: PropTypes.any.isRequired,
@@ -16,7 +16,7 @@ const enhanceIfiEditor = compose(
   })
 );
 
-const renderIfiEditor = ({ identifierType, value, onChange, onSave, refFirstInput }) => {
+const render = ({ identifierType, value, onChange, onSave, refFirstInput }) => {
   return (identifierType === 'account'
     ? (
       <IfiAccountEditor
@@ -35,4 +35,4 @@ const renderIfiEditor = ({ identifierType, value, onChange, onSave, refFirstInpu
   );
 };
 
-export default enhanceIfiEditor(renderIfiEditor);
+export default enhance(render);

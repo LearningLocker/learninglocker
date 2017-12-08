@@ -9,10 +9,10 @@ import {
 import { withModels } from 'ui/utils/hocs';
 import { addModel } from 'ui/redux/modules/models';
 import { routeNodeSelector } from 'redux-router5';
-import PersonaView from 'ui/containers/Personas/PersonaView';
 import ModelList from 'ui/containers/ModelList';
 import DeleteButton from 'ui/containers/DeleteButton';
 import SearchBox from 'ui/containers/SearchBox';
+import PersonaView from './PersonaView';
 
 const schema = 'persona';
 const PersonaList = compose(

@@ -5,38 +5,16 @@ import { compose, withProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import IconButton from 'ui/components/IconButton/IconButton';
 import DeleteIconButton from 'ui/components/IconButton/DeleteIconButton';
-import styles from './styles.css';
+import styles from '../styles.css';
+import IfiViewer from '../IfiViewer';
 
-const enhanceSavedIdentifier = compose(
+const enhance = compose(
   withProps({ schema: 'personaIdentifier' }),
   withModel,
   withStyles(styles)
 );
 
-const renderAccountValue = ({ identifierValue }) => {
-  return (
-    <div>
-      <div>
-        <span className={styles.key}>Home Page: </span>
-        <span className={styles.value}>{identifierValue.get('homePage')}</span>
-      </div>
-      <div>
-        <span className={styles.key}>Name: </span>
-        <span className={styles.value}>{identifierValue.get('name')}</span>
-      </div>
-    </div>
-  );
-};
-
-const renderValue = ({ identifierValue, identifierType }) => {
-  if (identifierType === 'account') {
-    return renderAccountValue({ identifierValue });
-  } else {
-    return identifierValue;
-  }
-};
-
-const renderSavedIdentifier = ({ model, deleteModel }) => {
+const render = ({ model, deleteModel }) => {
   const identifierType = model.getIn(['ifi', 'key']);
   const identifierValue = model.getIn(['ifi', 'value']);
   return (
@@ -45,7 +23,7 @@ const renderSavedIdentifier = ({ model, deleteModel }) => {
         {identifierType}
       </td>
       <td className={styles.td}>
-        {renderValue({ identifierValue, identifierType })}
+        <IfiViewer identifierType={identifierType} identifierValue={identifierValue} />
       </td>
       <td className={classNames(styles.td, styles.actions)}>
         <IconButton
@@ -62,4 +40,4 @@ const renderSavedIdentifier = ({ model, deleteModel }) => {
   );
 };
 
-export default enhanceSavedIdentifier(renderSavedIdentifier);
+export default enhance(render);

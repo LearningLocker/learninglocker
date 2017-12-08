@@ -4,9 +4,10 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, setPropTypes, withState } from 'recompose';
 import AddIconButton from 'ui/components/IconButton/AddIconButton';
 import CancelIconButton from 'ui/components/IconButton/CancelIconButton';
-import styles from './styles.css';
+import Input from 'ui/components/Input/Input';
+import styles from '../styles.css';
 
-const enhanceNewAttribute = compose(
+const enhance = compose(
   setPropTypes({
     onAdd: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
@@ -16,7 +17,7 @@ const enhanceNewAttribute = compose(
   withStyles(styles)
 );
 
-const renderNewAttribute = ({
+const render = ({
   attributeKey,
   attributeValue,
   setAttributeKey,
@@ -31,31 +32,24 @@ const renderNewAttribute = ({
     setAttributeKey('');
     setAttributeValue('');
   };
-  const handleEnterSave = (e) => {
-    if (e.keyCode === 13) {
-      handleAdd();
-    }
-  };
   return (
     <tr>
       <td className={styles.td}>
-        <input
+        <Input
           value={attributeKey}
-          onChange={(e) => setAttributeKey(e.target.value)}
           placeholder="Attribute Name"
-          className="form-control"
-          onKeyDown={handleEnterSave}
-          ref={(input) => {
+          onChange={setAttributeKey}
+          onSubmit={handleAdd}
+          inputRef={(input) => {
             keyRef = input;
           }} />
       </td>
       <td className={styles.td}>
-        <input
+        <Input
           value={attributeValue}
-          onChange={(e) => setAttributeValue(e.target.value)}
-          onKeyDown={handleEnterSave}
           placeholder="Attribute Value"
-          className={classNames(styles.input, 'form-control')} />
+          onChange={setAttributeValue}
+          onSubmit={handleAdd} />
       </td>
       <td className={classNames(styles.td, styles.actions)}>
         <AddIconButton onClick={handleAdd} />
@@ -65,4 +59,4 @@ const renderNewAttribute = ({
   );
 };
 
-export default enhanceNewAttribute(renderNewAttribute);
+export default enhance(render);

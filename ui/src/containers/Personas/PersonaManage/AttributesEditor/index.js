@@ -5,11 +5,11 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withProps, setPropTypes, withState } from 'recompose';
 import { withModels } from 'ui/utils/hocs';
 import AddTextIconButton from 'ui/components/TextIconButton/AddTextIconButton';
-import styles from './styles.css';
-import NewAttribute from './NewAttribute';
-import ExistingAttribute from './ExistingAttribute';
+import styles from '../styles.css';
+import NewRow from './NewRow';
+import SavedRow from './SavedRow';
 
-const enhancePersonaAttributes = compose(
+const enhance = compose(
   setPropTypes({
     personaId: PropTypes.string.isRequired,
   }),
@@ -24,39 +24,42 @@ const enhancePersonaAttributes = compose(
   withStyles(styles)
 );
 
-const renderPersonaAttributes = ({
+const render = ({
   personaId,
   models,
   isNewAttributeVisible,
   changeNewAttributeVisibility,
   addModel,
 }) => {
+  const handleNewRowAdd = (key, value) => {
+    const props = new Map({ key, value, personaId });
+    addModel({ props });
+  };
+  const handleNewRowCancel = () => {
+    changeNewAttributeVisibility(false);
+  };
+  const handleShowNewRow = () => {
+    changeNewAttributeVisibility(true)
+  };
   return (
     <div>
       <div className={styles.buttons}>
-        <AddTextIconButton text="Add Attribute" onClick={() => changeNewAttributeVisibility(true)} />
+        <AddTextIconButton text="Add Attribute" onClick={handleShowNewRow} />
       </div>
       <table className={styles.table}>
         <thead>
           <tr>
-            <th className={styles.td}>Attribute Name</th>
-            <th className={styles.td}>Attribute Value</th>
+            <th className={styles.td}>Name</th>
+            <th className={styles.td}>Value</th>
             <th className={classNames(styles.td, styles.actions)}>Actions</th>
           </tr>
         </thead>
         <tbody>
           {!isNewAttributeVisible ? null : (
-            <NewAttribute
-              onAdd={(key, value) => {
-                const props = new Map({ key, value, personaId });
-                addModel({ props });
-              }}
-              onCancel={() => {
-                changeNewAttributeVisibility(false)
-              }} />
+            <NewRow onAdd={handleNewRowAdd} onCancel={handleNewRowCancel} />
           )}
           {models.map((model) => {
-            return <ExistingAttribute id={model.get('_id')} />;
+            return <SavedRow id={model.get('_id')} />;
           }).valueSeq()}
         </tbody>
       </table>
@@ -64,4 +67,4 @@ const renderPersonaAttributes = ({
   );
 };
 
-export default enhancePersonaAttributes(renderPersonaAttributes);
+export default enhance(render);

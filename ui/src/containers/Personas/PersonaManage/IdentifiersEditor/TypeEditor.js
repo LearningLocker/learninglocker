@@ -1,14 +1,14 @@
 import React, { PropTypes } from 'react';
 import { compose, setPropTypes } from 'recompose';
 
-const enhanceIdentifierTypeEditor = compose(
+const enhance = compose(
   setPropTypes({
     value: PropTypes.oneOf(['mbox', 'mbox_sha1sum', 'openid', 'account']).isRequired,
     onChange: PropTypes.func.isRequired,
   }),
 );
 
-const renderIdentifierTypeEditor = ({ value, onChange }) => {
+const render = ({ value, onChange }) => {
   return (
     <select
       className="form-control"
@@ -22,4 +22,4 @@ const renderIdentifierTypeEditor = ({ value, onChange }) => {
   );
 };
 
-export default enhanceIdentifierTypeEditor(renderIdentifierTypeEditor);
+export default enhance(render);

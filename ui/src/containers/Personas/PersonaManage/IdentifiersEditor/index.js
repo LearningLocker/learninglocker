@@ -5,11 +5,11 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withProps, setPropTypes, withState } from 'recompose';
 import { withModels } from 'ui/utils/hocs';
 import AddTextIconButton from 'ui/components/TextIconButton/AddTextIconButton';
-import styles from './styles.css';
-import NewIdentifier from './NewIdentifier';
-import ExistingIdentifier from './ExistingIdentifier';
+import styles from '../styles.css';
+import NewRow from './NewRow';
+import SavedRow from './SavedRow';
 
-const enhancePersonaIdentifiers = compose(
+const enhance = compose(
   setPropTypes({
     personaId: PropTypes.string.isRequired,
   }),
@@ -24,13 +24,23 @@ const enhancePersonaIdentifiers = compose(
   withStyles(styles)
 );
 
-const renderPersonaIdentifiers = ({
+const render = ({
   personaId,
   models,
   isNewIdentifierVisible,
   changeNewIdentifierVisibility,
   addModel,
 }) => {
+  const handleNewRowAdd = (key, value) => {
+    const props = new Map({
+      ifi: new Map({ key, value }),
+      persona: personaId,
+    });
+    addModel({ props });
+  };
+  const handleNewRowCancel = () => {
+    changeNewIdentifierVisibility(false);
+  };
   return (
     <div>
       <div className={styles.buttons}>
@@ -41,27 +51,17 @@ const renderPersonaIdentifiers = ({
       <table className={styles.table}>
         <thead>
           <tr>
-            <th className={styles.td}>Identifier Type</th>
-            <th className={styles.td}>Identifier Value</th>
+            <th className={styles.td}>Type</th>
+            <th className={styles.td}>Value</th>
             <th className={classNames(styles.td, styles.actions)}>Actions</th>
           </tr>
         </thead>
         <tbody>
           {!isNewIdentifierVisible ? null : (
-            <NewIdentifier
-              onAdd={(key, value) => {
-                const props = new Map({
-                  ifi: new Map({ key, value }),
-                  persona: personaId,
-                });
-                addModel({ props });
-              }}
-              onCancel={() => {
-                changeNewIdentifierVisibility(false)
-              }} />
+            <NewRow onAdd={handleNewRowAdd} onCancel={handleNewRowCancel} />
           )}
           {models.map((model) => {
-            return <ExistingIdentifier id={model.get('_id')} />;
+            return <SavedRow id={model.get('_id')} />;
           }).valueSeq()}
         </tbody>
       </table>
@@ -69,4 +69,4 @@ const renderPersonaIdentifiers = ({
   );
 };
 
-export default enhancePersonaIdentifiers(renderPersonaIdentifiers);
+export default enhance(render);

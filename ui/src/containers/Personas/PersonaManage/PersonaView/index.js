@@ -5,10 +5,10 @@ import { Map } from 'immutable';
 import Tabs from 'ui/components/Material/Tabs';
 import { Tab } from 'react-toolbox/lib/tabs';
 import { withModel } from 'ui/utils/hocs';
-import PersonaMergeForm from 'ui/containers/Personas/PersonaMergeForm';
-import PersonaIdentifiers from 'ui/containers/Personas/PersonaIdentifiers';
-import PersonaAttributes from 'ui/containers/Personas/PersonaAttributes';
 import LabelledInput from 'ui/components/Input/LabelledInput';
+import MergeForm from '../MergeForm';
+import IdentifiersEditor from '../IdentifiersEditor';
+import AttributesEditor from '../AttributesEditor';
 
 const enhance = compose(
   setPropTypes({
@@ -33,20 +33,20 @@ const render = ({ model, getMetadata, activeTab, setActiveTab, updateModel }) =>
   };
 
   if (showMergeForm) {
-    return <PersonaMergeForm id={model.get('_id')} />
+    return <MergeForm id={model.get('_id')} />
   } else {
     return (
       <div>
         <LabelledInput label="Name" value={name} onChange={handleNameChange} />
         <Tabs index={activeTab} onChange={setActiveTab}>
           <Tab label="Identifiers">
-            <PersonaIdentifiers personaId={model.get('_id')} />
+            <IdentifiersEditor personaId={model.get('_id')} />
           </Tab>
           <Tab label="Attributes">
-            <PersonaAttributes personaId={model.get('_id')} />
+            <AttributesEditor personaId={model.get('_id')} />
           </Tab>
           <Tab label="Merge">
-            <PersonaMergeForm id={model.get('_id')} />
+            <MergeForm id={model.get('_id')} />
           </Tab>
         </Tabs>
       </div>

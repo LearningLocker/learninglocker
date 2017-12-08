@@ -6,18 +6,18 @@ import { compose, setPropTypes, withProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import SaveIconButton from 'ui/components/IconButton/SaveIconButton';
 import DeleteIconButton from 'ui/components/IconButton/DeleteIconButton';
-import styles from './styles.css';
-import ChangingAttribute from './ChangingAttribute';
-import SavedAttribute from './SavedAttribute';
+import styles from '../styles.css';
+import SavedRowEditor from './SavedRowEditor';
+import SavedRowViewer from './SavedRowViewer';
 
-const enhanceExistingAttribute = compose(
+const enhance = compose(
   withProps({ schema: 'personaAttribute' }),
   withModel
 );
 
-const renderExistingAttribute = ({ id, getMetadata, setMetadata }) => {
+const render = ({ id, getMetadata, setMetadata }) => {
   const isChanging = getMetadata('isChanging', false);
-  return isChanging ? <ChangingAttribute id={id} /> : <SavedAttribute id={id} />;
+  return isChanging ? <SavedRowEditor id={id} /> : <SavedRowViewer id={id} />;
 };
 
-export default enhanceExistingAttribute(renderExistingAttribute);
+export default enhance(render);
