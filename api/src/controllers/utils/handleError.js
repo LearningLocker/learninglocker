@@ -11,7 +11,7 @@ import EmptyCsvError from 'lib/errors/EmptyCsvError';
 import DuplicateCsvHeadersError from 'lib/errors/DuplicateCsvHeadersError';
 
 import PersonaConflict from 'personas/dist/errors/Conflict';
-import PersonaNoModel from 'personas/dist/errors/NoModel';
+import NoModel from 'jscommons/dist/errors/NoModel';
 import PersonaNoModelWithId from 'personas/dist/errors/NoModelWithId';
 
 export default (res, err) => {
@@ -22,7 +22,7 @@ export default (res, err) => {
   if (err instanceof PersonaNoModelWithId) {
     return res.status(404).send(`No model found for ${err.modelName} with id ${err.id}`);
   }
-  if (err instanceof PersonaNoModel) {
+  if (err instanceof NoModel) {
     return res.status(404).send(`No model found for ${err.modelName}`);
   }
   if (err instanceof PersonaConflict) {
