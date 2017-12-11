@@ -10,6 +10,7 @@ import Locked from 'personas/dist/errors/Locked';
 import { MAX_TIME_MS, MAX_SCAN } from 'lib/models/plugins/addCRUDFunctions';
 import parseQuery from 'lib/helpers/parseQuery';
 import asignIdentifierToStatements from 'lib/services/persona/asignIdentifierToStatements';
+import identifierHasStatement from 'lib/services/persona/identifierHasStatement';
 import {
   isUndefined,
   omitBy,
@@ -207,9 +208,17 @@ const deletePersonaIdentifier = catchErrors(async (req, res) => {
     authInfo
   });
 
+  const organisation = getOrgFromAuthInfo(authInfo);
+  const identifierId = req.params.personaIdentifierId;
+
+  const hasStatement = identifierHasStatement({ organisation, identifierId });
+  if (hasStatement) {
+    throw new Error('Cannot remove personaIdentifier; statements exists in LRS with ifi');
+  }
+
   await req.personaService.deletePersonaIdentifier({
-    organisation: getOrgFromAuthInfo(authInfo),
-    id: req.params.personaIdentifierId
+    organisation,
+    id: identifierId
   });
 
   return res.status(200).send();
