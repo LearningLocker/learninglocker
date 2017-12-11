@@ -46,15 +46,15 @@ class LLSchema extends Schema {
   }
 }
 
-const user = new LLSchema('user', { idAttribute: () => '_id', sortKey: 'updatedAt' }, {
+const user = new LLSchema('user', { idAttribute: '_id', sortKey: 'updatedAt' }, {
   preSave: model =>
     model.update('organisationSettings', new List(), orgSettings =>
       orgSettings.map(orgSetting =>
         orgSetting.update('filter', new Map({}), filter =>
           (
             filter.size > 0
-            ? JSON.stringify(filter.toJS())
-            : JSON.stringify(filter)
+              ? JSON.stringify(filter.toJS())
+              : JSON.stringify(filter)
           )
         )
       )
@@ -90,13 +90,13 @@ const visualisation = new LLSchema('visualisation', { idAttribute: '_id', sortKe
         query => JSON.stringify(query.toJS())
       )
     ).update('axes', new Map(), axes => JSON.stringify(axes.toJS()))
-    .merge(
+      .merge(
       model
         .filter((item, key) => key.startsWith('axes') && includes(axesToJsList, key))
         .map(item =>
           JSON.stringify(item ? item.toJS() : null)
         )
-    ),
+      ),
 
   reviver: (key, value) => {
     const isIndexed = Iterable.isIndexed(value); // From default reviver.
@@ -165,7 +165,7 @@ const query = new LLSchema('query', { idAttribute: '_id', sortKey: 'updatedAt' }
     conditions => (conditions.size > 0
       ? JSON.stringify(conditions.toJS())
       : JSON.stringify(conditions)
-  ))
+    ))
 });
 const identifer = new LLSchema('identifer', { idAttribute: '_id' });
 const personaIdentifier = new LLSchema('personaIdentifier',
@@ -197,8 +197,8 @@ const importcsv = new LLSchema('importcsv', { idAttribute: '_id', sortKey: 'upda
 const client = new LLSchema('client', { idAttribute: '_id', sortKey: 'updatedAt' }, {
   preSave: model => model.update('authority', authority => (
     Map.isMap(authority) ?
-    JSON.stringify(authority.toJS()) :
-    undefined
+      JSON.stringify(authority.toJS()) :
+      undefined
   ))
 });
 
@@ -207,8 +207,8 @@ const dashboard = new LLSchema('dashboard', { idAttribute: '_id' }, {
     model.update('filter', new Map({}), filter =>
       (
         filter.size > 0
-        ? JSON.stringify(filter.toJS())
-        : JSON.stringify(filter)
+          ? JSON.stringify(filter.toJS())
+          : JSON.stringify(filter)
       )
     ),
   reviver: (key, value) => {
@@ -253,9 +253,11 @@ const querybuildercache = new LLSchema('querybuildercache', { idAttribute: '_id'
 
 const querybuildercachevalue = new LLSchema('querybuildercachevalue', { idAttribute: '_id' }, { editableFields: ['value'] });
 
-const aggregation = new LLSchema('aggregation', { idAttribute: model => (
-  isString(model._id) ? model._id : JSON.stringify(model._id)
-) });
+const aggregation = new LLSchema('aggregation', {
+  idAttribute: model => (
+    isString(model._id) ? model._id : JSON.stringify(model._id)
+  )
+});
 
 const role = new LLSchema('role', { idAttribute: '_id' });
 
