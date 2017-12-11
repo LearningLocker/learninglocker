@@ -9,6 +9,7 @@ import { CursorDirection } from 'personas/dist/service/constants';
 import Locked from 'personas/dist/errors/Locked';
 import { MAX_TIME_MS, MAX_SCAN } from 'lib/models/plugins/addCRUDFunctions';
 import parseQuery from 'lib/helpers/parseQuery';
+import asignIdentifierToStatements from 'lib/services/persona/asignIdentifierToStatements';
 import {
   isUndefined,
   omitBy,
@@ -71,13 +72,16 @@ const addPersonaIdentifier = catchErrors(async (req, res) => {
     authInfo
   });
 
+  const organisation = getOrgFromAuthInfo(authInfo);
+
   const { identifier } = await req.personaService.createIdentifier({
     ifi: req.body.ifi,
-    organisation: getOrgFromAuthInfo(authInfo),
+    organisation,
     persona: req.body.persona,
   });
 
-  // @todo: assign persona and personaIdentifier to statements
+  // assign persona and personaIdentifier to statements
+  asignIdentifierToStatements({ organisation, identifier });
 
   return res.status(200).send(identifier);
 });
@@ -96,17 +100,19 @@ const upsertPersonaIdentifier = catchErrors(async (req, res) => {
     authInfo
   });
 
+  const organisation = getOrgFromAuthInfo(authInfo);
   const toPersona = req.body.persona;
   if (!toPersona) {
     try {
       // if we had no persona, attempt to create an ident with a new persona
       const { identifier } = await req.personaService.createUpdateIdentifierPersona({
         ifi: req.body.ifi,
-        organisation: getOrgFromAuthInfo(authInfo),
-        personaName: req.body.ifi,
+        organisation,
+        personaName: JSON.stringify(req.body.ifi, null, 2),
       });
 
-      // @todo: assign persona and personaIdentifier to statements
+      // assign persona and personaIdentifier to statements
+      asignIdentifierToStatements({ organisation, identifier });
 
       return res.status(200).send(identifier);
     } catch (err) {
@@ -122,12 +128,12 @@ const upsertPersonaIdentifier = catchErrors(async (req, res) => {
   // otherwise update the identifier's persona
   const { identifier } = await req.personaService.overwriteIdentifier({
     ifi: req.body.ifi,
-    organisation: getOrgFromAuthInfo(authInfo),
+    organisation,
     persona: toPersona
   });
 
-
-  // @todo: assign persona and personaIdentifier to statements
+  // assign persona and personaIdentifier to statements
+  asignIdentifierToStatements({ organisation, identifier });
 
   return res.status(200).send(identifier);
 });
@@ -179,11 +185,15 @@ const updatePersonaIdentifier = catchErrors(async (req, res) => {
     authInfo
   });
 
+  const organisation = getOrgFromAuthInfo(authInfo);
   const { identifier } = await req.personaService.setIdentifierPersona({
-    organisation: getOrgFromAuthInfo(authInfo),
+    organisation,
     id: req.params.personaIdentifierId,
     persona: req.body.persona
   });
+
+  // assign persona and personaIdentifier to statements
+  asignIdentifierToStatements({ organisation, identifier });
 
   return res.status(200).send(identifier);
 });
