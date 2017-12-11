@@ -27,6 +27,11 @@ router.post(
   PersonaIdentifierController.addPersonaIdentifier
 );
 router.post(
+  routes.PERSONA_IDENTIFIER_UPSERT,
+  passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
+  PersonaIdentifierController.upsertPersonaIdentifier
+);
+router.post(
   routes.PERSONA_IDENTIFIER_ID,
   passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
   PersonaIdentifierController.updatePersonaIdentifier

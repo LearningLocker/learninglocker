@@ -10,6 +10,8 @@ import { CursorDirection } from 'personas/dist/service/constants';
 import { reasignPersonaStatements } from 'lib/services/persona';
 import { replaceId, replaceIds } from 'api/controllers/utils/replaceIds';
 
+const MODEL_NAME = 'persona';
+
 const personaConnection = catchErrors(async (req, res) => {
   const { before, after } = req.query;
 
@@ -20,8 +22,9 @@ const personaConnection = catchErrors(async (req, res) => {
   const last = getFromQuery(req, 'last', undefined, parseInt);
   const authInfo = getAuthFromRequest(req);
 
+
   const scopeFilter = await getScopeFilter({
-    modelName: 'personasImport',
+    modelName: MODEL_NAME,
     actionName: 'view',
     authInfo
   });
@@ -57,7 +60,7 @@ const updatePersona = catchErrors(async (req, res) => {
   const newName = req.body.name;
 
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: MODEL_NAME,
     actionName: 'edit',
     authInfo
   });
@@ -82,7 +85,7 @@ const mergePersona = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: MODEL_NAME,
     actionName: 'edit',
     authInfo
   });
@@ -106,8 +109,8 @@ const deletePersona = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
-    actionName: 'edit',
+    modelName: MODEL_NAME,
+    actionName: 'delete',
     authInfo
   });
 
@@ -122,8 +125,8 @@ const deletePersona = catchErrors(async (req, res) => {
 const addPersona = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
   await getScopeFilter({
-    modelName: 'persona',
-    actionName: 'edit',
+    modelName: MODEL_NAME,
+    actionName: 'create',
     authInfo
   });
 
@@ -138,7 +141,7 @@ const addPersona = catchErrors(async (req, res) => {
 const getPersona = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: MODEL_NAME,
     actionName: 'view',
     authInfo
   });
@@ -155,7 +158,7 @@ const getPersonas = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: MODEL_NAME,
     actionName: 'view',
     authInfo
   });
@@ -172,7 +175,7 @@ const personaCount = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   const scopeFilter = await getScopeFilter({
-    modelName: 'persona',
+    modelName: MODEL_NAME,
     actionName: 'view',
     authInfo
   });

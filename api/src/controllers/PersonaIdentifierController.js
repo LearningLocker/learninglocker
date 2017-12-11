@@ -6,6 +6,7 @@ import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAu
 import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import { CursorDirection } from 'personas/dist/service/constants';
+import Locked from 'personas/dist/errors/Locked';
 import { MAX_TIME_MS, MAX_SCAN } from 'lib/models/plugins/addCRUDFunctions';
 import parseQuery from 'lib/helpers/parseQuery';
 import {
@@ -15,6 +16,8 @@ import {
 import { replaceId, replaceIds } from 'api/controllers/utils/replaceIds';
 
 const objectId = mongoose.Types.ObjectId;
+
+const MODEL_NAME = 'personaIdentifier';
 
 const personaIdentifierConnection = catchErrors(async (req, res) => {
   const { before, after } = req.query;
@@ -27,7 +30,7 @@ const personaIdentifierConnection = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   const scopeFilter = await getScopeFilter({
-    modelName: 'persona',
+    modelName: MODEL_NAME,
     actionName: 'view',
     authInfo
   });
@@ -64,17 +67,59 @@ const addPersonaIdentifier = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
-    actionName: 'edit',
+    modelName: MODEL_NAME,
+    actionName: 'create',
     authInfo
   });
 
   const { identifier } = await req.personaService.createIdentifier({
     ifi: req.body.ifi,
     organisation: getOrgFromAuthInfo(authInfo),
-    persona: req.body.persona
+    persona: req.body.persona,
+  });
+  return res.status(200).send(identifier);
+});
+
+/**
+ * Upsert a personaIdentifier
+ * Creates if does not exist and assigns to new persona
+ * Updates
+ */
+const upsertPersonaIdentifier = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  await getScopeFilter({
+    modelName: MODEL_NAME,
+    actionName: 'create',
+    authInfo
   });
 
+  const toPersona = req.body.persona;
+  if (!toPersona) {
+    try {
+      // if we had no persona, attempt to create an ident with a new persona
+      const { identifier } = await req.personaService.createUpdateIdentifierPersona({
+        ifi: req.body.ifi,
+        organisation: getOrgFromAuthInfo(authInfo),
+        personaName: req.body.ifi,
+      });
+      return res.status(200).send(replaceId(identifier));
+    } catch (err) {
+      // if there was a lock then the ident already existed, so just return it
+      if (err instanceof Locked) {
+        return res.status(200).send(replaceId(err.identifier));
+      }
+      // throw any other error
+      throw err;
+    }
+  }
+
+  // otherwise update the identifier's persona
+  const { identifier } = await req.personaService.overwriteIdentifier({
+    ifi: req.body.ifi,
+    organisation: getOrgFromAuthInfo(authInfo),
+    persona: toPersona
+  });
   return res.status(200).send(replaceId(identifier));
 });
 
@@ -82,7 +127,7 @@ const getPersonaIdentifier = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: MODEL_NAME,
     actionName: 'view',
     authInfo
   });
@@ -99,7 +144,7 @@ const getPersonaIdentifiers = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
+    modelName: MODEL_NAME,
     actionName: 'view',
     authInfo
   });
@@ -112,19 +157,22 @@ const getPersonaIdentifiers = catchErrors(async (req, res) => {
   return res.status(200).send(replaceIds(identifiers));
 });
 
+/**
+ * Update the personaIdentifier
+ * Only the persona can be changed via this method
+ */
 const updatePersonaIdentifier = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
-    actionName: 'view',
+    modelName: MODEL_NAME,
+    actionName: 'edit',
     authInfo
   });
 
-  const { identifier } = await req.personaService.overwriteIdentifier({
+  const { identifier } = await req.personaService.setIdentifierPersona({
     organisation: getOrgFromAuthInfo(authInfo),
     id: req.params.personaIdentifierId,
-    ifi: req.body.ifi,
     persona: req.body.persona
   });
 
@@ -135,8 +183,8 @@ const deletePersonaIdentifier = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
-    modelName: 'persona',
-    actionName: 'edit',
+    modelName: MODEL_NAME,
+    actionName: 'delete',
     authInfo
   });
 
@@ -152,7 +200,7 @@ const personaIdentifierCount = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   const scopeFilter = await getScopeFilter({
-    modelName: 'persona',
+    modelName: MODEL_NAME,
     actionName: 'view',
     authInfo
   });
@@ -177,6 +225,7 @@ export default {
   getPersonaIdentifiers,
   updatePersonaIdentifier,
   addPersonaIdentifier,
+  upsertPersonaIdentifier,
   deletePersonaIdentifier,
   personaIdentifierCount,
   personaIdentifierConnection,

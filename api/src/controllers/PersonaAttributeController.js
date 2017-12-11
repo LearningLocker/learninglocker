@@ -68,7 +68,7 @@ const addPersonaAttribute = catchErrors(async (req, res) => {
 
   await getScopeFilter({
     modelName: MODEL_NAME,
-    actionName: 'edit',
+    actionName: 'create',
     authInfo
   });
 
@@ -99,7 +99,7 @@ const getPersonaAttribute = catchErrors(async (req, res) => {
 
   await getScopeFilter({
     modelName: MODEL_NAME,
-    actionName: 'viewAllScope',
+    actionName: 'view',
     authInfo
   });
 
@@ -150,7 +150,7 @@ const deletePersonaAttribute = catchErrors(async (req, res) => {
 
   await getScopeFilter({
     modelName: MODEL_NAME,
-    actionName: 'edit',
+    actionName: 'delete',
     authInfo
   });
 
