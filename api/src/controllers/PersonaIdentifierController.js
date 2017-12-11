@@ -76,6 +76,9 @@ const addPersonaIdentifier = catchErrors(async (req, res) => {
     organisation: getOrgFromAuthInfo(authInfo),
     persona: req.body.persona,
   });
+
+  // @todo: assign persona and personaIdentifier to statements
+
   return res.status(200).send(identifier);
 });
 
@@ -102,6 +105,9 @@ const upsertPersonaIdentifier = catchErrors(async (req, res) => {
         organisation: getOrgFromAuthInfo(authInfo),
         personaName: req.body.ifi,
       });
+
+      // @todo: assign persona and personaIdentifier to statements
+
       return res.status(200).send(identifier);
     } catch (err) {
       // if there was a lock then the ident already existed, so just return it
@@ -119,6 +125,10 @@ const upsertPersonaIdentifier = catchErrors(async (req, res) => {
     organisation: getOrgFromAuthInfo(authInfo),
     persona: toPersona
   });
+
+
+  // @todo: assign persona and personaIdentifier to statements
+
   return res.status(200).send(identifier);
 });
 
