@@ -28,8 +28,8 @@ const enhance = compose(
 const render = ({ model, getMetadata, activeTab, setActiveTab, updateModel }) => {
   const showMergeForm = getMetadata('isMergeFormVisible', false);
   const name = model.get('name') || '';
-  const handleNameChange = (e) => {
-    updateModel({ path: ['name'], value: e.target.value });
+  const handleNameChange = (value) => {
+    updateModel({ path: ['name'], value });
   };
 
   if (showMergeForm) {
