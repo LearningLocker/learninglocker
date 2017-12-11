@@ -7,19 +7,9 @@ import ModelAutoComplete from 'ui/containers/ModelAutoComplete';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import IdentifiersViewer from '../IdentifiersViewer';
 import AttributesViewer from '../AttributesViewer';
+import PersonaAutoComplete from '../PersonaAutoComplete';
 import MergeButton from './MergeButton';
 import styles from './styles.css';
-
-const searchStringToFilter = (searchString) => {
-  switch (searchString) {
-    case '':
-      return new Map();
-    default:
-      return fromJS({ name: { $regex: searchString, $options: 'i' } });
-  }
-};
-
-const sort = new Map({ name: 1, _id: 1 });
 
 const enhance = compose(
   withProps({ schema: 'persona' }),
@@ -59,16 +49,9 @@ const render = ({ id, hasMetadata, getMetadata, setMetadata }) => {
         <label className="control-label">
           Merge identifiers and attributes from
         </label>
-        <ModelAutoComplete
-          filter={fromJS({
-            _id: { $ne: { $oid: id } }
-          })}
-          sort={sort}
-          schema="persona"
-          searchStringToFilter={searchStringToFilter}
-          id={mergeTargetId}
-          parseOption={model => model.get('name')}
-          parseOptionTooltip={model => model.get('name')}
+        <PersonaAutoComplete
+          selectedPersonaId={mergeTargetId}
+          currentPersonaId={id}
           onChange={handleMergeTargetChange} />
         <div className={styles.section}>
           <MergeButton id={id} disabled={!hasTarget} />
