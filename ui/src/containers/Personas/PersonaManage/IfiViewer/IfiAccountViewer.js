@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { Map } from 'immutable';
 import { compose, setPropTypes } from 'recompose';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from '../styles.css';
+import styles from './styles.css';
 
 const enhance = compose(
   setPropTypes({

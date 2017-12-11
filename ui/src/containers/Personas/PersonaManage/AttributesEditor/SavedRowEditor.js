@@ -8,7 +8,7 @@ import { withModel } from 'ui/utils/hocs';
 import SaveIconButton from 'ui/components/IconButton/SaveIconButton';
 import CancelIconButton from 'ui/components/IconButton/CancelIconButton';
 import Input from 'ui/components/Input/Input';
-import styles from '../styles.css';
+import styles from './styles.css';
 
 const enhance = compose(
   withProps({ schema: 'personaAttribute' }),

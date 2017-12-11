@@ -5,7 +5,7 @@ import { compose, setPropTypes, withState } from 'recompose';
 import AddIconButton from 'ui/components/IconButton/AddIconButton';
 import CancelIconButton from 'ui/components/IconButton/CancelIconButton';
 import Input from 'ui/components/Input/Input';
-import styles from '../styles.css';
+import styles from './styles.css';
 
 const enhance = compose(
   setPropTypes({

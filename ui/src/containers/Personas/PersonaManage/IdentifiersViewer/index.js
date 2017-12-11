@@ -3,8 +3,8 @@ import { Map } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withProps, setPropTypes } from 'recompose';
 import { withModels } from 'ui/utils/hocs';
-import styles from '../styles.css';
 import SavedRow from './SavedRow';
+import styles from './styles.css';
 
 const enhance = compose(
   setPropTypes({

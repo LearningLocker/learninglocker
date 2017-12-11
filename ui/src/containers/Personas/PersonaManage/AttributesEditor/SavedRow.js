@@ -6,9 +6,9 @@ import { compose, setPropTypes, withProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import SaveIconButton from 'ui/components/IconButton/SaveIconButton';
 import DeleteIconButton from 'ui/components/IconButton/DeleteIconButton';
-import styles from '../styles.css';
 import SavedRowEditor from './SavedRowEditor';
 import SavedRowViewer from './SavedRowViewer';
+import styles from './styles.css';
 
 const enhance = compose(
   withProps({ schema: 'personaAttribute' }),

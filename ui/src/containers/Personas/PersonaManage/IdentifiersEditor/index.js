@@ -5,9 +5,9 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withProps, setPropTypes, withState } from 'recompose';
 import { withModels } from 'ui/utils/hocs';
 import AddTextIconButton from 'ui/components/TextIconButton/AddTextIconButton';
-import styles from '../styles.css';
 import NewRow from './NewRow';
 import SavedRow from './SavedRow';
+import styles from './styles.css';
 
 const enhance = compose(
   setPropTypes({

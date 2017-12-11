@@ -34,7 +34,6 @@ const getPersonaName = (persona) => {
 };
 
 const render = ({ selectedPersonaId, currentPersonaId, onChange }) => {
-  console.log({currentPersonaId});
   return (
     <ModelAutoComplete
       filter={removeCurrentPersonaFilter(currentPersonaId)}

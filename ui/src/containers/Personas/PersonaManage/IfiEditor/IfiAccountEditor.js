@@ -2,9 +2,7 @@ import React, { PropTypes } from 'react';
 import { Map } from 'immutable';
 import classNames from 'classnames';
 import { compose, setPropTypes, defaultProps } from 'recompose';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import Input from 'ui/components/Input/Input';
-import styles from '../styles.css';
 
 const enhance = compose(
   setPropTypes({
@@ -17,8 +15,7 @@ const enhance = compose(
   defaultProps({
     refHomePageInput: () => { },
     refNameInput: () => { },
-  }),
-  withStyles(styles)
+  })
 );
 
 const render = ({

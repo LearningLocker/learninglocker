@@ -1,9 +1,7 @@
 import React, { PropTypes } from 'react';
 import { compose, setPropTypes, defaultProps } from 'recompose';
 import classNames from 'classnames';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import Input from 'ui/components/Input/Input';
-import styles from '../styles.css';
 
 const enhance = compose(
   setPropTypes({
@@ -14,8 +12,7 @@ const enhance = compose(
   }),
   defaultProps({
     refValueInput: () => { },
-  }),
-  withStyles(styles)
+  })
 );
 
 const render = ({ value, onChange, onSave, refValueInput }) => {
