@@ -4,9 +4,13 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import IconButton from 'ui/components/IconButton/IconButton';
+import ConfirmTextIconButton from 'ui/components/TextIconButton/ConfirmTextIconButton';
+import CancelTextIconButton from 'ui/components/TextIconButton/CancelTextIconButton';
 import DeleteIconButton from 'ui/components/IconButton/DeleteIconButton';
 import styles from '../styles.css';
 import IfiViewer from '../IfiViewer';
+import PersonaAutoComplete from '../PersonaAutoComplete';
+import ReassignmentForm from './ReassignmentForm';
 
 const enhance = compose(
   withProps({ schema: 'personaIdentifier' }),
@@ -14,9 +18,19 @@ const enhance = compose(
   withStyles(styles)
 );
 
-const render = ({ model, deleteModel }) => {
+const render = ({ model, deleteModel, getMetadata, setMetadata }) => {
+  const id = model.get('_id');
+  console.log({id});
   const identifierType = model.getIn(['ifi', 'key']);
   const identifierValue = model.getIn(['ifi', 'value']);
+  const isReassignmentVisible = getMetadata('isReassignmentVisible', false);
+  const handleCancelReassignment = () => {
+    setMetadata('isReassignmentVisible', false);
+    setMetadata('reassignmentTargetId', undefined);
+  };
+  const handleShowReassignment = () => {
+    setMetadata('isReassignmentVisible', true);
+  };
   return (
     <tr>
       <td className={styles.td}>
@@ -26,15 +40,20 @@ const render = ({ model, deleteModel }) => {
         <IfiViewer identifierType={identifierType} identifierValue={identifierValue} />
       </td>
       <td className={classNames(styles.td, styles.actions)}>
-        <IconButton
-          title="Assign to existing Persona"
-          icon="icon ion-person-stalker"
-          onClick={() => { }} />
-        <IconButton
-          title="Assign to new Persona"
-          icon="icon ion-person-add"
-          onClick={() => { }} />
-        <DeleteIconButton onConfirm={deleteModel} target="identifier" />
+        {isReassignmentVisible
+          ? <ReassignmentForm id={id} />
+          : (
+            <div>
+              <IconButton
+                title="Reassign identifier"
+                icon="icon ion-person-stalker"
+                onClick={handleShowReassignment} />
+              <DeleteIconButton
+                onConfirm={deleteModel}
+                target="identifier" />
+            </div>
+          )
+        }
       </td>
     </tr>
   );

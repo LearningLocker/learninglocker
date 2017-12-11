@@ -10,12 +10,12 @@
 .td {
   padding: 8px;
   border: solid rgb(238, 238, 238) 1px;
-  width: 42%;
+  width: 35%;
 }
 
 .actions {
   text-align: right;
-  width: 16%
+  width: 30%
 }
 
 .key {

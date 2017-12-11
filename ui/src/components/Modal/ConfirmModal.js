@@ -4,7 +4,8 @@ import { connect } from 'react-redux';
 import { compose, setPropTypes, defaultProps } from 'recompose';
 import { lowerCase } from 'lodash';
 import { deleteModel } from 'ui/redux/modules/models';
-import TextIconButton from 'ui/components/TextIconButton/TextIconButton';
+import ConfirmTextIconButton from 'ui/components/TextIconButton/ConfirmTextIconButton';
+import CancelTextIconButton from 'ui/components/TextIconButton/CancelTextIconButton';
 import Modal from 'ui/components/Modal/Modal';
 
 const enhanceConfirmModal = compose(
@@ -33,8 +34,8 @@ const renderModalMessage = ({ message }) => {
 const renderModalActions = ({ onConfirm, onCancel }) => {
   return (
     <div className="modal-footer" style={{ textAlign: 'center' }}>
-      <TextIconButton text="Confirm" icon="icon ion-checkmark" onClick={onConfirm} />
-      <TextIconButton text="Cancel" icon="icon ion-close-round" onClick={onCancel} />
+      <ConfirmTextIconButton onClick={onConfirm} />
+      <CancelTextIconButton onClick={onCancel} />
     </div>
   );
 };

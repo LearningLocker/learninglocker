@@ -3,7 +3,8 @@ import TextIconButton from './TextIconButton';
 
 const enhanceTextIconButton = compose(
   defaultProps({
-    icon: 'ion ion-plus',
+    text: 'Confirm',
+    icon: 'icon ion-checkmark',
   }),
 );
 
