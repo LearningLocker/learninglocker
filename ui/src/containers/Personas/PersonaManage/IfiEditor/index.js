@@ -1,7 +1,9 @@
 import React, { PropTypes } from 'react';
 import { compose, setPropTypes, defaultProps } from 'recompose';
 import IfiAccountEditor from './IfiAccountEditor';
-import IfiValueEditor from './IfiValueEditor';
+import IfiMboxEditor from './IfiMboxEditor';
+import IfiMboxShaEditor from './IfiMboxShaEditor';
+import IfiOpenIdEditor from './IfiOpenIdEditor';
 
 const enhance = compose(
   setPropTypes({
@@ -17,22 +19,39 @@ const enhance = compose(
 );
 
 const render = ({ identifierType, value, onChange, onSave, refFirstInput }) => {
-  return (identifierType === 'account'
-    ? (
+  switch (identifierType) {
+    case 'account': return (
       <IfiAccountEditor
         value={value}
         onChange={onChange}
         onSave={onSave}
         refHomePageInput={refFirstInput} />
-    )
-    : (
-      <IfiValueEditor
+    );
+    case 'mbox': return (
+      <IfiMboxEditor
         value={value}
         onChange={onChange}
         onSave={onSave}
         refValueInput={refFirstInput} />
+    );
+    case 'openid': return (
+      <IfiOpenIdEditor
+        value={value}
+        onChange={onChange}
+        onSave={onSave}
+        refValueInput={refFirstInput} />
+    );
+    case 'mbox_sha1sum': return (
+      <IfiMboxShaEditor
+        value={value}
+        onChange={onChange}
+        onSave={onSave}
+        refValueInput={refFirstInput} />
+    );
+    default: return (
+      <span>Unknown identifier type {identifierType}</span>
     )
-  );
+  }
 };
 
 export default enhance(render);

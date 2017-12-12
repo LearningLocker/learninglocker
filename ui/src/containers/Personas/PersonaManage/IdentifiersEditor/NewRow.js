@@ -7,6 +7,7 @@ import AddIconButton from 'ui/components/IconButton/AddIconButton';
 import CancelIconButton from 'ui/components/IconButton/CancelIconButton';
 import TypeEditor from './TypeEditor';
 import IfiEditor from '../IfiEditor';
+import hasIdentifierValueErrors from './hasIdentifierValueErrors';
 import styles from './styles.css';
 
 const enhance = compose(
@@ -28,6 +29,7 @@ const render = ({
   onCancel,
 }) => {
   let firstInputRef = null;
+  const hasErrors = hasIdentifierValueErrors(identifierType, identifierValue);
   const handleAddAndReset = () => {
     firstInputRef.focus();
     handleAdd();
@@ -45,6 +47,7 @@ const render = ({
     firstInputRef.focus();
   };
   const handleAdd = () => {
+    if (hasErrors) return;
     onAdd(identifierType, identifierValue);
     if (identifierType === 'account') {
       setIdentifierValue(new Map({
@@ -71,7 +74,7 @@ const render = ({
           }} />
       </td>
       <td className={classNames(styles.td, styles.actions)}>
-        <AddIconButton onClick={handleAddAndReset} />
+        <AddIconButton onClick={handleAddAndReset} disabled={hasErrors} />
         <CancelIconButton onClick={onCancel} />
       </td>
     </tr>

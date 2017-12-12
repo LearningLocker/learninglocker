@@ -14,10 +14,10 @@ const render = ({ value, onChange }) => {
       className="form-control"
       onChange={(e) => onChange(e.target.value)}
       value={value}>
-      <option value="mbox">mbox</option>
-      <option value="mbox_sha1sum">mbox_sha1sum</option>
-      <option value="openid">openid</option>
-      <option value="account">account</option>
+      <option value="mbox">Email (mbox)</option>
+      <option value="mbox_sha1sum">Encrypted Email (mbox_sha1sum)</option>
+      <option value="openid">Open ID (openid)</option>
+      <option value="account">Website Account (account)</option>
     </select>
   );
 };

@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { compose, setPropTypes, defaultProps } from 'recompose';
 import classNames from 'classnames';
 import Input from 'ui/components/Input/Input';
+import ErrorText from './ErrorText';
 
 const enhance = compose(
   setPropTypes({
@@ -16,13 +17,16 @@ const enhance = compose(
 );
 
 const render = ({ value, onChange, onSave, refValueInput }) => {
+  const hasSha1Error = value.length === 0;
   return (
-    <Input
-      value={value}
-      placeholder="Identifier Value"
-      onChange={onChange}
-      onSubmit={onSave}
-      inputRef={refValueInput} />
+    <div className={classNames({ 'has-error': hasSha1Error })}>
+      <Input
+        value={value}
+        placeholder="Sha1 encrypted email address"
+        onChange={onChange}
+        onSubmit={onSave}
+        inputRef={refValueInput} />
+    </div>
   );
 };
 
