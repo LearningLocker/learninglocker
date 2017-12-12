@@ -17,12 +17,12 @@ const enhance = compose(
       setMetadata,
       deleteMetadata
     }) => () => {
-        const mergePersonaFromId = getMetadata('mergeTargetId');
-        const mergePersonaToId = id;
-        setMetadata('isMergeFormVisible', false);
-        deleteMetadata('mergeTargetId');
-        mergePersona(mergePersonaFromId, mergePersonaToId);
-      }
+      const mergePersonaFromId = getMetadata('mergeTargetId');
+      const mergePersonaToId = id;
+      setMetadata('isMergeFormVisible', false);
+      deleteMetadata('mergeTargetId');
+      mergePersona(mergePersonaFromId, mergePersonaToId);
+    }
   })
 );
 

@@ -23,10 +23,14 @@ const enhance = compose(
 const render = ({ value, onChange, onSave, refHomePageInput, refNameInput }) => {
   const homePage = value.get('homePage');
   const name = value.get('name');
-  const handleHomePageChange = (homePage) => onChange(value.set('homePage', homePage));
-  const handleNameChange = (name) => onChange(value.set('name', name));
   const hasHomePageError = validateIri(homePage, ['homepage']).length !== 0;
   const hasNameError = name.length === 0;
+  const handleHomePageChange = (newHomePage) => {
+    onChange(value.set('homePage', newHomePage));
+  };
+  const handleNameChange = (newName) => {
+    onChange(value.set('name', newName));
+  };
   return (
     <div>
       <div className={classNames('form-group', { 'has-error': hasHomePageError })}>

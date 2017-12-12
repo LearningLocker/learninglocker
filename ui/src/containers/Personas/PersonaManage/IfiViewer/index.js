@@ -16,9 +16,8 @@ const enhance = compose(
 const render = ({ identifierType, identifierValue }) => {
   if (identifierType === 'account') {
     return <IfiAccountViewer identifierValue={identifierValue} />;
-  } else {
-    return <span>{identifierValue}</span>;
   }
+  return <span>{identifierValue}</span>;
 };
 
 export default enhance(render);

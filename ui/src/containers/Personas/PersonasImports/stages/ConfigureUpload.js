@@ -22,10 +22,10 @@ const handlers = withHandlers({
     model,
     importPersonas: doImportPersonas
   }) => () => {
-      doImportPersonas({
-        id: model.get('_id')
-      });
-    }
+    doImportPersonas({
+      id: model.get('_id')
+    });
+  }
 });
 
 

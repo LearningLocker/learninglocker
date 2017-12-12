@@ -1,14 +1,11 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import IconButton from 'ui/components/IconButton/IconButton';
-import ConfirmTextIconButton from 'ui/components/TextIconButton/ConfirmTextIconButton';
-import CancelTextIconButton from 'ui/components/TextIconButton/CancelTextIconButton';
 import DeleteIconButton from 'ui/components/IconButton/DeleteIconButton';
 import IfiViewer from '../IfiViewer';
-import PersonaAutoComplete from '../PersonaAutoComplete';
 import { identifierTypeDisplays } from '../constants';
 import ReassignmentForm from './ReassignmentForm';
 import styles from './styles.css';
@@ -24,10 +21,6 @@ const render = ({ model, deleteModel, getMetadata, setMetadata }) => {
   const identifierType = model.getIn(['ifi', 'key']);
   const identifierValue = model.getIn(['ifi', 'value']);
   const isReassignmentVisible = getMetadata('isReassignmentVisible', false);
-  const handleCancelReassignment = () => {
-    setMetadata('isReassignmentVisible', false);
-    setMetadata('reassignmentTargetId', undefined);
-  };
   const handleShowReassignment = () => {
     setMetadata('isReassignmentVisible', true);
   };

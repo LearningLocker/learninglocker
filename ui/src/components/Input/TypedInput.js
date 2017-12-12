@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 import Input from './Input';
 
 const numberPattern = /^\d+(\.\d*)?$/;
@@ -10,9 +10,7 @@ const getTypedValue = (value) => {
   return value;
 };
 
-const getStringValue = (value) => {
-  return value.toString();
-};
+const getStringValue = value => value.toString();
 
 const render = ({ onChange, value, ...props }) => {
   const handleChange = (newValue) => {
@@ -20,7 +18,7 @@ const render = ({ onChange, value, ...props }) => {
     return onChange(typedValue);
   };
   const stringValue = getStringValue(value);
-  return <Input onChange={handleChange} value={stringValue} {...props} />
+  return <Input onChange={handleChange} value={stringValue} {...props} />;
 };
 
 export default render;

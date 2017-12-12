@@ -219,16 +219,14 @@ class _LLApiClient {
 
   importPersonas = ({
     id
-  }) => {
-    return post({
-      url: formatUrl(routes.IMPORTPERSONAS),
-      headers: {
-        Authorization: `Bearer ${this.getToken()}`,
-        ContentType: 'application/json'
-      },
-      body: { id },
-    });
-  };
+  }) => post({
+    url: formatUrl(routes.IMPORTPERSONAS),
+    headers: {
+      Authorization: `Bearer ${this.getToken()}`,
+      ContentType: 'application/json'
+    },
+    body: { id },
+  });
 }
 
 const LLApiClient = _LLApiClient;

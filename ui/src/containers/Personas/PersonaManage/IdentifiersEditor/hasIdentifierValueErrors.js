@@ -14,7 +14,7 @@ export default (identifierType, identifierValue) => {
       return validateMailto(identifierValue, ['mbox']).length !== 0;
     }
     case 'mbox_sha1sum': {
-      return identifierValue.length === 0
+      return identifierValue.length === 0;
     }
     case 'openid': {
       return validateIri(identifierValue, ['openid']).length !== 0;

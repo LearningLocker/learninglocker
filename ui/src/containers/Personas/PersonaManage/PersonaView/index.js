@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-indent */
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import { compose, withProps, setPropTypes, defaultProps } from 'recompose';
 import { Map } from 'immutable';
 import Tabs from 'ui/components/Material/Tabs';
@@ -31,30 +31,29 @@ const render = ({ model, getMetadata, setMetadata, updateModel }) => {
   const handleNameChange = (value) => {
     updateModel({ path: ['name'], value });
   };
-  const handleTabChange = (activeTab) => {
-    setMetadata('personaViewActiveTab', activeTab);
+  const handleTabChange = (newActiveTab) => {
+    setMetadata('personaViewActiveTab', newActiveTab);
   };
 
   if (showMergeForm) {
-    return <MergeForm id={model.get('_id')} />
-  } else {
-    return (
-      <div>
-        <LabelledInput label="Name" value={name} onChange={handleNameChange} />
-        <Tabs index={activeTab} onChange={handleTabChange}>
-          <Tab label="Identifiers">
-            <IdentifiersEditor personaId={model.get('_id')} />
-          </Tab>
-          <Tab label="Attributes">
-            <AttributesEditor personaId={model.get('_id')} />
-          </Tab>
-          <Tab label="Merge">
-            <MergeForm id={model.get('_id')} />
-          </Tab>
-        </Tabs>
-      </div>
-    );
+    return <MergeForm id={model.get('_id')} />;
   }
+  return (
+    <div>
+      <LabelledInput label="Name" value={name} onChange={handleNameChange} />
+      <Tabs index={activeTab} onChange={handleTabChange}>
+        <Tab label="Identifiers">
+          <IdentifiersEditor personaId={model.get('_id')} />
+        </Tab>
+        <Tab label="Attributes">
+          <AttributesEditor personaId={model.get('_id')} />
+        </Tab>
+        <Tab label="Merge">
+          <MergeForm id={model.get('_id')} />
+        </Tab>
+      </Tabs>
+    </div>
+  );
 };
 
 export default enhance(render);

@@ -12,7 +12,7 @@ const render = ({ hasError, children }) => {
   if (hasError) {
     return <span className="help-block">{children}</span>;
   }
-  return <noscript />
+  return <noscript />;
 };
 
 export default enhance(render);

@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import { compose, setPropTypes, defaultProps } from 'recompose';
-import { v4 as uuid } from 'uuid';
 
 const enterKey = 13;
 

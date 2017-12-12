@@ -20,11 +20,9 @@ const initialState = {
 };
 
 const handler = handleActions({
-  [MERGE_PERSONA_START]: (state, { id }) => {
-    return (
+  [MERGE_PERSONA_START]: (state, { id }) => (
       state.setIn([id, 'requestState'], IN_PROGRESS)
-    );
-  },
+    ),
   [MERGE_PERSONA_SUCCESS]: (state, { id }) => (
     state.setIn([id, 'requestState'], COMPLETED)
   ),

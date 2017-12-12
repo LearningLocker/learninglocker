@@ -1,9 +1,7 @@
 import React from 'react';
-import { fromJS, Map } from 'immutable';
 import { compose, withProps } from 'recompose';
 import classNames from 'classnames';
 import { withModel } from 'ui/utils/hocs';
-import ModelAutoComplete from 'ui/containers/ModelAutoComplete';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import IdentifiersViewer from '../IdentifiersViewer';
 import AttributesViewer from '../AttributesViewer';
@@ -19,7 +17,7 @@ const enhance = compose(
 
 const renderTarget = ({ hasTarget, mergeTargetId }) => {
   if (!hasTarget) {
-    return <noscript />
+    return <noscript />;
   }
 
   return (
@@ -33,7 +31,7 @@ const renderTarget = ({ hasTarget, mergeTargetId }) => {
         <AttributesViewer personaId={mergeTargetId} />
       </div>
     </div>
-  )
+  );
 };
 
 const render = ({ id, hasMetadata, getMetadata, setMetadata }) => {
@@ -45,10 +43,10 @@ const render = ({ id, hasMetadata, getMetadata, setMetadata }) => {
 
   return (
     <div>
-      <div className={classNames("form-group", styles.section)}>
-        <label className="control-label">
+      <div className={classNames('form-group', styles.section)}>
+        <div className={styles.label}>
           Merge identifiers and attributes from
-        </label>
+        </div>
         <PersonaAutoComplete
           selectedPersonaId={mergeTargetId}
           currentPersonaId={id}

@@ -19,8 +19,8 @@ const enhance = compose(
 
 const render = ({ value, onChange, onSave, refValueInput }) => {
   const hasMboxError = validateMailto(value, ['mbox']).length !== 0;
-  const handleChange = (value) => {
-    onChange(`mailto:${value}`);
+  const handleChange = (newValue) => {
+    onChange(`mailto:${newValue}`);
   };
   return (
     <div className={classNames({ 'has-error': hasMboxError })}>

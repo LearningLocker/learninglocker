@@ -9,18 +9,16 @@ const enhance = compose(
   }),
 );
 
-const render = ({ value, onChange }) => {
-  return (
-    <select
-      className="form-control"
-      onChange={(e) => onChange(e.target.value)}
-      value={value}>
-      <option value="mbox">{identifierTypeDisplays.mbox}</option>
-      <option value="mbox_sha1sum">{identifierTypeDisplays.mbox_sha1sum}</option>
-      <option value="openid">{identifierTypeDisplays.openid}</option>
-      <option value="account">{identifierTypeDisplays.account}</option>
-    </select>
+const render = ({ value, onChange }) => (
+  <select
+    className="form-control"
+    onChange={e => onChange(e.target.value)}
+    value={value}>
+    <option value="mbox">{identifierTypeDisplays.mbox}</option>
+    <option value="mbox_sha1sum">{identifierTypeDisplays.mbox_sha1sum}</option>
+    <option value="openid">{identifierTypeDisplays.openid}</option>
+    <option value="account">{identifierTypeDisplays.account}</option>
+  </select>
   );
-};
 
 export default enhance(render);

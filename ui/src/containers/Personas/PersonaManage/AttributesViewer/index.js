@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import classNames from 'classnames';
 import { Map } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withProps, setPropTypes } from 'recompose';
@@ -21,32 +20,29 @@ const enhance = compose(
   withStyles(styles)
 );
 
-const render = ({ personaId, models }) => {
+const render = ({ models }) => {
   if (models.count() === 0) {
     return (
       <div>
         No attributes.
       </div>
     );
-  } else {
-    return (
-      <div>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th className={styles.td}>Name</th>
-              <th className={styles.td}>Value</th>
-            </tr>
-          </thead>
-          <tbody>
-            {models.map((model) => {
-              return <SavedRow id={model.get('_id')} />;
-            }).valueSeq()}
-          </tbody>
-        </table>
-      </div>
-    );
   }
+  return (
+    <div>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th className={styles.td}>Name</th>
+            <th className={styles.td}>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {models.map(model => <SavedRow id={model.get('_id')} />).valueSeq()}
+        </tbody>
+      </table>
+    </div>
+  );
 };
 
 export default enhance(render);

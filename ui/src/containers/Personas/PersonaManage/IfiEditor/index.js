@@ -50,7 +50,7 @@ const render = ({ identifierType, value, onChange, onSave, refFirstInput }) => {
     );
     default: return (
       <span>Unknown identifier type {identifierType}</span>
-    )
+    );
   }
 };
 

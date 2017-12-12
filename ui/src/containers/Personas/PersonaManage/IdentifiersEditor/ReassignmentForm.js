@@ -1,9 +1,9 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { compose, withProps } from 'recompose';
 import { Map } from 'immutable';
 import { withModel } from 'ui/utils/hocs';
-import { clearModelsCache } from 'ui/redux/actions';
+import { clearModelsCache as clearCache } from 'ui/redux/actions';
 import ConfirmTextIconButton from 'ui/components/TextIconButton/ConfirmTextIconButton';
 import CancelTextIconButton from 'ui/components/TextIconButton/CancelTextIconButton';
 import PersonaAutoComplete from '../PersonaAutoComplete';
@@ -12,10 +12,10 @@ import createPersonaIdentFilter from '../createPersonaIdentFilter';
 const enhance = compose(
   withProps({ schema: 'personaIdentifier' }),
   withModel,
-  connect(() => ({}), { clearModelsCache })
+  connect(() => ({}), { clearModelsCache: clearCache })
 );
 
-const render = ({ id, model, getMetadata, setMetadata, saveModel, clearModelsCache }) => {
+const render = ({ model, getMetadata, setMetadata, saveModel, clearModelsCache }) => {
   const reassignmentTargetId = getMetadata('reassignmentTargetId');
   const currentPersonaId = model.get('persona');
   const isReassignmentDisabled = reassignmentTargetId === undefined;

@@ -39,7 +39,7 @@ const render = ({
     changeNewAttributeVisibility(false);
   };
   const handleShowNewRow = () => {
-    changeNewAttributeVisibility(true)
+    changeNewAttributeVisibility(true);
   };
   return (
     <div>
@@ -58,9 +58,7 @@ const render = ({
           {!isNewAttributeVisible ? null : (
             <NewRow onAdd={handleNewRowAdd} onCancel={handleNewRowCancel} />
           )}
-          {models.map((model) => {
-            return <SavedRow id={model.get('_id')} />;
-          }).valueSeq()}
+          {models.map(model => <SavedRow id={model.get('_id')} />).valueSeq()}
         </tbody>
       </table>
     </div>

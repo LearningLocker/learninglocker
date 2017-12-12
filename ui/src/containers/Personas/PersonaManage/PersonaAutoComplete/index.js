@@ -23,28 +23,22 @@ const searchStringToFilter = (searchString) => {
 };
 
 // Prevents merging of a persona into itself, etc.
-const removeCurrentPersonaFilter = (currentPersonaId) => {
-  return fromJS({
-    _id: { $ne: { $oid: currentPersonaId } }
-  });
-};
+const removeCurrentPersonaFilter = currentPersonaId => fromJS({
+  _id: { $ne: { $oid: currentPersonaId } }
+});
 
-const getPersonaName = (persona) => {
-  return persona.get('name');
-};
+const getPersonaName = persona => persona.get('name');
 
-const render = ({ selectedPersonaId, currentPersonaId, onChange }) => {
-  return (
-    <ModelAutoComplete
-      filter={removeCurrentPersonaFilter(currentPersonaId)}
-      sort={sort}
-      schema="persona"
-      searchStringToFilter={searchStringToFilter}
-      id={selectedPersonaId}
-      parseOption={getPersonaName}
-      parseOptionTooltip={getPersonaName}
-      onChange={onChange} />
-  );
-};
+const render = ({ selectedPersonaId, currentPersonaId, onChange }) => (
+  <ModelAutoComplete
+    filter={removeCurrentPersonaFilter(currentPersonaId)}
+    sort={sort}
+    schema="persona"
+    searchStringToFilter={searchStringToFilter}
+    id={selectedPersonaId}
+    parseOption={getPersonaName}
+    parseOptionTooltip={getPersonaName}
+    onChange={onChange} />
+);
 
-export default render;
+export default enhance(render);

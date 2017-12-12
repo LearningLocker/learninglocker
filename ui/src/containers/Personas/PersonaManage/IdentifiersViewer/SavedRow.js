@@ -1,5 +1,4 @@
-import React, { PropTypes } from 'react';
-import classNames from 'classnames';
+import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
@@ -13,7 +12,7 @@ const enhance = compose(
   withStyles(styles)
 );
 
-const render = ({ model, deleteModel }) => {
+const render = ({ model }) => {
   const identifierType = model.getIn(['ifi', 'key']);
   const identifierValue = model.getIn(['ifi', 'value']);
   return (

@@ -30,10 +30,6 @@ const render = ({
 }) => {
   let firstInputRef = null;
   const hasErrors = hasIdentifierValueErrors(identifierType, identifierValue);
-  const handleAddAndReset = () => {
-    firstInputRef.focus();
-    handleAdd();
-  };
   const handleTypeChange = (type) => {
     if (type === 'account') {
       setIdentifierValue(new Map({
@@ -58,6 +54,10 @@ const render = ({
       setIdentifierValue('');
     }
   };
+  const handleAddAndReset = () => {
+    firstInputRef.focus();
+    handleAdd();
+  };
   return (
     <tr>
       <td className={styles.td}>
@@ -70,7 +70,7 @@ const render = ({
           onChange={setIdentifierValue}
           onSave={handleAddAndReset}
           refFirstInput={(input) => {
-            firstInputRef = input
+            firstInputRef = input;
           }} />
       </td>
       <td className={classNames(styles.td, styles.actions)}>

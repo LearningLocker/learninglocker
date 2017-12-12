@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import { Map } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
@@ -12,9 +12,7 @@ import styles from './styles.css';
 const enhance = compose(
   withProps({ schema: 'personaAttribute' }),
   withModel,
-  withState('attributeValue', 'setAttributeValue', ({ model }) => {
-    return model.get('value', '');
-  }),
+  withState('attributeValue', 'setAttributeValue', ({ model }) => model.get('value', '')),
   withStyles(styles)
 );
 

@@ -4,3 +4,5 @@ export const identifierTypeDisplays = {
   openid: 'Open ID',
   account: 'Website Account',
 };
+
+export default { identifierTypeDisplays };

@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import { compose, setPropTypes, defaultProps } from 'recompose';
 import classNames from 'classnames';
 import Input from 'ui/components/Input/Input';
-import ErrorText from './ErrorText';
 
 const enhance = compose(
   setPropTypes({
