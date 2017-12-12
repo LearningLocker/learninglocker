@@ -98,6 +98,7 @@ function* mergePersonaSaga() {
 
       yield put(clearModelsCacheDuck.actions.clearModelsCache({ schema: 'persona' }));
       yield put(clearModelsCacheDuck.actions.clearModelsCache({ schema: 'personaIdentifier' }));
+      yield put(clearModelsCacheDuck.actions.clearModelsCache({ schema: 'personaAttribute' }));
       yield put(mergePersonaSuccess(mergePersonaToId));
       yield call(delay, 2000); // shows success state for 2 seconds
       yield put(mergePersonaDone(mergePersonaToId));
