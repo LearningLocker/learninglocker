@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-indent */
 import React, { Component, PropTypes } from 'react';
-import { compose, withProps, setPropTypes, defaultProps, withState } from 'recompose';
+import { compose, withProps, setPropTypes, defaultProps } from 'recompose';
 import { Map } from 'immutable';
 import Tabs from 'ui/components/Material/Tabs';
 import { Tab } from 'react-toolbox/lib/tabs';
@@ -21,15 +21,18 @@ const enhance = compose(
     schema: 'persona',
     id: model.get('_id'),
   })),
-  withState('activeTab', 'setActiveTab', 0),
   withModel
 );
 
-const render = ({ model, getMetadata, activeTab, setActiveTab, updateModel }) => {
+const render = ({ model, getMetadata, setMetadata, updateModel }) => {
   const showMergeForm = getMetadata('isMergeFormVisible', false);
+  const activeTab = getMetadata('personaViewActiveTab', 0);
   const name = model.get('name') || '';
   const handleNameChange = (value) => {
     updateModel({ path: ['name'], value });
+  };
+  const handleTabChange = (activeTab) => {
+    setMetadata('personaViewActiveTab', activeTab);
   };
 
   if (showMergeForm) {
@@ -38,7 +41,7 @@ const render = ({ model, getMetadata, activeTab, setActiveTab, updateModel }) =>
     return (
       <div>
         <LabelledInput label="Name" value={name} onChange={handleNameChange} />
-        <Tabs index={activeTab} onChange={setActiveTab}>
+        <Tabs index={activeTab} onChange={handleTabChange}>
           <Tab label="Identifiers">
             <IdentifiersEditor personaId={model.get('_id')} />
           </Tab>
