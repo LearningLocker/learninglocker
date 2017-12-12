@@ -7,7 +7,7 @@ import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import { MAX_TIME_MS, MAX_SCAN } from 'lib/models/plugins/addCRUDFunctions';
 import parseQuery from 'lib/helpers/parseQuery';
 import { CursorDirection } from 'personas/dist/service/constants';
-import { reasignPersonaStatements } from 'lib/services/persona';
+import reasignPersonaStatements from 'lib/services/persona/reasignPersonaStatements';
 
 const MODEL_NAME = 'persona';
 
