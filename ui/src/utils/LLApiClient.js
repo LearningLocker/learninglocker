@@ -50,7 +50,7 @@ class _LLApiClient {
   indexModels = (schema, filter, params, limit = 0) => {
     switch (schema) {
       case 'statement': return get({
-        url: formatUrl('/statements/aggregate'),
+        url: formatUrl(routes.STATEMENTS_AGGREGATE),
         headers: {
           Authorization: `Bearer ${this.getToken()}`
         },
@@ -84,7 +84,7 @@ class _LLApiClient {
 
   countModels = (schema, filter, params) => get({
     url: (schema === 'statement') ?
-      formatUrl('/statements/count') : formatUrl(
+      formatUrl(routes.STATEMENTS_COUNT) : formatUrl(
         `${routes.RESTIFY_PREFIX}/${schema}/count`
       ),
     headers: {
@@ -129,7 +129,7 @@ class _LLApiClient {
   })
 
   getAggregation = (pipeline, limit) => get({
-    url: formatUrl('/statements/aggregate'),
+    url: formatUrl(routes.STATEMENTS_AGGREGATE),
     headers: {
       Authorization: `Bearer ${this.getToken()}`
     },
@@ -140,28 +140,12 @@ class _LLApiClient {
     }
   })
 
-  peopleUpload = (file, owner) => {
-    const peopleForm = form({
-      users: file,
-      userId: owner
-    });
-    return post({
-      url: formatUrl('/uploadpeople'),
-      headers: {
-        Authorization: `Bearer ${this.getToken()}`,
-        ContentType: 'multipart/form-data; boundary=,',
-        Accept: 'text/csv'
-      },
-      body: peopleForm
-    });
-  }
-
   uploadLogo = (file, id) => {
     const logoForm = form({
       logo: file
     });
     return post({
-      url: formatUrl('/uploadlogo'),
+      url: formatUrl(routes.UPLOADLOGO),
       headers: {
         Authorization: `Bearer ${this.getToken()}`,
         ContentType: 'multipart/form-data; boundary=,',
@@ -175,7 +159,7 @@ class _LLApiClient {
   }
 
   downloadExport = ({ exportId, pipelines }) => get({
-    url: formatUrl('/export'),
+    url: formatUrl(routes.EXPORT),
     headers: {
       Authorization: `Bearer ${this.getToken()}`
     },
@@ -223,7 +207,7 @@ class _LLApiClient {
       file: file.handle
     });
     return post({
-      url: formatUrl('/uploadpersonas'),
+      url: formatUrl(routes.UPLOADPERSONAS),
       headers: {
         Authorization: `Bearer ${this.getToken()}`,
         ContentType: 'multipart/form-data; boundary=,',
@@ -236,9 +220,8 @@ class _LLApiClient {
   importPersonas = ({
     id
   }) => {
-    console.log('importPersonas');
     return post({
-      url: formatUrl('/importpersonas'),
+      url: formatUrl(routes.IMPORTPERSONAS),
       headers: {
         Authorization: `Bearer ${this.getToken()}`,
         ContentType: 'application/json'

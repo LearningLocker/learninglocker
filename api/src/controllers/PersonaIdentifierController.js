@@ -9,6 +9,8 @@ import { CursorDirection } from 'personas/dist/service/constants';
 import Locked from 'personas/dist/errors/Locked';
 import { MAX_TIME_MS, MAX_SCAN } from 'lib/models/plugins/addCRUDFunctions';
 import parseQuery from 'lib/helpers/parseQuery';
+import asignIdentifierToStatements from 'lib/services/persona/asignIdentifierToStatements';
+import identifierHasStatements from 'lib/services/persona/identifierHasStatements';
 import {
   isUndefined,
   omitBy,
@@ -72,11 +74,17 @@ const addPersonaIdentifier = catchErrors(async (req, res) => {
     authInfo
   });
 
+  const organisation = getOrgFromAuthInfo(authInfo);
+
   const { identifier } = await req.personaService.createIdentifier({
     ifi: req.body.ifi,
-    organisation: getOrgFromAuthInfo(authInfo),
+    organisation,
     persona: req.body.persona,
   });
+
+  // assign persona and personaIdentifier to statements
+  asignIdentifierToStatements({ organisation, identifier });
+
   return res.status(200).send(identifier);
 });
 
@@ -94,15 +102,20 @@ const upsertPersonaIdentifier = catchErrors(async (req, res) => {
     authInfo
   });
 
+  const organisation = getOrgFromAuthInfo(authInfo);
   const toPersona = req.body.persona;
   if (!toPersona) {
     try {
       // if we had no persona, attempt to create an ident with a new persona
       const { identifier } = await req.personaService.createUpdateIdentifierPersona({
         ifi: req.body.ifi,
-        organisation: getOrgFromAuthInfo(authInfo),
-        personaName: req.body.ifi,
+        organisation,
+        personaName: JSON.stringify(req.body.ifi, null, 2),
       });
+
+      // assign persona and personaIdentifier to statements
+      asignIdentifierToStatements({ organisation, identifier });
+
       return res.status(200).send(replaceId(identifier));
     } catch (err) {
       // if there was a lock then the ident already existed, so just return it
@@ -117,9 +130,13 @@ const upsertPersonaIdentifier = catchErrors(async (req, res) => {
   // otherwise update the identifier's persona
   const { identifier } = await req.personaService.overwriteIdentifier({
     ifi: req.body.ifi,
-    organisation: getOrgFromAuthInfo(authInfo),
+    organisation,
     persona: toPersona
   });
+
+  // assign persona and personaIdentifier to statements
+  asignIdentifierToStatements({ organisation, identifier });
+
   return res.status(200).send(replaceId(identifier));
 });
 
@@ -170,11 +187,15 @@ const updatePersonaIdentifier = catchErrors(async (req, res) => {
     authInfo
   });
 
+  const organisation = getOrgFromAuthInfo(authInfo);
   const { identifier } = await req.personaService.setIdentifierPersona({
-    organisation: getOrgFromAuthInfo(authInfo),
+    organisation,
     id: req.params.personaIdentifierId,
     persona: req.body.persona
   });
+
+  // assign persona and personaIdentifier to statements
+  asignIdentifierToStatements({ organisation, identifier });
 
   return res.status(200).send(replaceId(identifier));
 });
@@ -188,9 +209,17 @@ const deletePersonaIdentifier = catchErrors(async (req, res) => {
     authInfo
   });
 
+  const organisation = getOrgFromAuthInfo(authInfo);
+  const identifierId = req.params.personaIdentifierId;
+
+  const hasStatement = identifierHasStatements({ organisation, identifierId });
+  if (hasStatement) {
+    throw new Error('Cannot remove personaIdentifier; statements exists in LRS with ifi');
+  }
+
   await req.personaService.deletePersonaIdentifier({
-    organisation: getOrgFromAuthInfo(authInfo),
-    id: req.params.personaIdentifierId
+    organisation,
+    id: identifierId
   });
 
   return res.status(200).send();
