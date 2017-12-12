@@ -1,16 +1,21 @@
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { compose, withProps } from 'recompose';
+import { Map } from 'immutable';
 import { withModel } from 'ui/utils/hocs';
+import { clearModelsCache } from 'ui/redux/actions';
 import ConfirmTextIconButton from 'ui/components/TextIconButton/ConfirmTextIconButton';
 import CancelTextIconButton from 'ui/components/TextIconButton/CancelTextIconButton';
 import PersonaAutoComplete from '../PersonaAutoComplete';
+import createPersonaIdentFilter from '../createPersonaIdentFilter';
 
 const enhance = compose(
   withProps({ schema: 'personaIdentifier' }),
-  withModel
+  withModel,
+  connect(() => ({}), { clearModelsCache })
 );
 
-const render = ({ id, model, getMetadata, setMetadata, updateModel }) => {
+const render = ({ id, model, getMetadata, setMetadata, saveModel, clearModelsCache }) => {
   const reassignmentTargetId = getMetadata('reassignmentTargetId');
   const currentPersonaId = model.get('persona');
   const isReassignmentDisabled = reassignmentTargetId === undefined;
@@ -18,9 +23,17 @@ const render = ({ id, model, getMetadata, setMetadata, updateModel }) => {
     setMetadata('isReassignmentVisible', false);
     setMetadata('reassignmentTargetId', undefined);
   };
-  const handleReassignment = () => {
-    updateModel({ path: ['persona'], value: reassignmentTargetId });
+  const handleReassignment = async () => {
     handleCancelReassignment();
+    await saveModel({ attrs: new Map({ persona: reassignmentTargetId }) });
+    clearModelsCache({
+      schema: 'personaIdentifier',
+      filter: createPersonaIdentFilter(reassignmentTargetId),
+    });
+    clearModelsCache({
+      schema: 'personaIdentifier',
+      filter: createPersonaIdentFilter(currentPersonaId),
+    });
   };
   const handleReassignmentTargetChange = (persona) => {
     setMetadata('reassignmentTargetId', persona.get('_id'));

@@ -3,6 +3,7 @@ import { Map } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withProps, setPropTypes } from 'recompose';
 import { withModels } from 'ui/utils/hocs';
+import createPersonaIdentFilter from '../createPersonaIdentFilter';
 import SavedRow from './SavedRow';
 import styles from './styles.css';
 
@@ -11,7 +12,7 @@ const enhance = compose(
     personaId: PropTypes.string.isRequired,
   }),
   withProps(({ personaId }) => ({
-    filter: new Map({ persona: personaId }),
+    filter: createPersonaIdentFilter(personaId),
     schema: 'personaIdentifier',
     first: 100,
     sort: new Map({ _id: -1 }),
