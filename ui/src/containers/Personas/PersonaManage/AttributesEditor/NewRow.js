@@ -5,6 +5,7 @@ import { compose, setPropTypes, withState } from 'recompose';
 import AddIconButton from 'ui/components/IconButton/AddIconButton';
 import CancelIconButton from 'ui/components/IconButton/CancelIconButton';
 import Input from 'ui/components/Input/Input';
+import TypedInput from 'ui/components/Input/TypedInput';
 import styles from './styles.css';
 
 const enhance = compose(
@@ -45,7 +46,7 @@ const render = ({
           }} />
       </td>
       <td className={styles.td}>
-        <Input
+        <TypedInput
           value={attributeValue}
           placeholder="Attribute Value"
           onChange={setAttributeValue}

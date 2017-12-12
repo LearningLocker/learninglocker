@@ -1,13 +1,12 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { Map } from 'immutable';
-import DebounceInput from 'react-debounce-input';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withState, withProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import SaveIconButton from 'ui/components/IconButton/SaveIconButton';
 import CancelIconButton from 'ui/components/IconButton/CancelIconButton';
-import Input from 'ui/components/Input/Input';
+import TypedInput from 'ui/components/Input/TypedInput';
 import styles from './styles.css';
 
 const enhance = compose(
@@ -38,7 +37,7 @@ const render = ({
     <tr>
       <td className={styles.td}>{key}</td>
       <td className={styles.td}>
-        <Input
+        <TypedInput
           value={attributeValue}
           placeholder="value"
           onChange={setAttributeValue}
