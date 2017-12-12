@@ -137,10 +137,16 @@ const updatePersonaAttribute = catchErrors(async (req, res) => {
     authInfo
   });
 
+  const organisation = getOrgFromAuthInfo(authInfo);
   const { attribute } = await req.personaService.overwritePersonaAttribute({
     ...req.body,
-    organisation: getOrgFromAuthInfo(authInfo),
+    organisation,
     id: req.params.personaAttributeId
+  });
+
+  updateQueryBuilderCache({
+    attributes: [attribute],
+    organisation,
   });
 
   return res.status(200).send(replaceId(attribute));
