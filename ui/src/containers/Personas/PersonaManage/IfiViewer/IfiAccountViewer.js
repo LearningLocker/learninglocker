@@ -17,11 +17,11 @@ const render = ({ identifierValue }) => {
   return (
     <div>
       <div>
-        <span className={styles.key}>Home Page: </span>
+        <span className={styles.key}>Website: </span>
         <span className={styles.value}>{homePage}</span>
       </div>
       <div>
-        <span className={styles.key}>Name: </span>
+        <span className={styles.key}>User ID: </span>
         <span className={styles.value}>{name}</span>
       </div>
     </div>

@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
+import { identifierTypeDisplays } from '../constants';
 import IfiViewer from '../IfiViewer';
 import styles from './styles.css';
 
@@ -18,7 +19,7 @@ const render = ({ model, deleteModel }) => {
   return (
     <tr>
       <td className={styles.td}>
-        {identifierType}
+        {identifierTypeDisplays[identifierType]}
       </td>
       <td className={styles.td}>
         <IfiViewer identifierType={identifierType} identifierValue={identifierValue} />

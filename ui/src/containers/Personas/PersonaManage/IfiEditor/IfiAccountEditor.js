@@ -32,7 +32,7 @@ const render = ({ value, onChange, onSave, refHomePageInput, refNameInput }) => 
       <div className={classNames('form-group', { 'has-error': hasHomePageError })}>
         <Input
           value={homePage}
-          placeholder="Website (home page)"
+          placeholder="Website"
           onChange={handleHomePageChange}
           onSubmit={onSave}
           inputRef={refHomePageInput} />
@@ -43,7 +43,7 @@ const render = ({ value, onChange, onSave, refHomePageInput, refNameInput }) => 
       <div className={classNames({ 'has-error': hasNameError })}>
         <Input
           value={name}
-          placeholder="User ID (name)"
+          placeholder="User ID"
           onChange={handleNameChange}
           onSubmit={onSave}
           inputRef={refNameInput} />

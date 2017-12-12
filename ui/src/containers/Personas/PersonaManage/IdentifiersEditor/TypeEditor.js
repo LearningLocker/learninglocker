@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { compose, setPropTypes } from 'recompose';
+import { identifierTypeDisplays } from '../constants';
 
 const enhance = compose(
   setPropTypes({
@@ -14,10 +15,10 @@ const render = ({ value, onChange }) => {
       className="form-control"
       onChange={(e) => onChange(e.target.value)}
       value={value}>
-      <option value="mbox">Email (mbox)</option>
-      <option value="mbox_sha1sum">Encrypted Email (mbox_sha1sum)</option>
-      <option value="openid">Open ID (openid)</option>
-      <option value="account">Website Account (account)</option>
+      <option value="mbox">{identifierTypeDisplays.mbox}</option>
+      <option value="mbox_sha1sum">{identifierTypeDisplays.mbox_sha1sum}</option>
+      <option value="openid">{identifierTypeDisplays.openid}</option>
+      <option value="account">{identifierTypeDisplays.account}</option>
     </select>
   );
 };

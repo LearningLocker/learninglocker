@@ -9,6 +9,7 @@ import CancelTextIconButton from 'ui/components/TextIconButton/CancelTextIconBut
 import DeleteIconButton from 'ui/components/IconButton/DeleteIconButton';
 import IfiViewer from '../IfiViewer';
 import PersonaAutoComplete from '../PersonaAutoComplete';
+import { identifierTypeDisplays } from '../constants';
 import ReassignmentForm from './ReassignmentForm';
 import styles from './styles.css';
 
@@ -33,7 +34,7 @@ const render = ({ model, deleteModel, getMetadata, setMetadata }) => {
   return (
     <tr>
       <td className={styles.td}>
-        {identifierType}
+        {identifierTypeDisplays[identifierType]}
       </td>
       <td className={styles.td}>
         <IfiViewer identifierType={identifierType} identifierValue={identifierValue} />
