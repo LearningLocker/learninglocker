@@ -12,6 +12,7 @@ import { MAX_TIME_MS, MAX_SCAN } from 'lib/models/plugins/addCRUDFunctions';
 import parseQuery from 'lib/helpers/parseQuery';
 import asignIdentifierToStatements from 'lib/services/persona/asignIdentifierToStatements';
 import identifierHasStatements from 'lib/services/persona/identifierHasStatements';
+import getPersonaService from 'lib/connections/personaService';
 import {
   isUndefined,
   omitBy,
@@ -20,6 +21,8 @@ import {
 const objectId = mongoose.Types.ObjectId;
 
 const MODEL_NAME = 'personaIdentifier';
+
+const personaService = getPersonaService();
 
 const personaIdentifierConnection = catchErrors(async (req, res) => {
   const { before, after } = req.query;
@@ -49,7 +52,7 @@ const personaIdentifierConnection = catchErrors(async (req, res) => {
   };
   const filterNoUndefined = omitBy(filter, isUndefined);
 
-  const identifiers = await req.personaService.getIdentifiers({
+  const identifiers = await personaService.getIdentifiers({
     limit: first || last || 10,
     direction: CursorDirection[before ? 'BACKWARDS' : 'FORWARDS'],
     sort,
@@ -76,7 +79,7 @@ const addPersonaIdentifier = catchErrors(async (req, res) => {
 
   const organisation = getOrgFromAuthInfo(authInfo);
 
-  const { identifier } = await req.personaService.createIdentifier({
+  const { identifier } = await personaService.createIdentifier({
     ifi: req.body.ifi,
     organisation,
     persona: req.body.persona,
@@ -107,7 +110,7 @@ const upsertPersonaIdentifier = catchErrors(async (req, res) => {
   if (!toPersona) {
     try {
       // if we had no persona, attempt to create an ident with a new persona
-      const { identifier } = await req.personaService.createUpdateIdentifierPersona({
+      const { identifier } = await personaService.createUpdateIdentifierPersona({
         ifi: req.body.ifi,
         organisation,
         personaName: JSON.stringify(req.body.ifi, null, 2),
@@ -128,7 +131,7 @@ const upsertPersonaIdentifier = catchErrors(async (req, res) => {
   }
 
   // otherwise update the identifier's persona
-  const { identifier } = await req.personaService.overwriteIdentifier({
+  const { identifier } = await personaService.overwriteIdentifier({
     ifi: req.body.ifi,
     organisation,
     persona: toPersona
@@ -149,7 +152,7 @@ const getPersonaIdentifier = catchErrors(async (req, res) => {
     authInfo
   });
 
-  const { identifier } = await req.personaService.getIdentifier({
+  const { identifier } = await personaService.getIdentifier({
     organisation: getOrgFromAuthInfo(authInfo),
     id: req.params.personaIdentifierId
   });
@@ -166,7 +169,7 @@ const getPersonaIdentifiers = catchErrors(async (req, res) => {
     authInfo
   });
 
-  const { identifiers } = await req.personaService.getPersonaIdentifiers({
+  const { identifiers } = await personaService.getPersonaIdentifiers({
     ...req.query,
     organisation: getOrgFromAuthInfo(authInfo),
   });
@@ -188,7 +191,7 @@ const updatePersonaIdentifier = catchErrors(async (req, res) => {
   });
 
   const organisation = getOrgFromAuthInfo(authInfo);
-  const { identifier } = await req.personaService.setIdentifierPersona({
+  const { identifier } = await personaService.setIdentifierPersona({
     organisation,
     id: req.params.personaIdentifierId,
     persona: req.body.persona
@@ -217,7 +220,7 @@ const deletePersonaIdentifier = catchErrors(async (req, res) => {
     throw new ClientError('Cannot remove personaIdentifier; statements exists in LRS with ifi');
   }
 
-  await req.personaService.deletePersonaIdentifier({
+  await personaService.deletePersonaIdentifier({
     organisation,
     id: identifierId
   });
@@ -241,7 +244,7 @@ const personaIdentifierCount = catchErrors(async (req, res) => {
     ...scopeFilter
   };
 
-  const count = await req.personaService.getPersonaIdentifierCount({
+  const count = await personaService.getPersonaIdentifierCount({
     organisation: getOrgFromAuthInfo(authInfo),
     filter
   });

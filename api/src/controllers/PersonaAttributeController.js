@@ -9,6 +9,7 @@ import { CursorDirection } from 'personas/dist/service/constants';
 import { MAX_TIME_MS, MAX_SCAN } from 'lib/models/plugins/addCRUDFunctions';
 import parseQuery from 'lib/helpers/parseQuery';
 import updateQueryBuilderCache from 'lib/services/importPersonas/updateQueryBuilderCache';
+import getPersonaService from 'lib/connections/personaService';
 import {
   isUndefined,
   omitBy,
@@ -17,6 +18,8 @@ import {
 const objectId = mongoose.Types.ObjectId;
 
 const MODEL_NAME = 'personaAttribute';
+
+const personaService = getPersonaService();
 
 const personaAttributeConnection = catchErrors(async (req, res) => {
   const { before, after } = req.query;
@@ -46,7 +49,7 @@ const personaAttributeConnection = catchErrors(async (req, res) => {
   };
   const filterNoUndefined = omitBy(filter, isUndefined);
 
-  const attributes = await req.personaService.getAttributes({
+  const attributes = await personaService.getAttributes({
     limit: first || last || 10,
     direction: CursorDirection[before ? 'BACKWARDS' : 'FORWARDS'],
     sort,
@@ -75,7 +78,7 @@ const addPersonaAttribute = catchErrors(async (req, res) => {
 
   const { key, value, personaId } = req.body;
 
-  const { attribute } = await req.personaService.overwritePersonaAttribute({
+  const { attribute } = await personaService.overwritePersonaAttribute({
     organisation,
     personaId,
     key,
@@ -99,7 +102,7 @@ const getPersonaAttribute = catchErrors(async (req, res) => {
     authInfo
   });
 
-  const { attribute } = await req.personaService.getAttribute({
+  const { attribute } = await personaService.getAttribute({
     organisation: getOrgFromAuthInfo(authInfo),
     id: req.params.personaAttributeId
   });
@@ -116,7 +119,7 @@ const getPersonaAttributes = catchErrors(async (req, res) => {
     authInfo
   });
 
-  const { attributes } = await req.personaService.getPersonaAttributes({
+  const { attributes } = await personaService.getPersonaAttributes({
     ...req.query,
     organisation: getOrgFromAuthInfo(authInfo),
   });
@@ -133,7 +136,7 @@ const updatePersonaAttribute = catchErrors(async (req, res) => {
     authInfo
   });
 
-  const { attribute } = await req.personaService.overwritePersonaAttribute({
+  const { attribute } = await personaService.overwritePersonaAttribute({
     ...req.body,
     organisation: getOrgFromAuthInfo(authInfo),
     id: req.params.personaAttributeId
@@ -150,7 +153,7 @@ const deletePersonaAttribute = catchErrors(async (req, res) => {
     authInfo
   });
 
-  await req.personaService.deletePersonaAttribute({
+  await personaService.deletePersonaAttribute({
     organisation: getOrgFromAuthInfo(authInfo),
     id: req.params.personaAttributeId
   });
@@ -174,7 +177,7 @@ const personaAttributeCount = catchErrors(async (req, res) => {
     ...scopeFilter
   };
 
-  const count = await req.personaService.getPersonaAttributeCount({
+  const count = await personaService.getPersonaAttributeCount({
     organisation: getOrgFromAuthInfo(authInfo),
     filter
   });

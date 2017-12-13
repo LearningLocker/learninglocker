@@ -1,11 +1,12 @@
 import testId from 'api/routes/tests/utils/testId';
 import Persona from 'lib/models/persona';
+import getPersonaService from 'lib/connections/personaService';
 
-export default () =>
-  Persona.create({
-    name: 'Persona',
+export default async () => {
+  const service = getPersonaService();
+  const { persona } = await service.createPersona({
     organisation: testId,
-    identifiers: [],
-    personStatements: [],
-    personStudents: []
+    name: 'Persona'
   });
+  return persona;
+};
