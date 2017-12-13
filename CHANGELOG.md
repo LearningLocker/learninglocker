@@ -9,6 +9,17 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.1.0] - 2017-11-23
+### Added
+  - Migration funcionality ([#LL-395](https://ht2labs.myjetbrains.com/youtrack/issue/LL-395))
+  - Can now set the max times statement forwarding will retry.
+  - Legend added to X vs Y charts ([#LL-322](https://ht2labs.myjetbrains.com/youtrack/issue/LL-322))
+  - Prevents deleting a role if assigned to a user, added error alerts ([#LL-353](https://ht2labs.myjetbrains.com/youtrack/issue/LL-353))
+  - User integration tests
+### Fixed
+ - Client auth not working with some APIs ([#LL-367](https://ht2labs.myjetbrains.com/youtrack/issue/LL-367))
+### Changed
+ - Only allow sensible combinations of roles
 
 ## [2.0.7] - 2017-11-08
 ### Fixes

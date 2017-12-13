@@ -1,12 +1,62 @@
 import React, { PropTypes } from 'react';
 import { compose, setPropTypes, withProps, withHandlers } from 'recompose';
-import { List } from 'immutable';
-import { map, groupBy, startCase, lowerCase } from 'lodash';
+import { List, Set } from 'immutable';
+import {
+  chain,
+  map,
+  groupBy,
+  startCase,
+  lowerCase,
+  difference,
+} from 'lodash';
 import Checkbox from 'ui/components/Material/Checkbox';
 import { withModel } from 'ui/utils/hocs';
-import orgScopes, { roleGroupNames } from 'lib/constants/orgScopes';
+import orgScopes, {
+  roleGroupNames,
+} from 'lib/constants/orgScopes';
+import {
+  getScopeDependencies,
+  getScopeDependents,
+} from 'lib/helpers/scopes';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import styles from './styles.css';
+
+
+export const generateNewScopes = (oldScopes, scope, checked) => {
+  let newScopes;
+  if (checked) {
+    const scopeDependencies = getScopeDependencies()(scope);
+    newScopes = oldScopes.union(new Set([scope, ...scopeDependencies]));
+  } else {
+    let newScopesAll;
+
+    const dependencies = getScopeDependencies()(scope);
+    if (
+      difference(dependencies, oldScopes.toJS()).length === 0
+    ) {
+      const dependenciesDependents = chain(dependencies)
+        .map(getScopeDependents())
+        .flatten();
+
+      newScopesAll = oldScopes.subtract(new Set([
+        ...dependencies,
+        ...dependenciesDependents
+      ]));
+    } else {
+      newScopesAll = oldScopes;
+    }
+
+    const scopeDependents = getScopeDependents()(scope);
+    newScopes = newScopesAll.subtract(
+      new Set([
+        scope,
+        ...scopeDependents,
+      ])
+    );
+  }
+
+  return newScopes.toList();
+};
 
 const enhance = compose(
   setPropTypes({
@@ -25,9 +75,10 @@ const enhance = compose(
     handleScopeChange: ({ model, updateModel }) =>
       (scope, checked) => {
         const oldScopes = model.get('scopes', new List()).toSet();
-        const newScopes = checked ? oldScopes.add(scope) : oldScopes.delete(scope);
-        const value = newScopes.toList();
-        updateModel({ path: ['scopes'], value });
+
+        const newScopes = generateNewScopes(oldScopes, scope, checked);
+
+        updateModel({ path: ['scopes'], value: newScopes });
       }
   })
 );
@@ -79,6 +130,7 @@ const renderScopeTableRow = ({
 
 const render = ({ model, handleAttrChange, handleScopeChange }) => {
   const groupedOrgScopes = groupScopes(orgScopes);
+
   return (
     <div>
       <div className="form-group">

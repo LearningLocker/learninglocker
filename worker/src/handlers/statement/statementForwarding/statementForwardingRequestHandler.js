@@ -7,17 +7,26 @@ import mongoose from 'mongoose';
 import StatementForwarding from 'lib/models/statementForwarding';
 import ForwardingRequestError from
   'worker/handlers/statement/statementForwarding/ForwardingRequestError';
+import {
+  STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE,
+} from 'lib/constants/statements';
+import * as Queue from 'lib/services/queue';
 
 const objectId = mongoose.Types.ObjectId;
 
 const generateHeaders = (statementContent, statementForwarding) => {
-  const headers1 = new Map({
+  const headersWithLength = new Map({
     'Content-Type': 'application/json',
     'Content-Length': Buffer.byteLength(statementContent)
   });
-  const statementForwarding2 = new StatementForwarding(statementForwarding);
-  const headers2 = headers1.merge(statementForwarding2.getAuthHeaders());
-  return headers2.toJS();
+  const statementForwardingModel = new StatementForwarding(statementForwarding);
+  const headersWithAuthAndLength =
+    headersWithLength.merge(statementForwardingModel.getAuthHeaders());
+
+  const headersWithAuthAndLengthAndHeaders =
+    headersWithAuthAndLength.merge(statementForwardingModel.getHeaders());
+
+  return headersWithAuthAndLengthAndHeaders.toJS();
 };
 
 const sendRequest = async (statement, statementForwarding) => {
@@ -69,7 +78,10 @@ const setCompleteStatements = (statement, statementForwardingId) =>
 
 const statementForwardingRequestHandler = async (
   { statement, statementForwarding },
-  done
+  done,
+  {
+    queue = Queue
+  } = {}
 ) => {
   try {
     await setPendingStatements(
@@ -85,13 +97,13 @@ const statementForwardingRequestHandler = async (
     await setCompleteStatements(statement, statementForwarding._id);
 
     logger.debug(
-      `SUCCESS sending statement to ${statementForwarding.configuration.url}`
+      `SUCCESS sending statement ${statement._id} to ${statementForwarding.configuration.url}`
     );
 
     done();
   } catch (err) {
     logger.info(
-      `FAILED sending stetement to ${statementForwarding.configuration.url}`,
+      `FAILED sending statement ${statement._id} to ${statementForwarding.configuration.url}`,
       err
     );
 
@@ -108,19 +120,46 @@ const statementForwardingRequestHandler = async (
     }
 
     try {
-      await Statement.findByIdAndUpdate(
+      const updatedStatement = await Statement.findByIdAndUpdate(
         statement._id,
         {
           $addToSet: {
             failedForwardingLog: update
           }
+        },
+        {
+          new: true,
         }
       );
+
+      if (
+        updatedStatement.failedForwardingLog.length <=
+          statementForwarding.configuration.maxRetries
+      ) {
+        logger.info(`SENDING statement ${updatedStatement._id} to ${STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE}`);
+        queue.publish({
+          queueName: STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE,
+          payload: {
+            status: STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE,
+            statement: updatedStatement,
+            statementForwarding
+          }
+        }, (err) => {
+          if (err) {
+            logger.error(`FAILED sending statement ${updatedStatement._id} to ${STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE}`, err);
+            done(err);
+            throw new Error('Error publishing to queue');
+          }
+          done();
+          return;
+        });
+      } else {
+        logger.info(`SENT statement ${updatedStatement._id} to ${STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE}`);
+        done(err); // failed, let redrive send to dead letter queue
+      }
     } catch (err) {
       logger.error('Failed updating failedForwardingLog', err);
     }
-
-    done(err);
   }
 
   return [statement._id];

@@ -2,7 +2,7 @@
 
 exports[`SaveBar should render save bar COMPLETED 1`] = `
 <div
-  className="container"
+  className="container save-bar"
 >
   <div
     aria-valuemax={100}
@@ -50,7 +50,7 @@ exports[`SaveBar should render save bar COMPLETED 1`] = `
 
 exports[`SaveBar should render save bar FAILED 1`] = `
 <div
-  className="container"
+  className="container save-bar"
 >
   <div
     aria-valuemax={100}
@@ -98,7 +98,7 @@ exports[`SaveBar should render save bar FAILED 1`] = `
 
 exports[`SaveBar should render save bar IN_PROGRESS 1`] = `
 <div
-  className="container"
+  className="container save-bar"
 >
   <div
     aria-valuemax={100}
