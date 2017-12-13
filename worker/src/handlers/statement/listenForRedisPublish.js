@@ -8,15 +8,15 @@ import cachePrefix from 'lib/helpers/cachePrefix';
 const redisOpts = redis.getOptions();
 
 export default () => {
-  const v1SubClient = redis.createClient();
-  const v1PubClient = redis.createClient();
+  const subClient = redis.createClient();
+  const pubClient = redis.createClient();
   const subKey = cachePrefix('statement.notify'); // subscribe channel is not prefixed by bull, so must manually do this!
   const pubKey = cachePrefix('statement.new');
   logger.debug('Using redis options:', redisOpts);
   logger.info(`Subscribing to '${subKey}' and will rpop on key '${pubKey}'`);
 
   let currentlyWorking = false;
-  v1SubClient.on('message', (channel) => {
+  subClient.on('message', (channel) => {
     logger.info(`Message on channel '${channel}'`);
 
     if (!currentlyWorking) {
@@ -25,7 +25,7 @@ export default () => {
       // while there are payloads left in the work queue, process them
       async.doUntil(
         (cb) => {
-          v1PubClient.rpop(pubKey, (err, payload) => {
+          pubClient.rpop(pubKey, (err, payload) => {
             if (err) {
               logger.error('ERROR ON REDIS RPOP', err);
               cb(err);
@@ -49,5 +49,5 @@ export default () => {
       );
     }
   });
-  v1SubClient.subscribe(subKey);
+  subClient.subscribe(subKey);
 };

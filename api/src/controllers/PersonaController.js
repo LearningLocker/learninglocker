@@ -9,8 +9,11 @@ import parseQuery from 'lib/helpers/parseQuery';
 import { CursorDirection } from 'personas/dist/service/constants';
 import { replaceId, replaceIds } from 'api/controllers/utils/replaceIds';
 import reasignPersonaStatements from 'lib/services/persona/reasignPersonaStatements';
+import getPersonaService from 'lib/connections/personaService';
 
 const MODEL_NAME = 'persona';
+
+const personaService = getPersonaService();
 
 const personaConnection = catchErrors(async (req, res) => {
   const { before, after } = req.query;
@@ -49,7 +52,7 @@ const personaConnection = catchErrors(async (req, res) => {
     maxScan: MAX_SCAN
   };
 
-  const personas = await req.personaService.getPersonasConnection(params);
+  const personas = await personaService.getPersonasConnection(params);
 
   return res.status(200).send(personas);
 });
@@ -65,7 +68,7 @@ const updatePersona = catchErrors(async (req, res) => {
     authInfo
   });
 
-  const { persona } = await req.personaService.updatePersona({
+  const { persona } = await personaService.updatePersona({
     organisation: getOrgFromAuthInfo(authInfo),
     personaId,
     name: newName
@@ -90,7 +93,7 @@ const mergePersona = catchErrors(async (req, res) => {
     authInfo
   });
 
-  const result = await req.personaService.mergePersona({
+  const result = await personaService.mergePersona({
     organisation: getOrgFromAuthInfo(authInfo),
     fromPersonaId: req.query.mergePersonaFromId,
     toPersonaId: req.query.mergePersonaToId
@@ -114,7 +117,7 @@ const deletePersona = catchErrors(async (req, res) => {
     authInfo
   });
 
-  const result = await req.personaService.deletePersona({
+  const result = await personaService.deletePersona({
     organisation: getOrgFromAuthInfo(authInfo),
     personaId: req.params.personaId
   });
@@ -130,7 +133,7 @@ const addPersona = catchErrors(async (req, res) => {
     authInfo
   });
 
-  const { persona } = await req.personaService.createPersona({
+  const { persona } = await personaService.createPersona({
     organisation: getOrgFromAuthInfo(authInfo),
     name: req.body.name
   });
@@ -146,7 +149,7 @@ const getPersona = catchErrors(async (req, res) => {
     authInfo
   });
 
-  const { persona } = await req.personaService.getPersona({
+  const { persona } = await personaService.getPersona({
     organisation: getOrgFromAuthInfo(authInfo),
     personaId: req.params.personaId
   });
@@ -163,7 +166,7 @@ const getPersonas = catchErrors(async (req, res) => {
     authInfo
   });
 
-  const { personas } = await req.personaService.getPersonas({
+  const { personas } = await personaService.getPersonas({
     ...req.query,
     organisation: getOrgFromAuthInfo(authInfo)
   });
@@ -189,7 +192,7 @@ const personaCount = catchErrors(async (req, res) => {
     ...scopeFilter
   };
 
-  const count = await req.personaService.getPersonaCount({
+  const count = await personaService.getPersonaCount({
     organisation: getOrgFromAuthInfo(authInfo),
     filter
   });

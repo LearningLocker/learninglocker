@@ -1,28 +1,13 @@
 import testId from 'api/routes/tests/utils/testId';
-import { MongoClient } from 'mongodb';
+import getPersonaService from 'lib/connections/personaService';
 import { expect } from 'chai';
-import mongoModelsRepo from 'personas/dist/mongoModelsRepo';
-import config from 'personas/dist/config';
-import createPersonaService from 'personas/dist/service';
 import setup from 'api/routes/tests/utils/setup';
 import * as routes from 'lib/constants/routes';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 
 describe('updatePersonaAttribute', () => {
   const apiApp = setup();
-
-  let personaService;
-  before(async () => {
-    const mongoClientPromise = MongoClient.connect(
-      process.env.MONGODB_PATH,
-      config.mongoModelsRepo.options
-    );
-    personaService = createPersonaService({
-      repo: mongoModelsRepo({
-        db: mongoClientPromise
-      })
-    });
-  });
+  const personaService = getPersonaService();
 
   beforeEach(async () => {
     await personaService.clearService();

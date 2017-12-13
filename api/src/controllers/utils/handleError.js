@@ -2,12 +2,10 @@ import NotFoundError from 'lib/errors/NotFoundError';
 import NoAccessError from 'lib/errors/NoAccessError';
 import Unauthorised from 'lib/errors/Unauthorised';
 import UnauthorisedQueryError from 'lib/errors/UnauthorisedQueryError';
-import InvalidRecalc from 'lib/errors/InvalidRecalc';
 import BaseError from 'lib/errors/BaseError';
+import ClientError from 'lib/errors/ClientError';
 import logger from 'lib/logger';
 import defaultTo from 'lodash/defaultTo';
-import EmptyCsvError from 'lib/errors/EmptyCsvError';
-import DuplicateCsvHeadersError from 'lib/errors/DuplicateCsvHeadersError';
 import { v4 as uuid } from 'uuid';
 import PersonaConflict from 'personas/dist/errors/Conflict';
 import NoModel from 'jscommons/dist/errors/NoModel';
@@ -16,7 +14,6 @@ import PersonaNoModelWithId from 'personas/dist/errors/NoModelWithId';
 
 export default (res, err) => {
   const errorId = uuid();
-  logger.error(errorId, err);
 
   // persona errors
   if (err instanceof PersonaNoModelWithId) {
@@ -64,15 +61,15 @@ export default (res, err) => {
   }
 
   if (
-    err instanceof InvalidRecalc ||
-    err instanceof EmptyCsvError ||
-    err instanceof DuplicateCsvHeadersError
+    err instanceof ClientError
   ) {
     return res.status(400).send({
       errorId,
       message: err.message
     });
   }
+
+  logger.error(errorId, err);
 
   if (
     err instanceof Error ||
