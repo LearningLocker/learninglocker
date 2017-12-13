@@ -3,7 +3,7 @@ import Promise from 'bluebird';
 import wrapHandlerForStatement from 'worker/handlers/statement/wrapHandlerForStatement';
 import { STATEMENT_EXTRACT_PERSONAS_QUEUE } from 'lib/constants/statements';
 import asignIdentifierToStatements from 'lib/services/persona/asignIdentifierToStatements';
-import getIfiFromActor from 'lib/services/persona/libs/getIfiFromActor';
+import getIfiFromActor from 'lib/services/persona/utils/getIfiFromActor';
 
 const handleStatement = personaService => async (statement) => {
   const ifi = getIfiFromActor(statement.statement.actor);
