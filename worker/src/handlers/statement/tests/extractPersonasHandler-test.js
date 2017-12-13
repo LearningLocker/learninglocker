@@ -60,7 +60,6 @@ describe('Extract persona handler', () => {
   });
 
   beforeEach(async () => {
-    personaService = getPersonaService();
     await personaService.clearService();
   });
 
