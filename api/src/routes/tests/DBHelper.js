@@ -2,6 +2,7 @@ import Organisation from 'lib/models/organisation';
 import Lrs from 'lib/models/lrs';
 import Client from 'lib/models/client';
 import User from 'lib/models/user';
+import Statement from 'lib/models/statement';
 import async from 'async';
 import * as scopes from 'lib/constants/scopes';
 
@@ -65,7 +66,7 @@ export default class journeyDBHelpers {
 
   cleanUp = (done) => {
     async.forEach(
-      [Organisation, User, Lrs, Client],
+      [Organisation, User, Lrs, Client, Statement],
       (model, doneDeleting) => {
         model.remove({}, doneDeleting);
       },

@@ -5,6 +5,7 @@
 .tags
 .tmp
 *.csv
+*.log
 *.iml
 *.orig
 api/logs/*

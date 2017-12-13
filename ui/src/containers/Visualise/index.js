@@ -12,9 +12,12 @@ import ModelList from 'ui/containers/ModelList';
 import VisualiseForm from 'ui/containers/VisualiseForm';
 import DeleteButton from 'ui/containers/DeleteButton';
 import PrivacyToggleButton from 'ui/containers/PrivacyToggleButton';
+import VisualisationTypeIcon from './VisualisationTypeIcon';
 import styles from './visualise.css';
 
+
 const schema = 'visualisation';
+
 const VisualisationList = compose(
   withProps({
     schema,
@@ -69,7 +72,14 @@ class Visualise extends Component {
             filter={queryStringToQuery(this.props.searchString, schema)}
             ModelForm={VisualiseForm}
             buttons={[PrivacyToggleButton, DeleteButton]}
-            getDescription={model => model.get('description') || '~ Unnamed Visualisation'} />
+            getDescription={model => (
+              <span>
+                <span style={{ paddingRight: 5 }}>
+                  <VisualisationTypeIcon id={model.get('_id')} />
+                </span>
+                { model.get('description') || '~ Unnamed Visualisation'}
+              </span>
+            )} />
         </div>
       </div>
     </div>
