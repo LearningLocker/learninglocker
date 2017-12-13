@@ -8,19 +8,17 @@ import NoModel from 'jscommons/dist/errors/NoModel';
 import getPersonaService from 'lib/connections/personaService';
 
 
-const assertError = (expectedConstructor, promise) => {
-  return promise.then(() => {
-    assert(false, 'Expected an error to be thrown');
-  }, (err) => {
-    const actualConstructor = err.constructor;
-    if (actualConstructor === expectedConstructor) {
-      return;
-    }
-    const x = new Error('Expected a different error constructor');
-    x.stack = err.stack;
-    throw x;
-  });
-};
+const assertError = (expectedConstructor, promise) => promise.then(() => {
+  assert(false, 'Expected an error to be thrown');
+}, (err) => {
+  const actualConstructor = err.constructor;
+  if (actualConstructor === expectedConstructor) {
+    return;
+  }
+  const x = new Error('Expected a different error constructor');
+  x.stack = err.stack;
+  throw x;
+});
 
 describe('PersonaController.mergePersona', () => {
   let token;
@@ -41,9 +39,8 @@ describe('PersonaController.mergePersona', () => {
     mergePersonaFromId,
     mergePersonaToId,
     expectedCode
-  }) => {
-    return new Promise((resolve, reject) => {
-      apiApp
+  }) => new Promise((resolve, reject) => {
+    apiApp
         .post(routes.MERGE_PERSONA)
         .set('Authorization', `Bearer ${token}`)
         .query({ mergePersonaFromId, mergePersonaToId })
@@ -52,8 +49,7 @@ describe('PersonaController.mergePersona', () => {
           if (err) return reject(err);
           resolve(res);
         });
-    });
-  };
+  });
 
   const assertFailedMerge = async ({
     mergePersonaFromId,

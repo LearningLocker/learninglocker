@@ -1,5 +1,4 @@
 import testId from 'api/routes/tests/utils/testId';
-import Persona from 'lib/models/persona';
 import getPersonaService from 'lib/connections/personaService';
 
 export default async () => {

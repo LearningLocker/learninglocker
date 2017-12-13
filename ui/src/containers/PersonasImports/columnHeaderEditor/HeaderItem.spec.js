@@ -49,7 +49,7 @@ describe('HeaderItem', () => {
       model={fromJS({
         _id: '1'
       })}
-      disabled="true"/>);
+      disabled="true" />);
 
     expect(rendered).toMatchSnapshot();
   });
