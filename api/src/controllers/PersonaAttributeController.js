@@ -71,23 +71,20 @@ const addPersonaAttribute = catchErrors(async (req, res) => {
     authInfo
   });
 
-  const parsedBody = await parseQuery(
-    req.body,
-    {
-      organisation: getOrgFromAuthInfo(authInfo)
-    }
-  );
+  const organisation = getOrgFromAuthInfo(authInfo);
+
+  const { key, value, personaId } = req.body;
 
   const { attribute } = await req.personaService.overwritePersonaAttribute({
-    organisation: getOrgFromAuthInfo(authInfo),
-    personaId: toString(parsedBody.personaId),
-    key: parsedBody.key,
-    value: parsedBody.value
+    organisation,
+    personaId,
+    key,
+    value,
   });
 
   updateQueryBuilderCache({
     attributes: [attribute],
-    organisation: getOrgFromAuthInfo(authInfo)
+    organisation,
   });
 
   return res.status(200).send(attribute);
@@ -160,6 +157,7 @@ const deletePersonaAttribute = catchErrors(async (req, res) => {
 
   return res.status(200).send();
 });
+
 const personaAttributeCount = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 

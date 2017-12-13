@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import getJSONFromQuery from 'api/utils/getJSONFromQuery';
 import catchErrors from 'api/controllers/utils/catchErrors';
 import getFromQuery from 'api/utils/getFromQuery';
+import ClientError from 'lib/errors/ClientError';
 import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
 import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
@@ -211,9 +212,9 @@ const deletePersonaIdentifier = catchErrors(async (req, res) => {
   const organisation = getOrgFromAuthInfo(authInfo);
   const identifierId = req.params.personaIdentifierId;
 
-  const hasStatement = identifierHasStatements({ organisation, identifierId });
+  const hasStatement = await identifierHasStatements({ organisation, identifierId });
   if (hasStatement) {
-    throw new Error('Cannot remove personaIdentifier; statements exists in LRS with ifi');
+    throw new ClientError('Cannot remove personaIdentifier; statements exists in LRS with ifi');
   }
 
   await req.personaService.deletePersonaIdentifier({

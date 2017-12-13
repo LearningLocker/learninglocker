@@ -59,6 +59,5 @@ describe('patchPresonaAttributes', () => {
         value: 'test12',
       })
       .expect(200);
-    process.exit();
   });
 });

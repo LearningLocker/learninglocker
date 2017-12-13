@@ -35,8 +35,7 @@ describe('personaController postAttribute', () => {
     await personaService.clearService();
   });
 
-
-  it('should create an identifier', async () => {
+  it('should create an attribute', async () => {
     const { persona } = await personaService.createPersona({
       organisation: testId,
       name: 'Dave'

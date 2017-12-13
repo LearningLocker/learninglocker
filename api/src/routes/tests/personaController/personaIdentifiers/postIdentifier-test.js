@@ -35,11 +35,17 @@ describe('updatePresonaIdentifier', () => {
     await personaService.clearService();
   });
 
-  it('Should update an identifier', async () => {
+  it('Should update an identifier (but only the persona)', async () => {
     const { persona } = await personaService.createPersona({
       organisation: testId,
       name: 'Dave'
     });
+
+    const { persona: persona2 } = await personaService.createPersona({
+      organisation: testId,
+      name: 'Dave'
+    });
+
 
     const { identifier } = await personaService.createIdentifier({
       ifi: {
@@ -59,11 +65,14 @@ describe('updatePresonaIdentifier', () => {
           key: 'mbox',
           value: 'test2@test2.com'
         },
-        persona: persona.id
+        persona: persona2.id
       })
       .expect(200);
 
-    expect(result.body.ifi.value).to.equal('test2@test2.com');
-    expect(result.body.persona).to.equal(persona.id);
+    // ident should still have the same ifi
+    expect(result.body.ifi.key).to.equal(identifier.ifi.key);
+    expect(result.body.ifi.value).to.equal(identifier.ifi.value);
+    // but persona should have changed
+    expect(result.body.persona).to.equal(persona2.id);
   });
 });
