@@ -1,8 +1,9 @@
-import Statement from 'lib/models/statement';
 import mongoose from 'mongoose';
 import { expect } from 'chai';
 import async from 'async';
 import Promise, { promisify } from 'bluebird';
+import Statement from 'lib/models/statement';
+import getPersonaService from 'lib/connections/personaService';
 import {
   STATEMENT_JOURNEY_QUEUE,
   STATEMENT_QUERYBUILDERCACHE_QUEUE,
@@ -12,7 +13,6 @@ import {
 import extractPersonasHandler, {
   extractPersonasStatementHandler
 } from '../extractPersonasHandler';
-import { getPersonaService } from '../index';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -27,7 +27,7 @@ const cleanUp = () => new Promise(reslove =>
 );
 
 describe('Extract persona handler', () => {
-  let personaFacade;
+  const personaService = getPersonaService();
 
   const statementId = '561a679c0c5d017e4004714f';
   const organisationId = '561a679c0c5d017e4004715a';
@@ -60,22 +60,21 @@ describe('Extract persona handler', () => {
   });
 
   beforeEach(async () => {
-    personaFacade = getPersonaService();
-    await personaFacade.clearService();
+    await personaService.clearService();
   });
 
   afterEach(() => {
-    personaFacade.clearService();
+    personaService.clearService();
   });
 
   it('Should extract a persona if no presona or identifer exists', async () => {
     await Statement.create(testStatement);
 
     await Promise.promisify(
-      extractPersonasHandler(personaFacade)
+      extractPersonasHandler(personaService)
     )({ statementId });
 
-    const { personaId, identifierId } = await personaFacade.getIdentifierByIfi({
+    const { personaId, identifierId } = await personaService.getIdentifierByIfi({
       organisation: organisationId,
       ifi: {
         key: 'mbox',
@@ -83,7 +82,7 @@ describe('Extract persona handler', () => {
       }
     });
 
-    const { persona } = await personaFacade.getPersona({
+    const { persona } = await personaService.getPersona({
       organisation: organisationId,
       personaId
     });
@@ -102,10 +101,10 @@ describe('Extract persona handler', () => {
 
     console.log('101', statementId);
     await Promise.promisify(
-      extractPersonasHandler(personaFacade)
+      extractPersonasHandler(personaService)
     )({ statementId });
 
-    const { personaId, identifierId } = await personaFacade.getIdentifierByIfi({
+    const { personaId, identifierId } = await personaService.getIdentifierByIfi({
       organisation: organisationId,
       ifi: {
         key: 'mbox',
@@ -113,7 +112,7 @@ describe('Extract persona handler', () => {
       }
     });
 
-    const { persona } = await personaFacade.getPersona({
+    const { persona } = await personaService.getPersona({
       organisation: organisationId,
       personaId
     });
@@ -133,11 +132,11 @@ describe('Extract persona handler', () => {
 
     // Add the persona
 
-    const { persona: createdPersona } = await personaFacade.createPersona({
+    const { persona: createdPersona } = await personaService.createPersona({
       name: 'Lucky',
       organisation: organisationId
     });
-    await personaFacade.createIdentifier({
+    await personaService.createIdentifier({
       ifi: {
         key: 'mbox',
         value: 'mailto:juanmorales@acorncorp.com'
@@ -150,9 +149,9 @@ describe('Extract persona handler', () => {
 
     const statement = await Statement.findById(statementId);
 
-    await promisify(extractPersonasStatementHandler(personaFacade))([statement]);
+    await promisify(extractPersonasStatementHandler(personaService))([statement]);
 
-    const { personaId, identifierId } = await personaFacade.getIdentifierByIfi({
+    const { personaId, identifierId } = await personaService.getIdentifierByIfi({
       organisation: organisationId,
       ifi: {
         key: 'mbox',
@@ -160,7 +159,7 @@ describe('Extract persona handler', () => {
       }
     });
 
-    const { persona } = await personaFacade.getPersona({
+    const { persona } = await personaService.getPersona({
       organisation: organisationId,
       personaId
     });
@@ -186,7 +185,7 @@ describe('Extract persona handler', () => {
 
     // RUN
     await Promise.promisify(
-      extractPersonasHandler(personaFacade)
+      extractPersonasHandler(personaService)
     )({ statementId: queueStatementId });
 
     // TEST

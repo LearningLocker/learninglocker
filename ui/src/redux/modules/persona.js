@@ -43,15 +43,14 @@ export const uploadPersonas = ({ id, file }) => ({
   file,
 });
 
-export const uploadPersonasSuccess = ({ id, body }) => {
+export const uploadPersonasSuccess = ({ id, body }) =>
   // We want to update the model
 
-  return ({
-    type: UPLOAD_PERSONAS_SUCCESS,
-    body,
-    id
-  });
-};
+   ({
+     type: UPLOAD_PERSONAS_SUCCESS,
+     body,
+     id
+   });
 
 export const uploadPersonasFailure = ({ id, err }) => ({
   type: UPLOAD_PERSONAS_FAILURE,

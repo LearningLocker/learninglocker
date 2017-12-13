@@ -58,16 +58,14 @@ const processStream = stream =>
     stream.apply(resolve);
   });
 
-const createIndex = (key) => {
-  return Statement.collection.createIndex(
-    {
-      organisation: 1,
-      lrs_id: 1,
-      [key]: 1
-    },
+const createIndex = key => Statement.collection.createIndex(
+  {
+    organisation: 1,
+    lrs_id: 1,
+    [key]: 1
+  },
     { background: true }
   );
-};
 
 const createIndexes = keys => keys.map(createIndex);
 

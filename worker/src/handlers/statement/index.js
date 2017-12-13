@@ -2,7 +2,7 @@ import logger from 'lib/logger';
 import extractPersonasHandler from 'worker/handlers/statement/extractPersonasHandler';
 import queryBuilderCacheHandler from 'worker/handlers/statement/queryBuilderCacheHandler';
 import defaultStatementHandler from 'worker/handlers/statement/statementHandler';
-import listenForV1 from 'worker/handlers/statement/listenForV1';
+import listenForRedisPublish from 'worker/handlers/statement/listenForRedisPublish';
 import * as Queue from 'lib/services/queue';
 import statementForwardingHandler from
   'worker/handlers/statement/statementForwarding/statementForwardingHandler';
@@ -10,10 +10,7 @@ import statementForwardingRequestHandler from
   'worker/handlers/statement/statementForwarding/statementForwardingRequestHandler';
 import statementForwardingDeadLetterHandler from
   'worker/handlers/statement/statementForwarding/statementForwardingDeadLetterHandler';
-import mongoModelsRepo from 'personas/dist/mongoModelsRepo';
-import { MongoClient } from 'mongodb';
-import config from 'personas/dist/config';
-import service from 'personas/dist/service';
+import getPersonaService from 'lib/connections/personaService';
 
 import {
   STATEMENT_QUEUE,
@@ -30,16 +27,6 @@ const defaultHandleResponse = (err) => {
   return err;
 };
 
-export const getPersonaService = () =>
-  service({
-    repo: mongoModelsRepo({
-      db: MongoClient.connect(
-        process.env.MONGODB_PATH,
-        config.mongoModelsRepo.options,
-      ),
-    }),
-  });
-
 export default (
 {
   handleResponse = defaultHandleResponse,
@@ -49,8 +36,8 @@ export default (
 }
 ) => {
   const personaService = getPersonaService();
-  // GET NOTIFICATIONS FROM V1. Keep this until statement API is moved to node
-  listenForV1();
+  // Get notifications from Redis pub/sub
+  listenForRedisPublish();
 
   Queue.subscribe({
     queueName: STATEMENT_QUEUE,
