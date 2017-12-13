@@ -1,8 +1,9 @@
-import Statement from 'lib/models/statement';
 import mongoose from 'mongoose';
 import { expect } from 'chai';
 import async from 'async';
 import Promise, { promisify } from 'bluebird';
+import Statement from 'lib/models/statement';
+import getPersonaService from 'lib/connections/personaService';
 import {
   STATEMENT_JOURNEY_QUEUE,
   STATEMENT_QUERYBUILDERCACHE_QUEUE,
@@ -12,7 +13,6 @@ import {
 import extractPersonasHandler, {
   extractPersonasStatementHandler
 } from '../extractPersonasHandler';
-import getPersonaService from 'lib/connections/personaService';
 
 const objectId = mongoose.Types.ObjectId;
 
