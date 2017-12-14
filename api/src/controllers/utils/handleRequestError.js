@@ -11,6 +11,10 @@ import PersonaConflict from 'personas/dist/errors/Conflict';
 import NoModel from 'jscommons/dist/errors/NoModel';
 import PersonaNoModelWithId from 'personas/dist/errors/NoModelWithId';
 
+export const unawaitedErrorHandler = (err) => {
+  const errorId = uuid();
+  logger.error(errorId, err);
+};
 
 export default (res, err) => {
   const errorId = uuid();

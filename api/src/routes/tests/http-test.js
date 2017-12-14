@@ -123,8 +123,6 @@ describe('API HTTP Route tests', () => {
             }
           }
         });
-
-        console.log(statement);
       });
 
       it('should return 200 with token auth', async () => {

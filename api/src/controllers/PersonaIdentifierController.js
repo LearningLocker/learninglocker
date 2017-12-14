@@ -3,6 +3,7 @@ import getJSONFromQuery from 'api/utils/getJSONFromQuery';
 import catchErrors from 'api/controllers/utils/catchErrors';
 import getFromQuery from 'api/utils/getFromQuery';
 import ClientError from 'lib/errors/ClientError';
+import handleError from 'lib/utils/handleError';
 import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
 import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
@@ -87,7 +88,8 @@ const addPersonaIdentifier = catchErrors(async (req, res) => {
   });
 
   // assign persona and personaIdentifier to statements
-  asignIdentifierToStatements({ organisation, identifier });
+  asignIdentifierToStatements({ organisation, toIdentifierId: identifier.id })
+    .catch(handleError);
 
   return res.status(200).send(identifier);
 });
@@ -118,7 +120,8 @@ const upsertPersonaIdentifier = catchErrors(async (req, res) => {
       });
 
       // assign persona and personaIdentifier to statements
-      asignIdentifierToStatements({ organisation, identifier });
+      asignIdentifierToStatements({ organisation, toIdentifierId: identifier.id })
+        .catch(handleError);
 
       return res.status(200).send(replaceId(identifier));
     } catch (err) {
@@ -139,7 +142,8 @@ const upsertPersonaIdentifier = catchErrors(async (req, res) => {
   });
 
   // assign persona and personaIdentifier to statements
-  asignIdentifierToStatements({ organisation, identifier });
+  asignIdentifierToStatements({ organisation, toIdentifierId: identifier.id })
+    .catch(handleError);
 
   return res.status(200).send(replaceId(identifier));
 });
@@ -199,7 +203,8 @@ const updatePersonaIdentifier = catchErrors(async (req, res) => {
   });
 
   // assign persona and personaIdentifier to statements
-  asignIdentifierToStatements({ organisation, identifier });
+  asignIdentifierToStatements({ organisation, toIdentifierId: identifier.id })
+    .catch(handleError);
 
   return res.status(200).send(replaceId(identifier));
 });
