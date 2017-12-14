@@ -91,7 +91,7 @@ const addPersonaIdentifier = catchErrors(async (req, res) => {
   asignIdentifierToStatements({ organisation, toIdentifierId: identifier.id })
     .catch(handleError);
 
-  return entityResponse(res, identifer);
+  return entityResponse(res, identifier);
 });
 
 /**
