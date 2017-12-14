@@ -52,9 +52,9 @@ const personaConnection = catchErrors(async (req, res) => {
     maxScan: MAX_SCAN
   };
 
-  const personas = await personaService.getPersonasConnection(params);
+  const result = await personaService.getPersonasConnection(params);
 
-  return res.status(200).send(personas);
+  return res.status(200).send(result);
 });
 
 const updatePersona = catchErrors(async (req, res) => {

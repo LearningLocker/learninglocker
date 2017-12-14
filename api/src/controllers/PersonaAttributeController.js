@@ -50,7 +50,7 @@ const personaAttributeConnection = catchErrors(async (req, res) => {
   };
   const filterNoUndefined = omitBy(filter, isUndefined);
 
-  const attributes = await personaService.getAttributes({
+  const result = await personaService.getAttributes({
     limit: first || last || 10,
     direction: CursorDirection[before ? 'BACKWARDS' : 'FORWARDS'],
     sort,
@@ -63,7 +63,7 @@ const personaAttributeConnection = catchErrors(async (req, res) => {
     maxScan: MAX_SCAN
   });
 
-  return res.status(200).send(attributes);
+  return res.status(200).send(result);
 });
 
 const addPersonaAttribute = catchErrors(async (req, res) => {

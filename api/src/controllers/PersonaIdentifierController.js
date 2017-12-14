@@ -54,7 +54,7 @@ const personaIdentifierConnection = catchErrors(async (req, res) => {
   };
   const filterNoUndefined = omitBy(filter, isUndefined);
 
-  const identifiers = await personaService.getIdentifiers({
+  const result = await personaService.getIdentifiers({
     limit: first || last || 10,
     direction: CursorDirection[before ? 'BACKWARDS' : 'FORWARDS'],
     sort,
@@ -67,7 +67,7 @@ const personaIdentifierConnection = catchErrors(async (req, res) => {
     maxScan: MAX_SCAN
   });
 
-  return res.status(200).send(identifiers);
+  return res.status(200).send(result);
 });
 
 const addPersonaIdentifier = catchErrors(async (req, res) => {
@@ -91,7 +91,7 @@ const addPersonaIdentifier = catchErrors(async (req, res) => {
   asignIdentifierToStatements({ organisation, toIdentifierId: identifier.id })
     .catch(handleError);
 
-  return res.status(200).send(identifier);
+  return entityResponse(res, identifer);
 });
 
 /**
