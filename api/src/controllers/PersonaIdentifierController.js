@@ -19,7 +19,6 @@ import {
   omitBy,
 } from 'lodash';
 import { entityResponse, entitiesResponse } from 'api/controllers/utils/entitiesResponse';
-import { identifer } from 'ui/utils/schemas';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -124,11 +123,11 @@ const upsertPersonaIdentifier = catchErrors(async (req, res) => {
       asignIdentifierToStatements({ organisation, toIdentifierId: identifier.id })
         .catch(handleError);
 
-      return entityResponse(res, identifer);
+      return entityResponse(res, identifier);
     } catch (err) {
       // if there was a lock then the ident already existed, so just return it
       if (err instanceof Locked) {
-        return entityResponse(res, err.identifer);
+        return entityResponse(res, err.identifier);
       }
       // throw any other error
       throw err;
@@ -146,7 +145,7 @@ const upsertPersonaIdentifier = catchErrors(async (req, res) => {
   asignIdentifierToStatements({ organisation, toIdentifierId: identifier.id })
     .catch(handleError);
 
-  return entityResponse(res, identifer);
+  return entityResponse(res, identifier);
 });
 
 const getPersonaIdentifier = catchErrors(async (req, res) => {
@@ -163,7 +162,7 @@ const getPersonaIdentifier = catchErrors(async (req, res) => {
     id: req.params.personaIdentifierId
   });
 
-  return entityResponse(res, identifer);
+  return entityResponse(res, identifier);
 });
 
 const getPersonaIdentifiers = catchErrors(async (req, res) => {
@@ -207,7 +206,7 @@ const updatePersonaIdentifier = catchErrors(async (req, res) => {
   asignIdentifierToStatements({ organisation, toIdentifierId: identifier.id })
     .catch(handleError);
 
-  return entityResponse(res, identifer);
+  return entityResponse(res, identifier);
 });
 
 const deletePersonaIdentifier = catchErrors(async (req, res) => {

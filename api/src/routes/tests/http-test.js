@@ -14,7 +14,6 @@ const apiApp = supertestApi();
 
 const db = new DBHelper();
 
-let statement;
 let jwtToken;
 let orgJwtToken;
 const provider = 'native';
@@ -113,7 +112,7 @@ describe('API HTTP Route tests', () => {
       beforeEach('create organisation and jwt token', async () => {
         orgJwtToken = await createOrgToken(['ALL'], [], '561a679c0c5d017e4004714e');
 
-        statement = await Statement.create({
+        await Statement.create({
           organisation: testId,
           statement: {
             context: {

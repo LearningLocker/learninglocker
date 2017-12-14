@@ -167,7 +167,7 @@ const query = new LLSchema('query', { idAttribute: '_id', sortKey: 'updatedAt' }
       : JSON.stringify(conditions)
     ))
 });
-const identifer = new LLSchema('identifer', { idAttribute: '_id' });
+
 const personaIdentifier = new LLSchema('personaIdentifier',
   { idAttribute: entity => entity._id || entity.id, sortKey: 'updatedAt' },
   {
@@ -191,7 +191,6 @@ const personaAttribute = new LLSchema('personaAttribute',
   }
 );
 const scoredPersonas = new LLSchema('scoredPersonas', { idAttribute: '_id' });
-const scoringscheme = new LLSchema('scoringscheme', { idAttribute: '_id', sortKey: 'updatedAt' });
 const importcsv = new LLSchema('importcsv', { idAttribute: '_id', sortKey: 'updatedAt' });
 
 const client = new LLSchema('client', { idAttribute: '_id', sortKey: 'updatedAt' }, {
@@ -316,10 +315,6 @@ scoredPersonas.define({
   persona: { type: persona }
 });
 
-scoringscheme.define({
-  organisation: { type: organisation }
-});
-
 visualisation.define({
   organisation: { type: organisation },
   sources: { type: arrayOf(lrs) },
@@ -351,11 +346,9 @@ export {
   streamOutcome,
   persona,
   query,
-  identifer,
   personaAttribute,
   personaIdentifier,
   scoredPersonas,
-  scoringscheme,
   importcsv,
   client,
   dashboard,
