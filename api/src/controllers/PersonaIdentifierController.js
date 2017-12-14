@@ -18,7 +18,8 @@ import {
   isUndefined,
   omitBy,
 } from 'lodash';
-import { replaceId, replaceIds } from 'api/controllers/utils/replaceIds';
+import { entityResponse, entitiesResponse } from 'api/controllers/utils/entitiesResponse';
+import { identifer } from 'ui/utils/schemas';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -123,11 +124,11 @@ const upsertPersonaIdentifier = catchErrors(async (req, res) => {
       asignIdentifierToStatements({ organisation, toIdentifierId: identifier.id })
         .catch(handleError);
 
-      return res.status(200).send(replaceId(identifier));
+      return entityResponse(res, identifer);
     } catch (err) {
       // if there was a lock then the ident already existed, so just return it
       if (err instanceof Locked) {
-        return res.status(200).send(replaceId(err.identifier));
+        return entityResponse(res, err.identifer);
       }
       // throw any other error
       throw err;
@@ -145,7 +146,7 @@ const upsertPersonaIdentifier = catchErrors(async (req, res) => {
   asignIdentifierToStatements({ organisation, toIdentifierId: identifier.id })
     .catch(handleError);
 
-  return res.status(200).send(replaceId(identifier));
+  return entityResponse(res, identifer);
 });
 
 const getPersonaIdentifier = catchErrors(async (req, res) => {
@@ -162,7 +163,7 @@ const getPersonaIdentifier = catchErrors(async (req, res) => {
     id: req.params.personaIdentifierId
   });
 
-  return res.status(200).send(replaceId(identifier));
+  return entityResponse(res, identifer);
 });
 
 const getPersonaIdentifiers = catchErrors(async (req, res) => {
@@ -179,7 +180,7 @@ const getPersonaIdentifiers = catchErrors(async (req, res) => {
     organisation: getOrgFromAuthInfo(authInfo),
   });
 
-  return res.status(200).send(replaceIds(identifiers));
+  return entitiesResponse(res, identifiers);
 });
 
 /**
@@ -206,7 +207,7 @@ const updatePersonaIdentifier = catchErrors(async (req, res) => {
   asignIdentifierToStatements({ organisation, toIdentifierId: identifier.id })
     .catch(handleError);
 
-  return res.status(200).send(replaceId(identifier));
+  return entityResponse(res, identifer);
 });
 
 const deletePersonaIdentifier = catchErrors(async (req, res) => {

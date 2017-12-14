@@ -7,7 +7,7 @@ import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import { MAX_TIME_MS, MAX_SCAN } from 'lib/models/plugins/addCRUDFunctions';
 import parseQuery from 'lib/helpers/parseQuery';
 import { CursorDirection } from 'personas/dist/service/constants';
-import { replaceId, replaceIds } from 'api/controllers/utils/replaceIds';
+import { entityResponse, entitiesResponse } from 'api/controllers/utils/entitiesResponse';
 import reasignPersonaStatements from 'lib/services/persona/reasignPersonaStatements';
 import getPersonaService from 'lib/connections/personaService';
 
@@ -81,7 +81,7 @@ const updatePersona = catchErrors(async (req, res) => {
     fromId: personaId
   });
 
-  return res.status(200).send(replaceId(persona));
+  return entityResponse(res, persona);
 });
 
 const mergePersona = catchErrors(async (req, res) => {
@@ -138,7 +138,7 @@ const addPersona = catchErrors(async (req, res) => {
     name: req.body.name
   });
 
-  return res.status(200).send(replaceId(persona));
+  return entityResponse(res, persona);
 });
 
 const getPersona = catchErrors(async (req, res) => {
@@ -154,7 +154,7 @@ const getPersona = catchErrors(async (req, res) => {
     personaId: req.params.personaId
   });
 
-  return res.status(200).send(replaceId(persona));
+  return entityResponse(res, persona);
 });
 
 const getPersonas = catchErrors(async (req, res) => {
@@ -171,7 +171,7 @@ const getPersonas = catchErrors(async (req, res) => {
     organisation: getOrgFromAuthInfo(authInfo)
   });
 
-  return res.status(200).send(replaceIds(personas));
+  return entitiesResponse(res, personas);
 });
 
 const personaCount = catchErrors(async (req, res) => {

@@ -14,7 +14,7 @@ import {
   isUndefined,
   omitBy,
 } from 'lodash';
-import { replaceId, replaceIds } from 'api/controllers/utils/replaceIds';
+import { entityResponse, entitiesResponse } from 'api/controllers/utils/entitiesResponse';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -91,7 +91,7 @@ const addPersonaAttribute = catchErrors(async (req, res) => {
     organisation,
   });
 
-  return res.status(200).send(replaceId(attribute));
+  return entityResponse(res, attribute);
 });
 
 const getPersonaAttribute = catchErrors(async (req, res) => {
@@ -108,7 +108,7 @@ const getPersonaAttribute = catchErrors(async (req, res) => {
     id: req.params.personaAttributeId
   });
 
-  return res.status(200).send(replaceId(attribute));
+  return entityResponse(res, attribute);
 });
 
 const getPersonaAttributes = catchErrors(async (req, res) => {
@@ -125,7 +125,7 @@ const getPersonaAttributes = catchErrors(async (req, res) => {
     organisation: getOrgFromAuthInfo(authInfo),
   });
 
-  return res.status(200).send(replaceIds(attributes));
+  return entitiesResponse(res, attributes);
 });
 
 const updatePersonaAttribute = catchErrors(async (req, res) => {
@@ -149,7 +149,7 @@ const updatePersonaAttribute = catchErrors(async (req, res) => {
     organisation,
   });
 
-  return res.status(200).send(replaceId(attribute));
+  return entityResponse(res, attribute);
 });
 const deletePersonaAttribute = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
