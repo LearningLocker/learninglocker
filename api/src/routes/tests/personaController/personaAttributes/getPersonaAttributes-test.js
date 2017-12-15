@@ -56,7 +56,7 @@ describe('getPresonaAttributes', () => {
 
     expect(result.body[0].key).to.equal('testkey');
     expect(result.body[0].value).to.equal('testvalue');
-    expect(result.body[0].id).to.equal(attribute.id);
+    expect(result.body[0]._id).to.equal(attribute.id);
     expect(result.body[0].personaId).to.equal(persona.id);
     expect(result.body[0].organisation).to.equal(testId);
     expect(result.body.length).to.equal(2);

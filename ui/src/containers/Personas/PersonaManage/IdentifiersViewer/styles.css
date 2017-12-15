@@ -1,0 +1,9 @@
+.table {
+  width: 100%;
+}
+
+.td {
+  padding: 8px;
+  border: solid rgb(238, 238, 238) 1px;
+  width: 50%;
+}

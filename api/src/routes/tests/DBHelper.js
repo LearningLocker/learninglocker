@@ -8,7 +8,6 @@ import * as scopes from 'lib/constants/scopes';
 
 export default class journeyDBHelpers {
   prepare = (done) => {
-    console.log('preparing');
     async.parallel(
       {
         organisation: insertDone =>

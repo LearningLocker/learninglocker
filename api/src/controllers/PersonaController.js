@@ -7,6 +7,7 @@ import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import { MAX_TIME_MS, MAX_SCAN } from 'lib/models/plugins/addCRUDFunctions';
 import parseQuery from 'lib/helpers/parseQuery';
 import { CursorDirection } from 'personas/dist/service/constants';
+import { entityResponse, entitiesResponse } from 'api/controllers/utils/entitiesResponse';
 import reasignPersonaStatements from 'lib/services/persona/reasignPersonaStatements';
 import getPersonaService from 'lib/connections/personaService';
 
@@ -51,9 +52,9 @@ const personaConnection = catchErrors(async (req, res) => {
     maxScan: MAX_SCAN
   };
 
-  const personas = await personaService.getPersonasConnection(params);
+  const result = await personaService.getPersonasConnection(params);
 
-  return res.status(200).send(personas);
+  return res.status(200).send(result);
 });
 
 const updatePersona = catchErrors(async (req, res) => {
@@ -80,13 +81,10 @@ const updatePersona = catchErrors(async (req, res) => {
     fromId: personaId
   });
 
-  return res.status(200).send({
-    ...persona,
-    _id: persona.id
-  });
+  return entityResponse(res, persona);
 });
 
-const mergePersona = catchErrors(async(req, res) => {
+const mergePersona = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
@@ -110,7 +108,7 @@ const mergePersona = catchErrors(async(req, res) => {
   return res.status(200).send(result);
 });
 
-const deletePersona = catchErrors(async(req, res) => {
+const deletePersona = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   await getScopeFilter({
@@ -140,7 +138,7 @@ const addPersona = catchErrors(async (req, res) => {
     name: req.body.name
   });
 
-  return res.status(200).send(persona);
+  return entityResponse(res, persona);
 });
 
 const getPersona = catchErrors(async (req, res) => {
@@ -156,7 +154,7 @@ const getPersona = catchErrors(async (req, res) => {
     personaId: req.params.personaId
   });
 
-  return res.status(200).send(persona);
+  return entityResponse(res, persona);
 });
 
 const getPersonas = catchErrors(async (req, res) => {
@@ -173,7 +171,7 @@ const getPersonas = catchErrors(async (req, res) => {
     organisation: getOrgFromAuthInfo(authInfo)
   });
 
-  return res.status(200).send(personas);
+  return entitiesResponse(res, personas);
 });
 
 const personaCount = catchErrors(async (req, res) => {

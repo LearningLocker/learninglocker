@@ -67,7 +67,7 @@ describe('Extract persona handler', () => {
     personaService.clearService();
   });
 
-  it('Should extract a persona if no presona or identifer exists', async () => {
+  it('Should extract a persona if no presona or identifier exists', async () => {
     await Statement.create(testStatement);
 
     await Promise.promisify(
@@ -99,7 +99,6 @@ describe('Extract persona handler', () => {
   it('Should extract a persona if statements are in an array', async () => {
     await Statement.create(testStatement);
 
-    console.log('101', statementId);
     await Promise.promisify(
       extractPersonasHandler(personaService)
     )({ statementId });

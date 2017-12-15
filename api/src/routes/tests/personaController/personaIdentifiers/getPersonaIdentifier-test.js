@@ -42,7 +42,7 @@ describe('getPresonaIdentifier', () => {
 
     expect(result.body.ifi.key).to.equal('mbox');
     expect(result.body.ifi.value).to.equal('test@test.com');
-    expect(result.body.id).to.equal(identifier.id);
+    expect(result.body._id).to.equal(identifier.id);
     expect(result.body.persona).to.equal(persona.id);
     expect(result.body.organisation).to.equal(testId);
   });

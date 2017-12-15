@@ -3,6 +3,7 @@ import getJSONFromQuery from 'api/utils/getJSONFromQuery';
 import catchErrors from 'api/controllers/utils/catchErrors';
 import getFromQuery from 'api/utils/getFromQuery';
 import ClientError from 'lib/errors/ClientError';
+import handleError from 'lib/utils/handleError';
 import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
 import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
@@ -17,6 +18,7 @@ import {
   isUndefined,
   omitBy,
 } from 'lodash';
+import { entityResponse, entitiesResponse } from 'api/controllers/utils/entitiesResponse';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -52,7 +54,7 @@ const personaIdentifierConnection = catchErrors(async (req, res) => {
   };
   const filterNoUndefined = omitBy(filter, isUndefined);
 
-  const identifiers = await personaService.getIdentifiers({
+  const result = await personaService.getIdentifiers({
     limit: first || last || 10,
     direction: CursorDirection[before ? 'BACKWARDS' : 'FORWARDS'],
     sort,
@@ -65,7 +67,7 @@ const personaIdentifierConnection = catchErrors(async (req, res) => {
     maxScan: MAX_SCAN
   });
 
-  return res.status(200).send(identifiers);
+  return res.status(200).send(result);
 });
 
 const addPersonaIdentifier = catchErrors(async (req, res) => {
@@ -86,9 +88,10 @@ const addPersonaIdentifier = catchErrors(async (req, res) => {
   });
 
   // assign persona and personaIdentifier to statements
-  asignIdentifierToStatements({ organisation, identifier });
+  asignIdentifierToStatements({ organisation, toIdentifierId: identifier.id })
+    .catch(handleError);
 
-  return res.status(200).send(identifier);
+  return entityResponse(res, identifier);
 });
 
 /**
@@ -117,13 +120,14 @@ const upsertPersonaIdentifier = catchErrors(async (req, res) => {
       });
 
       // assign persona and personaIdentifier to statements
-      asignIdentifierToStatements({ organisation, identifier });
+      asignIdentifierToStatements({ organisation, toIdentifierId: identifier.id })
+        .catch(handleError);
 
-      return res.status(200).send(identifier);
+      return entityResponse(res, identifier);
     } catch (err) {
       // if there was a lock then the ident already existed, so just return it
       if (err instanceof Locked) {
-        return res.status(200).send(err.identifier);
+        return entityResponse(res, err.identifier);
       }
       // throw any other error
       throw err;
@@ -138,9 +142,10 @@ const upsertPersonaIdentifier = catchErrors(async (req, res) => {
   });
 
   // assign persona and personaIdentifier to statements
-  asignIdentifierToStatements({ organisation, identifier });
+  asignIdentifierToStatements({ organisation, toIdentifierId: identifier.id })
+    .catch(handleError);
 
-  return res.status(200).send(identifier);
+  return entityResponse(res, identifier);
 });
 
 const getPersonaIdentifier = catchErrors(async (req, res) => {
@@ -157,7 +162,7 @@ const getPersonaIdentifier = catchErrors(async (req, res) => {
     id: req.params.personaIdentifierId
   });
 
-  return res.status(200).send(identifier);
+  return entityResponse(res, identifier);
 });
 
 const getPersonaIdentifiers = catchErrors(async (req, res) => {
@@ -174,7 +179,7 @@ const getPersonaIdentifiers = catchErrors(async (req, res) => {
     organisation: getOrgFromAuthInfo(authInfo),
   });
 
-  return res.status(200).send(identifiers);
+  return entitiesResponse(res, identifiers);
 });
 
 /**
@@ -198,9 +203,10 @@ const updatePersonaIdentifier = catchErrors(async (req, res) => {
   });
 
   // assign persona and personaIdentifier to statements
-  asignIdentifierToStatements({ organisation, identifier });
+  asignIdentifierToStatements({ organisation, toIdentifierId: identifier.id })
+    .catch(handleError);
 
-  return res.status(200).send(identifier);
+  return entityResponse(res, identifier);
 });
 
 const deletePersonaIdentifier = catchErrors(async (req, res) => {

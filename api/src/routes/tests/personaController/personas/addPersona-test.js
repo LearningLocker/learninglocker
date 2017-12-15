@@ -31,7 +31,7 @@ describe('personaController addPersona', () => {
 
     const { persona } = await personaService.getPersona({
       organisation: testId,
-      personaId: result.body.id
+      personaId: result.body._id
     });
 
     expect(persona.name).to.equal('Dave');
@@ -46,10 +46,10 @@ describe('personaController addPersona', () => {
 
     const { persona } = await personaService.getPersona({
       organisation: testId,
-      personaId: result.body.id
+      personaId: result.body._id
     });
 
     expect(persona.name).to.equal(undefined);
-    expect(persona.id).to.equal(result.body.id);
+    expect(persona.id).to.equal(result.body._id);
   });
 });
