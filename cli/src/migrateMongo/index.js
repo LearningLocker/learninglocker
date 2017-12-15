@@ -107,7 +107,7 @@ const checkRunMigrations = async ({ migrations }) => {
   });
 };
 
-const doMigrations = async ({ down, up, migrations }) => {
+export const doMigrations = async ({ down, up, migrations }) => {
   if (down && isBoolean(down)) {
     throw new Error('down must take a target file name');
   }
