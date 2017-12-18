@@ -6,9 +6,14 @@ import { createOrgJWT, createUserJWT } from 'api/auth/jwt';
 import { getCookieName } from 'ui/utils/auth';
 import User from 'lib/models/user';
 import Organisation from 'lib/models/organisation';
+import { getConnection } from 'lib/connections/mongoose';
+import { doMigrations } from 'cli/migrateMongo';
+import v2Migrations from 'cli/commands/v2-migrations';
 
 const resetState = async () => {
-  await Promise.all(map(models, model => model.remove({})));
+  const connection = getConnection();
+  await connection.dropDatabase();
+  await doMigrations({ migrations: v2Migrations });
 
   // add a user
   await createSiteAdmin('chris.bishop@ht2labs.com', 'Test organisation', 'password0', {});

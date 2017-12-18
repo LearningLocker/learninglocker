@@ -1,8 +1,10 @@
 import logger from 'lib/logger';
-import personasService from 'personas/dist/service';
+import getPersonaService from 'lib/connections/personaService';
+
+const personaService = getPersonaService();
 
 const createPersonaIndexes = () => {
-  personasService.migrate();
+  personaService.migrate();
 };
 
 const up = async () => {
