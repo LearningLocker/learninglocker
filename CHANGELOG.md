@@ -10,6 +10,8 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Migrations
 
 ## [2.2.0]
+### Added
+  - Override system email address ([#1029](https://github.com/LearningLocker/learninglocker/pull/1029)) (thanks to [@eashman](https://github.com/eashman))
 ### Changed
 #### Personas refactor
   - Personas, identifiers and their attributes split into separate models
