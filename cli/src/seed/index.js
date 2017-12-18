@@ -1,6 +1,4 @@
 import logger from 'lib/logger';
-import * as models from 'lib/models';
-import { map } from 'lodash';
 import createSiteAdmin from 'cli/commands/createSiteAdmin';
 import { createOrgJWT, createUserJWT } from 'api/auth/jwt';
 import { getCookieName } from 'ui/utils/auth';
