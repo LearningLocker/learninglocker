@@ -16,17 +16,25 @@ const processStream = stream =>
 const migrateIdentifierBatch = (docs) => {
   const collection = connection.collection(attributesCollectionName);
   const bulkOp = collection.initializeUnorderedBulkOp();
-  docs.forEach((doc) => {
-    doc.identifiers.forEach(({ key, value }) => {
-      if (!/^statement\.actor/.test(key)) {
+  const ops = docs.filter((doc) => {
+    const identOps = doc.identifiers.filter(({ key, value }) => {
+      if (!/^statement\./.test(key)) {
         const personaId = doc.persona;
         const organisation = doc.organisation;
-        const attribute = { personaId, organisation, key, value };
+        const newKey = key.replace('persona.import.', '');
+        const attribute = { personaId, organisation, key: newKey, value };
         bulkOp.insert(attribute);
+        return true;
       }
+      return false;
     });
+    return identOps.length > 0;
   });
-  return highland(bulkOp.execute());
+  
+  if (ops.length > 0) {
+    return highland(bulkOp.execute());
+  }
+  return highland(Promise.resolve());
 };
 
 const createAttributesFromIdentifiers = async () => {
