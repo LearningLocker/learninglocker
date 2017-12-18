@@ -18,10 +18,12 @@ const migrateIdentifierBatch = (docs) => {
   const bulkOp = collection.initializeUnorderedBulkOp();
   docs.forEach((doc) => {
     doc.identifiers.forEach(({ key, value }) => {
-      const personaId = doc.persona;
-      const organisation = doc.organisation;
-      const attribute = { personaId, organisation, key, value };
-      bulkOp.insert(attribute);
+      if (!/^statement\.actor/.test(key)) {
+        const personaId = doc.persona;
+        const organisation = doc.organisation;
+        const attribute = { personaId, organisation, key, value };
+        bulkOp.insert(attribute);
+      }
     });
   });
   return highland(bulkOp.execute());
@@ -45,6 +47,10 @@ const updateIdentifierFields = async () => {
   const opts = { multi: true };
   const collection = connection.collection(newIdentsCollectionName);
   await collection.update(filter, update, opts);
+  await collection.update({"ifi.key": "statement.actor.account"}, { $set: {"ifi.key": "account"} }, {multi: true});
+  await collection.update({"ifi.key": "statement.actor.mbox"}, { $set: {"ifi.key": "mbox"} }, {multi: true});
+  await collection.update({"ifi.key": "statement.actor.openid"}, { $set: {"ifi.key": "openid"} }, {multi: true});
+  await collection.update({"ifi.key": "statement.actor.mbox_sha1sum"}, { $set: {"ifi.key": "mbox_sha1sum"} }, {multi: true});
 };
 
 const cloneIdentifiersToNewCollection = async () => {
@@ -66,7 +72,8 @@ const up = async () => {
 };
 
 const down = async () => {
-  logger.info('Dropping persona attributes');
+  logger.info('Dropping persona attributes and new idents');
+  connection.collection(newIdentsCollectionName).drop();
   connection.collection(attributesCollectionName).drop();
 };
 
