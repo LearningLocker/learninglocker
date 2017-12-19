@@ -55,9 +55,7 @@ export default compose(
   (
     <div className={styles.visualiseResultsContainer}>
       {!model.get('source') && <VisualisationComponent model={model} />}
-      {model.get('source') &&
-        <SourceResults id={model.get('_id')} />
-      }
+      {model.get('source') && <SourceResults id={model.get('_id')} /> }
     </div>
   )
 );
