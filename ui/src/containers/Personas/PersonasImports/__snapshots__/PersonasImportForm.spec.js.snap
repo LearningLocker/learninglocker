@@ -77,7 +77,7 @@ exports[`PersonasImportForm should render the form in STAGE_IMPORTED 1`] = `
         </b>
         <b>
           Created: 
-           new components
+           new personas
         </b>
       </p>
     </blockquote>

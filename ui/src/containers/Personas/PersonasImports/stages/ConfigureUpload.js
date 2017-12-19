@@ -22,10 +22,10 @@ const handlers = withHandlers({
     model,
     importPersonas: doImportPersonas
   }) => () => {
-    doImportPersonas({
-      id: model.get('_id')
-    });
-  }
+      doImportPersonas({
+        id: model.get('_id')
+      });
+    }
 });
 
 
@@ -33,8 +33,9 @@ export const ConfigureUploadComponent = ({
   model,
   handleImportPersonas,
   disabled = false,
-}) =>
-  (
+}) => {
+  const errors = model.getIn(['errors', 'messages', 'structure']);
+  return (
     <div>
       <div
         className={classNames({
@@ -47,9 +48,9 @@ export const ConfigureUploadComponent = ({
           model={model}
           disabled={disabled} />
 
-        {model.getIn(['errors', 'messages', 'structure'], false) &&
+        {errors !== undefined &&
           (<span className="help-block">
-            <ValidationList errors={model.getIn(['errors', 'messages', 'structure'])} />
+            <ValidationList errors={errors} />
           </span>)
         }
       </div>
@@ -64,6 +65,7 @@ export const ConfigureUploadComponent = ({
       }
     </div>
   );
+};
 
 export default compose(
   withProps(({ model }) => ({

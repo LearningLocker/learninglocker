@@ -58,7 +58,7 @@ export const PersonasImportFormComponent = ({
           <h4>Imported on {moment(model.get('importedAt')).format('ddd DD MMM YYYY h:mm:ss')}</h4>
           <p>
             <b>Merged: {model.getIn(['result', 'merged'], 0)} personas<br /></b>
-            <b>Created: {model.getIn(['result', 'created'])} new components</b>
+            <b>Created: {model.getIn(['result', 'created'])} new personas</b>
           </p>
         </blockquote>
       </div>
