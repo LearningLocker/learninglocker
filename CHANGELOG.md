@@ -9,6 +9,10 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.1.1] - 2017-12-19
+### Fixed
+  - Arrays in statement API response were being converted to keys
+
 ## [2.1.0] - 2017-11-23
 ### Added
   - Migration funcionality ([#LL-395](https://ht2labs.myjetbrains.com/youtrack/issue/LL-395))
