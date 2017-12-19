@@ -23,7 +23,7 @@ exports[`InitialUpload should render 1`] = `
         type="file"
       />
       <strong>
-        Upload personas CSV
+        Choose CSV
       </strong>
     </label>
     <span>
