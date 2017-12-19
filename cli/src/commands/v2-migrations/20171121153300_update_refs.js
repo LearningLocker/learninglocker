@@ -15,8 +15,7 @@ import getVerbsFromStatement from 'xapi-statements/dist/service/storeStatements/
 const getQueriables = (doc) => {
   const statement = doc.statement;
   const refs = doc.refs ? doc.refs : [];
-  const statementRefs = refs.map(ref => ref.statement);
-  const statements = [statement, ...statementRefs];
+  const statements = [statement, ...refs];
 
   return {
     activities: union(...statements.map(getActivitiesFromStatement)),
