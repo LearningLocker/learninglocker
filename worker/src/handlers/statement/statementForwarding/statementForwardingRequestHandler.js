@@ -106,7 +106,7 @@ const statementForwardingRequestHandler = async (
       `FAILED sending statement ${statement._id} to ${statementForwarding.configuration.url}`,
       err
     );
-    
+
     let update = {
       timestamp: new Date(),
       statementForwarding_id: objectId(statementForwarding._id),

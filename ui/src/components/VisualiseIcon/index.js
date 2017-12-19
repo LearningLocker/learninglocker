@@ -70,15 +70,18 @@ class VisualiseIcon extends Component {
     }
   }
 
-  renderIcon = () => {
+  renderIcon = ({ className } = {}) => {
     const { type } = this.props;
     return (
-      <img src={this.getIcon(type)} alt={this.getTitle(type)} />
+      <img
+        className={styles[className]}
+        src={this.getIcon(type)}
+        alt={this.getTitle(type)} />
     );
   }
 
   render = () => {
-    const { type, active, onClick, isSmall } = this.props;
+    const { type, active, onClick, isSmall, className } = this.props;
     const classes = classNames({
       [styles['visualisation-icon']]: true,
       [styles.active]: active
@@ -86,7 +89,7 @@ class VisualiseIcon extends Component {
 
     return (
       isSmall
-      ? this.renderIcon()
+      ? this.renderIcon({ className })
       : (
         <div className={classes} onClick={onClick} >
           { this.renderIcon() }

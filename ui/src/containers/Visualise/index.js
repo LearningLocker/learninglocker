@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { routeNodeSelector } from 'redux-router5';
 import { withProps, compose } from 'recompose';
 import { Map, fromJS } from 'immutable';
 import { queryStringToQuery, modelQueryStringSelector } from 'ui/redux/modules/search';
@@ -12,10 +13,12 @@ import ModelList from 'ui/containers/ModelList';
 import VisualiseForm from 'ui/containers/VisualiseForm';
 import DeleteButton from 'ui/containers/DeleteButton';
 import PrivacyToggleButton from 'ui/containers/PrivacyToggleButton';
-import { routeNodeSelector } from 'redux-router5';
+import VisualisationTypeIcon from './VisualisationTypeIcon';
 import styles from './visualise.css';
 
+
 const schema = 'visualisation';
+
 const VisualisationList = compose(
   withProps({
     schema,
@@ -48,37 +51,43 @@ class Visualise extends Component {
     });
   }
 
-  render = () =>
-    (
-      <div>
-        <header id="topbar">
-          <div className="heading heading-light">
-            <span className="pull-right open_panel_btn">
-              <button
-                className="btn btn-primary btn-sm"
-                ref={(ref) => { this.addButton = ref; }}
-                onClick={this.onClickAdd}>
-                <i className="ion ion-plus" /> Add new
-              </button>
-            </span>
-            <span className="pull-right open_panel_btn" style={{ width: '25%' }}>
-              <SearchBox schema={schema} />
-            </span>
-            Visualise
-          </div>
-        </header>
-        <div className="row">
-          <div className="col-md-12">
-            <VisualisationList
-              id={this.props.visualisationId}
-              filter={queryStringToQuery(this.props.searchString, schema)}
-              ModelForm={VisualiseForm}
-              buttons={[PrivacyToggleButton, DeleteButton]}
-              getDescription={model => model.get('description') || '~ Unnamed Visualisation'} />
-          </div>
+  render = () => (
+    <div>
+      <header id="topbar">
+        <div className="heading heading-light">
+          <span className="pull-right open_panel_btn">
+            <button
+              className="btn btn-primary btn-sm"
+              ref={(ref) => { this.addButton = ref; }}
+              onClick={this.onClickAdd}>
+              <i className="ion ion-plus" /> Add new
+            </button>
+          </span>
+          <span className="pull-right open_panel_btn" style={{ width: '25%' }}>
+            <SearchBox schema={schema} />
+          </span>
+          Visualise
+        </div>
+      </header>
+      <div className="row">
+        <div className="col-md-12">
+          <VisualisationList
+            id={this.props.visualisationId}
+            filter={queryStringToQuery(this.props.searchString, schema)}
+            ModelForm={VisualiseForm}
+            buttons={[PrivacyToggleButton, DeleteButton]}
+            getDescription={model => (
+              <span>
+                <span style={{ paddingRight: 5 }}>
+                  <VisualisationTypeIcon id={model.get('_id')} />
+                </span>
+                { model.get('description') || '~ Unnamed Visualisation'}
+              </span>
+            )} />
         </div>
       </div>
-    );
+    </div>
+  );
 }
 
 export default compose(
