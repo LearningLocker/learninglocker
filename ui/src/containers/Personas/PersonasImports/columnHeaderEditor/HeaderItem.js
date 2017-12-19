@@ -6,7 +6,7 @@ import {
 import { connect } from 'react-redux';
 import { fromJS } from 'immutable';
 import { updateModel } from 'ui/redux/modules/models';
-import { COLUMN_TYPES, COLUMN_TYPE_LABELS } from 'lib/constants/personasImport';
+import { COLUMN_TYPES, COLUMN_TYPE_LABELS, COLUMN_ACCOUNT_KEY } from 'lib/constants/personasImport';
 import { map } from 'lodash';
 import {
   hasRelatedField,
@@ -42,7 +42,7 @@ const headerItemHandlers = withHandlers({
         [columnName, 'primary'],
         getPrimaryMaxPlusOne({ structure: newStructure })
       ) :
-        newStructure.setIn([columnName, 'primary'], null);
+      newStructure.setIn([columnName, 'primary'], null);
 
     doUpdateModel({
       schema,
@@ -56,58 +56,58 @@ const headerItemHandlers = withHandlers({
     model,
     updateModel: doUpdateModel
   }) => (value) => {
-    if (!value) {
+      if (!value) {
+        doUpdateModel({
+          schema,
+          id: model.get('_id'),
+          path: ['structure', columnName, 'primary'],
+          value: null
+        });
+        return;
+      }
+
+      const maxOrder = model.get('structure')
+        .map(s => s.primary)
+        .reduce((acc, number) => (number > acc ? number : acc), 0);
+      const newOrder = maxOrder + 1;
+
       doUpdateModel({
         schema,
         id: model.get('_id'),
         path: ['structure', columnName, 'primary'],
-        value: null
+        value: newOrder
       });
-      return;
-    }
-
-    const maxOrder = model.get('structure')
-      .map(s => s.primary)
-      .reduce((acc, number) => (number > acc ? number : acc), 0);
-    const newOrder = maxOrder + 1;
-
-    doUpdateModel({
-      schema,
-      id: model.get('_id'),
-      path: ['structure', columnName, 'primary'],
-      value: newOrder
-    });
-  },
+    },
   onPrimaryOrderChange: ({
     columnName,
     model,
     updateModel: doUpdateModel
   }) => (event) => {
-    doUpdateModel({
-      schema,
-      id: model.get('_id'),
-      path: ['structure', columnName, 'primary'],
-      value: parseInt(event.target.value)
-    });
-  },
+      doUpdateModel({
+        schema,
+        id: model.get('_id'),
+        path: ['structure', columnName, 'primary'],
+        value: parseInt(event.target.value)
+      });
+    },
   onRelatedColumnChange: ({
     columnName,
     model,
     updateModel: doUpdateModel
   }) => (event) => {
-    const newStructure = updateRelatedStructure({
-      structure: model.get('structure'),
-      columnName,
-      relatedColumn: event.target.value
-    });
+      const newStructure = updateRelatedStructure({
+        structure: model.get('structure'),
+        columnName,
+        relatedColumn: event.target.value
+      });
 
-    doUpdateModel({
-      schema,
-      id: model.get('_id'),
-      path: 'structure',
-      value: newStructure
-    });
-  }
+      doUpdateModel({
+        schema,
+        id: model.get('_id'),
+        path: 'structure',
+        value: newStructure
+      });
+    }
 });
 
 export const HeaderItemComponent = ({
@@ -118,12 +118,13 @@ export const HeaderItemComponent = ({
   onRelatedColumnChange,
   model,
   disabled
-}) =>
-  (
+}) => {
+  const columnType = columnStructure.get('columnType');
+  return (
     <div>
       <h3>{columnName}</h3>
 
-      { isColumnOrderable({ columnStructure: columnStructure.toJS() }) && <div className="form-group">
+      {isColumnOrderable({ columnStructure: columnStructure.toJS() }) && <div className="form-group">
         <label htmlFor={`${model.get('_id')}-${columnName}-order`}>Order</label>
         <input
           className="form-control"
@@ -133,7 +134,7 @@ export const HeaderItemComponent = ({
           type="number"
           disabled={disabled} />
       </div>
-    }
+      }
 
       <div className="form-group">
         <label htmlFor={`${model.get('_id')}-${columnName}-columnType`}>Field type</label>
@@ -152,9 +153,14 @@ export const HeaderItemComponent = ({
         </select>
       </div>
 
-      {hasRelatedField(columnStructure.get('columnType')) &&
+      {hasRelatedField(columnType) &&
         <div className="form-group">
-          <label htmlFor={`${model.get('_id')}-${columnName}-relatedColumn`}>Related column</label>
+          <label htmlFor={`${model.get('_id')}-${columnName}-relatedColumn`}>
+            {(columnType === COLUMN_ACCOUNT_KEY
+              ? 'Account name column'
+              : 'Account home page column'
+            )}
+          </label>
           <select
             id={`${model.get('_id')}-${columnName}-relatedColumn`}
             className="form-control"
@@ -178,6 +184,7 @@ export const HeaderItemComponent = ({
       }
     </div>
   );
+};
 
 export default compose(
   connect(
