@@ -5,6 +5,7 @@
 .tags
 .tmp
 *.csv
+*.log
 *.iml
 *.orig
 api/logs/*
@@ -26,3 +27,4 @@ bootstrap.sh
 yarn-error.log
 cypress/screenshots/*
 cypress/videos/*
+debug/*

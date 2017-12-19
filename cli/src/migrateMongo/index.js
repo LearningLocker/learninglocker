@@ -135,7 +135,7 @@ const doMigrations = async ({ down, up, migrations }) => {
 };
 
 const displayInfo = async ({ info, migrations }) => {
-  const verbose = info === 'v' || info === 'vebose';
+  const verbose = info === 'v' || info === 'verbose';
 
   if (!verbose) {
     const lastRunMigration = await migration.findOne().sort({ updatedAt: -1 });
