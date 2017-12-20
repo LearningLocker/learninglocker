@@ -1,9 +1,14 @@
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withContext, lifecycle } from 'recompose';
 import { Card, CardText } from 'react-toolbox/lib/card';
-import { oAuthLoginStart, loginStart, loginErrorSelector, loginRequestStateSelector } from 'ui/redux/modules/auth';
+import {
+  oAuthLoginStart as reduxOAuthLoginStart,
+  loginStart as reduxLoginStart,
+  loginErrorSelector,
+  loginRequestStateSelector
+} from 'ui/redux/modules/auth';
 import { getAppDataSelector, fetchAppData } from 'ui/redux/modules/app';
 import Helmet from 'react-helmet';
 import Link from 'ui/containers/Link';
@@ -20,7 +25,11 @@ const enhance = compose(
     loginRequestState: loginRequestStateSelector(state),
     loginError: loginErrorSelector(state),
     googleAuth: getAppDataSelector('googleAuth', false)(state),
-  }), { oAuthLoginStart, loginStart, fetchAppData }),
+  }), {
+    oAuthLoginStart: reduxOAuthLoginStart,
+    loginStart: reduxLoginStart,
+    fetchAppData
+  }),
   lifecycle({
     componentWillMount() {
       this.props.fetchAppData({ key: 'googleAuth' });
