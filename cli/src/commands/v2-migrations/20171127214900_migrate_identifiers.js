@@ -14,27 +14,60 @@ const processStream = stream =>
   });
 
 const migrateIdentifierBatch = (docs) => {
-  const collection = connection.collection(attributesCollectionName);
-  const bulkOp = collection.initializeUnorderedBulkOp();
-  const ops = docs.filter((doc) => {
+  const attributesCollection = connection.collection(attributesCollectionName);
+  const newIdentsCollection = connection.collection(newIdentsCollectionName);
+
+  const opsPromises = [];
+
+  // Create attributes from idents
+  const attrBulkOp = attributesCollection.initializeUnorderedBulkOp();
+  const attrOps = docs.filter((doc) => {
     const identOps = doc.identifiers.filter(({ key, value }) => {
       if (!/^statement\./.test(key)) {
         const personaId = doc.persona;
         const organisation = doc.organisation;
         const newKey = key.replace('persona.import.', '');
         const attribute = { personaId, organisation, key: newKey, value };
-        bulkOp.insert(attribute);
+        attrBulkOp.insert(attribute);
         return true;
       }
       return false;
     });
     return identOps.length > 0;
-  });
+  }); 
   
-  if (ops.length > 0) {
-    return highland(bulkOp.execute());
+  if (attrOps.length > 0) {
+    opsPromises.push(attrBulkOp.execute());
   }
-  return highland(Promise.resolve());
+
+  // Create new identifiers from old
+  const identBulkOp = newIdentsCollection.initializeUnorderedBulkOp();
+  const identOps = docs.map((doc) => {
+    const { key, value } = doc.uniqueIdentifier;
+    let newKey;
+    if (/^statement\.actor\./.test(key)) {
+      newKey = key.replace('statement.actor.', '');
+    }
+
+    identBulkOp.insert({
+      _id: doc._id,
+      organisation: doc.organisation,
+      createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt,
+      persona: doc.persona,
+      ifi: {
+        key: newKey,
+        value,
+      }
+    });
+  });
+
+  if (identOps.length > 0){
+    // execute the ident bulk op
+    opsPromises.push(identBulkOp.execute());
+  }
+
+  return highland(Promise.all(opsPromises));
 };
 
 const createAttributesFromIdentifiers = async () => {
@@ -74,8 +107,8 @@ const cloneIdentifiersToNewCollection = async () => {
 
 const up = async () => {
   await createAttributesFromIdentifiers();
-  await cloneIdentifiersToNewCollection();
-  await updateIdentifierFields();
+  // await cloneIdentifiersToNewCollection();
+  // await updateIdentifierFields();
   logger.info(`You may want to delete the now unused ${oldIdentsCollectionName} collection`);
 };
 
