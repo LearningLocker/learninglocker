@@ -110,7 +110,7 @@ const createAttributesFromIdents = async (docs) => {
 
 const migrateIdentifierBatch = (docs) => {
   const opsPromises = [
-    createAttributesPromise(docs),
+    createAttributesFromIdents(docs),
     insertIdents(docs),
   ];
 
