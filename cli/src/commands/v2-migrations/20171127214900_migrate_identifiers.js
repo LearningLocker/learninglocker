@@ -24,10 +24,7 @@ const processStream = stream =>
 
 const createNewIdent = (doc) => {
   const { key, value } = doc.uniqueIdentifier;
-  let newKey;
-  if (/^statement\.actor\./.test(key)) {
-    newKey = key.replace('statement.actor.', '');
-  }
+  const newKey = /^statement\.actor\./.test(key) ? key.replace('statement.actor.', '') : key;
 
   return {
     _id: doc._id,
