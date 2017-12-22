@@ -115,7 +115,7 @@ const migrateIdentifierBatch = (docs) => {
 };
 
 const migrateIdentifiers = async () => {
-  const batchSize = 10000;
+  const batchSize = 1000;
   const filter = {};
   const collection = connection.collection(oldIdentsCollectionName);
   const docStream = highland(collection.find(filter));
