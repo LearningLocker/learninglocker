@@ -13,6 +13,16 @@ const processStream = stream =>
     stream.apply(resolve);
   });
 
+const executeIdentBulkOp = async (batch) => {
+  try {
+    await batch.execute();
+  } catch (err) {
+    console.log(err);
+  }
+
+  return Promise.resolve();
+};
+
 const migrateIdentifierBatch = (docs) => {
   const attributesCollection = connection.collection(attributesCollectionName);
   const newIdentsCollection = connection.collection(newIdentsCollectionName);
@@ -34,8 +44,8 @@ const migrateIdentifierBatch = (docs) => {
       return false;
     });
     return identOps.length > 0;
-  }); 
-  
+  });
+
   if (attrOps.length > 0) {
     opsPromises.push(attrBulkOp.execute());
   }
@@ -64,7 +74,7 @@ const migrateIdentifierBatch = (docs) => {
 
   if (identOps.length > 0){
     // execute the ident bulk op
-    opsPromises.push(identBulkOp.execute());
+    opsPromises.push(executeIdentBulkOp(identBulkOp));
   }
 
   return highland(Promise.all(opsPromises));
