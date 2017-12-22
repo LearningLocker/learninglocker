@@ -42,7 +42,7 @@ const createNewIdent = (doc) => {
   };
 }
 
-const updateStatementsForFailedIdent = (failedIdent) => {
+const updateStatementsForFailedIdent = async (failedIdent) => {
   const existingIdent = await newIdentsCollection.findOne({ organisation: new ObjectID(failedIdent.organisation), ifi: failedIdent.ifi });
   const persona = await personasCollection.findOne({ _id: new ObjectID(existingIdent.persona) });
   const personaDisplay =  persona ? persona.name : 'Unknown persona';
