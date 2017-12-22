@@ -10,59 +10,80 @@ const newIdentsCollectionName = 'personaIdentifiers';
 const statementsCollectionName = 'statements';
 const personasCollectionName = 'personas';
 
+// Connections
+const attributesCollection = connection.collection(attributesCollectionName);
+const newIdentsCollection = connection.collection(newIdentsCollectionName);
+const statementsCollection = connection.collection(statementsCollectionName);
+const personasCollection = connection.collection(personasCollectionName);
+
 const processStream = stream =>
   new Promise((resolve, reject) => {
     stream.on('error', reject);
     stream.apply(resolve);
   });
 
-const insertIdents = async (idents) => {
-  const newIdentsCollection = connection.collection(newIdentsCollectionName);
-  const statementsCollection = connection.collection(statementsCollectionName);
-  const personasCollection = connection.collection(personasCollectionName);
-  console.log(`Inserting ${idents.length} idents....`);
+const createNewIdent = (doc) => {
+  const { key, value } = doc.uniqueIdentifier;
+  let newKey;
+  if (/^statement\.actor\./.test(key)) {
+    newKey = key.replace('statement.actor.', '');
+  }
+
+  return {
+    _id: doc._id,
+    organisation: doc.organisation,
+    createdAt: doc.createdAt,
+    updatedAt: doc.updatedAt,
+    persona: doc.persona,
+    ifi: {
+      key: newKey,
+      value,
+    }
+  };
+}
+
+const updateStatementsForFailedIdent = (failedIdent) => {
+  const existingIdent = await newIdentsCollection.findOne({ organisation: new ObjectID(failedIdent.organisation), ifi: failedIdent.ifi });
+  const persona = await personasCollection.findOne({ _id: new ObjectID(existingIdent.persona) });
+  const personaDisplay =  persona ? persona.name : 'Unknown persona';
+  if (existingIdent) {
+    console.log(`Convert personaIdentifier ${failedIdent._id} to ${existingIdent._id} with persona name of ${personaDisplay} (${persona._id})`);
+    const filter = { organisation: new ObjectID(failedIdent.organisation),  personaIdentifier: new ObjectID(failedIdent._id) };
+    const update = {
+      $set: {
+        personaIdentifier: new ObjectID(existingIdent._id),
+        person: {
+          _id: new ObjectID(existingIdent.persona),
+          display: personaDisplay,
+        }
+      }
+    };
+    return statementsCollection.update(filter, update, { multi: true });
+  }
+}
+
+const insertIdents = async (docs) => {
+  // Create new identifiers from old
+  const identInserts = docs.map(createNewIdent);
+  console.log(`Inserting ${identInserts.length} idents....`);
+
   try {
-    await newIdentsCollection.insertMany(idents, {ordered: false});
+    await newIdentsCollection.insertMany(identInserts, {ordered: false});
   } catch (err) {
     if (err instanceof MongoError && err.code === 11000) {
       const failedInserts = err.writeErrors.map((writeError) => {
         return writeError.getOperation();
       })
 
-      const updatePromises = failedInserts.map( async (failedIdent) => {
-        console.log(failedIdent);
-        const existingIdent = await newIdentsCollection.findOne({ organisation: new ObjectID(failedIdent.organisation), ifi: failedIdent.ifi });
-        const persona = await personasCollection.findOne({ _id: new ObjectID(existingIdent.persona) });
-        const personaDisplay =  persona ? persona.name : 'Unknown persona';
-        if (existingIdent) {
-          console.log(`convert ${failedIdent._id} to ${existingIdent._id} with persona name of ${personaDisplay} (${persona._id})`);
-          return statementsCollection.update({
-            organisation: new ObjectID(failedIdent.organisation),
-            personaIdentifier: new ObjectID(failedIdent._id),
-          },{
-             $set: {
-              personaIdentifier: new ObjectID(existingIdent._id),
-              person: {
-                _id: new ObjectID(existingIdent.persona),
-                display: personaDisplay,
-              }
-            }
-          }, { multi: true });
-        }
-      });
+      const updatePromises = failedInserts.map(updateStatementsForFailedIdent);
       return Promise.all(updatePromises);
     }
-
   }
 
   return Promise.resolve();
 };
 
-const migrateIdentifierBatch = (docs) => {
-  const attributesCollection = connection.collection(attributesCollectionName);
-
-  const opsPromises = [];
-
+const createAttributesFromIdents = async (docs) => {
   // Create attributes from idents
   const attrBulkOp = attributesCollection.initializeUnorderedBulkOp();
   const attrOps = docs.filter((doc) => {
@@ -81,34 +102,17 @@ const migrateIdentifierBatch = (docs) => {
   });
 
   if (attrOps.length > 0) {
-    opsPromises.push(attrBulkOp.execute());
+    return attrBulkOp.execute();
   }
 
-  // Create new identifiers from old
-  const identInserts = docs.map((doc) => {
-    const { key, value } = doc.uniqueIdentifier;
-    let newKey;
-    if (/^statement\.actor\./.test(key)) {
-      newKey = key.replace('statement.actor.', '');
-    }
+  return Promise.resolve();
+}
 
-    return {
-      _id: doc._id,
-      organisation: doc.organisation,
-      createdAt: doc.createdAt,
-      updatedAt: doc.updatedAt,
-      persona: doc.persona,
-      ifi: {
-        key: newKey,
-        value,
-      }
-    };
-  });
-
-  if (identInserts.length > 0){
-    // execute the ident bulk op
-    opsPromises.push(insertIdents(identInserts));
-  }
+const migrateIdentifierBatch = (docs) => {
+  const opsPromises = [
+    createAttributesPromise(docs),
+    insertIdents(docs),
+  ];
 
   return highland(Promise.all(opsPromises));
 };
