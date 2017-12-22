@@ -1,11 +1,14 @@
 import highland from 'highland';
 import logger from 'lib/logger';
 import { getConnection } from 'lib/connections/mongoose';
+import { MongoError, ObjectID } from 'mongodb';
 
 const connection = getConnection();
 const attributesCollectionName = 'personaAttributes';
 const oldIdentsCollectionName = 'personaidentifiers';
 const newIdentsCollectionName = 'personaIdentifiers';
+const statementsCollectionName = 'statements';
+const personasCollectionName = 'personas';
 
 const processStream = stream =>
   new Promise((resolve, reject) => {
@@ -13,11 +16,43 @@ const processStream = stream =>
     stream.apply(resolve);
   });
 
-const executeIdentBulkOp = async (batch) => {
+const insertIdents = async (idents) => {
+  const newIdentsCollection = connection.collection(newIdentsCollectionName);
+  const statementsCollection = connection.collection(statementsCollectionName);
+  const personasCollection = connection.collection(personasCollectionName);
+  console.log(`Inserting ${idents.length} idents....`);
   try {
-    await batch.execute();
+    await newIdentsCollection.insertMany(idents, {ordered: false});
   } catch (err) {
-    console.log(err);
+    if (err instanceof MongoError && err.code === 11000) {
+      const failedInserts = err.writeErrors.map((writeError) => {
+        return writeError.getOperation();
+      })
+
+      const updatePromises = failedInserts.map( async (failedIdent) => {
+        console.log(failedIdent);
+        const existingIdent = await newIdentsCollection.findOne({ organisation: new ObjectID(failedIdent.organisation), ifi: failedIdent.ifi });
+        const persona = await personasCollection.findOne({ _id: new ObjectID(existingIdent.persona) });
+        const personaDisplay =  persona ? persona.name : 'Unknown persona';
+        if (existingIdent) {
+          console.log(`convert ${failedIdent._id} to ${existingIdent._id} with persona name of ${personaDisplay} (${persona._id})`);
+          return statementsCollection.update({
+            organisation: new ObjectID(failedIdent.organisation),
+            personaIdentifier: new ObjectID(failedIdent._id),
+          },{
+             $set: {
+              personaIdentifier: new ObjectID(existingIdent._id),
+              person: {
+                _id: new ObjectID(existingIdent.persona),
+                display: personaDisplay,
+              }
+            }
+          }, { multi: true });
+        }
+      });
+      return Promise.all(updatePromises);
+    }
+
   }
 
   return Promise.resolve();
@@ -25,7 +60,6 @@ const executeIdentBulkOp = async (batch) => {
 
 const migrateIdentifierBatch = (docs) => {
   const attributesCollection = connection.collection(attributesCollectionName);
-  const newIdentsCollection = connection.collection(newIdentsCollectionName);
 
   const opsPromises = [];
 
@@ -51,15 +85,14 @@ const migrateIdentifierBatch = (docs) => {
   }
 
   // Create new identifiers from old
-  const identBulkOp = newIdentsCollection.initializeUnorderedBulkOp();
-  const identOps = docs.map((doc) => {
+  const identInserts = docs.map((doc) => {
     const { key, value } = doc.uniqueIdentifier;
     let newKey;
     if (/^statement\.actor\./.test(key)) {
       newKey = key.replace('statement.actor.', '');
     }
 
-    identBulkOp.insert({
+    return {
       _id: doc._id,
       organisation: doc.organisation,
       createdAt: doc.createdAt,
@@ -69,19 +102,19 @@ const migrateIdentifierBatch = (docs) => {
         key: newKey,
         value,
       }
-    });
+    };
   });
 
-  if (identOps.length > 0){
+  if (identInserts.length > 0){
     // execute the ident bulk op
-    opsPromises.push(executeIdentBulkOp(identBulkOp));
+    opsPromises.push(insertIdents(identInserts));
   }
 
   return highland(Promise.all(opsPromises));
 };
 
-const createAttributesFromIdentifiers = async () => {
-  const batchSize = 10;
+const migrateIdentifiers = async () => {
+  const batchSize = 10000;
   const filter = {};
   const collection = connection.collection(oldIdentsCollectionName);
   const docStream = highland(collection.find(filter));
@@ -89,43 +122,15 @@ const createAttributesFromIdentifiers = async () => {
   await processStream(migrationStream);
 };
 
-const updateIdentifierFields = async () => {
-  const filter = {};
-  const update = {
-    $unset: { identifiers: '', personaScores: '' },
-    $rename: { uniqueIdentifier: 'ifi' },
-  };
-  const opts = { multi: true };
-  const collection = connection.collection(newIdentsCollectionName);
-  await collection.update(filter, update, opts);
-  await collection.update({"ifi.key": "statement.actor.account"}, { $set: {"ifi.key": "account"} }, {multi: true});
-  await collection.update({"ifi.key": "statement.actor.mbox"}, { $set: {"ifi.key": "mbox"} }, {multi: true});
-  await collection.update({"ifi.key": "statement.actor.openid"}, { $set: {"ifi.key": "openid"} }, {multi: true});
-  await collection.update({"ifi.key": "statement.actor.mbox_sha1sum"}, { $set: {"ifi.key": "mbox_sha1sum"} }, {multi: true});
-};
-
-const cloneIdentifiersToNewCollection = async () => {
-  const pipeline = [{ $match: {} }];
-  await new Promise((resolve, reject) => {
-    connection.collection(oldIdentsCollectionName).aggregate(pipeline, { out: newIdentsCollectionName }, (err) => {
-      console.log('Error: ', err);
-      if (err) return reject(err);
-      resolve();
-    });
-  });
-};
-
 const up = async () => {
-  await createAttributesFromIdentifiers();
-  // await cloneIdentifiersToNewCollection();
-  // await updateIdentifierFields();
+  await migrateIdentifiers();
   logger.info(`You may want to delete the now unused ${oldIdentsCollectionName} collection`);
 };
 
 const down = async () => {
   logger.info('Dropping persona attributes and new idents');
-  connection.collection(newIdentsCollectionName).drop();
-  connection.collection(attributesCollectionName).drop();
+  await connection.collection(newIdentsCollectionName).remove({});
+  await connection.collection(attributesCollectionName).remove({});
 };
 
 export default { up, down };

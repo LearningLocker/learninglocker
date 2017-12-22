@@ -9,7 +9,7 @@ import personasIndexes from './2017108104700_personas_indexes';
 export default new OrderedMap()
   .set('20171122100800_common_indexes', commonIndexesMigration)
   .set('20171121153300_update_refs', updateRefs)
-  .set('20171127214900_migrate_identifiers', migrateIdentifiers)
-  .set('2017108104700_personas_indexes', personasIndexes);
+  .set('2017108104700_personas_indexes', personasIndexes)
+  .set('20171127214900_migrate_identifiers', migrateIdentifiers);
   // .set('20171127214500_remove_unused_persona_props', removeUnusedPersonaProps)
   // .set('20171128144900_remove_old_idents', removeOldIdents)
