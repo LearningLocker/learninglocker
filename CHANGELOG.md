@@ -9,6 +9,10 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.1.2] - 2018-01-02
+### Fixed
+  - Better error handling in migrations
+
 ## [2.1.1] - 2017-12-19
 ### Fixed
   - Arrays in statement API response were being converted to keys
