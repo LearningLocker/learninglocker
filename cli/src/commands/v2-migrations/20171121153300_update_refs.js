@@ -64,8 +64,8 @@ const createIndex = key => Statement.collection.createIndex(
     lrs_id: 1,
     [key]: 1
   },
-  { background: true }
-);
+    { background: true }
+  );
 
 const createIndexes = keys => keys.map(createIndex);
 
