@@ -1,6 +1,7 @@
 import highland from 'highland';
 import Statement from 'lib/models/statement';
 import union from 'lodash/union';
+import logger from 'lib/logger';
 import {
   getActivitiesFromStatement,
   getRelatedActivitiesFromStatement
@@ -30,18 +31,23 @@ const getQueriables = (doc) => {
 const migrateStatementsBatch = (statements) => {
   const bulkOp = Statement.collection.initializeUnorderedBulkOp();
   statements.forEach((doc) => {
-    const queriables = getQueriables(doc);
-    const update = {
-      $addToSet: {
-        activities: { $each: queriables.activities },
-        agents: { $each: queriables.agents },
-        registrations: { $each: queriables.registrations },
-        relatedActivities: { $each: queriables.relatedActivities },
-        relatedAgents: { $each: queriables.relatedAgents },
-        verbs: { $each: queriables.verbs }
-      }
-    };
-    bulkOp.find({ _id: doc._id }).updateOne(update);
+    try {
+      const queriables = getQueriables(doc);
+      const update = {
+        $addToSet: {
+          activities: { $each: queriables.activities },
+          agents: { $each: queriables.agents },
+          registrations: { $each: queriables.registrations },
+          relatedActivities: { $each: queriables.relatedActivities },
+          relatedAgents: { $each: queriables.relatedAgents },
+          verbs: { $each: queriables.verbs }
+        }
+      };
+      bulkOp.find({ _id: doc._id }).updateOne(update);
+    } catch (err) {
+      const docId = doc._id ? doc._id : 'unknown';
+      logger.error(`Error migrating statement with _id: ${docId}`, err);
+    }
   });
   return highland(bulkOp.execute());
 };
