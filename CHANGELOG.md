@@ -11,6 +11,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [2.1.2] - 2018-01-02
 ### Fixed
+  - `GOOGLE_ENABLED` .env value no longer compiled into API build and can be updated in the .env, followed by a restart of the API
   - Better error handling in migrations
 
 ## [2.1.1] - 2017-12-19
