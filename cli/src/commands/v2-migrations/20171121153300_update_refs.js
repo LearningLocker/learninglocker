@@ -30,6 +30,7 @@ const getQueriables = (doc) => {
 
 const migrateStatementsBatch = (statements) => {
   const bulkOp = Statement.collection.initializeUnorderedBulkOp();
+  let i = 0;
   statements.forEach((doc) => {
     try {
       const queriables = getQueriables(doc);
@@ -44,12 +45,17 @@ const migrateStatementsBatch = (statements) => {
         }
       };
       bulkOp.find({ _id: doc._id }).updateOne(update);
+      ++i;
     } catch (err) {
       const docId = doc._id ? doc._id : 'unknown';
-      logger.error(`Error migrating statement with _id: ${docId}`, err);
+      logger.error(`Error migrating statement with _id: ${docId}`, err.message);
     }
   });
-  return highland(bulkOp.execute());
+  if (i > 0) {
+    return highland(bulkOp.execute());
+  } else {
+    return highland(Promise.resolve());
+  }
 };
 
 const processStream = stream =>
