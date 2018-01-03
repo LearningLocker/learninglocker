@@ -45,7 +45,7 @@ const migrateStatementsBatch = (statements) => {
         }
       };
       bulkOp.find({ _id: doc._id }).updateOne(update);
-      ++i;
+      i += 1;
     } catch (err) {
       const docId = doc._id ? doc._id : 'unknown';
       logger.error(`Error migrating statement with _id: ${docId}`, err.message);
