@@ -49,8 +49,8 @@ const createClientIndexes = (connection) => {
 
 const createActivityIndexes = (connection) => {
   const fullActivities = connection.collection('fullActivities');
-  const activityIndex = { organisationId: 1, lrsId: 1, activityId: 1 };
-  createUnique(fullActivities, 'orgId_lrsId_activityId', activityIndex);
+  const activityIndex = { organisation: 1, lrs_id: 1, activityId: 1 };
+  createUnique(fullActivities, 'org_lrs_id_activityId', activityIndex);
 };
 
 const up = async () => {
