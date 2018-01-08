@@ -5,13 +5,13 @@ import logger from 'lib/logger';
 import {
   getActivitiesFromStatement,
   getRelatedActivitiesFromStatement
-} from 'xapi-statements/dist/service/storeStatements/queriables/getActivitiesFromStatement';
+} from '@learninglocker/xapi-statements/dist/service/storeStatements/queriables/getActivitiesFromStatement';
 import {
   getAgentsFromStatement,
   getRelatedAgentsFromStatement
-} from 'xapi-statements/dist/service/storeStatements/queriables/getAgentsFromStatement';
-import getRegistrationsFromStatement from 'xapi-statements/dist/service/storeStatements/queriables/getRegistrationsFromStatement';
-import getVerbsFromStatement from 'xapi-statements/dist/service/storeStatements/queriables/getVerbsFromStatement';
+} from '@learninglocker/xapi-statements/dist/service/storeStatements/queriables/getAgentsFromStatement';
+import getRegistrationsFromStatement from '@learninglocker/xapi-statements/dist/service/storeStatements/queriables/getRegistrationsFromStatement';
+import getVerbsFromStatement from '@learninglocker/xapi-statements/dist/service/storeStatements/queriables/getVerbsFromStatement';
 
 const getQueriables = (doc) => {
   const statement = doc.statement;
