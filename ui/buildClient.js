@@ -27,9 +27,7 @@ const webpackConfig = getWebpackConfig({
     from: path.resolve(sourceDir, 'static'),
     to: path.resolve(outputDir, 'static')
   }],
-  clientFreeVariables: {
-    __GOOGLE_ENABLED__: boolean(process.env.GOOGLE_ENABLED)
-  }
+  clientFreeVariables: {}
 });
 
 /**
