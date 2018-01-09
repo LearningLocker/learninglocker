@@ -6,7 +6,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
     - Storage
       - Requires the Cloud Storage JSON API to be enabled for your Google Cloud project
       - New environment configs:
-        - `FS_GOOGLE_CLOUD_KEYFILE` 
+        - `FS_GOOGLE_CLOUD_KEY_FILENAME` 
           - Path to your Service account key JSON file. Must be configured to allow read/write/delete to your Cloud Storage bucket
         - `FS_GOOGLE_CLOUD_PROJECT_ID` - Project ID
         - `FS_GOOGLE_CLOUD_BUCKET` - Bucket name
