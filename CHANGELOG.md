@@ -5,6 +5,12 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
   - Google cloud services 
     - Storage
     - PubSub queues
+      - Requires PubSub API to be enabled for your Google Cloud project
+      - New environment configs:
+        - `GOOGLECLOUD_PUBSUB_KEY_FILENAME` 
+          - Path to your Service account key JSON file. Must be configured to allow read/write/delete to your Cloud Storage bucket
+        - `GOOGLE_CLOUD_PUBSUB_PROJECT_ID` - Project ID
+        - `GOOGLECLOUD_PUBSUB_SUBSCRIPTION_NAME` - Pubsub subscription name (defaults to `learninglocker_worker`)
 ### Changed
 ### Deprecated
 ### Removed
