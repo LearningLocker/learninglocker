@@ -48,6 +48,7 @@
     "rollback": "node cli/dist/server migrateMongo --down last"
   },
   "dependencies": {
+    "@google-cloud/storage": "^1.5.2",
     "@newrelic/native-metrics": "^2.1.0",
     "Base64": "^0.3.0",
     "assets-webpack-plugin": "^3.5.0",
