@@ -2,6 +2,9 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [unreleased]
 ### Added
+  - Google cloud services 
+    - Storage
+    - PubSub queues
 ### Changed
 ### Deprecated
 ### Removed
