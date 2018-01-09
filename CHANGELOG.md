@@ -10,7 +10,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
         - `GOOGLE_CLOUD_PUBSUB_KEY_FILENAME` 
           - Path to your Service account key JSON file. Must be configured to allow read/write/delete to your Cloud Storage bucket
         - `GOOGLE_CLOUD_PUBSUB_PROJECT_ID` - Project ID
-        - `GOOGLE_CLOUD_PUBSUB_SUBSCRIPTION_NAME` - Pubsub subscription name (defaults to `learninglocker_worker`)
+        - `GOOGLE_CLOUD_PUBSUB_SUBSCRIPTION_NAME` - Pubsub subscription name (defaults to `ll`)
 ### Changed
 ### Deprecated
 ### Removed
