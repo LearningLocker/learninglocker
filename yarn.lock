@@ -27,6 +27,51 @@
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@cypress/xvfb/-/xvfb-1.0.4.tgz#e7391d534baef2b180bd84fdc2ffea1020f7d6a5"
 
+"@learninglocker/xapi-statements@^5.0.9":
+  version "5.0.9"
+  resolved "https://registry.yarnpkg.com/@learninglocker/xapi-statements/-/xapi-statements-5.0.9.tgz#0b57b086589074a079f68a5946f792de8c7ffb8f"
+  dependencies:
+    "@learninglocker/xapi-validation" "^2.1.5"
+    accept-language-parser "^1.4.1"
+    atob "^2.0.3"
+    aws-sdk "^2.97.0"
+    bluebird "^3.5.0"
+    body-parser "^1.17.1"
+    boolean "^0.1.2"
+    btoa "^1.1.2"
+    cors "^2.8.1"
+    dotenv "^4.0.0"
+    express "^4.14.1"
+    file-stream-rotator "^0.2.0"
+    fs-extra "^5.0.0"
+    helmet "^3.5.0"
+    jscommons "^2.1.0"
+    jsonwebtoken "^8.0.1"
+    lodash "^4.17.4"
+    mime-types "^2.1.17"
+    moment "^2.18.0"
+    mongodb "^2.2.26"
+    morgan "^1.8.1"
+    node-fetch "^1.6.3"
+    object-hash "1.2.0"
+    promise-retry "^1.1.1"
+    query-string "^5.0.1"
+    redis "^2.8.0"
+    rulr "^4.0.0"
+    source-map-support "^0.5.0"
+    stream-to-string "^1.1.0"
+    string-to-stream "^1.1.0"
+    uuid "^3.0.1"
+    winston "^2.3.1"
+    winston-aws-cloudwatch "^2.0.0"
+
+"@learninglocker/xapi-validation@^2.1.5":
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/@learninglocker/xapi-validation/-/xapi-validation-2.1.5.tgz#f3937120e024e9f734c688ccbf4e1b0c07c9f18c"
+  dependencies:
+    lodash "^4.17.4"
+    rulr "^4.0.1"
+
 "@newrelic/native-metrics@^2.1.0":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/@newrelic/native-metrics/-/native-metrics-2.1.2.tgz#9a595dc602654b717188a294507087a51e79fba3"
@@ -273,8 +318,8 @@ array-slice@^0.2.3:
   resolved "https://registry.yarnpkg.com/array-slice/-/array-slice-0.2.3.tgz#dd3cfb80ed7973a75117cdac69b0b99ec86186f5"
 
 array-slice@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/array-slice/-/array-slice-1.0.0.tgz#e73034f00dcc1f40876008fd20feae77bd4b7c2f"
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/array-slice/-/array-slice-1.1.0.tgz#e368ea15f89bc7069f7ffb89aec3a6c7d4ac22d4"
 
 array-union@^1.0.1:
   version "1.0.2"
@@ -444,8 +489,8 @@ aws-sdk@^2.100.0, aws-sdk@^2.2.43, aws-sdk@^2.58.0, aws-sdk@^2.77.0:
     xmlbuilder "4.2.1"
 
 aws-sdk@^2.80.0, aws-sdk@^2.97.0:
-  version "2.154.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.154.0.tgz#bbe9439d31e380a2e3617ffa217432b4fab776d1"
+  version "2.177.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.177.0.tgz#d5fbf1f82bab250e55153699b030b44f687f600b"
   dependencies:
     buffer "4.9.1"
     crypto-browserify "1.0.9"
@@ -2278,9 +2323,13 @@ commander@2.9.0:
   dependencies:
     graceful-readlink ">= 1.0.0"
 
-commander@^2.11.0, commander@^2.2.0, commander@^2.9.0:
+commander@^2.11.0, commander@^2.9.0:
   version "2.11.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.11.0.tgz#157152fd1e7a6c8d98a5b715cf376df928004563"
+
+commander@^2.2.0:
+  version "2.12.2"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-2.12.2.tgz#0f5946c427ed9ec0d91a46bb9def53e54650e555"
 
 common-tags@1.4.0:
   version "1.4.0"
@@ -3022,6 +3071,10 @@ decamelize@^1.0.0, decamelize@^1.1.1, decamelize@^1.1.2:
 declare.js@~0.0.4:
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/declare.js/-/declare.js-0.0.8.tgz#0478adff9564c004f51df73d8bc134019d28dcde"
+
+decode-uri-component@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.2.0.tgz#eb3913333458775cb84cd1a1fae062106bb87545"
 
 deep-eql@^0.1.3:
   version "0.1.3"
@@ -4416,6 +4469,14 @@ fs-extra@^4.0.2:
     jsonfile "^4.0.0"
     universalify "^0.1.0"
 
+fs-extra@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-5.0.0.tgz#414d0110cdd06705734d055652c5411260c31abd"
+  dependencies:
+    graceful-fs "^4.1.2"
+    jsonfile "^4.0.0"
+    universalify "^0.1.0"
+
 fs-readdir-recursive@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/fs-readdir-recursive/-/fs-readdir-recursive-1.0.0.tgz#8cd1745c8b4f8a29c8caec392476921ba195f560"
@@ -4514,8 +4575,8 @@ generate-object-property@^1.1.0:
     is-property "^1.0.0"
 
 generic-pool@^3.1.7:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/generic-pool/-/generic-pool-3.2.0.tgz#c1d485ecbd6f18c0513d4741d098a6715eaeeca8"
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/generic-pool/-/generic-pool-3.4.0.tgz#6b76fc201bb49a0ff381450f585352378fb1c08f"
 
 get-caller-file@^1.0.1:
   version "1.0.2"
@@ -5193,9 +5254,13 @@ interpret@^0.6.4:
   version "0.6.6"
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-0.6.6.tgz#fecd7a18e7ce5ca6abfb953e1f86213a49f1625b"
 
-interpret@^1.0.0, interpret@^1.0.1, interpret@^1.0.4:
+interpret@^1.0.0, interpret@^1.0.1:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.0.4.tgz#820cdd588b868ffb191a809506d6c9c8f212b1b0"
+
+interpret@^1.0.4:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.1.0.tgz#7ed1b1410c6a0e0f78cf95d3b8440c63f78b8614"
 
 invariant@2.2.0:
   version "2.2.0"
@@ -5242,12 +5307,12 @@ is-absolute-url@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/is-absolute-url/-/is-absolute-url-2.1.0.tgz#50530dfb84fcc9aa7dbe7852e83a37b93b9f2aa6"
 
-is-absolute@^0.2.3:
-  version "0.2.6"
-  resolved "https://registry.yarnpkg.com/is-absolute/-/is-absolute-0.2.6.tgz#20de69f3db942ef2d87b9c2da36f172235b1b5eb"
+is-absolute@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/is-absolute/-/is-absolute-1.0.0.tgz#395e1ae84b11f26ad1795e73c17378e48a301576"
   dependencies:
-    is-relative "^0.2.1"
-    is-windows "^0.2.0"
+    is-relative "^1.0.0"
+    is-windows "^1.0.1"
 
 is-arrayish@^0.2.1:
   version "0.2.1"
@@ -5442,11 +5507,11 @@ is-regex@^1.0.4:
   dependencies:
     has "^1.0.1"
 
-is-relative@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/is-relative/-/is-relative-0.2.1.tgz#d27f4c7d516d175fb610db84bbeef23c3bc97aa5"
+is-relative@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/is-relative/-/is-relative-1.0.0.tgz#a1bb6935ce8c5dba1e8b9754b9b2dcc020e2260d"
   dependencies:
-    is-unc-path "^0.1.1"
+    is-unc-path "^1.0.0"
 
 is-resolvable@^1.0.0:
   version "1.0.0"
@@ -5480,11 +5545,11 @@ is-typedarray@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/is-typedarray/-/is-typedarray-1.0.0.tgz#e479c80858df0c1b11ddda6940f96011fcda4a9a"
 
-is-unc-path@^0.1.1:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/is-unc-path/-/is-unc-path-0.1.2.tgz#6ab053a72573c10250ff416a3814c35178af39b9"
+is-unc-path@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/is-unc-path/-/is-unc-path-1.0.0.tgz#d731e8898ed090a12c352ad2eaed5095ad322c9d"
   dependencies:
-    unc-path-regex "^0.1.0"
+    unc-path-regex "^0.1.2"
 
 is-utf8@^0.2.0:
   version "0.2.1"
@@ -5493,6 +5558,10 @@ is-utf8@^0.2.0:
 is-windows@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/is-windows/-/is-windows-0.2.0.tgz#de1aa6d63ea29dd248737b69f1ff8b8002d2108c"
+
+is-windows@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/is-windows/-/is-windows-1.0.1.tgz#310db70f742d259a16a369202b51af84233310d9"
 
 is@^3.2.1:
   version "3.2.1"
@@ -5872,8 +5941,8 @@ jsbn@~0.1.0:
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
 
 jscommons@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/jscommons/-/jscommons-2.1.0.tgz#045cd967b33c16809592fd3c57a3f8233d6774dd"
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/jscommons/-/jscommons-2.1.2.tgz#f959ed6a3a01bccb14533bb39694ce9e6455e2ae"
   dependencies:
     aws-sdk "^2.80.0"
     body-parser "^1.17.2"
@@ -5881,7 +5950,7 @@ jscommons@^2.1.0:
     cors "^2.8.3"
     express "^4.15.3"
     file-stream-rotator "^0.2.0"
-    fs-extra "^4.0.2"
+    fs-extra "^5.0.0"
     helmet "^3.6.1"
     knex "^0.14.0"
     lodash "^4.17.4"
@@ -5892,7 +5961,7 @@ jscommons@^2.1.0:
     rulr "^4.0.1"
     uuid "^3.1.0"
     winston "^2.3.1"
-    winston-aws-cloudwatch "^1.5.0"
+    winston-aws-cloudwatch "^2.0.0"
 
 jsdom@^9.11.0:
   version "9.12.0"
@@ -6194,8 +6263,8 @@ klaw@^1.0.0:
     graceful-fs "^4.1.9"
 
 knex@^0.14.0:
-  version "0.14.1"
-  resolved "https://registry.yarnpkg.com/knex/-/knex-0.14.1.tgz#ba4ae5afc2824a43b392fbbc8f8a7753e356d808"
+  version "0.14.2"
+  resolved "https://registry.yarnpkg.com/knex/-/knex-0.14.2.tgz#f3b3fe1ea0711af842770100768af21bfcbcbaea"
   dependencies:
     babel-runtime "^6.23.0"
     bluebird "^3.4.6"
@@ -7123,8 +7192,8 @@ moment@2.x.x, moment@^2.10.6, moment@^2.11.2:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.19.1.tgz#56da1a2d1cbf01d38b7e1afc31c10bcfa1929167"
 
 moment@^2.18.0, moment@^2.18.1:
-  version "2.19.2"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.19.2.tgz#8a7f774c95a64550b4c7ebd496683908f9419dbe"
+  version "2.20.1"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.20.1.tgz#d6eb1a46cbcc14a2b2f9434112c1ff8907f313fd"
 
 mongodb-core@2.1.17:
   version "2.1.17"
@@ -7133,12 +7202,27 @@ mongodb-core@2.1.17:
     bson "~1.0.4"
     require_optional "~1.0.0"
 
-mongodb@2.2.33, mongodb@^2.1.4, mongodb@^2.2.26, mongodb@^2.2.29:
+mongodb-core@2.1.18:
+  version "2.1.18"
+  resolved "https://registry.yarnpkg.com/mongodb-core/-/mongodb-core-2.1.18.tgz#4c46139bdf3a1f032ded91db49f38eec01659050"
+  dependencies:
+    bson "~1.0.4"
+    require_optional "~1.0.0"
+
+mongodb@2.2.33, mongodb@^2.1.4:
   version "2.2.33"
   resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-2.2.33.tgz#b537c471d34a6651b48f36fdbf29750340e08b50"
   dependencies:
     es6-promise "3.2.1"
     mongodb-core "2.1.17"
+    readable-stream "2.2.7"
+
+mongodb@^2.2.26, mongodb@^2.2.29:
+  version "2.2.34"
+  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-2.2.34.tgz#a34f59bbeb61754aec432de72c3fe21526a44c1a"
+  dependencies:
+    es6-promise "3.2.1"
+    mongodb-core "2.1.18"
     readable-stream "2.2.7"
 
 mongoose-detective@~0.1.0:
@@ -7310,8 +7394,8 @@ newrelic@^1.27.2:
     semver "^5.3.0"
 
 newrelic@^2.3.1:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-2.4.0.tgz#b54455640d28dbd55a4b8a6944a9513d781e8516"
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-2.5.0.tgz#28226b2b6aefc829a31cbb1da0f526b075f9f816"
   dependencies:
     async "^2.1.4"
     concat-stream "^1.5.0"
@@ -7942,10 +8026,10 @@ parse-asn1@^5.0.0:
     pbkdf2 "^3.0.3"
 
 parse-filepath@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/parse-filepath/-/parse-filepath-1.0.1.tgz#159d6155d43904d16c10ef698911da1e91969b73"
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/parse-filepath/-/parse-filepath-1.0.2.tgz#a632127f53aaf3d15876f5872f3ffac763d6c891"
   dependencies:
-    is-absolute "^0.2.3"
+    is-absolute "^1.0.0"
     map-cache "^0.2.0"
     path-root "^0.1.1"
 
@@ -9078,6 +9162,14 @@ query-string@^4.1.0:
     object-assign "^4.1.0"
     strict-uri-encode "^1.0.0"
 
+query-string@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/query-string/-/query-string-5.0.1.tgz#6e2b86fe0e08aef682ecbe86e85834765402bd88"
+  dependencies:
+    decode-uri-component "^0.2.0"
+    object-assign "^4.1.0"
+    strict-uri-encode "^1.0.0"
+
 querystring-es3@^0.2.0:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/querystring-es3/-/querystring-es3-0.2.1.tgz#9ec61f79049875707d69414596fd907a4d711e73"
@@ -10148,13 +10240,9 @@ rst-selector-parser@^2.2.2:
     lodash.flattendeep "^4.4.0"
     nearley "^2.7.10"
 
-rulr@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/rulr/-/rulr-1.1.0.tgz#66eafd49c6c1fe1218f97ad5c13d77b3c0f4df5d"
-
 rulr@^4.0.0, rulr@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/rulr/-/rulr-4.0.1.tgz#650a701175d10ac869faeb4102c638dbc1b56f57"
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/rulr/-/rulr-4.0.2.tgz#4d1b89fe884ac36693ffeaae03b70f75305a89b8"
 
 run-async@^0.1.0:
   version "0.1.0"
@@ -11214,7 +11302,7 @@ ultron@1.0.x:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/ultron/-/ultron-1.0.2.tgz#ace116ab557cd197386a4e88f4685378c8b2e4fa"
 
-unc-path-regex@^0.1.0:
+unc-path-regex@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/unc-path-regex/-/unc-path-regex-0.1.2.tgz#e73dd3d7b0d7c5ed86fbac6b0ae7d8c6a69d50fa"
 
@@ -11794,6 +11882,16 @@ winston-aws-cloudwatch@^1.5.0:
     lodash.isempty "^4.2.1"
     winston "^2.3.1"
 
+winston-aws-cloudwatch@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/winston-aws-cloudwatch/-/winston-aws-cloudwatch-2.0.0.tgz#de35ec4dbba9cab85b2d5dc27aec55ec32f65b81"
+  dependencies:
+    aws-sdk "^2.58.0"
+    babel-runtime "^6.23.0"
+    bottleneck "^1.15.1"
+    debug "^3.1.0"
+    lodash.isempty "^4.2.1"
+
 winston@^2.1.1, winston@^2.3.1:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/winston/-/winston-2.4.0.tgz#808050b93d52661ed9fb6c26b3f0c826708b0aee"
@@ -11874,56 +11972,6 @@ wtf-8@1.0.0:
 x-xss-protection@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/x-xss-protection/-/x-xss-protection-1.0.0.tgz#898afb93869b24661cf9c52f9ee8db8ed0764dd9"
-
-xapi-statements@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/xapi-statements/-/xapi-statements-5.0.1.tgz#bedd6ff218996558fd05ceecc0d2623cd8c54588"
-  dependencies:
-    accept-language-parser "^1.4.1"
-    atob "^2.0.3"
-    aws-sdk "^2.97.0"
-    bluebird "^3.5.0"
-    body-parser "^1.17.1"
-    boolean "^0.1.2"
-    btoa "^1.1.2"
-    cors "^2.8.1"
-    dotenv "^4.0.0"
-    express "^4.14.1"
-    file-stream-rotator "^0.2.0"
-    fs-extra "^4.0.2"
-    helmet "^3.5.0"
-    jscommons "^2.1.0"
-    jsonwebtoken "^8.0.1"
-    lodash "^4.17.4"
-    mime-types "^2.1.17"
-    moment "^2.18.0"
-    mongodb "^2.2.26"
-    morgan "^1.8.1"
-    node-fetch "^1.6.3"
-    object-hash "1.2.0"
-    promise-retry "^1.1.1"
-    redis "^2.8.0"
-    rulr "^4.0.0"
-    source-map-support "^0.5.0"
-    stream-to-string "^1.1.0"
-    string-to-stream "^1.1.0"
-    uuid "^3.0.1"
-    winston "^2.3.1"
-    winston-aws-cloudwatch "^1.5.0"
-    xapi-validation "^2.1.0"
-
-xapi-validation@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/xapi-validation/-/xapi-validation-1.0.2.tgz#265b20335003ab71df0aecf882241888b6e9e8f8"
-  dependencies:
-    rulr "^1.1.0"
-
-xapi-validation@^2.1.0:
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/xapi-validation/-/xapi-validation-2.1.4.tgz#b8f5dffd3afca9829b181407a29159ce13fcfe8d"
-  dependencies:
-    lodash "^4.17.4"
-    rulr "^4.0.1"
 
 xdg-basedir@^3.0.0:
   version "3.0.0"
