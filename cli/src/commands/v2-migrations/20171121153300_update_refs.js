@@ -1,16 +1,17 @@
 import highland from 'highland';
 import Statement from 'lib/models/statement';
 import union from 'lodash/union';
+import logger from 'lib/logger';
 import {
   getActivitiesFromStatement,
   getRelatedActivitiesFromStatement
-} from 'xapi-statements/dist/service/storeStatements/queriables/getActivitiesFromStatement';
+} from '@learninglocker/xapi-statements/dist/service/storeStatements/queriables/getActivitiesFromStatement';
 import {
   getAgentsFromStatement,
   getRelatedAgentsFromStatement
-} from 'xapi-statements/dist/service/storeStatements/queriables/getAgentsFromStatement';
-import getRegistrationsFromStatement from 'xapi-statements/dist/service/storeStatements/queriables/getRegistrationsFromStatement';
-import getVerbsFromStatement from 'xapi-statements/dist/service/storeStatements/queriables/getVerbsFromStatement';
+} from '@learninglocker/xapi-statements/dist/service/storeStatements/queriables/getAgentsFromStatement';
+import getRegistrationsFromStatement from '@learninglocker/xapi-statements/dist/service/storeStatements/queriables/getRegistrationsFromStatement';
+import getVerbsFromStatement from '@learninglocker/xapi-statements/dist/service/storeStatements/queriables/getVerbsFromStatement';
 
 const getQueriables = (doc) => {
   const statement = doc.statement;
@@ -35,21 +36,32 @@ const getQueriables = (doc) => {
 
 const migrateStatementsBatch = (statements) => {
   const bulkOp = Statement.collection.initializeUnorderedBulkOp();
+  let i = 0;
   statements.forEach((doc) => {
-    const queriables = getQueriables(doc);
-    const update = {
-      $addToSet: {
-        activities: { $each: queriables.activities },
-        agents: { $each: queriables.agents },
-        registrations: { $each: queriables.registrations },
-        relatedActivities: { $each: queriables.relatedActivities },
-        relatedAgents: { $each: queriables.relatedAgents },
-        verbs: { $each: queriables.verbs }
-      }
-    };
-    bulkOp.find({ _id: doc._id }).updateOne(update);
+    try {
+      const queriables = getQueriables(doc);
+      const update = {
+        $addToSet: {
+          activities: { $each: queriables.activities },
+          agents: { $each: queriables.agents },
+          registrations: { $each: queriables.registrations },
+          relatedActivities: { $each: queriables.relatedActivities },
+          relatedAgents: { $each: queriables.relatedAgents },
+          verbs: { $each: queriables.verbs }
+        }
+      };
+      bulkOp.find({ _id: doc._id }).updateOne(update);
+      i += 1;
+    } catch (err) {
+      const docId = doc._id ? doc._id : 'unknown';
+      logger.error(`Error migrating statement with _id: ${docId}`, err.message);
+    }
   });
-  return highland(bulkOp.execute());
+  if (i > 0) {
+    return highland(bulkOp.execute());
+  } else {
+    return highland(Promise.resolve());
+  }
 };
 
 const processStream = stream =>

@@ -1,3 +1,4 @@
+import boolean from 'boolean';
 import express from 'express';
 import restify from 'express-restify-mongoose';
 import git from 'git-rev';
@@ -60,6 +61,10 @@ router.get(routes.VERSION, (req, res) => {
     jsonSuccess(res)({ short, long, branch, tag });
   })
   .catch(serverError(res));
+});
+router.get(routes.GOOGLE_AUTH, (req, res) => {
+  const enabled = boolean(process.env.GOOGLE_ENABLED);
+  jsonSuccess(res)({ enabled });
 });
 
 /**

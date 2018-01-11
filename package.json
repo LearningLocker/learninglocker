@@ -48,6 +48,8 @@
     "rollback": "node cli/dist/server migrateMongo --down last"
   },
   "dependencies": {
+    "@learninglocker/xapi-statements": "^5.0.9",
+    "@learninglocker/xapi-validation": "^2.1.5",
     "@newrelic/native-metrics": "^2.1.0",
     "Base64": "^0.3.0",
     "assets-webpack-plugin": "^3.5.0",
@@ -232,9 +234,7 @@
     "webpack-dev-middleware": "^1.10.1",
     "webpack-node-externals": "^1.5.4",
     "winston": "^2.1.1",
-    "winston-aws-cloudwatch": "^1.5.0",
-    "xapi-statements": "^5.0.1",
-    "xapi-validation": "^1.0.2"
+    "winston-aws-cloudwatch": "^1.5.0"
   },
   "devDependencies": {
     "babel-jest": "^19.0.0",

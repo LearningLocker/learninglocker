@@ -86,7 +86,7 @@ const checkRunMigrations = async ({ migrations }) => {
   const allMigrations = dbMigrations.zip(actualMigrations);
 
   if (allMigrations.size !== dbMigrations.size) {
-    throw new Error('Db does not match the migrations');
+    throw new Error('Db does not match the migrations - you may still have the v1 migrations collection');
   }
 
   allMigrations.forEach((item) => {
@@ -97,13 +97,13 @@ const checkRunMigrations = async ({ migrations }) => {
       throw new Error(`Db migration (${dbMigration.key}) does not match (${actualMigration[0]})`);
     }
 
-    if (
-      dbMigration.upFn.toString().replace(/\s/g) !== actualMigration[1].up.toString().replace(/\s/g)
-    ) {
-      throw new Error(
-        `db up migration for (${actualMigration[0]}) does not match the function that was run`
-      );
-    }
+    // if (
+    //   dbMigration.upFn.toString().replace(/\s/g) !== actualMigration[1].up.toString().replace(/\s/g)
+    // ) {
+    //   throw new Error(
+    //     `db up migration for (${actualMigration[0]}) does not match the function that was run`
+    //   );
+    // }
   });
 };
 
