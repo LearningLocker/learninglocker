@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import validateMailto from 'xapi-validation/dist/regexValues/mailto';
+import validateMailto from '@learninglocker/xapi-validation/dist/regexValues/mailto';
 import { compose, setPropTypes, defaultProps } from 'recompose';
 import classNames from 'classnames';
 import Input from 'ui/components/Input/Input';

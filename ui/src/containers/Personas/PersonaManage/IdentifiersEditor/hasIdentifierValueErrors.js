@@ -1,5 +1,5 @@
-import validateIri from 'xapi-validation/dist/regexValues/iri';
-import validateMailto from 'xapi-validation/dist/regexValues/mailto';
+import validateIri from '@learninglocker/xapi-validation/dist/regexValues/iri';
+import validateMailto from '@learninglocker/xapi-validation/dist/regexValues/mailto';
 
 export default (identifierType, identifierValue) => {
   switch (identifierType) {
