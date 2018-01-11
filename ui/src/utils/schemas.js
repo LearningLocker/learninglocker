@@ -182,14 +182,22 @@ const client = new LLSchema('client', { idAttribute: '_id', sortKey: 'updatedAt'
 });
 
 const dashboard = new LLSchema('dashboard', { idAttribute: '_id' }, {
-  preSave: model =>
-    model.update('filter', new Map({}), filter =>
-      (
-        filter.size > 0
-        ? JSON.stringify(filter.toJS())
-        : JSON.stringify(filter)
-      )
-    ),
+  preSave: (model) => {
+    // TODO: remove
+    // model.update('filter', new Map({}), filter =>
+    //   (
+    //     filter.size > 0
+    //     ? JSON.stringify(filter.toJS())
+    //     : JSON.stringify(filter)
+    //   )
+    // )
+    const newShareable = model.get('shareable', new List()).map(item =>
+      item.update('filter', new Map({}), filter => (
+        filter.size > 0 ? JSON.stringify(filter.toJS()) : JSON.stringify(filter)
+      ))
+    );
+    return model.set('shareable', newShareable);
+  },
   reviver: (key, value) => {
     if (value.has('filter')) {
       try {

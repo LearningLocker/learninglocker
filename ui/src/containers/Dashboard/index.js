@@ -20,7 +20,7 @@ import {
   ANYWHERE,
   VALID_DOMAINS
 } from 'lib/constants/sharingScopes.js';
-
+import DashboardSharing from 'ui/containers/DashboardSharing';
 import styles from './styles.css';
 
 const schema = 'dashboard';
@@ -127,63 +127,69 @@ class Dashboard extends Component {
               <Owner model={model} />
             </span>
           </div>
-          {this.props.getMetadata('isSharing') &&
-            <Card className={styles.sharingCard}>
-              <div className="row">
-                <div className="col-md-6">
-                  <div className="form-group">
-                    <label htmlFor="shareLink">Shareable link</label>
-                    <div>
-                      <DebounceInput
-                        id="shareLink"
-                        className={styles.textField}
-                        debounceTimeout={377}
-                        value={`${getRouteUrl()}/dashboards/${model.get('_id')}`}
-                        onChange={() => null} />
-                    </div>
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="visibility">
-                      Where can this be viewed?
-                    </label>
-                    <RadioGroup
-                      name="visibility"
-                      value={model.get('visibility')}
-                      onChange={this.onChangeVisibility}>
-                      <RadioButton label="Nowhere" value={NOWHERE} />
-                      <RadioButton label="Anywhere" value={ANYWHERE} />
-                      <RadioButton
-                        label="Only where I choose"
-                        value={VALID_DOMAINS} />
-                    </RadioGroup>
-                  </div>
-                  {model.get('visibility') === VALID_DOMAINS &&
+          {this.props.getMetadata('isSharing') || true /* DEBUG ONLY remove */ &&
+            <div>
+              <DashboardSharing
+                shareable={model.get('shareable', new List())}
+                id={model.get('_id')} />
+              <Card className={styles.sharingCard}>
+                <div className="row">
+                  <div className="col-md-6">
                     <div className="form-group">
-                      <label htmlFor="validDomains">
-                        What are the valid domains?
-                      </label>
+                      <label htmlFor="shareLink">Shareable link</label>
                       <div>
                         <DebounceInput
-                          id="validDomains"
+                          id="shareLink"
                           className={styles.textField}
                           debounceTimeout={377}
-                          value={model.get('validDomains')}
-                          onChange={this.onChangeValidDomains} />
+                          value={`${getRouteUrl()}/dashboards/${model.get('_id')}`}
+                          onChange={() => null} />
                       </div>
-                    </div>}
-                </div>
-                <div className="col-md-6">
-                  <div className="form-group">
-                    <label htmlFor={filterId}>Filter</label>
-                    <QueryBuilder
-                      id={filterId}
-                      componentPath={new List(['dashboard', model.get('_id')])}
-                      query={filter}
-                      onChange={this.handleFilterChange} />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="visibility">
+                        Where can this be viewed?
+                      </label>
+                      <RadioGroup
+                        name="visibility"
+                        value={model.get('visibility')}
+                        onChange={this.onChangeVisibility}>
+                        <RadioButton label="Nowhere" value={NOWHERE} />
+                        <RadioButton label="Anywhere" value={ANYWHERE} />
+                        <RadioButton
+                          label="Only where I choose"
+                          value={VALID_DOMAINS} />
+                      </RadioGroup>
+                    </div>
+                    {model.get('visibility') === VALID_DOMAINS &&
+                      <div className="form-group">
+                        <label htmlFor="validDomains">
+                          What are the valid domains?
+                        </label>
+                        <div>
+                          <DebounceInput
+                            id="validDomains"
+                            className={styles.textField}
+                            debounceTimeout={377}
+                            value={model.get('validDomains')}
+                            onChange={this.onChangeValidDomains} />
+                        </div>
+                      </div>}
+                  </div>
+                  <div className="col-md-6">
+                    <div className="form-group">
+                      <label htmlFor={filterId}>Filter</label>
+                      <QueryBuilder
+                        id={filterId}
+                        componentPath={new List(['dashboard', model.get('_id')])}
+                        query={filter}
+                        onChange={this.handleFilterChange} />
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Card>}
+              </Card>
+            </div>
+          }
         </div>
         <div className="clearfix" />
         <DashboardGrid
