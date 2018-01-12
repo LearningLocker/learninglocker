@@ -74,27 +74,27 @@ const handlers = withHandlers({
     file,
     uploadPersonas: doUploadPersonas
   }) => (event) => {
-      if (event) event.preventDefault();
+    if (event) event.preventDefault();
 
-      doUploadPersonas({
-        id: model.get('_id'),
-        file
-      });
-    },
+    doUploadPersonas({
+      id: model.get('_id'),
+      file
+    });
+  },
   handleFileChange: ({
     setFile,
     setDisableUpload
   }) => (event) => {
-      const name = event.target.files[0].name;
-      const handle = event.target.files[0];
+    const name = event.target.files[0].name;
+    const handle = event.target.files[0];
 
-      setDisableUpload(false);
+    setDisableUpload(false);
 
-      setFile({
-        name,
-        handle
-      });
-    }
+    setFile({
+      name,
+      handle
+    });
+  }
 });
 
 export const InitialUploadComponent = ({

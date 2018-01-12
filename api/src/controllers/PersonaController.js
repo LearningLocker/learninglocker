@@ -6,7 +6,7 @@ import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAu
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import { MAX_TIME_MS, MAX_SCAN } from 'lib/models/plugins/addCRUDFunctions';
 import parseQuery from 'lib/helpers/parseQuery';
-import { CursorDirection } from 'personas/dist/service/constants';
+import { CursorDirection } from '@learninglocker/persona-service/dist/service/constants';
 import { entityResponse, entitiesResponse } from 'api/controllers/utils/entitiesResponse';
 import reasignPersonaStatements from 'lib/services/persona/reasignPersonaStatements';
 import getPersonaService from 'lib/connections/personaService';

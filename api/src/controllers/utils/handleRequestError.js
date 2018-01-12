@@ -7,10 +7,10 @@ import ClientError from 'lib/errors/ClientError';
 import logger from 'lib/logger';
 import defaultTo from 'lodash/defaultTo';
 import { v4 as uuid } from 'uuid';
-import PersonaConflict from 'personas/dist/errors/Conflict';
+import PersonaConflict from '@learninglocker/persona-service/dist/errors/Conflict';
 import NoModel from 'jscommons/dist/errors/NoModel';
-import PersonaNoModelWithId from 'personas/dist/errors/NoModelWithId';
 import AllreadyProcessingError from 'lib/errors/AllreadyProcessingError';
+import PersonaNoModelWithId from '@learninglocker/persona-service/dist/errors/NoModelWithId';
 
 export const unawaitedErrorHandler = (err) => {
   const errorId = uuid();

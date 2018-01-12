@@ -17,6 +17,29 @@
   dependencies:
     lodash.once "^4.1.1"
 
+"@learninglocker/persona-service@^1.6.4":
+  version "1.6.4"
+  resolved "https://registry.yarnpkg.com/@learninglocker/persona-service/-/persona-service-1.6.4.tgz#f53fe1897d7d2016ce38513b5ba6666cbf5a88fd"
+  dependencies:
+    aws-sdk "^2.74.0"
+    bluebird "^3.5.0"
+    boolean "^0.1.2"
+    dotenv "^4.0.0"
+    express "^4.14.1"
+    fs-extra "^5.0.0"
+    jscommons "^2.1.0"
+    lodash "^4.17.4"
+    mongodb "^2.2.26"
+    node-fetch "^1.6.3"
+    promise-retry "^1.1.1"
+    rulr "^4.0.0"
+    sha1 "^1.1.1"
+    sift "^5.0.0"
+    source-map-support "^0.5.0"
+    stream-to-string "^1.1.0"
+    string-to-stream "^1.1.0"
+    uuid "^3.0.1"
+
 "@learninglocker/xapi-statements@^5.0.9":
   version "5.0.12"
   resolved "https://registry.yarnpkg.com/@learninglocker/xapi-statements/-/xapi-statements-5.0.12.tgz#9edcdc350c47ec9f4fde75af468a35eb7c3e305a"
@@ -8867,30 +8890,6 @@ performance-now@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
 
-personas@^1.6.0:
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/personas/-/personas-1.6.1.tgz#eebc7858e62cd333ff2de313b44c096968235b54"
-  dependencies:
-    aws-sdk "^2.74.0"
-    bluebird "^3.5.0"
-    boolean "^0.1.2"
-    dotenv "^4.0.0"
-    express "^4.14.1"
-    fs-extra "^5.0.0"
-    jscommons "^2.1.0"
-    lodash "^4.17.4"
-    mongodb "^2.2.26"
-    node-fetch "^1.6.3"
-    promise-retry "^1.1.1"
-    rulr "^4.0.0"
-    sha1 "^1.1.1"
-    sift "^5.0.0"
-    source-map-support "^0.5.0"
-    stream-to-string "^1.1.0"
-    string-to-stream "^1.1.0"
-    uuid "^3.0.1"
-    xapi-validation "^2.0.0"
-
 pg-connection-string@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/pg-connection-string/-/pg-connection-string-2.0.0.tgz#3eefe5997e06d94821e4d502e42b6a1c73f8df82"
@@ -12788,13 +12787,6 @@ wtf-8@1.0.0:
 x-xss-protection@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/x-xss-protection/-/x-xss-protection-1.0.0.tgz#898afb93869b24661cf9c52f9ee8db8ed0764dd9"
-
-xapi-validation@^2.0.0:
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/xapi-validation/-/xapi-validation-2.1.4.tgz#b8f5dffd3afca9829b181407a29159ce13fcfe8d"
-  dependencies:
-    lodash "^4.17.4"
-    rulr "^4.0.1"
 
 xdg-basedir@^3.0.0:
   version "3.0.0"

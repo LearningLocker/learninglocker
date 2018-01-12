@@ -37,15 +37,15 @@ const createNewIdent = (doc) => {
       value,
     }
   };
-}
+};
 
 const updateStatementsForFailedIdent = async (failedIdent) => {
   const existingIdent = await newIdentsCollection.findOne({ organisation: new ObjectID(failedIdent.organisation), ifi: failedIdent.ifi });
   const persona = await personasCollection.findOne({ _id: new ObjectID(existingIdent.persona) });
-  const personaDisplay =  persona ? persona.name : 'Unknown persona';
+  const personaDisplay = persona ? persona.name : 'Unknown persona';
   if (existingIdent) {
     console.log(`Convert personaIdentifier ${failedIdent._id} to ${existingIdent._id} with persona name of ${personaDisplay} (${persona._id})`);
-    const filter = { organisation: new ObjectID(failedIdent.organisation),  personaIdentifier: new ObjectID(failedIdent._id) };
+    const filter = { organisation: new ObjectID(failedIdent.organisation), personaIdentifier: new ObjectID(failedIdent._id) };
     const update = {
       $set: {
         personaIdentifier: new ObjectID(existingIdent._id),
@@ -57,7 +57,7 @@ const updateStatementsForFailedIdent = async (failedIdent) => {
     };
     return statementsCollection.update(filter, update, { multi: true });
   }
-}
+};
 
 const insertIdents = async (docs) => {
   // Create new identifiers from old
@@ -65,12 +65,10 @@ const insertIdents = async (docs) => {
   console.log(`Inserting ${identInserts.length} idents....`);
 
   try {
-    await newIdentsCollection.insertMany(identInserts, {ordered: false});
+    await newIdentsCollection.insertMany(identInserts, { ordered: false });
   } catch (err) {
     if (err instanceof MongoError && err.code === 11000) {
-      const failedInserts = err.writeErrors.map((writeError) => {
-        return writeError.getOperation();
-      })
+      const failedInserts = err.writeErrors.map(writeError => writeError.getOperation());
 
       const updatePromises = failedInserts.map(updateStatementsForFailedIdent);
       return Promise.all(updatePromises);
@@ -103,7 +101,7 @@ const createAttributesFromIdents = async (docs) => {
   }
 
   return Promise.resolve();
-}
+};
 
 const migrateIdentifierBatch = (docs) => {
   const opsPromises = [

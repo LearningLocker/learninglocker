@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import validateIri from 'xapi-validation/dist/regexValues/iri';
+import validateIri from '@learninglocker/xapi-validation/dist/regexValues/iri';
 import { compose, setPropTypes, defaultProps } from 'recompose';
 import classNames from 'classnames';
 import Input from 'ui/components/Input/Input';
