@@ -56,58 +56,58 @@ const headerItemHandlers = withHandlers({
     model,
     updateModel: doUpdateModel
   }) => (value) => {
-      if (!value) {
-        doUpdateModel({
-          schema,
-          id: model.get('_id'),
-          path: ['structure', columnName, 'primary'],
-          value: null
-        });
-        return;
-      }
-
-      const maxOrder = model.get('structure')
-        .map(s => s.primary)
-        .reduce((acc, number) => (number > acc ? number : acc), 0);
-      const newOrder = maxOrder + 1;
-
+    if (!value) {
       doUpdateModel({
         schema,
         id: model.get('_id'),
         path: ['structure', columnName, 'primary'],
-        value: newOrder
+        value: null
       });
-    },
+      return;
+    }
+
+    const maxOrder = model.get('structure')
+        .map(s => s.primary)
+        .reduce((acc, number) => (number > acc ? number : acc), 0);
+    const newOrder = maxOrder + 1;
+
+    doUpdateModel({
+      schema,
+      id: model.get('_id'),
+      path: ['structure', columnName, 'primary'],
+      value: newOrder
+    });
+  },
   onPrimaryOrderChange: ({
     columnName,
     model,
     updateModel: doUpdateModel
   }) => (event) => {
-      doUpdateModel({
-        schema,
-        id: model.get('_id'),
-        path: ['structure', columnName, 'primary'],
-        value: parseInt(event.target.value)
-      });
-    },
+    doUpdateModel({
+      schema,
+      id: model.get('_id'),
+      path: ['structure', columnName, 'primary'],
+      value: parseInt(event.target.value)
+    });
+  },
   onRelatedColumnChange: ({
     columnName,
     model,
     updateModel: doUpdateModel
   }) => (event) => {
-      const newStructure = updateRelatedStructure({
-        structure: model.get('structure'),
-        columnName,
-        relatedColumn: event.target.value
-      });
+    const newStructure = updateRelatedStructure({
+      structure: model.get('structure'),
+      columnName,
+      relatedColumn: event.target.value
+    });
 
-      doUpdateModel({
-        schema,
-        id: model.get('_id'),
-        path: 'structure',
-        value: newStructure
-      });
-    }
+    doUpdateModel({
+      schema,
+      id: model.get('_id'),
+      path: 'structure',
+      value: newStructure
+    });
+  }
 });
 
 export const HeaderItemComponent = ({
