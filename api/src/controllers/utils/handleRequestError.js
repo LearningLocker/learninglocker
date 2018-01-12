@@ -10,6 +10,7 @@ import { v4 as uuid } from 'uuid';
 import PersonaConflict from 'personas/dist/errors/Conflict';
 import NoModel from 'jscommons/dist/errors/NoModel';
 import PersonaNoModelWithId from 'personas/dist/errors/NoModelWithId';
+import AllreadyProcessingError from 'lib/errors/AllreadyProcessingError';
 
 export const unawaitedErrorHandler = (err) => {
   const errorId = uuid();
@@ -72,6 +73,16 @@ export default (res, err) => {
       message: err.message
     });
   }
+
+  if (
+    err instanceof AllreadyProcessingError
+  ) {
+    return res.status(409).send({
+      errorId,
+      message: err.message
+    });
+  }
+
 
   logger.error(errorId, err);
 

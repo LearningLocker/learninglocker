@@ -7,7 +7,7 @@ import { normalize } from 'normalizr';
 import entityReviver from 'ui/redux/modules/models/entityReviver';
 import * as schemas from 'ui/utils/schemas';
 import { alert } from 'ui/redux/modules/alerts';
-import createSyncDuck from 'ui/utils/createAsyncDuck';
+import createAsyncDuck from 'ui/utils/createAsyncDuck';
 import { clearModelsCache } from 'ui/redux/modules/pagination';
 
 
@@ -98,8 +98,9 @@ function* uploadPersonasSaga() {
   }
 }
 
-const importPersonasDuck = createSyncDuck({
+const importPersonasDuck = createAsyncDuck({
   actionName: IMPORT_PERSONAS,
+  successDelay: 2000,
   doAction:
     function* doAction({
       id,
@@ -110,6 +111,10 @@ const importPersonasDuck = createSyncDuck({
 
       const schemaClass = schemas.personasImport;
 
+      if (body.importStage === 'STAGE_PROCESSING') {
+        body.inProgress = true;
+      }
+
       const normalizedModels = normalize(body, schemaClass);
       const entities = entityReviver(normalizedModels);
 
@@ -118,6 +123,14 @@ const importPersonasDuck = createSyncDuck({
       ));
 
       yield put(clearModelsCache({ schema: 'persona' }));
+
+      if (body.importStage === 'STAGE_PROCESSING') {
+        // pole model
+      }
+
+      return {
+        id
+      };
     }
 });
 
@@ -142,6 +155,14 @@ const handler = handleActions({
   [UPLOAD_PERSONAS_RESET]: (state, { id }) => (
     state.deleteIn([id, 'requestState'])
   ),
+  [importPersonasDuck.constants.start]: (state, { id }) =>
+    state.setIn([id, 'requestState'], IN_PROGRESS),
+  [importPersonasDuck.constants.success]: (state, { id }) =>
+    state.setIn([id, 'requestState'], COMPLETED),
+  [importPersonasDuck.constants.failure]: (state, { id }) =>
+    state.setIn([id, 'requestState'], FAILED),
+  [importPersonasDuck.constants.complete]: (state, { id }) =>
+    state.deleteIn([id, 'requestState'])
 });
 
 const initialState = {};

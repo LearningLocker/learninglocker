@@ -1,6 +1,9 @@
 import React from 'react';
 import { compose, withHandlers, withProps } from 'recompose';
-import { withModel } from 'ui/utils/hocs';
+import {
+  withModel,
+  withPolling
+} from 'ui/utils/hocs';
 import IntialUploadForm from 'ui/containers/Personas/PersonasImports/stages/InitialUpload';
 import ConfigureUpload from 'ui/containers/Personas/PersonasImports/stages/ConfigureUpload';
 import moment from 'moment';
@@ -8,7 +11,8 @@ import moment from 'moment';
 import {
   STAGE_UPLOAD,
   STAGE_CONFIGURE_FIELDS,
-  STAGE_IMPORTED
+  STAGE_IMPORTED,
+  STAGE_PROCESSING
 } from 'lib/constants/personasImport';
 
 const schema = 'personasImport';
@@ -48,7 +52,7 @@ export const PersonasImportFormComponent = ({
         className="configureUpload"
         model={model} />
     }
-    {model.get('importStage') === STAGE_IMPORTED &&
+    {model.get('importStage') === STAGE_PROCESSING || model.get('importStage') === STAGE_IMPORTED &&
       <div className="stageImported">
         <ConfigureUpload
           className="configureUpload"
@@ -69,9 +73,11 @@ export const PersonasImportFormComponent = ({
 const PersonasImportForm = compose(
   withProps(({ model }) => ({
     schema,
-    id: model.get('_id')
+    id: model.get('_id'),
+    doWhile: m => m.get('importStage') === STAGE_PROCESSING
   })),
   withModel,
+  withPolling,
   handlers,
 )(PersonasImportFormComponent);
 
