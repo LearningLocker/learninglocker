@@ -53,9 +53,8 @@ const migrateStatementsBatch = (statements) => {
   });
   if (i > 0) {
     return highland(bulkOp.execute());
-  } else {
-    return highland(Promise.resolve());
   }
+  return highland(Promise.resolve());
 };
 
 const processStream = stream =>
