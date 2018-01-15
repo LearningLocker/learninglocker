@@ -123,11 +123,11 @@ export default compose(
     schema
   })),
   withModel,
-  withProps(({ model }) => {
-    return ({
+  withProps(({ model }) =>
+    ({
       shareable: model.get('shareable')
-    });
-  }),
+    })
+  ),
   withStyles(styles),
   selectedShareableState,
   utilHandlers,
