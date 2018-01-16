@@ -80,13 +80,16 @@ const render = ({
   hasMore,
   fetchMore,
   modifyButtons,
+  ModelListItem: ModelListItemToUse = ModelListItem,
   ...other
 }) => {
+  console.log('001', models);
+
   if (models.size > 0) {
     return (
       <div>
         { models.map(model =>
-          <ModelListItem
+          <ModelListItemToUse
             key={model.get('_id')}
             model={model}
             schema={schema}

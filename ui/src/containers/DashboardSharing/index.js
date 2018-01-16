@@ -11,6 +11,8 @@ import {
 import QueryBuilder from 'ui/containers/QueryBuilder';
 import { withModel } from 'ui/utils/hocs';
 import uuid from 'uuid';
+import ModelList from 'ui/containers/ModelList';
+import ModelListItemWithoutModel from 'ui/containers/ModelListItem/ModelListItemWithoutModel';
 import styles from './styles.css';
 
 const schema = 'dashboard';
@@ -67,54 +69,96 @@ const handlers = withHandlers({
   }
 });
 
-const DashboardSharingComponent = ({
-  shareable,
-  selectedShareable,
-  addShareable,
-  setSelectedShareable,
+// const DashboardSharingComponent = ({
+//   shareable,
+//   selectedShareable,
+//   addShareable,
+//   setSelectedShareable,
+//   handleTitleChange,
+//   handleFilterChange
+// }) => {
+//   const filterId = uuid.v4();
+//   const titleId = uuid.v4();
+
+
+  // return (<Card className={styles.sharingCard}>
+  //   <div className="row">
+  //     <div className="col-md-6">
+  //       Dashboard Sharing
+  //       {shareable.map(share2 =>
+  //         (<div onClick={() => setSelectedShareable(share2)}>
+  //           {share2.get('title', '~ Shareable')}
+  //         </div>)
+  //       )}
+
+  //       <button
+  //         className="btn btn-primary"
+  //         onClick={addShareable}>
+  //         New shareable link
+  //       </button>
+  //     </div>
+  //     <div className="col-md-6">
+  //       {selectedShareable && (<div className="form-group">
+  //         <div>
+  //           <label htmlFor={titleId}>Title</label>
+  //           <input
+  //             id={titleId}
+  //             value={selectedShareable.get('title')}
+  //             onChange={handleTitleChange} />
+  //         </div>
+  //         <div>
+  //           <label htmlFor={filterId}>Filter</label>
+  //           <QueryBuilder
+  //             id={filterId}
+  //             query={selectedShareable.get('filter', new Map({}))}
+  //             componentPath={new List([])}
+  //             onChange={handleFilterChange} />
+  //         </div>
+  //       </div>)}
+  //     </div>
+  //   </div>
+  // </Card>);
+// };
+
+
+const ModelForm = ({
   handleTitleChange,
-  handleFilterChange
+  handleFilterChange,
+  model
 }) => {
-  const filterId = uuid.v4();
+  console.log('model', model);
   const titleId = uuid.v4();
+  const filterId = uuid.v4();
 
-  return (<Card className={styles.sharingCard}>
-    <div className="row">
-      <div className="col-md-6">
-        Dashboard Sharing
-        {shareable.map(share2 =>
-          (<div onClick={() => setSelectedShareable(share2)}>
-            {share2.get('title', '~ Shareable')}
-          </div>)
-        )}
-
-        <button
-          className="btn btn-primary"
-          onClick={addShareable}>
-          New shareable link
-        </button>
-      </div>
-      <div className="col-md-6">
-        {selectedShareable && (<div className="form-group">
-          <div>
-            <label htmlFor={titleId}>Title</label>
-            <input
-              id={titleId}
-              value={selectedShareable.get('title')}
-              onChange={handleTitleChange} />
-          </div>
-          <div>
-            <label htmlFor={filterId}>Filter</label>
-            <QueryBuilder
-              id={filterId}
-              query={selectedShareable.get('filter', new Map({}))}
-              componentPath={new List([])}
-              onChange={handleFilterChange} />
-          </div>
-        </div>)}
-      </div>
+  return (<div>
+    <div>
+      <label htmlFor={titleId}>Title</label>
+      <input
+        id={titleId}
+        value={model.get('title')}
+        onChange={handleTitleChange} />
     </div>
-  </Card>);
+    <div>
+      <label htmlFor={filterId}>Filter</label>
+      <QueryBuilder
+        id={filterId}
+        query={model.get('filter', new Map({}))}
+        componentPath={new List([])}
+        onChange={handleFilterChange} />
+    </div>
+  </div>);
+};
+
+
+const DashboardSharingComponent = ({ model }) => {
+  return (<ModelList
+    ModelForm={ModelForm}
+    getIdentifier={(mod) => {
+      console.log('mod', mod);
+      return mod.get('title');
+    }}
+    models={model.get('shareable')}
+    ModelListItem={ModelListItemWithoutModel} />);
 };
 
 export default compose(
@@ -123,13 +167,5 @@ export default compose(
     schema
   })),
   withModel,
-  withProps(({ model }) =>
-    ({
-      shareable: model.get('shareable')
-    })
-  ),
   withStyles(styles),
-  selectedShareableState,
-  utilHandlers,
-  handlers
 )(DashboardSharingComponent);

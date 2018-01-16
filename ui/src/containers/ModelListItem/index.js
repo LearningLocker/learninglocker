@@ -9,7 +9,7 @@ import { withProps, compose } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import styles from './modellistitem.css';
 
-class ModelListItem extends Component {
+export class ModelListItem extends Component {
   static propTypes = {
     schema: PropTypes.string.isRequired,
     model: PropTypes.instanceOf(Map).isRequired,
