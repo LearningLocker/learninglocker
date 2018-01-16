@@ -13,6 +13,9 @@ import {
 import getRegistrationsFromStatement from 'xapi-statements/dist/service/storeStatements/queriables/getRegistrationsFromStatement';
 import getVerbsFromStatement from 'xapi-statements/dist/service/storeStatements/queriables/getVerbsFromStatement';
 
+const BATCH_SIZE = 10000;
+const REVISION = 1;
+
 const getQueriables = (doc) => {
   const statement = doc.statement;
   const refs = doc.refs ? doc.refs : [];
@@ -35,6 +38,9 @@ const migrateStatementsBatch = (statements) => {
     try {
       const queriables = getQueriables(doc);
       const update = {
+        $set: {
+          rev: REVISION
+        },
         $addToSet: {
           activities: { $each: queriables.activities },
           agents: { $each: queriables.agents },
@@ -52,10 +58,11 @@ const migrateStatementsBatch = (statements) => {
     }
   });
   if (i > 0) {
-    return highland(bulkOp.execute());
-  } else {
-    return highland(Promise.resolve());
+    return highland(bulkOp.execute().then(() => {
+      logger.info(`Completed batch of ${BATCH_SIZE}`);
+    }));
   }
+  return highland(Promise.resolve());
 };
 
 const processStream = stream =>
@@ -76,10 +83,14 @@ const createIndex = key => Statement.collection.createIndex(
 const createIndexes = keys => keys.map(createIndex);
 
 const up = async () => {
-  const batchSize = 10;
-  const query = {};
+  const query = {
+    $or: [
+      { rev: { $exists: false } },
+      { rev: { $lte: REVISION } },
+    ]
+  };
   const statementStream = highland(Statement.find(query).cursor());
-  const migrationStream = statementStream.batch(batchSize).flatMap(migrateStatementsBatch);
+  const migrationStream = statementStream.batch(BATCH_SIZE).flatMap(migrateStatementsBatch);
   await processStream(migrationStream);
   createIndexes([
     'activities',
@@ -100,8 +111,9 @@ const down = async () => {
       registrations: '',
       relatedActivities: '',
       relatedAgents: '',
-      verbs: ''
-    }
+      verbs: '',
+      rev: '',
+    },
   };
   const options = { multi: true };
   await Statement.update(filter, update, options);
