@@ -31,8 +31,7 @@ before_script:
   - yarn build-all
 
 cache:
-  directories:
-  - $HOME/.yarn-cache
+  yarn: true
 
 addons:
   apt:
