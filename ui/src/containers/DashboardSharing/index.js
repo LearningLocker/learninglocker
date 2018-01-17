@@ -1,11 +1,9 @@
 import React from 'react';
 import { Map, List } from 'immutable';
-import { Card } from 'react-toolbox/lib/card';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import {
   compose,
   withProps,
-  withState,
   withHandlers
 } from 'recompose';
 import QueryBuilder from 'ui/containers/QueryBuilder';
@@ -17,24 +15,19 @@ import styles from './styles.css';
 
 const schema = 'dashboard';
 
-const selectedShareableState = withState('selectedShareable', 'setSelectedShareable');
-
 const utilHandlers = withHandlers({
   updateSelectedSharable: ({
-    shareable,
-    selectedShareable,
+    parentModel,
+    model,
     updateModel,
-    setSelectedShareable
   }) => ({
     path,
     value,
   }) => {
-    const newSelectedShareable = selectedShareable.set(path, value);
-    setSelectedShareable(newSelectedShareable);
+    const newModel = model.set(path, value);
+    const selectedIndex = parentModel.get('shareable').findIndex(item => item.get('_id') === parentModel.get('_id'));
 
-    const selectedIndex = shareable.findIndex(item => item.get('_id') === selectedShareable.get('_id'));
-
-    const newShareable = shareable.set(selectedIndex, newSelectedShareable);
+    const newShareable = parentModel.get('shareable').set(selectedIndex, newModel);
     updateModel({
       path: 'shareable',
       value: newShareable
@@ -69,64 +62,11 @@ const handlers = withHandlers({
   }
 });
 
-// const DashboardSharingComponent = ({
-//   shareable,
-//   selectedShareable,
-//   addShareable,
-//   setSelectedShareable,
-//   handleTitleChange,
-//   handleFilterChange
-// }) => {
-//   const filterId = uuid.v4();
-//   const titleId = uuid.v4();
-
-
-  // return (<Card className={styles.sharingCard}>
-  //   <div className="row">
-  //     <div className="col-md-6">
-  //       Dashboard Sharing
-  //       {shareable.map(share2 =>
-  //         (<div onClick={() => setSelectedShareable(share2)}>
-  //           {share2.get('title', '~ Shareable')}
-  //         </div>)
-  //       )}
-
-  //       <button
-  //         className="btn btn-primary"
-  //         onClick={addShareable}>
-  //         New shareable link
-  //       </button>
-  //     </div>
-  //     <div className="col-md-6">
-  //       {selectedShareable && (<div className="form-group">
-  //         <div>
-  //           <label htmlFor={titleId}>Title</label>
-  //           <input
-  //             id={titleId}
-  //             value={selectedShareable.get('title')}
-  //             onChange={handleTitleChange} />
-  //         </div>
-  //         <div>
-  //           <label htmlFor={filterId}>Filter</label>
-  //           <QueryBuilder
-  //             id={filterId}
-  //             query={selectedShareable.get('filter', new Map({}))}
-  //             componentPath={new List([])}
-  //             onChange={handleFilterChange} />
-  //         </div>
-  //       </div>)}
-  //     </div>
-  //   </div>
-  // </Card>);
-// };
-
-
-const ModelForm = ({
+const ModelFormComponent = ({
   handleTitleChange,
   handleFilterChange,
   model
 }) => {
-  console.log('model', model);
   const titleId = uuid.v4();
   const filterId = uuid.v4();
 
@@ -149,17 +89,22 @@ const ModelForm = ({
   </div>);
 };
 
+const ModelForm = compose(
+  utilHandlers,
+  handlers
+)(ModelFormComponent);
 
-const DashboardSharingComponent = ({ model }) => {
-  return (<ModelList
+const DashboardSharingComponent = ({
+  model,
+  updateModel
+}) =>
+  (<ModelList
     ModelForm={ModelForm}
-    getIdentifier={(mod) => {
-      console.log('mod', mod);
-      return mod.get('title');
-    }}
+    getDescription={mod => mod.get('title')}
     models={model.get('shareable')}
-    ModelListItem={ModelListItemWithoutModel} />);
-};
+    ModelListItem={ModelListItemWithoutModel}
+    parentModel={model}
+    updateModel={updateModel} />);
 
 export default compose(
   withProps(({ id }) => ({

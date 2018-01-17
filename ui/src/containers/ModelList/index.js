@@ -83,8 +83,6 @@ const render = ({
   ModelListItem: ModelListItemToUse = ModelListItem,
   ...other
 }) => {
-  console.log('001', models);
-
   if (models.size > 0) {
     return (
       <div>
