@@ -1,5 +1,6 @@
 import React from 'react';
 import { Map, List } from 'immutable';
+import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import {
   compose,
@@ -11,6 +12,8 @@ import { withModel } from 'ui/utils/hocs';
 import uuid from 'uuid';
 import ModelList from 'ui/containers/ModelList';
 import ModelListItemWithoutModel from 'ui/containers/ModelListItem/ModelListItemWithoutModel';
+import DeleteButtonComponent from 'ui/containers/DeleteButton';
+import { updateModel as reduxUpdateModel } from 'ui/redux/modules/models';
 import styles from './styles.css';
 
 const schema = 'dashboard';
@@ -36,13 +39,6 @@ const utilHandlers = withHandlers({
 });
 
 const handlers = withHandlers({
-  addShareable: ({ updateModel, shareable }) => () => {
-    const newShareable = shareable.push(new Map({}));
-    updateModel({
-      path: 'shareable',
-      value: newShareable
-    });
-  },
   handleTitleChange: ({
     updateSelectedSharable
   }) => (event) => {
@@ -94,17 +90,59 @@ const ModelForm = compose(
   handlers
 )(ModelFormComponent);
 
+const deleteButton = ({ parentModel }) => compose(
+  connect(() => ({}), { updateModel: reduxUpdateModel }),
+  withHandlers({
+    onDelete: ({ updateModel }) => ({ id }) => {
+      const newShareable = parentModel.get('shareable').filter(mod => mod.get('_id') !== id);
+      updateModel({
+        schema,
+        id: parentModel.get('_id'),
+        path: 'shareable',
+        value: newShareable
+      });
+    }
+  })
+)(DeleteButtonComponent);
+
+// --------------------------
+
+const dashboardSharingHandlers = withHandlers({
+  addShareable: ({ updateModel, model }) => () => {
+    const newShareable = model.get('shareable', new List()).push(new Map({
+      title: '~ Shareable'
+    }));
+    updateModel({
+      path: 'shareable',
+      value: newShareable
+    });
+  }
+});
+
 const DashboardSharingComponent = ({
   model,
-  updateModel
+  updateModel,
+  addShareable
 }) =>
-  (<ModelList
-    ModelForm={ModelForm}
-    getDescription={mod => mod.get('title')}
-    models={model.get('shareable')}
-    ModelListItem={ModelListItemWithoutModel}
-    parentModel={model}
-    updateModel={updateModel} />);
+  (
+    <div>
+      <div className={`clearfix ${styles.shareableHeader}`}>
+        <button
+          className="btn btn-primary pull-right"
+          onClick={addShareable}>
+          Add new link
+        </button>
+      </div>
+      <ModelList
+        ModelForm={ModelForm}
+        getDescription={mod => mod.get('title')}
+        models={model.get('shareable')}
+        ModelListItem={ModelListItemWithoutModel}
+        parentModel={model}
+        updateModel={updateModel}
+        buttons={[(deleteButton({ parentModel: model }))]} />
+    </div>
+  );
 
 export default compose(
   withProps(({ id }) => ({
@@ -113,4 +151,5 @@ export default compose(
   })),
   withModel,
   withStyles(styles),
+  dashboardSharingHandlers
 )(DashboardSharingComponent);

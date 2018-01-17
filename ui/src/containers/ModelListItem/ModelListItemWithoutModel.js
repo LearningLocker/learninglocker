@@ -1,4 +1,8 @@
-import { withProps, withStateHandlers, compose } from 'recompose';
+import {
+  withProps,
+  withStateHandlers,
+  compose
+} from 'recompose';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Map } from 'immutable';
 import { ModelListItem } from './index';
@@ -22,5 +26,5 @@ const stateProps = withProps(({ metadata }) => ({
 export default compose(
   stateHandlers,
   stateProps,
-  withStyles(styles),
+  withStyles(styles)
 )(ModelListItem);
