@@ -3,7 +3,7 @@ import React from 'react';
 import { Map } from 'immutable';
 import { isFunction } from 'lodash';
 import ProgressBar from 'ui/components/Material/ProgressBar';
-import { PROGRESS_MODELS } from 'utils/constants';
+import { PROGRESS_MODELS } from 'ui/utils/constants';
 
 export default ({ model, schema }) => {
   const progressModel = PROGRESS_MODELS[schema];
