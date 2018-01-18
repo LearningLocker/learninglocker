@@ -7,6 +7,7 @@ import {
   withProps,
   withHandlers
 } from 'recompose';
+import DebounceInput from 'react-debounce-input';
 import QueryBuilder from 'ui/containers/QueryBuilder';
 import { withModel } from 'ui/utils/hocs';
 import uuid from 'uuid';
@@ -14,6 +15,14 @@ import ModelList from 'ui/containers/ModelList';
 import ModelListItemWithoutModel from 'ui/containers/ModelListItem/ModelListItemWithoutModel';
 import DeleteButtonComponent from 'ui/containers/DeleteButton';
 import { updateModel as reduxUpdateModel } from 'ui/redux/modules/models';
+import { getShareableUrl } from 'ui/utils/dashboard';
+import {
+  NOWHERE,
+  ANYWHERE,
+  VALID_DOMAINS
+} from 'lib/constants/sharingScopes';
+import RadioGroup from 'ui/components/Material/RadioGroup';
+import RadioButton from 'ui/components/Material/RadioButton';
 import styles from './styles.css';
 
 const schema = 'dashboard';
@@ -55,26 +64,93 @@ const handlers = withHandlers({
       path: 'filter',
       value: filter
     });
+  },
+  handleVisibilityChange: ({
+    updateSelectedSharable
+  }) => (value) => {
+    updateSelectedSharable({
+      path: 'visibility',
+      value
+    });
+  },
+  handleDomainsChange: ({
+    updateSelectedSharable
+  }) => (event) => {
+    updateSelectedSharable({
+      path: 'validDomains',
+      value: event.target.value
+    });
   }
 });
 
 const ModelFormComponent = ({
   handleTitleChange,
   handleFilterChange,
-  model
+  handleVisibilityChange,
+  handleDomainsChange,
+  model,
+  parentModel
 }) => {
   const titleId = uuid.v4();
   const filterId = uuid.v4();
+  const urlId = uuid.v4();
+  const visibilityId = uuid.v4();
+  const validDomainsId = uuid.v4();
 
   return (<div>
-    <div>
+    <div className="form-group">
       <label htmlFor={titleId}>Title</label>
       <input
+        className="form-control"
         id={titleId}
         value={model.get('title')}
         onChange={handleTitleChange} />
     </div>
-    <div>
+    <div className="form-group">
+      <label htmlFor={urlId}>Shareable link</label>
+      <input
+        id={urlId}
+        className="form-control"
+        disabled="true"
+        value={getShareableUrl({
+          model,
+          parentModel
+        })} />
+    </div>
+
+    <div className="form-group">
+      <label htmlFor={visibilityId}>
+        Where can this be viewed?
+      </label>
+      <RadioGroup
+        id={visibilityId}
+        name="visibility"
+        value={model.get('visibility')}
+        onChange={handleVisibilityChange}>
+        <RadioButton label="Nowhere" value={NOWHERE} />
+        <RadioButton label="Anywhere" value={ANYWHERE} />
+        <RadioButton
+          label="Only where I choose"
+          value={VALID_DOMAINS} />
+      </RadioGroup>
+    </div>
+
+    {model.get('visibility') === VALID_DOMAINS &&
+      <div className="form-group">
+        <label htmlFor={validDomainsId}>
+          What are the valid domains?
+        </label>
+        <div>
+          <DebounceInput
+            id={validDomainsId}
+            className={styles.textField}
+            debounceTimeout={377}
+            value={model.get('validDomains')}
+            onChange={handleDomainsChange} />
+        </div>
+      </div>}
+
+    <div className="form-group">
       <label htmlFor={filterId}>Filter</label>
       <QueryBuilder
         id={filterId}
