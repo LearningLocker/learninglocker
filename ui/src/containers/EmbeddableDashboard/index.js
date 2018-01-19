@@ -24,12 +24,11 @@ const enhance = compose(
   })
 );
 
-const render = ({ model, organisationId }) => {
-  return (<DashboardGrid
+const render = ({ model, organisationId }) =>
+  (<DashboardGrid
     organisationId={organisationId}
     widgets={model.get('widgets', new List())}
     editable={false} />
   );
-};
 
 export default enhance(render);

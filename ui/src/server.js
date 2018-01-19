@@ -81,7 +81,6 @@ proxy.on('error', (error, req, res) => {
 });
 
 app.use('/dashboards/:dashboardId/:shareableId', renderDashboard);
-// app.use('/dashboards/:dashboardId', renderDashboard);
 app.use('*', renderApp);
 
 if (config.port) {

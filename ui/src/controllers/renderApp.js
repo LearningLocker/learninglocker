@@ -11,7 +11,6 @@ import clientAssets from '../public/assets.json';
 const pretty = new PrettyError();
 
 export default async (req, res, next) => {
-  console.log('101 SHOULD HAPPEN');
   try {
     const data = {};
     data.protocol = req.protocol;

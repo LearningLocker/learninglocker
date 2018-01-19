@@ -1,6 +1,6 @@
 import React from 'react';
 import logger from 'lib/logger';
-import { omit, find, assign } from 'lodash';
+import { find } from 'lodash';
 import Html from 'ui/components/Html';
 import { renderToString } from 'react-dom/server';
 import { createDashboardJWT } from 'api/auth/jwt';
