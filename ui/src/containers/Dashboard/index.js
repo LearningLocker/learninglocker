@@ -1,7 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Map, List, is } from 'immutable';
-import uuid from 'uuid';
 import Input from 'ui/components/Material/Input';
 import { withProps, compose } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
@@ -82,8 +81,6 @@ class Dashboard extends Component {
 
   render() {
     const { model, organisationId } = this.props;
-    const filterId = uuid.v4();
-    const filter = model.get('filter', new Map({}));
 
     return (
       <div className="row">
@@ -138,12 +135,11 @@ class Dashboard extends Component {
 
 export default compose(
   withStyles(styles),
-  withProps(({ params, id }) => {
-    console.log('101', id);
-    return ({
+  withProps(({ params, id }) =>
+    ({
       schema,
       id: id || params.dashboardId
     });
-  }),
+  ),
   withModel
 )(Dashboard);
