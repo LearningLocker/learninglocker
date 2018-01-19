@@ -40,6 +40,7 @@ const createNewIdent = (doc) => {
 };
 
 const updateStatementsForFailedIdent = async (failedIdent) => {
+  console.log('yo asahd', failedIdent);
   const existingIdent = await newIdentsCollection.findOne({ organisation: new ObjectID(failedIdent.organisation), ifi: failedIdent.ifi });
   const persona = await personasCollection.findOne({ _id: new ObjectID(existingIdent.persona) });
   const personaDisplay = persona ? persona.name : 'Unknown persona';
@@ -68,8 +69,11 @@ const insertIdents = async (docs) => {
     await newIdentsCollection.insertMany(identInserts, { ordered: false });
   } catch (err) {
     if (err instanceof MongoError && err.code === 11000) {
-      const failedInserts = err.writeErrors.map(writeError => writeError.getOperation());
-
+      const failedInserts = (err.writeErrors === undefined
+        ? [err.getOperation()]
+        : err.writeErrors.map(writeError => writeError.getOperation())
+      );
+      console.log(failedInserts);
       const updatePromises = failedInserts.map(updateStatementsForFailedIdent);
       return Promise.all(updatePromises);
     }
