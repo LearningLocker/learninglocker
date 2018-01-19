@@ -1,30 +1,49 @@
 import {
   withProps,
-  withStateHandlers,
   compose
 } from 'recompose';
+import {
+  getMetadataSelector,
+  setInMetadata
+} from 'ui/redux/modules/metadata';
+import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Map } from 'immutable';
 import { ModelListItem } from './index';
 import styles from './modellistitem.css';
 
 // Doesn't use the with model hoc, uses the raw immutable js model.
 
-const stateHandlers = withStateHandlers(() => ({
-  metadata: new Map()
-}), {
-  setMetadata: ({ metadata }) => (key, value) =>
-    ({
-      metadata: metadata.set(key, value)
-    })
-});
-
-const stateProps = withProps(({ metadata }) => ({
-  getMetadata: key => metadata.get(key)
+const stateProps = withProps(({
+  setInMetadata: setInMetadataProp,
+  schema,
+  id,
+  metadata,
+}) => ({
+  setMetadata: (key, value) => {
+    setInMetadataProp({
+      schema,
+      id,
+      path: [key],
+      value
+    });
+  },
+  getMetadata: (key, defaultValue) =>
+    metadata.get(key, defaultValue)
 }));
 
 export default compose(
-  stateHandlers,
-  stateProps,
-  withStyles(styles)
+  withStyles(styles),
+  withProps(({ model }) => ({
+    id: model.get('_id')
+  })),
+  connect(
+    (state, { schema, id }) =>
+      ({
+        metadata: getMetadataSelector({ schema, id })(state)
+      }),
+    {
+      setInMetadata
+    }
+  ),
+  stateProps
 )(ModelListItem);

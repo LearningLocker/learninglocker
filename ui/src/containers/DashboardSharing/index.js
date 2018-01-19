@@ -37,7 +37,9 @@ const utilHandlers = withHandlers({
     value,
   }) => {
     const newModel = model.set(path, value);
-    const selectedIndex = parentModel.get('shareable').findIndex(item => item.get('_id') === parentModel.get('_id'));
+    const selectedIndex = parentModel.get('shareable').findIndex(item =>
+      item.get('_id') === model.get('_id')
+    );
 
     const newShareable = parentModel.get('shareable').set(selectedIndex, newModel);
     updateModel({
@@ -210,9 +212,10 @@ const DashboardSharingComponent = ({
         </button>
       </div>
       <ModelList
+        schema="dashboardSharing"
         ModelForm={ModelForm}
         getDescription={mod => mod.get('title')}
-        models={model.get('shareable')}
+        models={model.get('shareable', new List())}
         ModelListItem={ModelListItemWithoutModel}
         parentModel={model}
         updateModel={updateModel}

@@ -191,11 +191,17 @@ const dashboard = new LLSchema('dashboard', { idAttribute: '_id' }, {
     //     : JSON.stringify(filter)
     //   )
     // )
+
+    if (!model.get('shareable')) {
+      return model;
+    }
+
     const newShareable = model.get('shareable', new List()).map(item =>
       item.update('filter', new Map({}), filter => (
         filter.size > 0 ? JSON.stringify(filter.toJS()) : JSON.stringify(filter)
       ))
     );
+
     return model.set('shareable', newShareable);
   },
   reviver: (key, value) => {
@@ -208,7 +214,9 @@ const dashboard = new LLSchema('dashboard', { idAttribute: '_id' }, {
       return value;
     }
 
-    if (key === 'widgets') return value.toList();
+    if (key === 'widgets') {
+      return value.toList();
+    }
 
     // From default reviver.
     return Iterable.isIndexed(value) ? value.toList() : value.toMap();
