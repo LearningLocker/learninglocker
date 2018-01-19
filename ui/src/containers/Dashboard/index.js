@@ -205,9 +205,12 @@ class Dashboard extends Component {
 
 export default compose(
   withStyles(styles),
-  withProps(({ params, id }) => ({
-    schema,
-    id: id || params.dashboardId
-  })),
+  withProps(({ params, id }) => {
+    console.log('101', id);
+    return ({
+      schema,
+      id: id || params.dashboardId
+    });
+  }),
   withModel
 )(Dashboard);

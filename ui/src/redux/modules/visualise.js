@@ -24,6 +24,8 @@ import {
   modelsByFilterSelector,
   updateModel
 } from 'ui/redux/modules/models';
+import { metadataSelector } from 'ui/redux/modules/metadata';
+import { modelsSelector } from 'ui/redux/modules/models/selectors';
 import { UPDATE_MODEL } from 'ui/redux/modules/models/updateModel';
 import {
   TYPES,
@@ -60,17 +62,58 @@ export const fetchVisualisation = id => ({
  * @return {Immutable.Map}       Map of pipeline
  */
 
+const shareableDashboardFilterSelector = () => createSelector(
+  [metadataSelector, modelsSelector],
+  (metadata, models) => {
+    const expandedKey = metadata
+      .get('dashboardSharing', new Map())
+      .findKey(share => share.get('isExpanded', false) === true);
+
+    if (!expandedKey) {
+      return new Map();
+    }
+
+    const theDashboard = models.get('dashboard').find(dash =>
+      dash.get('remoteCache', new Map())
+        .get('shareable', new List())
+        .find(share =>
+          (share.get('_id') === expandedKey)
+        )
+    );
+
+    const theShare = theDashboard.get('remoteCache', new Map())
+      .get('shareable', new List())
+      .find(share => share.get('_id') === expandedKey);
+
+    return theShare.get('filter', new Map());
+  }
+);
+
 export const visualisationPiplelinesSelector = (
   id,
   cb = pipelinesFromQueries // whilst waiting for https://github.com/facebook/jest/issues/3608
 ) => createSelector(
-  [modelsSchemaIdSelector('visualisation', id)],
-  (visualisation) => {
+  [modelsSchemaIdSelector('visualisation', id), shareableDashboardFilterSelector()],
+  (visualisation, filter) => {
     if (!visualisation) return new List();
     const type = visualisation.get('type');
     const journey = visualisation.get('journey');
     const previewPeriod = visualisation.get('previewPeriod');
-    const queries = visualisation.get('filters', new List());
+    const queries = visualisation.get('filters', new List()).map((vFilter) => {
+      if (!filter) {
+        return vFilter;
+      }
+
+      return new Map({
+        $match: new Map({
+          $and: new List([
+            vFilter.get('$match', new Map()),
+            filter
+          ])
+        })
+      });
+    });
+
     const axes = unflattenAxes(visualisation);
     return cb(queries, axes, type, previewPeriod, journey);
   }
