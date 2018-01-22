@@ -1,7 +1,9 @@
+import validateSha1 from '@learninglocker/xapi-validation/dist/regexValues/sha1';
 import React, { PropTypes } from 'react';
 import { compose, setPropTypes, defaultProps } from 'recompose';
 import classNames from 'classnames';
 import Input from 'ui/components/Input/Input';
+import ErrorText from './ErrorText';
 
 const enhance = compose(
   setPropTypes({
@@ -16,7 +18,7 @@ const enhance = compose(
 );
 
 const render = ({ value, onChange, onSave, refValueInput }) => {
-  const hasSha1Error = value.length === 0;
+  const hasSha1Error = validateSha1(value, ['mbox_sha1sum']).length !== 0;
   return (
     <div className={classNames({ 'has-error': hasSha1Error })}>
       <Input
@@ -25,6 +27,9 @@ const render = ({ value, onChange, onSave, refValueInput }) => {
         onChange={onChange}
         onSubmit={onSave}
         inputRef={refValueInput} />
+      <ErrorText hasError={value.length !== 0 && hasSha1Error}>
+        Must be valid Sha1 text.
+      </ErrorText>
     </div>
   );
 };
