@@ -19,6 +19,7 @@ import {
   omitBy,
 } from 'lodash';
 import { entityResponse, entitiesResponse } from 'api/controllers/utils/entitiesResponse';
+import setupIfi from 'lib/services/persona/setupIfi';
 import validateIfi from 'lib/services/persona/validateIfi';
 
 const objectId = mongoose.Types.ObjectId;
@@ -81,10 +82,11 @@ const addPersonaIdentifier = catchErrors(async (req, res) => {
   });
 
   const organisation = getOrgFromAuthInfo(authInfo);
-  validateIfi(req.body.ifi, ['body', 'ifi']);
+  const ifi = setupIfi(req.body.ifi);
+  validateIfi(ifi, ['body', 'ifi']);
 
   const { identifier } = await personaService.createIdentifier({
-    ifi: req.body.ifi,
+    ifi,
     organisation,
     persona: req.body.persona,
   });
@@ -111,16 +113,17 @@ const upsertPersonaIdentifier = catchErrors(async (req, res) => {
   });
 
   const organisation = getOrgFromAuthInfo(authInfo);
-  validateIfi(req.body.ifi, ['body', 'ifi']);
+  const ifi = setupIfi(req.body.ifi);
+  validateIfi(ifi, ['body', 'ifi']);
 
   const toPersona = req.body.persona;
   if (!toPersona) {
     try {
       // if we had no persona, attempt to create an ident with a new persona
       const { identifier } = await personaService.createUpdateIdentifierPersona({
-        ifi: req.body.ifi,
+        ifi,
         organisation,
-        personaName: JSON.stringify(req.body.ifi, null, 2),
+        personaName: JSON.stringify(ifi, null, 2),
       });
 
       // assign persona and personaIdentifier to statements
@@ -140,7 +143,7 @@ const upsertPersonaIdentifier = catchErrors(async (req, res) => {
 
   // otherwise update the identifier's persona
   const { identifier } = await personaService.overwriteIdentifier({
-    ifi: req.body.ifi,
+    ifi,
     organisation,
     persona: toPersona
   });
