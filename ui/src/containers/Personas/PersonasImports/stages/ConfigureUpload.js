@@ -2,7 +2,8 @@ import React from 'react';
 import {
   compose,
   withProps,
-  withHandlers
+  withHandlers,
+  withState
 } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import { Map, List } from 'immutable';
@@ -17,11 +18,15 @@ import ColumnHeaderEditor from '../columnHeaderEditor';
 
 const schema = 'personasImport';
 
+const disabledState = withState('disabled', 'setDisabled', ({ disabled }) => disabled);
+
 const handlers = withHandlers({
   handleImportPersonas: ({
     model,
-    importPersonas: doImportPersonas
+    importPersonas: doImportPersonas,
+    setDisabled
   }) => () => {
+    setDisabled(true);
     doImportPersonas({
       id: model.get('_id')
     });
@@ -79,6 +84,7 @@ export default compose(
     }),
     { importPersonas }
   ),
+  disabledState,
   handlers
 )(
   ConfigureUploadComponent

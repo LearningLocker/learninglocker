@@ -1,3 +1,5 @@
+import { STAGE_PROCESSING } from 'lib/constants/personasImport';
+
 export const LEADERBOARD = 'LEADERBOARD';
 export const POPULARACTIVITIES = 'POPULARACTIVITIES';
 export const PLATFORMS = 'PLATFORMS';
@@ -50,6 +52,10 @@ export const PROGRESS_MODELS = {
     totalCount: 'totalCount',
     remainingCount: 'remainingCount'
   },
+  personasImport: {
+    statusObject: 'importStage',
+    inProgress: status => status === STAGE_PROCESSING
+  }
 };
 
 export const STACKED_TYPES = [LEADERBOARD, POPULARACTIVITIES, STATEMENTS];

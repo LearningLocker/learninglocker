@@ -12,6 +12,7 @@ export default (WrappedComponent) => {
     componentWillReceiveProps = ({ schema, id, doWhile }) => {
       this.pollWhile({ schema, id, doWhile });
     };
+
     pollWhile = ({ schema, id, doWhile }) => {
       if (doWhile) {
         this.props.pollWhile({ schema, id, doWhile });
