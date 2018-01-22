@@ -34,7 +34,7 @@ describe('personaController postIdentifier', () => {
         ifi: {
           key: 'account',
           value: {
-            homePage: 'test@test.com',
+            homePage: 'http://example.org',
             name: 'test'
           }
         },
@@ -42,7 +42,7 @@ describe('personaController postIdentifier', () => {
       })
       .expect(200);
 
-    expect(result.body.ifi.value.homePage).to.equal('test@test.com');
+    expect(result.body.ifi.value.homePage).to.equal('http://example.org');
     expect(result.body.ifi.value.name).to.equal('test');
     expect(result.body.ifi.key).to.equal('account');
     expect(result.body.persona).to.equal(persona.id);
