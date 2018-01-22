@@ -19,6 +19,7 @@ import {
   omitBy,
 } from 'lodash';
 import { entityResponse, entitiesResponse } from 'api/controllers/utils/entitiesResponse';
+import validateIfi from 'lib/services/persona/validateIfi';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -80,6 +81,7 @@ const addPersonaIdentifier = catchErrors(async (req, res) => {
   });
 
   const organisation = getOrgFromAuthInfo(authInfo);
+  validateIfi(req.body.ifi, ['body', 'ifi']);
 
   const { identifier } = await personaService.createIdentifier({
     ifi: req.body.ifi,
@@ -109,6 +111,8 @@ const upsertPersonaIdentifier = catchErrors(async (req, res) => {
   });
 
   const organisation = getOrgFromAuthInfo(authInfo);
+  validateIfi(req.body.ifi, ['body', 'ifi']);
+
   const toPersona = req.body.persona;
   if (!toPersona) {
     try {
