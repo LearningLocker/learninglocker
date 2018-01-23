@@ -137,6 +137,12 @@ router.post(
   ImportPersonasController.importPersonas
 );
 
+router.get(
+  routes.IMPORTPERSONASERROR,
+  passport.authenticate(['jwt', 'jwt-cookie'], DEFAULT_PASSPORT_OPTIONS),
+  ImportPersonasController.importPersonasError
+)
+
 /**
  * DOWNLOADS
  */

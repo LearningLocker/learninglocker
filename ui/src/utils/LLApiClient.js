@@ -4,7 +4,7 @@ import { activeTokenSelector } from 'ui/redux/modules/auth';
 import * as routes from 'lib/constants/routes';
 import config from 'ui/config';
 
-function formatUrl(path) {
+export function formatUrl(path) {
   const adjustedPath = path[0] !== '/' ? `/${path}` : path;
   if (__SERVER__) {
     // Prepend host and port of the API server to the path.
