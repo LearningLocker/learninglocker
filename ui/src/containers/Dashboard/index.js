@@ -139,7 +139,7 @@ export default compose(
     ({
       schema,
       id: id || params.dashboardId
-    });
+    })
   ),
   withModel
 )(Dashboard);
