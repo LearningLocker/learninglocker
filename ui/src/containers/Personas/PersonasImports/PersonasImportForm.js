@@ -7,7 +7,6 @@ import {
 import IntialUploadForm from 'ui/containers/Personas/PersonasImports/stages/InitialUpload';
 import ConfigureUpload from 'ui/containers/Personas/PersonasImports/stages/ConfigureUpload';
 import { List } from 'immutable';
-import { RESTIFY_PREFIX }  from 'lib/constants/routes';
 import { formatUrl } from 'ui/utils/LLApiClient';
 import moment from 'moment';
 
