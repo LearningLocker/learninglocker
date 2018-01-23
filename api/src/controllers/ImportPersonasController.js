@@ -66,5 +66,3 @@ export default {
   importPersonas,
   importPersonasError
 };
-
-
