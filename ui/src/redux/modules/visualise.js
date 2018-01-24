@@ -65,7 +65,7 @@ export const fetchVisualisation = id => ({
 const shareableDashboardFilterSelector = () => createSelector(
   [metadataSelector, modelsSelector],
   (metadata, models) => {
-    const expandedKey = metadata
+    const expandedKey = (metadata || new Map())
       .get('dashboardSharing', new Map())
       .findKey(share => share.get('isExpanded', false) === true);
 
@@ -324,7 +324,7 @@ export function* watchFetchVisualisation() {
   }
 }
 
-export const sagas = [watchUpdateVisualisation, watchFetchVisualisation];
+export const sagas = [watchUpdateVisualisation, watchFetchVisualisation]; 
 
 export const getEndDate = (dateStart, period) => {
   const dateEnd = moment(dateStart); // Clones the date so it's not mutated.
