@@ -1,4 +1,4 @@
 testName,mbox,openId
-nameA,nameA@test.com,1
-nameB,,2
-nameAB,nameA@test.com,3
+nameA,nameA@test.com,http://1
+nameB,,http://2
+nameAB,nameA@test.com,http://3
