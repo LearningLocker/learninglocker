@@ -94,7 +94,7 @@ const createDashboardTokenPayload = async (dashboard, provider) => {
     scopes: getDashboardScopes(dashboard),
     tokenType: 'dashboard',
     tokenId: String(dashboard._id),
-    filter: JSON.parse(dashboard.filter),
+    filter: {},
     extensions: {
       visualisationIds,
     }
