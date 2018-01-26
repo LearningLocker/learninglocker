@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
 import sqsConsumer from 'sqs-consumer';
-import Promise, { promisify } from 'bluebird';
+import { promisify } from 'bluebird';
 
 AWS.config.update({
   region: process.env.AWS_SQS_DEFAULT_REGION,
@@ -50,7 +50,6 @@ export default async function ({
       process.exit();
     }
   });
-  console.log('102');
 
   consumer.start();
 }
