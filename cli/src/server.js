@@ -29,6 +29,7 @@ import testQueryBuilderCache from 'cli/commands/testQueryBuilderCache';
 import migrateMongo, { MIGRATIONS_PATH } from 'cli/migrateMongo';
 
 import seed from 'cli/seed';
+import moveSqsQueue from 'cli/commands/moveSqsQueue';
 
 program.version('0.0.1');
 
@@ -151,5 +152,16 @@ program
   )
   .option('-i, --info [info]', "Display the state of the migrations, optional ['v'|'verbose']");
 // node cli/dist/server migrateMongo
+
+/*
+  specific to sqs queue, as we don't necasserly know the configurations of the two queue
+*/
+program
+  .command('moveSqsQueue')
+  .action(moveSqsQueue)
+  .option('-f, --from [from]')
+  .option('-t, --to [to]')
+  .option('-n, --no [no]', 'number of messages to move');
+// node cli/dist/server moveSqsQueue
 
 program.parse(process.argv);
