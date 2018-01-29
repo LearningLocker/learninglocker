@@ -2,8 +2,11 @@ import { publish } from 'lib/services/queue';
 import { promisify } from 'bluebird';
 import ImportPersonasLock from 'lib/models/importPersonasLock';
 import { getIfis } from 'lib/services/importPersonas/personasImportHelpers';
-import { PERSONA_IMPORT_QUEUE } from 'lib/constants/personasImport';
+import { PERSONA_IMPORT_QUEUE, STAGE_IMPORTED } from 'lib/constants/personasImport';
 import importPersona from 'lib/services/importPersonas/importPersona';
+import moment from 'moment';
+import PersonasImport from 'lib/models/personasImport';
+import { addErrorsToCsv } from 'lib/services/importPersonas/importPersonas';
 
 // exported for testing
 export const establishLock = async ({
@@ -15,9 +18,6 @@ export const establishLock = async ({
     row: data
   }), // argument for testing only
 }) => {
-  console.log('003');
-
-
   try {
     const result = await ImportPersonasLock.findOneAndUpdate({
       organisation,
@@ -44,6 +44,24 @@ const releaseLock = async ({
   await lock.remove();
 };
 
+export const finishedProcessing = async ({
+  personaImportId
+}) => {
+  const personasImport = await PersonasImport.findOneAndUpdate({
+    _id: personaImportId
+  }, {
+    importStage: STAGE_IMPORTED,
+    importedAt: moment().toDate()
+  }, {
+    new: true
+  });
+
+  await addErrorsToCsv({
+    personasImport,
+    csvHandle: personasImport.csvHandle
+  });
+};
+
 export default personaService => async ({
   index,
   data,
@@ -51,7 +69,6 @@ export default personaService => async ({
   structure,
   organisation
 }, done) => {
-  console.log('001 WORKER importPersonaHandler');
   // establish lock
 
   const lock = await establishLock({ structure, data, organisation });
@@ -71,19 +88,21 @@ export default personaService => async ({
   }
 
   // Do the magic
-  await importPersona({
+  const { processedCount, totalCount } = await importPersona({
     personaImportId,
     structure,
     organisation,
     personaService
   })(data, index);
 
-  // release lock
-  await releaseLock({ lock });
-
   // have we finished processing ???
 
+  if (totalCount && processedCount >= totalCount) {
+    await finishedProcessing({ personaImportId });
+  }
 
+  // release lock
+  await releaseLock({ lock });
 
   done();
 };
