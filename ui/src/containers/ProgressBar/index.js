@@ -5,6 +5,31 @@ import { isFunction } from 'lodash';
 import ProgressBar from 'ui/components/Material/ProgressBar';
 import { PROGRESS_MODELS } from 'ui/utils/constants';
 
+const getTotalCount = ({
+  progressModel,
+  workerStatus,
+  model
+}) => {
+  if (progressModel.getTotalCount) {
+    return progressModel.getTotalCount(model);
+  }
+  return workerStatus.get && workerStatus.get(progressModel.totalCount, 0) || 0;
+};
+
+const getProcessedCount = ({
+  progressModel,
+  workerStatus,
+  model,
+  totalCount
+}) => {
+  if (progressModel.getProcessedCount) {
+    return progressModel.getProcessedCount(model);
+  }
+
+  const remainingCount = workerStatus.get && workerStatus.get(progressModel.remainingCount, 0) || 0;
+  return totalCount - remainingCount;
+};
+
 export default ({ model, schema }) => {
   const progressModel = PROGRESS_MODELS[schema];
 
@@ -13,8 +38,7 @@ export default ({ model, schema }) => {
   const statusObject = progressModel.statusObject;
   const inProgress = progressModel.inProgress;
   const workerStatus = model.get(statusObject, new Map({}));
-  const totalCount = workerStatus.get && workerStatus.get(progressModel.totalCount, 0) || 0;
-  const remainingCount = workerStatus.get && workerStatus.get(progressModel.remainingCount, 0) || 0;
+  const totalCount = getTotalCount({ model, workerStatus, progressModel });
 
   if (isFunction(inProgress)) {
     if (!inProgress(workerStatus)) return <noscript />;
@@ -22,13 +46,20 @@ export default ({ model, schema }) => {
     return <noscript />;
   }
 
-  return totalCount === 0 ? (
-    <ProgressBar type="linear" />
-  ) : (
+  if (!totalCount) return <ProgressBar type="linear" />;
+
+  const processedCount = getProcessedCount({
+    model,
+    workerStatus,
+    progressModel,
+    totalCount
+  });
+
+  return (
     <ProgressBar
       type="linear"
       mode="determinate"
-      value={totalCount - remainingCount}
+      value={processedCount}
       max={totalCount} />
   );
 };

@@ -66,10 +66,11 @@ export const PersonasImportFormComponent = ({
           <h4>Imported on {moment(model.get('importedAt')).format('ddd DD MMM YYYY h:mm:ss')}</h4>
           <p>
             <b>Merged: {model.getIn(['result', 'merged'], 0)} personas<br /></b>
-            <b>Created: {model.getIn(['result', 'created'])} new personas<br/></b>
-            {errorSize > 0 && <b style={{color: 'red'}}>
+            <b>Created: {model.getIn(['result', 'created'])} new personas<br /></b>
+            {errorSize > 0 && <b style={{ color: 'red' }}>
               Errored: {errorSize} {errorSize === 1 && <span>row</span>} {errorSize > 1 && <span>rows</span>}&nbsp;
-              <a href={formatUrl(`/importpersonaserror/${model.get('_id')}.csv`)}
+              <a
+                href={formatUrl(`/importpersonaserror/${model.get('_id')}.csv`)}
                 target="_blank"
                 rel="noreferrer noopener"
                 className="btn btn-primary">Download csv with errors</a>
@@ -80,7 +81,7 @@ export const PersonasImportFormComponent = ({
     }
   </div>
   );
-}
+};
 
 const PersonasImportForm = compose(
   withProps(({ model }) => ({
