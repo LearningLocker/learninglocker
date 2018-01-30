@@ -5,7 +5,7 @@ import ImportPersonasLock from 'lib/models/importPersonasLock';
 import { expect } from 'chai';
 import { establishLock } from './importPersonaHandler';
 
-describe.only('importPersonaHandler', () => {
+describe('importPersonaHandler', () => {
   beforeEach(async () => {
     await ImportPersonasLock.remove({});
   });
