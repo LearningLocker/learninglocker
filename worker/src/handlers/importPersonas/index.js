@@ -7,15 +7,18 @@ import getPersonaService from 'lib/connections/personaService';
 import importPersonaHandler from './importPersonaHandler';
 
 const defaultHandleResponse = (err) => {
-  if (err) logger.error('ERROR SUBSCRIBING TO QUEUE', err);
+  if (err) logger.error(`ERROR SUBSCRIBING TO QUEUE ${PERSONA_IMPORT_QUEUE}`, err);
   return err;
 };
 
-export default () => {
+export default ({
+  onProccessed
+}) => {
   const personaService = getPersonaService();
 
   Queue.subscribe({
     queueName: PERSONA_IMPORT_QUEUE,
-    handler: importPersonaHandler(personaService)
+    handler: importPersonaHandler(personaService),
+    onProccessed
   }, defaultHandleResponse);
 };
