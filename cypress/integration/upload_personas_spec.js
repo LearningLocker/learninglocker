@@ -30,6 +30,8 @@ describe('upload personas', () => {
 
       cy.get('select[id$="Age-columnType"]').select('COLUMN_ATTRIBUTE_DATA');
 
+      cy.wait(1000); // Otherwise the patch request from the form edit will run after the from is processed
+
       cy.contains('Import Personas').click();
     })
     .then(() => {
@@ -47,6 +49,9 @@ describe('upload personas', () => {
     })
     .then(() => {
       cy.get('.ion-upload').last().click();
+
+      cy.wait(1000); // Otherwise the patch request from the form edit will run after the from is processed
+
       cy.contains('Import Personas').click();
     })
     .then(() => {
