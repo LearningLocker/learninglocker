@@ -33,7 +33,7 @@ describe('upload personas', () => {
       cy.contains('Import Personas').click();
     })
     .then(() => {
-      cy.contains('Imported on').should('be.visible');
+      cy.contains(null, 'Imported on', { timeout: 10000 }).should('be.visible');
       cy.get('input[id$="Email-order"]').should('have.value', '1');
       cy.contains('personas.csv').click(); // minimise
     })
@@ -50,7 +50,7 @@ describe('upload personas', () => {
       cy.contains('Import Personas').click();
     })
     .then(() => {
-      cy.contains('Imported on').should('be.visible');
+      cy.contains('', 'Imported on', { timeout: 10000 }).should('be.visible');
       cy.get('input[id$="Email-order"]').should('have.value', '1');
       cy.get('select[id$="Email-columnType"]').should('have.value', 'COLUMN_MBOX');
       cy.get('select[id$="Name-columnType"]').should('have.value', 'COLUMN_NAME');
