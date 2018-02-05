@@ -38,5 +38,5 @@ describe('deletePresonaAttribute', () => {
       routes.PERSONA_ATTRIBUTE_ID.replace(':personaAttributeId', attribute.id)
     ).set('Authorization', `Bearer ${token}`)
       .expect(200);
-  });
+  }).timeout(5000);
 });

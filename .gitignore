@@ -6,7 +6,6 @@
 .tags
 .tmp
 storage/**/*.csv
-*.csv
 *.log
 *.iml
 *.orig

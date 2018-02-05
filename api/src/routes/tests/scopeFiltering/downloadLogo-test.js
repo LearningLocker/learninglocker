@@ -62,7 +62,7 @@ describe('DownloadController.downloadLogo scope filtering', () => {
   it('should allow action when ALL org scope is used', async () => {
     const token = await createOrgToken([ALL]);
     await assertAuthorised(token);
-  });
+  }).timeout(5000);
 
   it('should allow action when MANAGE_ALL_ORGANISATIONS org scope is used', async () => {
     const token = await createOrgToken([MANAGE_ALL_ORGANISATIONS]);
