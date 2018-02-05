@@ -5,10 +5,14 @@ import createDashboard from 'api/routes/tests/utils/models/createDashboard';
 const objectId = mongoose.Types.ObjectId;
 
 export default async ({ visualisationIds = [] } = {}) => {
+  const shareableId = objectId();
   const dashboard = await createDashboard({
-    widgets: visualisationIds.map(_id => ({ title: `Visualisation: ${_id.toString()}`, visualisation: _id }))
+    widgets: visualisationIds.map(_id => ({ title: `Visualisation: ${_id.toString()}`, visualisation: _id })),
+    shareable: [{
+      _id: shareableId,
+      filter: '{}'
+    }]
   });
-  console.log('objectId: ', objectId().toString());
-  const token = await createDashboardJWT(dashboard, objectId().toString(), 'native');
+  const token = await createDashboardJWT(dashboard, shareableId.toString(), 'native');
   return token;
 };
