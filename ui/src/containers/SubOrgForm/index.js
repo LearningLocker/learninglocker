@@ -16,6 +16,7 @@ import SmallSpinner from 'ui/components/SmallSpinner';
 import ValidationList from 'ui/components/ValidationList';
 import OrgLogo from 'ui/components/OrgLogo';
 import uuid from 'uuid';
+import DatePicker from 'ui/components/Material/DatePicker';
 import styles from './suborgform.css';
 
 const schema = 'organisation';
@@ -89,6 +90,30 @@ class SubOrgForm extends Component {
   onChangeBooleanSetting = (attr, checked) => {
     this.changeSettingsAttr(attr, checked);
   };
+
+  onExpirationChange = (value) => {
+    const { model } = this.props;
+    const modelId = model.get('_id');
+
+    this.props.updateModel({
+      schema: 'organisation',
+      id: modelId,
+      path: ['expiration'],
+      value
+    });
+  };
+
+  onExpirationDismiss = () => {
+    const { model } = this.props;
+    const modelId = model.get('_id');
+
+    this.props.updateModel({
+      schema: 'organisation',
+      id: modelId,
+      path: ['expiration'],
+      value: null
+    });
+  }
 
   handleFile = (e) => {
     this.setState({ fileName: e.target.files[0].name });
@@ -327,6 +352,8 @@ class SubOrgForm extends Component {
     const settings = model.get('settings');
     const errorMessages = model.getIn(['errors', 'messages'], new Map());
 
+    console.log('model', model.get('expiration'));
+
     return (
       <div className="row">
         <div className="col-md-12">
@@ -440,6 +467,14 @@ class SubOrgForm extends Component {
             {settings.get('PASSWORD_HISTORY_CHECK') &&
               this.renderPasswordHistoryCheck(errorMessages, settings)}
           </fieldset>
+
+          <div className="from-group">
+            <p>Expiry</p>
+            <DatePicker
+              value={model.get('expiration') ? new Date(model.get('expiration')) : null}
+              onChange={this.onExpirationChange}
+              onDismiss={this.onExpirationDismiss} />
+          </div>
         </div>
       </div>
     );
