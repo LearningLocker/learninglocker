@@ -31,7 +31,8 @@ export const establishLock = async ({
     });
     return result;
   } catch (err) {
-    if (err.code && err.codeName === 'DuplicateKey') {
+    console.log('001', err.codeName, err.code);
+    if (err.code && err.code === 11000) { // DuplicateKey
       return false;
     }
     throw err;
