@@ -49,8 +49,11 @@ const createPayloadFromPayload = (payload) => {
         return { expectedToken, user };
       }
       case 'dashboard': {
+        const shareable = find(dashboard.shareable, share => share._id.toString() === payload.shareableId);
+
         const expectedToken = await createDashboardTokenPayload(
           dashboard,
+          shareable._id.toString(),
           provider
         );
         return { expectedToken };
@@ -69,6 +72,7 @@ async function verifyToken(token, done) {
     const decodedToken = await verifyPromise(token, process.env.APP_SECRET);
 
     // Recreates the token's payload to make sure that all scopes are still valid.
+
     const { expectedToken, user } = await createPayloadFromPayload(
       decodedToken
     );

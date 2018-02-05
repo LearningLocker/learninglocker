@@ -50,7 +50,7 @@ export default (req, res) => {
 
     return dashboardWithShareable;
   })
-  .then(dashboard => createDashboardJWT(dashboard, 'native')
+  .then(dashboard => createDashboardJWT(dashboard, shareableId, 'native')
     .then((token) => {
       store.dispatch(decodeLoginTokenAction(token));
       store.dispatch(setActiveTokenAction('dashboard', String(dashboard._id)));
