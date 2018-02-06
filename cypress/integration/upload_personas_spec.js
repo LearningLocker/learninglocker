@@ -30,10 +30,12 @@ describe('upload personas', () => {
 
       cy.get('select[id$="Age-columnType"]').select('COLUMN_ATTRIBUTE_DATA');
 
+      cy.wait(2000); // Otherwise the patch request from the form edit will run after the from is processed
+
       cy.contains('Import Personas').click();
     })
     .then(() => {
-      cy.contains('Imported on').should('be.visible');
+      cy.contains(null, 'Imported on', { timeout: 15000 }).should('be.visible');
       cy.get('input[id$="Email-order"]').should('have.value', '1');
       cy.contains('personas.csv').click(); // minimise
     })
@@ -47,10 +49,13 @@ describe('upload personas', () => {
     })
     .then(() => {
       cy.get('.ion-upload').last().click();
+
+      cy.wait(2000); // Otherwise the patch request from the form edit will run after the from is processed
+
       cy.contains('Import Personas').click();
     })
     .then(() => {
-      cy.contains('Imported on').should('be.visible');
+      cy.contains('', 'Imported on', { timeout: 15000 }).should('be.visible');
       cy.get('input[id$="Email-order"]').should('have.value', '1');
       cy.get('select[id$="Email-columnType"]').should('have.value', 'COLUMN_MBOX');
       cy.get('select[id$="Name-columnType"]').should('have.value', 'COLUMN_NAME');

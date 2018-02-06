@@ -54,7 +54,9 @@ export const PROGRESS_MODELS = {
   },
   personasImport: {
     statusObject: 'importStage',
-    inProgress: status => status === STAGE_PROCESSING
+    inProgress: status => status === STAGE_PROCESSING,
+    getTotalCount: model => model.get('totalCount'),
+    getProcessedCount: model => model.get('processedCount')
   }
 };
 

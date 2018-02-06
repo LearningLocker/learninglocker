@@ -6,9 +6,20 @@ import { withModels } from 'ui/utils/hocs';
 import ModelList from 'ui/containers/ModelList';
 import { addModel } from 'ui/redux/modules/models';
 import { loggedInUserId } from 'ui/redux/modules/auth';
+import DeleteButton from 'ui/containers/DeleteButton';
+import { STAGE_PROCESSING } from 'lib/constants/personasImport';
 import PersonasImportForm from './PersonasImportForm';
 
 const schema = 'personasImport';
+
+const deleteButtonWithDisabled = models => ({ id, ...props }) => {
+  const disabled = models.get(id).get('importStage') === STAGE_PROCESSING;
+
+  return (<DeleteButton
+    id={id}
+    disabled={disabled}
+    {...props} />);
+};
 
 const ImportList = compose(
   withProps({
@@ -17,9 +28,12 @@ const ImportList = compose(
       importedAt: -1,
       createdAt: -1,
       _id: -1
-    })
+    }),
   }),
-  withModels
+  withModels,
+  withProps(({ models }) => ({
+    buttons: [deleteButtonWithDisabled(models)]
+  }))
 )(ModelList);
 
 const onAddModel = ({ addModel: doAddModel, userId }) => () => {
