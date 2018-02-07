@@ -3,6 +3,10 @@ import express from 'express';
 import restify from 'express-restify-mongoose';
 import git from 'git-rev';
 import Promise from 'bluebird';
+import { omit, findIndex } from 'lodash';
+import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
+import getScopesFromRequest from 'lib/services/auth/authInfoSelectors/getScopesFromAuthInfo';
+import { SITE_ADMIN } from 'lib/constants/scopes';
 import { jsonSuccess, serverError } from 'api/utils/responses';
 import passport from 'api/auth/passport';
 import {
@@ -189,7 +193,18 @@ router.get(
  * REST APIS
  */
 restify.defaults(RESTIFY_DEFAULTS);
-restify.serve(router, Organisation);
+restify.serve(router, Organisation, {
+  preUpdate: (req, res, next) => {
+    const authInfo = getAuthFromRequest(req);
+    const scopes = getScopesFromRequest(authInfo);
+    if (
+      findIndex(scopes, item => item === SITE_ADMIN) < 0
+    ) {
+      req.body = omit(req.body, 'expiration');
+    }
+    next();
+  }
+});
 restify.serve(router, Stream);
 restify.serve(router, Export);
 restify.serve(router, Download);

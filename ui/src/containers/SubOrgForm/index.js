@@ -17,6 +17,8 @@ import ValidationList from 'ui/components/ValidationList';
 import OrgLogo from 'ui/components/OrgLogo';
 import uuid from 'uuid';
 import DatePicker from 'ui/components/Material/DatePicker';
+import { hasScopeSelector } from 'ui/redux/modules/auth';
+import { SITE_ADMIN } from 'lib/constants/scopes';
 import styles from './suborgform.css';
 
 const schema = 'organisation';
@@ -26,7 +28,8 @@ class SubOrgForm extends Component {
     model: PropTypes.instanceOf(Map),
     uploadLogo: PropTypes.func,
     uploadState: PropTypes.instanceOf(Map),
-    updateModel: PropTypes.func
+    updateModel: PropTypes.func,
+    isSiteAdmin: PropTypes.bool
   };
 
   static defaultProps = {
@@ -352,8 +355,6 @@ class SubOrgForm extends Component {
     const settings = model.get('settings');
     const errorMessages = model.getIn(['errors', 'messages'], new Map());
 
-    console.log('model', model.get('expiration'));
-
     return (
       <div className="row">
         <div className="col-md-12">
@@ -473,7 +474,8 @@ class SubOrgForm extends Component {
             <DatePicker
               value={model.get('expiration') ? new Date(model.get('expiration')) : null}
               onChange={this.onExpirationChange}
-              onDismiss={this.onExpirationDismiss} />
+              onDismiss={this.onExpirationDismiss}
+              readonly={!this.props.isSiteAdmin} />
           </div>
         </div>
       </div>
@@ -484,9 +486,14 @@ class SubOrgForm extends Component {
 export default compose(
   withStyles(styles),
   connect(
-    state => ({
-      uploadState: state.logo
-    }),
-    { updateModel, uploadLogo }
+    state =>
+      ({
+        uploadState: state.logo,
+        isSiteAdmin: hasScopeSelector(SITE_ADMIN)(state)
+      }),
+    {
+      updateModel,
+      uploadLogo
+    }
   )
 )(SubOrgForm);
