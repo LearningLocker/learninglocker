@@ -17,6 +17,7 @@ import Spinner from 'ui/components/Spinner';
 import FullPageBackground from 'ui/components/FullPageBackground';
 import AuthContainer from 'ui/containers/AuthContainer';
 import smallLogo from 'ui/static/smallLogo.png';
+import moment from 'moment';
 import styles from './styles.css';
 
 class Home extends Component {
@@ -46,6 +47,17 @@ class Home extends Component {
 
   onClickOrgLogin = (orgId, e) => {
     if (e) e.preventDefault();
+
+    const { models } = this.props;
+    const organisation = models.get(orgId);
+
+    if (
+      !this.props.isSiteAdmin &&
+      organisation.get('expiration') && moment(organisation.get('expiration')).isBefore(moment())
+    ) {
+      return;
+    }
+
     this.props.orgLoginStart({ organisation: orgId });
   }
 
@@ -73,6 +85,14 @@ class Home extends Component {
     const { models } = this.props;
     if (models.has(index)) {
       const organisation = models.get(index);
+
+      const name = <span>{organisation.get('name')}</span>;
+
+      const rightActions = [];
+      if (organisation.get('expiration') && moment(organisation.get('expiration')).isBefore(moment())) {
+        rightActions.push(<span style={{ color: 'red' }}>Expired</span>);
+      }
+
       return (
         <div key={key} style={style}>
           <ListItem
@@ -80,7 +100,8 @@ class Home extends Component {
             ripple
             onClick={this.onClickOrgLogin.bind(null, organisation.get('_id'))}
             avatar={organisation.get('logoPath') ? organisation.get('logoPath') : smallLogo}
-            caption={organisation.get('name')} />
+            caption={name}
+            rightActions={rightActions} />
         </div>
       );
     }
