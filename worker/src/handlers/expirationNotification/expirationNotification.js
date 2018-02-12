@@ -20,7 +20,6 @@ export default async ({ organisationId, emailType }, jobDone) => {
 
   const organisation = await Organisation.findById(organisationId);
 
-
   await map(users, async (user) => {
     // send the email
     if (emailType === WEEK_BEFORE_NOTIFICATION) {
