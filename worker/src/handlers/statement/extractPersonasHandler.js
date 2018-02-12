@@ -1,7 +1,7 @@
 import { isArray, map } from 'lodash';
 import Promise from 'bluebird';
 import wrapHandlerForStatement from 'worker/handlers/statement/wrapHandlerForStatement';
-import { STATEMENT_EXTRACT_PERSONAS_QUEUE, getUniqueIdentifierDisplayName } from 'lib/constants/statements';
+import { STATEMENT_EXTRACT_PERSONAS_QUEUE, getIfiDisplayName } from 'lib/constants/statements';
 import asignIdentifierToStatements from 'lib/services/persona/asignIdentifierToStatements';
 import getIfiFromActor from 'lib/services/persona/utils/getIfiFromActor';
 
@@ -11,7 +11,7 @@ const handleStatement = personaService => async (statement) => {
   // This will only apply to the persona if they are created
   const personaName = statement.statement.actor.name
     ? statement.statement.actor.name
-    : getUniqueIdentifierDisplayName(ifi);
+    : getIfiDisplayName(ifi);
 
   const {
     personaId,
