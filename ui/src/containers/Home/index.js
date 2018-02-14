@@ -49,7 +49,7 @@ class Home extends Component {
     if (e) e.preventDefault();
 
     const { models } = this.props;
-    const organisation = models.get(orgId);
+    const organisation = models.find(model => orgId === model.get('_id'));
 
     if (
       !this.props.isSiteAdmin &&
@@ -86,7 +86,7 @@ class Home extends Component {
     if (models.has(index)) {
       const organisation = models.get(index);
 
-      const name = <span>{organisation.get('name')}</span>;
+      const name = organisation.get('name');
 
       const rightActions = [];
       if (organisation.get('expiration') && moment(organisation.get('expiration')).isBefore(moment())) {
