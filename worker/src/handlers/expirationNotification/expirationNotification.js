@@ -1,4 +1,5 @@
 import { map } from 'bluebird';
+import logger from 'lib/logger';
 import Users from 'lib/models/user';
 import Organisation, { EMAIL_SENT } from 'lib/models/organisation';
 import {
@@ -20,14 +21,19 @@ export default async ({ organisationId, emailType }, jobDone) => {
 
   const organisation = await Organisation.findById(organisationId);
 
-  await map(users, async (user) => {
-    // send the email
-    if (emailType === WEEK_BEFORE_NOTIFICATION) {
-      await sendOrganisationAboutToExpire(user, organisation);
-    } else if (emailType === EXPIRATION_NOTIFICATION) {
-      await sendOrganisationExpired(user, organisation);
-    }
-  });
+  try {
+    await map(users, async (user) => {
+      // send the email
+      if (emailType === WEEK_BEFORE_NOTIFICATION) {
+        await sendOrganisationAboutToExpire(user, organisation);
+      } else if (emailType === EXPIRATION_NOTIFICATION) {
+        await sendOrganisationExpired(user, organisation);
+      }
+    });
+  } catch (err) {
+    logger.error(err);
+    throw err;
+  }
 
   if (emailType === WEEK_BEFORE_NOTIFICATION) {
     organisation.expirationNotifications.weekBeforeNotificationSent = EMAIL_SENT;
