@@ -34,7 +34,7 @@ export default async ({ organisationId, emailType }, jobDone) => {
   } else if (emailType === EXPIRATION_NOTIFICATION) {
     organisation.expirationNotifications.expirationNotificationSent = EMAIL_SENT;
   }
-  organisation.save();
+  await organisation.save();
 
   jobDone();
 };
