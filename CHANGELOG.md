@@ -11,6 +11,12 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
         - `FS_GOOGLE_CLOUD_PROJECT_ID` - Project ID
         - `FS_GOOGLE_CLOUD_BUCKET` - Bucket name
     - PubSub queues
+      - Requires PubSub API to be enabled for your Google Cloud project
+      - New environment configs:
+        - `PUBSUB_GOOGLE_CLOUD_KEY_FILENAME` 
+          - Path to your Service account key JSON file. Must be configured to allow read/write/delete to your Cloud Storage bucket
+        - `PUBSUB_GOOGLE_CLOUD_PROJECT_ID` - Project ID
+        - `PUBSUB_GOOGLE_CLOUD_SUBSCRIPTION_NAME` - Pubsub subscription name (defaults to `ll`)
 ### Changed
 ### Deprecated
 ### Removed
