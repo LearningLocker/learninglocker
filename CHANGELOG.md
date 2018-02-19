@@ -9,6 +9,10 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.1.4] - 2018-02-19
+### Fixed
+  - Fix for sending secured SMTP emails
+
 ## [2.1.3] - 2018-01-15
 ### Added
   - Ensures `timestamp` and `stored` are selected over `statement.timestamp` and `statement.stored` in parsed queries
