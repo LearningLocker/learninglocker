@@ -32,7 +32,6 @@ export default async ({ organisationId, emailType }, jobDone) => {
     });
   } catch (err) {
     logger.error(err);
-    throw err;
   }
 
   if (emailType === WEEK_BEFORE_NOTIFICATION) {
