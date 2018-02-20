@@ -177,7 +177,9 @@ const personaAttributeCount = catchErrors(async (req, res) => {
     authInfo
   });
 
-  const userFilter = await parseQuery(req.query.query);
+  const userFilter = await parseQuery(req.query.query, {
+    organisation: getOrgFromAuthInfo(authInfo)
+  });
 
   const filter = {
     ...userFilter,

@@ -34,7 +34,8 @@ const personaConnection = catchErrors(async (req, res) => {
 
   const filter = {
     ...(await parseQuery(
-      getJSONFromQuery(req, 'filter', {})
+      getJSONFromQuery(req, 'filter', {}),
+      { organisation: getOrgFromAuthInfo(authInfo) }
     )),
     ...scopeFilter
   };
