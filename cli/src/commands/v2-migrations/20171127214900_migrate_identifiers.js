@@ -44,7 +44,7 @@ const updateStatementsForFailedIdent = async (failedIdent) => {
   const persona = await personasCollection.findOne({ _id: new ObjectID(existingIdent.persona) });
   const personaDisplay = persona ? persona.name : 'Unknown persona';
   if (existingIdent) {
-    console.log(`Convert personaIdentifier ${failedIdent._id} to ${existingIdent._id} with persona name of ${personaDisplay} (${persona._id})`);
+    console.log(new Date(), `Convert personaIdentifier ${failedIdent._id} to ${existingIdent._id} with persona name of ${personaDisplay} (${existingIdent.persona})`);
     const filter = { organisation: new ObjectID(failedIdent.organisation), personaIdentifier: new ObjectID(failedIdent._id) };
     const update = {
       $set: {
@@ -62,7 +62,7 @@ const updateStatementsForFailedIdent = async (failedIdent) => {
 const insertIdents = async (docs) => {
   // Create new identifiers from old
   const identInserts = docs.map(createNewIdent);
-  console.log(`Inserting ${identInserts.length} idents....`);
+  console.log(new Date(), `Inserting ${identInserts.length} idents....`);
 
   try {
     await newIdentsCollection.insertMany(identInserts, { ordered: false });
