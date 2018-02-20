@@ -24,6 +24,10 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Migrations
 This update requires a migration which can be run using `yarn migrate`. If installing via the deploy script this will automatically be done.
 
+## [2.1.3] - 2018-01-15
+### Added
+  - Ensures `timestamp` and `stored` are selected over `statement.timestamp` and `statement.stored` in parsed queries
+
 ## [2.1.2] - 2018-01-02
 ### Fixed
   - `GOOGLE_ENABLED` .env value no longer compiled into API build and can be updated in the .env, followed by a restart of the API

@@ -39,15 +39,15 @@ const renderPage = (routeName) => {
 
   // People //
 
-  if (testRoute('organisation.people.manage')) {
+  if (testRoute('organisation.people.imports')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/PersonaManage')
+      loader: System.import('ui/containers/Personas/PersonasImports')
     }));
   }
 
-  if (testRoute('organisation.people.reconcile')) {
+  if (testRoute('organisation.people.manage')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/PersonaReconcile')
+      loader: System.import('ui/containers/Personas/PersonaManage')
     }));
   }
 
