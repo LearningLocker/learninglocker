@@ -20,9 +20,12 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
   - Provides much more control over identifiers and attributes via the API and UI
   - Improved CSV upload tool
   - Improved persona creation performance
-
 ### Migrations
 This update requires a migration which can be run using `yarn migrate`. If installing via the deploy script this will automatically be done.
+
+## [2.1.4] - 2018-02-19
+### Fixed
+  - Fix for sending secured SMTP emails
 
 ## [2.1.3] - 2018-01-15
 ### Added
