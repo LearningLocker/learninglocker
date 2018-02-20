@@ -13,6 +13,8 @@ import CollapsibleNav from 'ui/containers/SideNav/CollapsibleNav';
 import { activeOrganisationSettingsSelector, currentScopesSelector } from 'ui/redux/modules/auth';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import canViewModel from 'lib/services/auth/canViewModel';
+import canViewOrganisationsFn from 'lib/services/auth/canViewOrganisations';
+import { getAppDataSelector } from 'ui/redux/modules/app';
 import styles from './sidenav.css';
 
 class SideNav extends Component {
@@ -68,13 +70,17 @@ class SideNav extends Component {
   }
 
   renderSettings = () => {
-    const { activeRoute } = this.props;
+    const { activeRoute, SUPERADMIN_EDIT_ORGANISATION_ONLY } = this.props;
     const { groups } = this.state;
     const organisationId = activeRoute.params.organisationId;
     const activeScopes = this.props.activeScopes.toJS();
     const canViewStores = canViewModel('store', activeScopes);
     const canViewUsers = canViewModel('user', activeScopes);
-    const canViewOrganisations = canViewModel('organisation', activeScopes);
+
+    const canViewOrganisations = canViewOrganisationsFn(activeScopes, {
+      SUPERADMIN_EDIT_ORGANISATION_ONLY
+    });
+
     const canViewClients = canViewModel('client', activeScopes);
     const canViewRoles = canViewModel('role', activeScopes);
     const canViewSettings = (
@@ -166,12 +172,15 @@ class SideNav extends Component {
 
 export default compose(
   withStyles(styles),
-  connect(state => ({
-    activeRoute: routeNodeSelector('organisation')(state).route,
-    activeOrganisationSettings: activeOrganisationSettingsSelector(state),
-    activeScopes: currentScopesSelector(state),
-    id: activeOrgIdSelector(state)
-  })),
+  connect(state =>
+    ({
+      activeRoute: routeNodeSelector('organisation')(state).route,
+      activeOrganisationSettings: activeOrganisationSettingsSelector(state),
+      activeScopes: currentScopesSelector(state),
+      id: activeOrgIdSelector(state),
+      SUPERADMIN_EDIT_ORGANISATION_ONLY: getAppDataSelector('SUPERADMIN_EDIT_ORGANISATION_ONLY')(state)
+    })
+  ),
   withProps(() => ({
     schema: 'organisation'
   })),
