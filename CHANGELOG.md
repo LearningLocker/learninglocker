@@ -9,6 +9,20 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.2.0]
+### Added
+  - Override system email address ([#1029](https://github.com/LearningLocker/learninglocker/pull/1029)) (thanks to [@eashman](https://github.com/eashman))
+### Fixed
+  - "Go to visualisation" from dashboard widget ([#1034](https://github.com/LearningLocker/learninglocker/pull/1034)) (thanks to [@eashman](https://github.com/eashman))
+  - Hide the source and results before visualisation type is picked
+### Personas refactor
+  - Personas, identifiers and their attributes split into separate models
+  - Provides much more control over identifiers and attributes via the API and UI
+  - Improved CSV upload tool
+  - Improved persona creation performance
+### Migrations
+This update requires a migration which can be run using `yarn migrate`. If installing via the deploy script this will automatically be done.
+
 ## [2.1.4] - 2018-02-19
 ### Fixed
   - Fix for sending secured SMTP emails
