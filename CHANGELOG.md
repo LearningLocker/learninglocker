@@ -9,6 +9,14 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.1.4] - 2018-02-19
+### Fixed
+  - Fix for sending secured SMTP emails
+
+## [2.1.3] - 2018-01-15
+### Added
+  - Ensures `timestamp` and `stored` are selected over `statement.timestamp` and `statement.stored` in parsed queries
+
 ## [2.1.2] - 2018-01-02
 ### Fixed
   - `GOOGLE_ENABLED` .env value no longer compiled into API build and can be updated in the .env, followed by a restart of the API
