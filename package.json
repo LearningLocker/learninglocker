@@ -48,6 +48,8 @@
     "rollback": "node cli/dist/server migrateMongo --down last"
   },
   "dependencies": {
+    "@google-cloud/pubsub": "^0.16.1",
+    "@google-cloud/storage": "^1.5.2",
     "@learninglocker/persona-service": "^1.6.4",
     "@learninglocker/xapi-statements": "^5.0.9",
     "@learninglocker/xapi-validation": "^2.1.5",
