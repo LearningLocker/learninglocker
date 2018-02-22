@@ -22,7 +22,8 @@ const downloadExport = catchErrors(async (req, res) => {
     downloadId
   });
   res.header('Content-Type', mime);
-  return downloadToStream(key)(res);
+  const downloadStreamPromise = downloadToStream(key)(res);
+  return downloadStreamPromise;
 });
 
 export default {

@@ -9,6 +9,7 @@
 // ***********************************************
 
 const _ = require('lodash');
+const path = require('path');
 
 Cypress.Commands.add('resetState', () =>
   cy.exec('node cli/dist/server seed reset', {
@@ -46,5 +47,36 @@ Cypress.Commands.add('beLoggedIn', () =>
     ).each(([key, value]) =>
       cy.setCookie(key, value)
     ).then(() => args);
+  })
+);
+
+Cypress.Commands.add('uploadFixture', (
+  fixturePath,
+  el,
+  {
+    type = 'text/csv',
+    name
+  } = {}
+) =>
+  cy.fixture(fixturePath).then((content) => {
+    name = name || path.basename(fixturePath);
+
+    const contentBlob = new Blob([content], {
+      type
+    });
+
+    const file = new File([contentBlob], name);
+
+    el[0] = Object.defineProperty(el[0], 'files', {
+      configurable: true,
+      value: [file]
+    });
+
+    el[0].dispatchEvent(new Event('change', {
+      bubbles: true,
+      target: {
+        files: [file]
+      }
+    }));
   })
 );
