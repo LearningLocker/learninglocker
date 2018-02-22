@@ -2,6 +2,16 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [unreleased]
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+### Migrations
+
+## [2.2.0]
+### Added
+  - Override system email address ([#1029](https://github.com/LearningLocker/learninglocker/pull/1029)) (thanks to [@eashman](https://github.com/eashman))
   - Google cloud services 
     - Storage
       - Requires the Cloud Storage JSON API to be enabled for your Google Cloud project
@@ -17,16 +27,6 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
           - Path to your Service account key JSON file. Must be configured to allow read/write/delete to your Cloud Storage bucket
         - `PUBSUB_GOOGLE_CLOUD_PROJECT_ID` - Project ID
         - `PUBSUB_GOOGLE_CLOUD_SUBSCRIPTION_NAME` - Pubsub subscription name (defaults to `ll`)
-### Changed
-### Deprecated
-### Removed
-### Fixed
-### Security
-### Migrations
-
-## [2.2.0]
-### Added
-  - Override system email address ([#1029](https://github.com/LearningLocker/learninglocker/pull/1029)) (thanks to [@eashman](https://github.com/eashman))
 ### Fixed
   - "Go to visualisation" from dashboard widget ([#1034](https://github.com/LearningLocker/learninglocker/pull/1034)) (thanks to [@eashman](https://github.com/eashman))
   - Hide the source and results before visualisation type is picked
