@@ -1,4 +1,4 @@
-import expirationNotificationEmails from 'worker/commands/expirationNotificationEmails';
+import expirationNotificationEmails from 'cli/commands/expirationNotificationEmails';
 import logger from 'lib/logger';
 
 const timeout = 15 * 60 * 1000;
