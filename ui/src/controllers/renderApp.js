@@ -23,7 +23,7 @@ export default async (req, res, next) => {
 
     data.state = {
       app: {
-        SUPERADMIN_EDIT_ORGANISATION_ONLY: boolean(defaultTo(process.env.SUPERADMIN_EDIT_ORGANISATION_ONLY, true))
+        RESTRICT_CREATE_ORGANISATION: boolean(defaultTo(process.env.RESTRICT_CREATE_ORGANISATION, true))
       }
     };
 

@@ -13,8 +13,6 @@ import CollapsibleNav from 'ui/containers/SideNav/CollapsibleNav';
 import { activeOrganisationSettingsSelector, currentScopesSelector } from 'ui/redux/modules/auth';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import canViewModel from 'lib/services/auth/canViewModel';
-import canViewOrganisationsFn from 'lib/services/auth/canViewOrganisations';
-import { getAppDataSelector } from 'ui/redux/modules/app';
 import styles from './sidenav.css';
 
 class SideNav extends Component {
@@ -70,16 +68,14 @@ class SideNav extends Component {
   }
 
   renderSettings = () => {
-    const { activeRoute, SUPERADMIN_EDIT_ORGANISATION_ONLY } = this.props;
+    const { activeRoute } = this.props;
     const { groups } = this.state;
     const organisationId = activeRoute.params.organisationId;
     const activeScopes = this.props.activeScopes.toJS();
     const canViewStores = canViewModel('store', activeScopes);
     const canViewUsers = canViewModel('user', activeScopes);
 
-    const canViewOrganisations = canViewOrganisationsFn(activeScopes, {
-      SUPERADMIN_EDIT_ORGANISATION_ONLY
-    });
+    const canViewOrganisations = canViewModel('organisation', activeScopes);
 
     const canViewClients = canViewModel('client', activeScopes);
     const canViewRoles = canViewModel('role', activeScopes);
@@ -177,8 +173,7 @@ export default compose(
       activeRoute: routeNodeSelector('organisation')(state).route,
       activeOrganisationSettings: activeOrganisationSettingsSelector(state),
       activeScopes: currentScopesSelector(state),
-      id: activeOrgIdSelector(state),
-      SUPERADMIN_EDIT_ORGANISATION_ONLY: getAppDataSelector('SUPERADMIN_EDIT_ORGANISATION_ONLY')(state)
+      id: activeOrgIdSelector(state)
     })
   ),
   withProps(() => ({
