@@ -45,9 +45,9 @@ describe('UploadController.uploadLogo scope filtering', () => {
     await assertUnauthorised(token);
   });
 
-  it('should not allow action when ALL org scope is used', async () => {
+  it('should allow action when ALL org scope is used', async () => {
     const token = await createOrgToken([ALL]);
-    await assertUnauthorised(token);
+    await assertAuthorised(token);
   });
 
   it('should not allow action when MANAGE_ALL_ORGANISATIONS org scope is used', async () => {
