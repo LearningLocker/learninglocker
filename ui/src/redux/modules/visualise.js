@@ -56,6 +56,15 @@ export const fetchVisualisation = id => ({
 * Selectors
 */
 
+const dashboardShareableIdSelector = (state) => {
+  const out =
+    state.router &&
+    state.router.route &&
+    state.router.route.params &&
+    state.router.route.params.shareableId;
+  return out;
+};
+
  /**
  * gets the visualisation pipeline associated with the provided ID
  * @param  {String}          id  id of visualisation
@@ -63,11 +72,16 @@ export const fetchVisualisation = id => ({
  */
 
 const shareableDashboardFilterSelector = () => createSelector(
-  [metadataSelector, modelsSelector],
-  (metadata, models) => {
-    const expandedKey = (metadata || new Map())
+  [metadataSelector, modelsSelector, dashboardShareableIdSelector],
+  (metadata, models, shareableId) => {
+    let expandedKey = (metadata || new Map())
       .get('dashboardSharing', new Map())
       .findKey(share => share.get('isExpanded', false) === true);
+
+    if (!expandedKey) {
+      // return new Map();
+      expandedKey = shareableId;
+    }
 
     if (!expandedKey) {
       return new Map();
