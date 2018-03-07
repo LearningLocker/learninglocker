@@ -50,7 +50,7 @@
   "dependencies": {
     "@google-cloud/pubsub": "^0.16.1",
     "@google-cloud/storage": "^1.5.2",
-    "@learninglocker/persona-service": "^1.6.4",
+    "@learninglocker/persona-service": "^1.6.8",
     "@learninglocker/xapi-statements": "^5.0.9",
     "@learninglocker/xapi-validation": "^2.1.5",
     "@newrelic/native-metrics": "^2.1.0",
