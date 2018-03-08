@@ -1,9 +1,9 @@
 import statementWorker from 'worker/handlers/statement';
-import uploadWorker from 'worker/handlers/upload';
+import importPersonasWorker from 'worker/handlers/importPersonas';
 import logger from 'lib/logger';
 
 statementWorker({});
-uploadWorker();
+importPersonasWorker({});
 
 logger.info('STARTED WORKER');
 

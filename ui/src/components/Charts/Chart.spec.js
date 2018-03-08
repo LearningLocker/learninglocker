@@ -64,7 +64,6 @@ test('getChartData should filter item', () => {
   const hiddenSeries = new Set(['s2']);
 
   const result = getChartData(data, hiddenSeries);
-  console.log('result', result);
   expect(result[0].s2).toEqual(undefined);
   expect(result[0].s1).toEqual(6);
 });

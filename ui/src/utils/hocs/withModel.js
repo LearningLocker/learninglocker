@@ -75,7 +75,10 @@ export default (WrappedComponent) => {
         saveModel={this.saveModel} />
     )
   }
-  return connect((state, { schema, id }) => ({
+  return connect((state, {
+    schema,
+    id
+  }) => ({
     metadata: getMetadataSelector({ schema, id })(state),
     model: modelsSchemaIdSelector(schema, id)(state),
     isLoadingModel: isLoadingModelSelector({ schema, id })(state)

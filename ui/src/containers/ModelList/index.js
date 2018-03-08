@@ -2,7 +2,15 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { getMetadataSelector } from 'ui/redux/modules/metadata';
 import { Iterable } from 'immutable';
-import { compose, setPropTypes, defaultProps, withHandlers, setDisplayName } from 'recompose';
+import {
+  compose,
+  setPropTypes,
+  defaultProps,
+  withHandlers,
+  setDisplayName,
+  withProps,
+  lifecycle
+} from 'recompose';
 import Spinner from 'ui/components/Spinner';
 import DeleteButton from 'ui/containers/DeleteButton';
 import ModelListItem from 'ui/containers/ModelListItem';
@@ -13,6 +21,7 @@ const enhance = compose(
     isLoading: PropTypes.bool.isRequired,
     hasMore: PropTypes.bool.isRequired,
     models: PropTypes.instanceOf(Iterable).isRequired,
+    model: PropTypes.object,
     fetchMore: PropTypes.func.isRequired,
     ModelForm: PropTypes.func.isRequired,
     displayOwner: PropTypes.bool,
@@ -27,7 +36,10 @@ const enhance = compose(
     modifyButtons: buttons => buttons
   }),
   connect(
-    (state, { schema, models }) => {
+    (state, {
+      schema,
+      models
+    }) => {
       const metadata = models.map(
         model => getMetadataSelector({ schema, id: model.get('_id') })(state)
       );
@@ -53,6 +65,27 @@ const enhance = compose(
     fetchMore: ({ schema, filter, sort, fetchMore }) =>
       () => fetchMore({ schema, filter, sort })
   }),
+  withProps(({
+    models,
+    model
+  }) =>
+    ({
+      modelsWithModel: (!model || !model.get('_id') || models.has(model.get('_id')) ?
+        models :
+          models.reverse().set(model.get('_id'), model).reverse()
+      )
+    })
+  ),
+  lifecycle({
+    componentWillMount: function componentWillMount() {
+      // If this component also has a withModel hoc on it,
+      // then we want that to be expanded by default.
+      if (this.props.model && this.props.model.get('_id')) {
+        // this works because setMetadata comes from the withModel hoc (as opposed to withModels)
+        this.props.setMetadata('isExpanded', true);
+      }
+    },
+  }),
   setDisplayName('ModelList')
 );
 
@@ -72,7 +105,7 @@ const renderLoadMoreButton = ({ isLoading, hasMore, fetchMore }) =>
 
 const render = ({
   isLoading,
-  models,
+  modelsWithModel,
   schema,
   ModelForm,
   getDescription,
@@ -81,6 +114,7 @@ const render = ({
   fetchMore,
   modifyButtons,
   ModelListItem: ModelListItemToUse = ModelListItem,
+  models,
   ...other
 }) => {
   if (models.size > 0) {
@@ -93,8 +127,7 @@ const render = ({
             schema={schema}
             getDescription={getDescription}
             ModelForm={ModelForm}
-            buttons={modifyButtons(buttons, models)}
-            {...other} />
+            buttons={modifyButtons(buttons, modelsWithModel)} />
         ).valueSeq() }
 
         { isLoading
