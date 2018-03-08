@@ -6,7 +6,7 @@ import IfiAccountViewer from './IfiAccountViewer';
 const enhance = compose(
   setPropTypes({
     identifierType: PropTypes.string.isRequired,
-    identifierValue: PropTypes.oneOf([
+    identifierValue: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.instanceOf(Map),
     ]).isRequired,

@@ -31,7 +31,7 @@ const render = ({ value, onChange, onSave, refValueInput }) => {
         onSubmit={onSave}
         inputRef={refValueInput} />
       <ErrorText hasError={value.length !== 0 && hasMboxError}>
-        Must be a valid email address.
+        <span>Must be a valid email address.</span>
       </ErrorText>
     </div>
   );
