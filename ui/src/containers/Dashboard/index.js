@@ -9,6 +9,7 @@ import DeleteButton from 'ui/containers/DeleteButton';
 import Owner from 'ui/containers/Owner';
 import PrivacyToggleButton from 'ui/containers/PrivacyToggleButton';
 import DashboardSharing from 'ui/containers/DashboardSharing';
+import Spinner from 'ui/components/Spinner';
 import styles from './styles.css';
 
 const schema = 'dashboard';
@@ -81,6 +82,10 @@ class Dashboard extends Component {
 
   render() {
     const { model, organisationId } = this.props;
+
+    if (!model.get('_id')) {
+      return <Spinner />;
+    }
 
     return (
       <div className="row">
