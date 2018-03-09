@@ -44,11 +44,12 @@ const createJWT = ({
   tokenType,
   tokenId,
   shareableId = null,
-  extensions
+  extensions,
+  organisation = null
 }, opts = {
   expiresIn: '7d'
 }) => sign(
-  { userId, provider, scopes, tokenType, tokenId, shareableId, extensions, filter },
+  { userId, provider, scopes, tokenType, tokenId, shareableId, extensions, filter, organisation },
   process.env.APP_SECRET,
   opts
 );
@@ -96,6 +97,7 @@ const createDashboardTokenPayload = async (dashboard, shareableId, provider) => 
     tokenType: 'dashboard',
     tokenId: String(dashboard._id),
     shareableId,
+    organisation: String(dashboard.organisation),
     filter: {},
     extensions: {
       visualisationIds,
