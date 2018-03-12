@@ -64,53 +64,71 @@ class StatementsForm extends Component {
     });
   }
 
-  renderSourceToggle = () =>
-    (
-      <Switch
-        checked={this.props.source}
-        label="Source"
-        onChange={this.toggleSource} />
-    );
+  renderSourceToggle = () => (
+    <Switch
+      checked={this.props.source}
+      label="Source"
+      onChange={this.toggleSource} />
+  );
 
-  render = () => {
-    const { model } = this.props;
-    return (
-      <div className="row">
-        <div className="col-md-6 left-border">
-          <Editor
-            model={model}
-            exportVisualisation={this.props.exportVisualisation} />
+  renderEditor = () => (
+    <Editor model={this.props.model} exportVisualisation={this.props.exportVisualisation} />
+  );
+
+  renderTimePicker = () => (
+    <select
+      id={`${this.props.model.get('_id')}previewPeriodInput`}
+      className="form-control"
+      value={this.props.model.get('previewPeriod')}
+      onChange={this.onChangeAttr.bind(null, 'previewPeriod')}>
+      <option value={LAST_24_HOURS}>Last 24 hours</option>
+      <option value={LAST_7_DAYS}>Last 7 days</option>
+      <option value={LAST_30_DAYS}>Last 30 days</option>
+      <option value={LAST_2_MONTHS}>Last 2 months</option>
+      <option value={LAST_6_MONTHS}>Last 6 months</option>
+      <option value={LAST_1_YEAR}>Last 1 year</option>
+      <option value={LAST_2_YEARS}>Last 2 years</option>
+    </select>
+  )
+
+  renderFormWithResults = () => (
+    <div className="row">
+      <div className="col-md-6 left-border">
+        { this.renderEditor() }
+      </div>
+      <div
+        className="col-md-6">
+        <div style={{ float: 'left' }}>
+          { this.renderSourceToggle() }
         </div>
-
-        <div
-          className="col-md-6">
-          <div style={{ float: 'left' }}>
-            { this.renderSourceToggle() }
-          </div>
-          <div className="form-group form-inline" style={{ textAlign: 'right' }}>
-            <select
-              id={`${model.get('_id')}previewPeriodInput`}
-              className="form-control"
-              value={model.get('previewPeriod')}
-              onChange={this.onChangeAttr.bind(null, 'previewPeriod')}>
-              <option value={LAST_24_HOURS}>Last 24 hours</option>
-              <option value={LAST_7_DAYS}>Last 7 days</option>
-              <option value={LAST_30_DAYS}>Last 30 days</option>
-              <option value={LAST_2_MONTHS}>Last 2 months</option>
-              <option value={LAST_6_MONTHS}>Last 6 months</option>
-              <option value={LAST_1_YEAR}>Last 1 year</option>
-              <option value={LAST_2_YEARS}>Last 2 years</option>
-            </select>
-          </div>
-          <div style={{ height: '400px', paddingTop: 5 }}>
-            {!this.props.source && <VisualiseResults id={model.get('_id')} />}
-            {this.props.source &&
-              <SourceResults id={model.get('_id')} />
-            }
-          </div>
+        <div className="form-group form-inline" style={{ textAlign: 'right' }}>
+          { this.renderTimePicker() }
+        </div>
+        <div style={{ height: '400px', paddingTop: 5 }}>
+          {!this.props.source && <VisualiseResults id={this.props.model.get('_id')} />}
+          {this.props.source &&
+            <SourceResults id={this.props.model.get('_id')} />
+          }
         </div>
       </div>
-    );
+    </div>
+  )
+
+  renderEditorOnly = () => (
+    <div className="row">
+      <div className="col-md-12 left-border">
+        { this.renderEditor() }
+      </div>
+    </div>
+  );
+
+  render = () => {
+    if (this.props.model.has('type')) {
+      // include the results if type is selected
+      return this.renderFormWithResults();
+    }
+    // if not type is selected, only show the editor
+    return this.renderEditorOnly();
   }
 }
 

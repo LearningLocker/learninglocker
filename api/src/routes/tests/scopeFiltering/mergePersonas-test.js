@@ -10,14 +10,15 @@ describe('PersonaController.mergePersonas scope filtering', () => {
   const apiApp = setup();
 
   const mergePersona = async ({ expectedCode, token }) => {
-    const personas = await Promise.all([createPersona(), createPersona()]);
+    const persona1 = await createPersona();
+    const persona2 = await createPersona();
     return new Promise((resolve, reject) => {
       apiApp
         .post(routes.MERGE_PERSONA)
         .set('Authorization', `Bearer ${token}`)
         .query({
-          mergePersonaFromId: personas[0]._id.toString(),
-          mergePersonaToId: personas[1]._id.toString()
+          mergePersonaFromId: persona1.id,
+          mergePersonaToId: persona2.id
         })
         .expect(expectedCode)
         .end((err, res) => {

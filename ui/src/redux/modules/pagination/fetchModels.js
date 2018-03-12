@@ -37,8 +37,7 @@ const paginationStateSelector = (
   sort = defaultSort
 ) =>
   createSelector(paginationSelector,
-    pagination =>
-      pagination.getIn([schema, filter, sort], new Map())
+    pagination => pagination.getIn([schema, filter, sort], new Map())
   );
 
 const paginationPageInfoSelector = (schema, filter, sort) =>
