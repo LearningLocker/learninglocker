@@ -181,8 +181,24 @@ const getPersonaIdentifiers = catchErrors(async (req, res) => {
     authInfo
   });
 
+  const sort = getJSONFromQuery(req, 'sort', { _id: 1 });
+  const limit = getFromQuery(req, 'limit', undefined, parseInt);
+  const skip = getFromQuery(req, 'skip', undefined, parseInt);
+
+  const query = getJSONFromQuery(req, 'query', {});
+  const filter = getJSONFromQuery(req, 'filter', query);
+
+  const {
+    persona,
+    ...inFilter
+  } = filter;
+
   const { identifiers } = await personaService.getPersonaIdentifiers({
-    ...req.query,
+    sort,
+    limit,
+    skip,
+    persona,
+    filter: inFilter,
     organisation: getOrgFromAuthInfo(authInfo),
   });
 

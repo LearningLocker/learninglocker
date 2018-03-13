@@ -65,7 +65,9 @@ describe('getPresonaAttributes', () => {
   it('should only get attributes for provided persona', async () => {
     const result = await apiApp.get(routes.PERSONA_ATTRIBUTE)
       .set('Authorization', `Bearer ${token}`)
-      .query({ personaId: persona.id })
+      .query({ 
+        filter: JSON.stringify({ personaId: persona.id }) 
+      })
       .expect(200);
 
     expect(result.body.length).to.equal(1);

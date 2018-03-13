@@ -69,7 +69,7 @@ describe('getPresonaIdentifiers', () => {
     const result = await apiApp.get(routes.PERSONA_IDENTIFIER)
       .set('Authorization', `Bearer ${token}`)
       .query({
-        persona: persona.id
+        filter: JSON.stringify({ persona: persona.id })
       })
       .expect(200);
 
