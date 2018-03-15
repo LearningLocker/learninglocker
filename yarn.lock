@@ -84,9 +84,9 @@
     string-format-obj "^1.0.0"
     through2 "^2.0.0"
 
-"@learninglocker/persona-service@^1.6.8":
-  version "1.6.8"
-  resolved "https://registry.yarnpkg.com/@learninglocker/persona-service/-/persona-service-1.6.8.tgz#a95811a14698387cb288080870dbdbb8ddd902de"
+"@learninglocker/persona-service@^1.6.9":
+  version "1.6.9"
+  resolved "https://registry.yarnpkg.com/@learninglocker/persona-service/-/persona-service-1.6.9.tgz#60518ca809e6ae3179b56ac90706aa2f6794e28b"
   dependencies:
     aws-sdk "^2.0.1"
     bluebird "^3.5.0"
