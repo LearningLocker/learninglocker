@@ -1,5 +1,7 @@
 import highland from 'highland';
 import logger from 'lib/logger';
+import isPlainObject from 'lodash/isPlainObject';
+import has from 'lodash/has';
 import { getConnection } from 'lib/connections/mongoose';
 import { MongoError, ObjectID } from 'mongodb';
 
@@ -24,7 +26,11 @@ const processStream = stream =>
 
 const createNewIdent = (doc) => {
   const { key, value } = doc.uniqueIdentifier;
+
   const newKey = /^statement\.actor\./.test(key) ? key.replace('statement.actor.', '') : key;
+  const newValue = (isPlainObject(value) && has(value, 'homePage') && has(value, 'name'))
+    ? { homePage: value.homePage, name: value.name }
+    : value;
 
   return {
     _id: doc._id,
@@ -34,7 +40,7 @@ const createNewIdent = (doc) => {
     persona: doc.persona,
     ifi: {
       key: newKey,
-      value,
+      value: newValue,
     }
   };
 };
