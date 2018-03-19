@@ -1,0 +1,4 @@
+testName,mbox,openId
+nameA,nameA@test.com,http://1
+nameB,,http://2
+nameAB,nameA@test.com,http://3

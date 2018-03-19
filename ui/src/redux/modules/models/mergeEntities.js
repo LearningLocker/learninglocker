@@ -14,10 +14,11 @@ const mergeEntitiesReducer = (state, action) => {
   return nextState;
 };
 
-const mergeEntitiesAction = models => ({
-  type: MERGE_ENTITIES,
-  models
-});
+const mergeEntitiesAction = models =>
+  ({
+    type: MERGE_ENTITIES,
+    models
+  });
 
 export const reducers = {
   [MERGE_ENTITIES]: mergeEntitiesReducer

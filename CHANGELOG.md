@@ -9,6 +9,39 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.2.0]
+### Added
+  - Override system email address ([#1029](https://github.com/LearningLocker/learninglocker/pull/1029)) (thanks to [@eashman](https://github.com/eashman))
+  - Google cloud services 
+    - Storage
+      - Requires the Cloud Storage JSON API to be enabled for your Google Cloud project
+      - New environment configs:
+        - `FS_GOOGLE_CLOUD_KEY_FILENAME` 
+          - Path to your Service account key JSON file. Must be configured to allow read/write/delete to your Cloud Storage bucket
+        - `FS_GOOGLE_CLOUD_PROJECT_ID` - Project ID
+        - `FS_GOOGLE_CLOUD_BUCKET` - Bucket name
+    - PubSub queues
+      - Requires PubSub API to be enabled for your Google Cloud project
+      - New environment configs:
+        - `PUBSUB_GOOGLE_CLOUD_KEY_FILENAME` 
+          - Path to your Service account key JSON file. Must be configured to allow read/write/delete to your Cloud Storage bucket
+        - `PUBSUB_GOOGLE_CLOUD_PROJECT_ID` - Project ID
+        - `PUBSUB_GOOGLE_CLOUD_SUBSCRIPTION_NAME` - Pubsub subscription name (defaults to `ll`)
+### Fixed
+  - "Go to visualisation" from dashboard widget ([#1034](https://github.com/LearningLocker/learninglocker/pull/1034)) (thanks to [@eashman](https://github.com/eashman))
+  - Hide the source and results before visualisation type is picked
+### Personas refactor
+  - Personas, identifiers and their attributes split into separate models
+  - Provides much more control over identifiers and attributes via the API and UI
+  - Improved CSV upload tool
+  - Improved persona creation performance
+### Migrations
+This update requires a migration which can be run using `yarn migrate`. If installing via the deploy script this will automatically be done.
+
+## [2.1.4] - 2018-02-19
+### Fixed
+  - Fix for sending secured SMTP emails
+
 ## [2.1.3] - 2018-01-15
 ### Added
   - Ensures `timestamp` and `stored` are selected over `statement.timestamp` and `statement.stored` in parsed queries

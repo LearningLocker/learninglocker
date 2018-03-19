@@ -11,6 +11,7 @@ import { actions as updateModelActions } from 'ui/redux/modules/models/updateMod
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 import { modelsSchemaIdSelector } from 'ui/redux/modules/models/selectors';
 import HttpError from 'ui/utils/errors/HttpError';
+import ValidationError from 'ui/utils/errors/ValidationError';
 
 export const ADD_TO_SAVE_QUEUE = 'learninglocker/models/ADD_TO_SAVE_QUEUE';
 
@@ -83,6 +84,9 @@ const saveModel = createAsyncDuck({
 
     // check the status and throw errors if not valid
     if (status >= 300) {
+      const errorMessage = body.message || body;
+      const errorOptions = { status };
+
       if (has(body, 'errors') && has(body, 'name') && body.name === 'ValidationError') {
         const errors = { hasErrors: true, messages: {} };
 
@@ -96,11 +100,11 @@ const saveModel = createAsyncDuck({
         });
 
         yield put(updateModelErrors(schema, id, fromJS(errors)));
+
+        throw new ValidationError(errorMessage, errorOptions);
       }
 
-      throw new HttpError(body.message || body, {
-        status
-      });
+      throw new HttpError(errorMessage, errorOptions);
     }
     const result = normalize(body, schemaClass);
     const entities = entityReviver(result);
