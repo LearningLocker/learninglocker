@@ -2,7 +2,7 @@ import logger from 'lib/logger';
 import extractPersonasHandler from 'worker/handlers/statement/extractPersonasHandler';
 import queryBuilderCacheHandler from 'worker/handlers/statement/queryBuilderCacheHandler';
 import defaultStatementHandler from 'worker/handlers/statement/statementHandler';
-import listenForV1 from 'worker/handlers/statement/listenForV1';
+import listenForRedisPublish from 'worker/handlers/statement/listenForRedisPublish';
 import * as Queue from 'lib/services/queue';
 import statementForwardingHandler from
   'worker/handlers/statement/statementForwarding/statementForwardingHandler';
@@ -10,6 +10,7 @@ import statementForwardingRequestHandler from
   'worker/handlers/statement/statementForwarding/statementForwardingRequestHandler';
 import statementForwardingDeadLetterHandler from
   'worker/handlers/statement/statementForwarding/statementForwardingDeadLetterHandler';
+import getPersonaService from 'lib/connections/personaService';
 
 import {
   STATEMENT_QUEUE,
@@ -34,8 +35,9 @@ export default (
   statementHandlerProccessed
 }
 ) => {
-  // GET NOTIFICATIONS FROM V1. Keep this until statement API is moved to node
-  listenForV1();
+  const personaService = getPersonaService();
+  // Get notifications from Redis pub/sub
+  listenForRedisPublish();
 
   Queue.subscribe({
     queueName: STATEMENT_QUEUE,
@@ -46,7 +48,7 @@ export default (
 
   Queue.subscribe({
     queueName: STATEMENT_EXTRACT_PERSONAS_QUEUE,
-    handler: extractPersonasHandler
+    handler: extractPersonasHandler(personaService)
   }, handleResponse);
 
   Queue.subscribe({

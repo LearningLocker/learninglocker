@@ -70,7 +70,8 @@ const fetchModel = createAsyncDuck({
     return state.setIn([schema, id, 'requestState'], null);
   },
 
-  startAction: ({ schema, id, force }) => ({ schema, id, force }),
+  startAction: ({ schema, id, force }) =>
+    ({ schema, id, force }),
   successAction: ({ schema, id }) => ({ schema, id }),
   failureAction: ({ schema, id }) => ({ schema, id }),
   completeAction: ({ schema, id }) => ({ schema, id }),

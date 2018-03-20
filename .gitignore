@@ -1,10 +1,11 @@
 .DS_STORE
 .env
+.env
 .env.*
 .idea/
 .tags
 .tmp
-*.csv
+storage/**/*.csv
 *.log
 *.iml
 *.orig
@@ -12,7 +13,7 @@ api/logs/*
 dist/
 dump.rdb
 node_modules/
-npm-debug.log
+npm-debug.log*
 pids/
 static/logos/*.*
 storage/*.*
@@ -27,3 +28,4 @@ bootstrap.sh
 yarn-error.log
 cypress/screenshots/*
 cypress/videos/*
+debug/*

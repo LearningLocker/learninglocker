@@ -9,6 +9,12 @@ import ValidationList from 'ui/components/ValidationList';
 import Checkbox from 'ui/components/Material/Checkbox';
 import uuid from 'uuid';
 import { validatePasswordUtil } from 'lib/utils/validators/User';
+import { connect } from 'react-redux';
+import {
+  hasScopeSelector,
+  loggedInUserId as loggedInUserIdSelector
+} from 'ui/redux/modules/auth';
+import { SITE_ADMIN } from 'lib/constants/scopes';
 import styles from './userform.css';
 
 const changeModelAttr = (updateModel, model, attr) => value =>
@@ -170,6 +176,8 @@ const render = ({
   setPassword,
   passwordConfirmation,
   setPasswordConfirmation,
+  isSiteAdmin,
+  loggedInUserId
 }) => {
   const ownerOrganisationSettings = model.get('ownerOrganisationSettings', new Map()).toJS();
 
@@ -179,7 +187,12 @@ const render = ({
     password, passwordConfirmation, ownerOrganisationSettings
   ).concat(password === '' ? serverErrors : new List());
   const hasPasswordErrors = !passwordErrors.isEmpty();
-  const canChangePassword = (changePasswordChecked || hasPasswordErrors);
+  const canChangePassword =
+    (changePasswordChecked || hasPasswordErrors);
+  const isAuthorisedToChangePassword = (
+      isSiteAdmin ||
+      model.get('_id') === loggedInUserId
+    );
   const passwordInputsVisible = (!model.get('verified') || canChangePassword);
   const passwordGroupClasses = classNames({
     'form-group': true,
@@ -195,7 +208,7 @@ const render = ({
         {renderVerified(model, styles)}
         {renderName(model, onChangeAttr)}
         {renderEmail(model, onChangeAttr)}
-        {renderPasswordChanges(model, onPasswordCheckboxChange(updateModel, model, setChangePasswordChecked), canChangePassword)}
+        {isAuthorisedToChangePassword && renderPasswordChanges(model, onPasswordCheckboxChange(updateModel, model, setChangePasswordChecked), canChangePassword)}
 
         {passwordInputsVisible && (
           <div className="form-group">
@@ -228,6 +241,10 @@ export default compose(
   withProps(({ model }) => ({
     schema: 'user',
     id: model.get('_id')
+  })),
+  connect(state => ({
+    isSiteAdmin: hasScopeSelector(SITE_ADMIN)(state),
+    loggedInUserId: loggedInUserIdSelector(state)
   })),
   withModel
 )(render);

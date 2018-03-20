@@ -119,7 +119,7 @@ class SideNav extends Component {
         label={'People'}
         icon={'ion ion-person-stalker'} >
         {this.renderLink(activeClass, 'organisation.people.manage', 'Manage')}
-        {this.renderLink(activeClass, 'organisation.people.reconcile', 'Reconcile')}
+        {this.renderLink(activeClass, 'organisation.people.imports', 'Import')}
       </CollapsibleNav>
     );
   }

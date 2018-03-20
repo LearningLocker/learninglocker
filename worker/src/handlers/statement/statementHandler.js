@@ -71,7 +71,7 @@ const addStatementToPendingQueues = (statement, queues, done) => {
         if (size(pendingQueueNames) > 0) {
           logger.debug(`ADDED ${statement._id} to ${pendingQueueNames.join(', ')}`);
         } else {
-          logger.info(`PROCESSED STATEMENT ${statement._id}`);
+          logger.debug(`PROCESSED QUEUE FOR STATEMENT ${statement._id}`);
         }
         return done();
       });
@@ -82,7 +82,7 @@ const addStatementToPendingQueues = (statement, queues, done) => {
 export default ({ status, statementId }, jobDone) => {
   try {
     if (status) {
-      logger.debug('FINISHED', status, statementId);
+      logger.info(`COMPLETED ${statementId} - ${status}`);
       return Statement.findByIdAndUpdate(
         statementId,
         {
@@ -105,11 +105,12 @@ export default ({ status, statementId }, jobDone) => {
     logger.debug('NO STATUS', statementId);
     return Statement.findById(
       statementId,
-      (err, statement) =>
+      (err, statement) => {
         addStatementToPendingQueues(statement, queueDependencies, (err) => {
           if (err) logger.error('addStatementToPendingQueues error', err);
           if (jobDone) return jobDone(err);
-        })
+        });
+      }
     );
   } catch (err) {
     logger.error('statementHandler error', err);
