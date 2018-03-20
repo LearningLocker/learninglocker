@@ -34,8 +34,10 @@ const renderModalActions = ({ onConfirm, onCancel }) => (
 
 const renderConfirmModal = ({ isOpen, title, message, onConfirm, onCancel }) => (
   <Modal isOpen={isOpen} title={title} onCancel={onCancel}>
-    {renderModalMessage({ message })}
-    {renderModalActions({ onConfirm, onCancel })}
+    <div>
+      {renderModalMessage({ message })}
+      {renderModalActions({ onConfirm, onCancel })}
+    </div>
   </Modal>
 );
 
