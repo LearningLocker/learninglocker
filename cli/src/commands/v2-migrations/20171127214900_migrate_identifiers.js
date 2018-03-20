@@ -2,6 +2,7 @@ import highland from 'highland';
 import logger from 'lib/logger';
 import isPlainObject from 'lodash/isPlainObject';
 import has from 'lodash/has';
+import without from 'lodash/without';
 import { getConnection } from 'lib/connections/mongoose';
 import { MongoError, ObjectID } from 'mongodb';
 
@@ -67,7 +68,7 @@ const updateStatementsForFailedIdent = async (failedIdent) => {
 
 const insertIdents = async (docs) => {
   // Create new identifiers from old
-  const identInserts = docs.map(createNewIdent);
+  const identInserts = without(docs, undefined).map(createNewIdent);
   console.log(new Date(), `Inserting ${identInserts.length} idents....`);
 
   try {
