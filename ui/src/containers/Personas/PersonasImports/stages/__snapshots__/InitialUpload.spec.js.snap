@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InitialUpload should render 1`] = `
+<div>
+  <form
+    className="form-group"
+    encType="multipart/form-data"
+  >
+    <label
+      className="btn btn-primary"
+      htmlFor="1-file-selector"
+    >
+      <input
+        accept=".csv"
+        className="form-control"
+        id="1-file-selector"
+        placeholder="Upload the csv"
+        style={
+          Object {
+            "display": "none",
+          }
+        }
+        type="file"
+      />
+      <strong>
+        Choose CSV
+      </strong>
+    </label>
+    <span>
+       
+      fileName
+    </span>
+    <br />
+    <div>
+      <Component
+        model={
+          Object {
+            "_id": "1",
+          }
+        }
+        schema="importcsv"
+      />
+    </div>
+  </form>
+  <div
+    className="form-group"
+  >
+    <Connect(UploadButtonComponent)
+      id="1"
+    />
+  </div>
+  <div
+    className="form-group"
+  />
+</div>
+`;
+
+exports[`InitialUpload should render upload button COMPLETED 1`] = `
+<button
+  className="btn btn-primary pull-right"
+  disabled="true"
+>
+  <i
+    className="icon animated fadeIn ion-checkmark"
+  />
+</button>
+`;
+
+exports[`InitialUpload should render upload button FAILED 1`] = `
+<button
+  className="btn btn-primary pull-right"
+>
+  <i
+    className="icon animated fadeIn ion-sad"
+  />
+   Retry
+</button>
+`;
+
+exports[`InitialUpload should render upload button IN_PROGRESS 1`] = `
+<button
+  className="btn btn-primary pull-right"
+>
+  <i
+    className="icon ion-gear-a animated rotate infinite"
+    style={
+      Object {
+        "display": "block",
+      }
+    }
+  />
+</button>
+`;

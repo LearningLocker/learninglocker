@@ -5,13 +5,13 @@ import logger from 'lib/logger';
 import {
   getActivitiesFromStatement,
   getRelatedActivitiesFromStatement
-} from 'xapi-statements/dist/service/storeStatements/queriables/getActivitiesFromStatement';
+} from '@learninglocker/xapi-statements/dist/service/storeStatements/queriables/getActivitiesFromStatement';
 import {
   getAgentsFromStatement,
   getRelatedAgentsFromStatement
-} from 'xapi-statements/dist/service/storeStatements/queriables/getAgentsFromStatement';
-import getRegistrationsFromStatement from 'xapi-statements/dist/service/storeStatements/queriables/getRegistrationsFromStatement';
-import getVerbsFromStatement from 'xapi-statements/dist/service/storeStatements/queriables/getVerbsFromStatement';
+} from '@learninglocker/xapi-statements/dist/service/storeStatements/queriables/getAgentsFromStatement';
+import getRegistrationsFromStatement from '@learninglocker/xapi-statements/dist/service/storeStatements/queriables/getRegistrationsFromStatement';
+import getVerbsFromStatement from '@learninglocker/xapi-statements/dist/service/storeStatements/queriables/getVerbsFromStatement';
 
 const BATCH_SIZE = 10000;
 const REVISION = 1;
@@ -21,14 +21,20 @@ const getQueriables = (doc) => {
   const refs = doc.refs ? doc.refs : [];
   const statements = [statement, ...refs];
 
-  return {
-    activities: union(...statements.map(getActivitiesFromStatement)),
-    agents: union(...statements.map(getAgentsFromStatement)),
-    registrations: union(...statements.map(getRegistrationsFromStatement)),
-    relatedActivities: union(...statements.map(getRelatedActivitiesFromStatement)),
-    relatedAgents: union(...statements.map(getRelatedAgentsFromStatement)),
-    verbs: union(...statements.map(getVerbsFromStatement))
-  };
+  try {
+    return {
+      activities: union(...statements.map(getActivitiesFromStatement)),
+      agents: union(...statements.map(getAgentsFromStatement)),
+      registrations: union(...statements.map(getRegistrationsFromStatement)),
+      relatedActivities: union(...statements.map(getRelatedActivitiesFromStatement)),
+      relatedAgents: union(...statements.map(getRelatedAgentsFromStatement)),
+      verbs: union(...statements.map(getVerbsFromStatement))
+    };
+  } catch (err) {
+    console.log('Error on statement: ', doc);
+    console.error(err);
+    throw err;
+  }
 };
 
 const migrateStatementsBatch = (statements) => {
@@ -77,8 +83,8 @@ const createIndex = key => Statement.collection.createIndex(
     lrs_id: 1,
     [key]: 1
   },
-    { background: true }
-  );
+  { background: true }
+);
 
 const createIndexes = keys => keys.map(createIndex);
 

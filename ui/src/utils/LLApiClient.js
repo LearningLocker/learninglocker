@@ -4,7 +4,7 @@ import { activeTokenSelector } from 'ui/redux/modules/auth';
 import * as routes from 'lib/constants/routes';
 import config from 'ui/config';
 
-function formatUrl(path) {
+export function formatUrl(path) {
   const adjustedPath = path[0] !== '/' ? `/${path}` : path;
   if (__SERVER__) {
     // Prepend host and port of the API server to the path.
@@ -50,7 +50,7 @@ class _LLApiClient {
   indexModels = (schema, filter, params, limit = 0) => {
     switch (schema) {
       case 'statement': return get({
-        url: formatUrl('/statements/aggregate'),
+        url: formatUrl(routes.STATEMENTS_AGGREGATE),
         headers: {
           Authorization: `Bearer ${this.getToken()}`
         },
@@ -84,7 +84,7 @@ class _LLApiClient {
 
   countModels = (schema, filter, params) => get({
     url: (schema === 'statement') ?
-      formatUrl('/statements/count') : formatUrl(
+      formatUrl(routes.STATEMENTS_COUNT) : formatUrl(
         `${routes.RESTIFY_PREFIX}/${schema}/count`
       ),
     headers: {
@@ -129,7 +129,7 @@ class _LLApiClient {
   })
 
   getAggregation = (pipeline, limit) => get({
-    url: formatUrl('/statements/aggregate'),
+    url: formatUrl(routes.STATEMENTS_AGGREGATE),
     headers: {
       Authorization: `Bearer ${this.getToken()}`
     },
@@ -140,28 +140,12 @@ class _LLApiClient {
     }
   })
 
-  peopleUpload = (file, owner) => {
-    const peopleForm = form({
-      users: file,
-      userId: owner
-    });
-    return post({
-      url: formatUrl('/uploadpeople'),
-      headers: {
-        Authorization: `Bearer ${this.getToken()}`,
-        ContentType: 'multipart/form-data; boundary=,',
-        Accept: 'text/csv'
-      },
-      body: peopleForm
-    });
-  }
-
   uploadLogo = (file, id) => {
     const logoForm = form({
       logo: file
     });
     return post({
-      url: formatUrl('/uploadlogo'),
+      url: formatUrl(routes.UPLOADLOGO),
       headers: {
         Authorization: `Bearer ${this.getToken()}`,
         ContentType: 'multipart/form-data; boundary=,',
@@ -175,7 +159,7 @@ class _LLApiClient {
   }
 
   downloadExport = ({ exportId, pipelines }) => get({
-    url: formatUrl('/export'),
+    url: formatUrl(routes.EXPORT),
     headers: {
       Authorization: `Bearer ${this.getToken()}`
     },
@@ -212,6 +196,36 @@ class _LLApiClient {
     query: {
       personaIdentifierId,
     }
+  });
+
+  personasUpload = ({
+    id,
+    file
+  }) => {
+    const personaForm = form({
+      id,
+      file: file.handle
+    });
+    return post({
+      url: formatUrl(routes.UPLOADPERSONAS),
+      headers: {
+        Authorization: `Bearer ${this.getToken()}`,
+        ContentType: 'multipart/form-data; boundary=,',
+        Accept: 'text/csv'
+      },
+      body: personaForm
+    });
+  };
+
+  importPersonas = ({
+    id
+  }) => post({
+    url: formatUrl(routes.IMPORTPERSONAS),
+    headers: {
+      Authorization: `Bearer ${this.getToken()}`,
+      ContentType: 'application/json'
+    },
+    body: { id },
   });
 }
 
