@@ -1,0 +1,23 @@
+.content {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.container {
+  position: relative;
+}
+
+.card {
+  padding: 15px;
+  margin: 15px;
+  min-width: 220px;
+}
+
+.card:first-child {
+  margin-left: 2px;
+}
+
+.card:last-child {
+  margin-right: 2px;  
+}

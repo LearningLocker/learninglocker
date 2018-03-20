@@ -24,8 +24,6 @@ test('BasicQueryBuilder ExpandedSection Should generate query from path', () => 
 
   const query = queryBuilderCacheFilterGenerator({ section });
 
-  console.log('query', JSON.stringify(query.queryBuilderCacheFilter));
-
   expect(query.queryBuilderCacheFilter.$and[0].$and[0]['path.0'].$eq).toEqual('statement');
   expect(query.queryBuilderCacheFilter.$and[0].$and[1]['path.1'].$eq).toEqual('context');
   expect(query.queryBuilderCacheFilter.$and[0].$and[2]['path.2'].$eq).toEqual('extensions');

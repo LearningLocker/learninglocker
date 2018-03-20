@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
-import { Iterable } from 'immutable';
+import { Iterable, Map } from 'immutable';
 
-export const clientIdsSelector = state => state.clientIds;
+export const clientIdsSelector = state => state.clientIds || new Map();
 
 const actualIdFromClientIds = (clientIds, id) => clientIds.get(id, id);
 
