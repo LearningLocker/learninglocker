@@ -188,7 +188,8 @@ const deleteButton = ({ parentModel }) => compose(
 const dashboardSharingHandlers = withHandlers({
   addShareable: ({ updateModel, model }) => () => {
     const newShareable = model.get('shareable', new List()).push(new Map({
-      title: '~ Shareable'
+      title: '~ Shareable',
+      createdAt: new Date(),
     }));
     updateModel({
       path: 'shareable',
@@ -213,13 +214,18 @@ const DashboardSharingComponent = ({
       </div>
       <ModelList
         schema="dashboardSharing"
-        ModelForm={ModelForm}
-        getDescription={mod => mod.get('title')}
+        isLoading={false}
+        hasMore={false}
         models={model.get('shareable', new List())}
+        fetchMore={() => {}}
+        ModelForm={ModelForm}
         ModelListItem={ModelListItemWithoutModel}
         parentModel={model}
         updateModel={updateModel}
-        buttons={[(deleteButton({ parentModel: model }))]} />
+        buttons={[(deleteButton({ parentModel: model }))]}
+        getDescription={mod => mod.get('title')}
+        noItemsDisplay="No shared links - click 'Add new link' to share your dashboard" />
+      <hr />
     </div>
   );
 

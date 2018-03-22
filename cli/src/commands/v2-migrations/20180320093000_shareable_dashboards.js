@@ -1,3 +1,4 @@
+import logger from 'lib/logger';
 import mongoose from 'mongoose';
 import { getConnection } from 'lib/connections/mongoose';
 import Dashboard, { schema } from 'lib/models/dashboard';
@@ -10,6 +11,7 @@ schema.set('strict', false);
 const OldDashboardModel = getConnection().model('Dashboard', schema, 'dashboards');
 
 const up = async () => {
+  logger.info('Moving existing shared dashboards into new array format.');
   const dashboards = await Dashboard.find({}).exec();
 
   const updatePromises = map(dashboards, async (dashboard) => {
@@ -46,8 +48,7 @@ const up = async () => {
 };
 
 const down = async () => {
-  console.log('Unimplemented');
-
+  logger.info('Moving first shared link in dashboards back into old format.');
   const dashboards = await OldDashboardModel.find({}).exec();
 
   const updatePromises = map(dashboards, (dashboard) => {
