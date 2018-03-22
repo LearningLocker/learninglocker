@@ -9,6 +9,7 @@ import {
   withHandlers,
   setDisplayName,
   withProps,
+  withState,
   lifecycle
 } from 'recompose';
 import Spinner from 'ui/components/Spinner';
@@ -76,15 +77,26 @@ const enhance = compose(
       )
     })
   ),
+  withState('isExpandedOnce', 'setExpandedOnce', false),
   lifecycle({
-    componentWillMount: function componentWillMount() {
+    componentWillReceiveProps: ({
+      setMetadata,
+      isExpandedOnce,
+      setExpandedOnce,
+      model
+    }) => {
       // If this component also has a withModel hoc on it,
       // then we want that to be expanded by default.
-      if (this.props.model && this.props.model.get('_id')) {
+      if (model && model.get('_id') && isExpandedOnce === false) {
         // this works because setMetadata comes from the withModel hoc (as opposed to withModels)
-        this.props.setMetadata('isExpanded', true);
+        setMetadata('isExpanded', true);
+        setExpandedOnce(true);
       }
     },
+    componentWillUnmount: function componentWillUnmount() {
+      // otherwise isExpandedOnce preserves it's state between unmounting and mounting again :(
+      this.props.setExpandedOnce(false);
+    }
   }),
   setDisplayName('ModelList')
 );
@@ -113,6 +125,7 @@ const render = ({
   hasMore,
   fetchMore,
   modifyButtons,
+
   ...other
 }) => {
   if (modelsWithModel.size > 0) {
