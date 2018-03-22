@@ -3,6 +3,8 @@ import logger from 'lib/logger';
 import Html from 'ui/components/Html';
 import PrettyError from 'pretty-error';
 import { renderToString } from 'react-dom/server';
+import boolean from 'boolean';
+import defaultTo from 'lodash/defaultTo';
 
 // this is the assets manifest for the client build
 // it describes the location of all the compiled assets (js, css)
@@ -19,7 +21,12 @@ export default async (req, res, next) => {
       clientAssets.client.js,
     ];
 
-    data.state = {};
+    data.state = {
+      app: {
+        RESTRICT_CREATE_ORGANISATION: boolean(defaultTo(process.env.RESTRICT_CREATE_ORGANISATION, true))
+      }
+    };
+
     const html = renderToString(<Html {...data} />);
     global.navigator = { userAgent: req.headers['user-agent'] };
     res.status(200);
