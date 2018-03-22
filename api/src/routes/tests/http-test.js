@@ -18,7 +18,7 @@ let jwtToken;
 let orgJwtToken;
 const provider = 'native';
 
-describe.only('API HTTP Route tests', function describeTest() {
+describe('API HTTP Route tests', function describeTest() {
   this.timeout(10000);
   before((done) => {
     if (connection.readyState !== 1) {
