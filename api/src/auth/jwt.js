@@ -28,11 +28,13 @@ const payloadDefaults = ({
   provider = 'native',
   scopes = [],
   extensions = {},
+  organisation = null,
   ...others
 }) => ({
   provider,
   scopes,
   extensions,
+  organisation,
   ...others
 });
 
@@ -43,11 +45,13 @@ const createJWT = ({
   filter,
   tokenType,
   tokenId,
-  extensions
+  shareableId = null,
+  extensions,
+  organisation = null
 }, opts = {
   expiresIn: '7d'
 }) => sign(
-  { userId, provider, scopes, tokenType, tokenId, extensions, filter },
+  { userId, provider, scopes, tokenType, tokenId, shareableId, extensions, filter, organisation },
   process.env.APP_SECRET,
   opts
 );
@@ -87,22 +91,28 @@ const createOrgJWT = async (user, organisationId, provider) => {
   return createJWT(orgTokenPayload);
 };
 
-const createDashboardTokenPayload = async (dashboard, provider) => {
+const createDashboardTokenPayload = async (dashboard, shareableId, provider) => {
+  if (!shareableId && dashboard.shareable.length > 0) {
+    shareableId = dashboard.shareable[0]._id;
+  }
+
   const visualisationIds = getVisualisationIdsFromDashboard(dashboard);
   return payloadDefaults({
     provider,
     scopes: getDashboardScopes(dashboard),
     tokenType: 'dashboard',
     tokenId: String(dashboard._id),
-    filter: JSON.parse(dashboard.filter),
+    shareableId,
+    organisation: String(dashboard.organisation),
+    filter: {},
     extensions: {
       visualisationIds,
     }
   });
 };
 
-const createDashboardJWT = async (dashboard, provider) => {
-  const dashboardPayload = await createDashboardTokenPayload(dashboard, provider);
+const createDashboardJWT = async (dashboard, shareableId, provider) => {
+  const dashboardPayload = await createDashboardTokenPayload(dashboard, shareableId, provider);
   return createJWT(dashboardPayload);
 };
 

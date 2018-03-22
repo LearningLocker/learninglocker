@@ -25,16 +25,20 @@ const enhance = compose(
     model: PropTypes.object,
     fetchMore: PropTypes.func.isRequired,
     ModelForm: PropTypes.func.isRequired,
+    getModelKey: PropTypes.func,
     displayOwner: PropTypes.bool,
     buttons: PropTypes.arrayOf(PropTypes.func),
     modifyButtons: PropTypes.func,
-    getDescription: PropTypes.func
+    getDescription: PropTypes.func,
+    noItemsDisplay: PropTypes.string,
   }),
   defaultProps({
+    getModelKey: model => model.get('_id', Math.random().toString()),
     getDescription: model => model.get('description', ''),
     buttons: [DeleteButton],
     displayOwner: true,
-    modifyButtons: buttons => buttons
+    modifyButtons: buttons => buttons,
+    noItemsDisplay: 'No items.',
   }),
   connect(
     (state, {
@@ -121,20 +125,22 @@ const render = ({
   schema,
   ModelForm,
   getDescription,
+  getModelKey,
   buttons,
   hasMore,
   fetchMore,
   modifyButtons,
-
+  ModelListItem: ModelListItemToUse = ModelListItem,
+  noItemsDisplay,
   ...other
 }) => {
   if (modelsWithModel.size > 0) {
     return (
       <div>
         { modelsWithModel.map(model =>
-          <ModelListItem
+          <ModelListItemToUse
             {...other}
-            key={model.get('_id')}
+            key={getModelKey(model)}
             model={model}
             schema={schema}
             getDescription={getDescription}
@@ -153,7 +159,7 @@ const render = ({
   }
   return (
     <div className="row">
-      <div className="col-md-12"><h4>No items.</h4></div>
+      <div className="col-md-12"><h4>{ noItemsDisplay }</h4></div>
     </div>
   );
 };
