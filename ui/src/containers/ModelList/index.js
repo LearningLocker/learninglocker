@@ -38,7 +38,7 @@ const enhance = compose(
     buttons: [DeleteButton],
     displayOwner: true,
     modifyButtons: buttons => buttons,
-    noItemsDisplay: 'No Items.',
+    noItemsDisplay: 'No items.',
   }),
   connect(
     (state, {
