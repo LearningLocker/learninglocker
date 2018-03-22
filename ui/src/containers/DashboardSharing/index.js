@@ -23,6 +23,7 @@ import {
 } from 'lib/constants/sharingScopes';
 import RadioGroup from 'ui/components/Material/RadioGroup';
 import RadioButton from 'ui/components/Material/RadioButton';
+import OpenLinkButtonComponent from './OpenLinkButton';
 import styles from './styles.css';
 
 const schema = 'dashboard';
@@ -183,6 +184,16 @@ const deleteButton = ({ parentModel }) => compose(
   })
 )(DeleteButtonComponent);
 
+const openLinkButton = ({ parentModel }) => compose(
+  withHandlers({
+    openLink: ({ id }) => () => {
+      const model = parentModel.get('shareable').find(mod => mod.get('_id') === id);
+      const url = getShareableUrl({ model, parentModel });
+      window.open(url, `shareable-${parentModel.get('_id')}-${model.get('_id')}`);
+    }
+  })
+)(OpenLinkButtonComponent);
+
 // --------------------------
 
 const dashboardSharingHandlers = withHandlers({
@@ -222,7 +233,7 @@ const DashboardSharingComponent = ({
         ModelListItem={ModelListItemWithoutModel}
         parentModel={model}
         updateModel={updateModel}
-        buttons={[(deleteButton({ parentModel: model }))]}
+        buttons={[(openLinkButton({ parentModel: model })), (deleteButton({ parentModel: model }))]}
         getDescription={mod => mod.get('title')}
         noItemsDisplay="No shared links - click 'Add new link' to share your dashboard" />
       <hr />
