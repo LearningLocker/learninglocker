@@ -37,9 +37,16 @@ export default (req, res) => {
   Dashboard.findById(dashboardId).then((dashboard) => {
     if (dashboard === null) throw new Error('Dashboard not found');
 
-    const shareableDashboard = find(dashboard.shareable, share =>
-      share._id.toString() === shareableId
-    );
+    let shareableDashboard;
+    if (shareableId) {
+      shareableDashboard = find(dashboard.shareable, share =>
+        share._id.toString() === shareableId
+      );
+    } else if (dashboard.shareable.length > 0) {
+      shareableDashboard = dashboard.shareable[0];
+    } else {
+      throw new Error('This dashboard has not been shared');
+    }
 
     const dashboardWithShareable = dashboard;
 
