@@ -9,6 +9,10 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.2.1]
+### Fixes
+  - Ensures order on personaIdentifier IFIs 
+
 ## [2.2.0]
 ### Added
   - Override system email address ([#1029](https://github.com/LearningLocker/learninglocker/pull/1029)) (thanks to [@eashman](https://github.com/eashman))

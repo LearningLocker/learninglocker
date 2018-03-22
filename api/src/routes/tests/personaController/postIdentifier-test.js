@@ -14,6 +14,7 @@ describe('personaController postIdentifier', () => {
 
   beforeEach(async () => {
     await personaService.clearService();
+    await personaService.migrate();
     token = await createOrgToken();
   });
 
@@ -46,5 +47,40 @@ describe('personaController postIdentifier', () => {
     expect(result.body.ifi.value.name).to.equal('test');
     expect(result.body.ifi.key).to.equal('account');
     expect(result.body.persona).to.equal(persona.id);
+  });
+
+  it('should not be able to duplicate an identifier', async () => {
+    const { persona } = await personaService.createPersona({
+      organisation: testId,
+      name: 'Dave'
+    });
+
+    const ifi = {
+      key: 'account',
+      value: {
+        homePage: 'http://example.org',
+        name: 'test'
+      }
+    };
+
+    await personaService.createIdentifier({
+      organisation: testId,
+      persona: persona.id,
+      ifi
+    });
+
+    await apiApp.post(routes.PERSONA_IDENTIFIER)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        ifi: {
+          key: ifi.key,
+          value: {
+            name: ifi.value.name,
+            homePage: ifi.value.homePage,
+          }
+        },
+        persona: persona.id
+      })
+      .expect(400);
   });
 });
