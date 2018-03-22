@@ -13,8 +13,7 @@ api/logs/*
 dist/
 dump.rdb
 node_modules/
-node_modules
-npm-debug.log
+npm-debug.log*
 pids/
 static/logos/*.*
 storage/*.*
