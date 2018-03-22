@@ -9,7 +9,8 @@ import {
   withHandlers,
   setDisplayName,
   withProps,
-  withState
+  withState,
+  lifecycle
 } from 'recompose';
 import Spinner from 'ui/components/Spinner';
 import DeleteButton from 'ui/containers/DeleteButton';
@@ -77,15 +78,21 @@ const enhance = compose(
     })
   ),
   withState('isExpandedOnce', 'setExpandedOnce', false),
-  connect((state, { model, setMetadata, isExpandedOnce, setExpandedOnce }) => {
-    // If this component also has a withModel hoc on it,
-    // then we want that to be expanded by default.
-    if (model && model.get('_id') && isExpandedOnce === false) {
-      // this works because setMetadata comes from the withModel hoc (as opposed to withModels)
-      setMetadata('isExpanded', true);
-      setExpandedOnce(true);
+  lifecycle({
+    componentWillReceiveProps: ({
+      setMetadata,
+      isExpandedOnce,
+      setExpandedOnce,
+      model
+    }) => {
+      // If this component also has a withModel hoc on it,
+      // then we want that to be expanded by default.
+      if (model && model.get('_id') && isExpandedOnce === false) {
+        // this works because setMetadata comes from the withModel hoc (as opposed to withModels)
+        setMetadata('isExpanded', true);
+        setExpandedOnce(true);
+      }
     }
-    return {};
   }),
   setDisplayName('ModelList')
 );
