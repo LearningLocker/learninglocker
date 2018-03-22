@@ -12,39 +12,35 @@ const OldDashboardModel = getConnection().model('Dashboard', schema, 'dashboards
 
 const up = async () => {
   logger.info('Moving existing shared dashboards into new array format.');
-  const dashboards = await Dashboard.find({}).exec();
+  const dashboards = await Dashboard.find({}).lean().exec();
 
   const updatePromises = map(dashboards, async (dashboard) => {
     if (!dashboard.shareable) {
       dashboard.shareable = [];
     }
 
-    dashboard.shareable.unshift({
+    const shareable = dashboard.shareable;
+    shareable.unshift({
       title: '~ Shareable',
       filter: dashboard.filter,
-      visability: dashboard.visability,
-      validDomains: dashboard.validDomains
+      visibility: dashboard.visibility,
+      validDomains: dashboard.validDomains,
+      createdAt: new Date(),
     });
 
-    console.log('id ', dashboard._id);
-
-    return dashboard.save();
+    return OldDashboardModel.update(
+      { _id: objectId(dashboard._id) },
+      {
+        shareable,
+      },
+      {
+        safe: false,
+        strict: false
+      }
+    );
   });
 
   await Promise.all(updatePromises);
-
-  const result = await OldDashboardModel.update(
-    {},
-    {
-      $unset: { filter: true, visibility: true, validDomains: true },
-    },
-    {
-      multi: true,
-      safe: false,
-      strict: false
-    }
-  );
-  console.log('result', result);
 };
 
 const down = async () => {
@@ -52,7 +48,7 @@ const down = async () => {
   const dashboards = await OldDashboardModel.find({}).exec();
 
   const updatePromises = map(dashboards, (dashboard) => {
-    if (!dashboard.shareable || dashboard.shareable.length <= 1) {
+    if (!dashboard.shareable || dashboard.shareable.length < 1) {
       return Promise.resolve();
     }
 
@@ -62,9 +58,9 @@ const down = async () => {
       { _id: objectId(dashboard._id) },
       {
         filter: shareable.filter,
-        visability: shareable.visability,
+        visibility: shareable.visibility,
         validDomains: shareable.validDomains,
-        shareable
+        shareable: dashboard.shareable,
       },
       {
         safe: false,
