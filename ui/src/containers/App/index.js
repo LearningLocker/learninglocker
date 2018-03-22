@@ -44,7 +44,9 @@ const renderPage = (routeName) => {
       loader: System.import('ui/containers/ResetPassword')
     }));
   }
-  if (testRoute('embedded-dashboard')) {
+  if (
+    testRoute('embedded-dashboard')
+  ) {
     return React.createElement(createAsyncComponent({
       loader: System.import('ui/containers/EmbeddableDashboard')
     }));

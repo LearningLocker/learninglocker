@@ -92,6 +92,10 @@ const createOrgJWT = async (user, organisationId, provider) => {
 };
 
 const createDashboardTokenPayload = async (dashboard, shareableId, provider) => {
+  if (!shareableId && dashboard.shareable.length > 0) {
+    shareableId = dashboard.shareable[0]._id;
+  }
+
   const visualisationIds = getVisualisationIdsFromDashboard(dashboard);
   return payloadDefaults({
     provider,
