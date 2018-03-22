@@ -7,7 +7,7 @@ import {
 } from 'lib/constants/expirationNotifications';
 import expirationNotificationEmails from './expirationNotificationEmails';
 
-describe.only('expirationNotificationEmails', () => {
+describe('expirationNotificationEmails', () => {
   beforeEach(async () => {
     await Organisation.remove({});
   });
