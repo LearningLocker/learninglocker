@@ -92,6 +92,10 @@ const enhance = compose(
         setMetadata('isExpanded', true);
         setExpandedOnce(true);
       }
+    },
+    componentWillUnmount: function componentWillUnmount() {
+      // otherwise isExpandedOnce preserves it's state between unmounting and mounting again :(
+      this.props.setExpandedOnce(false);
     }
   }),
   setDisplayName('ModelList')

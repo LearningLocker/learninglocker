@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { fromJS } from 'immutable';
 import { withProps, compose } from 'recompose';
-import { withModels } from 'ui/utils/hocs';
+import { withModels, withModel } from 'ui/utils/hocs';
 import UserPicture from 'ui/components/UserPicture';
 import { queryStringToQuery, modelQueryStringSelector } from 'ui/redux/modules/search';
 import SearchBox from 'ui/containers/SearchBox';
@@ -11,6 +11,7 @@ import { expandModel } from 'ui/redux/modules/models';
 import ModelList from 'ui/containers/ModelList';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import styles from 'ui/containers/Users/users.css';
+import { routeNodeSelector } from 'redux-router5';
 
 const schema = 'user';
 const UserList = compose(
@@ -18,20 +19,11 @@ const UserList = compose(
     schema,
     sort: fromJS({ email: 1, _id: -1 })
   }),
-  withModels
+  withModels,
+  withModel
 )(ModelList);
 
 class SiteUsers extends Component {
-  static propTypes = {
-    // expandModel: PropTypes.func,
-  }
-
-  componentDidMount = () => {
-    // if (this.props.params.userId) {
-    //   this.props.expandModel(schema, this.props.params.userId, true);
-    // }
-  }
-
   renderUserDescription = (model) => {
     const name = model.get('name', model.get('email'));
 
@@ -58,6 +50,7 @@ class SiteUsers extends Component {
       <div className="row">
         <div className="col-md-12">
           <UserList
+            id={this.props.userId}
             filter={queryStringToQuery(this.props.searchString, schema)}
             getDescription={this.renderUserDescription}
             ModelForm={SiteUserItem} />
@@ -72,6 +65,7 @@ export default compose(
   connect(
     state => ({
       searchString: modelQueryStringSelector(schema)(state),
+      userId: routeNodeSelector('admin.users.id')(state).route.params.userId
     }),
     { expandModel }
   )
