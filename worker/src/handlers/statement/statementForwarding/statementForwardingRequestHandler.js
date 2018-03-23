@@ -36,7 +36,6 @@ const sendRequest = async (statement, statementForwarding) => {
   const statementContent = JSON.stringify(statement);
 
   const headers = generateHeaders(statementContent, statementForwarding);
-
   const request = popsicle.request({
     method: 'POST',
     body: statement,
