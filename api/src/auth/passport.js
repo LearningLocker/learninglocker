@@ -7,7 +7,7 @@ import Promise from 'bluebird';
 import CustomStrategy from 'passport-custom';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { find, get, omit } from 'lodash';
+import { find, get, omit, omitBy } from 'lodash';
 import { fromJS } from 'immutable';
 import assert from 'assert';
 import Client from 'lib/models/client';
@@ -49,8 +49,13 @@ const createPayloadFromPayload = (payload) => {
         return { expectedToken, user };
       }
       case 'dashboard': {
+        const shareable = find(dashboard.shareable, share =>
+          share._id.toString() === payload.shareableId
+        );
+
         const expectedToken = await createDashboardTokenPayload(
           dashboard,
+          (shareable ? shareable._id.toString() : null),
           provider
         );
         return { expectedToken };
@@ -69,10 +74,12 @@ async function verifyToken(token, done) {
     const decodedToken = await verifyPromise(token, process.env.APP_SECRET);
 
     // Recreates the token's payload to make sure that all scopes are still valid.
+
     const { expectedToken, user } = await createPayloadFromPayload(
       decodedToken
     );
-    const tokenToVerify = omit(decodedToken, ['iat', 'exp']);
+    const tokenToVerify1 = omit(decodedToken, ['iat', 'exp']);
+    const tokenToVerify = omitBy(tokenToVerify1, (v, k) => k === 'shareableId' && !v);
 
     const iExpectedToken = fromJS(expectedToken);
     const iTokenToVerify = fromJS(tokenToVerify);

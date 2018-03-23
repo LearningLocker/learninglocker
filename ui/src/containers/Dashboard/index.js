@@ -1,26 +1,15 @@
 import React, { PropTypes, Component } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Map, List, is } from 'immutable';
-import uuid from 'uuid';
 import Input from 'ui/components/Material/Input';
 import { withProps, compose } from 'recompose';
-import QueryBuilder from 'ui/containers/QueryBuilder';
 import { withModel } from 'ui/utils/hocs';
 import DashboardGrid from 'ui/containers/DashboardGrid';
 import DeleteButton from 'ui/containers/DeleteButton';
-import DebounceInput from 'react-debounce-input';
-import { Card } from 'react-toolbox/lib/card';
-import RadioGroup from 'ui/components/Material/RadioGroup';
-import RadioButton from 'ui/components/Material/RadioButton';
-import getRouteUrl from 'ui/utils/getRouteUrl';
 import Owner from 'ui/containers/Owner';
 import PrivacyToggleButton from 'ui/containers/PrivacyToggleButton';
-import {
-  NOWHERE,
-  ANYWHERE,
-  VALID_DOMAINS
-} from 'lib/constants/sharingScopes.js';
-
+import DashboardSharing from 'ui/containers/DashboardSharing';
+import Spinner from 'ui/components/Spinner';
 import styles from './styles.css';
 
 const schema = 'dashboard';
@@ -93,8 +82,10 @@ class Dashboard extends Component {
 
   render() {
     const { model, organisationId } = this.props;
-    const filterId = uuid.v4();
-    const filter = model.get('filter', new Map({}));
+
+    if (!model.get('_id')) {
+      return <Spinner />;
+    }
 
     return (
       <div className="row">
@@ -128,62 +119,12 @@ class Dashboard extends Component {
             </span>
           </div>
           {this.props.getMetadata('isSharing') &&
-            <Card className={styles.sharingCard}>
-              <div className="row">
-                <div className="col-md-6">
-                  <div className="form-group">
-                    <label htmlFor="shareLink">Shareable link</label>
-                    <div>
-                      <DebounceInput
-                        id="shareLink"
-                        className={styles.textField}
-                        debounceTimeout={377}
-                        value={`${getRouteUrl()}/dashboards/${model.get('_id')}`}
-                        onChange={() => null} />
-                    </div>
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="visibility">
-                      Where can this be viewed?
-                    </label>
-                    <RadioGroup
-                      name="visibility"
-                      value={model.get('visibility')}
-                      onChange={this.onChangeVisibility}>
-                      <RadioButton label="Nowhere" value={NOWHERE} />
-                      <RadioButton label="Anywhere" value={ANYWHERE} />
-                      <RadioButton
-                        label="Only where I choose"
-                        value={VALID_DOMAINS} />
-                    </RadioGroup>
-                  </div>
-                  {model.get('visibility') === VALID_DOMAINS &&
-                    <div className="form-group">
-                      <label htmlFor="validDomains">
-                        What are the valid domains?
-                      </label>
-                      <div>
-                        <DebounceInput
-                          id="validDomains"
-                          className={styles.textField}
-                          debounceTimeout={377}
-                          value={model.get('validDomains')}
-                          onChange={this.onChangeValidDomains} />
-                      </div>
-                    </div>}
-                </div>
-                <div className="col-md-6">
-                  <div className="form-group">
-                    <label htmlFor={filterId}>Filter</label>
-                    <QueryBuilder
-                      id={filterId}
-                      componentPath={new List(['dashboard', model.get('_id')])}
-                      query={filter}
-                      onChange={this.handleFilterChange} />
-                  </div>
-                </div>
-              </div>
-            </Card>}
+            <div>
+              <DashboardSharing
+                shareable={model.get('shareable', new List())}
+                id={model.get('_id')} />
+            </div>
+          }
         </div>
         <div className="clearfix" />
         <DashboardGrid
@@ -199,9 +140,11 @@ class Dashboard extends Component {
 
 export default compose(
   withStyles(styles),
-  withProps(({ params, id }) => ({
-    schema,
-    id: id || params.dashboardId
-  })),
+  withProps(({ params, id }) =>
+    ({
+      schema,
+      id: id || params.dashboardId
+    })
+  ),
   withModel
 )(Dashboard);
