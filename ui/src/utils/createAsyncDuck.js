@@ -2,9 +2,9 @@ import { put, call, takeEvery } from 'redux-saga/effects';
 import Promise from 'bluebird';
 import identity from 'lodash/identity';
 import DispatchNotReadyError from 'ui/utils/errors/DispatchNotReadyError';
-import Unauthorised from 'lib/errors/Unauthorised';
 import { actions as logoutAcitons } from 'ui/redux/modules/auth/logout';
 import { alert } from 'ui/redux/modules/alerts';
+import HttpError from 'ui/utils/errors/HttpError';
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -77,6 +77,7 @@ export default function createAsyncDuck({
       const result = yield call(doAction, args);
       yield put(actions.success(result));
       args.resolve(result);
+
       if (successDelay > -1) {
         yield call(delay, successDelay); // shows the success state for 2 seconds
         yield put(actions.complete(args));
@@ -97,7 +98,7 @@ export default function createAsyncDuck({
         yield call(delay, failureDelay); // shows the failure state for 2 seconds
         yield put(actions.complete(args));
       }
-      if (err.constructor === Unauthorised) {
+      if (err.constructor === HttpError && err.status === 401) {
         yield put(logoutAcitons.logoutAction());
       }
     }
