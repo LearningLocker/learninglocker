@@ -220,7 +220,7 @@ const DashboardSharingComponent = ({
         <button
           className="btn btn-primary pull-right"
           onClick={addShareable}>
-          Add new link
+          New shareable link
         </button>
       </div>
       <ModelList
@@ -235,7 +235,7 @@ const DashboardSharingComponent = ({
         updateModel={updateModel}
         buttons={[(openLinkButton({ parentModel: model })), (deleteButton({ parentModel: model }))]}
         getDescription={mod => mod.get('title')}
-        noItemsDisplay="No shared links - click 'Add new link' to share your dashboard" />
+        noItemsDisplay="No shared links - click 'New shareable link' to share your dashboard" />
       <hr />
     </div>
   );

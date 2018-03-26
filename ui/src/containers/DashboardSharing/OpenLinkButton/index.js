@@ -38,8 +38,8 @@ class OpenLinkButton extends Component {
 
 
     return (
-      <button className={classes} title="Open link" onClick={this.onClick.bind(null)} style={{ width }} disabled={this.props.disabled}>
-        <i className="icon ion-eye" />
+      <button className={classes} title="View dashboard in new tab" onClick={this.onClick.bind(null)} style={{ width }} disabled={this.props.disabled}>
+        <i className="icon ion-android-open" />
       </button>
     );
   }
