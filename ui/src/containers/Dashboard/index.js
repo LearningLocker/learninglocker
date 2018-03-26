@@ -54,7 +54,7 @@ class Dashboard extends Component {
     });
   };
 
-  onChangeWidgetTitle = (widgetIndex, widgetPatch, title) => {
+  onChangeWidgetTitle = (widgetIndex, title) => {
     this.onWidgetChange([widgetIndex, 'title'], title);
   };
 
