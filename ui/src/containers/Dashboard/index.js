@@ -10,6 +10,7 @@ import Owner from 'ui/containers/Owner';
 import PrivacyToggleButton from 'ui/containers/PrivacyToggleButton';
 import DashboardSharing from 'ui/containers/DashboardSharing';
 import Spinner from 'ui/components/Spinner';
+import { connect } from 'react-redux';
 import styles from './styles.css';
 
 const schema = 'dashboard';
@@ -53,12 +54,21 @@ class Dashboard extends Component {
     });
   };
 
-  onChangeWidgetTitle = (widgetIndex, title) => {
+  onChangeWidgetTitle = (widgetIndex, widgetPatch, title) => {
     this.onWidgetChange([widgetIndex, 'title'], title);
   };
 
-  onChangeWidgetVisualisation = (widgetIndex, visualisation) => {
-    this.onWidgetChange([widgetIndex, 'visualisation'], visualisation);
+  onChangeWidgetVisualisation = (widgetIndex, visualisation, title) => {
+    const { model } = this.props;
+    const newModel = model
+      .setIn(['widgets', widgetIndex, 'visualisation'], visualisation)
+      .setIn(['widgets', widgetIndex, 'title'], title);
+    const widgetsUpdate = newModel.get('widgets');
+
+    this.props.updateModel({
+      path: ['widgets'],
+      value: widgetsUpdate
+    });
   };
 
   onChangeVisibility = (value) => {
