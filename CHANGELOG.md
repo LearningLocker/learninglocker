@@ -9,6 +9,12 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.2.2]
+### Fixes
+  - Cast `SMTP_SECURED` boolean flag ([Github #1117](https://github.com/LearningLocker/learninglocker/issues/1117)) ([#LL-510](https://ht2labs.myjetbrains.com/youtrack/issue/LL-510))
+### Added
+  - `SMTP_IGNORE_TLS` and `SMTP_REQUIRE_TLS` env flags (https://nodemailer.com/smtp/#tls-options)
+
 ## [2.2.1]
 ### Fixes
   - Ensures order on personaIdentifier IFIs 
