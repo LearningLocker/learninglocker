@@ -10,7 +10,6 @@ import Owner from 'ui/containers/Owner';
 import PrivacyToggleButton from 'ui/containers/PrivacyToggleButton';
 import DashboardSharing from 'ui/containers/DashboardSharing';
 import Spinner from 'ui/components/Spinner';
-import { connect } from 'react-redux';
 import styles from './styles.css';
 
 const schema = 'dashboard';
