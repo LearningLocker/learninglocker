@@ -28,7 +28,6 @@ before_script:
   - mkdir ${PWD}/mongodb-linux-x86_64-${MONGODB}/data
   - ${PWD}/mongodb-linux-x86_64-${MONGODB}/bin/mongod --dbpath ${PWD}/mongodb-linux-x86_64-${MONGODB}/data --logpath ${PWD}/mongodb-linux-x86_64-${MONGODB}/mongodb.log --fork
   - npm install pm2 -g
-  - yarn build-all
 
 cache:
   yarn: true
@@ -44,6 +43,7 @@ script:
   - npm run lint
   - yarn test
   # Integration tests.
+  - yarn build-all
   - yarn start-test
   - yarn test-integration-run
 
