@@ -43,9 +43,7 @@ const withStatementsVisualisation = (WrappedComponent) => {
 
     shouldComponentUpdate = ({ results, model, fetchState }) => !(
       this.props.results.equals(results) &&
-      this.getAxes().equals(unflattenAxes(model)) &&
-      this.props.model.get('stacked') === model.get('stacked') &&
-      this.props.model.get('filters').equals(model.get('filters')) &&
+      this.props.model.equals(model) &&
       this.props.fetchState === fetchState
     );
 
@@ -55,23 +53,10 @@ const withStatementsVisualisation = (WrappedComponent) => {
       }
     }
 
-    isLoading = () => this.props.fetchState === IN_PROGRESS ||
-      !this.props.fetchState;
-
-    getFormattedResults = results =>
-      getFormattedResults(this.getAxes().getIn(['group', 'optionKey'], 'date'), results);
-
-    getAxes = () => unflattenAxes(this.props.model);
+    isLoading = () => this.props.fetchState === IN_PROGRESS || !this.props.fetchState;
 
     renderPreview = () => (
-      <WrappedComponent
-        {...this.props}
-        previewPeriod={this.props.model.get('previewPeriod')}
-        stacked={this.props.model.get('stacked', true)}
-        axes={this.getAxes()}
-        labels={this.props.model.get('filters', new List()).map(filter => filter.get('label'))}
-        colors={this.props.model.get('filters', new List()).map((filter, index) => filter.get('color') || VISUALISATION_COLORS[index])}
-        getFormattedResults={this.getFormattedResults} />
+      <WrappedComponent model={this.props.model} results={this.props.results} />
     );
 
     renderSpinner = () => (
@@ -98,7 +83,7 @@ const withStatementsVisualisation = (WrappedComponent) => {
     shouldFetch: visualisationShouldFetchSelector(id)(state),
     fetchState: visualisationFetchStateSelector(id)(state)
   }),
-  { fetchVisualisation })(WithStatementsVisualisation);
+    { fetchVisualisation })(WithStatementsVisualisation);
 };
 
 export default compose(
