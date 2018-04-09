@@ -5909,10 +5909,6 @@ homedir-polyfill@^1.0.1:
   dependencies:
     parse-passwd "^1.0.0"
 
-hooks-fixed@2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/hooks-fixed/-/hooks-fixed-2.0.2.tgz#20076daa07e77d8a6106883ce3f1722e051140b0"
-
 hosted-git-info@^2.1.4:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-2.5.0.tgz#6d60e34b3abbc8313062c3b798ef8d901a07af3c"
@@ -7235,9 +7231,9 @@ jwt-decode@^1.5.1:
   dependencies:
     Base64 "~0.1.3"
 
-kareem@1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/kareem/-/kareem-1.5.0.tgz#e3e4101d9dcfde299769daf4b4db64d895d17448"
+kareem@2.0.6:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/kareem/-/kareem-2.0.6.tgz#011ed59fd718bb147c63141a799fc888cd5a211b"
 
 karma-cli@^0.1.1:
   version "0.1.2"
@@ -8486,7 +8482,13 @@ mongodb-core@3.0.4:
     bson "~1.0.4"
     require_optional "^1.0.1"
 
-mongodb@2.2.34, mongodb@^2.1.4:
+mongodb@3.0.4, mongodb@^3.0.1:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-3.0.4.tgz#ee0c0f7bc565edc5f40ee2d23170e522a8ad2286"
+  dependencies:
+    mongodb-core "3.0.4"
+
+mongodb@^2.1.4:
   version "2.2.34"
   resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-2.2.34.tgz#a34f59bbeb61754aec432de72c3fe21526a44c1a"
   dependencies:
@@ -8502,12 +8504,6 @@ mongodb@^2.2.26:
     mongodb-core "2.1.19"
     readable-stream "2.2.7"
 
-mongodb@^3.0.1:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-3.0.4.tgz#ee0c0f7bc565edc5f40ee2d23170e522a8ad2286"
-  dependencies:
-    mongodb-core "3.0.4"
-
 mongoose-detective@~0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/mongoose-detective/-/mongoose-detective-0.1.1.tgz#853b05e2fc100c1cfae6d52171f62626de681fce"
@@ -8515,6 +8511,10 @@ mongoose-detective@~0.1.0:
 mongoose-findorcreate@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/mongoose-findorcreate/-/mongoose-findorcreate-0.1.2.tgz#47979b3e1bfd61ea50c5f490c18e149cee44a04c"
+
+mongoose-legacy-pluralize@1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/mongoose-legacy-pluralize/-/mongoose-legacy-pluralize-1.0.2.tgz#3ba9f91fa507b5186d399fb40854bff18fb563e4"
 
 mongoose-timestamp@^0.5.0:
   version "0.5.0"
@@ -8533,21 +8533,19 @@ mongoose-validators@^0.1.0:
   dependencies:
     validator "3.16.0"
 
-mongoose@^4.8.5:
-  version "4.13.11"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-4.13.11.tgz#da6edf8e399054e12836016316999519a358db43"
+mongoose@^5.0.13:
+  version "5.0.13"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.0.13.tgz#07c1ce9ecf9c758939891b5f180f448eda44f11d"
   dependencies:
     async "2.1.4"
     bson "~1.0.4"
-    hooks-fixed "2.0.2"
-    kareem "1.5.0"
+    kareem "2.0.6"
     lodash.get "4.4.2"
-    mongodb "2.2.34"
+    mongodb "3.0.4"
+    mongoose-legacy-pluralize "1.0.2"
     mpath "0.3.0"
-    mpromise "0.5.5"
-    mquery "2.3.3"
+    mquery "3.0.0"
     ms "2.0.0"
-    muri "1.3.0"
     regexp-clone "0.0.1"
     sliced "1.0.1"
 
@@ -8582,13 +8580,9 @@ mpath@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/mpath/-/mpath-0.3.0.tgz#7a58f789e9b5fd3c94520634157960f26bd5ef44"
 
-mpromise@0.5.5:
-  version "0.5.5"
-  resolved "https://registry.yarnpkg.com/mpromise/-/mpromise-0.5.5.tgz#f5b24259d763acc2257b0a0c8c6d866fd51732e6"
-
-mquery@2.3.3:
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/mquery/-/mquery-2.3.3.tgz#221412e5d4e7290ca5582dd16ea8f190a506b518"
+mquery@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/mquery/-/mquery-3.0.0.tgz#e5f387dbabc0b9b69859e550e810faabe0ceabb0"
   dependencies:
     bluebird "3.5.0"
     debug "2.6.9"
@@ -8629,10 +8623,6 @@ multiparty@^4.1.2:
   resolved "https://registry.yarnpkg.com/multiparty/-/multiparty-4.1.3.tgz#3c43c7fcb1896e17460436a9dd0b6ef1668e4f94"
   dependencies:
     fd-slicer "~1.0.1"
-
-muri@1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/muri/-/muri-1.3.0.tgz#aeccf3db64c56aa7c5b34e00f95b7878527a4721"
 
 mute-stream@0.0.5:
   version "0.0.5"
