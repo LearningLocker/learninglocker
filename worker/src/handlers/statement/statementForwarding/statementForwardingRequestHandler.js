@@ -154,7 +154,7 @@ const statementForwardingRequestHandler = async (
           return;
         });
       } else {
-        logger.info(`SENT statement ${updatedStatement._id} to ${STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE}`);
+        logger.info(`EXCEEDED max retry for statement ${updatedStatement._id}, failing (should go to dead letter queue).`);
         done(err); // failed, let redrive send to dead letter queue
       }
     } catch (err) {
