@@ -11,6 +11,7 @@ import {
   STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE,
 } from 'lib/constants/statements';
 import * as Queue from 'lib/services/queue';
+import decodeDot from 'lib/helpers/decodeDot';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -33,13 +34,15 @@ const sendRequest = async (statement, statementForwarding) => {
   const urlString = `${statementForwarding.configuration
     .protocol}://${statementForwarding.configuration.url}`;
 
-  const statementContent = JSON.stringify(statement);
+  const statementContent = decodeDot(JSON.stringify(
+    statement
+  ));
 
   const headers = generateHeaders(statementContent, statementForwarding);
 
   const request = popsicle.request({
     method: 'POST',
-    body: statement,
+    body: statementContent,
     url: urlString,
     headers,
     timeout: 16000,
