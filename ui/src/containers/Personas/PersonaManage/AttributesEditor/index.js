@@ -14,7 +14,7 @@ const enhance = compose(
     personaId: PropTypes.string.isRequired,
   }),
   withProps(({ personaId }) => ({
-    filter: new Map({ personaId }),
+    filter: new Map({ personaId: new Map({ $oid: personaId }) }),
     schema: 'personaAttribute',
     first: 100,
     sort: new Map({ _id: -1 }),
@@ -61,8 +61,7 @@ const render = ({
           {models.map(model => (
             <SavedRow
               id={model.get('_id')}
-              key={model.get('_id')}
-            />
+              key={model.get('_id')} />
           )).valueSeq()}
         </tbody>
       </table>
