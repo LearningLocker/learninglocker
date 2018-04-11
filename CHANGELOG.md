@@ -27,6 +27,10 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Migrations
 **This update requires a migration which can be run using `yarn migrate`.**
 
+## [2.2.3]
+### Fixes
+  - Parse persona ident and attribute queries
+  
 ## [2.2.2]
 ### Fixes
   - Cast `SMTP_SECURED` boolean flag ([Github #1117](https://github.com/LearningLocker/learninglocker/issues/1117)) ([#LL-510](https://ht2labs.myjetbrains.com/youtrack/issue/LL-510))
