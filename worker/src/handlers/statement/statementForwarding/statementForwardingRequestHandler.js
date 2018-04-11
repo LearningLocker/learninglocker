@@ -51,16 +51,15 @@ const sendRequest = async (statement, statementForwarding) => {
 
   try {
     const response = await request;
+    if (!(response.status >= 200 && response.status < 400)) {
+      throw new ForwardingRequestError(
+        `Status code was invalid: (${response.status})`,
+        response.body,
+      );
+    }
   } catch (err) {
     throw new ForwardingRequestError(
       `Error with popsicle request/response: ${JSON.stringify(requestOptions)}`,
-    );
-  }
-
-  if (!(response.status >= 200 && response.status < 400)) {
-    throw new ForwardingRequestError(
-      `Status code was invalid: (${response.status})`,
-      response.body,
     );
   }
 
