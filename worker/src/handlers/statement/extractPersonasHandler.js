@@ -1,5 +1,6 @@
 import { isArray, map } from 'lodash';
 import Promise from 'bluebird';
+import logger from 'lib/logger';
 import wrapHandlerForStatement from 'worker/handlers/statement/wrapHandlerForStatement';
 import { STATEMENT_EXTRACT_PERSONAS_QUEUE, getIfiDisplayName } from 'lib/constants/statements';
 import asignIdentifierToStatements from 'lib/services/persona/asignIdentifierToStatements';
@@ -23,16 +24,24 @@ const handleStatement = personaService => async (statement) => {
     personaName,
   });
 
-  const { persona } = await personaService.getPersona({
-    organisation: statement.organisation,
-    personaId
-  });
+  let display = 'Unknown name';
+  try {
+    const { persona } = await personaService.getPersona({
+      organisation: statement.organisation,
+      personaId
+    });
+    if (persona) {
+      display = persona.name;
+    }
+  } catch (err) {
+    logger.error('Error finding person - not updating statement', err);
+  }
 
   if (!wasCreated) {
     statement.personaIdentifier = identifierId;
     statement.person = {
       _id: personaId,
-      display: persona.name
+      display,
     };
     await statement.save();
   } else {

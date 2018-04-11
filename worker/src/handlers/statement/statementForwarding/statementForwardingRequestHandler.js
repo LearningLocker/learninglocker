@@ -37,7 +37,7 @@ const sendRequest = async (statement, statementForwarding) => {
 
   const headers = generateHeaders(statementContent, statementForwarding);
 
-  const request = popsicle.request({
+  const requestOptions = {
     method: 'POST',
     body: statement,
     url: urlString,
@@ -46,9 +46,17 @@ const sendRequest = async (statement, statementForwarding) => {
     options: {
       followRedirects: (() => true)
     }
-  });
+  };
+  const request = popsicle.request(requestOptions);
 
-  const response = await request;
+  try {
+    const response = await request;
+  } catch (err) {
+    throw new ForwardingRequestError(
+      `Error with popsicle request/response: ${JSON.stringify(requestOptions)}`,
+    );
+  }
+
   if (!(response.status >= 200 && response.status < 400)) {
     throw new ForwardingRequestError(
       `Status code was invalid: (${response.status})`,
