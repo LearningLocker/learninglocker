@@ -2,7 +2,7 @@ import * as popsicle from 'popsicle';
 import { assign } from 'lodash';
 import { Map } from 'immutable';
 import logger from 'lib/logger';
-import Statement from 'lib/models/statement';
+import Statement, { mapDot } from 'lib/models/statement';
 import mongoose from 'mongoose';
 import StatementForwarding from 'lib/models/statementForwarding';
 import ForwardingRequestError from
@@ -11,7 +11,6 @@ import {
   STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE,
 } from 'lib/constants/statements';
 import * as Queue from 'lib/services/queue';
-import decodeDot from 'lib/helpers/decodeDot';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -34,7 +33,7 @@ const sendRequest = async (statement, statementForwarding) => {
   const urlString = `${statementForwarding.configuration
     .protocol}://${statementForwarding.configuration.url}`;
 
-  const statementContent = decodeDot(JSON.stringify(
+  const statementContent = JSON.stringify(mapDot(
     statement
   ));
 
@@ -42,7 +41,7 @@ const sendRequest = async (statement, statementForwarding) => {
 
   const request = popsicle.request({
     method: 'POST',
-    body: statementContent,
+    body: mapDot(statement),
     url: urlString,
     headers,
     timeout: 16000,
