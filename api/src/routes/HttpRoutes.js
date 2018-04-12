@@ -41,6 +41,7 @@ import QueryBuilderCacheValue from 'lib/models/querybuildercachevalue';
 import Role from 'lib/models/role';
 import PersonasImport from 'lib/models/personasImport';
 import PersonasImportTemplate from 'lib/models/personasImportTemplate';
+import SiteSettings from 'lib/models/SiteSettings';
 import personaRESTHandler from 'api/routes/personas/personaRESTHandler';
 import personaIdentifierRESTHandler from 'api/routes/personas/personaIdentifierRESTHandler';
 import personaAttributeRESTHandler from 'api/routes/personas/personaAttributeRESTHandler';
@@ -211,6 +212,7 @@ restify.serve(router, QueryBuilderCacheValue);
 restify.serve(router, Role);
 restify.serve(router, PersonasImport);
 restify.serve(router, PersonasImportTemplate);
+restify.serve(router, SiteSettings);
 
 /**
  * CONNECTIONS and INDEXES

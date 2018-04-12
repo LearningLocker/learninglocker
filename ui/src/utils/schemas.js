@@ -336,6 +336,11 @@ query.define({});
 
 role.define({});
 
+const siteSettings = new LLSchema('siteSettings', {
+  idAttribute: '_id'
+});
+siteSettings.define({});
+
 export {
   user,
   lrs,
@@ -361,4 +366,5 @@ export {
   role,
   statementForwarding,
   personasImport,
+  siteSettings
 };
