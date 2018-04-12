@@ -25,7 +25,7 @@ const Register = ({
   return <Card>
     <CardText className={styles.container}>
       <div >
-        <img className={styles.logo} src={registerLogo} />
+        <img className={styles.logo} role="presentation" src={registerLogo} />
         <div className={styles.registerText}>REGISTER YOUR LOCKER</div>
         <hr className={styles.divider} />
         <div className={styles.benefits}>Get helpdesk access and help promote the Open Source project</div>
@@ -40,13 +40,14 @@ const Register = ({
           <button
             className={`btn btn-primary pull-right ${styles.dontShowAgain}`}
             onClick={setRegistered}
-            >Don't show again</button>
+            >Don&#39;t show again</button>
 
           <a 
             className={`btn btn-danger ${styles.register}`}
             href="https://www.ht2labs.com/learning-locker/register-installation/"
             target="_blank"
             onClick={setRegistered}
+            rel="noopener noreferrer"
             >Register</a>
 
         </div>

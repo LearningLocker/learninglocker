@@ -1,5 +1,6 @@
 import SiteSettings from 'lib/models/siteSettings';
 import { SITE_SETTINGS_ID } from 'lib/constants/siteSettings';
+import { getConnection } from 'lib/connections/mongoose';
 import mongoose from 'mongoose';
 
 const objectId = mongoose.Types.ObjectId;
