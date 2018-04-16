@@ -61,8 +61,7 @@ const render = ({
           {models.map(model => (
             <SavedRow
               id={model.get('_id')}
-              key={model.get('_id')}
-            />
+              key={model.get('_id')} />
           )).valueSeq()}
         </tbody>
       </table>
