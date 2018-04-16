@@ -29,8 +29,10 @@ class WidgetVisualisePicker extends Component {
   getVisualisationId = () => this.props.model.get('visualisation');
 
   onClickVisualisation = (visualisation) => {
-    this.props.onChangeTitle(this.getNewTitle(visualisation));
-    this.props.onChangeVisualisation(visualisation.get('_id'));
+    this.props.onChangeVisualisation(
+      visualisation.get('_id'),
+      this.getNewTitle(visualisation)
+    );
   };
 
   onChangeTitle = e => this.props.onChangeTitle(e.target.value);

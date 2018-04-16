@@ -17,7 +17,7 @@ export default () => {
 
   let currentlyWorking = false;
   subClient.on('message', (channel) => {
-    logger.info(`Message on channel '${channel}'`);
+    logger.debug(`Message on channel '${channel}'`);
 
     if (!currentlyWorking) {
       currentlyWorking = true;
