@@ -1,6 +1,5 @@
 import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
-import Unauthorised from 'lib/errors/Unauthorised';
 import { LOGOUT } from 'ui/redux/modules/auth/logout';
 import HttpError from 'ui/utils/errors/HttpError';
 import createAsyncDuck from './createAsyncDuck';
