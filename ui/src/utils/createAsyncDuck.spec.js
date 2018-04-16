@@ -2,6 +2,7 @@ import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import Unauthorised from 'lib/errors/Unauthorised';
 import { LOGOUT } from 'ui/redux/modules/auth/logout';
+import HttpError from 'ui/utils/errors/HttpError';
 import createAsyncDuck from './createAsyncDuck';
 
 test('createAsyncDuck should logout on Unauthorised error', async () => {
@@ -30,7 +31,9 @@ test('createAsyncDuck should logout on Unauthorised error', async () => {
   const createAsyncDuckSaga = createAsyncDuck({
     actionName: 'testAction',
     doAction: () => {
-      throw new Unauthorised('Unauthorised');
+      throw new HttpError('Unauthorised', {
+        status: 401
+      });
     },
     failureDelay: 0,
   }).sagas[0];
