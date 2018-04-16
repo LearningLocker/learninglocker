@@ -9,6 +9,33 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.4.0]
+
+## [2.3.0]
+### Added
+  - Multiple shareable links per dashboard
+    - Requires migration to be run
+  - Aggregations now can read from secondary members on replica set
+  - Sentinel Redis support
+  - New role to allow organisation creation (via site admin)
+### Security
+  - Passwords can only be changed for the user logged in or by site admins
+### Fixes
+  - Unicode data now pulled from dependency
+  - Ensure order on personaIdentifier IFI values (fixes issue with multiple personaIdents for the same actor)
+  - Fix for personaIdentifier migration
+### Performance and build
+  - Webpack 3 
+### Migrations
+**This update requires a migration which can be run using `yarn migrate`.**
+
+## [2.2.4]
+### Fixes
+  - Ensure statementForwarding query is valid json. (#1138)
+  - Persona import errors if there are no iris. (#1140)
+  - Workers handle errors on missing personas
+  - Workers handle errors on invalid JSON in statement forward callbacks
+
 ## [2.2.3]
 ### Fixes
   - Parse persona ident and attribute queries

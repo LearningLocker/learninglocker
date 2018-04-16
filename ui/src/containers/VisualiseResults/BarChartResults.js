@@ -9,14 +9,16 @@ export default withStatementsVisualisation(({
   colors,
   stacked,
   axes
-}) => (
-  <BarChart
-    results={getFormattedResults(results)}
-    labels={labels}
-    colors={colors}
-    stacked={stacked}
-    axesLabels={{
-      xLabel: axes.get('xLabel', 'X-Axes'),
-      yLabel: axes.get('yLabel', 'Y-Axes')
-    }} />
-));
+}) =>
+  (
+    <BarChart
+      results={getFormattedResults(results)}
+      labels={labels}
+      colors={colors}
+      stacked={stacked}
+      axesLabels={{
+        xLabel: axes.get('xLabel', 'X-Axes'),
+        yLabel: axes.get('yLabel', 'Y-Axes')
+      }} />
+  )
+);
