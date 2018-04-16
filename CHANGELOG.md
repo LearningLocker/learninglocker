@@ -27,6 +27,13 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Migrations
 **This update requires a migration which can be run using `yarn migrate`.**
 
+## [2.2.4]
+### Fixes
+  - Ensure statementForwarding query is valid json. (#1138)
+  - Persona import errors if there are no iris. (#1140)
+  - Workers handle errors on missing personas
+  - Workers handle errors on invalid JSON in statement forward callbacks
+
 ## [2.2.3]
 ### Fixes
   - Parse persona ident and attribute queries
