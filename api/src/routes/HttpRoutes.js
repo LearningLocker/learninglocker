@@ -198,7 +198,18 @@ router.get(
  * REST APIS
  */
 restify.defaults(RESTIFY_DEFAULTS);
-restify.serve(router, Organisation);
+restify.serve(router, Organisation, {
+  preUpdate: (req, res, next) => {
+    const authInfo = getAuthFromRequest(req);
+    const scopes = getScopesFromRequest(authInfo);
+    if (
+      findIndex(scopes, item => item === SITE_ADMIN) < 0
+    ) {
+      req.body = omit(req.body, 'expiration');
+    }
+    next();
+  }
+});
 restify.serve(router, Stream);
 restify.serve(router, Export);
 restify.serve(router, Download);

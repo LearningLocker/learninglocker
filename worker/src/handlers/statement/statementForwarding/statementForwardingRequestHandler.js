@@ -2,7 +2,7 @@ import * as popsicle from 'popsicle';
 import { assign } from 'lodash';
 import { Map } from 'immutable';
 import logger from 'lib/logger';
-import Statement from 'lib/models/statement';
+import Statement, { mapDot } from 'lib/models/statement';
 import mongoose from 'mongoose';
 import StatementForwarding from 'lib/models/statementForwarding';
 import ForwardingRequestError from
@@ -33,13 +33,15 @@ const sendRequest = async (statement, statementForwarding) => {
   const urlString = `${statementForwarding.configuration
     .protocol}://${statementForwarding.configuration.url}`;
 
-  const statementContent = JSON.stringify(statement);
+  const statementContent = JSON.stringify(mapDot(
+    statement
+  ));
 
   const headers = generateHeaders(statementContent, statementForwarding);
 
   const requestOptions = {
     method: 'POST',
-    body: statement,
+    body: mapDot(statement),
     url: urlString,
     headers,
     timeout: 16000,
