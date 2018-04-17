@@ -29,7 +29,7 @@ const renderDashboard = params => (model, index) => (
 
 const enhance = compose(
   connect(
-    (state) =>
+    state =>
       ({
         isLoading: isLoadingSelector('dashboard', new Map())(state),
         userId: loggedInUserId(state),
@@ -55,9 +55,7 @@ const enhance = compose(
     ({
       id,
       models,
-      model,
-      navigateTo,
-      organisation
+      model
     }) => {
       if (model.size === 0 && id) {
         return ({
