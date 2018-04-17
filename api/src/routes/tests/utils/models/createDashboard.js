@@ -6,5 +6,6 @@ export default (opts = { _id: testId }) =>
   Dashboard.create({
     name: 'Test dashboard',
     owner: ownerId,
+    organisation: testId,
     ...opts
   });

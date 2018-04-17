@@ -42,6 +42,18 @@
       "watch": ["worker/dist", ".env"],
       "wait_ready": true,
       "listen_timeout": 30000
+    },
+    {
+      "name": "Scheduler",
+      "script": "cli/dist/scheduler",
+      "cwd": ".",
+      "output": "./logs/stdout.log",
+      "error": "./logs/stderr.log",
+      "pid": "./pids/scheduler.pid",
+      "instances": 1,
+      "exec_mode": "cluster",
+      "detached": true,
+      "listen_timeout": 30000
     }
   ]
 }

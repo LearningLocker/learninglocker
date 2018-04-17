@@ -51,7 +51,8 @@ describe('API HTTP GET visualisations route scope filtering', () => {
   it('should return all visualisations inside the org when using site admin token', async () => {
     const bearerToken = await createUserToken([SITE_ADMIN]);
     await createVisualisations();
-    return assertNodes({ bearerToken }, 3);
+    const out = assertNodes({ bearerToken }, 3);
+    return out;
   });
 
   it('should return all visualisations inside the org when using client basic with ALL scopes', async () => {
@@ -77,6 +78,7 @@ describe('API HTTP GET visualisations route scope filtering', () => {
   it('should return no visualisations with dashboard token with no visualisations', async () => {
     await createVisualisation();
     const dashboardToken = await createDashboardToken();
-    return assertNodes({ bearerToken: dashboardToken }, 0);
+    const out = assertNodes({ bearerToken: dashboardToken }, 0);
+    return out;
   });
 });

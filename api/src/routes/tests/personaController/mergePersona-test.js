@@ -41,14 +41,14 @@ describe('PersonaController.mergePersona', () => {
     expectedCode
   }) => new Promise((resolve, reject) => {
     apiApp
-        .post(routes.MERGE_PERSONA)
-        .set('Authorization', `Bearer ${token}`)
-        .query({ mergePersonaFromId, mergePersonaToId })
-        .expect(expectedCode)
-        .end((err, res) => {
-          if (err) return reject(err);
-          resolve(res);
-        });
+      .post(routes.MERGE_PERSONA)
+      .set('Authorization', `Bearer ${token}`)
+      .query({ mergePersonaFromId, mergePersonaToId })
+      .expect(expectedCode)
+      .end((err, res) => {
+        if (err) return reject(err);
+        resolve(res);
+      });
   });
 
   const assertFailedMerge = async ({
@@ -70,7 +70,7 @@ describe('PersonaController.mergePersona', () => {
   };
 
   it('should merge two people', async () => {
-    const ifi1 = { key: 'mbox', value: 'mailto:A@test.com' };
+    const ifi1 = { key: 'mbox', value: 'mailto:A1@test.com' };
     const ifi2 = { key: 'mbox', value: 'mailto:A2@test.com' };
     const organisation = testId;
     const { personaId: personaAId } = await personaService.createUpdateIdentifierPersona({
