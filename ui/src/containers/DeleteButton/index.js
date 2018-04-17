@@ -57,7 +57,7 @@ class DeleteButton extends Component {
       'btn-default': this.props.small || this.props.white
     });
     const width = this.props.small ? '22.5px' : '33px';
-    
+
     const popupProps = {
       schema: this.props.schema,
       id: this.props.id,

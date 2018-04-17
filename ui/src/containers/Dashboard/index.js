@@ -57,8 +57,17 @@ class Dashboard extends Component {
     this.onWidgetChange([widgetIndex, 'title'], title);
   };
 
-  onChangeWidgetVisualisation = (widgetIndex, visualisation) => {
-    this.onWidgetChange([widgetIndex, 'visualisation'], visualisation);
+  onChangeWidgetVisualisation = (widgetIndex, visualisation, title) => {
+    const { model } = this.props;
+    const newModel = model
+      .setIn(['widgets', widgetIndex, 'visualisation'], visualisation)
+      .setIn(['widgets', widgetIndex, 'title'], title);
+    const widgetsUpdate = newModel.get('widgets');
+
+    this.props.updateModel({
+      path: ['widgets'],
+      value: widgetsUpdate
+    });
   };
 
   onChangeVisibility = (value) => {

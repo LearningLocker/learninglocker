@@ -9,6 +9,8 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.4.0]
+
 ## [2.3.0]
 ### Added
   - Multiple shareable links per dashboard
@@ -26,6 +28,8 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
   - Webpack 3 
 ### Migrations
 **This update requires a migration which can be run using `yarn migrate`.**
+
+## [2.2.5]
 
 ## [2.2.4]
 ### Fixes
