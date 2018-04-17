@@ -42,13 +42,13 @@ const enhance = compose(
   ),
   withProps({ schema: 'dashboard', filter: new Map() }),
   withModels,
-  withProps(({
+  withProps(
+    ({
       params
-    }) => {
-      return ({
+    }) =>
+      ({
         id: params.dashboardId
       })
-    }
   ),
   withModel,
   withProps(
