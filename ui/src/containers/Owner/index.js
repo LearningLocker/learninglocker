@@ -14,7 +14,7 @@ const getCreatedDate = (createdAt, _id) => {
     }
   }
   return createdAt;
-}
+};
 
 const Creator = compose(
   withProps(({ model }) => ({ schema: 'user', id: model.get('owner') })),
@@ -35,7 +35,7 @@ export default ({ model }) => {
   const formattedDate = createdAtFormatter(date);
   return (
     model.has('owner')
-    ? <Creator model={model} date={ formattedDate } />
+    ? <Creator model={model} date={formattedDate} />
     : <div style={{ marginTop: 8 }}>{ formattedDate }</div>
-  )
+  );
 };
