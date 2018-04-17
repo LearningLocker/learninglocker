@@ -221,9 +221,9 @@ restify.serve(router, User, {
     const scopes = getScopesFromRequest(authInfo);
 
     if (findIndex(scopes, item => item === SITE_ADMIN) < 0) {
-      // remove scope changes 
+      // remove scope changes
       req.body = omit(req.body, 'scopes');
-      if (req.body._id !== getUserIdFromAuthInfo(authInfo).toString()){
+      if (req.body._id !== getUserIdFromAuthInfo(authInfo).toString()) {
         // Don't allow changing of passwords
         req.body = omit(req.body, 'password');
       }
