@@ -80,6 +80,7 @@ proxy.on('error', (error, req, res) => {
   res.end(JSON.stringify(json));
 });
 
+app.use('/dashboards/:dashboardId/:shareableId', renderDashboard);
 app.use('/dashboards/:dashboardId', renderDashboard);
 app.use('*', renderApp);
 

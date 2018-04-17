@@ -18,12 +18,11 @@ let jwtToken;
 let orgJwtToken;
 const provider = 'native';
 
-describe('API HTTP Route tests', () => {
+describe('API HTTP Route tests', function describeTest() {
+  this.timeout(10000);
   before((done) => {
-    console.log('readyState', connection.readyState);
     if (connection.readyState !== 1) {
       connection.on('connected', () => {
-        console.log('connected');
         done();
       });
     } else {

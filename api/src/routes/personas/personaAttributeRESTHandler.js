@@ -8,52 +8,52 @@ const router = new express.Router();
 
 router.get(
   routes.PERSONA_ATTRIBUTE_COUNT,
-  passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   PersonaAttributeController.personaAttributeCount
 );
 router.get(
   routes.PERSONA_ATTRIBUTE,
-  passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   PersonaAttributeController.getPersonaAttributes
 );
 router.get(
   routes.PERSONA_ATTRIBUTE_ID,
-  passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   PersonaAttributeController.getPersonaAttribute
 );
 router.post(
   routes.PERSONA_ATTRIBUTE,
-  passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   PersonaAttributeController.addPersonaAttribute
 );
 router.post(
   routes.PERSONA_ATTRIBUTE_ID,
-  passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   PersonaAttributeController.updatePersonaAttribute
 );
 router.put(
   routes.PERSONA_ATTRIBUTE,
-  passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   PersonaAttributeController.addPersonaAttribute
 );
 router.put(
   routes.PERSONA_ATTRIBUTE_ID,
-  passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   PersonaAttributeController.updatePersonaAttribute
 );
 router.patch(
   routes.PERSONA_ATTRIBUTE_ID,
-  passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   PersonaAttributeController.updatePersonaAttribute
 );
 router.delete(
   routes.PERSONA_ATTRIBUTE_ID,
-  passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   PersonaAttributeController.deletePersonaAttribute
 );
 router.get(
   routes.CONNECTION_PERSONA_ATTRIBUTE,
-  passport.authenticate(['jwt', 'client_basic'], DEFAULT_PASSPORT_OPTIONS),
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   PersonaAttributeController.personaAttributeConnection
 );
 

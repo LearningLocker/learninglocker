@@ -6,7 +6,7 @@ import {
   queryStringToQuery,
   modelQueryStringSelector
 } from 'ui/redux/modules/search';
-import { withModels } from 'ui/utils/hocs';
+import { withModels, withModel } from 'ui/utils/hocs';
 import { addModel } from 'ui/redux/modules/models';
 import { routeNodeSelector } from 'redux-router5';
 import ModelList from 'ui/containers/ModelList';
@@ -19,12 +19,14 @@ const PersonaList = compose(
     schema,
     sort: fromJS({ _id: -1 })
   }),
-  withModels
+  withModels,
+  withModel
 )(ModelList);
 
 class PersonaManage extends Component {
   static propTypes = {
-    addModel: PropTypes.func
+    addModel: PropTypes.func,
+    personaId: PropTypes.string // optional
   };
 
   constructor(props) {
@@ -79,6 +81,7 @@ class PersonaManage extends Component {
         <div className="row">
           <div className="col-md-12">
             <PersonaList
+              id={this.props.personaId}
               filter={queryStringToQuery(this.props.searchString, schema)}
               ModelForm={PersonaView}
               saveParams={{ populate: 'personaIdentifiers' }}
@@ -92,7 +95,8 @@ class PersonaManage extends Component {
 export default connect(
   state => ({
     searchString: modelQueryStringSelector(schema)(state),
-    params: routeNodeSelector('organisation.people.manage')(state).route.params
+    params: routeNodeSelector('organisation.people.manage')(state).route.params,
+    personaId: routeNodeSelector('organisation.people.manage.persona')(state).route.params.personaId
   }),
   { addModel }
 )(PersonaManage);

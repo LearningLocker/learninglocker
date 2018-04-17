@@ -8,6 +8,9 @@ import UserForm from 'ui/containers/UserForm';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import Checkbox from 'ui/components/Material/Checkbox';
 import { connect } from 'react-redux';
+import { getAppDataSelector } from 'ui/redux/modules/app';
+import { currentScopesSelector } from 'ui/redux/modules/auth';
+import { SITE_ADMIN, SITE_CAN_CREATE_ORG, SITE_SCOPES } from 'lib/constants/scopes';
 
 const ORG_SETTINGS = 'organisationSettings';
 
@@ -42,6 +45,42 @@ const RolesList = compose(
   </div>)
 );
 
+const SiteRolesList = compose(
+  setPropTypes({
+    selectedRoles: PropTypes.instanceOf(List).isRequired,
+    handleRolesChange: PropTypes.func.isRequired,
+  }),
+  withProps({
+    sort: new Map({
+      title: 1,
+      _id: 1,
+    }),
+    filter: new Map({}),
+  }),
+)(({ selectedRoles, handleRolesChange }) => {
+  const models = new List([
+    new Map({
+      _id: SITE_CAN_CREATE_ORG,
+      title: SITE_SCOPES[SITE_CAN_CREATE_ORG]
+    })
+  ]);
+  return (<div>
+    {
+      models.map((model) => {
+        const modelId = model.get('_id');
+        const isChecked = selectedRoles.includes(modelId);
+        return (
+          <Checkbox
+            key={modelId}
+            label={model.get('title') || '~ Unnamed Role'}
+            checked={isChecked}
+            onChange={handleRolesChange.bind(null, modelId)} />
+        );
+      }).valueSeq()
+    }
+  </div>);
+});
+
 const getDefaultOrgSettings = organisation =>
   fromJS({
     organisation,
@@ -63,7 +102,9 @@ const enhance = compose(
     id: PropTypes.string.isRequired,
   }),
   connect(state => ({
-    organisationId: activeOrgIdSelector(state)
+    organisationId: activeOrgIdSelector(state),
+    activeScopes: currentScopesSelector(state),
+    RESTRICT_CREATE_ORGANISATION: getAppDataSelector('RESTRICT_CREATE_ORGANISATION')(state)
   })),
   withProps({
     schema: 'user',
@@ -108,6 +149,13 @@ const enhance = compose(
         );
         updateOrgSettings('roles', newRoles.toList());
       },
+    handleSiteRolesChange: ({ model, updateModel }) => (role, checked) => {
+      const scopes = model.get('scopes', new List()).toSet();
+      const newScopes = checked ?
+        scopes.add(role) :
+        scopes.delete(role);
+      updateModel({ path: 'scopes', value: newScopes.toList() });
+    },
     handleFilterChange: ({ updateOrgSettings }) =>
       (filter) => {
         updateOrgSettings('filter', filter);
@@ -116,12 +164,24 @@ const enhance = compose(
 );
 
 const render = (props) => {
-  const { model, organisationId, handleRolesChange, handleFilterChange } = props;
+  const {
+    model,
+    organisationId,
+    handleRolesChange,
+    handleFilterChange,
+    handleSiteRolesChange,
+    RESTRICT_CREATE_ORGANISATION
+  } = props;
   const userOrgSettings = getActiveOrgSettings({ model, organisationId });
   const roles = userOrgSettings.get('roles', new List());
   const rolesId = uuid.v4();
+  const siteRolesId = uuid.v4();
   const filterId = uuid.v4();
   const filter = fromJS(userOrgSettings.get('filter', new Map({})));
+
+  const siteRoles = model.get('scopes', new List());
+  const canEditSiteRoles = RESTRICT_CREATE_ORGANISATION &&
+    props.activeScopes.includes(SITE_ADMIN);
 
   return (
     <div>
@@ -136,6 +196,19 @@ const render = (props) => {
           </div>
         </div>
       </div>
+
+
+      {canEditSiteRoles && <div className="row">
+        <div className="col-md-12">
+          <div className="form-group">
+            <label htmlFor={siteRolesId}>Site Roles</label>
+            <div id={siteRolesId}>
+              <SiteRolesList selectedRoles={siteRoles} handleRolesChange={handleSiteRolesChange} />
+            </div>
+          </div>
+        </div>
+      </div>}
+
       <div className="form-group">
         <label htmlFor={filterId}>User Filter</label>
         <QueryBuilder

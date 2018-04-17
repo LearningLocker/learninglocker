@@ -1,7 +1,7 @@
 import React from 'react';
 import Input from './Input';
 
-const numberPattern = /^\d+(\.\d*)?$/;
+const numberPattern = /^\d+(\.\d+)?$/;
 
 const getTypedValue = (value) => {
   if (numberPattern.test(value)) {

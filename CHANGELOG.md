@@ -9,9 +9,67 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.4.0]
+
+## [2.3.0]
+### Added
+  - Multiple shareable links per dashboard
+    - Requires migration to be run
+  - Aggregations now can read from secondary members on replica set
+  - Sentinel Redis support
+  - New role to allow organisation creation (via site admin)
+### Security
+  - Passwords can only be changed for the user logged in or by site admins
+### Fixes
+  - Unicode data now pulled from dependency
+  - Ensure order on personaIdentifier IFI values (fixes issue with multiple personaIdents for the same actor)
+  - Fix for personaIdentifier migration
+### Performance and build
+  - Webpack 3 
+### Migrations
+**This update requires a migration which can be run using `yarn migrate`.**
+
+## [2.2.5]
+
+## [2.2.4]
+### Fixes
+  - Ensure statementForwarding query is valid json. (#1138)
+  - Persona import errors if there are no iris. (#1140)
+  - Workers handle errors on missing personas
+  - Workers handle errors on invalid JSON in statement forward callbacks
+
+## [2.2.3]
+### Fixes
+  - Parse persona ident and attribute queries
+  
+## [2.2.2]
+### Fixes
+  - Cast `SMTP_SECURED` boolean flag ([Github #1117](https://github.com/LearningLocker/learninglocker/issues/1117)) ([#LL-510](https://ht2labs.myjetbrains.com/youtrack/issue/LL-510))
+### Added
+  - `SMTP_IGNORE_TLS` and `SMTP_REQUIRE_TLS` env flags (https://nodemailer.com/smtp/#tls-options)
+
+## [2.2.1]
+### Fixes
+  - Ensures order on personaIdentifier IFIs 
+
 ## [2.2.0]
 ### Added
   - Override system email address ([#1029](https://github.com/LearningLocker/learninglocker/pull/1029)) (thanks to [@eashman](https://github.com/eashman))
+  - Google cloud services 
+    - Storage
+      - Requires the Cloud Storage JSON API to be enabled for your Google Cloud project
+      - New environment configs:
+        - `FS_GOOGLE_CLOUD_KEY_FILENAME` 
+          - Path to your Service account key JSON file. Must be configured to allow read/write/delete to your Cloud Storage bucket
+        - `FS_GOOGLE_CLOUD_PROJECT_ID` - Project ID
+        - `FS_GOOGLE_CLOUD_BUCKET` - Bucket name
+    - PubSub queues
+      - Requires PubSub API to be enabled for your Google Cloud project
+      - New environment configs:
+        - `PUBSUB_GOOGLE_CLOUD_KEY_FILENAME` 
+          - Path to your Service account key JSON file. Must be configured to allow read/write/delete to your Cloud Storage bucket
+        - `PUBSUB_GOOGLE_CLOUD_PROJECT_ID` - Project ID
+        - `PUBSUB_GOOGLE_CLOUD_SUBSCRIPTION_NAME` - Pubsub subscription name (defaults to `ll`)
 ### Fixed
   - "Go to visualisation" from dashboard widget ([#1034](https://github.com/LearningLocker/learninglocker/pull/1034)) (thanks to [@eashman](https://github.com/eashman))
   - Hide the source and results before visualisation type is picked
@@ -20,9 +78,16 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
   - Provides much more control over identifiers and attributes via the API and UI
   - Improved CSV upload tool
   - Improved persona creation performance
-
 ### Migrations
 This update requires a migration which can be run using `yarn migrate`. If installing via the deploy script this will automatically be done.
+
+## [2.1.4] - 2018-02-19
+### Fixed
+  - Fix for sending secured SMTP emails
+
+## [2.1.3] - 2018-01-15
+### Added
+  - Ensures `timestamp` and `stored` are selected over `statement.timestamp` and `statement.stored` in parsed queries
 
 ## [2.1.2] - 2018-01-02
 ### Fixed

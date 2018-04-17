@@ -9,6 +9,7 @@ import {
   withHandlers,
   setDisplayName,
   withProps,
+  withState,
   lifecycle
 } from 'recompose';
 import Spinner from 'ui/components/Spinner';
@@ -24,16 +25,20 @@ const enhance = compose(
     model: PropTypes.object,
     fetchMore: PropTypes.func.isRequired,
     ModelForm: PropTypes.func.isRequired,
+    getModelKey: PropTypes.func,
     displayOwner: PropTypes.bool,
     buttons: PropTypes.arrayOf(PropTypes.func),
     modifyButtons: PropTypes.func,
-    getDescription: PropTypes.func
+    getDescription: PropTypes.func,
+    noItemsDisplay: PropTypes.string,
   }),
   defaultProps({
+    getModelKey: model => model.get('_id', Math.random().toString()),
     getDescription: model => model.get('description', ''),
     buttons: [DeleteButton],
     displayOwner: true,
-    modifyButtons: buttons => buttons
+    modifyButtons: buttons => buttons,
+    noItemsDisplay: 'No items.',
   }),
   connect(
     (state, {
@@ -76,15 +81,26 @@ const enhance = compose(
       )
     })
   ),
+  withState('isExpandedOnce', 'setExpandedOnce', false),
   lifecycle({
-    componentWillMount: function componentWillMount() {
+    componentWillReceiveProps: ({
+      setMetadata,
+      isExpandedOnce,
+      setExpandedOnce,
+      model
+    }) => {
       // If this component also has a withModel hoc on it,
       // then we want that to be expanded by default.
-      if (this.props.model && this.props.model.get('_id')) {
+      if (model && model.get('_id') && isExpandedOnce === false) {
         // this works because setMetadata comes from the withModel hoc (as opposed to withModels)
-        this.props.setMetadata('isExpanded', true);
+        setMetadata('isExpanded', true);
+        setExpandedOnce(true);
       }
     },
+    componentWillUnmount: function componentWillUnmount() {
+      // otherwise isExpandedOnce preserves it's state between unmounting and mounting again :(
+      this.props.setExpandedOnce(false);
+    }
   }),
   setDisplayName('ModelList')
 );
@@ -109,19 +125,22 @@ const render = ({
   schema,
   ModelForm,
   getDescription,
+  getModelKey,
   buttons,
   hasMore,
   fetchMore,
   modifyButtons,
+  ModelListItem: ModelListItemToUse = ModelListItem,
+  noItemsDisplay,
   ...other
 }) => {
   if (modelsWithModel.size > 0) {
     return (
       <div>
         { modelsWithModel.map(model =>
-          <ModelListItem
+          <ModelListItemToUse
             {...other}
-            key={model.get('_id')}
+            key={getModelKey(model)}
             model={model}
             schema={schema}
             getDescription={getDescription}
@@ -140,7 +159,7 @@ const render = ({
   }
   return (
     <div className="row">
-      <div className="col-md-12"><h4>No items.</h4></div>
+      <div className="col-md-12"><h4>{ noItemsDisplay }</h4></div>
     </div>
   );
 };
