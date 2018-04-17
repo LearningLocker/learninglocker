@@ -9,6 +9,8 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.2.5]
+
 ## [2.2.4]
 ### Fixes
   - Ensure statementForwarding query is valid json. (#1138)
