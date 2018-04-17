@@ -11,6 +11,7 @@ export default class exportsDBHelpers {
         active: true,
         _id: '561a679c0c5d017e4004714f',
         lrs_id: '560a679c0c5d017e4004714f',
+        hash: '560a679c0c5d017e4004714a',
         statement: {
           version: '1.0.0',
           actor: {
@@ -43,6 +44,7 @@ export default class exportsDBHelpers {
         active: true,
         _id: '562a679c0c5d017e4004714f',
         lrs_id: '560a679c0c5d017e4004714f',
+        hash: '560a679c0c5d017e4004714b',
         statement: {
           version: '1.0.0',
           actor: {
@@ -75,6 +77,7 @@ export default class exportsDBHelpers {
         active: true,
         _id: '563a679c0c5d017e4004714f',
         lrs_id: '560a679c0c5d017e4004714f',
+        hash: '560a679c0c5d017e4004714c',
         statement: {
           version: '1.0.0',
           actor: {

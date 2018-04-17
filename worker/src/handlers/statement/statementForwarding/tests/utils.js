@@ -7,6 +7,7 @@ import {
   STATEMENT_FORWARDING_DEADLETTER_QUEUE
 } from 'lib/constants/statements';
 import { map } from 'lodash';
+import { getPrefixedQueueName } from 'lib/services/queue';
 import { getQueueUrl, sqs } from 'lib/services/queue/sqs';
 import logger from 'lib/logger';
 import { getQueue } from 'lib/services/queue/bull';
@@ -17,7 +18,7 @@ const queueNames = [
   STATEMENT_EXTRACT_PERSONAS_QUEUE,
   STATEMENT_FORWARDING_QUEUE,
   STATEMENT_FORWARDING_REQUEST_QUEUE,
-  STATEMENT_FORWARDING_DEADLETTER_QUEUE
+  STATEMENT_FORWARDING_DEADLETTER_QUEUE,
 ];
 
 export const purgeBullQueues = () => {
@@ -29,8 +30,9 @@ export const purgeBullQueues = () => {
   }
 
   const purgeQueues = map(queueNames, async (item) => {
+    const prefixedQueueName = getPrefixedQueueName(item);
     const queue = await new Promise((resolve, reject) =>
-      getQueue(item, (err, queue2) => (err ? reject(err) : resolve(queue2)))
+    getQueue(prefixedQueueName, (err, queue2) => (err ? reject(err) : resolve(queue2)))
     );
 
     if (queue.client.domain !== null || queue.client.options.host !== '127.0.0.1') {
@@ -49,7 +51,8 @@ export const purgeSQSQueues = () => { // eslint-disable-line import/prefer-defau
   }
 
   const purgedQueues = map(queueNames, async (item) => {
-    const queueUrl = await getQueueUrl(item);
+    const prefixedQueueName = getPrefixedQueueName(item);
+    const queueUrl = await getQueueUrl(prefixedQueueName);
     if (
       !/_DEV_/.test(queueUrl) &&
       !/\/TRAVIS_/.test(queueUrl)

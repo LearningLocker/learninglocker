@@ -6,7 +6,7 @@ import { map } from 'lodash';
 import btoa from 'btoa';
 import Checkbox from 'ui/components/Material/Checkbox';
 import Dropdown from 'ui/components/Material/Dropdown';
-import { withSchema, withModel } from 'ui/utils/hocs';
+import { withModels, withModel } from 'ui/utils/hocs';
 import { API_SCOPES, XAPI_SCOPES } from 'lib/constants/scopes';
 import ValidationList from 'ui/components/ValidationList';
 import AuthorityEditor from './AuthorityEditor';
@@ -22,7 +22,11 @@ const renderStoreItems = stores =>
   ));
 
 const renderStoreDropdown = compose(
-  withSchema('lrs')
+  withProps({
+    schema: 'lrs',
+    first: 100
+  }),
+  withModels
 )(({ models, onSelect, selectedId, elemId }) =>
   <Dropdown
     label="LRS (optional)"
