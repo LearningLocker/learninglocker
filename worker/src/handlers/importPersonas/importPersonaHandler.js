@@ -5,7 +5,6 @@ import { getIfis } from 'lib/services/importPersonas/personasImportHelpers';
 import { PERSONA_IMPORT_QUEUE, STAGE_IMPORTED } from 'lib/constants/personasImport';
 import importPersona from 'lib/services/importPersonas/importPersona';
 import moment from 'moment';
-import mongoose from 'mongoose';
 import PersonasImport from 'lib/models/personasImport';
 import { addErrorsToCsv } from 'lib/services/importPersonas/importPersonas';
 
