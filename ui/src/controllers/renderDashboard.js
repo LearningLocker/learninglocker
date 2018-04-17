@@ -54,6 +54,7 @@ export default (req, res) => {
     dashboardWithShareable.filter = shareableDashboard.filter;
     dashboardWithShareable.title = shareableDashboard.title;
     dashboardWithShareable.visibility = shareableDashboard.visibility;
+    dashboardWithShareable.validDomains = shareableDashboard.validDomains;
 
     return dashboardWithShareable;
   })
@@ -66,7 +67,13 @@ export default (req, res) => {
         case sharingScopes.VALID_DOMAINS: {
           const parsedUrl = parseUrl(req.get('Referer'));
           const invalidReferer = !isMatch(parsedUrl.hostname, dashboard.validDomains);
-          if (invalidReferer) return res.status(404).send();
+          if (invalidReferer) {
+            const parsedSiteUrl = parseUrl(process.env.SITE_URL);
+            const siteIsntReferer = !isMatch(parsedUrl.hostname, parsedSiteUrl.hostname);
+            if (siteIsntReferer) {
+              return res.status(404).send('Dashboard can only be embedded within valid domains, or opened directly from Learning Locker');
+            }
+          }
           res.set('X-Frame-Options', `ALLOW-FROM ${parsedUrl.origin}`);
           return res.send(`<!doctype html>\n${renderHtmlWithReq(store)}`);
         }
