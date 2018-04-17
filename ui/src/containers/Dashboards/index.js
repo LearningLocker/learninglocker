@@ -13,6 +13,7 @@ import {
 import { loggedInUserId } from 'ui/redux/modules/auth';
 import Spinner from 'ui/components/Spinner';
 import Dashboard from 'ui/containers/Dashboard';
+import { activeOrgIdSelector } from 'ui/redux/modules/router';
 
 const renderSpinner = () => (
   <div style={{ height: '60vh', display: 'flex' }}>
@@ -28,30 +29,46 @@ const renderDashboard = params => (model, index) => (
 
 const enhance = compose(
   connect(
-    state => ({
-      isLoading: isLoadingSelector('dashboard', new Map())(state),
-      userId: loggedInUserId(state),
-      params: routeNodeSelector('organisation.dashboards')(state).route.params,
-      first: 300,
-    }),
+    (state) =>
+      ({
+        isLoading: isLoadingSelector('dashboard', new Map())(state),
+        userId: loggedInUserId(state),
+        params: routeNodeSelector('organisation.dashboards')(state).route.params,
+        first: 300,
+        organisation: activeOrgIdSelector(state)
+      })
+    ,
     { navigateTo: actions.navigateTo }
   ),
   withProps({ schema: 'dashboard', filter: new Map() }),
   withModels,
   withProps(({
       params
-    }) => ({
-      id: params.dashboardId
-    })),
+    }) => {
+      return ({
+        id: params.dashboardId
+      })
+    }
+  ),
   withModel,
   withProps(
     ({
       id,
       models,
-      model
-    }) => ({
-      modelsWithModel: !id || models.has(id) ? models : models.reverse().set(id, model).reverse()
-    })
+      model,
+      navigateTo,
+      organisation
+    }) => {
+      if (model.size === 0 && id) {
+        return ({
+          modelsWithModel: models
+        });
+      }
+
+      return ({
+        modelsWithModel: !id || models.has(id) ? models : models.reverse().set(id, model).reverse()
+      });
+    }
   ),
   withHandlers({
     pushRoute: ({ navigateTo, params: { organisationId } }) => (dashboardId) => {
