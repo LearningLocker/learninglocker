@@ -35,8 +35,6 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Migrations
 **This update requires a migration which can be run using `yarn migrate`.**
 
-## [2.2.5]
-
 ## [2.2.4]
 ### Fixes
   - Ensure statementForwarding query is valid json. (#1138)
