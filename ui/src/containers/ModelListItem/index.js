@@ -9,7 +9,7 @@ import { withProps, compose } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import styles from './modellistitem.css';
 
-class ModelListItem extends Component {
+export class ModelListItem extends Component {
   static propTypes = {
     schema: PropTypes.string.isRequired,
     model: PropTypes.instanceOf(Map).isRequired,
@@ -81,7 +81,7 @@ class ModelListItem extends Component {
         <div className={headerClasses} onClick={this.expandItem} >
           <span className="pull-right right-btns">
             { buttons.map((Button, key) =>
-              <Button schema={schema} id={model.get('_id')} key={key} />
+              (<Button schema={schema} id={model.get('_id')} key={key} />)
             )}
           </span>
           <i className={iconClasses} />
