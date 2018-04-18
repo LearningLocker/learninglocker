@@ -26,9 +26,8 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
   - Client can select more than 10 xAPI stores (#1130)
   - Server side validation of Statement Forward queries (#1138)
   - Statement forwards decode `&46;` in statement keys (#1134)
-  - Persona Attribute and Identifier APIs now parse $oid values for `persona` filters (#1133)
-  - Fixed issue with hanging file imports on persona data
-  - Switch to `clamdscan` as primary AV scanner
+  - Fixed issue with hanging file imports on persona data (#1141)
+  - Switch to `clamdscan` as primary AV scanner (#1141)
     - Requires updated .env settings - refer to .env.example
 ### Performance and build
   - Webpack 3 - improved build speed (#1094)
@@ -37,14 +36,14 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [2.2.4]
 ### Fixes
-  - Ensure statementForwarding query is valid json. (#1138)
+  - Server side validation of Statement Forward queries (#1138)
   - Persona import errors if there are no iris. (#1140)
-  - Workers handle errors on missing personas
-  - Workers handle errors on invalid JSON in statement forward callbacks
+  - Workers handle errors on missing personas (#1137)
+  - Workers handle errors on invalid JSON in statement forward callbacks (#1137)
 
 ## [2.2.3]
 ### Fixes
-  - Parse persona ident and attribute queries
+  - Persona Attribute and Identifier APIs now parse $oid values for `persona` filters (#1133)
   
 ## [2.2.2]
 ### Fixes
