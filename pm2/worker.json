@@ -13,6 +13,20 @@
       "listen_timeout": 30000,
       "watch": [".env"],
       "max_memory_restart" : "500M"
+    },
+    {
+      "name": "Scheduler",
+      "script": "cli/dist/scheduler",
+      "cwd": ".",
+      "output": "./logs/scheduler_stdout.log",
+      "error": "./logs/scheduler_stderr.log",
+      "pid": "./pids/scheduler.pid",
+      "instances": 1,
+      "exec_mode": "cluster",
+      "detached": true,
+      "listen_timeout": 30000,
+      "watch": [".env"],
+      "max_memory_restart" : "500M"
     }
    ]
  }
