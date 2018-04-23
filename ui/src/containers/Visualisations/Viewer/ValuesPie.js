@@ -53,8 +53,8 @@ const render = withStyles(styles)(
                 data={chartDataEntries}
                 nameKey={'groupId'}
                 valueKey={getSeriesDataKey(0)}
-                innerRadius={60}
-                outerRadius={80}>
+                fill={model.series[0].colour}
+                outerRadius={150}>
               </Pie>
               <Tooltip content={(props) => (
                 <div>

@@ -2,7 +2,7 @@
 import React from 'react';
 // @ts-ignore
 import { withStatementsVisualisation } from 'ui/utils/hocs';
-import Viewer from './ValuesTable';
+import Viewer from './ValuesHorizontalBar';
 
 const dummyModel = {
   stacked: false,
