@@ -1,4 +1,5 @@
 // @ts-check
+import getGroupedResults from './getGroupedResults';
 
 /**
  * @typedef {Object} GroupResult
@@ -13,11 +14,7 @@
  */
 const getValueGroupedSeriesResults = (seriesResults) => {
   return seriesResults.map((seriesResult) => {
-    return seriesResult.reduce((groupedSeriesResult, groupResult) => {
-      const { _id: groupId, model: name, count } = groupResult;
-      groupedSeriesResult[groupResult._id] = { groupId, name, count };
-      return groupedSeriesResult;
-    }, {});
+    return getGroupedResults(seriesResult);
   });
 };
 

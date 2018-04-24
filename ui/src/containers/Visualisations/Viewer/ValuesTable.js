@@ -14,6 +14,7 @@ import createGroupAxisLabeller from './utils/createGroupAxisLabeller';
 import createGroupTooltipLabeller from './utils/createGroupTooltipLabeller';
 // @ts-ignore
 import styles from './utils/styles.css';
+import keyCodes from 'lib/constants/keyCodes';
 
 /**
  * @typedef {Object} SeriesConfig
@@ -43,39 +44,41 @@ const render = withStyles(styles)(
     const chartDataEntries = getSortedValueChartEntries(groupDictionary, groupedSeriesResults);
 
     return (
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th className={styles.td}>{model.group.label}</th>
-            {model.series.map((series, index) => {
+      <div className={styles.tableWrapper}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th className={styles.td}>{model.group.label}</th>
+              {model.series.map((series, index) => {
+                return (
+                  <th key={index} className={styles.td} style={{ color: series.colour }}>
+                    {series.label}
+                  </th>
+                );
+              })}
+              <th className={styles.td}>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {chartDataEntries.map((chartDataEntry, entryIndex) => {
               return (
-                <th key={index} className={styles.td} style={{ color: series.colour }}>
-                  {series.label}
-                </th>
+                <tr key={entryIndex}>
+                  <td className={styles.td}>{groupDictionary[chartDataEntry.groupId]}</td>
+                  {model.series.map((series, seriesIndex) => {
+                    const data = chartDataEntry[getSeriesDataKey(seriesIndex)];
+                    return (
+                      <td key={seriesIndex} className={styles.td}>
+                        {data}
+                      </td>
+                    );
+                  })}
+                  <td className={styles.td}>{chartDataEntry.total}</td>
+                </tr>
               );
             })}
-            <th className={styles.td}>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {chartDataEntries.map((chartDataEntry) => {
-            return (
-              <tr>
-                <td className={styles.td}>{groupDictionary[chartDataEntry.groupId]}</td>
-                {model.series.map((series, index) => {
-                  const data = chartDataEntry[getSeriesDataKey(index)];
-                  return (
-                    <td key={index} className={styles.td} style={{ color: series.colour }}>
-                      {data}
-                    </td>
-                  );
-                })}
-                <td>{chartDataEntry.total}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     );
   }
 );
