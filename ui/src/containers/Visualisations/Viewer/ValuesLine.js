@@ -8,7 +8,7 @@ import getSeriesDataKey from './utils/getSeriesDataKey';
 import getValueGroupedSeriesResults from './utils/getValueGroupedSeriesResults';
 import getValueGroupDictionary from './utils/getValueGroupDictionary';
 import renderLines from './utils/renderLines';
-import ValuesCustomTooltip from './utils/ValuesCustomTooltip';
+import ValuesTooltip from './utils/ValuesTooltip';
 import getValueChartEntries from './utils/getValueChartEntries';
 import createGroupAxisLabeller from './utils/createGroupAxisLabeller';
 import createGroupTooltipLabeller from './utils/createGroupTooltipLabeller';
@@ -55,7 +55,7 @@ export default withStyles(styles)(
                 <YAxis type="number" />
                 <Legend />
                 {renderLines({ model })}
-                <Tooltip content={<ValuesCustomTooltip display={getGroupTooltipLabel} />} />;
+                <Tooltip content={<ValuesTooltip display={getGroupTooltipLabel} />} />;
               </LineChart>
             )}
           </AutoSizer>

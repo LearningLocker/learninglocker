@@ -9,7 +9,7 @@ import getSeriesDataKey from './utils/getSeriesDataKey';
 import getValueGroupedSeriesResults from './utils/getValueGroupedSeriesResults';
 import getValueGroupDictionary from './utils/getValueGroupDictionary';
 import renderBars from './utils/renderBars';
-import ValuesCustomTooltip from './utils/ValuesCustomTooltip';
+import ValuesTooltip from './utils/ValuesTooltip';
 import getSortedValueChartEntries from './utils/getSortedValueChartEntries';
 import createGroupAxisLabeller from './utils/createGroupAxisLabeller';
 import createGroupTooltipLabeller from './utils/createGroupTooltipLabeller';
@@ -80,7 +80,7 @@ export default compose(
                 <XAxis type="number" domain={[minValue, maxValue]} />
                 <Legend />
                 {renderBars({ model })}
-                <Tooltip content={<ValuesCustomTooltip display={getGroupTooltipLabel} />} />;
+                <Tooltip content={<ValuesTooltip display={getGroupTooltipLabel} />} />;
               </BarChart>
             )}
           </AutoSizer>

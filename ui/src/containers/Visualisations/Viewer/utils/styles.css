@@ -5,7 +5,8 @@
 }
 
 .chart svg g text {
-  font-size: 12px; }
+  font-size: 12px;
+}
 
 .barContainer {
   display: flex;
@@ -19,23 +20,26 @@
   border: 2px solid #f5f5f5;
   background-color: rgba(255, 255, 255, 0.8);
   padding: 10px;
-  font-size: 12px; }
+  font-size: 12px;
+}
 
 .label {
-  margin: 1;
+  margin: 2px 0px;
   color: #ED7030;
   font-weight: 700;
   word-break: break-all;
 }
 
 .value {
-  margin: 5;
+  margin: 1px 0px;
   color: #000;
-  font-weight: 300; }
+  font-weight: 300;
+}
 
 .desc {
   margin: 0;
-  color: #999; }
+  color: #999;
+}
 
 .buttons {
   display: flex;
@@ -46,15 +50,18 @@
 
 .prevButton {
   align-self: flex-start;
-  margin-left: 10px; }
+  margin-left: 10px;
+}
 
 .nextButton {
   margin-right: 10px;
-  margin-left: auto; }
+  margin-left: auto;
+}
 
 .xAxis {
   display: inline-block;
-  white-space: nowrap; }
+  white-space: nowrap;
+}
 
 .xAxisLabel {
   text-align: right;
@@ -79,7 +86,7 @@
 
 .yAxis {
   display: inline-block;
-  }
+}
 
 .chartWrapper {
   flex-grow: 1;

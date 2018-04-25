@@ -7,7 +7,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import getSeriesDataKey from './utils/getSeriesDataKey';
 import getValueGroupedSeriesResults from './utils/getValueGroupedSeriesResults';
 import getValueGroupDictionary from './utils/getValueGroupDictionary';
-import ValuesCustomTooltip from './utils/ValuesCustomTooltip';
+import ValuesTooltip from './utils/ValuesTooltip';
 import renderLines from './utils/renderLines';
 import getSortedValueChartEntries from './utils/getSortedValueChartEntries';
 import createGroupAxisLabeller from './utils/createGroupAxisLabeller';

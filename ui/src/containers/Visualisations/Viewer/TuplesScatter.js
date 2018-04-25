@@ -5,12 +5,14 @@ import { union } from 'lodash';
 import { AutoSizer } from 'react-virtualized';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import getTupleGroupedSeriesResults from './utils/getTupleGroupedSeriesResults';
-import getValueGroupDictionary from './utils/getValueGroupDictionary';
 import getTupleTableEntries from './utils/getTupleTableEntries';
 import Chart from './utils/Chart';
 import renderScatters from './utils/renderScatters';
+import TuplesTooltip from './utils/TuplesTooltip';
 // @ts-ignore
 import styles from './utils/styles.css';
+import getTupleNameDictionary from './utils/getTupleNameDictionary';
+import getTupleDataKey from './utils/getTupleDataKey';
 
 /**
  * @typedef {Object} SeriesConfig
@@ -36,7 +38,17 @@ export default withStyles(styles)(
   (props) => {
     const { model, seriesResults } = props;
     const groupedSeriesResults = getTupleGroupedSeriesResults(seriesResults);
-    const groupDictionary = getValueGroupDictionary(groupedSeriesResults);
+    const nameDictionary = getTupleNameDictionary(groupedSeriesResults);
+    console.log(nameDictionary);
+    const displayTooltipGroupNames = (firstCount, secondCount) => {
+      const names = nameDictionary[getTupleDataKey(firstCount, secondCount)];
+      const first10Names = names.slice(0, 10).join(', ');
+      if (names.length > 10) {
+        return `${first10Names}, more...`;
+      } else {
+        return first10Names;
+      }
+    };
 
     return (
       <Chart xAxisLabel={model.firstValue.label} yAxisLabel={model.secondValue.label}>
@@ -48,9 +60,12 @@ export default withStyles(styles)(
               margin={{ top: 10, right: 12, left: -10, bottom: 2 }}>
               <XAxis dataKey="firstCount" type="number" name={model.firstValue.label} />
               <YAxis dataKey="secondCount" type="number" name={model.secondValue.label} />
+              {renderScatters({ model, groupedSeriesResults })}
               <CartesianGrid />
               <Legend />
-              {renderScatters({ model, groupedSeriesResults })}
+              <Tooltip
+                cursor={{ strokeDasharray: '3 3' }}
+                content={<TuplesTooltip display={displayTooltipGroupNames} />} />
             </ScatterChart>
           )}
         </AutoSizer>
