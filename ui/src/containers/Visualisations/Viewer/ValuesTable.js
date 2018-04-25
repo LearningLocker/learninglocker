@@ -35,7 +35,7 @@ import keyCodes from 'lib/constants/keyCodes';
  * @property {number} count
  */
 
-const render = withStyles(styles)(
+export default withStyles(styles)(
   /**  @param {{ model: Model, seriesResults: GroupResult[][] }} props */
   (props) => {
     const { model, seriesResults } = props;
@@ -82,5 +82,3 @@ const render = withStyles(styles)(
     );
   }
 );
-
-export default render;

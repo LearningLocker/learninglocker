@@ -42,7 +42,7 @@ import styles from './utils/styles.css';
 
 const groupsPerPage = 10;
 
-const render = compose(
+export default compose(
   withStyles(styles),
   withState('page', 'setPage', 0)
 )(
@@ -89,5 +89,3 @@ const render = compose(
     );
   }
 );
-
-export default render;
