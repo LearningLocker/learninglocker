@@ -63,13 +63,6 @@ class StatementsForm extends Component {
     });
   }
 
-  renderSourceToggle = () => (
-    <Switch
-      checked={this.props.source}
-      label="Source"
-      onChange={this.toggleSource} />
-  );
-
   renderEditor = () => (
     <Editor model={this.props.model} exportVisualisation={this.props.exportVisualisation} />
   );
@@ -97,11 +90,7 @@ class StatementsForm extends Component {
         <div className="col-md-6 left-border">
           {this.renderEditor()}
         </div>
-        <div
-          className="col-md-6">
-          <div style={{ float: 'left' }}>
-            {this.renderSourceToggle()}
-          </div>
+        <div className="col-md-6">
           <div className="form-group form-inline" style={{ textAlign: 'right' }}>
             {this.renderTimePicker()}
           </div>
