@@ -7,13 +7,13 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import getSeriesDataKey from './utils/getSeriesDataKey';
 import getValueGroupedSeriesResults from './utils/getValueGroupedSeriesResults';
 import getValueGroupDictionary from './utils/getValueGroupDictionary';
-import ValuesTooltip from './utils/ValuesTooltip';
 import renderLines from './utils/renderLines';
 import getSortedValueChartEntries from './utils/getSortedValueChartEntries';
 import createGroupAxisLabeller from './utils/createGroupAxisLabeller';
 import createGroupTooltipLabeller from './utils/createGroupTooltipLabeller';
 // @ts-ignore
 import styles from './utils/styles.css';
+import PieTooltip from './utils/PieTooltip';
 
 /**
  * @typedef {Object} SeriesConfig
@@ -56,11 +56,7 @@ export default withStyles(styles)(
                 fill={model.series[0].colour}
                 outerRadius={150}>
               </Pie>
-              <Tooltip content={(props) => (
-                <div>
-                  {JSON.stringify(props)}
-                </div>
-              )} />;
+              <Tooltip content={<PieTooltip display={getGroupTooltipLabel} />} />;
             </PieChart>
           )}
         </AutoSizer>
