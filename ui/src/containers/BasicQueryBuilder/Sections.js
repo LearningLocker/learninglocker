@@ -45,7 +45,12 @@ export default class Sections extends Component {
     const sectionPath = section.get('keyPath', new List());
     const out = this.props.criteria.filter((value, key) => {
       const criteriaPath = key.get('criteriaPath', new List());
-      return criteriaPath.equals(sectionPath);
+
+      const matchChildGenerators = section.get('childGenerators', new List()).filter(generator =>
+        criteriaPath.slice(0, -1).equals(generator.get('path'))
+      ).count();
+
+      return criteriaPath.equals(sectionPath) || matchChildGenerators > 0;
     });
     return out;
   }
@@ -84,12 +89,11 @@ export default class Sections extends Component {
       onAddCriterion={this.props.onAddCriterion} />
   );
 
-  renderCollapsedSection = (section, key) =>
-    <CollapsedSection
-      used={this.getCriteriaForWholeSection(section) > 0}
-      section={section}
-      key={key}
-      onExpand={this.expandSection.bind(this, key, section)} />
+  renderCollapsedSection = (section, key) => (<CollapsedSection
+    used={this.getCriteriaForWholeSection(section) > 0}
+    section={section}
+    key={key}
+    onExpand={this.expandSection.bind(this, key, section)} />)
 
   render = () => {
     const {
