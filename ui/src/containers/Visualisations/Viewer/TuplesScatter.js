@@ -4,6 +4,9 @@ import { ScatterChart, XAxis, YAxis, Bar, Legend, Tooltip, CartesianGrid } from 
 import { union } from 'lodash';
 import { AutoSizer } from 'react-virtualized';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { compose } from 'recompose';
+// @ts-ignore
+import { withStatementsVisualisation } from 'ui/utils/hocs';
 import getTupleGroupedSeriesResults from './utils/getTupleGroupedSeriesResults';
 import getTupleTableEntries from './utils/getTupleTableEntries';
 import Chart from './utils/Chart';
@@ -22,24 +25,29 @@ import getTupleDataKey from './utils/getTupleDataKey';
  * @property {string} label
  * @typedef {Object} TupleValueConfig
  * @property {string} label
- * @typedef {Object} Model
+ * @typedef {Object} Config
  * @property {SeriesConfig[]} series
  * @property {GroupConfig} group
  * @property {TupleValueConfig} firstValue
  * @property {TupleValueConfig} secondValue
+ * @typedef {Object} Model
+ * @property {Config} config
  * @typedef {Object} GroupResult
  * @property {string} _id
  * @property {string} model
  * @property {number} count
  */
 
-export default withStyles(styles)(
+export default compose(
+  withStyles(styles),
+  withStatementsVisualisation,
+)(
   /**  @param {{ model: Model, seriesResults: GroupResult[][][] }} props */
   (props) => {
     const { model, seriesResults } = props;
+    const config = model.config;
     const groupedSeriesResults = getTupleGroupedSeriesResults(seriesResults);
     const nameDictionary = getTupleNameDictionary(groupedSeriesResults);
-    console.log(nameDictionary);
     const displayTooltipGroupNames = (firstCount, secondCount) => {
       const names = nameDictionary[getTupleDataKey(firstCount, secondCount)];
       const first10Names = names.slice(0, 10).join(', ');
@@ -51,16 +59,16 @@ export default withStyles(styles)(
     };
 
     return (
-      <Chart xAxisLabel={model.firstValue.label} yAxisLabel={model.secondValue.label}>
+      <Chart xAxisLabel={config.firstValue.label} yAxisLabel={config.secondValue.label}>
         <AutoSizer>
           {({ height, width }) => (
             <ScatterChart
               width={width}
               height={height}
               margin={{ top: 10, right: 12, left: -10, bottom: 2 }}>
-              <XAxis dataKey="firstCount" type="number" name={model.firstValue.label} />
-              <YAxis dataKey="secondCount" type="number" name={model.secondValue.label} />
-              {renderScatters({ model, groupedSeriesResults })}
+              <XAxis dataKey="firstCount" type="number" name={config.firstValue.label} />
+              <YAxis dataKey="secondCount" type="number" name={config.secondValue.label} />
+              {renderScatters({ config, groupedSeriesResults })}
               <CartesianGrid />
               <Legend />
               <Tooltip

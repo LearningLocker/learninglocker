@@ -5,6 +5,8 @@ import { BarChart, XAxis, YAxis, Bar, Legend, Tooltip } from 'recharts';
 import { union } from 'lodash';
 import { AutoSizer } from 'react-virtualized';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+// @ts-ignore
+import { withStatementsVisualisation } from 'ui/utils/hocs';
 import getSeriesDataKey from './utils/getSeriesDataKey';
 import getValueGroupedSeriesResults from './utils/getValueGroupedSeriesResults';
 import getValueGroupDictionary from './utils/getValueGroupDictionary';
@@ -29,11 +31,13 @@ import styles from './utils/styles.css';
  * @property {string} label
  * @typedef {Object} ValueConfig
  * @property {string} label
- * @typedef {Object} Model
+ * @typedef {Object} Config
  * @property {boolean} stacked
  * @property {SeriesConfig[]} series
  * @property {GroupConfig} group
  * @property {ValueConfig} value
+ * @typedef {Object} Model
+ * @property {Config} config
  * @typedef {Object} GroupResult
  * @property {string} _id
  * @property {string} model
@@ -44,11 +48,13 @@ const groupsPerPage = 10;
 
 export default compose(
   withStyles(styles),
-  withState('page', 'setPage', 0)
+  withStatementsVisualisation,
+  withState('page', 'setPage', 0),
 )(
   /**  @param {{ model: Model, seriesResults: GroupResult[][], page: number, setPage: (page: number) => void }} props */
   (props) => {
     const { model, seriesResults, page, setPage } = props;
+    const config = model.config;
     const groupedSeriesResults = getValueGroupedSeriesResults(seriesResults);
     const groupDictionary = getValueGroupDictionary(groupedSeriesResults);
     const chartDataEntries = getSortedValueChartEntries(groupDictionary, groupedSeriesResults);
@@ -72,14 +78,14 @@ export default compose(
             </span>
           )}
         </div>
-        <Chart xAxisLabel={model.value.label} yAxisLabel={model.group.label}>
+        <Chart xAxisLabel={config.value.label} yAxisLabel={config.group.label}>
           <AutoSizer>
             {({ height, width }) => (
               <BarChart layout="vertical" data={chartPageDataEntries} width={width} height={height}>
                 <YAxis type="category" dataKey="groupId" tickFormatter={getGroupAxisLabel} width={90} />
                 <XAxis type="number" domain={[minValue, maxValue]} />
                 <Legend />
-                {renderBars({ model })}
+                {renderBars({ config })}
                 <Tooltip content={<ValuesTooltip display={getGroupTooltipLabel} />} />;
               </BarChart>
             )}

@@ -13,16 +13,16 @@ import getSeriesDataKey from './getSeriesDataKey';
  * @typedef {Object} Series
  * @property {string} label
  * @property {string} colour
- * @typedef {Object} Model
+ * @typedef {Object} Config
  * @property {Series[]} series
  */
 
 /**
- * @param {{ model: Model, groupedSeriesResults: {[groupId: string]: GroupedSeriesResult}[] }} props
+ * @param {{ config: Config, groupedSeriesResults: {[groupId: string]: GroupedSeriesResult}[] }} props
  */
 const renderScatters = (props) => {
-  const { model, groupedSeriesResults } = props;
-  return model.series.map((series, seriesIndex) => {
+  const { config, groupedSeriesResults } = props;
+  return config.series.map((series, seriesIndex) => {
     const { label, colour } = series;
     return (
       <Scatter

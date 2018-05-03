@@ -4,6 +4,9 @@ import { PieChart, Pie, Tooltip } from 'recharts';
 import { union } from 'lodash';
 import { AutoSizer } from 'react-virtualized';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { compose } from 'recompose';
+// @ts-ignore
+import { withStatementsVisualisation } from 'ui/utils/hocs';
 import getSeriesDataKey from './utils/getSeriesDataKey';
 import getTupleGroupedSeriesResults from './utils/getTupleGroupedSeriesResults';
 import getValueGroupDictionary from './utils/getValueGroupDictionary';
@@ -24,21 +27,27 @@ import keyCodes from 'lib/constants/keyCodes';
  * @property {string} label
  * @typedef {Object} TupleValueConfig
  * @property {string} label
- * @typedef {Object} Model
+ * @typedef {Object} Config
  * @property {SeriesConfig[]} series
  * @property {GroupConfig} group
  * @property {TupleValueConfig} firstValue
  * @property {TupleValueConfig} secondValue
+ * @typedef {Object} Model
+ * @property {Config} config
  * @typedef {Object} GroupResult
  * @property {string} _id
  * @property {string} model
  * @property {number} count
  */
 
-export default withStyles(styles)(
+export default compose(
+  withStyles(styles),
+  withStatementsVisualisation,
+)(
   /**  @param {{ model: Model, seriesResults: GroupResult[][][] }} props */
   (props) => {
     const { model, seriesResults } = props;
+    const config = model.config;
     const groupedSeriesResults = getTupleGroupedSeriesResults(seriesResults);
     const groupDictionary = getValueGroupDictionary(groupedSeriesResults);
     const tableDataEntries = getTupleTableEntries(groupDictionary, groupedSeriesResults);
@@ -49,7 +58,7 @@ export default withStyles(styles)(
           <thead>
             <tr>
               <th className={styles.td}></th>
-              {model.series.map((series, index) => {
+              {config.series.map((series, index) => {
                 return (
                   <th key={index} colSpan="2" className={styles.td} style={{ color: series.colour }}>
                     {series.label}
@@ -58,14 +67,14 @@ export default withStyles(styles)(
               })}
             </tr>
             <tr>
-              <th className={styles.td}>{model.group.label}</th>
-              {model.series.map((series, seriesIndex) => {
+              <th className={styles.td}>{config.group.label}</th>
+              {config.series.map((series, seriesIndex) => {
                 return [
                   <th key={`${seriesIndex}-1`} className={styles.td} style={{ color: series.colour }}>
-                    {model.firstValue.label}
+                    {config.firstValue.label}
                   </th>,
                   <th key={`${seriesIndex}-2`} className={styles.td} style={{ color: series.colour }}>
-                    {model.secondValue.label}
+                    {config.secondValue.label}
                   </th>,
                 ];
               })}
@@ -76,7 +85,7 @@ export default withStyles(styles)(
               return (
                 <tr key={entryIndex}>
                   <td className={styles.td}>{groupDictionary[tableDataEntry.groupId]}</td>
-                  {model.series.map((series, seriesIndex) => {
+                  {config.series.map((series, seriesIndex) => {
                     const data = tableDataEntry.seriesResults[seriesIndex];
                     return [
                       <td key={`${seriesIndex}-1`} className={styles.td}>

@@ -4,6 +4,9 @@ import { PieChart, Pie, Tooltip } from 'recharts';
 import { union } from 'lodash';
 import { AutoSizer } from 'react-virtualized';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { compose } from 'recompose';
+// @ts-ignore
+import { withStatementsVisualisation } from 'ui/utils/hocs';
 import getSeriesDataKey from './utils/getSeriesDataKey';
 import getValueGroupedSeriesResults from './utils/getValueGroupedSeriesResults';
 import getValueGroupDictionary from './utils/getValueGroupDictionary';
@@ -24,21 +27,27 @@ import keyCodes from 'lib/constants/keyCodes';
  * @property {string} label
  * @typedef {Object} ValueConfig
  * @property {string} label
- * @typedef {Object} Model
+ * @typedef {Object} Config
  * @property {boolean} stacked
  * @property {SeriesConfig[]} series
  * @property {GroupConfig} group
  * @property {ValueConfig} value
+ * @typedef {Object} Model
+ * @property {Config} config
  * @typedef {Object} GroupResult
  * @property {string} _id
  * @property {string} model
  * @property {number} count
  */
 
-export default withStyles(styles)(
+export default compose(
+  withStyles(styles),
+  withStatementsVisualisation,
+)(
   /**  @param {{ model: Model, seriesResults: GroupResult[][] }} props */
   (props) => {
     const { model, seriesResults } = props;
+    const config = model.config;
     const groupedSeriesResults = getValueGroupedSeriesResults(seriesResults);
     const groupDictionary = getValueGroupDictionary(groupedSeriesResults);
     const chartDataEntries = getSortedValueChartEntries(groupDictionary, groupedSeriesResults);
@@ -48,8 +57,8 @@ export default withStyles(styles)(
         <table className={styles.table}>
           <thead>
             <tr>
-              <th className={styles.td}>{model.group.label}</th>
-              {model.series.map((series, index) => {
+              <th className={styles.td}>{config.group.label}</th>
+              {config.series.map((series, index) => {
                 return (
                   <th key={index} className={styles.td} style={{ color: series.colour }}>
                     {series.label}
@@ -64,7 +73,7 @@ export default withStyles(styles)(
               return (
                 <tr key={entryIndex}>
                   <td className={styles.td}>{groupDictionary[chartDataEntry.groupId]}</td>
-                  {model.series.map((series, seriesIndex) => {
+                  {config.series.map((series, seriesIndex) => {
                     const data = chartDataEntry[getSeriesDataKey(seriesIndex)];
                     return (
                       <td key={seriesIndex} className={styles.td}>

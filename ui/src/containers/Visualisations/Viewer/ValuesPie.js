@@ -4,6 +4,9 @@ import { PieChart, Pie, Tooltip } from 'recharts';
 import { union } from 'lodash';
 import { AutoSizer } from 'react-virtualized';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { compose } from 'recompose';
+// @ts-ignore
+import { withStatementsVisualisation } from 'ui/utils/hocs';
 import getSeriesDataKey from './utils/getSeriesDataKey';
 import getValueGroupedSeriesResults from './utils/getValueGroupedSeriesResults';
 import getValueGroupDictionary from './utils/getValueGroupDictionary';
@@ -23,21 +26,27 @@ import PieTooltip from './utils/PieTooltip';
  * @property {string} label
  * @typedef {Object} ValueConfig
  * @property {string} label
- * @typedef {Object} Model
+ * @typedef {Object} Config
  * @property {boolean} stacked
  * @property {SeriesConfig[]} series
  * @property {GroupConfig} group
  * @property {ValueConfig} value
+ * @typedef {Object} Model
+ * @property {Config} config
  * @typedef {Object} GroupResult
  * @property {string} _id
  * @property {string} model
  * @property {number} count
  */
 
-export default withStyles(styles)(
+export default compose(
+  withStyles(styles),
+  withStatementsVisualisation,
+)(
   /**  @param {{ model: Model, seriesResults: GroupResult[][] }} props */
   (props) => {
     const { model, seriesResults } = props;
+    const config = model.config;
     const groupedSeriesResults = getValueGroupedSeriesResults(seriesResults);
     const groupDictionary = getValueGroupDictionary(groupedSeriesResults);
     const chartDataEntries = getSortedValueChartEntries(groupDictionary, groupedSeriesResults);
@@ -53,7 +62,7 @@ export default withStyles(styles)(
                 data={chartDataEntries}
                 nameKey={'groupId'}
                 valueKey={getSeriesDataKey(0)}
-                fill={model.series[0].colour}
+                fill={config.series[0].colour}
                 outerRadius={150}>
               </Pie>
               <Tooltip content={<PieTooltip display={getGroupTooltipLabel} />} />;

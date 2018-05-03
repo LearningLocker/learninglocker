@@ -4,6 +4,9 @@ import { LineChart, XAxis, YAxis, Bar, Legend, Tooltip } from 'recharts';
 import { union } from 'lodash';
 import { AutoSizer } from 'react-virtualized';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { compose } from 'recompose';
+// @ts-ignore
+import { withStatementsVisualisation } from 'ui/utils/hocs';
 import getSeriesDataKey from './utils/getSeriesDataKey';
 import getValueGroupedSeriesResults from './utils/getValueGroupedSeriesResults';
 import getValueGroupDictionary from './utils/getValueGroupDictionary';
@@ -24,21 +27,27 @@ import styles from './utils/styles.css';
  * @property {string} label
  * @typedef {Object} ValueConfig
  * @property {string} label
- * @typedef {Object} Model
+ * @typedef {Object} Config
  * @property {boolean} stacked
  * @property {SeriesConfig[]} series
  * @property {GroupConfig} group
  * @property {ValueConfig} value
+ * @typedef {Object} Model
+ * @property {Config} config
  * @typedef {Object} GroupResult
  * @property {string} _id
  * @property {string} model
  * @property {number} count
  */
 
-export default withStyles(styles)(
+export default compose(
+  withStyles(styles),
+  withStatementsVisualisation,
+)(
   /**  @param {{ model: Model, seriesResults: GroupResult[][] }} props */
   (props) => {
     const { model, seriesResults } = props;
+    const config = model.config;
     const groupedSeriesResults = getValueGroupedSeriesResults(seriesResults);
     const groupDictionary = getValueGroupDictionary(groupedSeriesResults);
     const chartDataEntries = getValueChartEntries(groupDictionary, groupedSeriesResults);
@@ -47,14 +56,14 @@ export default withStyles(styles)(
 
     return (
       <div className={styles.chart}>
-        <Chart xAxisLabel={model.group.label} yAxisLabel={model.value.label}>
+        <Chart xAxisLabel={config.group.label} yAxisLabel={config.value.label}>
           <AutoSizer>
             {({ height, width }) => (
               <LineChart layout="horizontal" data={chartDataEntries} width={width} height={height}>
                 <XAxis type="category" dataKey="groupId" tickFormatter={getGroupAxisLabel} />
                 <YAxis type="number" />
                 <Legend />
-                {renderLines({ model })}
+                {renderLines({ config })}
                 <Tooltip content={<ValuesTooltip display={getGroupTooltipLabel} />} />;
               </LineChart>
             )}
