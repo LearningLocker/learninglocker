@@ -18,6 +18,7 @@ import createGroupTooltipLabeller from './utils/createGroupTooltipLabeller';
 import Chart from './utils/Chart';
 // @ts-ignore
 import styles from './utils/styles.css';
+import migrateValuesModel from '../utils/migrateValuesModel';
 
 /**
  * @typedef {Object} SeriesConfig
@@ -44,11 +45,12 @@ export default compose(
   withStyles(styles),
   withStatementsVisualisation,
 )(
-  /**  @param {{ model: Model, seriesResults: GroupResult[][] }} props */
+  /**  @param {{ model: Model, results: GroupResult[][] }} props */
   (props) => {
-    const { model, seriesResults } = props;
-    const config = model.config;
-    const groupedSeriesResults = getValueGroupedSeriesResults(seriesResults);
+    const { model, results } = props;
+    const newModel = migrateValuesModel(model);
+    const config = newModel.config;
+    const groupedSeriesResults = getValueGroupedSeriesResults(results);
     const groupDictionary = getValueGroupDictionary(groupedSeriesResults);
     const chartDataEntries = getValueChartEntries(groupDictionary, groupedSeriesResults);
     const getGroupAxisLabel = createGroupAxisLabeller(groupDictionary);
@@ -57,17 +59,15 @@ export default compose(
     return (
       <div className={styles.chart}>
         <Chart xAxisLabel={config.group.label} yAxisLabel={config.value.label}>
-          <AutoSizer>
-            {({ height, width }) => (
-              <LineChart layout="horizontal" data={chartDataEntries} width={width} height={height}>
-                <XAxis type="category" dataKey="groupId" tickFormatter={getGroupAxisLabel} />
-                <YAxis type="number" />
-                <Legend />
-                {renderLines({ config })}
-                <Tooltip content={<ValuesTooltip display={getGroupTooltipLabel} />} />;
-              </LineChart>
-            )}
-          </AutoSizer>
+          {({ height, width }) => (
+            <LineChart layout="horizontal" data={chartDataEntries} width={width} height={height}>
+              <XAxis type="category" dataKey="groupId" tickFormatter={getGroupAxisLabel} />
+              <YAxis type="number" />
+              <Legend />
+              {renderLines({ config })}
+              <Tooltip content={<ValuesTooltip display={getGroupTooltipLabel} />} />;
+            </LineChart>
+          )}
         </Chart>
       </div>
     );

@@ -4,10 +4,11 @@ import { round, get } from 'lodash';
 import numeral from 'numeral';
 import { compose } from 'recompose';
 // @ts-ignore
-// import { withStatementsVisualisation } from 'ui/utils/hocs';
+import { withStatementsVisualisation } from 'ui/utils/hocs';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 // @ts-ignore
 import styles from './utils/styles.css';
+import migrateCounterModel from '../utils/migrateCounterModel';
 
 /**
  * @typedef {Object} ValueConfig
@@ -25,13 +26,14 @@ import styles from './utils/styles.css';
 
 export default compose(
   withStyles(styles),
-  // withStatementsVisualisation,
+  withStatementsVisualisation,
 )(
-  /**  @param {{ model: Model, seriesResults: GroupResult[][] }} props */
+  /**  @param {{ model: Model, results: GroupResult[][] }} props */
   (props) => {
-    const { model, seriesResults } = props;
-    const config = model.config;
-    const count = get(seriesResults, [0, 0, 'count'], 0);
+    const { model, results } = props;
+    const newModel = migrateCounterModel(model);
+    const config = newModel.config;
+    const count = get(results, [0, 0, 'count'], 0);
     const color = config.value.colour;
 
     return (

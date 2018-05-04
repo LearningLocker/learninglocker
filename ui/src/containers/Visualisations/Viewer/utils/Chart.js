@@ -7,8 +7,14 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 // @ts-ignore
 import styles from './styles.css';
 
+/**
+ * @typedef {Object} AutoSizerProps
+ * @property {number} height
+ * @property {number} width
+ */
+
 const render = withStyles(styles)(
-  /**  @param {{ xAxisLabel: string, yAxisLabel: string, children: React.Element }} props */
+  /**  @param {{ xAxisLabel: string, yAxisLabel: string, children: (props: AutoSizerProps) => React.Element }} props */
   (props) => {
     const { xAxisLabel, yAxisLabel, children } = props;
     return (
@@ -25,7 +31,9 @@ const render = withStyles(styles)(
             </span>
           </div>
           <div className={styles.chartWrapper}>
-            {children}
+            <AutoSizer>
+              {children}
+            </AutoSizer>
           </div>
         </div>
       </div>

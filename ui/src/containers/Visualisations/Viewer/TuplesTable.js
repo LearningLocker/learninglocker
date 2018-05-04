@@ -18,6 +18,7 @@ import createGroupTooltipLabeller from './utils/createGroupTooltipLabeller';
 // @ts-ignore
 import styles from './utils/styles.css';
 import keyCodes from 'lib/constants/keyCodes';
+import migrateTuplesModel from '../utils/migrateTuplesModel';
 
 /**
  * @typedef {Object} SeriesConfig
@@ -44,11 +45,12 @@ export default compose(
   withStyles(styles),
   withStatementsVisualisation,
 )(
-  /**  @param {{ model: Model, seriesResults: GroupResult[][][] }} props */
+  /**  @param {{ model: Model, results: GroupResult[][][] }} props */
   (props) => {
-    const { model, seriesResults } = props;
-    const config = model.config;
-    const groupedSeriesResults = getTupleGroupedSeriesResults(seriesResults);
+    const { model, results } = props;
+    const newModel = migrateTuplesModel(model);
+    const config = newModel.config;
+    const groupedSeriesResults = getTupleGroupedSeriesResults(results);
     const groupDictionary = getValueGroupDictionary(groupedSeriesResults);
     const tableDataEntries = getTupleTableEntries(groupDictionary, groupedSeriesResults);
 

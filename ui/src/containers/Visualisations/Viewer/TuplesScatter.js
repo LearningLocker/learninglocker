@@ -16,6 +16,7 @@ import TuplesTooltip from './utils/TuplesTooltip';
 import styles from './utils/styles.css';
 import getTupleNameDictionary from './utils/getTupleNameDictionary';
 import getTupleDataKey from './utils/getTupleDataKey';
+import migrateTuplesModel from '../utils/migrateTuplesModel';
 
 /**
  * @typedef {Object} SeriesConfig
@@ -42,11 +43,12 @@ export default compose(
   withStyles(styles),
   withStatementsVisualisation,
 )(
-  /**  @param {{ model: Model, seriesResults: GroupResult[][][] }} props */
+  /**  @param {{ model: Model, results: GroupResult[][][] }} props */
   (props) => {
-    const { model, seriesResults } = props;
-    const config = model.config;
-    const groupedSeriesResults = getTupleGroupedSeriesResults(seriesResults);
+    const { model, results } = props;
+    const newModel = migrateTuplesModel(model);
+    const config = newModel.config;
+    const groupedSeriesResults = getTupleGroupedSeriesResults(results);
     const nameDictionary = getTupleNameDictionary(groupedSeriesResults);
     const displayTooltipGroupNames = (firstCount, secondCount) => {
       const names = nameDictionary[getTupleDataKey(firstCount, secondCount)];
@@ -60,23 +62,21 @@ export default compose(
 
     return (
       <Chart xAxisLabel={config.firstValue.label} yAxisLabel={config.secondValue.label}>
-        <AutoSizer>
-          {({ height, width }) => (
-            <ScatterChart
-              width={width}
-              height={height}
-              margin={{ top: 10, right: 12, left: -10, bottom: 2 }}>
-              <XAxis dataKey="firstCount" type="number" name={config.firstValue.label} />
-              <YAxis dataKey="secondCount" type="number" name={config.secondValue.label} />
-              {renderScatters({ config, groupedSeriesResults })}
-              <CartesianGrid />
-              <Legend />
-              <Tooltip
-                cursor={{ strokeDasharray: '3 3' }}
-                content={<TuplesTooltip display={displayTooltipGroupNames} />} />
-            </ScatterChart>
-          )}
-        </AutoSizer>
+        {({ height, width }) => (
+          <ScatterChart
+            width={width}
+            height={height}
+            margin={{ top: 10, right: 12, left: -10, bottom: 2 }}>
+            <XAxis dataKey="firstCount" type="number" name={config.firstValue.label} />
+            <YAxis dataKey="secondCount" type="number" name={config.secondValue.label} />
+            {renderScatters({ config, groupedSeriesResults })}
+            <CartesianGrid />
+            <Legend />
+            <Tooltip
+              cursor={{ strokeDasharray: '3 3' }}
+              content={<TuplesTooltip display={displayTooltipGroupNames} />} />
+          </ScatterChart>
+        )}
       </Chart>
     );
   }

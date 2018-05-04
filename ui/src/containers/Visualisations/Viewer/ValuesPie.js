@@ -17,6 +17,7 @@ import createGroupTooltipLabeller from './utils/createGroupTooltipLabeller';
 // @ts-ignore
 import styles from './utils/styles.css';
 import PieTooltip from './utils/PieTooltip';
+import migrateValuesModel from '../utils/migrateValuesModel';
 
 /**
  * @typedef {Object} SeriesConfig
@@ -43,11 +44,12 @@ export default compose(
   withStyles(styles),
   withStatementsVisualisation,
 )(
-  /**  @param {{ model: Model, seriesResults: GroupResult[][] }} props */
+  /**  @param {{ model: Model, results: GroupResult[][] }} props */
   (props) => {
-    const { model, seriesResults } = props;
-    const config = model.config;
-    const groupedSeriesResults = getValueGroupedSeriesResults(seriesResults);
+    const { model, results } = props;
+    const newModel = migrateValuesModel(model);
+    const config = newModel.config;
+    const groupedSeriesResults = getValueGroupedSeriesResults(results);
     const groupDictionary = getValueGroupDictionary(groupedSeriesResults);
     const chartDataEntries = getSortedValueChartEntries(groupDictionary, groupedSeriesResults);
     const getGroupAxisLabel = createGroupAxisLabeller(groupDictionary);
@@ -55,20 +57,18 @@ export default compose(
 
     return (
       <div className={styles.chart}>
-        <AutoSizer>
-          {({ height, width }) => (
-            <PieChart width={width} height={height}>
-              <Pie
-                data={chartDataEntries}
-                nameKey={'groupId'}
-                valueKey={getSeriesDataKey(0)}
-                fill={config.series[0].colour}
-                outerRadius={150}>
-              </Pie>
-              <Tooltip content={<PieTooltip display={getGroupTooltipLabel} />} />;
-            </PieChart>
-          )}
-        </AutoSizer>
+        {({ height, width }) => (
+          <PieChart width={width} height={height}>
+            <Pie
+              data={chartDataEntries}
+              nameKey={'groupId'}
+              valueKey={getSeriesDataKey(0)}
+              fill={config.series[0].colour}
+              outerRadius={150}>
+            </Pie>
+            <Tooltip content={<PieTooltip display={getGroupTooltipLabel} />} />;
+          </PieChart>
+        )}
       </div>
     );
   }

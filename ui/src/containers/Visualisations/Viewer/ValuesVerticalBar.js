@@ -18,6 +18,7 @@ import createGroupAxisLabeller from './utils/createGroupAxisLabeller';
 import createGroupTooltipLabeller from './utils/createGroupTooltipLabeller';
 // @ts-ignore
 import styles from './utils/styles.css';
+import migrateValuesModel from '../utils/migrateValuesModel';
 
 /**
  * @typedef {Object} SeriesConfig
@@ -44,11 +45,12 @@ export default compose(
   withStyles(styles),
   withStatementsVisualisation,
 )(
-  /**  @param {{ model: Model, seriesResults: GroupResult[][] }} props */
+  /**  @param {{ model: Model, results: GroupResult[][] }} props */
   (props) => {
-    const { model, seriesResults } = props;
-    const config = model.config;
-    const groupedSeriesResults = getValueGroupedSeriesResults(seriesResults);
+    const { model, results } = props;
+    const newModel = migrateValuesModel(model);
+    const config = newModel.config;
+    const groupedSeriesResults = getValueGroupedSeriesResults(results);
     const groupDictionary = getValueGroupDictionary(groupedSeriesResults);
     const chartDataEntries = getValueChartEntries(groupDictionary, groupedSeriesResults);
     const getGroupAxisLabel = createGroupAxisLabeller(groupDictionary);
@@ -59,17 +61,15 @@ export default compose(
     return (
       <div className={styles.chart}>
         <Chart xAxisLabel={config.group.label} yAxisLabel={config.value.label}>
-          <AutoSizer>
-            {({ height, width }) => (
-              <BarChart layout="horizontal" data={chartDataEntries} width={width} height={height}>
-                <XAxis type="category" dataKey="groupId" tickFormatter={getGroupAxisLabel} />
-                <YAxis type="number" domain={[minValue, maxValue]} />
-                <Legend />
-                {renderBars({ config })}
-                <Tooltip content={<ValuesTooltip display={getGroupTooltipLabel} />} />;
-              </BarChart>
-            )}
-          </AutoSizer>
+          {({ height, width }) => (
+            <BarChart layout="horizontal" data={chartDataEntries} width={width} height={height}>
+              <XAxis type="category" dataKey="groupId" tickFormatter={getGroupAxisLabel} />
+              <YAxis type="number" domain={[minValue, maxValue]} />
+              <Legend />
+              {renderBars({ config })}
+              <Tooltip content={<ValuesTooltip display={getGroupTooltipLabel} />} />;
+            </BarChart>
+          )}
         </Chart>
       </div>
     );
