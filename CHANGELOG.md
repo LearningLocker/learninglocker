@@ -13,34 +13,39 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [2.3.0]
 ### Added
-  - Multiple shareable links per dashboard
-    - Requires migration to be run
-  - Aggregations now can read from secondary members on replica set
-  - Sentinel Redis support
-  - New role to allow organisation creation (via site admin)
+  - Multiple shareable links per dashboard (#1096)
+    - Requires migration to be run - `yarn migrate`
+  - Aggregations now can read from secondary members on replica set (#1095)
+  - Sentinel Redis support (#1119)
+  - New role to allow organisation creation (via site admin) (#1110)
+  - Widgets now auto pick visualisation name when populated (#1126)
 ### Security
-  - Passwords can only be changed for the user logged in or by site admins
+  - Passwords can only be changed for the user logged in or by site admins (#1112)
 ### Fixes
-  - Unicode data now pulled from dependency
-  - Ensure order on personaIdentifier IFI values (fixes issue with multiple personaIdents for the same actor)
+  - Unicode data now pulled from dependency (#1125)
+  - Ensure order on personaIdentifier IFI values (fixes issue with multiple personaIdents for the same actor) (#1120)
   - Fix for personaIdentifier migration
+  - Client can select more than 10 xAPI stores (#1130)
+  - Server side validation of Statement Forward queries (#1138)
+  - Statement forwards decode `&46;` in statement keys (#1134)
+  - Fixed issue with hanging file imports on persona data (#1141)
+  - Switch to `clamdscan` as primary AV scanner (#1141)
+    - Requires updated .env settings - refer to .env.example
 ### Performance and build
-  - Webpack 3 
+  - Webpack 3 - improved build speed (#1094)
 ### Migrations
 **This update requires a migration which can be run using `yarn migrate`.**
 
-## [2.2.5]
-
 ## [2.2.4]
 ### Fixes
-  - Ensure statementForwarding query is valid json. (#1138)
+  - Server side validation of Statement Forward queries (#1138)
   - Persona import errors if there are no iris. (#1140)
-  - Workers handle errors on missing personas
-  - Workers handle errors on invalid JSON in statement forward callbacks
+  - Workers handle errors on missing personas (#1137)
+  - Workers handle errors on invalid JSON in statement forward callbacks (#1137)
 
 ## [2.2.3]
 ### Fixes
-  - Parse persona ident and attribute queries
+  - Persona Attribute and Identifier APIs now parse $oid values for `persona` filters (#1133)
   
 ## [2.2.2]
 ### Fixes
