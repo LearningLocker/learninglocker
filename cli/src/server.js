@@ -27,6 +27,7 @@ import testQueryBuilderCache from 'cli/commands/testQueryBuilderCache';
 import migrateMongo, { MIGRATIONS_PATH } from 'cli/migrateMongo';
 
 import seed from 'cli/seed';
+import expirationNotificationEmails from 'cli/commands/expirationNotificationEmails';
 
 program.version('0.0.1');
 
@@ -139,5 +140,11 @@ program
   )
   .option('-i, --info [info]', "Display the state of the migrations, optional ['v'|'verbose']");
 // node cli/dist/server migrateMongo
+
+program
+  .command('expirationNotificationEmails')
+  .action(expirationNotificationEmails)
+  .option('--weekBefore [weekBefore]', 'The date of when to send the week before email');
+// node cli/dist/server expirationNotificationEmails
 
 program.parse(process.argv);
