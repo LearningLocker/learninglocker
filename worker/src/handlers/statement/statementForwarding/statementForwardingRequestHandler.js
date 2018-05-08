@@ -2,7 +2,7 @@ import * as popsicle from 'popsicle';
 import { assign } from 'lodash';
 import { Map } from 'immutable';
 import logger from 'lib/logger';
-import Statement from 'lib/models/statement';
+import Statement, { mapDot } from 'lib/models/statement';
 import mongoose from 'mongoose';
 import StatementForwarding from 'lib/models/statementForwarding';
 import ForwardingRequestError from
@@ -33,26 +33,35 @@ const sendRequest = async (statement, statementForwarding) => {
   const urlString = `${statementForwarding.configuration
     .protocol}://${statementForwarding.configuration.url}`;
 
-  const statementContent = JSON.stringify(statement);
+  const statementContent = JSON.stringify(mapDot(
+    statement
+  ));
 
   const headers = generateHeaders(statementContent, statementForwarding);
 
-  const request = popsicle.request({
+  const requestOptions = {
     method: 'POST',
-    body: statement,
+    body: mapDot(statement),
     url: urlString,
     headers,
     timeout: 16000,
     options: {
       followRedirects: (() => true)
     }
-  });
+  };
+  const request = popsicle.request(requestOptions);
 
-  const response = await request;
-  if (!(response.status >= 200 && response.status < 400)) {
+  try {
+    const response = await request;
+    if (!(response.status >= 200 && response.status < 400)) {
+      throw new ForwardingRequestError(
+        `Status code was invalid: (${response.status})`,
+        response.body,
+      );
+    }
+  } catch (err) {
     throw new ForwardingRequestError(
-      `Status code was invalid: (${response.status})`,
-      response.body,
+      `Error with popsicle request/response: ${JSON.stringify(requestOptions)}`,
     );
   }
 
@@ -154,7 +163,7 @@ const statementForwardingRequestHandler = async (
           return;
         });
       } else {
-        logger.info(`SENT statement ${updatedStatement._id} to ${STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE}`);
+        logger.info(`EXCEEDED max retry for statement ${updatedStatement._id}, failing (should go to dead letter queue).`);
         done(err); // failed, let redrive send to dead letter queue
       }
     } catch (err) {

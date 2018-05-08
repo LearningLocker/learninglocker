@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
 import getJSONFromQuery from 'api/utils/getJSONFromQuery';
 import catchErrors from 'api/controllers/utils/catchErrors';
+import getPersonaFilter from 'api/controllers/utils/getPersonaFilter';
 import getFromQuery from 'api/utils/getFromQuery';
 import ClientError from 'lib/errors/ClientError';
 import handleError from 'lib/utils/handleError';
@@ -16,13 +16,11 @@ import identifierHasStatements from 'lib/services/persona/identifierHasStatement
 import getPersonaService from 'lib/connections/personaService';
 import {
   isUndefined,
-  omitBy,
+  omitBy
 } from 'lodash';
 import { entityResponse, entitiesResponse } from 'api/controllers/utils/entitiesResponse';
 import setupIfi from 'lib/services/persona/setupIfi';
 import validateIfi from 'lib/services/persona/validateIfi';
-
-const objectId = mongoose.Types.ObjectId;
 
 const MODEL_NAME = 'personaIdentifier';
 
@@ -44,14 +42,17 @@ const personaIdentifierConnection = catchErrors(async (req, res) => {
     authInfo
   });
 
+  const parsedFilter = await parseQuery(getJSONFromQuery(req, 'filter', {}));
   const {
     persona,
     ...inFilter
-  } = getJSONFromQuery(req, 'filter', {});
+  } = parsedFilter;
+
+  const personaFilter = getPersonaFilter(persona, 'persona');
 
   const filter = {
     ...inFilter,
-    persona: persona ? objectId(persona) : undefined,
+    ...personaFilter,
     ...scopeFilter
   };
   const filterNoUndefined = omitBy(filter, isUndefined);

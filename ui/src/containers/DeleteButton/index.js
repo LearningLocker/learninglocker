@@ -46,6 +46,7 @@ class DeleteButton extends Component {
   render = () => {
     const { className } = this.props;
     const { openModal } = this.state;
+
     const classes = classNames({
       [className]: true,
       btn: true,

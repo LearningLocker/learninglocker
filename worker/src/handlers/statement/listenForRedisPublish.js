@@ -17,7 +17,7 @@ export default () => {
 
   let currentlyWorking = false;
   subClient.on('message', (channel) => {
-    logger.info(`Message on channel '${channel}'`);
+    logger.debug(`Message on channel '${channel}'`);
 
     if (!currentlyWorking) {
       currentlyWorking = true;
@@ -32,7 +32,7 @@ export default () => {
             }
             latestResult = payload;
             if (payload) {
-              logger.info(`Popped '${pubKey}':`, payload);
+              logger.debug(`Popped '${pubKey}':`, payload);
               Statement.findOne({ 'statement.id': payload }, (err, statement) => {
                 // get the statement so that we can find its database id
                 // push it straight into the correct queues
