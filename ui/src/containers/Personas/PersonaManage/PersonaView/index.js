@@ -1,5 +1,7 @@
 /* eslint-disable react/jsx-indent */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React from 'react';
 import { compose, withProps, setPropTypes, defaultProps } from 'recompose';
 import { Map } from 'immutable';
 import Tabs from 'ui/components/Material/Tabs';
@@ -9,6 +11,7 @@ import LabelledInput from 'ui/components/Input/LabelledInput';
 import MergeForm from '../MergeForm';
 import IdentifiersEditor from '../IdentifiersEditor';
 import AttributesEditor from '../AttributesEditor';
+import Journeys from '../Journeys';
 
 const enhance = compose(
   setPropTypes({
@@ -50,6 +53,9 @@ const render = ({ model, getMetadata, setMetadata, updateModel }) => {
         </Tab>
         <Tab label="Merge">
           <MergeForm id={model.get('_id')} />
+        </Tab>
+        <Tab label="Journeys">
+          <Journeys id={model.get('_id')} />
         </Tab>
       </Tabs>
     </div>

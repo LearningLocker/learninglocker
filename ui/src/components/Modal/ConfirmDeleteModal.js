@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { compose, withProps, setPropTypes } from 'recompose';
 import ConfirmModal from 'ui/components/Modal/ConfirmModal';
 

@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { compose, withProps, withHandlers, setPropTypes } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import UserForm from 'ui/containers/UserForm';

@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { compose, setPropTypes, withState, withProps, withHandlers } from 'recompose';
 import { Map, fromJS, Iterable } from 'immutable';
 import isString from 'lodash/isString';

@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { Map } from 'immutable';
 import { setPropTypes } from 'recompose';
 import SiteOrgLink from 'ui/components/Site/SiteOrgLink';

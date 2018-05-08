@@ -1,12 +1,13 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
 import Portal from 'react-portal';
 
 export default class SimpleTooltip extends React.Component {
   static propTypes = {
-    mouseThrottle: React.PropTypes.number,
-    width: React.PropTypes.number,
-    children: React.PropTypes.node
+    mouseThrottle: PropTypes.number,
+    width: PropTypes.number,
+    children: PropTypes.node
   };
   static defaultProps = {
     mouseThrottle: 10,

@@ -1,4 +1,5 @@
 import { withContext, compose } from 'recompose';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Provider } from 'react-redux';
 import App from 'ui/containers/App';
@@ -12,8 +13,8 @@ const component = ({ store }) => (
 export default compose(
   withContext(
     {
-      insertCss: React.PropTypes.func,
-      router: React.PropTypes.object
+      insertCss: PropTypes.func,
+      router: PropTypes.object
     },
     ({ context }) => context
   )

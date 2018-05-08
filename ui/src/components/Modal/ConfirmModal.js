@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { compose, setPropTypes, defaultProps } from 'recompose';
 import ConfirmTextIconButton from 'ui/components/TextIconButton/ConfirmTextIconButton';
 import CancelTextIconButton from 'ui/components/TextIconButton/CancelTextIconButton';

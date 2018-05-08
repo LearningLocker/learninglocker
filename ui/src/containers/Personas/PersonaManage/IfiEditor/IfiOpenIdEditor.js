@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import validateIri from '@learninglocker/xapi-validation/dist/regexValues/iri';
 import { compose, setPropTypes, defaultProps } from 'recompose';
 import classNames from 'classnames';

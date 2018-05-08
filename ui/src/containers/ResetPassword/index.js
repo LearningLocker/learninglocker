@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { resetPasswordStart, resetRequestStateSelector, resetErrorSelector } from 'ui/redux/modules/auth';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';

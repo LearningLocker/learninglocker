@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { Map, List } from 'immutable';
 import isEmpty from 'lodash/isEmpty';
 import Switch from 'ui/components/Material/Switch';

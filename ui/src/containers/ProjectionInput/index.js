@@ -1,5 +1,7 @@
 /* eslint-disable react/jsx-indent */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Map } from 'immutable';
 import JsonTextArea from 'ui/components/JsonTextArea';

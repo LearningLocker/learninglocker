@@ -1,5 +1,6 @@
 import { Map, fromJS } from 'immutable';
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import Portal from 'react-portal';
 import { withProps, compose } from 'recompose';
 import ModelAutoComplete from 'ui/containers/ModelAutoComplete';

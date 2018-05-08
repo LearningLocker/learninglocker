@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { compose, setPropTypes } from 'recompose';
 import { fromJS, Map } from 'immutable';
 import ModelAutoComplete from 'ui/containers/ModelAutoComplete';

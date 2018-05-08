@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { List } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import styles from './validationlist.css';

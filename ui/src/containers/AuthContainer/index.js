@@ -1,4 +1,5 @@
-import React, { PropTypes, Component } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { fetchModels } from 'ui/redux/modules/pagination';
 import { loggedInUserId, loggedInUserSelector } from 'ui/redux/modules/auth';

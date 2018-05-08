@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { Map, List } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withProps, withHandlers, setPropTypes } from 'recompose';

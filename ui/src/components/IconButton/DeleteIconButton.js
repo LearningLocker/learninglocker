@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { compose, withProps, setPropTypes, withState } from 'recompose';
 import ConfirmDeleteModal from 'ui/components/Modal/ConfirmDeleteModal';
 import IconButton from './IconButton';

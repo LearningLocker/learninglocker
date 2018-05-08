@@ -1,5 +1,7 @@
 /* eslint-disable react/jsx-indent */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import classNames from 'classnames';
 
 class OpenLinkButton extends Component {

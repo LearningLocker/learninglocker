@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { List, Map } from 'immutable';
 import moment from 'moment';
 import { updateModel } from 'ui/redux/modules/models';

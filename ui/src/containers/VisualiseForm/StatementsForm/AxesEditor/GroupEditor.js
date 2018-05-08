@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { Map } from 'immutable';
 import CacheKeysAutoComplete from 'ui/containers/CacheKeysAutoComplete';
 import { GROUP_OPTS } from 'ui/utils/visualisations/localOptions';

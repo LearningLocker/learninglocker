@@ -1,5 +1,7 @@
 /* eslint-disable react/jsx-indent */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import { Map, List } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import BasicQueryBuilder from 'ui/containers/BasicQueryBuilder';
