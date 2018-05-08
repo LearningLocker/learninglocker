@@ -6,6 +6,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Deprecated
 ### Removed
 ### Fixed
+  - Respect organisation creation scope (#1153)
 ### Security
 ### Migrations
 
