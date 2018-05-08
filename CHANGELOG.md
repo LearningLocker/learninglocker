@@ -9,6 +9,8 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.4.0]
+
 ## [2.3.0]
 ### Added
   - Multiple shareable links per dashboard (#1096)
