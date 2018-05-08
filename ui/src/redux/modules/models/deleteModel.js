@@ -25,7 +25,8 @@ const deleteModel = createAsyncDuck({
   reduceStart: (state, { schema, id }) =>
     state.setIn([schema, id, 'deleteState'], IN_PROGRESS),
   reduceSuccess: (state, { schema, id }) =>
-    state.setIn([schema, id, 'deleteState'], COMPLETED),
+    state.setIn([schema, id, 'deleteState'], COMPLETED)
+      .removeIn([schema, id, 'remoteCache']),
   reduceFailure: (state, { schema, id }) =>
     state.setIn([schema, id, 'deleteState'], FAILED),
   reduceComplete: (state, { schema, id }) =>
