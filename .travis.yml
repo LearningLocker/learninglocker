@@ -47,7 +47,7 @@ script:
   - yarn $TEST_SUITE
 
 jobs:
-  - include:
+  include:
     - stage: start pm2
       script: npm install pm2 -g
     - stage: integration tests
