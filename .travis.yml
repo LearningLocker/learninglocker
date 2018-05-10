@@ -4,12 +4,9 @@ sudo: false
 
 env:
   matrix:
-    - RUN_SCRIPT=lint
-    - RUN_SCRIPT=test-worker
-    - RUN_SCRIPT=test-lib
-    - RUN_SCRIPT=test-api
-    - RUN_SCRIPT=test-ui
-    - RUN_SCRIPT=ci-test-integrations
+    - YARN_CMD=lint
+    - YARN_CMD=test
+    - YARN_CMD=ci-test-integrations
   global:
     - MONGODB=3.2.13
     - APP_SECRET=44E52D2227F93179525E252EC3AB5
@@ -37,7 +34,7 @@ cache:
   yarn: true
 
 script:
-  - yarn $RUN_SCRIPT
+  - yarn $YARN_CMD
 
 after_script:
   - pkill mongod
