@@ -41,6 +41,7 @@
     "test-lib": "mocha-webpack --exit --webpack-config \"api/testConfig.js\" \"lib/**/*-test.js\"",
     "test-cli": "mocha-webpack --exit --webpack-config \"cli/testConfig.js\" \"cli/**/*-test.js\"",
     "test-ui": "jest --config ui/jest.config.json --env node",
+    "ci-test-integrations": "npm install -g pm2 && yarn build-all && yarn start-test && yarn test-integration-run && yarn stop-test",
     "test": "yarn test-api && yarn test-lib && yarn test-worker && yarn test-ui",
     "test-integration": "cypress open",
     "test-integration-run": "cypress run",
