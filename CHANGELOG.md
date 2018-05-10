@@ -9,6 +9,10 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.3.2]
+### Fixed
+  - Check persona and attribute exists before creating (#1153)
+
 ## [2.3.1]
 ### Fixed
   - Respect organisation creation scope (#1153)
