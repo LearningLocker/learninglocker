@@ -6,6 +6,10 @@ env:
   global:
     - MONGODB=3.2.13
     - APP_SECRET=44E52D2227F93179525E252EC3AB5
+  - TEST_SUITE=api
+  - TEST_SUITE=lib
+  - TEST_SUITE=worker
+  - TEST_SUITE=ui
 install:
   - wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${MONGODB}.tgz
   - tar xzf mongodb-linux-x86_64-${MONGODB}.tgz
@@ -41,11 +45,8 @@ addons:
 
 script:
   - npm run lint
-  - yarn test
-  # Integration tests.
-  - yarn build-all
-  - yarn start-test
-  - yarn test-integration-run
+  - yarn test-$TEST_SUITE
+  - yarn build-all && yarn start-test && yarn test-integration-run
 
 after_script:
   - pkill mongod
