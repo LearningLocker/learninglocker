@@ -4,10 +4,12 @@ sudo: false
 
 env:
   matrix:
-    - TEST_SUITE=api
-    - TEST_SUITE=lib
-    - TEST_SUITE=worker
-    - TEST_SUITE=ui
+    - TEST_SUITE=lint
+    - TEST_SUITE=test-api
+    - TEST_SUITE=test-lib
+    - TEST_SUITE=test-worker
+    - TEST_SUITE=test-ui
+    - TEST_SUITE=test-integrations
   global:
     - MONGODB=3.2.13
     - APP_SECRET=44E52D2227F93179525E252EC3AB5
@@ -45,9 +47,7 @@ addons:
     - g++-4.8
 
 script:
-  - npm run lint
-  - yarn test-$TEST_SUITE
-  - yarn build-all && yarn start-test && yarn test-integration-run
+  - yarn $TEST_SUITE
 
 after_script:
   - pkill mongod
