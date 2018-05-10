@@ -4,12 +4,10 @@ sudo: false
 
 env:
   matrix:
-    - TEST_SUITE=lint
     - TEST_SUITE=test-api
     - TEST_SUITE=test-lib
     - TEST_SUITE=test-worker
     - TEST_SUITE=test-ui
-    - TEST_SUITE=test-integrations
   global:
     - MONGODB=3.2.13
     - APP_SECRET=44E52D2227F93179525E252EC3AB5
@@ -32,9 +30,9 @@ before_install:
   - touch .env
 
 before_script:
+  - yarn lint
   - mkdir ${PWD}/mongodb-linux-x86_64-${MONGODB}/data
   - ${PWD}/mongodb-linux-x86_64-${MONGODB}/bin/mongod --dbpath ${PWD}/mongodb-linux-x86_64-${MONGODB}/data --logpath ${PWD}/mongodb-linux-x86_64-${MONGODB}/mongodb.log --fork
-  - npm install pm2 -g
 
 cache:
   yarn: true
@@ -49,6 +47,15 @@ addons:
 script:
   - yarn $TEST_SUITE
 
+jobs:
+  - include:
+    - stage: start pm2
+      script: npm install pm2 -g
+    - stage: integration tests
+      script: yarn test-integrations
+    - stage: stop test instance
+      script: yarn stop-test
+
 after_script:
   - pkill mongod
-  - yarn stop-test
+
