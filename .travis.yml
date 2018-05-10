@@ -24,8 +24,6 @@ services:
   - redis-server
 
 before_install:
-  - export CXX=g++-4.8
-  - export DISPLAY=:99.0
   - export NODE_UNICODETABLE_UNICODEDATA_TXT=$PWD/UnicodeData.txt
   - sh -e /etc/init.d/xvfb start
   - touch .env
