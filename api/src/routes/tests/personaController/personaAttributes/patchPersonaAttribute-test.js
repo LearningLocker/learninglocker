@@ -26,7 +26,7 @@ describe('patchPresonaAttributes', () => {
       key: 'testkey',
       value: 'testvalue',
       organisation: testId,
-      persona: persona.id
+      personaId: persona.id
     });
 
     attribute = tempAttribute;
@@ -42,6 +42,7 @@ describe('patchPresonaAttributes', () => {
       .send({
         key: 'test11',
         value: 'test12',
+        personaId: persona.id,
       })
       .expect(200);
   });
