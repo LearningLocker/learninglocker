@@ -2,6 +2,7 @@ import getJSONFromQuery from 'api/utils/getJSONFromQuery';
 import catchErrors from 'api/controllers/utils/catchErrors';
 import getPersonaFilter from 'api/controllers/utils/getPersonaFilter';
 import getFromQuery from 'api/utils/getFromQuery';
+import ClientError from 'lib/errors/ClientError';
 import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
 import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
@@ -79,6 +80,12 @@ const addPersonaAttribute = catchErrors(async (req, res) => {
   const organisation = getOrgFromAuthInfo(authInfo);
 
   const { key, value, personaId } = req.body;
+  if (!key || !personaId) {
+    throw new ClientError('`key` and `personaId` must be included when creating an attribute');
+  }
+  if (value === undefined) {
+    throw new ClientError('Value must be defined');
+  }
 
   const { attribute } = await personaService.overwritePersonaAttribute({
     organisation,
@@ -155,10 +162,20 @@ const updatePersonaAttribute = catchErrors(async (req, res) => {
   });
 
   const organisation = getOrgFromAuthInfo(authInfo);
+
+  const { key, value, personaId } = req.body;
+  if (!key || !personaId) {
+    throw new ClientError('`key` and `personaId` must be included when updating an attribute');
+  }
+  if (value === undefined) {
+    throw new ClientError('Value must be defined');
+  }
+
   const { attribute } = await personaService.overwritePersonaAttribute({
-    ...req.body,
     organisation,
-    id: req.params.personaAttributeId
+    personaId,
+    key,
+    value,
   });
 
   updateQueryBuilderCache({
