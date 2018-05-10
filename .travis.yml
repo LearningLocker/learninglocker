@@ -4,9 +4,9 @@ sudo: false
 
 env:
   matrix:
-    - TEST_SUITE=test-api
+    - TEST_SUITE=lint && test-worker
     - TEST_SUITE=test-lib
-    - TEST_SUITE=test-worker
+    - TEST_SUITE=test-api
     - TEST_SUITE=test-ui
   global:
     - MONGODB=3.2.13
@@ -30,7 +30,6 @@ before_install:
   - touch .env
 
 before_script:
-  - yarn lint
   - mkdir ${PWD}/mongodb-linux-x86_64-${MONGODB}/data
   - ${PWD}/mongodb-linux-x86_64-${MONGODB}/bin/mongod --dbpath ${PWD}/mongodb-linux-x86_64-${MONGODB}/data --logpath ${PWD}/mongodb-linux-x86_64-${MONGODB}/mongodb.log --fork
 
