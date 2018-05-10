@@ -4,7 +4,7 @@ sudo: false
 
 env:
   matrix:
-    - TEST_SUITE=lint && test-worker
+    - TEST_SUITE=lint && yarn test-worker
     - TEST_SUITE=test-lib
     - TEST_SUITE=test-api
     - TEST_SUITE=test-ui
