@@ -4,10 +4,11 @@ sudo: false
 
 env:
   matrix:
-    - TEST_SUITE=lint && yarn test-worker
-    - TEST_SUITE=test-lib
-    - TEST_SUITE=test-api
-    - TEST_SUITE=test-ui
+    - RUN_SCRIPT=lint && yarn test-worker
+    - RUN_SCRIPT=test-lib
+    - RUN_SCRIPT=test-api
+    - RUN_SCRIPT=test-ui
+    - RUN_SCRIPT=npm install pm2 -g && yarn test-integrations && yarn stop-test
   global:
     - MONGODB=3.2.13
     - APP_SECRET=44E52D2227F93179525E252EC3AB5
@@ -44,16 +45,7 @@ addons:
     - g++-4.8
 
 script:
-  - yarn $TEST_SUITE
-
-jobs:
-  include:
-    - stage: start pm2
-      script: npm install pm2 -g
-    - stage: integration tests
-      script: yarn test-integrations
-    - stage: stop test instance
-      script: yarn stop-test
+  - $RUN_SCRIPT
 
 after_script:
   - pkill mongod
