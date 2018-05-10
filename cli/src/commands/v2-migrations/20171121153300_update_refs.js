@@ -5,27 +5,36 @@ import logger from 'lib/logger';
 import {
   getActivitiesFromStatement,
   getRelatedActivitiesFromStatement
-} from 'xapi-statements/dist/service/storeStatements/queriables/getActivitiesFromStatement';
+} from '@learninglocker/xapi-statements/dist/service/storeStatements/queriables/getActivitiesFromStatement';
 import {
   getAgentsFromStatement,
   getRelatedAgentsFromStatement
-} from 'xapi-statements/dist/service/storeStatements/queriables/getAgentsFromStatement';
-import getRegistrationsFromStatement from 'xapi-statements/dist/service/storeStatements/queriables/getRegistrationsFromStatement';
-import getVerbsFromStatement from 'xapi-statements/dist/service/storeStatements/queriables/getVerbsFromStatement';
+} from '@learninglocker/xapi-statements/dist/service/storeStatements/queriables/getAgentsFromStatement';
+import getRegistrationsFromStatement from '@learninglocker/xapi-statements/dist/service/storeStatements/queriables/getRegistrationsFromStatement';
+import getVerbsFromStatement from '@learninglocker/xapi-statements/dist/service/storeStatements/queriables/getVerbsFromStatement';
+
+const BATCH_SIZE = 10000;
+const REVISION = 1;
 
 const getQueriables = (doc) => {
   const statement = doc.statement;
   const refs = doc.refs ? doc.refs : [];
   const statements = [statement, ...refs];
 
-  return {
-    activities: union(...statements.map(getActivitiesFromStatement)),
-    agents: union(...statements.map(getAgentsFromStatement)),
-    registrations: union(...statements.map(getRegistrationsFromStatement)),
-    relatedActivities: union(...statements.map(getRelatedActivitiesFromStatement)),
-    relatedAgents: union(...statements.map(getRelatedAgentsFromStatement)),
-    verbs: union(...statements.map(getVerbsFromStatement))
-  };
+  try {
+    return {
+      activities: union(...statements.map(getActivitiesFromStatement)),
+      agents: union(...statements.map(getAgentsFromStatement)),
+      registrations: union(...statements.map(getRegistrationsFromStatement)),
+      relatedActivities: union(...statements.map(getRelatedActivitiesFromStatement)),
+      relatedAgents: union(...statements.map(getRelatedAgentsFromStatement)),
+      verbs: union(...statements.map(getVerbsFromStatement))
+    };
+  } catch (err) {
+    console.log('Error on statement: ', doc);
+    console.error(err);
+    throw err;
+  }
 };
 
 const migrateStatementsBatch = (statements) => {
@@ -35,6 +44,9 @@ const migrateStatementsBatch = (statements) => {
     try {
       const queriables = getQueriables(doc);
       const update = {
+        $set: {
+          rev: REVISION
+        },
         $addToSet: {
           activities: { $each: queriables.activities },
           agents: { $each: queriables.agents },
@@ -52,10 +64,11 @@ const migrateStatementsBatch = (statements) => {
     }
   });
   if (i > 0) {
-    return highland(bulkOp.execute());
-  } else {
-    return highland(Promise.resolve());
+    return highland(bulkOp.execute().then(() => {
+      logger.info(`Completed batch of ${BATCH_SIZE}`);
+    }));
   }
+  return highland(Promise.resolve());
 };
 
 const processStream = stream =>
@@ -70,16 +83,20 @@ const createIndex = key => Statement.collection.createIndex(
     lrs_id: 1,
     [key]: 1
   },
-    { background: true }
-  );
+  { background: true }
+);
 
 const createIndexes = keys => keys.map(createIndex);
 
 const up = async () => {
-  const batchSize = 10;
-  const query = {};
+  const query = {
+    $or: [
+      { rev: { $exists: false } },
+      { rev: { $lte: REVISION } },
+    ]
+  };
   const statementStream = highland(Statement.find(query).cursor());
-  const migrationStream = statementStream.batch(batchSize).flatMap(migrateStatementsBatch);
+  const migrationStream = statementStream.batch(BATCH_SIZE).flatMap(migrateStatementsBatch);
   await processStream(migrationStream);
   createIndexes([
     'activities',
@@ -100,8 +117,9 @@ const down = async () => {
       registrations: '',
       relatedActivities: '',
       relatedAgents: '',
-      verbs: ''
-    }
+      verbs: '',
+      rev: '',
+    },
   };
   const options = { multi: true };
   await Statement.update(filter, update, options);

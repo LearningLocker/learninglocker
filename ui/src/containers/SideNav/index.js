@@ -74,7 +74,9 @@ class SideNav extends Component {
     const activeScopes = this.props.activeScopes.toJS();
     const canViewStores = canViewModel('store', activeScopes);
     const canViewUsers = canViewModel('user', activeScopes);
+
     const canViewOrganisations = canViewModel('organisation', activeScopes);
+
     const canViewClients = canViewModel('client', activeScopes);
     const canViewRoles = canViewModel('role', activeScopes);
     const canViewSettings = (
@@ -117,7 +119,7 @@ class SideNav extends Component {
         label={'People'}
         icon={'ion ion-person-stalker'} >
         {this.renderLink(activeClass, 'organisation.people.manage', 'Manage')}
-        {this.renderLink(activeClass, 'organisation.people.reconcile', 'Reconcile')}
+        {this.renderLink(activeClass, 'organisation.people.imports', 'Import')}
       </CollapsibleNav>
     );
   }
@@ -166,12 +168,14 @@ class SideNav extends Component {
 
 export default compose(
   withStyles(styles),
-  connect(state => ({
-    activeRoute: routeNodeSelector('organisation')(state).route,
-    activeOrganisationSettings: activeOrganisationSettingsSelector(state),
-    activeScopes: currentScopesSelector(state),
-    id: activeOrgIdSelector(state)
-  })),
+  connect(state =>
+    ({
+      activeRoute: routeNodeSelector('organisation')(state).route,
+      activeOrganisationSettings: activeOrganisationSettingsSelector(state),
+      activeScopes: currentScopesSelector(state),
+      id: activeOrgIdSelector(state)
+    })
+  ),
   withProps(() => ({
     schema: 'organisation'
   })),

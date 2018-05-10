@@ -53,8 +53,8 @@ const user = new LLSchema('user', { idAttribute: '_id', sortKey: 'updatedAt' }, 
         orgSetting.update('filter', new Map({}), filter =>
           (
             filter.size > 0
-            ? JSON.stringify(filter.toJS())
-            : JSON.stringify(filter)
+              ? JSON.stringify(filter.toJS())
+              : JSON.stringify(filter)
           )
         )
       )
@@ -90,13 +90,13 @@ const visualisation = new LLSchema('visualisation', { idAttribute: '_id', sortKe
         query => JSON.stringify(query.toJS())
       )
     ).update('axes', new Map(), axes => JSON.stringify(axes.toJS()))
-    .merge(
+      .merge(
       model
         .filter((item, key) => key.startsWith('axes') && includes(axesToJsList, key))
         .map(item =>
           JSON.stringify(item ? item.toJS() : null)
         )
-    ),
+      ),
 
   reviver: (key, value) => {
     const isIndexed = Iterable.isIndexed(value); // From default reviver.
@@ -165,31 +165,65 @@ const query = new LLSchema('query', { idAttribute: '_id', sortKey: 'updatedAt' }
     conditions => (conditions.size > 0
       ? JSON.stringify(conditions.toJS())
       : JSON.stringify(conditions)
-  ))
+    ))
 });
-const identifer = new LLSchema('identifer', { idAttribute: '_id' });
-const personaIdentifier = new LLSchema('personaIdentifier', { idAttribute: '_id', sortKey: 'updatedAt' });
+
+const personaIdentifier = new LLSchema('personaIdentifier',
+  { idAttribute: entity => entity._id || entity.id, sortKey: 'updatedAt' },
+  {
+    reviver: (key, value) => {
+      if (key) {
+        return value.toMap();
+      }
+      return value.toMap().set('_id', value.get('_id') || value.get('id'));
+    }
+  }
+);
+const personaAttribute = new LLSchema('personaAttribute',
+  { idAttribute: entity => entity._id || entity.id },
+  {
+    reviver: (key, value) => {
+      if (key) {
+        return value.toMap();
+      }
+      return value.toMap().set('_id', value.get('_id') || value.get('id'));
+    }
+  }
+);
 const scoredPersonas = new LLSchema('scoredPersonas', { idAttribute: '_id' });
-const scoringscheme = new LLSchema('scoringscheme', { idAttribute: '_id', sortKey: 'updatedAt' });
 const importcsv = new LLSchema('importcsv', { idAttribute: '_id', sortKey: 'updatedAt' });
 
 const client = new LLSchema('client', { idAttribute: '_id', sortKey: 'updatedAt' }, {
   preSave: model => model.update('authority', authority => (
     Map.isMap(authority) ?
-    JSON.stringify(authority.toJS()) :
-    undefined
+      JSON.stringify(authority.toJS()) :
+      undefined
   ))
 });
 
 const dashboard = new LLSchema('dashboard', { idAttribute: '_id' }, {
-  preSave: model =>
-    model.update('filter', new Map({}), filter =>
-      (
-        filter.size > 0
-        ? JSON.stringify(filter.toJS())
-        : JSON.stringify(filter)
-      )
-    ),
+  preSave: (model) => {
+    // TODO: remove
+    // model.update('filter', new Map({}), filter =>
+    //   (
+    //     filter.size > 0
+    //     ? JSON.stringify(filter.toJS())
+    //     : JSON.stringify(filter)
+    //   )
+    // )
+
+    if (!model.get('shareable')) {
+      return model;
+    }
+
+    const newShareable = model.get('shareable', new List()).map(item =>
+      item.update('filter', new Map({}), filter => (
+        filter.size > 0 ? JSON.stringify(filter.toJS()) : JSON.stringify(filter)
+      ))
+    );
+
+    return model.set('shareable', newShareable);
+  },
   reviver: (key, value) => {
     if (value.has('filter')) {
       try {
@@ -200,7 +234,9 @@ const dashboard = new LLSchema('dashboard', { idAttribute: '_id' }, {
       return value;
     }
 
-    if (key === 'widgets') return value.toList();
+    if (key === 'widgets') {
+      return value.toList();
+    }
 
     // From default reviver.
     return Iterable.isIndexed(value) ? value.toList() : value.toMap();
@@ -232,13 +268,21 @@ const querybuildercache = new LLSchema('querybuildercache', { idAttribute: '_id'
 
 const querybuildercachevalue = new LLSchema('querybuildercachevalue', { idAttribute: '_id' }, { editableFields: ['value'] });
 
-const aggregation = new LLSchema('aggregation', { idAttribute: model => (
-  isString(model._id) ? model._id : JSON.stringify(model._id)
-) });
+const aggregation = new LLSchema('aggregation', {
+  idAttribute: model => (
+    isString(model._id) ? model._id : JSON.stringify(model._id)
+  )
+});
 
 const role = new LLSchema('role', { idAttribute: '_id' });
 
 const globalError = new LLSchema('globalError', { idAttribute: '_id' });
+
+const personasImport = new LLSchema('personasImport', {
+  idAttribute: '_id',
+  sortKey: 'createdAt'
+});
+personasImport.define({});
 
 stream.define({
   outcomes: { type: arrayOf(streamOutcome), local: true },
@@ -287,10 +331,6 @@ scoredPersonas.define({
   persona: { type: persona }
 });
 
-scoringscheme.define({
-  organisation: { type: organisation }
-});
-
 visualisation.define({
   organisation: { type: organisation },
   sources: { type: arrayOf(lrs) },
@@ -322,10 +362,9 @@ export {
   streamOutcome,
   persona,
   query,
-  identifer,
+  personaAttribute,
   personaIdentifier,
   scoredPersonas,
-  scoringscheme,
   importcsv,
   client,
   dashboard,
@@ -336,5 +375,6 @@ export {
   aggregation,
   globalError,
   role,
-  statementForwarding
+  statementForwarding,
+  personasImport,
 };

@@ -63,16 +63,17 @@ const withStatementsVisualisation = (WrappedComponent) => {
 
     getAxes = () => unflattenAxes(this.props.model);
 
-    renderPreview = () => (
-      <WrappedComponent
-        {...this.props}
-        previewPeriod={this.props.model.get('previewPeriod')}
-        stacked={this.props.model.get('stacked', true)}
-        axes={this.getAxes()}
-        labels={this.props.model.get('filters', new List()).map(filter => filter.get('label'))}
-        colors={this.props.model.get('filters', new List()).map((filter, index) => filter.get('color') || VISUALISATION_COLORS[index])}
-        getFormattedResults={this.getFormattedResults} />
-    );
+    renderPreview = () =>
+      (
+        <WrappedComponent
+          {...this.props}
+          previewPeriod={this.props.model.get('previewPeriod')}
+          stacked={this.props.model.get('stacked', true)}
+          axes={this.getAxes()}
+          labels={this.props.model.get('filters', new List()).map(filter => filter.get('label'))}
+          colors={this.props.model.get('filters', new List()).map((filter, index) => filter.get('color') || VISUALISATION_COLORS[index])}
+          getFormattedResults={this.getFormattedResults} />
+      );
 
     renderSpinner = () => (
       <div
@@ -93,11 +94,13 @@ const withStatementsVisualisation = (WrappedComponent) => {
       </div>
     );
   }
-  return connect((state, { id }) => ({
-    results: visualisationResultsSelector(id)(state),
-    shouldFetch: visualisationShouldFetchSelector(id)(state),
-    fetchState: visualisationFetchStateSelector(id)(state)
-  }),
+  return connect((state, { id }) =>
+    ({
+      results: visualisationResultsSelector(id)(state),
+      shouldFetch: visualisationShouldFetchSelector(id)(state),
+      fetchState: visualisationFetchStateSelector(id)(state)
+    })
+  ,
   { fetchVisualisation })(WithStatementsVisualisation);
 };
 

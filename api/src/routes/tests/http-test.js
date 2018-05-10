@@ -14,17 +14,15 @@ const apiApp = supertestApi();
 
 const db = new DBHelper();
 
-let statement;
 let jwtToken;
 let orgJwtToken;
 const provider = 'native';
 
-describe('API HTTP Route tests', () => {
+describe('API HTTP Route tests', function describeTest() {
+  this.timeout(10000);
   before((done) => {
-    console.log('readyState', connection.readyState);
     if (connection.readyState !== 1) {
       connection.on('connected', () => {
-        console.log('connected');
         done();
       });
     } else {
@@ -113,7 +111,7 @@ describe('API HTTP Route tests', () => {
       beforeEach('create organisation and jwt token', async () => {
         orgJwtToken = await createOrgToken(['ALL'], [], '561a679c0c5d017e4004714e');
 
-        statement = await Statement.create({
+        await Statement.create({
           organisation: testId,
           statement: {
             context: {
@@ -123,8 +121,6 @@ describe('API HTTP Route tests', () => {
             }
           }
         });
-
-        console.log(statement);
       });
 
       it('should return 200 with token auth', async () => {

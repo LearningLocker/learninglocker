@@ -7,6 +7,7 @@ import ExportDBHelper from 'api/utils/tests/exportsDBHelper';
 import { streamToCsv, groupStreams } from 'api/utils/exports';
 import { getConnection } from 'lib/connections/mongoose';
 import highland from 'highland';
+import Statement from 'lib/models/statement';
 import _ from 'lodash';
 
 const connection = getConnection();
@@ -16,6 +17,10 @@ const { expect } = chai;
 const exportDBHelper = new ExportDBHelper();
 
 describe('Export helper tests', () => {
+  beforeEach(async () => {
+    await Statement.remove({});
+  });
+
   before((done) => {
     if (connection.readyState !== 1) {
       connection.then(() => { done(); });

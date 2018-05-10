@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    // This must be specified if "paths" is set
+    "baseUrl": ".",
+    // Relative to "baseUrl"
+    "paths": {
+      "api": "api/src",
+      "ui": "ui/src",
+      "worker": "worker/src",
+      "cli": "cli/src",
+      "lib": "lib/src"
+    }
+  },
+  "include": [
+    "api/src",
+    "ui/src",
+    "worker/src",
+    "cli/src",
+    "lib/src"
+  ]
+}

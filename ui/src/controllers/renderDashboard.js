@@ -1,5 +1,6 @@
 import React from 'react';
 import logger from 'lib/logger';
+import { find } from 'lodash';
 import Html from 'ui/components/Html';
 import { renderToString } from 'react-dom/server';
 import { createDashboardJWT } from 'api/auth/jwt';
@@ -31,12 +32,33 @@ export default (req, res) => {
 
   global.navigator = { userAgent: req.headers['user-agent'] };
   const dashboardId = req.params.dashboardId;
+  const shareableId = req.params.shareableId;
 
   Dashboard.findById(dashboardId).then((dashboard) => {
     if (dashboard === null) throw new Error('Dashboard not found');
-    return dashboard;
+
+    let shareableDashboard;
+    if (shareableId) {
+      shareableDashboard = find(dashboard.shareable, share =>
+        share._id.toString() === shareableId
+      );
+    } else if (dashboard.shareable.length > 0) {
+      shareableDashboard = dashboard.shareable[0];
+    } else {
+      throw new Error('This dashboard has not been shared');
+    }
+
+    const dashboardWithShareable = dashboard;
+
+    // spreading doesn't work as it's a mongoose object
+    dashboardWithShareable.filter = shareableDashboard.filter;
+    dashboardWithShareable.title = shareableDashboard.title;
+    dashboardWithShareable.visibility = shareableDashboard.visibility;
+    dashboardWithShareable.validDomains = shareableDashboard.validDomains;
+
+    return dashboardWithShareable;
   })
-  .then(dashboard => createDashboardJWT(dashboard, 'native')
+  .then(dashboard => createDashboardJWT(dashboard, shareableId, 'native')
     .then((token) => {
       store.dispatch(decodeLoginTokenAction(token));
       store.dispatch(setActiveTokenAction('dashboard', String(dashboard._id)));
@@ -45,7 +67,13 @@ export default (req, res) => {
         case sharingScopes.VALID_DOMAINS: {
           const parsedUrl = parseUrl(req.get('Referer'));
           const invalidReferer = !isMatch(parsedUrl.hostname, dashboard.validDomains);
-          if (invalidReferer) return res.status(404).send();
+          if (invalidReferer) {
+            const parsedSiteUrl = parseUrl(process.env.SITE_URL);
+            const siteIsntReferer = !isMatch(parsedUrl.hostname, parsedSiteUrl.hostname);
+            if (siteIsntReferer) {
+              return res.status(404).send('Dashboard can only be embedded within valid domains, or opened directly from Learning Locker');
+            }
+          }
           res.set('X-Frame-Options', `ALLOW-FROM ${parsedUrl.origin}`);
           return res.send(`<!doctype html>\n${renderHtmlWithReq(store)}`);
         }
