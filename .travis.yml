@@ -4,10 +4,10 @@ sudo: false
 
 env:
   matrix:
-    - RUN_SCRIPT=lint && yarn test-worker
-    - RUN_SCRIPT=test-lib
-    - RUN_SCRIPT=test-api
-    - RUN_SCRIPT=test-ui
+    - RUN_SCRIPT=yarn lint && yarn test-worker
+    - RUN_SCRIPT=yarn test-lib
+    - RUN_SCRIPT=yarn test-api
+    - RUN_SCRIPT=yarn test-ui
     - RUN_SCRIPT=npm install pm2 -g && yarn test-integrations && yarn stop-test
   global:
     - MONGODB=3.2.13
