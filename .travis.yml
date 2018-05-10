@@ -38,7 +38,7 @@ cache:
   yarn: true
 
 script:
-  - $RUN_SCRIPT
+  - date && $RUN_SCRIPT
 
 after_script:
   - pkill mongod
