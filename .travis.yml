@@ -37,13 +37,6 @@ before_script:
 cache:
   yarn: true
 
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - g++-4.8
-
 script:
   - $RUN_SCRIPT
 
