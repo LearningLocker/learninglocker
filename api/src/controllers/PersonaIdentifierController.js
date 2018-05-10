@@ -219,6 +219,11 @@ const updatePersonaIdentifier = catchErrors(async (req, res) => {
     authInfo
   });
 
+  const { persona } = req.body;
+  if (!persona) {
+    throw new ClientError('`persona` must be included when updating an identifier');
+  }
+
   const organisation = getOrgFromAuthInfo(authInfo);
   const { identifier } = await personaService.setIdentifierPersona({
     organisation,

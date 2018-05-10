@@ -11,6 +11,14 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [2.4.0]
 
+## [2.3.2]
+### Fixed
+  - Check persona and attribute exists before creating (#1153)
+
+## [2.3.1]
+### Fixed
+  - Respect organisation creation scope (#1153)
+  
 ## [2.3.0]
 ### Added
   - Multiple shareable links per dashboard (#1096)
