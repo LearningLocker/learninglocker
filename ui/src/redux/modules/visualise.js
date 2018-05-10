@@ -338,7 +338,7 @@ export function* watchFetchVisualisation() {
   }
 }
 
-export const sagas = [watchUpdateVisualisation, watchFetchVisualisation]; 
+export const sagas = [watchUpdateVisualisation, watchFetchVisualisation];
 
 export const getEndDate = (dateStart, period) => {
   const dateEnd = moment(dateStart); // Clones the date so it's not mutated.
