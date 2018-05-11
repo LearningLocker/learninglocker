@@ -37,16 +37,12 @@
 
 .register {
   display: block;
-  width: 80px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.ok {
   background-color: #276CDA;
+  width: 80px;
   margin-left: 12px;
 }
 
 .dontShowAgain {
-  background-color: #CB7128;
+  color: #8d5e28;
+  margin-top: 12px;
 }

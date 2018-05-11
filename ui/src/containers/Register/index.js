@@ -31,24 +31,18 @@ const Register = ({
         <div className={styles.benefits}>Get helpdesk access and help promote the Open Source project</div>
 
         <div className={styles.buttons}>
-
-          <button
-            className={`btn btn-primary pull-right ${styles.ok}`}
-            onClick={() => setOk(true)}
-            >OK</button>
-
-          <button
-            className={`btn btn-primary pull-right ${styles.dontShowAgain}`}
-            onClick={setRegistered}
-            >Don&#39;t show again</button>
-
           <a 
-            className={`btn btn-danger ${styles.register}`}
-            href="https://www.ht2labs.com/learning-locker/register-installation/"
+            className={`btn btn-primary pull-right ${styles.register}`}
+            href="https://www.ht2labs.com/learning-locker/register-installation/#register"
             target="_blank"
             onClick={setRegistered}
             rel="noopener noreferrer"
             >Register</a>
+
+          <a href="javascript:void(0);"
+            className={`pull-left ${styles.dontShowAgain}`}
+            onClick={setRegistered}
+            >Don&#39;t show again</a>
 
         </div>
       </div>
