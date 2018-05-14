@@ -75,7 +75,6 @@ const dashboardIdSelector = (state) => {
 };
 
 const routeNameSelector = (state) => {
-  console.log(state.router.route);
   const out =
     state.router &&
     state.router.route &&
@@ -92,10 +91,8 @@ const routeNameSelector = (state) => {
 const shareableDashboardFilterSelector = () => createSelector(
   [metadataSelector, modelsSelector, dashboardShareableIdSelector, dashboardIdSelector, routeNameSelector],
   (metadata, models, routeShareableId, routeDashboardId, routeName) => {
-    const viewingDashboardExternally = (routeName.indexOf('embedded-dashboard') !== -1);
+    const viewingDashboardExternally = (routeName && routeName.indexOf('embedded-dashboard') !== -1);
     const dashboards = models.get('dashboard', new Map());
-
-    console.log(routeName, routeName.indexOf('embedded-dashboard'));
 
     // if we are viewing a shared dashboard externally
     if (viewingDashboardExternally) {
