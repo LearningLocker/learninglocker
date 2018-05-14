@@ -2,7 +2,7 @@
   "name": "learning_locker",
   "description": "An open source learning record store",
   "license": "GPL-3.0",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/LearningLocker/learninglocker"

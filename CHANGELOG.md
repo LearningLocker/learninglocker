@@ -9,6 +9,10 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.3.3]
+### Fixed
+  - Legacy shareable dashboard links respect filters (#1162)
+
 ## [2.3.2]
 ### Fixed
   - Check persona and attribute exists before creating (#1153)
