@@ -65,6 +65,15 @@ const dashboardShareableIdSelector = (state) => {
   return out;
 };
 
+const dashboardIdSelector = (state) => {
+  const out =
+    state.router &&
+    state.router.route &&
+    state.router.route.params &&
+    state.router.route.params.dashboardId;
+  return out;
+};
+
  /**
  * gets the visualisation pipeline associated with the provided ID
  * @param  {String}          id  id of visualisation
@@ -72,8 +81,8 @@ const dashboardShareableIdSelector = (state) => {
  */
 
 const shareableDashboardFilterSelector = () => createSelector(
-  [metadataSelector, modelsSelector, dashboardShareableIdSelector],
-  (metadata, models, shareableId) => {
+  [metadataSelector, modelsSelector, dashboardShareableIdSelector, dashboardIdSelector],
+  (metadata, models, shareableId, dashboardId) => {
     let expandedKey = (metadata || new Map())
       .get('dashboardSharing', new Map())
       .findKey(share => share.get('isExpanded', false) === true);
@@ -84,7 +93,31 @@ const shareableDashboardFilterSelector = () => createSelector(
     }
 
     if (!expandedKey) {
-      return new Map();
+      // no shareble id found - could be a legacy link (no shareable id in route params)
+      // find dashboard using dashboard id in route params instead
+      if (!dashboardId) {
+        // shouldn't be here...
+        return new Map();
+      }
+
+      const theDashboard = models.get('dashboard').find(
+        dash => {
+          return (dash.get('remoteCache', new Map()).get('_id') === dashboardId);
+        }
+      );
+      if (!theDashboard) {
+        // no dashboard found
+        return new Map();
+      }
+
+      const theShare = theDashboard.get('remoteCache', new Map())
+      .get('shareable', new List()).first();
+      if (!theShare) {
+        // no shareable on this model
+        return new Map();
+      }
+
+      return theShare.get('filter', new Map());
     }
 
     const theDashboard = models.get('dashboard').find(dash =>
