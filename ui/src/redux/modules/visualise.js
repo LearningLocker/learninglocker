@@ -79,7 +79,7 @@ const routeNameSelector = (state) => {
   const out =
     state.router &&
     state.router.route &&
-    state.router.route.name
+    state.router.route.name;
   return out;
 };
 
@@ -99,24 +99,28 @@ const shareableDashboardFilterSelector = () => createSelector(
 
     // if we are viewing a shared dashboard externally
     if (viewingDashboardExternally) {
-      console.log('viewing externally');
       if (!routeDashboardId) {
-        // this really should exist on t
         console.warn('Dashboard ID should exist on this route');
         return new Map();
       }
+
       const theDashboard = dashboards.get(routeDashboardId, new Map());
+      if (!theDashboard) {
+        // No dashboard found, return an empty filter
+        return new Map();
+      }
+
       if (!routeShareableId) {
         // must be a legacy link (no shareable ID) - use the first filter
         const legacyShare = theDashboard.get('remoteCache', new Map()).get('shareable', new List()).first();
         return legacyShare.get('filter', new Map());
-      } else {
-        // otherwise find the filter on the dasboard's shareables and return it
-        const theShare = theDashboard.get('remoteCache', new Map())
+      }
+
+      // otherwise find the filter on the dasboard's shareables and return it
+      const theShare = theDashboard.get('remoteCache', new Map())
         .get('shareable', new List())
         .find(share => share.get('_id') === routeShareableId);
-        return theShare.get('filter', new Map());
-      }
+      return theShare.get('filter', new Map());
     }
 
     const expandedKey = (metadata || new Map())
@@ -124,23 +128,25 @@ const shareableDashboardFilterSelector = () => createSelector(
       .findKey(share => share.get('isExpanded', false) === true);
 
     if (!expandedKey) {
+      // we aren't filtering - return empty filter
       return new Map();
     }
 
     // if we are filtering due to an expanded shareable model
-    const shareableFilterId = expandedKey;
+    // Find the dashboard with the corresponding shareable ID
     const theDashboard = dashboards.find(dash =>
       dash.get('remoteCache', new Map())
       .get('shareable', new List())
       .find(share =>
-        (share.get('_id') === shareableFilterId)
+        (share.get('_id') === expandedKey)
       )
     );
 
-    const theShare = theDashboard.get('remoteCache', new Map())
+    // return the filter from that dashboard's shareable model
+    return theDashboard.get('remoteCache', new Map())
       .get('shareable', new List())
-      .find(share => share.get('_id') === shareableFilterId);
-    return theShare.get('filter', new Map());
+      .find(share => share.get('_id') === expandedKey)
+      .get('filter', new Map());
   }
 );
 
