@@ -101,9 +101,7 @@ const shareableDashboardFilterSelector = () => createSelector(
       }
 
       const theDashboard = models.get('dashboard').find(
-        dash => {
-          return (dash.get('remoteCache', new Map()).get('_id') === dashboardId);
-        }
+        dash => (dash.get('remoteCache', new Map()).get('_id') === dashboardId)
       );
       if (!theDashboard) {
         // no dashboard found
