@@ -10,6 +10,8 @@ import { setInMetadata } from 'ui/redux/modules/metadata';
 import * as clearModelsCacheDuck from 'ui/redux/modules/pagination/clearModelsCache';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 import { modelsSelector } from 'ui/redux/modules/models/selectors';
+import Unauthorised from 'lib/errors/Unauthorised';
+import HttpError from 'ui/utils/errors/HttpError';
 
 const addStateSelector = schema => createSelector(
   [modelsSelector],
@@ -45,13 +47,14 @@ const addModel = createAsyncDuck({
 
     // check the status and throw errors if not valid
     if (status >= 400) {
+      if (status === 401) { throw new Unauthorised('Unauthorised'); }
       if (body.code === 11000 && schema === 'personaIdentifier') {
         throw new Error(
           'Another persona already uses that identifier and it cannot be used twice.'
         );
       }
       const message = body.errmsg || body.message || body;
-      throw new Error(message);
+      throw new HttpError(message, { status });
     }
 
     const result = normalize({ ...safeProps.toJS(), ...body }, schemaClass);
