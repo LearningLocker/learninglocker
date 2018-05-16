@@ -23,6 +23,7 @@ import migrateQueryBuilderCachesPath from 'cli/commands/migrateQueryBuilderCache
 
 import testStatementForwarding from 'cli/commands/testStatementForwarding';
 import testQueryBuilderCache from 'cli/commands/testQueryBuilderCache';
+import disableRegister from 'cli/commands/disableRegister';
 
 import migrateMongo, { MIGRATIONS_PATH } from 'cli/migrateMongo';
 
@@ -125,6 +126,12 @@ program
   .option('-b, --batchSize [batchSize]', 'Batch size..')
   .action(batchJobs);
 // node cli/dist/server batchJobs
+
+program
+  .command('disableRegister')
+  .action(disableRegister);
+// node cli/dist/server disableRegister
+
 
 program
   .command('migrateMongo')
