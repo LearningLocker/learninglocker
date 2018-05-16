@@ -260,7 +260,7 @@ const fetchModels = createAsyncDuck({
       throw new Unauthorised('Unauthorised');
     }
     if (status >= 300) {
-      throw new HttpError(body.message || body);
+      throw new HttpError(body.message || body, { status });
     }
 
     const models = map(body.edges, 'node');
