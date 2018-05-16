@@ -16,7 +16,6 @@ const Register = ({
   model,
   setRegistered,
   ok,
-  setOk
 }) => {
   if (model.size === 0 || model.get('dontShowRegistration') === true || ok === true) {
     return <div />;
@@ -38,10 +37,9 @@ const Register = ({
             onClick={setRegistered}
             rel="noopener noreferrer">Register</a>
 
-          <a
-            href="javascript:void(0);"
+          <span
             className={`pull-left ${styles.dontShowAgain}`}
-            onClick={setRegistered}>Don&#39;t show again</a>
+            onClick={setRegistered}>Don&#39;t show again</span>
 
         </div>
       </div>
