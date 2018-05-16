@@ -10,7 +10,26 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Migrations
 
 ## [2.4.0]
+### Fixes
+  - Deleted dashboard bug (#1142)
+  - Existing personas' names updated via CSV import (#1143)
+### Added
+  - Upgraded mongoose (v5) (#1132)
+  - Organisation, store and client deletions logged into new `audits` collection (#1132)
+  - Registration prompt on home screen (#1165)
 
+## [2.3.3]
+### Fixed
+  - Legacy shareable dashboard links respect filters (#1162)
+
+## [2.3.2]
+### Fixed
+  - Check persona and attribute exists before creating (#1153)
+
+## [2.3.1]
+### Fixed
+  - Respect organisation creation scope (#1153)
+  
 ## [2.3.0]
 ### Added
   - Multiple shareable links per dashboard (#1096)
