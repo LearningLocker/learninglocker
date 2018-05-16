@@ -37,7 +37,7 @@
 
 .register {
   display: block;
-  background-color: #276CDA;
+  background: #276CDA !important;
   width: 80px;
   margin-left: 12px;
 }
@@ -45,6 +45,7 @@
 .dontShowAgain {
   color: #8d5e28;
   margin-top: 12px;
+  cursor: pointer;
 }
 
 .dontShowAgain:hover {
