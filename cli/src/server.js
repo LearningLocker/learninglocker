@@ -47,7 +47,7 @@ program
     'Force the command to update the password (if valid)'
   )
   .action(createSiteAdmin);
-// node cli/dist/server createSiteAdmin andrew.hickey@ht2labs.com HT2 password
+// node cli/dist/server createSiteAdmin "example@email.com" "Your organisation name" "yourpassword"
 
 program.command('updateStatementCount').action(updateStatementCount);
 // node cli/dist/server updateStatementCount
