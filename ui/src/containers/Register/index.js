@@ -9,7 +9,7 @@ import {
 } from 'recompose';
 import { SITE_SETTINGS_ID } from 'lib/constants/siteSettings';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import registerLogo from 'ui/static/register-logo.png'
+import registerLogo from 'ui/static/register-logo.png';
 import styles from './styles.css';
 
 const Register = ({
@@ -18,11 +18,11 @@ const Register = ({
   ok,
   setOk
 }) => {
-  if(model.size === 0 || model.get('dontShowRegistration') === true || ok === true) {
-    return <div></div>;
+  if (model.size === 0 || model.get('dontShowRegistration') === true || ok === true) {
+    return <div />;
   }
 
-  return <Card>
+  return (<Card>
     <CardText className={styles.container}>
       <div >
         <img className={styles.logo} role="presentation" src={registerLogo} />
@@ -31,24 +31,23 @@ const Register = ({
         <div className={styles.benefits}>Get helpdesk access and help promote the Open Source project</div>
 
         <div className={styles.buttons}>
-          <a 
+          <a
             className={`btn btn-primary pull-right ${styles.register}`}
             href="https://www.ht2labs.com/learning-locker/register-installation/#register"
             target="_blank"
             onClick={setRegistered}
-            rel="noopener noreferrer"
-            >Register</a>
+            rel="noopener noreferrer">Register</a>
 
-          <a href="javascript:void(0);"
+          <a
+            href="javascript:void(0);"
             className={`pull-left ${styles.dontShowAgain}`}
-            onClick={setRegistered}
-            >Don&#39;t show again</a>
+            onClick={setRegistered}>Don&#39;t show again</a>
 
         </div>
       </div>
     </CardText>
-  </Card>;
-}
+  </Card>);
+};
 
 export default compose(
   withProps(() => ({
@@ -57,12 +56,10 @@ export default compose(
   })),
   withModel,
   withHandlers({
-    setRegistered: ({updateModel}) => () => {
-      return updateModel({
-        path: ['dontShowRegistration'],
-        value: true
-      })
-    }
+    setRegistered: ({ updateModel }) => () => updateModel({
+      path: ['dontShowRegistration'],
+      value: true
+    })
   }),
   withState('ok', 'setOk', false),
   withStyles(styles)

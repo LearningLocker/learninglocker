@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import SiteSettings from 'lib/models/siteSettings'
+import SiteSettings from 'lib/models/siteSettings';
 import { SITE_SETTINGS_ID } from 'lib/constants/siteSettings';
 
 const objectId = mongoose.Types.ObjectId;
