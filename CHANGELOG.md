@@ -11,6 +11,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [2.4.0]
 ### Fixes
+  - Logs out the user when their token has expired (#1167)
   - Deleted dashboard bug (#1142)
   - Existing personas' names updated via CSV import (#1143)
 ### Added
