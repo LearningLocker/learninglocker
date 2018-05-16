@@ -46,3 +46,9 @@
   color: #8d5e28;
   margin-top: 12px;
 }
+
+.dontShowAgain:hover {
+  color: #8d5e28;
+  text-decoration: underline;
+  margin-top: 12px;
+}
