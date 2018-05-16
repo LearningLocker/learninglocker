@@ -12,9 +12,11 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ## [2.4.0]
 ### Fixes
   - Deleted dashboard bug (#1142)
-
+  - Existing personas' names updated via CSV import (#1143)
 ### Added
-  - Registration prompt (#1165)
+  - Upgraded mongoose (v5) (#1132)
+  - Organisation, store and client deletions logged into new `audits` collection (#1132)
+  - Registration prompt on home screen (#1165)
 
 ## [2.3.3]
 ### Fixed
