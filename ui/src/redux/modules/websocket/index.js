@@ -2,7 +2,7 @@ import { put, take, select } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import { handleActions } from 'redux-actions';
 import Cookies from 'js-cookie';
-import { pickBy, toLower } from 'lodash';
+import { pickBy, lowerCase } from 'lodash';
 import { fromJS, OrderedMap, Map } from 'immutable';
 import { testCookieName } from 'ui/utils/auth';
 import { FORWARD, BACKWARD } from 'ui/redux/modules/pagination/fetchModels';
@@ -78,12 +78,11 @@ function* initWebsocket() {
 function* handleWebsocketMessage() {
   while (true) {
     const { message } = yield take(WEBSOCKET_MESSAGE);
-    console.log('handleWebsocketMessage', message);
 
     const data = JSON.parse(message.data);
 
     // normalzr reviver
-    const schemaClass = schemas[data.schema];
+    const schemaClass = schemas[lowerCase(data.schema)];
     const normalizedModels = normalize([data.node], arrayOf(schemaClass));
     const entities = entityReviver(normalizedModels);
     // eo romalzr reviver

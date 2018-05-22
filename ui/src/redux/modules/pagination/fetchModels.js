@@ -278,7 +278,6 @@ const fetchModels = createAsyncDuck({
     // eo websocket
 
     // put all of the models into the master record in the model store
-    console.log('101 entities', entities);
     yield put(mergeEntitiesDuck.actions.mergeEntitiesAction(entities));
 
     // map the ids against the filter in the pagination store
