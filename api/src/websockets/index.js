@@ -2,40 +2,17 @@ import { getCookieName } from 'ui/utils/auth';
 import { verifyToken } from 'api/auth/passport';
 import Statement from 'lib/models/statement';
 
-const websockets = [];
-
 const messageManager = ws => async (message) => {
   const jsonMessage = JSON.parse(message);
 
   switch (jsonMessage.type) {
-    case 'authenticate': {
-      // TODO:
-      const organisationId = '59c209c4ad95fd50960c0362';
-      const cookieName = getCookieName({ tokenType: 'organisation', tokenId: organisationId });
-
-      const token = jsonMessage.value[cookieName];
-      let authDetails;
-      try {
-        authDetails = await verifyToken(token);
-      } catch (err) {
-        ws.close();
-      }
-
-
-      websockets.push({
-        organisationId,
-        authDetails,
-        ws
-      });
-      break;
-    }
     case 'REGISTER': {
       const cookieName = getCookieName({
         tokenType: 'organisation', tokenId: jsonMessage.organisationId
       });
 
       if (jsonMessage.schema !== 'statement') {
-        // ONLY suport statement live updates atm.
+        // Only suport statement live updates atm.
         break;
       }
 
@@ -48,13 +25,22 @@ const messageManager = ws => async (message) => {
         break;
       }
 
-      Statement.getConnectionWs({
+      const changeStream = await Statement.getConnectionWs({
         filter: jsonMessage.filter,
         cursor: jsonMessage.cursor,
         authInfo,
+        sort: jsonMessage.sort,
         ws
       });
-      // watch the websocket, and push new stuff down to it
+
+      ws.on('error', () => {
+        changeStream.driverChangeStream.close();
+        changeStream.removeAllListeners();
+      });
+      ws.on('close', () => {
+        changeStream.driverChangeStream.close();
+        changeStream.removeAllListeners();
+      });
 
       break;
     }
