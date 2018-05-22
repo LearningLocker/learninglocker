@@ -95,7 +95,6 @@ function* handleWebsocketMessage() {
     yield put({
       type: 'learninglocker/pagination/FETCH_MODELS_SUCCESS',
       cursor: new Map({
-        // after: data.before,
         before: data.before
       }),
       direction: BACKWARD,

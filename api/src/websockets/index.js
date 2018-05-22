@@ -1,18 +1,28 @@
 import { getCookieName } from 'ui/utils/auth';
 import { verifyToken } from 'api/auth/passport';
 import Statement from 'lib/models/statement';
+import { isUndefined } from 'lodash';
+
+const getModel = (schema) => {
+  switch (schema) {
+    // only support statements currently
+    case 'statement':
+      return Statement;
+    default:
+      return;
+  }
+};
 
 const messageManager = ws => async (message) => {
   const jsonMessage = JSON.parse(message);
-
   switch (jsonMessage.type) {
     case 'REGISTER': {
       const cookieName = getCookieName({
         tokenType: 'organisation', tokenId: jsonMessage.organisationId
       });
 
-      if (jsonMessage.schema !== 'statement') {
-        // Only suport statement live updates atm.
+      const model = getModel(jsonMessage.schema);
+      if (isUndefined(model)) {
         break;
       }
 
@@ -25,7 +35,7 @@ const messageManager = ws => async (message) => {
         break;
       }
 
-      const changeStream = await Statement.getConnectionWs({
+      const changeStream = await model.getConnectionWs({
         filter: jsonMessage.filter,
         cursor: jsonMessage.cursor,
         authInfo,
