@@ -11,8 +11,8 @@ import entityReviver from 'ui/redux/modules/models/entityReviver';
 import * as mergeEntitiesDuck from 'ui/redux/modules/models/mergeEntities';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 import Unauthorised from 'lib/errors/Unauthorised';
+import { registerAction } from 'ui/redux/modules/websocket';
 import diffEdges from './fetchModelsDiff';
-
 
 export const FORWARD = 'FORWARD'; // forward pagination direction
 export const BACKWARD = 'BACKWARD'; // backward pagination direction
@@ -124,10 +124,10 @@ const hasMoreSelector = (schema, filter, sort, direction = FORWARD) =>
   });
 
 export const reduceStart = (state, { schema, filter, sort, cursor }) => (
-  state
-    .setIn([schema, filter, sort, cursor, 'requestState'], IN_PROGRESS)
-    .setIn([schema, filter, sort, 'pageInfo', 'currentCursor'], cursor)
-);
+    state
+      .setIn([schema, filter, sort, cursor, 'requestState'], IN_PROGRESS)
+      .setIn([schema, filter, sort, 'pageInfo', 'currentCursor'], cursor)
+  );
 
 export const reduceSuccess = (
   state,
@@ -176,12 +176,11 @@ const fetchModels = createAsyncDuck({
 
   reduceSuccess,
 
-  reduceFailure: (state, { schema, filter, sort, cursor }) =>
-    state.setIn([schema, filter, sort, cursor, 'requestState'], FAILED)
+  reduceFailure: (state, { schema, filter, sort, cursor }) => state.setIn([schema, filter, sort, cursor, 'requestState'], FAILED)
       .setIn([schema, filter, sort, cursor, 'cachedAt'], moment()),
 
   reduceComplete: (state, { schema, filter, sort, cursor }) =>
-    state.setIn([schema, filter, sort, cursor, 'requestState'], null),
+     state.setIn([schema, filter, sort, cursor, 'requestState'], null),
 
   startAction: (
     {
@@ -269,7 +268,17 @@ const fetchModels = createAsyncDuck({
     const entities = entityReviver(normalizedModels);
     const pageInfo = fromJS(body.pageInfo);
 
+    // websocket
+    yield put(registerAction({
+      schema,
+      filter: plainFilter,
+      sort: plainSort,
+      cursor: pageInfo.get('startCursor', undefined) // TODO: make this the last curser
+    }));
+    // eo websocket
+
     // put all of the models into the master record in the model store
+    console.log('101 entities', entities);
     yield put(mergeEntitiesDuck.actions.mergeEntitiesAction(entities));
 
     // map the ids against the filter in the pagination store

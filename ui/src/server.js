@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import httpProxy from 'http-proxy';
+import proxyMiddleware from 'http-proxy-middleware';
 import path from 'path';
 import http from 'http';
 import fs from 'fs';
@@ -65,6 +66,10 @@ app.use(Express.static(path.join(__dirname, '..', 'public'), {
 app.use('/api', (req, res) => {
   proxy.web(req, res, { target: targetUrl });
 });
+
+const wsProxy = proxyMiddleware('/websocket', { target: 'ws://learninglocker:8080', ws: true, changeOrigin: true });
+app.use(wsProxy);
+server.on('upgrade', wsProxy.upgrade);
 
 // added the error handling to avoid https://github.com/nodejitsu/node-http-proxy/issues/527
 proxy.on('error', (error, req, res) => {

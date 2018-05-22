@@ -97,6 +97,7 @@
     "express": "^4.13.4",
     "express-markdown-browser": "0.0.2",
     "express-restify-mongoose": "^3.2.0",
+    "express-ws": "^3.0.0",
     "faker": "^3.0.1",
     "fast-csv": "^2.3.0",
     "file-loader": "^0.8.5",
@@ -108,6 +109,7 @@
     "hoist-non-react-statics": "^1.0.3",
     "html-to-text": "^2.1.0",
     "http-proxy": "^1.12.0",
+    "http-proxy-middleware": "^0.18.0",
     "immutability-helper": "^2.0.0",
     "immutable": "^3.8.1",
     "invariant": "^2.2.0",
@@ -238,7 +240,8 @@
     "webpack-dev-middleware": "^1.10.1",
     "webpack-node-externals": "^1.5.4",
     "winston": "^2.1.1",
-    "winston-aws-cloudwatch": "^1.5.0"
+    "winston-aws-cloudwatch": "^1.5.0",
+    "ws": "^5.1.1"
   },
   "devDependencies": {
     "babel-jest": "^19.0.0",
