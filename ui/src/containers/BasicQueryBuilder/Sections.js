@@ -46,8 +46,8 @@ export default class Sections extends Component {
     const out = this.props.criteria.filter((value, key) => {
       const criteriaPath = key.get('criteriaPath', new List());
 
-      const matchChildGenerators = section.get('childGenerators', new List()).filter(generator =>
-        criteriaPath.slice(0, -1).equals(generator.get('path'))
+      const matchChildGenerators = section.get('childGenerators', new List()).filter(
+        generator => criteriaPath.slice(0, generator.get('path').size).equals(generator.get('path'))
       ).count();
 
       return criteriaPath.equals(sectionPath) || matchChildGenerators > 0;
