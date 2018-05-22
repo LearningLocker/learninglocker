@@ -6,6 +6,9 @@ import { pickBy, toLower } from 'lodash';
 import { fromJS, OrderedMap, Map } from 'immutable';
 import { testCookieName } from 'ui/utils/auth';
 import { FORWARD, BACKWARD } from 'ui/redux/modules/pagination/fetchModels';
+import * as schemas from 'ui/utils/schemas';
+import { normalize, arrayOf } from 'normalizr';
+import entityReviver from 'ui/redux/modules/models/entityReviver';
 import * as mergeEntitiesDuck from 'ui/redux/modules/models/mergeEntities';
 
 
@@ -79,18 +82,13 @@ function* handleWebsocketMessage() {
 
     const data = JSON.parse(message.data);
 
-    const models = fromJS({
-      // TODO: push though utils/schemas
-      [toLower(data.schema)]: {
-        [data.node._id]: data.node
-      }
-    });
+    // normalzr reviver
+    const schemaClass = schemas[data.schema];
+    const normalizedModels = normalize([data.node], arrayOf(schemaClass));
+    const entities = entityReviver(normalizedModels);
+    // eo romalzr reviver
 
-    // const jsonMessage = JSON.parse(message);
-
-    console.log('009 message', models);
-
-    yield put(mergeEntitiesDuck.actions.mergeEntitiesAction(models));
+    yield put(mergeEntitiesDuck.actions.mergeEntitiesAction(entities));
 
     yield put({
       type: 'learninglocker/pagination/FETCH_MODELS_SUCCESS',
