@@ -84,7 +84,7 @@
     string-format-obj "^1.0.0"
     through2 "^2.0.0"
 
-"@learninglocker/persona-service@1.6.11":
+"@learninglocker/persona-service@^1.6.11":
   version "1.6.11"
   resolved "https://registry.yarnpkg.com/@learninglocker/persona-service/-/persona-service-1.6.11.tgz#3bc5645ceed6298d14358b7b096d56fd8e117087"
   dependencies:

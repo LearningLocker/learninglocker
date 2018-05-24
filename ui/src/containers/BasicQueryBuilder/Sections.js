@@ -41,14 +41,16 @@ export default class Sections extends Component {
     this.changeSectionProp(key, 'children', children);
   }
 
-  getCriteriaForSection = (section) => {
+  getCriteriaForSection = (section, used = false) => {
     const sectionPath = section.get('keyPath', new List());
     const out = this.props.criteria.filter((value, key) => {
       const criteriaPath = key.get('criteriaPath', new List());
-
+      if (used === false) {
+        return criteriaPath.equals(sectionPath);
+      }
       const matchChildGenerators = section.get('childGenerators', new List()).filter(
-        generator => criteriaPath.slice(0, generator.get('path').size).equals(generator.get('path'))
-      ).count();
+          generator => criteriaPath.slice(0, generator.get('path').size).equals(generator.get('path'))
+        ).count();
 
       return criteriaPath.equals(sectionPath) || matchChildGenerators > 0;
     });
@@ -60,8 +62,8 @@ export default class Sections extends Component {
       .get('children', new Map())
       .reduce((criteria, child) => criteria + this.getCriteriaForWholeSection(child), 0);
 
-  getCriteriaForWholeSection = section => (
-    this.getCriteriaForSection(section).count() +
+  getCriteriaForWholeSection = (section, used = false) => (
+    this.getCriteriaForSection(section, used).count() +
     this.getCriteriaForChildren(section)
   );
 
@@ -90,7 +92,7 @@ export default class Sections extends Component {
   );
 
   renderCollapsedSection = (section, key) => (<CollapsedSection
-    used={this.getCriteriaForWholeSection(section) > 0}
+    used={this.getCriteriaForWholeSection(section, true) > 0}
     section={section}
     key={key}
     onExpand={this.expandSection.bind(this, key, section)} />)
