@@ -19,6 +19,10 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
   - Organisation, store and client deletions logged into new `audits` collection (#1132)
   - Registration prompt on home screen (#1165)
 
+## [2.3.4]
+### Fixed
+  - Larger nginx buffer size (#1170)
+
 ## [2.3.3]
 ### Fixed
   - Legacy shareable dashboard links respect filters (#1162)
