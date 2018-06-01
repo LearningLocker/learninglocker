@@ -2,6 +2,7 @@ import { getCookieName } from 'ui/utils/auth';
 import { verifyToken } from 'api/auth/passport';
 import Statement from 'lib/models/statement';
 import { isUndefined } from 'lodash';
+import logger from 'lib/logger';
 
 const getModel = (schema) => {
   switch (schema) {
@@ -43,8 +44,9 @@ const messageManager = ws => async (message) => {
         ws
       });
 
-      ws.on('error', () => {
+      ws.on('error', (err) => {
         changeStream.driverChangeStream.close();
+        logger.error('websocket error', err);
         changeStream.removeAllListeners();
       });
       ws.on('close', () => {

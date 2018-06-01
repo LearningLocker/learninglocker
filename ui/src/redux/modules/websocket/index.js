@@ -123,6 +123,9 @@ const getAuth = () => {
 };
 
 function* registerConnection() {
+  // wait for the websocket to be ready
+  yield take(WEBSOCKET_READY);
+
   while (true) {
     const {
       schema,
