@@ -23,6 +23,8 @@ import {
 } from 'lib/constants/sharingScopes';
 import RadioGroup from 'ui/components/Material/RadioGroup';
 import RadioButton from 'ui/components/Material/RadioButton';
+import { OFF, ANY, JWT_SECURED } from 'lib/constants/dashboard';
+import Switch from 'ui/components/Material/Switch';
 import OpenLinkButtonComponent from './OpenLinkButton';
 import styles from './styles.css';
 
@@ -83,6 +85,25 @@ const handlers = withHandlers({
       path: 'validDomains',
       value: event.target.value
     });
+  },
+
+  handleFilterModeChange: ({ updateSelectedSharable }) => (value) => {
+    updateSelectedSharable({
+      path: 'filterMode',
+      value
+    });
+  },
+  handleFilterNotEmptyChange: ({ updateSelectedSharable }) => (value) => {
+    updateSelectedSharable({
+      path: 'filterNotEmpty',
+      value
+    });
+  },
+  handleFilterJwtSecretChange: ({ updateSelectedSharable }) => (event) => {
+    updateSelectedSharable({
+      path: 'filterJwtSecret',
+      value: event.target.value
+    });
   }
 });
 
@@ -91,6 +112,11 @@ const ModelFormComponent = ({
   handleFilterChange,
   handleVisibilityChange,
   handleDomainsChange,
+
+  handleFilterModeChange,
+  handleFilterNotEmptyChange,
+  handleFilterJwtSecretChange,
+
   model,
   parentModel
 }) => {
@@ -99,6 +125,9 @@ const ModelFormComponent = ({
   const urlId = uuid.v4();
   const visibilityId = uuid.v4();
   const validDomainsId = uuid.v4();
+  const filterModeId = uuid.v4();
+  const filterNotEmptyId = uuid.v4();
+  const filterJwtSecretId = uuid.v4();
 
   return (<div>
     <div className="form-group">
@@ -154,6 +183,49 @@ const ModelFormComponent = ({
       </div>}
 
     <div className="form-group">
+      <label htmlFor={filterModeId}>
+        Filter url paramater mode
+      </label>
+      <RadioGroup
+        id={filterModeId}
+        name="filterMode"
+        value={model.get('filterMode', OFF)}
+        onChange={handleFilterModeChange}>
+
+        <RadioButton label="Off" value={OFF} />
+
+        <RadioButton label="Any" value={ANY} />
+        <RadioButton label="JWT Secured" value={JWT_SECURED} />
+      </RadioGroup>
+    </div>
+
+    {model.get('filterMode', OFF) !== OFF &&
+    <div className="form-group">
+      <label htmlFor={filterNotEmptyId} >
+        Parameter filter
+      </label>
+
+      <Switch
+        id={filterNotEmptyId}
+        label="Filter paramater required?"
+        checked={model.get('fitlerNotEmpty', true)}
+        onChange={handleFilterNotEmptyChange} />
+      {model.get('filterMode', OFF) === JWT_SECURED &&
+      <div>
+        <label htmlFor={filterJwtSecretId} >
+          JWT Secret
+        </label>
+        <input
+          id={filterJwtSecretId}
+          className="form-control"
+          type="text"
+          onChange={handleFilterJwtSecretChange}
+          value={model.get('filterJwtSecret', '')} />
+      </div>}
+    </div>}
+
+
+    <div className="form-group">
       <label htmlFor={filterId}>Filter</label>
       <QueryBuilder
         id={filterId}
@@ -163,10 +235,12 @@ const ModelFormComponent = ({
     </div>
   </div>);
 };
+/*
 
+*/
 const ModelForm = compose(
   utilHandlers,
-  handlers
+  handlers,
 )(ModelFormComponent);
 
 const deleteButton = ({ parentModel }) => compose(
