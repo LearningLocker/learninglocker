@@ -9,6 +9,11 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.3.5]
+### Fixed
+  - Persona locks now have a timeout to prevent imports from hanging forever (#1175)
+  - Fixed persona error-CSV download (#1174)
+  
 ## [2.3.4]
 ### Fixed
   - Larger nginx buffer size (#1170)

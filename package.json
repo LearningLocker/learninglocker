@@ -2,7 +2,7 @@
   "name": "learning_locker",
   "description": "An open source learning record store",
   "license": "GPL-3.0",
-  "version": "2.3.4",
+  "version": "2.3.5",
   "repository": {
     "type": "git",
     "url": "https://github.com/LearningLocker/learninglocker"
@@ -51,7 +51,7 @@
   "dependencies": {
     "@google-cloud/pubsub": "^0.16.1",
     "@google-cloud/storage": "^1.5.2",
-    "@learninglocker/persona-service": "1.6.11",
+    "@learninglocker/persona-service": "^1.6.11",
     "@learninglocker/xapi-statements": "^5.0.9",
     "@learninglocker/xapi-validation": "^2.1.5",
     "@newrelic/native-metrics": "^2.1.0",
