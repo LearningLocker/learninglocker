@@ -199,29 +199,17 @@ const ModelFormComponent = ({
       </RadioGroup>
     </div>
 
-    {model.get('filterMode', OFF) !== OFF &&
+    {model.get('filterMode', OFF) === JWT_SECURED &&
     <div className="form-group">
-      <label htmlFor={filterNotEmptyId} >
-        Parameter filter
+      <label htmlFor={filterJwtSecretId} >
+        JWT Secret (HS256)
       </label>
-
-      <Switch
-        id={filterNotEmptyId}
-        label="Filter paramater required?"
-        checked={model.get('fitlerNotEmpty', true)}
-        onChange={handleFilterNotEmptyChange} />
-      {model.get('filterMode', OFF) === JWT_SECURED &&
-      <div>
-        <label htmlFor={filterJwtSecretId} >
-          JWT Secret
-        </label>
-        <input
-          id={filterJwtSecretId}
-          className="form-control"
-          type="text"
-          onChange={handleFilterJwtSecretChange}
-          value={model.get('filterJwtSecret', '')} />
-      </div>}
+      <input
+        id={filterJwtSecretId}
+        className="form-control"
+        type="text"
+        onChange={handleFilterJwtSecretChange}
+        value={model.get('filterJwtSecret', '')} />
     </div>}
 
 
