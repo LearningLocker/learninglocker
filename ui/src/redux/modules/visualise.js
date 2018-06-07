@@ -186,8 +186,6 @@ export const visualisationPiplelinesSelector = (
         return vFilter;
       }
 
-      console.log('1001 filter: ', filter);
-
       const out = new Map({
         $match: new Map({
           $and: new List([
