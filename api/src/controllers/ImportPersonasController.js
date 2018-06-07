@@ -55,7 +55,7 @@ const importPersonasError = catchErrors(async (req, res) => {
     ...filter
   });
 
-  const csvHandle = personaImport.csvErrorHandle;
+  const csvHandle = personaImport.csvErrorHandle || personaImport.csvHandle;
 
   res.header('Content-Type', 'text/csv');
   return downloadToStream(csvHandle)(res);
