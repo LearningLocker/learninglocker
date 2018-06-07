@@ -86,7 +86,8 @@ export const finishedProcessing = async ({
 
   await addErrorsToCsv({
     personasImport,
-    csvHandle: personasImport.csvHandle
+    csvHandle: personasImport.csvHandle,
+    csvOutHandle: personasImport.csvErrorHandle
   });
 };
 
