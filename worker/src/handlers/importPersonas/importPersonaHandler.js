@@ -98,7 +98,6 @@ export default personaService => async ({
   organisation
 }, done) => {
   // establish lock
-
   const lock = await establishLock({ structure, data, organisation });
   if (!lock) {
     await promisify(publish)({
@@ -124,7 +123,6 @@ export default personaService => async ({
   })(data, index);
 
   // have we finished processing ???
-
   if (totalCount && processedCount >= totalCount) {
     await finishedProcessing({ personaImportId });
   }
