@@ -9,6 +9,11 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.3.5]
+### Fixed
+  - Persona Error CSV Downloading (#1174)
+  - Persona Upload Lock Timeouts (#1176)
+
 ## [2.3.4]
 ### Fixed
   - Larger nginx buffer size (#1170)
