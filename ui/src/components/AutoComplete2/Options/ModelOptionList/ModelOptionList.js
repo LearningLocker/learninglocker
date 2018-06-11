@@ -83,6 +83,7 @@ const addProps = compose(
     isEditing,
     setIsEditing,
     canEdit = () => true,
+    canAdd = true,
     fields,
     defaultValues,
     defaultNewValues,
@@ -101,7 +102,7 @@ const addProps = compose(
       fields,
       defaultValues
     }),
-    children: (
+    children: (canAdd &&
       <AddNewOption
         fields={fields}
         defaultNewValues={defaultNewValues}

@@ -7,7 +7,6 @@ import ModelOptionList from
 import { Map } from 'immutable';
 import { compose, withProps, withState } from 'recompose';
 import { isUndefined } from 'lodash';
-import { List } from 'react-toolbox/lib/list';
 // import * as schemas from 'ui/utils/schemas';
 
 // const withEditableFields = withProps(({ schema, editableFields }) => {
@@ -70,7 +69,7 @@ export default compose(
   parseOption,
   parseOptionTooltip,
   searchStringToFilter,
-  valuesFilter
+  valuesFilter,
 }) => (<AutoComplete2
   renderInput={({ hasFocus }) => (
     <QueryBuilderInput
@@ -93,6 +92,7 @@ export default compose(
       filter={filter}
       first={1000}
       canEdit={() => false}
+      canAdd={false}
       schema={schema} />
     )} />
   ));
