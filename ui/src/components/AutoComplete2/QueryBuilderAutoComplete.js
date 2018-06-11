@@ -6,6 +6,8 @@ import ModelOptionList from
   'ui/components/AutoComplete2/Options/ModelOptionList/ModelOptionList';
 import { Map } from 'immutable';
 import { compose, withProps, withState } from 'recompose';
+import { isUndefined } from 'lodash';
+import { List } from 'react-toolbox/lib/list';
 // import * as schemas from 'ui/utils/schemas';
 
 // const withEditableFields = withProps(({ schema, editableFields }) => {
@@ -19,7 +21,17 @@ import { compose, withProps, withState } from 'recompose';
 // merges that with the existing filter
 const withValuesFilter = compose(
   withProps(({ values, filter }) => {
-    if (values.isEmpty()) return { valuesFilter: new Map({ _id: null }) };
+    values = values.filter(items => items.filter(
+        item => !isUndefined(item)
+      ).size > 0
+    );
+
+    if (values.isEmpty()) {
+      return {
+        valuesFilter: new Map({ _id: null }),
+        values
+      };
+    }
 
     const inFilter = new Map({
       $or: values
@@ -28,7 +40,11 @@ const withValuesFilter = compose(
       $nor: values
     });
 
-    return { valuesFilter: inFilter.merge(filter), notValuesFilter: outFilter };
+    return {
+      valuesFilter: inFilter.merge(filter),
+      notValuesFilter: outFilter,
+      values
+    };
   })
 );
 
@@ -55,30 +71,28 @@ export default compose(
   parseOptionTooltip,
   searchStringToFilter,
   valuesFilter
-}) =>
-  (<AutoComplete2
-    renderInput={({ hasFocus }) => (
-      <QueryBuilderInput
-        filter={valuesFilter}
-        values={values}
-        first={1000}
-        parseOption={option => (option ? parseOption(option) : '')}
-        parseOptionTooltip={option => (option ? parseOption(option) : '')}
-        schema={schema}
-        deselectOption={deselectOption}
-        hasFocus={hasFocus}
-        searchStringToFilter={searchStringToFilter}
-        onChangeFilter={searchFilter => setSearchFilter(searchFilter)} />
+}) => (<AutoComplete2
+  renderInput={({ hasFocus }) => (
+    <QueryBuilderInput
+      filter={valuesFilter}
+      values={values}
+      first={1000}
+      parseOption={option => (option ? parseOption(option) : '')}
+      parseOptionTooltip={option => (option ? parseOption(option) : '')}
+      schema={schema}
+      deselectOption={deselectOption}
+      hasFocus={hasFocus}
+      searchStringToFilter={searchStringToFilter}
+      onChangeFilter={searchFilter => setSearchFilter(searchFilter)} />
     )}
-    renderOptions={() => (
-      <ModelOptionList
-        onSelectOption={selectOption}
-        parseOption={option => (option ? parseOption(option) : '')}
-        parseOptionTooltip={option => (option ? parseOptionTooltip(option) : '')}
-        filter={filter}
-        first={1000}
-        canEdit={() => false}
-        schema={schema} />
+  renderOptions={() => (
+    <ModelOptionList
+      onSelectOption={selectOption}
+      parseOption={option => (option ? parseOption(option) : '')}
+      parseOptionTooltip={option => (option ? parseOptionTooltip(option) : '')}
+      filter={filter}
+      first={1000}
+      canEdit={() => false}
+      schema={schema} />
     )} />
-  )
-);
+  ));
