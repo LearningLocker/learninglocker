@@ -28,8 +28,13 @@ const pollWhile = ({ id, schema, doWhile = () => false }) => ({
 function* doPoll({ schema, id, doWhile }) {
   let model = yield select(state => modelsSchemaIdSelector(schema, id)(state));
 
-  while (doWhile(model)) {
-    yield put(fetchModel({ schema, id, force: true }));
+  let stop = false;
+  const stopFn = () => {
+    stop = true;
+  };
+  while (doWhile(model) && stop) {
+    const result = yield put(fetchModel({ schema, id, force: true }));
+    result.catch(stopFn);
     yield call(delay, 8000);
     model = yield select(state => modelsSchemaIdSelector(schema, id)(state));
   }
