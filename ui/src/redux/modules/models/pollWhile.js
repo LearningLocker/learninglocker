@@ -32,7 +32,7 @@ function* doPoll({ schema, id, doWhile }) {
   const stopFn = () => {
     stop = true;
   };
-  while (doWhile(model) && stop) {
+  while (doWhile(model) && !stop) {
     const result = yield put(fetchModel({ schema, id, force: true }));
     result.catch(stopFn);
     yield call(delay, 8000);
