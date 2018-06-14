@@ -9,6 +9,10 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.3.6]
+### Fixed
+  - Client can patch users fully (#1188)
+
 ## [2.3.5]
 ### Fixed
   - Persona Error CSV Downloading (#1174)
