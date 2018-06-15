@@ -15,6 +15,6 @@ export const getShareableUrl = ({ // eslint-disable-line import/prefer-default-e
     return `${getRouteUrl()}/dashboards/${parentModel.get('_id')}/${model.get('_id')}/${urlEndocedTitle}`;
   }
 
-  const jwtToken = jwt.sign({}, model.get('filterJwtSecret'));
+  const jwtToken = jwt.sign({}, model.get('filterJwtSecret'), {noTimestamp: true});
   return `${getRouteUrl()}/dashboards/${parentModel.get('_id')}/${model.get('_id')}/${urlEndocedTitle}?filter=${jwtToken}`;
 };

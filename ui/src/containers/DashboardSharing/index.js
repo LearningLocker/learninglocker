@@ -203,7 +203,7 @@ const ModelFormComponent = ({
 
     <div className="form-group">
       <label htmlFor={filterModeId}>
-        Filter url paramater mode
+        Filter url parameter mode
       </label>
       <RadioGroup
         id={filterModeId}
