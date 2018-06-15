@@ -9,12 +9,12 @@ export const getShareableUrl = ({ // eslint-disable-line import/prefer-default-e
   const title = model.get('title', '')
     .replace(/\s/g, '-')
     .replace(/~-/g, '~');
-  const urlEndocedTitle = encodeURI(title);
+  const urlEncodedTitle = encodeURI(title);
 
   if (model.get('filterMode') !== JWT_SECURED) {
-    return `${getRouteUrl()}/dashboards/${parentModel.get('_id')}/${model.get('_id')}/${urlEndocedTitle}`;
+    return `${getRouteUrl()}/dashboards/${parentModel.get('_id')}/${model.get('_id')}/${urlEncodedTitle}`;
   }
 
   const jwtToken = jwt.sign({}, model.get('filterJwtSecret'), {noTimestamp: true});
-  return `${getRouteUrl()}/dashboards/${parentModel.get('_id')}/${model.get('_id')}/${urlEndocedTitle}?filter=${jwtToken}`;
+  return `${getRouteUrl()}/dashboards/${parentModel.get('_id')}/${model.get('_id')}/${urlEncodedTitle}?filter=${jwtToken}`;
 };
