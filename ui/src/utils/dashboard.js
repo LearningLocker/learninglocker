@@ -1,6 +1,7 @@
 import getRouteUrl from 'ui/utils/getRouteUrl';
 import { JWT_SECURED } from 'lib/constants/dashboard';
 import jwt from 'jsonwebtoken';
+import { isUndefined } from 'lodash';
 
 export const getShareableUrl = ({ // eslint-disable-line import/prefer-default-export
   model,
@@ -11,7 +12,7 @@ export const getShareableUrl = ({ // eslint-disable-line import/prefer-default-e
     .replace(/~-/g, '~');
   const urlEncodedTitle = encodeURI(title);
 
-  if (model.get('filterMode') !== JWT_SECURED) {
+  if (model.get('filterMode') !== JWT_SECURED || isUndefined(model.get('filterJwtSecret')) || model.get('filterJwtSecret') == "") {
     return `${getRouteUrl()}/dashboards/${parentModel.get('_id')}/${model.get('_id')}/${urlEncodedTitle}`;
   }
 
