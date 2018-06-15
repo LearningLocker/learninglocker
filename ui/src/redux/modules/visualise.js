@@ -130,13 +130,13 @@ const shareableDashboardFilterSelector = () => createSelector(
 
       // get paramater filter
       if (
-        theShare.get('filterMode', OFF) !== ANY && filter
+        theShare.get('filterMode', OFF) !== OFF && filter
       ) {
         return [
           theShare.get('filter', new Map()),
           // fromJS(JSON.parse(filter))
-          (theShare.get('filterMode') === 'ANY') ?
-            fromJS(JSON.parse(filter)) :
+          (theShare.get('filterMode') === ANY) ?
+            fromJS(JSON.parse(decodeURI(filter))) :
             filter // jwt token, send as string
         ];
       }
