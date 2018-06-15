@@ -222,6 +222,7 @@ restify.serve(router, User, {
     const scopes = getScopesFromAuthInfo(authInfo);
     const tokenType = getTokenTypeFromAuthInfo(authInfo);
 
+    // if site admin, skip over this section
     if (findIndex(scopes, item => item === SITE_ADMIN) < 0) {
       // remove scope changes
       req.body = omit(req.body, 'scopes');
@@ -230,6 +231,9 @@ restify.serve(router, User, {
           // Don't allow changing of passwords
           req.body = omit(req.body, 'password');
         }
+      } else {
+        // always strip the password from other token types
+        req.body = omit(req.body, 'password');
       }
     }
 
