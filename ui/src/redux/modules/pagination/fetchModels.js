@@ -2,7 +2,7 @@ import { Map, fromJS, OrderedSet, Iterable, OrderedMap } from 'immutable';
 import { createSelector } from 'reselect';
 import { map } from 'lodash';
 import moment from 'moment';
-import { put, call } from 'redux-saga/effects';
+import { put, call, select } from 'redux-saga/effects';
 import { handleActions } from 'redux-actions';
 import createAsyncDuck from 'ui/utils/createAsyncDuck';
 import * as schemas from 'ui/utils/schemas';
@@ -12,10 +12,14 @@ import * as mergeEntitiesDuck from 'ui/redux/modules/models/mergeEntities';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 import Unauthorised from 'lib/errors/Unauthorised';
 import { registerAction } from 'ui/redux/modules/websocket';
+import { includes } from 'lodash';
+import { SUPPORTED_SCHEMAS } from 'lib/constants/websocket';
 import diffEdges from './fetchModelsDiff';
 
 export const FORWARD = 'FORWARD'; // forward pagination direction
 export const BACKWARD = 'BACKWARD'; // backward pagination direction
+
+export const FETCH_MODELS = 'learninglocker/pagination/FETCH_MODELS';
 
 /**
  * REDUCERS
@@ -169,7 +173,7 @@ export const reduceSuccess = (
 };
 
 const fetchModels = createAsyncDuck({
-  actionName: 'learninglocker/pagination/FETCH_MODELS',
+  actionName: FETCH_MODELS,
   failureDelay: 2000,
 
   reduceStart,
@@ -245,6 +249,27 @@ const fetchModels = createAsyncDuck({
     const plainCursor = Iterable.isIterable(cursor) ? cursor.toJS() : cursor;
 
     const schemaClass = schemas[schema];
+
+    const state = yield select();
+
+    if (
+      state.auth.get('liveWebsockets', false) &&
+      includes(SUPPORTED_SCHEMAS, schema) // TODO: only support statements currently
+    ) {
+      // Do nothing, as we'll do it in websocket/fetchModels saga
+
+      // console.log('002');
+      // yield put(registerAction({
+      //   schema,
+      //   filter: plainFilter,
+      //   sort: plainSort,
+      //   cursor: plainCursor,
+      //   first,
+      //   last
+      // }));
+      // console.log('003');
+      return;
+    }
     const { status, body } = yield call(llClient.getConnection, {
       schema,
       filter: plainFilter,
@@ -269,12 +294,12 @@ const fetchModels = createAsyncDuck({
     const pageInfo = fromJS(body.pageInfo);
 
     // websocket
-    yield put(registerAction({
-      schema,
-      filter: plainFilter,
-      sort: plainSort,
-      cursor: pageInfo.get('startCursor', undefined) // TODO: make this the last curser
-    }));
+    // yield put(registerAction({
+    //   schema,
+    //   filter: plainFilter,
+    //   sort: plainSort,
+    //   cursor: pageInfo.get('startCursor', undefined) // TODO: make this the last curser
+    // }));
     // eo websocket
 
     // put all of the models into the master record in the model store
@@ -284,6 +309,7 @@ const fetchModels = createAsyncDuck({
     return yield { schema, filter, sort, cursor, direction, edges, pageInfo, ids };
   }
 });
+
 
 const fetchAllOutstandingModels = ({
   schema,
@@ -381,5 +407,6 @@ export const selectors = {
 export const reducer = handleActions({
   ...fetchModels.reducers
 });
+
 export const actions = { fetchMore, fetchAllOutstandingModels, ...fetchModels.actions };
 export const sagas = fetchModels.sagas;

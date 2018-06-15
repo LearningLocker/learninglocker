@@ -14,6 +14,7 @@ import { sagas as appSagas } from './app';
 import { sagas as personasSagas } from './persona';
 import { sagas as alertsSagas } from './alerts';
 import { sagas as websocketSagas } from './websocket';
+import { sagas as websocketFetchSagas } from './websocket/fetchModels';
 
 export const sagaMiddleware = createSagaMiddleware();
 
@@ -33,6 +34,7 @@ export default function* rootSaga() {
     ...map(appSagas, runSaga),
     ...map(alertsSagas, runSaga),
     ...map(personasSagas, runSaga),
-    ...map(websocketSagas, runSaga)
+    ...map(websocketSagas, runSaga),
+    ...map(websocketFetchSagas, runSaga)
   ];
 }

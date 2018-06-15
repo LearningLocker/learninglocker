@@ -75,6 +75,9 @@ export default function createAsyncDuck({
   function* doActionSaga(args) {
     try {
       const result = yield call(doAction, args);
+      if (!result) {
+        return;
+      }
       yield put(actions.success(result));
       args.resolve(result);
       if (successDelay > -1) {

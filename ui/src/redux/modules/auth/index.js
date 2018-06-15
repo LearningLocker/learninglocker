@@ -22,7 +22,11 @@ export const initialState = fromJS({
   orgLoginRequestState: false,
   passwordResetState: false,
   passwordRequestResetState: false,
-  tokens: {}
+  tokens: {},
+  // To use websockes over rest, where available
+  liveWebsockets: true,
+  // Whether to recieve live updates
+  liveUpdates: true
 });
 
 /*
