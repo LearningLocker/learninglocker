@@ -46,20 +46,12 @@ const createJWT = ({
   tokenType,
   tokenId,
   shareableId = null,
-<<<<<<< HEAD
-  extensions
-}, opts = {
-  expiresIn: '7d'
-}) => sign(
-  { userId, provider, scopes, tokenType, tokenId, shareableId, extensions, filter },
-=======
   extensions,
   organisation = null
 }, opts = {
   expiresIn: '7d'
 }) => sign(
   { userId, provider, scopes, tokenType, tokenId, shareableId, extensions, filter, organisation },
->>>>>>> 1dee1e37fa83127cec8ff004c136ad08884b02b4
   process.env.APP_SECRET,
   opts
 );
@@ -100,13 +92,10 @@ const createOrgJWT = async (user, organisationId, provider) => {
 };
 
 const createDashboardTokenPayload = async (dashboard, shareableId, provider) => {
-<<<<<<< HEAD
-=======
   if (!shareableId && dashboard.shareable.length > 0) {
     shareableId = dashboard.shareable[0]._id;
   }
 
->>>>>>> 1dee1e37fa83127cec8ff004c136ad08884b02b4
   const visualisationIds = getVisualisationIdsFromDashboard(dashboard);
   return payloadDefaults({
     provider,
@@ -114,10 +103,7 @@ const createDashboardTokenPayload = async (dashboard, shareableId, provider) => 
     tokenType: 'dashboard',
     tokenId: String(dashboard._id),
     shareableId,
-<<<<<<< HEAD
-=======
     organisation: String(dashboard.organisation),
->>>>>>> 1dee1e37fa83127cec8ff004c136ad08884b02b4
     filter: {},
     extensions: {
       visualisationIds,

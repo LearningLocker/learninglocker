@@ -65,8 +65,6 @@ const dashboardShareableIdSelector = (state) => {
   return out;
 };
 
-<<<<<<< HEAD
-=======
 const dashboardIdSelector = (state) => {
   const out =
     state.router &&
@@ -84,7 +82,6 @@ const routeNameSelector = (state) => {
   return out;
 };
 
->>>>>>> 1dee1e37fa83127cec8ff004c136ad08884b02b4
  /**
  * gets the visualisation pipeline associated with the provided ID
  * @param  {String}          id  id of visualisation
@@ -385,7 +382,7 @@ export function* watchFetchVisualisation() {
   }
 }
 
-export const sagas = [watchUpdateVisualisation, watchFetchVisualisation]; 
+export const sagas = [watchUpdateVisualisation, watchFetchVisualisation];
 
 export const getEndDate = (dateStart, period) => {
   const dateEnd = moment(dateStart); // Clones the date so it's not mutated.
