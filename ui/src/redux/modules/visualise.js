@@ -65,6 +65,26 @@ const dashboardShareableIdSelector = (state) => {
   return out;
 };
 
+<<<<<<< HEAD
+=======
+const dashboardIdSelector = (state) => {
+  const out =
+    state.router &&
+    state.router.route &&
+    state.router.route.params &&
+    state.router.route.params.dashboardId;
+  return out;
+};
+
+const routeNameSelector = (state) => {
+  const out =
+    state.router &&
+    state.router.route &&
+    state.router.route.name;
+  return out;
+};
+
+>>>>>>> 1dee1e37fa83127cec8ff004c136ad08884b02b4
  /**
  * gets the visualisation pipeline associated with the provided ID
  * @param  {String}          id  id of visualisation
@@ -72,34 +92,61 @@ const dashboardShareableIdSelector = (state) => {
  */
 
 const shareableDashboardFilterSelector = () => createSelector(
-  [metadataSelector, modelsSelector, dashboardShareableIdSelector],
-  (metadata, models, shareableId) => {
-    let expandedKey = (metadata || new Map())
+  [metadataSelector, modelsSelector, dashboardShareableIdSelector, dashboardIdSelector, routeNameSelector],
+  (metadata, models, routeShareableId, routeDashboardId, routeName) => {
+    const viewingDashboardExternally = (routeName && routeName.indexOf('embedded-dashboard') !== -1);
+    const dashboards = models.get('dashboard', new Map());
+
+    // if we are viewing a shared dashboard externally
+    if (viewingDashboardExternally) {
+      if (!routeDashboardId) {
+        console.warn('Dashboard ID should exist on this route');
+        return new Map();
+      }
+
+      const theDashboard = dashboards.get(routeDashboardId, new Map());
+      if (!theDashboard) {
+        // No dashboard found, return an empty filter
+        return new Map();
+      }
+
+      if (!routeShareableId) {
+        // must be a legacy link (no shareable ID) - use the first filter
+        const legacyShare = theDashboard.get('remoteCache', new Map()).get('shareable', new List()).first();
+        return legacyShare.get('filter', new Map());
+      }
+
+      // otherwise find the filter on the dasboard's shareables and return it
+      const theShare = theDashboard.get('remoteCache', new Map())
+        .get('shareable', new List())
+        .find(share => share.get('_id') === routeShareableId);
+      return theShare.get('filter', new Map());
+    }
+
+    const expandedKey = (metadata || new Map())
       .get('dashboardSharing', new Map())
       .findKey(share => share.get('isExpanded', false) === true);
 
     if (!expandedKey) {
-      // return new Map();
-      expandedKey = shareableId;
-    }
-
-    if (!expandedKey) {
+      // we aren't filtering - return empty filter
       return new Map();
     }
 
-    const theDashboard = models.get('dashboard').find(dash =>
+    // if we are filtering due to an expanded shareable model
+    // Find the dashboard with the corresponding shareable ID
+    const theDashboard = dashboards.find(dash =>
       dash.get('remoteCache', new Map())
-        .get('shareable', new List())
-        .find(share =>
-          (share.get('_id') === expandedKey)
-        )
+      .get('shareable', new List())
+      .find(share =>
+        (share.get('_id') === expandedKey)
+      )
     );
 
-    const theShare = theDashboard.get('remoteCache', new Map())
+    // return the filter from that dashboard's shareable model
+    return theDashboard.get('remoteCache', new Map())
       .get('shareable', new List())
-      .find(share => share.get('_id') === expandedKey);
-
-    return theShare.get('filter', new Map());
+      .find(share => share.get('_id') === expandedKey)
+      .get('filter', new Map());
   }
 );
 

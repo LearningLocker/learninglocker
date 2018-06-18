@@ -3,6 +3,10 @@ node_js: "6"
 sudo: false
 
 env:
+  matrix:
+    - YARN_CMD=lint
+    - YARN_CMD=test
+    - YARN_CMD=ci-test-integrations
   global:
     - MONGODB=3.2.13
     - APP_SECRET=44E52D2227F93179525E252EC3AB5
@@ -18,35 +22,20 @@ services:
   - redis-server
 
 before_install:
-  - export CXX=g++-4.8
   - export DISPLAY=:99.0
-  - export NODE_UNICODETABLE_UNICODEDATA_TXT=$PWD/UnicodeData.txt
   - sh -e /etc/init.d/xvfb start
   - touch .env
 
 before_script:
   - mkdir ${PWD}/mongodb-linux-x86_64-${MONGODB}/data
   - ${PWD}/mongodb-linux-x86_64-${MONGODB}/bin/mongod --dbpath ${PWD}/mongodb-linux-x86_64-${MONGODB}/data --logpath ${PWD}/mongodb-linux-x86_64-${MONGODB}/mongodb.log --fork
-  - npm install pm2 -g
-  - yarn build-all
 
 cache:
   yarn: true
 
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - g++-4.8
-
 script:
-  - npm run lint
-  - yarn test
-  # Integration tests.
-  - yarn start-test
-  - yarn test-integration-run
+  - yarn $YARN_CMD
 
 after_script:
   - pkill mongod
-  - yarn stop-test
+

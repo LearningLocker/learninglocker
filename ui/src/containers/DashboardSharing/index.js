@@ -23,6 +23,7 @@ import {
 } from 'lib/constants/sharingScopes';
 import RadioGroup from 'ui/components/Material/RadioGroup';
 import RadioButton from 'ui/components/Material/RadioButton';
+import OpenLinkButtonComponent from './OpenLinkButton';
 import styles from './styles.css';
 
 const schema = 'dashboard';
@@ -183,12 +184,23 @@ const deleteButton = ({ parentModel }) => compose(
   })
 )(DeleteButtonComponent);
 
+const openLinkButton = ({ parentModel }) => compose(
+  withHandlers({
+    openLink: ({ id }) => () => {
+      const model = parentModel.get('shareable').find(mod => mod.get('_id') === id);
+      const url = getShareableUrl({ model, parentModel });
+      window.open(url, `shareable-${parentModel.get('_id')}-${model.get('_id')}`);
+    }
+  })
+)(OpenLinkButtonComponent);
+
 // --------------------------
 
 const dashboardSharingHandlers = withHandlers({
   addShareable: ({ updateModel, model }) => () => {
     const newShareable = model.get('shareable', new List()).push(new Map({
-      title: '~ Shareable'
+      title: '~ Shareable',
+      createdAt: new Date(),
     }));
     updateModel({
       path: 'shareable',
@@ -208,18 +220,23 @@ const DashboardSharingComponent = ({
         <button
           className="btn btn-primary pull-right"
           onClick={addShareable}>
-          Add new link
+          New shareable link
         </button>
       </div>
       <ModelList
         schema="dashboardSharing"
-        ModelForm={ModelForm}
-        getDescription={mod => mod.get('title')}
+        isLoading={false}
+        hasMore={false}
         models={model.get('shareable', new List())}
+        fetchMore={() => {}}
+        ModelForm={ModelForm}
         ModelListItem={ModelListItemWithoutModel}
         parentModel={model}
         updateModel={updateModel}
-        buttons={[(deleteButton({ parentModel: model }))]} />
+        buttons={[(openLinkButton({ parentModel: model })), (deleteButton({ parentModel: model }))]}
+        getDescription={mod => mod.get('title')}
+        noItemsDisplay="No shared links - click 'New shareable link' to share your dashboard" />
+      <hr />
     </div>
   );
 

@@ -2,7 +2,16 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { getMetadataSelector } from 'ui/redux/modules/metadata';
 import { Iterable } from 'immutable';
-import { compose, setPropTypes, defaultProps, withHandlers, setDisplayName } from 'recompose';
+import {
+  compose,
+  setPropTypes,
+  defaultProps,
+  withHandlers,
+  setDisplayName,
+  withProps,
+  withState,
+  lifecycle
+} from 'recompose';
 import Spinner from 'ui/components/Spinner';
 import DeleteButton from 'ui/containers/DeleteButton';
 import ModelListItem from 'ui/containers/ModelListItem';
@@ -13,21 +22,29 @@ const enhance = compose(
     isLoading: PropTypes.bool.isRequired,
     hasMore: PropTypes.bool.isRequired,
     models: PropTypes.instanceOf(Iterable).isRequired,
+    model: PropTypes.object,
     fetchMore: PropTypes.func.isRequired,
     ModelForm: PropTypes.func.isRequired,
+    getModelKey: PropTypes.func,
     displayOwner: PropTypes.bool,
     buttons: PropTypes.arrayOf(PropTypes.func),
     modifyButtons: PropTypes.func,
-    getDescription: PropTypes.func
+    getDescription: PropTypes.func,
+    noItemsDisplay: PropTypes.string,
   }),
   defaultProps({
+    getModelKey: model => model.get('_id', Math.random().toString()),
     getDescription: model => model.get('description', ''),
     buttons: [DeleteButton],
     displayOwner: true,
-    modifyButtons: buttons => buttons
+    modifyButtons: buttons => buttons,
+    noItemsDisplay: 'No items.',
   }),
   connect(
-    (state, { schema, models }) => {
+    (state, {
+      schema,
+      models
+    }) => {
       const metadata = models.map(
         model => getMetadataSelector({ schema, id: model.get('_id') })(state)
       );
@@ -53,6 +70,38 @@ const enhance = compose(
     fetchMore: ({ schema, filter, sort, fetchMore }) =>
       () => fetchMore({ schema, filter, sort })
   }),
+  withProps(({
+    models,
+    model
+  }) =>
+    ({
+      modelsWithModel: (!model || !model.get('_id') || models.has(model.get('_id')) ?
+        models :
+          models.reverse().set(model.get('_id'), model).reverse()
+      )
+    })
+  ),
+  withState('isExpandedOnce', 'setExpandedOnce', false),
+  lifecycle({
+    componentWillReceiveProps: ({
+      setMetadata,
+      isExpandedOnce,
+      setExpandedOnce,
+      model
+    }) => {
+      // If this component also has a withModel hoc on it,
+      // then we want that to be expanded by default.
+      if (model && model.get('_id') && isExpandedOnce === false) {
+        // this works because setMetadata comes from the withModel hoc (as opposed to withModels)
+        setMetadata('isExpanded', true);
+        setExpandedOnce(true);
+      }
+    },
+    componentWillUnmount: function componentWillUnmount() {
+      // otherwise isExpandedOnce preserves it's state between unmounting and mounting again :(
+      this.props.setExpandedOnce(false);
+    }
+  }),
   setDisplayName('ModelList')
 );
 
@@ -72,29 +121,31 @@ const renderLoadMoreButton = ({ isLoading, hasMore, fetchMore }) =>
 
 const render = ({
   isLoading,
-  models,
+  modelsWithModel,
   schema,
   ModelForm,
   getDescription,
+  getModelKey,
   buttons,
   hasMore,
   fetchMore,
   modifyButtons,
   ModelListItem: ModelListItemToUse = ModelListItem,
+  noItemsDisplay,
   ...other
 }) => {
-  if (models.size > 0) {
+  if (modelsWithModel.size > 0) {
     return (
       <div>
-        { models.map(model =>
+        { modelsWithModel.map(model =>
           <ModelListItemToUse
-            key={model.get('_id')}
+            {...other}
+            key={getModelKey(model)}
             model={model}
             schema={schema}
             getDescription={getDescription}
             ModelForm={ModelForm}
-            buttons={modifyButtons(buttons, models)}
-            {...other} />
+            buttons={modifyButtons(buttons, modelsWithModel)} />
         ).valueSeq() }
 
         { isLoading
@@ -108,7 +159,7 @@ const render = ({
   }
   return (
     <div className="row">
-      <div className="col-md-12"><h4>No items.</h4></div>
+      <div className="col-md-12"><h4>{ noItemsDisplay }</h4></div>
     </div>
   );
 };

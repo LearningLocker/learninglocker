@@ -9,6 +9,7 @@ import DeleteButton from 'ui/containers/DeleteButton';
 import Owner from 'ui/containers/Owner';
 import PrivacyToggleButton from 'ui/containers/PrivacyToggleButton';
 import DashboardSharing from 'ui/containers/DashboardSharing';
+import Spinner from 'ui/components/Spinner';
 import styles from './styles.css';
 
 const schema = 'dashboard';
@@ -56,8 +57,17 @@ class Dashboard extends Component {
     this.onWidgetChange([widgetIndex, 'title'], title);
   };
 
-  onChangeWidgetVisualisation = (widgetIndex, visualisation) => {
-    this.onWidgetChange([widgetIndex, 'visualisation'], visualisation);
+  onChangeWidgetVisualisation = (widgetIndex, visualisation, title) => {
+    const { model } = this.props;
+    const newModel = model
+      .setIn(['widgets', widgetIndex, 'visualisation'], visualisation)
+      .setIn(['widgets', widgetIndex, 'title'], title);
+    const widgetsUpdate = newModel.get('widgets');
+
+    this.props.updateModel({
+      path: ['widgets'],
+      value: widgetsUpdate
+    });
   };
 
   onChangeVisibility = (value) => {
@@ -81,6 +91,10 @@ class Dashboard extends Component {
 
   render() {
     const { model, organisationId } = this.props;
+
+    if (!model.get('_id')) {
+      return <Spinner />;
+    }
 
     return (
       <div className="row">

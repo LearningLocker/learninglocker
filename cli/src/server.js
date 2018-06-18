@@ -10,8 +10,6 @@ import migrateVisualiseQueries from 'cli/commands/migrateVisualiseQueries';
 import migrateToOrgSettings from 'cli/commands/migrateToOrgSettings';
 import migrateClientAuthority from 'cli/commands/v1-migrations/migrateClientAuthority';
 import migrateClientId from 'cli/commands/v1-migrations/migrateClientId';
-import addIdentsToCache from 'cli/commands/addIdentsToCache';
-import reseedOrganisationScoringSchemes from 'cli/commands/reseedOrganisationScoringSchemes';
 import batchJobs from 'cli/commands/worker/batchJobs';
 import migrateExportsToCSV from 'cli/commands/migrateExportsToCSV';
 import migrateScopesToRoles from 'cli/commands/migrateScopesToRoles';
@@ -29,6 +27,7 @@ import testQueryBuilderCache from 'cli/commands/testQueryBuilderCache';
 import migrateMongo, { MIGRATIONS_PATH } from 'cli/migrateMongo';
 
 import seed from 'cli/seed';
+import expirationNotificationEmails from 'cli/commands/expirationNotificationEmails';
 
 program.version('0.0.1');
 
@@ -57,7 +56,7 @@ program
   .option('-s, --since [since]', 'Requeue statements stored since this ISO date')
   .action(requeueStatements);
 // 1. Stop workers.
-// 2. db.personas.remove({}); db.personstatements.remove({}); db.statementwaypoints.remove({}); db.queryBuilderCaches.remove({}); db.queryBuilderCacheValues.remove({}); db.personaidentifiers.remove({}); db.statements.update({}, {$set: {processingQueues: [], completedQueues: []}}, {multi: true});
+// 2. db.personas.remove({}); db.queryBuilderCaches.remove({}); db.queryBuilderCacheValues.remove({}); db.personaIdentifiers.remove({}); db.statements.update({}, {$set: {processingQueues: [], completedQueues: []}}, {multi: true});
 // 3a. node cli/dist/server updateStatementCount #we skip running the lrs count workers using this instead
 // 3b. node cli/dist/server requeueStatements
 // 4. npm run start-dev-worker
@@ -95,16 +94,6 @@ program.command('migrateXAPIReadScope').action(migrateXAPIReadScope.bind(null, n
 program.command('migrateDownloadPaths').action(migrateDownloadPaths);
 // node cli/dist/server migrateDownloadPaths
 
-program.command('addIdentsToCache').action(addIdentsToCache.bind(null, null));
-// node cli/dist/server addIdentsToCache
-
-program
-  .command('reseedOrganisationScoringSchemes')
-  .option('-s, --since [since]', 'Requeue statements stored since this ISO date')
-  .action(reseedOrganisationScoringSchemes);
-// node cli/dist/server reseedOrganisationScoringSchemes
-//
-//
 
 program.command('migrateVisualiseAxes').action(migrateVisualiseAxes.bind(null, null));
 // node cli/dist/server migrateVisualiseAxes
@@ -151,5 +140,11 @@ program
   )
   .option('-i, --info [info]', "Display the state of the migrations, optional ['v'|'verbose']");
 // node cli/dist/server migrateMongo
+
+program
+  .command('expirationNotificationEmails')
+  .action(expirationNotificationEmails)
+  .option('--weekBefore [weekBefore]', 'The date of when to send the week before email');
+// node cli/dist/server expirationNotificationEmails
 
 program.parse(process.argv);

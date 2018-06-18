@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import path from 'path';
+import { all } from 'bluebird';
 import run from '../lib/tools/run';
 import bundle from '../lib/tools/bundle';
 import getWebpackConfig from '../lib/tools/getWebpackConfig';
@@ -25,13 +26,28 @@ const webpackConfig = getWebpackConfig({
   }
 });
 
+const schedulerWebpackConfig = getWebpackConfig({
+  isDebug,
+  isVerbose,
+  isClient: false,
+  sourceDir,
+  outputDir: path.resolve(__dirname, 'dist', 'scheduler'),
+  stats,
+  publicPath: '/',
+  entry: {
+    scheduler: 'scheduler.js'
+  }
+});
 
 /**
  * Uses webpack to compile the API server
  * into a single file executable by node
  */
 async function build() {
-  await run(bundle, { webpackConfig, watch });
+  await all([
+    run(bundle, { webpackConfig, watch }),
+    run(bundle, { webpackConfig: schedulerWebpackConfig, watch })
+  ]);
 }
 
 export default build();

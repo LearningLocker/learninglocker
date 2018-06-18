@@ -14,7 +14,7 @@ const TEST_FILE = `${process.cwd()}/api/src/routes/tests/fixtures/favicon.png`;
 describe('DownloadController.downloadLogo scope filtering', () => {
   const apiApp = setup();
 
-  const createMasterToken = async () => createOrgToken([ALL], [], masterId);
+  const createMasterToken = async () => createOrgToken([ALL], [SITE_ADMIN], masterId);
 
   const uploadLogo = async () => {
     const orgId = testId;
@@ -54,7 +54,7 @@ describe('DownloadController.downloadLogo scope filtering', () => {
       expectedCode: 200
     });
 
-  it('should not allow action when no scopes are used', async () => {
+  it('should allow action when no scopes are used', async () => {
     const token = await createOrgToken([]);
     await assertAuthorised(token);
   });
@@ -62,7 +62,7 @@ describe('DownloadController.downloadLogo scope filtering', () => {
   it('should allow action when ALL org scope is used', async () => {
     const token = await createOrgToken([ALL]);
     await assertAuthorised(token);
-  });
+  }).timeout(5000);
 
   it('should allow action when MANAGE_ALL_ORGANISATIONS org scope is used', async () => {
     const token = await createOrgToken([MANAGE_ALL_ORGANISATIONS]);
