@@ -20,6 +20,10 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
   - Organisation, store and client deletions logged into new `audits` collection (#1132)
   - Registration prompt on home screen (#1165)
 
+## [2.3.6]
+### Fixed
+  - Client can patch users fully (#1188)
+
 ## [2.3.5]
 ### Fixed
   - Persona Error CSV Downloading (#1174)
