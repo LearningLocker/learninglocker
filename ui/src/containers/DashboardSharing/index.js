@@ -84,14 +84,9 @@ const handlers = withHandlers({
       value: event.target.value
     });
   },
-  copyToClipBoard: ({model, parentModel}) => (urlId) => () => {
-    
-    const value = getShareableUrl({
-      model,
-      parentModel
-    });
-    window.document.getElementById(urlId).select()
-    window.document.execCommand("copy");
+  copyToClipBoard: () => urlId => () => {
+    window.document.getElementById(urlId).select();
+    window.document.execCommand('copy');
   }
 });
 
@@ -135,7 +130,7 @@ const ModelFormComponent = ({
         onClick={copyToClipBoard(urlId)}>
         Copy link
       </button>
-      <ion-icon name="clipboard"></ion-icon>
+      <ion-icon name="clipboard" />
     </div>
 
     <div className="form-group">
