@@ -155,7 +155,7 @@ const handler = handleActions({
   [WEBSOCKET_READY]: (state, { websocket }) => {
     state.websocket = websocket;
     return state;
-  }
+  },
 });
 
 export default function reducer(state = {}, action = {}) {

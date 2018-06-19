@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { compose } from 'recompose';
+import { compose, withHandlers } from 'recompose';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { loggedInUserSelector, logout, orgLogout } from 'ui/redux/modules/auth';
+import { loggedInUserSelector, logout, orgLogout, liveWebsocketToggle } from 'ui/redux/modules/auth';
 import { Map, List } from 'immutable';
 import bannerImg from 'ui/static/whiteLogo.png';
 import SaveBar from 'ui/containers/SaveBar';
@@ -25,7 +25,7 @@ class TopNav extends Component {
   }
 
   render() {
-    const { user } = this.props;
+    const { user, toggleWebsockets, liveWebsocket } = this.props;
     const organisations = user.get('organisations', new List());
     return (
       <div className={`${styles['topnav-wrapper']}`}>
@@ -38,7 +38,9 @@ class TopNav extends Component {
           <div className="container-fluid">
             <div id="navbar" className="nav-icons">
               <div id={`${styles['topnav-switch']}`}>
-                <Switch />
+                <Switch
+                  onChange={toggleWebsockets}
+                  checked={liveWebsocket} />
               </div>
               <a className="pull-right option" title="Logout" onClick={this.props.logout}><i className="icon ion-log-out" /></a>
               {organisations.size > 0 && <a className="pull-right option" title="Switch organisation" onClick={this.onClickSwitchOrg}><i className="icon ion-arrow-swap" /></a>}
@@ -55,5 +57,11 @@ export default compose(
   withStyles(styles),
   connect(state => ({
     user: loggedInUserSelector(state),
-  }), { logout, orgLogout })
+    liveWebsocket: state.auth.get('liveWebsockets')
+  }), { logout, orgLogout, liveWebsocketToggle }),
+  withHandlers({
+    toggleWebsockets: ({ liveWebsocketToggle: liveWebsocketToggleAction }) => (value) => {
+      liveWebsocketToggleAction(value);
+    }
+  }),
 )(TopNav);

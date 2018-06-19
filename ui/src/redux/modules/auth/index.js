@@ -14,6 +14,7 @@ import * as requestResetPasswordDuck from 'ui/redux/modules/auth/requestResetPas
 
 export const LOGOUT = logoutDuck.LOGOUT;
 export const ORG_LOGOUT = orgLogoutDuck.ORG_LOGOUT;
+const LIVE_WEBSOCKET = 'learninglocker/websocket/LIVE_WEBSOCKET';
 
 export const initialState = fromJS({
   activeTokenType: 'user', // which type of token is default for requests
@@ -39,7 +40,8 @@ const handler = handleActions({
   ...logoutDuck.reducers,
   ...orgLogoutDuck.reducers,
   ...resetPasswordDuck.reducers,
-  ...requestResetPasswordDuck.reducers
+  ...requestResetPasswordDuck.reducers,
+  [LIVE_WEBSOCKET]: (state, { value }) => state.set('liveWebsockets', value)
 });
 
 export default function reducer(state = initialState, action = {}) {
@@ -63,6 +65,10 @@ export const orgLogout = orgLogoutDuck.actions.orgLogoutAction;
 export const resetPasswordStart = resetPasswordDuck.actions.start;
 export const requestPasswordResetStart = requestResetPasswordDuck.actions.start;
 
+export const liveWebsocketToggle = value => ({
+  type: LIVE_WEBSOCKET,
+  value
+});
 
 /*
  * Selectors
