@@ -11,7 +11,7 @@ import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import Link from 'ui/containers/Link';
 import DropDownMenu from 'ui/components/DropDownMenu';
 import WidgetVisualisePicker from 'ui/containers/WidgetVisualisePicker';
-import VisualiseResults from 'ui/containers/VisualiseResults';
+import VisualisationViewer from 'ui/containers/Visualisations/Viewer';
 import DeleteConfirm from 'ui/containers/DeleteConfirm';
 import styles from './widget.css';
 
@@ -85,8 +85,8 @@ class Widget extends Component {
     return isEditingTitle ? (
       <span>{model.get('title')}</span>
     ) : (
-      null
-    );
+        null
+      );
   }
 
   renderMenu = () => {
@@ -100,11 +100,11 @@ class Widget extends Component {
         }>
         {
           model.has('visualisation') &&
-            <Link
-              routeName={'organisation.data.visualise.visualisation'}
-              routeParams={{ organisationId, visualisationId: this.props.visualisation.get('_id') }} >
-              <i className={`ion ${styles.marginRight} ion-edit grey`} />
-              Go to visualisation
+          <Link
+            routeName={'organisation.data.visualise.visualisation'}
+            routeParams={{ organisationId, visualisationId: this.props.visualisation.get('_id') }} >
+            <i className={`ion ${styles.marginRight} ion-edit grey`} />
+            Go to visualisation
             </Link>
         }
         <a onClick={this.openModal.bind(null, VISUALISATION)} title="Widget settings">
@@ -138,9 +138,9 @@ class Widget extends Component {
             className={`panel-heading ${styles.heading}`}
             onDoubleClick={this.toggleEditingTitle}>
             <div className={`panel-title ${titleStyles} react-drag-handle`}>
-              { this.props.editable && this.renderMenu(styles) }
-              <span style={{ cursor: 'initial' }}>{ model.get('title') }</span>
-              { this.props.editable &&
+              {this.props.editable && this.renderMenu(styles)}
+              <span style={{ cursor: 'initial' }}>{model.get('title')}</span>
+              {this.props.editable &&
                 <a
                   onClick={this.openDeleteModal}
                   title="Delete"
@@ -151,18 +151,18 @@ class Widget extends Component {
             </div>
           </div>
           <div className={`panel-body ${styles.body}`}>
-            { model.has('visualisation') &&
-              <VisualiseResults id={model.get('visualisation')} />
+            {model.has('visualisation') &&
+              <VisualisationViewer model={model} />
             }
           </div>
           {
             isModalOpen &&
-              <WidgetVisualisePicker
-                isOpened={isModalOpen}
-                model={model}
-                onClickClose={this.closeModal}
-                onChangeTitle={this.props.onChangeTitle}
-                onChangeVisualisation={this.props.onChangeVisualisation} />
+            <WidgetVisualisePicker
+              isOpened={isModalOpen}
+              model={model}
+              onClickClose={this.closeModal}
+              onChangeTitle={this.props.onChangeTitle}
+              onChangeVisualisation={this.props.onChangeVisualisation} />
           }
           <DeleteConfirm isOpened={isDeleteOpen} {...delPopupProps} />
         </div>

@@ -81,7 +81,7 @@ class Visualise extends Component {
                 <span style={{ paddingRight: 5 }}>
                   <VisualisationTypeIcon id={model.get('_id')} />
                 </span>
-                { model.get('description') || '~ Unnamed Visualisation'}
+                {model.get('description') || '~ Unnamed Visualisation'}
               </span>
             )} />
         </div>

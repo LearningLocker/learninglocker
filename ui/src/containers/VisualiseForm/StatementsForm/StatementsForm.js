@@ -2,8 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { Map } from 'immutable';
 import { updateModel } from 'ui/redux/modules/models';
 import { connect } from 'react-redux';
-import VisualiseResults from 'ui/containers/VisualiseResults';
-import SourceResults from 'ui/containers/VisualiseResults/SourceResults';
+import VisualisationViewer from 'ui/containers/Visualisations/Viewer';
 import {
   LAST_30_DAYS,
   LAST_7_DAYS,
@@ -45,7 +44,7 @@ class StatementsForm extends Component {
 
   shouldComponentUpdate = nextProps => !(
     this.props.model.equals(nextProps.model) &&
-      this.props.source === nextProps.source
+    this.props.source === nextProps.source
   )
 
   onChangeAttr = (attr, e) => this.props.updateModel({
@@ -63,13 +62,6 @@ class StatementsForm extends Component {
       value
     });
   }
-
-  renderSourceToggle = () => (
-    <Switch
-      checked={this.props.source}
-      label="Source"
-      onChange={this.toggleSource} />
-  );
 
   renderEditor = () => (
     <Editor model={this.props.model} exportVisualisation={this.props.exportVisualisation} />
@@ -91,33 +83,29 @@ class StatementsForm extends Component {
     </select>
   )
 
-  renderFormWithResults = () => (
-    <div className="row">
-      <div className="col-md-6 left-border">
-        { this.renderEditor() }
-      </div>
-      <div
-        className="col-md-6">
-        <div style={{ float: 'left' }}>
-          { this.renderSourceToggle() }
+  renderFormWithResults = () => {
+    const { model } = this.props;
+    return (
+      <div className="row">
+        <div className="col-md-6 left-border">
+          {this.renderEditor()}
         </div>
-        <div className="form-group form-inline" style={{ textAlign: 'right' }}>
-          { this.renderTimePicker() }
-        </div>
-        <div style={{ height: '400px', paddingTop: 5 }}>
-          {!this.props.source && <VisualiseResults id={this.props.model.get('_id')} />}
-          {this.props.source &&
-            <SourceResults id={this.props.model.get('_id')} />
-          }
+        <div className="col-md-6">
+          <div className="form-group form-inline" style={{ textAlign: 'right' }}>
+            {this.renderTimePicker()}
+          </div>
+          <div style={{ height: '400px', paddingTop: 5 }}>
+            <VisualisationViewer id={model.get('_id')} model={model} />
+          </div>
         </div>
       </div>
-    </div>
-  )
+    );
+  }
 
   renderEditorOnly = () => (
     <div className="row">
       <div className="col-md-12 left-border">
-        { this.renderEditor() }
+        {this.renderEditor()}
       </div>
     </div>
   );
