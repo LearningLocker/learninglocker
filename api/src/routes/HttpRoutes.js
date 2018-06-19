@@ -5,7 +5,8 @@ import git from 'git-rev';
 import Promise from 'bluebird';
 import { omit, findIndex } from 'lodash';
 import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
-import getScopesFromRequest from 'lib/services/auth/authInfoSelectors/getScopesFromAuthInfo';
+import getTokenTypeFromAuthInfo from 'lib/services/auth/authInfoSelectors/getTokenTypeFromAuthInfo';
+import getScopesFromAuthInfo from 'lib/services/auth/authInfoSelectors/getScopesFromAuthInfo';
 import getUserIdFromAuthInfo from 'lib/services/auth/authInfoSelectors/getUserIdFromAuthInfo';
 import { SITE_ADMIN } from 'lib/constants/scopes';
 import { jsonSuccess, serverError } from 'api/utils/responses';
@@ -201,7 +202,7 @@ restify.defaults(RESTIFY_DEFAULTS);
 restify.serve(router, Organisation, {
   preUpdate: (req, res, next) => {
     const authInfo = getAuthFromRequest(req);
-    const scopes = getScopesFromRequest(authInfo);
+    const scopes = getScopesFromAuthInfo(authInfo);
     if (
       findIndex(scopes, item => item === SITE_ADMIN) < 0
     ) {
@@ -218,13 +219,20 @@ restify.serve(router, ImportCsv);
 restify.serve(router, User, {
   preUpdate: (req, res, next) => {
     const authInfo = getAuthFromRequest(req);
-    const scopes = getScopesFromRequest(authInfo);
+    const scopes = getScopesFromAuthInfo(authInfo);
+    const tokenType = getTokenTypeFromAuthInfo(authInfo);
 
+    // if site admin, skip over this section
     if (findIndex(scopes, item => item === SITE_ADMIN) < 0) {
       // remove scope changes
       req.body = omit(req.body, 'scopes');
-      if (req.body._id !== getUserIdFromAuthInfo(authInfo).toString()) {
-        // Don't allow changing of passwords
+      if (tokenType === 'user' || tokenType === 'organisation') {
+        if (req.body._id !== getUserIdFromAuthInfo(authInfo).toString()) {
+          // Don't allow changing of passwords
+          req.body = omit(req.body, 'password');
+        }
+      } else {
+        // always strip the password from other token types
         req.body = omit(req.body, 'password');
       }
     }
