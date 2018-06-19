@@ -2,7 +2,7 @@ import { put, take, select } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import { handleActions } from 'redux-actions';
 import Cookies from 'js-cookie';
-import { pickBy, lowerCase } from 'lodash';
+import { pickBy, lowerCase, map } from 'lodash';
 import { OrderedMap, Map } from 'immutable';
 import { testCookieName } from 'ui/utils/auth';
 import { BACKWARD } from 'ui/redux/modules/pagination/fetchModels';
@@ -82,8 +82,9 @@ function* handleWebsocketMessage() {
     const data = JSON.parse(message.data);
 
     // normalzr reviver
+    const models = map(data.edges, item => item.node);
     const schemaClass = schemas[lowerCase(data.schema)];
-    const normalizedModels = normalize([data.node], arrayOf(schemaClass));
+    const normalizedModels = normalize(models, arrayOf(schemaClass));
     const entities = entityReviver(normalizedModels);
     // eo romalzr reviver
 
@@ -95,12 +96,9 @@ function* handleWebsocketMessage() {
         before: data.before
       }),
       direction: BACKWARD,
-      edges: [new OrderedMap({
-        id: data.node._id,
-        cursor: data.cursor
-      })],
+      edges: map(data.edges, item => (new OrderedMap({ id: item.node._id, cursor: item.cursor }))),
       filter: new Map(),
-      ids: [data.node.id],
+      ids: map(models, '_id'),
       pageInfo: new Map({
         startCursor: data.cursor,
         endCursor: data.cursor,
@@ -108,7 +106,7 @@ function* handleWebsocketMessage() {
         hasPreviousPage: true,
       }),
       schema: 'statement',
-      sort: new Map({
+      sort: new Map({ // TODO
         _id: 1,
         timestamp: -1
       })

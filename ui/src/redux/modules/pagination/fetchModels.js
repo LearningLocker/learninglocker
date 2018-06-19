@@ -1,6 +1,6 @@
 import { Map, fromJS, OrderedSet, Iterable, OrderedMap } from 'immutable';
 import { createSelector } from 'reselect';
-import { map } from 'lodash';
+import { map, includes } from 'lodash';
 import moment from 'moment';
 import { put, call, select } from 'redux-saga/effects';
 import { handleActions } from 'redux-actions';
@@ -11,8 +11,6 @@ import entityReviver from 'ui/redux/modules/models/entityReviver';
 import * as mergeEntitiesDuck from 'ui/redux/modules/models/mergeEntities';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 import Unauthorised from 'lib/errors/Unauthorised';
-import { registerAction } from 'ui/redux/modules/websocket';
-import { includes } from 'lodash';
 import { SUPPORTED_SCHEMAS } from 'lib/constants/websocket';
 import diffEdges from './fetchModelsDiff';
 
@@ -258,7 +256,6 @@ const fetchModels = createAsyncDuck({
     ) {
       // Do nothing, as we'll do it in websocket/fetchModels saga
 
-      // console.log('002');
       // yield put(registerAction({
       //   schema,
       //   filter: plainFilter,
@@ -267,7 +264,6 @@ const fetchModels = createAsyncDuck({
       //   first,
       //   last
       // }));
-      // console.log('003');
       return;
     }
     const { status, body } = yield call(llClient.getConnection, {
