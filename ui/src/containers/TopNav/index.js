@@ -6,6 +6,7 @@ import { loggedInUserSelector, logout, orgLogout } from 'ui/redux/modules/auth';
 import { Map, List } from 'immutable';
 import bannerImg from 'ui/static/whiteLogo.png';
 import SaveBar from 'ui/containers/SaveBar';
+import Switch from 'ui/components/Material/Switch';
 import styles from './topnav.css';
 
 class TopNav extends Component {
@@ -36,6 +37,9 @@ class TopNav extends Component {
           </div>
           <div className="container-fluid">
             <div id="navbar" className="nav-icons">
+              <div id={`${styles['topnav-switch']}`}>
+                <Switch />
+              </div>
               <a className="pull-right option" title="Logout" onClick={this.props.logout}><i className="icon ion-log-out" /></a>
               {organisations.size > 0 && <a className="pull-right option" title="Switch organisation" onClick={this.onClickSwitchOrg}><i className="icon ion-arrow-swap" /></a>}
             </div>

@@ -34,3 +34,11 @@
   padding: 0px 11px 0px 0px;
   z-index: 11;
 }
+
+#topnav-switch {
+  display: inline-block;
+  margin-top: 7px;
+  float: right;
+  right: 20px;
+  margin-left:4px;
+}
