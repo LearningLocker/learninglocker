@@ -203,7 +203,7 @@ const ModelFormComponent = ({
 
     <div className="form-group">
       <label htmlFor={filterModeId}>
-        Filter url parameter mode
+        URL filter mode
       </label>
       <RadioGroup
         id={filterModeId}
@@ -211,9 +211,9 @@ const ModelFormComponent = ({
         value={model.get('filterMode', OFF)}
         onChange={handleFilterModeChange}>
 
-        <RadioButton label="Off" value={OFF} />
+        <RadioButton label="Disabled" value={OFF} />
 
-        <RadioButton label="Any" value={ANY} />
+        <RadioButton label="Plaintext" value={ANY} />
         <RadioButton label="JWT Secured" value={JWT_SECURED} />
       </RadioGroup>
     </div>
