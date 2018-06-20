@@ -25,7 +25,6 @@ const ImportList = compose(
   withProps({
     schema,
     sort: fromJS({
-      importedAt: -1,
       createdAt: -1,
       _id: -1
     }),
