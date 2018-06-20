@@ -38,9 +38,10 @@ class TopNav extends Component {
           <div className="container-fluid">
             <div id="navbar" className="nav-icons">
               <div id={`${styles['topnav-switch']}`}>
+              <div id={`${styles['topnav-switch-text']}`}>Websocket</div>
                 <Switch
                   onChange={toggleWebsockets}
-                  checked={liveWebsocket} />
+                  checked={liveWebsocket}></Switch>
               </div>
               <a className="pull-right option" title="Logout" onClick={this.props.logout}><i className="icon ion-log-out" /></a>
               {organisations.size > 0 && <a className="pull-right option" title="Switch organisation" onClick={this.onClickSwitchOrg}><i className="icon ion-arrow-swap" /></a>}
