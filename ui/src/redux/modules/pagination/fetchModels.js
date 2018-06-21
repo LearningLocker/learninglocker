@@ -10,6 +10,7 @@ import { normalize, arrayOf } from 'normalizr';
 import entityReviver from 'ui/redux/modules/models/entityReviver';
 import * as mergeEntitiesDuck from 'ui/redux/modules/models/mergeEntities';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
+import HttpError from 'ui/utils/errors/HttpError';
 import Unauthorised from 'lib/errors/Unauthorised';
 import diffEdges from './fetchModelsDiff';
 
@@ -259,7 +260,7 @@ const fetchModels = createAsyncDuck({
       throw new Unauthorised('Unauthorised');
     }
     if (status >= 300) {
-      throw new Error(body.message || body);
+      throw new HttpError(body.message || body, { status });
     }
 
     const models = map(body.edges, 'node');
