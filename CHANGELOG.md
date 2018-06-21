@@ -9,6 +9,26 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.4.0]
+### Fixes
+  - Logs out the user when their token has expired (#1167)
+  - Deleted dashboard bug (#1142)
+  - Existing personas' names updated via CSV import (#1143)
+  - Highlighting on nested query builder entries (#1149)
+### Added
+  - Upgraded mongoose (v5) (#1132)
+  - Organisation, store and client deletions logged into new `audits` collection (#1132)
+  - Registration prompt on home screen (#1165)
+
+## [2.3.6]
+### Fixed
+  - Client can patch users fully (#1188)
+
+## [2.3.5]
+### Fixed
+  - Persona Error CSV Downloading (#1174)
+  - Persona Upload Lock Timeouts (#1176)
+
 ## [2.3.4]
 ### Fixed
   - Larger nginx buffer size (#1170)
