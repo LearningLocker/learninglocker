@@ -26,6 +26,10 @@
     /* Sub-Menu Item - Border Color:hover */ }
     .sidenav a {
       color: #444; }
+    .sidenav a:hover {
+      background-color:  #F5AB35!important;
+      color: white!important;
+    }
     .sidenav ul.navSidenav {
       margin: 20px -20px 0px -20px;
       padding: 0;
@@ -33,10 +37,12 @@
     .sidenav ul li a {
       padding: 12px 24px 12px 28px;
       color: #515253;
-      letter-spacing: .025em;
+      letter-spacing: .025em; 
       font-weight: 400; }
     .sidenav ul li a i {
       font-size: 20px;
+      vertical-align: middle;
+      margin-top:-2px!important;
       margin-right: 10px; }
     .sidenav ul li a.vLinkActive,
     .sidenav ul li a.active,
