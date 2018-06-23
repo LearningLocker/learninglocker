@@ -3028,8 +3028,7 @@ select[multiple].input-lg {
 .btn.focus,
 .btn:active.focus,
 .btn.active.focus {
-  background-color: #F5AB35!important;
-  color: white!important;
+  outline-color: #525252;
   outline-offset: -2px;
 }
 .btn:hover,

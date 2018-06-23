@@ -120,7 +120,10 @@ class Dashboard extends Component {
             <button
               className="btn btn-default btn-sm flat-btn flat-white"
               title="Share"
-              onClick={this.toggleSharing}>
+              onClick={this.toggleSharing}
+              style={{
+                 backgroundColor: this.props.getMetadata('isSharing') ? '#F5AB35' : null
+              }}>
               <i className="icon ion-android-share-alt" />
             </button>
             <span style={{ marginLeft: 'auto' }}>
