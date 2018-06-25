@@ -2,8 +2,8 @@ import { put, take, select } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import { handleActions } from 'redux-actions';
 import Cookies from 'js-cookie';
-import { pickBy, lowerCase, map } from 'lodash';
-import { OrderedMap, Map } from 'immutable';
+import { pickBy, lowerCase, map, first as loFirst, last as loLast } from 'lodash';
+import { OrderedMap, Map, fromJS } from 'immutable';
 import { testCookieName } from 'ui/utils/auth';
 import { BACKWARD } from 'ui/redux/modules/pagination/fetchModels';
 import * as schemas from 'ui/utils/schemas';
@@ -92,18 +92,16 @@ function* handleWebsocketMessage() {
 
     yield put({
       type: 'learninglocker/pagination/FETCH_MODELS_SUCCESS',
-      cursor: new Map({
-        before: data.before
-      }),
+      cursor: fromJS(data.cursor),
       direction: BACKWARD,
       edges: map(data.edges, item => (new OrderedMap({ id: item.node._id, cursor: item.cursor }))),
       filter: new Map(),
       ids: map(models, '_id'),
       pageInfo: new Map({
-        startCursor: data.cursor,
-        endCursor: data.cursor,
-        hasNextPage: false,
-        hasPreviousPage: true,
+        startCursor: loFirst(data.edges).id,
+        endCursor: loLast(data.edges).id,
+        hasNextPage: true,
+        hasPreviousPage: false,
       }),
       schema: 'statement',
       sort: new Map({ // TODO

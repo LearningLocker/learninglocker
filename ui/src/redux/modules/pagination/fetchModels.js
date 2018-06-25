@@ -143,6 +143,7 @@ export const reduceSuccess = (
     direction
   }
 ) => {
+  console.log('001', schema);
   const cachedAt = moment();
 
   const newEdges = new OrderedSet(edges)
@@ -161,6 +162,8 @@ export const reduceSuccess = (
     )
   );
 
+  console.log('002 state', state);
+  console.log('003 cursor', cursor);
   const out = state
     .mergeIn([schema, filter, sort, 'pageInfo'], pageInfo)
     .setIn([schema, filter, sort, cursor, 'cachedAt'], cachedAt)
@@ -372,7 +375,11 @@ const fetchMore = ({
   direction = FORWARD,
   first = 10,
   last
-}) => (dispatch, getState) => (dispatch(
+}) => (dispatch, getState) => {
+  console.log('201', schema, filter, sort, direction);
+  console.log('202', getState());
+
+  return (dispatch(
     fetchModels.actions.start(
       { schema,
         filter,
@@ -384,8 +391,8 @@ const fetchMore = ({
       },
       getState()
     )
-  )
-);
+  ));
+};
 
 export const selectors = {
   paginationSelector,

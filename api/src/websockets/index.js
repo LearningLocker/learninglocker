@@ -45,13 +45,18 @@ const messageManager = ws => async (message) => {
       });
 
       ws.on('error', (err) => {
-        changeStream.driverChangeStream.close();
         logger.error('websocket error', err);
-        changeStream.removeAllListeners();
+
+        if (changeStream) {
+          changeStream.driverChangeStream.close();
+          changeStream.removeAllListeners();
+        }
       });
       ws.on('close', () => {
-        changeStream.driverChangeStream.close();
-        changeStream.removeAllListeners();
+        if (changeStream) {
+          changeStream.driverChangeStream.close();
+          changeStream.removeAllListeners();
+        }
       });
 
       break;

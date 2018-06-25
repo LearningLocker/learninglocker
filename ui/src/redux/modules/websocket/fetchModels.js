@@ -26,6 +26,7 @@ function* fetchModelsSaga({
 
   const plainFilter = Iterable.isIterable(filter) ? filter.toJS() : filter;
   const plainSort = Iterable.isIterable(sort) ? sort.toJS() : sort;
+  console.log('301 cursor', cursor);
   const plainCursor = Iterable.isIterable(cursor) ? cursor.toJS() : cursor;
 
   yield put(registerAction({
