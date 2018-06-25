@@ -60,6 +60,10 @@ class ExportForm extends Component {
     }
   };
 
+  componentDidMount = () => {
+    this.state.projectionString = this.getActiveProjection();
+  }
+
   postDownloadExport = () => {
     this.props.setDownloadRequestStates(downloadRequestStates.waiting);
     this.props.downloadExport({ exportId: this.props.id, pipelines: [this.getCompletePipeline()] })
@@ -97,6 +101,7 @@ class ExportForm extends Component {
     if (newRawMode === false) {
       this.onChangeProjection(this.state.projectionString);
     }
+
     updateModel({ path: ['rawMode'], value: newRawMode });
   }
 
