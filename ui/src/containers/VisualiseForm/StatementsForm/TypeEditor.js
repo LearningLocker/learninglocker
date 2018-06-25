@@ -26,13 +26,13 @@ class TypeEditor extends Component {
     this.state.type === nextState.type
   )
 
-  onClickType = type => this.setState({ type })
-
-  onClickSubmit = () => {
+  componentDidUpdate = () => {
     const path = ['type'];
     const value = this.state.type;
     this.props.updateModel({ path, value });
   }
+
+  onClickType = type => this.setState({ type })
 
   getStateFromProps = props => ({ type: props.model.get('type') })
 
@@ -58,7 +58,6 @@ class TypeEditor extends Component {
             <VisualiseText type={this.state.type} />
           </div>
           <div className="col-xs-2 text-right">
-            <a onClick={this.onClickSubmit} className="btn btn-primary btn-sm"><i className="icon ion-checkmark" /></a>
           </div>
         </div>
       }
