@@ -4,6 +4,8 @@ import { call } from 'redux-saga/effects';
 import moment from 'moment';
 import { handleActions } from 'redux-actions';
 import createAsyncDuck from 'ui/utils/createAsyncDuck';
+import Unauthorised from 'lib/errors/Unauthorised';
+import HttpError from 'ui/utils/errors/HttpError';
 
 export const IN_PROGRESS = 'IN_PROGRESS';
 export const COMPLETED = 'COMPLETED';
@@ -90,7 +92,9 @@ const fetchModelsCount = createAsyncDuck({
   ) {
     const plainFilter = Iterable.isIterable(filter) ? filter.toJS() : filter;
     const { status, body } = yield call(llClient.countModels, schema, plainFilter);
-    if (status >= 300) throw new Error(body.message || body);
+
+    if (status === 401) { throw new Unauthorised('Unauthorised'); }
+    if (status >= 300) throw new HttpError(body.message || body, { status });
 
     return yield ({ schema, filter, count: body.count });
   }
