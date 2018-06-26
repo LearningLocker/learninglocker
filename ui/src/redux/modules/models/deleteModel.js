@@ -4,6 +4,8 @@ import createAsyncDuck from 'ui/utils/createAsyncDuck';
 import * as clearModelsCacheDuck from 'ui/redux/modules/pagination/clearModelsCache';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 import { modelsSelector } from 'ui/redux/modules/models/selectors';
+import Unauthorised from 'lib/errors/Unauthorised';
+import HttpError from 'ui/utils/errors/HttpError';
 
 const deleteStateSelector = schema => createSelector(
   [modelsSelector],
@@ -25,7 +27,8 @@ const deleteModel = createAsyncDuck({
   reduceStart: (state, { schema, id }) =>
     state.setIn([schema, id, 'deleteState'], IN_PROGRESS),
   reduceSuccess: (state, { schema, id }) =>
-    state.setIn([schema, id, 'deleteState'], COMPLETED),
+    state.setIn([schema, id, 'deleteState'], COMPLETED)
+      .removeIn([schema, id, 'remoteCache']),
   reduceFailure: (state, { schema, id }) =>
     state.setIn([schema, id, 'deleteState'], FAILED),
   reduceComplete: (state, { schema, id }) =>
@@ -40,9 +43,12 @@ const deleteModel = createAsyncDuck({
   doAction: function* deleteModelSaga({ schema, id, llClient }) {
     const { status, body } = yield call(llClient.deleteModel, schema, { _id: id });
 
+    if (status === 401) { throw new Unauthorised('Unauthorised'); }
     if (status >= 300) {
       const message = body.message || body;
-      throw new Error(message);
+      throw new HttpError(message, {
+        status
+      });
     }
 
     // check the status and throw errors if not valid

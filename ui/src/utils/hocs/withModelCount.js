@@ -21,7 +21,7 @@ export default (WrappedComponent) => {
     }
     fetchModelsCount = ({ schema, filter }) =>
       this.props.fetchModelsCount({ schema, filter })
-        .catch(err => console.error(schema, filter, err.message))
+        .catch(() => {})
 
     render = () => <WrappedComponent {...this.props} />
   }
