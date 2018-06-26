@@ -73,6 +73,7 @@ const addStatementToPendingQueues = (statement, queues, done) => {
         } else {
           logger.debug(`PROCESSED QUEUE FOR STATEMENT ${statement._id}`);
         }
+
         return done();
       });
     }
@@ -102,7 +103,7 @@ export default ({ status, statementId }, jobDone) => {
       );
     }
 
-    logger.debug('NO STATUS', statementId);
+    logger.debug(`NO STATUS, statementId: ${statementId}`);
     return Statement.findById(
       statementId,
       (err, statement) => {

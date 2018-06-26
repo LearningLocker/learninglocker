@@ -7,6 +7,7 @@ server {
 
   # Max request size
   client_max_body_size 20M;
+  large_client_header_buffers 4 256k;
 
   root /SITE_ROOT/ui/dist/public;
 

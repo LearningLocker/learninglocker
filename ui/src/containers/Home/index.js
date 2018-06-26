@@ -17,6 +17,7 @@ import Spinner from 'ui/components/Spinner';
 import FullPageBackground from 'ui/components/FullPageBackground';
 import AuthContainer from 'ui/containers/AuthContainer';
 import smallLogo from 'ui/static/smallLogo.png';
+import Register from 'ui/containers/Register';
 import moment from 'moment';
 import styles from './styles.css';
 
@@ -170,6 +171,9 @@ class Home extends Component {
       <FullPageBackground>
         <AuthContainer>
           <h3>Choose your organisation</h3>
+
+          <Register />
+
           <Card>
             <CardText>
               <Helmet title=" - Choose an organisation" />

@@ -134,7 +134,7 @@
     "mollusc": "2.*",
     "moment": "^2.11.2",
     "mongodb": "^2.1.4",
-    "mongoose": "^4.8.5",
+    "mongoose": "^5.0.13",
     "mongoose-findorcreate": "^0.1.2",
     "mongoose-timestamp": "^0.5.0",
     "mongoose-validator": "^1.2.4",
