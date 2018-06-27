@@ -2,13 +2,22 @@ import logger from 'lib/logger';
 import _ from 'lodash';
 import User from 'lib/models/user';
 import Organisation from 'lib/models/organisation';
+import SiteSettings from 'lib/models/siteSettings';
+import { SITE_SETTINGS_ID } from 'lib/constants/siteSettings';
 import * as scopes from 'lib/constants/scopes';
+import mongoose from 'mongoose';
+import { MongoError } from 'mongodb';
+
+const objectId = mongoose.Types.ObjectId;
 
 async function findOrCreateUser(email, password) {
   logger.info(`Looking for ${email}`);
 
   const user = await User.findOne({ email });
-  if (user) return user;
+  if (user) {
+    logger.info('User already exists');
+    return user;
+  }
 
   logger.info('User not found, creating...');
   if (!password) {
@@ -25,7 +34,10 @@ async function findOrCreateUser(email, password) {
 
 async function findOrCreateOrganisation(user, organisationName) {
   const organisation = await Organisation.findOne({ name: organisationName });
-  if (organisation) return organisation;
+  if (organisation) {
+    logger.info('Organisation already exists');
+    return organisation;
+  }
 
   logger.info('Organisation not found, creating...');
   return new Organisation({
@@ -91,19 +103,35 @@ export const createSiteAdmin = async (email, organisationName, password, options
   const user = await findOrCreateUser(email, password);
   const organisation = await findOrCreateOrganisation(user, organisationName);
 
-  await ensureSiteAdmin(user, password, forceUpdatePassword);
-  await ensureUserHasOrg(user, organisation);
-  await ensureOrgScopeOnUser(user, organisation);
+  logger.info('Adding user to organisation');
+  try {
+    await ensureSiteAdmin(user, password, forceUpdatePassword);
+    await ensureUserHasOrg(user, organisation);
+    await ensureOrgScopeOnUser(user, organisation);
+  } catch (err) {
+    logger.debug('Expected errors thrown here', err);
+  }
+};
+
+const checkSiteSettings = async () => {
+  try {
+    await new SiteSettings({
+      _id: objectId(SITE_SETTINGS_ID)
+    }).save();
+  } catch (err) {
+    if (err instanceof MongoError && err.code === 11000) return;
+    logger.error(err);
+  }
 };
 
 export default async function (email, organisationName, password, options) {
   try {
+    await checkSiteSettings();
     await createSiteAdmin(email, organisationName, password, options);
-
+    logger.info('Done!');
     process.exit();
   } catch (error) {
     logger.error(error.message);
-    logger.error(error);
     process.exit();
   }
 }

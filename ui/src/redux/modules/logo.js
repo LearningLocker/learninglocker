@@ -1,6 +1,7 @@
 import { take, put, call } from 'redux-saga/effects';
 import { Map } from 'immutable';
 import { handleActions } from 'redux-actions';
+import { updateModel } from 'ui/redux/modules/models';
 import { toast } from './toasts';
 
 export const UPLOAD_LOGO = 'learninglocker/logo/UPLOAD_LOGO';
@@ -105,6 +106,14 @@ function* uploadLogoSaga() {
       yield put(uploadLogoDone(schema, id));
     } else {
       yield put(uploadLogoSuccess(schema, id, body));
+
+      yield put(updateModel({
+        schema: 'organisation',
+        path: 'logoPath',
+        id,
+        value: body
+      }));
+
       yield call(delay, 500);
       yield put(uploadLogoUpdate(schema, id, body));
       yield call(delay, 2000); // shows success state for 2 seconds

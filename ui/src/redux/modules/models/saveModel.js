@@ -10,6 +10,7 @@ import { mergeEntities, updateModelErrors } from 'ui/redux/modules/models';
 import { actions as updateModelActions } from 'ui/redux/modules/models/updateModel';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 import { modelsSchemaIdSelector } from 'ui/redux/modules/models/selectors';
+import Unauthorised from 'lib/errors/Unauthorised';
 import HttpError from 'ui/utils/errors/HttpError';
 import ValidationError from 'ui/utils/errors/ValidationError';
 
@@ -82,6 +83,7 @@ const saveModel = createAsyncDuck({
 
     const { status, body } = yield call(llClient.patchModel, schema, model.toJS());
 
+    if (status === 401) { throw new Unauthorised('Unauthorised'); }
     // check the status and throw errors if not valid
     if (status >= 300) {
       const errorMessage = body.message || body;

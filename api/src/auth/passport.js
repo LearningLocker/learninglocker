@@ -97,9 +97,11 @@ async function verifyToken(token, done) {
     done(null, auth);
     return auth;
   } catch (err) {
+    if (err.name === 'TokenExpiredError' || err.name === 'JsonWebTokenError') {
+      return done(new Unauthorized('Token expired'));
+    }
     logger.error('Auth error:', err);
     done(err);
-    throw err;
   }
 }
 
