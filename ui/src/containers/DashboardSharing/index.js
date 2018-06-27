@@ -1,5 +1,5 @@
 import React from 'react';
-import { Map, List } from 'immutable';
+import { Map, List, fromJS } from 'immutable';
 import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import {
@@ -23,6 +23,10 @@ import {
 } from 'lib/constants/sharingScopes';
 import RadioGroup from 'ui/components/Material/RadioGroup';
 import RadioButton from 'ui/components/Material/RadioButton';
+import { OFF, ANY, JWT_SECURED } from 'lib/constants/dashboard';
+import { toPath, slice } from 'lodash';
+import classNames from 'classnames';
+import ValidationList from 'ui/components/ValidationList';
 import OpenLinkButtonComponent from './OpenLinkButton';
 import styles from './styles.css';
 
@@ -84,17 +88,58 @@ const handlers = withHandlers({
       value: event.target.value
     });
   },
+
+  handleFilterModeChange: ({ updateSelectedSharable }) => (value) => {
+    updateSelectedSharable({
+      path: 'filterMode',
+      value
+    });
+  },
+  handleFilterJwtSecretChange: ({ updateSelectedSharable }) => (event) => {
+    updateSelectedSharable({
+      path: 'filterJwtSecret',
+      value: event.target.value
+    });
+  },
+
   copyToClipBoard: () => urlId => () => {
     window.document.getElementById(urlId).select();
     window.document.execCommand('copy');
   }
 });
 
+// Errors are set on the parent model
+const getErrors = (parentModel, model) => {
+  const messages = parentModel.getIn(['errors', 'messages'], new Map());
+
+  const releventMessages = messages.map((value, key) => {
+    const id = parentModel.getIn(slice(toPath(key), 0, 2), new Map()).get('_id');
+    if (!id) {
+      return new List([]);
+    }
+
+    if (id === model.get('_id')) {
+      return new List([new Map({
+        key: toPath(key)[2],
+        value
+      })]);
+    }
+  }).toList().flatten(true);
+
+  const releventMessagesWithKey = releventMessages.toMap().mapKeys((key, value) => value.get('key'));
+
+  return releventMessagesWithKey;
+};
+
 const ModelFormComponent = ({
   handleTitleChange,
   handleFilterChange,
   handleVisibilityChange,
   handleDomainsChange,
+
+  handleFilterModeChange,
+  handleFilterJwtSecretChange,
+
   model,
   parentModel,
   copyToClipBoard
@@ -104,6 +149,10 @@ const ModelFormComponent = ({
   const urlId = uuid.v4();
   const visibilityId = uuid.v4();
   const validDomainsId = uuid.v4();
+  const filterModeId = uuid.v4();
+  const filterJwtSecretId = uuid.v4();
+
+  const errors = getErrors(parentModel, model);
 
   return (<div>
     <div className="form-group">
@@ -166,6 +215,47 @@ const ModelFormComponent = ({
       </div>}
 
     <div className="form-group">
+      <label htmlFor={filterModeId}>
+        URL filter mode
+      </label>
+      <RadioGroup
+        id={filterModeId}
+        name="filterMode"
+        value={model.get('filterMode', OFF)}
+        onChange={handleFilterModeChange}>
+
+        <RadioButton label="Disabled" value={OFF} />
+
+        <RadioButton label="Plaintext" value={ANY} />
+        <RadioButton label="JWT Secured" value={JWT_SECURED} />
+      </RadioGroup>
+    </div>
+
+    {model.get('filterMode', OFF) === JWT_SECURED &&
+    <div
+      className={classNames({
+        'form-group': true,
+        'has-error': errors.has('filterJwtSecret')
+      })}>
+      <label htmlFor={filterJwtSecretId} >
+        JWT Secret (HS256)
+      </label>
+      <input
+        id={filterJwtSecretId}
+        className="form-control"
+        type="text"
+        onChange={handleFilterJwtSecretChange}
+        value={model.get('filterJwtSecret', '')} />
+        {errors.get('filterJwtSecret') &&
+          (<span className="help-block">
+            <ValidationList errors={fromJS([errors.get('filterJwtSecret')])} />
+          </span>
+          )
+        }
+    </div>}
+
+
+    <div className="form-group">
       <label htmlFor={filterId}>Filter</label>
       <QueryBuilder
         id={filterId}
@@ -175,11 +265,13 @@ const ModelFormComponent = ({
     </div>
   </div>);
 };
+/*
 
+*/
 const ModelForm = compose(
   withStyles(styles),
   utilHandlers,
-  handlers
+  handlers,
 )(ModelFormComponent);
 
 const deleteButton = ({ parentModel }) => compose(
