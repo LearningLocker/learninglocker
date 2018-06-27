@@ -1,4 +1,5 @@
 import React from 'react';
+import boolean from 'boolean';
 import { Map, List, fromJS } from 'immutable';
 import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
@@ -101,6 +102,12 @@ const handlers = withHandlers({
       value: event.target.value
     });
   },
+  handleFilterRequiredChange: ({ updateSelectedSharable }) => (value) => {
+    updateSelectedSharable({
+      path: 'filterRequired',
+      value: boolean(value)
+    });
+  },
 
   copyToClipBoard: () => urlId => () => {
     window.document.getElementById(urlId).select();
@@ -139,6 +146,7 @@ const ModelFormComponent = ({
 
   handleFilterModeChange,
   handleFilterJwtSecretChange,
+  handleFilterRequiredChange,
 
   model,
   parentModel,
@@ -150,7 +158,10 @@ const ModelFormComponent = ({
   const visibilityId = uuid.v4();
   const validDomainsId = uuid.v4();
   const filterModeId = uuid.v4();
+  const filterRequiredId = uuid.v4();
   const filterJwtSecretId = uuid.v4();
+  const filterMode = model.get('filterMode', OFF);
+  const filterRequired = model.get('filterRequired', false);
 
   const errors = getErrors(parentModel, model);
 
@@ -182,7 +193,11 @@ const ModelFormComponent = ({
       <ion-icon name="clipboard" />
     </div>
 
-    <div className="form-group">
+    <hr />
+
+    <h4>Security</h4>
+
+    <div className="form-group" style={{ marginTop: 25, marginBottom: 25 }}>
       <label htmlFor={visibilityId}>
         Where can this be viewed?
       </label>
@@ -200,46 +215,55 @@ const ModelFormComponent = ({
     </div>
 
     {model.get('visibility') === VALID_DOMAINS &&
-      <div className="form-group">
+      <div className="form-group" style={{ marginBottom: 25 }}>
         <label htmlFor={validDomainsId}>
           What are the valid domains?
         </label>
         <div>
           <DebounceInput
             id={validDomainsId}
-            className={styles.textField}
+            className="form-control"
             debounceTimeout={377}
             value={model.get('validDomains')}
             onChange={handleDomainsChange} />
         </div>
+        <span className={classNames('help-block', styles.contextHelp)}>A <a href="https://regexr.com/" target="_blank" rel="noopener noreferrer">regex pattern</a> matching any hostname this dashboard will be embedded into</span>
       </div>}
 
-    <div className="form-group">
+    <div className="form-group" style={{ marginBottom: 25 }}>
       <label htmlFor={filterModeId}>
         URL filter mode
       </label>
       <RadioGroup
         id={filterModeId}
         name="filterMode"
-        value={model.get('filterMode', OFF)}
+        value={filterMode}
         onChange={handleFilterModeChange}>
 
         <RadioButton label="Disabled" value={OFF} />
-
         <RadioButton label="Plaintext" value={ANY} />
         <RadioButton label="JWT Secured" value={JWT_SECURED} />
       </RadioGroup>
+
+      {filterMode === ANY &&
+        <span className={classNames('help-block', styles.contextHelp)}>The JSON filter should passed to the URL via a query param named filter</span>
+      }
+      {filterMode === JWT_SECURED &&
+        <span className={classNames('help-block', styles.contextHelp)}>The JSON filter should be encoded as a <a href="https://jwt.io/" target="_blank" rel="noopener noreferrer">JWT</a> and passed to the URL via a query param named filter</span>
+      }
     </div>
 
-    {model.get('filterMode', OFF) === JWT_SECURED &&
+    {filterMode === JWT_SECURED &&
     <div
       className={classNames({
         'form-group': true,
         'has-error': errors.has('filterJwtSecret')
-      })}>
+      })}
+      style={{ marginBottom: 25 }}>
       <label htmlFor={filterJwtSecretId} >
         JWT Secret (HS256)
       </label>
+      <span className={classNames('help-block', styles.contextHelp)}>When the secured filter is enabled, the filter value must be a <a href="https://jwt.io/" target="_blank" rel="noopener noreferrer">valid JWT</a> signed with the following secret</span>
       <input
         id={filterJwtSecretId}
         className="form-control"
@@ -255,8 +279,28 @@ const ModelFormComponent = ({
     </div>}
 
 
+    {(filterMode === JWT_SECURED) &&
+    <div className="form-group" style={{ marginBottom: 25 }}>
+      <label htmlFor={filterJwtSecretId} >
+        Filter required
+      </label>
+      <span className={classNames('help-block', styles.contextHelp)}>Must a filter be passed to the URL for the dashboard to load data?</span>
+      <RadioGroup
+        id={filterRequiredId}
+        name="filterRequired"
+        value={filterRequired ? '1' : '0'}
+        onChange={handleFilterRequiredChange}>
+
+        <RadioButton label="Yes" value={'1'} />
+        <RadioButton label="No" value={'0'} />
+      </RadioGroup>
+    </div>}
+
+    <hr />
+
     <div className="form-group">
-      <label htmlFor={filterId}>Filter</label>
+      <h4>Filter</h4>
+      <span className={classNames('help-block', styles.contextHelp)}>Apply a filter to this dashboard (preview below). Any URL filter (if present) will be applied on top of this filter.</span>
       <QueryBuilder
         id={filterId}
         query={model.get('filter', new Map({}))}
