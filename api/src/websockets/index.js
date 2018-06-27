@@ -38,7 +38,7 @@ const messageManager = ws => async (message) => {
 
       const changeStream = await model.getConnectionWs({
         filter: jsonMessage.filter,
-        cursor: jsonMessage.cursor,
+        ...jsonMessage.cursor,
         authInfo,
         sort: jsonMessage.sort,
         ws

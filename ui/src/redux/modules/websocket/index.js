@@ -5,7 +5,11 @@ import Cookies from 'js-cookie';
 import { pickBy, lowerCase, map, first as loFirst, last as loLast } from 'lodash';
 import { OrderedMap, Map, fromJS } from 'immutable';
 import { testCookieName } from 'ui/utils/auth';
-import { BACKWARD } from 'ui/redux/modules/pagination/fetchModels';
+import {
+  BACKWARD,
+  FORWARD,
+  RESET_REQUEST_STATE
+} from 'ui/redux/modules/pagination/fetchModels';
 import * as schemas from 'ui/utils/schemas';
 import { normalize, arrayOf } from 'normalizr';
 import entityReviver from 'ui/redux/modules/models/entityReviver';
@@ -91,19 +95,23 @@ function* handleWebsocketMessage() {
     yield put(mergeEntitiesDuck.actions.mergeEntitiesAction(entities));
 
     yield put({
+      type: RESET_REQUEST_STATE,
+      schema: lowerCase(data.schema)
+    });
+    yield put({
       type: 'learninglocker/pagination/FETCH_MODELS_SUCCESS',
       cursor: fromJS(data.cursor),
-      direction: BACKWARD,
+      direction: FORWARD,
       edges: map(data.edges, item => (new OrderedMap({ id: item.node._id, cursor: item.cursor }))),
       filter: new Map(),
       ids: map(models, '_id'),
       pageInfo: new Map({
-        startCursor: loFirst(data.edges).id,
-        endCursor: loLast(data.edges).id,
+        startCursor: loFirst(data.edges).cursor,
+        endCursor: loLast(data.edges).cursor,
         hasNextPage: true,
         hasPreviousPage: false,
       }),
-      schema: 'statement',
+      schema: lowerCase(data.schema),
       sort: new Map({ // TODO
         _id: 1,
         timestamp: -1
@@ -120,7 +128,6 @@ const getAuth = () => {
 
 function* registerConnection() {
   // wait for the websocket to be ready
-  yield take(WEBSOCKET_READY);
 
   while (true) {
     const {
@@ -151,7 +158,7 @@ const handler = handleActions({
   [WEBSOCKET_READY]: (state, { websocket }) => {
     state.websocket = websocket;
     return state;
-  }
+  },
 });
 
 export default function reducer(state = {}, action = {}) {

@@ -18,6 +18,7 @@ export const FORWARD = 'FORWARD'; // forward pagination direction
 export const BACKWARD = 'BACKWARD'; // backward pagination direction
 
 export const FETCH_MODELS = 'learninglocker/pagination/FETCH_MODELS';
+export const RESET_REQUEST_STATE = 'learninglocker/pagination/RESET_REQUEST_STATE';
 
 /**
  * REDUCERS
@@ -143,7 +144,6 @@ export const reduceSuccess = (
     direction
   }
 ) => {
-  console.log('001', schema);
   const cachedAt = moment();
 
   const newEdges = new OrderedSet(edges)
@@ -162,8 +162,6 @@ export const reduceSuccess = (
     )
   );
 
-  console.log('002 state', state);
-  console.log('003 cursor', cursor);
   const out = state
     .mergeIn([schema, filter, sort, 'pageInfo'], pageInfo)
     .setIn([schema, filter, sort, cursor, 'cachedAt'], cachedAt)
@@ -232,8 +230,7 @@ const fetchModels = createAsyncDuck({
     cursor
   }),
 
-  checkShouldFire: ({ schema, filter, sort, cursor }, state) =>
-    (shouldFetchSelector({ schema, filter, sort, cursor })(state)),
+  checkShouldFire: ({ schema, filter, sort, cursor }, state) => (shouldFetchSelector({ schema, filter, sort, cursor })(state)),
 
   doAction: function* fetchModelSaga({
     schema,
@@ -375,11 +372,7 @@ const fetchMore = ({
   direction = FORWARD,
   first = 10,
   last
-}) => (dispatch, getState) => {
-  console.log('201', schema, filter, sort, direction);
-  console.log('202', getState());
-
-  return (dispatch(
+}) => (dispatch, getState) => (dispatch(
     fetchModels.actions.start(
       { schema,
         filter,
@@ -392,7 +385,6 @@ const fetchMore = ({
       getState()
     )
   ));
-};
 
 export const selectors = {
   paginationSelector,
@@ -408,7 +400,20 @@ export const selectors = {
 };
 
 export const reducer = handleActions({
-  ...fetchModels.reducers
+  ...fetchModels.reducers,
+  [RESET_REQUEST_STATE]: (pagination, { schema }) => {
+    const outt = pagination.set(schema, pagination.get(schema).map((filter) => {
+      const out = filter.map((sort) => {
+        const ou = sort.map((cursor) => {
+          const o = cursor.delete('requestState');
+          return o;
+        });
+        return ou;
+      });
+      return out;
+    }));
+    return outt;
+  }
 });
 
 export const actions = { fetchMore, fetchAllOutstandingModels, ...fetchModels.actions };
