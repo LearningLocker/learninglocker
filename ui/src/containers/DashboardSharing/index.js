@@ -246,10 +246,10 @@ const ModelFormComponent = ({
       </RadioGroup>
 
       {filterMode === ANY &&
-        <span className={classNames('help-block', styles.contextHelp)}>The JSON filter should passed to the URL via a query param named filter</span>
+        <span className={classNames('help-block', styles.contextHelp)}>The JSON filter should be passed via the URL in a query parameter named filter. Some complex filters may need to be stripped of whitespace and URL Encoded first</span>
       }
       {filterMode === JWT_SECURED &&
-        <span className={classNames('help-block', styles.contextHelp)}>The JSON filter should be encoded as a <a href="https://jwt.io/" target="_blank" rel="noopener noreferrer">JWT</a> and passed to the URL via a query param named filter</span>
+        <span className={classNames('help-block', styles.contextHelp)}>The JSON filter should be encoded as a <a href="https://jwt.io/" target="_blank" rel="noopener noreferrer">JWT</a> and passed via the URL in a query parameter named filter</span>
       }
     </div>
 
@@ -282,7 +282,7 @@ const ModelFormComponent = ({
     {(filterMode === JWT_SECURED) &&
     <div className="form-group" style={{ marginBottom: 25 }}>
       <label htmlFor={filterJwtSecretId} >
-        Filter required
+        URL filter required
       </label>
       <span className={classNames('help-block', styles.contextHelp)}>Must a filter be passed to the URL for the dashboard to load data?</span>
       <RadioGroup
@@ -299,8 +299,8 @@ const ModelFormComponent = ({
     <hr />
 
     <div className="form-group">
-      <h4>Filter</h4>
-      <span className={classNames('help-block', styles.contextHelp)}>Apply a filter to this dashboard (preview below). Any URL filter (if present) will be applied on top of this filter.</span>
+      <h4>Base filter</h4>
+      <span className={classNames('help-block', styles.contextHelp)}>Configure a filter for this dashboard which will always be applied. The dashboard below will show a live preview of the result, updating as you construct your filter<br /><br />If a URL filter is also used, it will be applied on top of this filter</span>
       <QueryBuilder
         id={filterId}
         query={model.get('filter', new Map({}))}
