@@ -3,6 +3,7 @@ import { Map } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
+import { isArray } from 'lodash';
 import classNames from 'classnames';
 import { updateModel } from 'ui/redux/modules/models';
 import Checkbox from 'ui/components/Material/Checkbox';
@@ -76,7 +77,12 @@ class SubOrgForm extends Component {
     const { model } = this.props;
     const modelId = model.get('_id');
     const oldSettings = model.get('settings');
-    const newSettings = oldSettings.set(attr, value);
+    
+    if (!isArray(attr)) {
+      attr = [attr];
+    }
+
+    const newSettings = oldSettings.setIn(attr, value);
 
     this.props.updateModel({
       schema: 'organisation',
@@ -87,6 +93,7 @@ class SubOrgForm extends Component {
   };
 
   onChangeSettingsAttr = (attr, e) => {
+
     this.changeSettingsAttr(attr, e.target.value);
   };
 
@@ -354,6 +361,7 @@ class SubOrgForm extends Component {
     const { model } = this.props;
     const settings = model.get('settings');
     const errorMessages = model.getIn(['errors', 'messages'], new Map());
+    const ttlId = uuid.v4();
 
     return (
       <div className="row">
@@ -477,6 +485,46 @@ class SubOrgForm extends Component {
               onDismiss={this.onExpirationDismiss}
               readonly={!this.props.isSiteAdmin} />
           </div>
+
+          <fieldset>
+            <legend className="pageHeader">Export Expiry</legend>
+            <div className="from-group">
+              <Checkbox
+                label="Don't Allow Exports"
+                style={styles.checkbox}
+                onChange={this.onChangeBooleanSetting.bind(
+                  null,
+                  ['EXPIRE_EXPORTS', 'dontAllowExports']
+                )}
+                checked={settings.getIn(['EXPIRE_EXPORTS', 'dontAllowExports'])} />
+              <Checkbox
+                label="Exports should expire"
+                style={styles.checkbox}
+                onChange={this.onChangeBooleanSetting.bind(
+                  null,
+                  ['EXPIRE_EXPORTS', 'expireExports']
+                )}
+                checked={settings.getIn(['EXPIRE_EXPORTS', 'expireExports'])} />
+            </div>
+            <div
+              className={classNames({
+                'form-group': true,
+                'has-error': errorMessages.has('settings.EXPIRE_EXPORTS.ttl')
+              })}>
+              <label htmlFor={ttlId}>Time to expiry (seconds)</label>
+              <input
+                className="form-control"
+                id={ttlId}
+                placeholder="How many seconds will the export remain available for?"
+                value={settings.getIn(['EXPIRE_EXPORTS', 'ttl'])}
+                onChange={this.onChangeSettingsAttr.bind(null, ['EXPIRE_EXPORTS', 'ttl']) } />
+              {errorMessages.has('settings.EXPIRE_EXPORTS.ttl') &&
+                <span className="help-block">
+                  <ValidationList
+                    errors={errorMessages.get('settings.EXPIRE_EXPORTS.ttl')} />
+                </span>}
+            </div>
+          </fieldset>
         </div>
       </div>
     );

@@ -37,8 +37,8 @@ const reduceClearPending = (state, { schema, id }) =>
 /**
  * ACTIONS
  */
-const updateModel = ({ schema, id, path, value, silent = false }) =>
-  ({
+const updateModel = ({ schema, id, path, value, silent = false }) => {
+  return ({
     type: UPDATE_MODEL,
     schema,
     id,
@@ -46,6 +46,7 @@ const updateModel = ({ schema, id, path, value, silent = false }) =>
     value,
     silent
   });
+}
 
 const updateModelErrors = (schema, id, errors) => ({
   type: UPDATE_MODEL_ERRORS,
