@@ -171,7 +171,7 @@ describe('Statement Forwarding Request', () => {
       .equal(0);
     expect(doneStatement.failedForwardingLog[0].statementForwarding_id.toString()).to
       .equal(statementForwardingId);
-      expect(doneStatement.failedForwardingLog[0].errorInfo.responseStatus).to
+    expect(doneStatement.failedForwardingLog[0].errorInfo.responseStatus).to
         .equal(404);
   }).timeout(5000);
 
@@ -227,8 +227,6 @@ describe('Statement Forwarding Request', () => {
       .equal(0);
     expect(doneStatement.failedForwardingLog[0].statementForwarding_id.toString()).to
       .equal(statementForwardingId);
-      expect(doneStatement.failedForwardingLog[0].errorInfo.responseStatus).to.be.null;
-      console.log(doneStatement.failedForwardingLog[0]);
+    expect(doneStatement.failedForwardingLog[0].errorInfo.responseStatus).to.equal(null);
   }).timeout(10000);
-
 });

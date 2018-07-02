@@ -1,5 +1,5 @@
 import * as popsicle from 'popsicle';
-import { assign, isPlainObject, isString } from 'lodash';
+import { assign, isPlainObject } from 'lodash';
 import { Map } from 'immutable';
 import logger from 'lib/logger';
 import Statement, { mapDot } from 'lib/models/statement';
@@ -66,6 +66,9 @@ const sendRequest = async (statement, statementForwarding) => {
 
     return request;
   } catch (err) {
+    if (err instanceof ForwardingRequestError) {
+      throw err;
+    }
     throw new ForwardingRequestError(
       err.message,
       {
@@ -76,7 +79,6 @@ const sendRequest = async (statement, statementForwarding) => {
       }
     );
   }
-
 };
 
 const setPendingStatements = (statement, statementForwardingId) =>
