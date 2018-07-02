@@ -132,12 +132,18 @@ const shareableDashboardFilterSelector = () => createSelector(
       if (
         theShare.get('filterMode', OFF) !== OFF && filter
       ) {
+        let parsedFilter = filter; // either JSON or JWT
+        if (theShare.get('filterMode') === ANY) {
+          try {
+            // if JSON, attempt to parse
+            parsedFilter = fromJS(JSON.parse(decodeURI(filter)));
+          } catch (err) {
+            parsedFilter = fromJS({});
+          }
+        }
         return [
           theShare.get('filter', new Map()),
-          // fromJS(JSON.parse(filter))
-          (theShare.get('filterMode') === ANY) ?
-            fromJS(JSON.parse(decodeURI(filter))) :
-            filter // jwt token, send as string
+          parsedFilter
         ];
       }
 
