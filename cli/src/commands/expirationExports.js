@@ -23,23 +23,21 @@ const expireExportsForOrgatinasion = async (organisation) => {
 
   const exports = await Download.find({
     organisation: organisation._id,
-    upload: { $exists: true }
-    //   time: { $lt: cutOffDate } // DEBUG ONLY, uncomment
+    upload: { $exists: true },
+    time: { $lt: cutOffDate } // DEBUG ONLY, uncomment
   });
 
 
   await map(exports, async (expor) => {
     const repo = factory(expor.upload.repo);
     try {
+      console.log('000');
       await repo.deleteFromPath(expor.upload.key);
+      await Download.findByIdAndRemove(expor._id); // DEBUG ONLY, uncomment
     } catch (err) {
       console.error('err', err);
     }
-
-    await Download.findByIdAndRemove(expor._id);
   });
-
-  console.log('003.1', exports);
 };
 
 export default async function ({
@@ -61,16 +59,6 @@ export default async function ({
 
   await map(organisations, expireExportsForOrgatinasion);
 
-//   const toDeleteExport = await Download.find({
-//     time: { $gt: cutOffDate }
-//   });
-//   await map(toDeleteExport, async (organisation) => {
-//     if (
-//       todayDate.isAfter(moment(organisation.settings.EXPIRE_EXPORTS.ttl))
-//     ) {
-//       await Export.delete();
-//     }
-//   });
   if (!dontExit) {
     process.exit();
   }
