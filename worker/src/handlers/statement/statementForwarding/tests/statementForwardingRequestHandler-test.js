@@ -9,7 +9,7 @@ import statementForwardingRequestHandler from '../statementForwardingRequestHand
 
 const promiseRequestHandler = Promise.promisify(statementForwardingRequestHandler);
 
-describe('Statement Forwarding Request', () => {
+describe.only('Statement Forwarding Request', () => {
   afterEach(async () => {
     await Statement.remove({});
     await StatementForwarding.remove({});
@@ -171,5 +171,7 @@ describe('Statement Forwarding Request', () => {
       .equal(0);
     expect(doneStatement.failedForwardingLog[0].statementForwarding_id.toString()).to
       .equal(statementForwardingId);
+      expect(doneStatement.failedForwardingLog[0].errorInfo.responseStatus).to
+        .equal(404);
   }).timeout(5000);
 });
