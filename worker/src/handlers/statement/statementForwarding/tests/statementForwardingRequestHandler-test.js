@@ -9,7 +9,7 @@ import statementForwardingRequestHandler from '../statementForwardingRequestHand
 
 const promiseRequestHandler = Promise.promisify(statementForwardingRequestHandler);
 
-describe.only('Statement Forwarding Request', () => {
+describe('Statement Forwarding Request', () => {
   afterEach(async () => {
     await Statement.remove({});
     await StatementForwarding.remove({});
@@ -174,4 +174,61 @@ describe.only('Statement Forwarding Request', () => {
       expect(doneStatement.failedForwardingLog[0].errorInfo.responseStatus).to
         .equal(404);
   }).timeout(5000);
+
+
+  it('If a request timesout, keep in pending', async () => {
+    const statementId = '59438cabedcedb70146337ec';
+    const statementForwardingId = '59438cabedcedb70146337eb';
+    const organisationId = '561a679c0c5d017e4004715a';
+
+    const statementForwarding = {
+      _id: statementForwardingId,
+      lrs_id: '560a679c0c5d017e4004714f',
+      organisation: organisationId,
+      active: true,
+      configuration: {
+        protocol: 'http',
+        url: 'localhost:3101/',
+        method: 'POST'
+      }
+    };
+
+    const statement = {
+      _id: statementId,
+      organisation: organisationId,
+      statement: {
+        test: 'test'
+      }
+    };
+
+    await Statement.create(statement);
+
+    const request = nock('http://localhost:3101/')
+      .post('/', {
+        test: 'test'
+      })
+      .delayConnection(6000)
+      .reply(200, {
+        _id: '1',
+        _rev: '1',
+        success: true
+      });
+    try {
+      await promiseRequestHandler({ statementForwarding, statement });
+    } catch (err) {
+      expect(err).to.be.err; // eslint-disable-line no-unused-expressions
+    }
+    expect(request.isDone()).to.equal(true);
+
+    const doneStatement = await Statement.findById(statementId);
+    expect(doneStatement.pendingForwardingQueue[0].toString()).to
+      .equal(statementForwardingId);
+    expect(doneStatement.completedForwardingQueue.length).to
+      .equal(0);
+    expect(doneStatement.failedForwardingLog[0].statementForwarding_id.toString()).to
+      .equal(statementForwardingId);
+      expect(doneStatement.failedForwardingLog[0].errorInfo.responseStatus).to.be.null;
+      console.log(doneStatement.failedForwardingLog[0]);
+  }).timeout(10000);
+
 });

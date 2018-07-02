@@ -49,22 +49,34 @@ const sendRequest = async (statement, statementForwarding) => {
       followRedirects: (() => true)
     }
   };
-  const request = popsicle.request(requestOptions);
+  try {
+    const request = popsicle.request(requestOptions);
+    const response = await request;
+    if (!(response.status >= 200 && response.status < 400)) {
+      throw new ForwardingRequestError(
+        'Status code was invalid',
+        {
+          headers: requestOptions.headers,
+          responseBody: response.body,
+          responseStatus: response.status,
+          url: requestOptions.url,
+        }
+      );
+    }
 
-  const response = await request;
-  if (!(response.status >= 200 && response.status < 400)) {
+    return request;
+  } catch (err) {
     throw new ForwardingRequestError(
-      'Status code was invalid',
+      err.message,
       {
         headers: requestOptions.headers,
-        responseBody: response.body,
-        responseStatus: response.status,
+        responseBody: null,
+        responseStatus: null,
         url: requestOptions.url,
       }
     );
   }
 
-  return request;
 };
 
 const setPendingStatements = (statement, statementForwardingId) =>
