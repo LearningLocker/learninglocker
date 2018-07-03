@@ -5,21 +5,12 @@ import { get } from 'lodash';
 import moment from 'moment';
 import { map } from 'bluebird';
 import Organisation from 'lib/models/organisation';
-// import { deleteFromPath } from 'lib/services/files/storage/local';
-import { factory } from 'lib/services/files/storage';
-
 
 const expireExportsForOrgatinasion = async (organisation) => {
-  console.log('003');
   const ttl = organisation.settings.EXPIRE_EXPORTS.ttl;
 
   const todayDate = moment();
   const cutOffDate = todayDate.subtract(ttl, 'seconds');
-
-  // await Download.deleteMany({
-  //   organisation: organisation._id,
-  //   time: { $lt: cutOffDate }
-  // }).exec();
 
   const exports = await Download.find({
     organisation: organisation._id,
@@ -29,11 +20,8 @@ const expireExportsForOrgatinasion = async (organisation) => {
 
 
   await map(exports, async (expor) => {
-    const repo = factory(expor.upload.repo);
     try {
-      console.log('000');
-      await repo.deleteFromPath(expor.upload.key);
-      await Download.findByIdAndRemove(expor._id); // DEBUG ONLY, uncomment
+      await expor.remove();
     } catch (err) {
       console.error('err', err);
     }
