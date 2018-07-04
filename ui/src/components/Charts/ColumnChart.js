@@ -1,9 +1,10 @@
 import React from 'react';
-import { BarChart as Chart, XAxis, YAxis } from 'recharts';
+import { BarChart as Chart, XAxis, YAxis, CartesianGrid } from 'recharts';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { AutoSizer } from 'react-virtualized';
 import NoData from 'ui/components/Graphs/NoData';
 import { compose } from 'recompose';
+import uuid from 'uuid';
 import {
   getResultsData,
   getShortModel,
@@ -20,36 +21,46 @@ const sortData = data => data.sortBy(e => e.get('id'));
 
 const getSortedData = results => labels =>
   sortData(getResultsData(results)(labels));
-
+const chartUuid = uuid.v4();
 const renderBarChart = colors => (labels, toggleHiddenSeries, hiddenSeries) => stacked => data => ({ width, height }) => (
-  <Chart
-    data={getChartData(data, hiddenSeries)}
-    width={width}
-    height={height}
-    layout="horizontal">
-    <XAxis type="category" dataKey="cellId" tickFormatter={getShortModel(data)} />
-    <YAxis type="number" />
-    {renderLegend(labels, toggleHiddenSeries)}
-    {renderBars(colors)(labels)(stacked)}
-    {renderTooltips(data)}
-  </Chart>
+  /* eslint-disable react/no-danger */
+    <div> 
+      <style
+        dangerouslySetInnerHTML={{ __html: `
+          .grid-${chartUuid} .recharts-cartesian-grid-vertical {
+            visibility: hidden !important;
+          }
+        ` }} />
+    <Chart
+      className={`grid-${chartUuid}`}
+      data={getChartData(data, hiddenSeries)}
+      width={width}
+      height={height}
+      layout="horizontal">
+      <XAxis type="category" dataKey="cellId" tickFormatter={getShortModel(data)} />
+      <YAxis type="number" />
+      <CartesianGrid strokeDasharray="1 1"/>
+      {renderLegend(labels, toggleHiddenSeries)}
+      {renderBars(colors)(labels)(stacked)}
+      {renderTooltips(data)}
+    </Chart>
+  </div>
+  /* eslint-enable react/no-danger */
 );
 const renderChart = (component, axesLabels, chartWrapperFn) => (
   <div className={styles.chart}>
+    <div className={`${styles.barContainer}`}>
+        <span className={styles.yAxis}>
+          {axesLabels.yLabel || 'Y Axis'}
+        </span>
+      <div className={styles.chartWrapper}>
+        {chartWrapperFn(component)}
+      </div>
+    </div>
     <div className={styles.xAxisLabel}>
       <span className={styles.xAxis}>
         {axesLabels.xLabel || 'X Axis'}
       </span>
-    </div>
-    <div className={`${styles.barContainer}`}>
-      <div className={styles.yAxisLabel}>
-        <span className={styles.yAxis}>
-          {axesLabels.yLabel || 'Y Axis'}
-        </span>
-      </div>
-      <div className={styles.chartWrapper}>
-        {chartWrapperFn(component)}
-      </div>
     </div>
   </div>
 );

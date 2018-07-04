@@ -1,6 +1,6 @@
 import React from 'react';
 import { AutoSizer } from 'react-virtualized';
-import { LineChart as Chart, XAxis, YAxis, Line } from 'recharts';
+import { LineChart as Chart, XAxis, YAxis, Line, CartesianGrid } from 'recharts';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import NoData from 'ui/components/Graphs/NoData';
 import { compose } from 'recompose';
@@ -42,6 +42,7 @@ const renderLineChart = (labels, toggleHiddenSeries, hiddenSeries) => colors => 
     margin={{ top: 10, right: 35, left: -20, bottom: 5 }}>
     <XAxis type="category" dataKey="cellId" tickFormatter={getShortModel(data)} />
     <YAxis type="number" />
+    <CartesianGrid strokeDasharray="1 1"/>
     {renderLegend(labels, toggleHiddenSeries)}
     {renderLines(labels)(colors)}
     {renderTooltips(data)}
@@ -50,22 +51,18 @@ const renderLineChart = (labels, toggleHiddenSeries, hiddenSeries) => colors => 
 
 const renderChart = (component, axesLabels, chartWrapperFn) => (
   <div className={styles.chart}>
-
+    <div className={`${styles.barContainer}`}>
+        <span className={styles.yAxis}>
+          {axesLabels.yLabel || 'Y Axis'}
+        </span>
+      <div className={styles.chartWrapper}>
+        {chartWrapperFn(component)}
+      </div>
+    </div>
     <div className={styles.xAxisLabel}>
       <span className={styles.xAxis}>
         {axesLabels.xLabel || 'X Axis'}
       </span>
-    </div>
-
-    <div className={`${styles.barContainer}`}>
-      <div className={styles.yAxisLabel}>
-        <span className={styles.yAxis}>
-          {axesLabels.yLabel || 'Y Axis'}
-        </span>
-      </div>
-      <div className={styles.chartWrapper}>
-        {chartWrapperFn(component)}
-      </div>
     </div>
   </div>
 );

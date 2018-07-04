@@ -13,6 +13,7 @@ import {
 import PieTooltip from './PieTooltip';
 import styles from './styles.css';
 
+
 const cellPadding = 5;
 
 const getInnerRadius = size => i =>
@@ -32,16 +33,13 @@ const getSortedData = results => labels =>
 
 const renderCell = numberOfEntries => color => (entry, i) => (
   <Cell
-    fill={getColor({
-      hexColor: color,
-      range: numberOfEntries,
-      value: i,
-    })}
+    fill={getColor(i)}
     key={`cell-${i}`} />
 );
 
 const renderTooltips = labels => data =>
   (<Tooltip content={<PieTooltip display={getLongModel(data)} labels={labels} />} />);
+
 
 const renderPie = colors => data => (label, i, labels) =>
   (
@@ -50,8 +48,8 @@ const renderPie = colors => data => (label, i, labels) =>
       data={getChartData(data)}
       nameKey={'_id'}
       valueKey={`s${i}`}
-      innerRadius={getInnerRadius(getPieSize(labels.size))(i)}
-      outerRadius={getOuterRadius(getPieSize(labels.size))(i)}>
+      innerRadius={90}
+    >
       {data.valueSeq().map(renderCell(data.size)(colors.get(i)))}
     </Pie>
   );

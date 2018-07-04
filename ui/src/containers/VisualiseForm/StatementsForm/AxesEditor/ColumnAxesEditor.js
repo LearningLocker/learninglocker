@@ -6,6 +6,7 @@ import DebounceInput from 'react-debounce-input';
 import CountEditor from './CountEditor';
 import GroupEditor from './GroupEditor';
 import BaseAxesEditor from './BaseAxesEditor';
+import { getLegend } from 'ui/utils/shorten';
 
 class ColumnAxesEditor extends BaseAxesEditor {
   static propTypes = {
@@ -22,10 +23,10 @@ class ColumnAxesEditor extends BaseAxesEditor {
           <DebounceInput
             id={'xAxisLabel'}
             className="form-control"
-            placeholder={`${'x'.toUpperCase()}-Axis`}
+            placeholder={getLegend('x', this.props)}
             debounceTimeout={377}
             style={{ fontWeight: 'bold' }}
-            value={this.getAxesValue('xLabel')}
+            value={getLegend('x', this.props)}
             onChange={this.handleAxesChange.bind(this, 'xLabel')} />
         </div>
         <div className="form-group">
@@ -41,10 +42,10 @@ class ColumnAxesEditor extends BaseAxesEditor {
           <DebounceInput
             id={'yAxisLabel'}
             className="form-control"
-            placeholder={`${'y'.toUpperCase()}-Axis`}
+            placeholder={getLegend('y', this.props)}
             debounceTimeout={377}
             style={{ fontWeight: 'bold' }}
-            value={this.getAxesValue('yLabel')}
+            value={getLegend('y', this.props)}
             onChange={this.handleAxesChange.bind(this, 'yLabel')} />
         </div>
         <div className="form-group">

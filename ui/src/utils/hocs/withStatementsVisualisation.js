@@ -109,5 +109,5 @@ export default compose(
     schema: 'visualisation',
   })),
   withModel,
-  withStatementsVisualisation,
+  withStatementsVisualisation
 );

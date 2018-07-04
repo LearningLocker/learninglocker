@@ -132,22 +132,20 @@ class XvsY extends Component {
 
   renderChart = () => (
     <div className={styles.chart}>
-      <div className={styles.xAxisLabel}>
-        <span className={styles.xAxis}>
-          {this.props.axesLabels.xLabel || 'X Axis'}
-        </span>
-      </div>
       <div className={`${styles.barContainer}`}>
-        <div className={styles.yAxisLabel}>
           <span className={styles.yAxis}>
             {this.props.axesLabels.yLabel || 'Y Axis'}
           </span>
-        </div>
         <div className={styles.chartWrapper}>
           <AutoSizer forceChange={this.props.results}>
             {this.renderScatterChart}
           </AutoSizer>
         </div>
+      </div>
+      <div className={styles.xAxisLabel}>
+        <span className={styles.xAxis}>
+          {this.props.axesLabels.xLabel || 'X Axis'}
+        </span>
       </div>
     </div>
   )

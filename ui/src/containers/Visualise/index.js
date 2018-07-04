@@ -51,6 +51,14 @@ class Visualise extends Component {
     });
   }
 
+  createVisualisationName = (model) => {
+  if (model.getIn(['axesgroup','searchString'])||model.getIn(['axesxValue','searchString'])) {
+   return [<span>Unnamed </span>,<span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em'}}>( X: {model.getIn(['axesgroup','searchString'])||model.getIn(['axesxValue','searchString'])}   Y: {model.getIn(['axesvalue','searchString'])||model.getIn(['axesyValue','searchString'])} )</span>];
+  } else {
+    return [<span>Unnamed </span>,<span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em'}}>( {model.getIn(['axesvalue','searchString'])||model.getIn(['axesyValue','searchString'])} )</span>];
+  }
+  }
+
   render = () => (
     <div>
       <header id="topbar">
@@ -78,10 +86,10 @@ class Visualise extends Component {
             buttons={[PrivacyToggleButton, DeleteButton]}
             getDescription={model => (
               <span>
-                <span style={{ paddingRight: 5 }}>
+                <span style={{ paddingRight: 10 }}>
                   <VisualisationTypeIcon id={model.get('_id')} />
                 </span>
-                { model.get('description') || '~ Unnamed Visualisation'}
+                { model.get('description') || this.createVisualisationName(model)}
               </span>
             )} />
         </div>

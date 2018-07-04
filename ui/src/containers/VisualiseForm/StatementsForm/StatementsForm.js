@@ -98,7 +98,7 @@ class StatementsForm extends Component {
       </div>
       <div
         className="col-md-6">
-        <div style={{ float: 'left' }}>
+        <div style={{ float: 'left', marginLeft: '16px' }}>
           { this.renderSourceToggle() }
         </div>
         <div className="form-group form-inline" style={{ textAlign: 'right' }}>
