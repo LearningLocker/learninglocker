@@ -33,7 +33,11 @@ const getSortedData = results => labels =>
 
 const renderCell = numberOfEntries => color => (entry, i) => (
   <Cell
-    fill={getColor(i)}
+    fill={getColor({
+      hexColor: color,
+      range: numberOfEntries,
+      value: i
+    })}
     key={`cell-${i}`} />
 );
 
@@ -48,8 +52,9 @@ const renderPie = colors => data => (label, i, labels) =>
       data={getChartData(data)}
       nameKey={'_id'}
       valueKey={`s${i}`}
-      innerRadius={90}
-    >
+      innerRadius={getInnerRadius(getPieSize(labels.size))(i)}
+      outerRadius={getOuterRadius(getPieSize(labels.size))(i)}>
+      {/* innerRadius={90} */}
       {data.valueSeq().map(renderCell(data.size)(colors.get(i)))}
     </Pie>
   );

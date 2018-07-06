@@ -17,7 +17,23 @@ const colorCycle = (value) => {
   console.log('we here')
 };
 
-export default (value) => {
-  return colorCycle(value);
+export default ({
+  hexColor = '#f5d76e',
+  range,
+  value,
+  minOpacity = 0.2,
+  maxOpacity = 1,
+  shading = 'opacity'
+}) => {
+  switch (shading) {
+    case 'opacity':
+      const rgb = hexToRgb(hexColor);
+      const opacityRange = maxOpacity - minOpacity;
+      const opacityInterval = (range > 1 ? opacityRange / (range - 1) : opacityRange);
+      const opacity = (opacityInterval * value) + minOpacity;
+      return `rgba(${rgb.r},${rgb.g},${rgb.b},${opacity})`;
+    case 'colors':  return colorCycle(value);
+    default: return null;
+  }
 };
 

@@ -121,22 +121,20 @@ class BarChart extends Component {
           {this.hasPrevPage(pages)(activePage) && this.renderPrevButton()}
           {this.hasNextPage(pages)(activePage) && this.renderNextButton()}
         </div>
-        <div className={`${styles.withPrevNext} clearfix`}>
-        </div>
+        <div className={`${styles.withPrevNext} clearfix`} />
         <div className={`${styles.barContainer}`}>
-     
-            <span className={styles.yAxis}>
-              {this.props.axesLabels.yLabel || 'Y Axis'}
-            </span>
+          <span className={styles.yAxis}>
+            {this.props.axesLabels.yLabel || this.props.model.getIn(['axesgroup','searchString'], 'Y-Axis')}
+          </span>
           <div className={styles.chartWrapper}>
             {this.props.chartWrapperFn((this.renderBarChart(colors)(labels)(data)(stacked)(activePage)))}
           </div>
         </div>
         <div className={styles.xAxisLabel}>
-        <span className={styles.xAxis}>
-            {this.props.axesLabels.xLabel || 'X Axis'}
+          <span className={styles.xAxis}>
+            {this.props.axesLabels.xLabel || this.props.model.getIn(['axesvalue', 'searchString'], 'X-Axis')}
           </span>
-          </div>
+        </div>
       </div>
     );
   }

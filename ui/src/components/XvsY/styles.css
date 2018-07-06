@@ -62,7 +62,7 @@
   display: inline-block;
   writing-mode: vertical-lr;
   transform: rotate(-180deg);
-  margin-bottom:320px;
+  margin: auto 0;
   margin-left:15px;
   }
 

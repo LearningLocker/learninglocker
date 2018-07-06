@@ -53,7 +53,7 @@ const renderChart = (component, axesLabels, chartWrapperFn) => (
   <div className={styles.chart}>
     <div className={`${styles.barContainer}`}>
         <span className={styles.yAxis}>
-          {axesLabels.yLabel || 'Y Axis'}
+          {axesLabels.yLabel || this.props.model.getIn(['axesgroup', 'searchString'], 'Y-Axis')}
         </span>
       <div className={styles.chartWrapper}>
         {chartWrapperFn(component)}
@@ -61,7 +61,7 @@ const renderChart = (component, axesLabels, chartWrapperFn) => (
     </div>
     <div className={styles.xAxisLabel}>
       <span className={styles.xAxis}>
-        {axesLabels.xLabel || 'X Axis'}
+        {axesLabels.xLabel || this.props.model.getIn(['axesvalue', 'searchString'], 'X-Axis')}
       </span>
     </div>
   </div>

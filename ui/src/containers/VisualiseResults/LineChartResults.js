@@ -4,15 +4,16 @@ import LineChart from 'ui/components/Charts/LineChart';
 import { shorten } from 'ui/utils/shorten';
 
 export default withStatementsVisualisation(({
-  getFormattedResults, results, labels, colors, previewPeriod, axes
+  getFormattedResults, results, labels, colors, previewPeriod, axes, model
 }) => (
   <LineChart
     results={getFormattedResults(results)}
     labels={labels}
     colors={colors}
     preview={previewPeriod}
+    model={model}
     axesLabels={{
-      xLabel: shorten(axes.get('xLabel', axes.getIn(['group', 'searchString'], 'X-Axis'))),
+      xLabel: shorten(axes.get('xLabel', axes.getIn(['group', 'searchString'], 'yyyy-mm-dd'))),
       yLabel: shorten(axes.get('yLabel', axes.getIn(['value', 'searchString'], 'Y-Axis')))
     }} />
 ));

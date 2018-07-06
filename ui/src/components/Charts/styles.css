@@ -67,8 +67,6 @@
 }
 
 .yAxisLabel {
-  margin-bottom: 12px;
-  flex-shrink: 0;
   writing-mode: vertical-lr;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -81,8 +79,7 @@
   display: inline-block;
   writing-mode: vertical-lr;
   transform: rotate(-180deg);
-  margin-bottom:280px;
-  margin-left:15px;
+  margin: auto 0;
   }
 
 .chartWrapper {

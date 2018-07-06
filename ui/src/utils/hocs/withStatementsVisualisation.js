@@ -35,6 +35,7 @@ const withStatementsVisualisation = (WrappedComponent) => {
 
     componentDidMount = () => {
       this.fetchIfRequired(this.props);
+      console.log('ws',this.props)
     }
 
     componentWillReceiveProps = (nextProps) => {
@@ -70,6 +71,7 @@ const withStatementsVisualisation = (WrappedComponent) => {
           previewPeriod={this.props.model.get('previewPeriod')}
           stacked={this.props.model.get('stacked', true)}
           axes={this.getAxes()}
+          model={this.props.model}
           labels={this.props.model.get('filters', new List()).map(filter => filter.get('label'))}
           colors={this.props.model.get('filters', new List()).map((filter, index) => filter.get('color') || VISUALISATION_COLORS[index])}
           getFormattedResults={this.getFormattedResults} />

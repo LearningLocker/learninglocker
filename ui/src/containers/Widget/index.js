@@ -111,6 +111,9 @@ class Widget extends Component {
           <i className={`ion ${styles.marginRight} ion-gear-b grey`} />
           Settings
         </a>
+        <a onClick={this.openDeleteModal}>
+          <i className={`ion  ${styles.marginRight} ion-close-round grey`} />Delete
+        </a> 
       </DropDownMenu>
     );
   }
@@ -140,14 +143,6 @@ class Widget extends Component {
             <div className={`panel-title ${titleStyles} react-drag-handle`}>
               { this.props.editable && this.renderMenu(styles) }
               <span style={{ cursor: 'initial' }}>{ model.get('title') }</span>
-              { this.props.editable &&
-                <a
-                  onClick={this.openDeleteModal}
-                  title="Delete"
-                  className={styles.closeButton}>
-                  <i className="ion ion-close-round grey" />
-                </a>
-              }
             </div>
           </div>
           <div className={`panel-body ${styles.body}`}>
