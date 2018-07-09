@@ -7,14 +7,16 @@ export default withStatementsVisualisation(({
   results,
   labels,
   colors,
-  axes
+  axes,
+  trendLines
 }) => (
   <XvsY
     colors={colors}
     results={getFormattedResults(results)}
     labels={labels}
+    trendLines={trendLines}
     axesLabels={{
       xLabel: axes.get('xLabel', 'X-Axis'),
       yLabel: axes.get('yLabel', 'Y-Axis'),
     }} />
-));
+  ));
