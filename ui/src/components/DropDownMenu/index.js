@@ -25,8 +25,8 @@ class DropDownMenu extends Component {
   }
 
   onClick = () => {
-    let openState = this.state.isOpen
-    openState = !openState
+    let openState = this.state.isOpen;
+    openState = !openState;
     this.setState({
       isOpen: openState
     });

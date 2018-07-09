@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { routeNodeSelector } from 'redux-router5';
 import { withProps, compose } from 'recompose';
+import { createVisualisationName } from 'ui/utils/shorten'
 import { Map, fromJS } from 'immutable';
 import { queryStringToQuery, modelQueryStringSelector } from 'ui/redux/modules/search';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
@@ -51,16 +52,6 @@ class Visualise extends Component {
     });
   }
 
-  createVisualisationName = (model) => {
-console.log(model)
-    switch (model.get('type')) {
-      case ('FREQUENCY'): return [<span>Unnamed </span>, <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em'}}>( X: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue','searchString'])} Y: Time )</span>];
-      case ('XVSY'): return [<span>Unnamed </span>, <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>( X: {model.getIn(['axesxValue', 'searchString'])}   Y: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue', 'searchString'])} )</span>];
-      case ('COUNTER'): return [<span>Unnamed </span>, <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em'}}>( {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue','searchString'])} )</span>];
-      default: return [<span>Unnamed </span>, <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>( X: {model.getIn(['axesgroup', 'searchString'])}   Y: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue', 'searchString'])} )</span>];
-    }
-  }
-
   render = () => (
     <div>
       <header id="topbar">
@@ -91,7 +82,7 @@ console.log(model)
                 <span style={{ paddingRight: 10 }}>
                   <VisualisationTypeIcon id={model.get('_id')} />
                 </span>
-                { model.get('description') || this.createVisualisationName(model)}
+                { model.get('description') || createVisualisationName(model)}
               </span>
             )} />
         </div>

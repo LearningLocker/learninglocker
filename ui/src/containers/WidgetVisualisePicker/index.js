@@ -1,17 +1,20 @@
 import { Map, fromJS } from 'immutable';
 import React, { Component, PropTypes } from 'react';
+import lodash from 'lodash';
 import Portal from 'react-portal';
 import { withProps, compose } from 'recompose';
+import { createDefaultTitleWithIcon, createDefaultTitle } from 'ui/utils/shorten';
 import ModelAutoComplete from 'ui/containers/ModelAutoComplete';
 import uuid from 'uuid';
 import { withModels } from 'ui/utils/hocs';
+
 
 const schema = 'visualisation';
 
 class WidgetVisualisePicker extends Component {
   static propTypes = {
     isOpened: PropTypes.bool,
-    onClickClose: PropTypes.func,
+    onClickClose: PropTypes.func, 
     onChangeTitle: PropTypes.func,
     onChangeVisualisation: PropTypes.func
   };
@@ -21,17 +24,19 @@ class WidgetVisualisePicker extends Component {
     model: new Map()
   };
 
-  getNewTitle = visualisation =>
-    this.getTitle(visualisation.get('description', ''));
+  getNewTitle = visualisation => this.getTitle(visualisation.get('description', ''), this.props);
 
-  getTitle = defaultValue => this.props.model.get('title') || defaultValue;
+  getTitle = (defaultValue, props) => props.models.getIn([this.getVisualisationId(), 'description'], defaultValue)
+  
 
-  getVisualisationId = () => this.props.model.get('visualisation');
+  selectModel = () => this.props.models.get(this.getVisualisationId());
+
+  getVisualisationId = () => this.props.model.get('visualisation')
 
   onClickVisualisation = (visualisation) => {
     this.props.onChangeVisualisation(
       visualisation.get('_id'),
-      this.getNewTitle(visualisation)
+      createDefaultTitle(visualisation)
     );
   };
 
@@ -59,8 +64,8 @@ class WidgetVisualisePicker extends Component {
         <input
           id={htmlFor}
           className="form-control"
-          placeholder="Title"
-          value={this.getTitle('')}
+          placeholder={'Unnamed'}
+          value={this.getTitle('Unnamed', this.props)}
           onChange={this.onChangeTitle} />
       </div>
     );
@@ -76,8 +81,9 @@ class WidgetVisualisePicker extends Component {
             schema={schema}
             id={this.getVisualisationId()}
             displayCount={3}
-            parseOption={model => model.get('description', '')}
-            parseOptionTooltip={model => model.get('description', '')}
+            parseOption={model => model.get('description', createDefaultTitleWithIcon(model))}
+            parseOptionString={model => model.get('description', createDefaultTitle(model))}
+            parseOptionTooltip={model => model.get('description', createDefaultTitle(model))}
             onChange={this.onClickVisualisation}
             searchStringToFilter={this.searchStringToFilter}
             fields={['description']} />
@@ -88,7 +94,6 @@ class WidgetVisualisePicker extends Component {
 
   render = () => {
     const { isOpened } = this.props;
-
     return (
       <Portal isOpened={isOpened}>
         <span>
