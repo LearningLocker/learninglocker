@@ -16,6 +16,7 @@ import migrateScopesToRoles from 'cli/commands/migrateScopesToRoles';
 import migrateTimestamps from 'cli/commands/v1-migrations/migrateTimestamps';
 import migrateXAPIReadScope from 'cli/commands/v1-migrations/migrateXAPIReadScope';
 import migrateDownloadPaths from 'cli/commands/migrateDownloadPaths';
+import setExpireExport from 'cli/commands/setExpireExport';
 
 import clearAggregationCache from 'cli/commands/clearAggregationCache';
 import migrateVisualiseAxes from 'cli/commands/migrateVisualiseAxes';
@@ -29,6 +30,7 @@ import migrateMongo, { MIGRATIONS_PATH } from 'cli/migrateMongo';
 
 import seed from 'cli/seed';
 import expirationNotificationEmails from 'cli/commands/expirationNotificationEmails';
+import expirationExport from 'cli/commands/expirationExports';
 
 program.version('0.0.1');
 
@@ -131,6 +133,10 @@ program
   .command('disableRegister')
   .action(disableRegister);
 // node cli/dist/server disableRegister
+program
+  .command('setExpireExport <expireExport>')
+  .action(setExpireExport);
+// node cli/dist/server disableRegister
 
 
 program
@@ -150,8 +156,13 @@ program
 
 program
   .command('expirationNotificationEmails')
-  .action(expirationNotificationEmails)
-  .option('--weekBefore [weekBefore]', 'The date of when to send the week before email');
+  .option('--weekBefore [weekBefore]', 'The date of when to send the week before email')
+  .action(expirationNotificationEmails);
 // node cli/dist/server expirationNotificationEmails
+
+program
+  .command('expirationExport')
+  .action(expirationExport);
+// node cli/dist/server expirationExport
 
 program.parse(process.argv);
