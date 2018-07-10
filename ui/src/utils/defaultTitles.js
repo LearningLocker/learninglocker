@@ -1,5 +1,6 @@
 import React from 'react';
 import VisualisationTypeIcon from '../containers/Visualise/VisualisationTypeIcon';
+import uuid from 'uuid';
 
 export const shorten = (shortening) => {
   if (shortening.length >= 20) {
@@ -25,11 +26,11 @@ export const getLegend = (key, props) => {
 
 export const createVisualisationName = (model, prefix) => {
   switch (model.get('type', 'Unnamed')) {
-    case ('FREQUENCY'): return [<span>{prefix} </span>, <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em'}}>( X: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue','searchString'])} Y: Time )</span>];
-    case ('XVSY'): return [<span>{prefix} </span>, <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>( X: {model.getIn(['axesxValue', 'searchString'])}   Y: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue', 'searchString'])} )</span>];
-    case ('COUNTER'): return [<span>{prefix} </span>, <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em'}}>( {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue','searchString'])} )</span>];
-    case ('PIE'): return [<span>{prefix} </span>, <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>( {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue', 'searchString'])} / {model.getIn(['axesgroup', 'searchString'])} )</span>];
-    default: return [<span>{prefix} </span>, <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>( X: {model.getIn(['axesgroup', 'searchString'])}   Y: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue', 'searchString'])} )</span>];
+    case ('FREQUENCY'): return [<span key={uuid.v4()}>{prefix} </span>, <span  key={uuid.v4()} style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em'}}>( X: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue','searchString'])} Y: Time )</span>];
+    case ('XVSY'): return [<span key={uuid.v4()}>{prefix} </span>, <span  key={uuid.v4()} style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>( X: {model.getIn(['axesxValue', 'searchString'])}   Y: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue', 'searchString'])} )</span>];
+    case ('COUNTER'): return [<span key={uuid.v4()}>{prefix} </span>, <span  key={uuid.v4()} style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em'}}>( {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue','searchString'])} )</span>];
+    case ('PIE'): return [<span key={uuid.v4()}>{prefix} </span>, <span  key={uuid.v4()} style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>( {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue', 'searchString'])} / {model.getIn(['axesgroup', 'searchString'])} )</span>];
+    default: return [<span key={uuid.v4()}>{prefix} </span>, <span  key={uuid.v4()} style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>( X: {model.getIn(['axesgroup', 'searchString'])}   Y: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue', 'searchString'])} )</span>];
   }
 };
 
