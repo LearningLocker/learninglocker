@@ -6,7 +6,7 @@ import DebounceInput from 'react-debounce-input';
 import CountEditor from './CountEditor';
 import GroupEditor from './GroupEditor';
 import BaseAxesEditor from './BaseAxesEditor';
-import { getLegend, shorten } from 'ui/utils/shorten';
+import { getLegend } from 'ui/utils/defaultTitles';
 
 export class BarAxesEditor extends BaseAxesEditor {
   static propTypes = {

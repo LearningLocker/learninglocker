@@ -35,7 +35,6 @@ const withStatementsVisualisation = (WrappedComponent) => {
 
     componentDidMount = () => {
       this.fetchIfRequired(this.props);
-      console.log('ws',this.props)
     }
 
     componentWillReceiveProps = (nextProps) => {

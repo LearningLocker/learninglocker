@@ -28,6 +28,7 @@ export const createVisualisationName = (model, prefix) => {
     case ('FREQUENCY'): return [<span>{prefix} </span>, <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em'}}>( X: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue','searchString'])} Y: Time )</span>];
     case ('XVSY'): return [<span>{prefix} </span>, <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>( X: {model.getIn(['axesxValue', 'searchString'])}   Y: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue', 'searchString'])} )</span>];
     case ('COUNTER'): return [<span>{prefix} </span>, <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em'}}>( {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue','searchString'])} )</span>];
+    case ('PIE'): return [<span>{prefix} </span>, <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>( {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue', 'searchString'])} / {model.getIn(['axesgroup', 'searchString'])} )</span>];
     default: return [<span>{prefix} </span>, <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>( X: {model.getIn(['axesgroup', 'searchString'])}   Y: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue', 'searchString'])} )</span>];
   }
 };
@@ -38,6 +39,7 @@ export const createVisualisationText = (model, prefix = '') => {
       case ('FREQUENCY'): return `${prefix}X: ${model.getIn(['axesvalue', 'searchString'], '') || model.getIn(['axesyValue', 'searchString'], '')} Y: Time `;
       case ('XVSY'): return `${prefix}X: ${model.getIn(['axesxValue', 'searchString'], '')}  Y: ${model.getIn(['axesvalue', 'searchString'], '') || model.getIn(['axesyValue', 'searchString'], '')}`;
       case ('COUNTER'): return `${prefix} ${model.getIn(['axesvalue', 'searchString'], '') || model.getIn(['axesyValue', 'searchString'], '')}`;
+      case ('PIE'): return `${prefix} ${model.getIn(['axesvalue', 'searchString'], '') || model.getIn(['axesyValue', 'searchString'], '')} / ${model.getIn(['axesgroup', 'searchString'], '')} `;
       default: return `${prefix} X: ${model.getIn(['axesgroup', 'searchString'], '')}   Y: ${model.getIn(['axesvalue', 'searchString'], '') || model.getIn(['axesyValue', 'searchString'], '')}`;
     }
   }

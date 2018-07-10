@@ -1,7 +1,7 @@
 import React from 'react';
 import { withStatementsVisualisation } from 'ui/utils/hocs';
 import XvsY from 'ui/components/XvsY';
-import { shorten } from 'ui/utils/shorten';
+import { shorten } from 'ui/utils/defaultTitles';
 
 export default withStatementsVisualisation(({
   getFormattedResults,

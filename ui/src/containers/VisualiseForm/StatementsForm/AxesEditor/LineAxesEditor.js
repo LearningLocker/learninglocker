@@ -5,7 +5,7 @@ import { updateModel } from 'ui/redux/modules/models';
 import DebounceInput from 'react-debounce-input';
 import CountEditor from './CountEditor';
 import BaseAxesEditor from './BaseAxesEditor';
-import { getLegend } from 'ui/utils/shorten';
+import { getLegend } from 'ui/utils/defaultTitles';
 
 export class LineAxesEditor extends BaseAxesEditor {
   static propTypes = {

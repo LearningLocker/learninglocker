@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { routeNodeSelector } from 'redux-router5';
 import { withProps, compose } from 'recompose';
-import { createVisualisationName } from 'ui/utils/shorten'
+import { createVisualisationName } from 'ui/utils/defaultTitles'
 import { Map, fromJS } from 'immutable';
 import { queryStringToQuery, modelQueryStringSelector } from 'ui/redux/modules/search';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';

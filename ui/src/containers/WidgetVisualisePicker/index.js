@@ -1,9 +1,8 @@
 import { Map, fromJS } from 'immutable';
 import React, { Component, PropTypes } from 'react';
-import lodash from 'lodash';
 import Portal from 'react-portal';
 import { withProps, compose } from 'recompose';
-import { createDefaultTitleWithIcon, createDefaultTitle } from 'ui/utils/shorten';
+import { createDefaultTitleWithIcon, createDefaultTitle } from 'ui/utils/defaultTitles';
 import ModelAutoComplete from 'ui/containers/ModelAutoComplete';
 import uuid from 'uuid';
 import { withModels } from 'ui/utils/hocs';
@@ -24,21 +23,13 @@ class WidgetVisualisePicker extends Component {
     model: new Map()
   };
 
-  getNewTitle = visualisation => this.getTitle(visualisation.get('description', ''), this.props);
-
-  getTitle = (defaultValue, props) => props.models.getIn([this.getVisualisationId(), 'description'], defaultValue)
-  
-
-  selectModel = () => this.props.models.get(this.getVisualisationId());
+  getTitle = (props, defaultValue) => {
+    return props.model.getIn(['title'], defaultValue);
+  };
 
   getVisualisationId = () => this.props.model.get('visualisation')
 
-  onClickVisualisation = (visualisation) => {
-    this.props.onChangeVisualisation(
-      visualisation.get('_id'),
-      createDefaultTitle(visualisation)
-    );
-  };
+  onClickVisualisation = visualisation => this.props.onChangeVisualisation(visualisation.get('_id'), (this.props.model.get('title') || visualisation.get('description') || createDefaultTitle(visualisation)));
 
   onChangeTitle = e => this.props.onChangeTitle(e.target.value);
 
@@ -65,7 +56,7 @@ class WidgetVisualisePicker extends Component {
           id={htmlFor}
           className="form-control"
           placeholder={'Unnamed'}
-          value={this.getTitle('Unnamed', this.props)}
+          value={this.getTitle(this.props, 'Unnamed')}
           onChange={this.onChangeTitle} />
       </div>
     );

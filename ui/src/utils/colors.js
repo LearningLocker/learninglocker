@@ -14,7 +14,6 @@ const colorCycle = (value) => {
   } else {
     return COLORS[value];
   }
-  console.log('we here')
 };
 
 export default ({

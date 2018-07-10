@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStatementsVisualisation } from 'ui/utils/hocs';
-import { shorten } from 'ui/utils/shorten';
+import { shorten } from 'ui/utils/defaultTitles';
 import ColumnChart from 'ui/components/Charts/ColumnChart';
 
 export default withStatementsVisualisation((props) => {

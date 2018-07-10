@@ -54,8 +54,6 @@ export default compose(
 }) => {
   const searchString = searchFilterToString(searchFilter);
 
-  console.log('001 id', id);
-
   return (
     <AutoComplete2
       renderInput={({ hasFocus }) => (
