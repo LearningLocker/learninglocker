@@ -91,6 +91,7 @@ class StatementsForm extends Component {
     </select>
   )
 
+<<<<<<< HEAD
   renderFormWithResults = () => (
     <div className="row">
       <div className="col-md-6 left-border">
@@ -103,16 +104,33 @@ class StatementsForm extends Component {
         </div>
         <div className="form-group form-inline" style={{ textAlign: 'right' }}>
           { this.renderTimePicker() }
+=======
+  renderFormWithResults = () => {
+    console.log('201 StatementForm renderformWithresults');
+    return (
+      <div className="row">
+        <div className="col-md-6 left-border">
+          { this.renderEditor() }
+>>>>>>> visualisations-b
         </div>
-        <div style={{ height: '400px', paddingTop: 5 }}>
-          {!this.props.source && <VisualiseResults id={this.props.model.get('_id')} />}
-          {this.props.source &&
-            <SourceResults id={this.props.model.get('_id')} />
-          }
+        <div
+          className="col-md-6">
+          <div style={{ float: 'left' }}>
+            { this.renderSourceToggle() }
+          </div>
+          <div className="form-group form-inline" style={{ textAlign: 'right' }}>
+            { this.renderTimePicker() }
+          </div>
+          <div style={{ height: '400px', paddingTop: 5 }}>
+            {!this.props.source && <VisualiseResults id={this.props.model.get('_id')} />}
+            {this.props.source &&
+              <SourceResults id={this.props.model.get('_id')} />
+            }
+          </div>
         </div>
       </div>
-    </div>
-  )
+    );
+  }
 
   renderEditorOnly = () => (
     <div className="row">

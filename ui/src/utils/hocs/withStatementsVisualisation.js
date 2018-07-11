@@ -46,7 +46,8 @@ const withStatementsVisualisation = (WrappedComponent) => {
       this.getAxes().equals(unflattenAxes(model)) &&
       this.props.model.get('stacked') === model.get('stacked') &&
       this.props.model.get('filters').equals(model.get('filters')) &&
-      this.props.fetchState === fetchState
+      this.props.fetchState === fetchState &&
+      this.props.model.get('trendLines') === model.get('trendLines')
     );
 
     fetchIfRequired = (props) => {
@@ -69,6 +70,7 @@ const withStatementsVisualisation = (WrappedComponent) => {
           {...this.props}
           previewPeriod={this.props.model.get('previewPeriod')}
           stacked={this.props.model.get('stacked', true)}
+          trendLines={this.props.model.get('trendLines', false)}
           axes={this.getAxes()}
           model={this.props.model}
           labels={this.props.model.get('filters', new List()).map(filter => filter.get('label'))}
