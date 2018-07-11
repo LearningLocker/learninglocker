@@ -87,14 +87,14 @@ class BarChart extends Component {
               visibility: hidden !important;
             }
           ` }} />
-          
+
         <Chart
           className={`grid-${chartUuid}`}
           data={getChartData(this.getDataChunk(data)(page), this.props.hiddenSeries)}
           width={width}
           height={height}
-          layout="vertical"> 
-          <CartesianGrid strokeDasharray="1 1"/>
+          layout="vertical">
+          <CartesianGrid strokeDasharray="1 1" />
           <YAxis
             dataKey="cellId"
             tickFormatter={getShortModel(data)}
@@ -106,25 +106,20 @@ class BarChart extends Component {
           {renderTooltips(data, this.props.hiddenSeries)}
         </Chart>
       </div>
-      );
+    );
     /* eslint-enable react/no-danger */
   };
 
   renderResults = results => colors => labels => (stacked) => {
     const { activePage } = this.state;
     const data = this.getSortedData(results)(labels);
-    const pages = this.getPages(data);
 
     return (
       <div className={`${styles.chart}`}>
-        {/* <div className={`${styles.buttons}`}>
-          {this.hasPrevPage(pages)(activePage) && this.renderPrevButton()}
-          {this.hasNextPage(pages)(activePage) && this.renderNextButton()}
-        </div> */}
         <div className={`${styles.withPrevNext} clearfix`} />
         <div className={`${styles.barContainer}`}>
           <span className={styles.yAxis}>
-            {this.props.axesLabels.yLabel || this.props.model.getIn(['axesgroup','searchString'], 'Y-Axis')}
+            {this.props.axesLabels.yLabel || this.props.model.getIn(['axesgroup', 'searchString'], 'Y-Axis')}
           </span>
           <div className={styles.chartWrapper}>
             {this.props.chartWrapperFn((this.renderBarChart(colors)(labels)(data)(stacked)(activePage)))}

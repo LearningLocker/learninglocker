@@ -16,7 +16,7 @@
 
 .inputWrapper {
   border: 1px solid #ccc;
-  border-radius: 2spx;
+  border-radius: 2px;
   overflow: hidden;
   flex-wrap: wrap;
   min-height: 36px;
