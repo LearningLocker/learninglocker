@@ -1,7 +1,15 @@
 import React, { Component, PropTypes } from 'react';
 import { Map, List } from 'immutable';
 import { AutoSizer } from 'react-virtualized';
-import { ScatterChart, XAxis, YAxis, Tooltip, Scatter, CartesianGrid } from 'recharts';
+import {
+  ScatterChart,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Scatter,
+  CartesianGrid,
+  Line
+} from 'recharts';
 import NoData from 'ui/components/Graphs/NoData';
 import { displayAuto } from 'ui/redux/modules/queryBuilder';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
@@ -24,13 +32,14 @@ class XvsY extends Component {
     results: new List()
   }
 
-  shouldComponentUpdate = nextProps => !(
-    this.props.results.equals(nextProps.results) &&
-    this.props.axesLabels.xLabel === nextProps.axesLabels.xLabel &&
-    this.props.axesLabels.yLabel === nextProps.axesLabels.yLabel &&
-    this.props.colors.equals(nextProps.colors) &&
-    this.props.labels.equals(nextProps.labels)
-  )
+  shouldComponentUpdate = (nextProps) => !(
+      this.props.results.equals(nextProps.results) &&
+      this.props.axesLabels.xLabel === nextProps.axesLabels.xLabel &&
+      this.props.axesLabels.yLabel === nextProps.axesLabels.yLabel &&
+      this.props.colors.equals(nextProps.colors) &&
+      this.props.labels.equals(nextProps.labels) &&
+      this.props.trendLines === nextProps.trendLines
+    )
 
   getLargestSeriesSize = () => (
     this.props.results.map(this.getLargestAxisSize).max()
@@ -103,12 +112,14 @@ class XvsY extends Component {
     models.get(new Map({ x, y }), new List())
   );
 
-  renderOneSeries = (series, index) =>
+  renderOneSeries = ({ trendLines }) => (series, index) =>
     (
       <Scatter
         dataKey={`s${index}`}
         name={this.props.labels.get(index)}
         key={index}
+        line={trendLines}
+        lineType="fitting"
         data={this.getSeriesData(series)}
         fill={this.props.colors.get(index)} />
     );
@@ -120,7 +131,7 @@ class XvsY extends Component {
       margin={{ top: 10, right: 12, left: -10, bottom: 2 }}>
       <XAxis dataKey="x" type="number" name={this.props.axesLabels.xLabel || 'X Axis'} />
       <YAxis dataKey="y" type="number" name={this.props.axesLabels.yLabel || 'Y AXis'} />
-      {this.props.results.map(this.renderOneSeries)}
+      {this.props.results.map(this.renderOneSeries({ trendLines: this.props.trendLines }))}
       <CartesianGrid />
       {renderLegend(this.props.labels)}
       <Tooltip
@@ -128,7 +139,7 @@ class XvsY extends Component {
           display={this.displayModelAtPosition(this.getModels())} />}
         cursor={{ strokeDasharray: '3 3' }} />
     </ScatterChart>
-  );
+    )
 
   renderChart = () => (
     <div className={styles.chart}>

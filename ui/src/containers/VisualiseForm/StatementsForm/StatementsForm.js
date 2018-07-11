@@ -107,12 +107,12 @@ class StatementsForm extends Component {
         <div style={{ height: '400px', paddingTop: 5 }}>
           {!this.props.source && <VisualiseResults id={this.props.model.get('_id')} />}
           {this.props.source &&
-            <SourceResults id={this.props.model.get('_id')} />
-          }
+          <SourceResults id={this.props.model.get('_id')} />
+            }
         </div>
       </div>
     </div>
-  )
+    )
 
   renderEditorOnly = () => (
     <div className="row">

@@ -5,10 +5,12 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { updateModel } from 'ui/redux/modules/models';
 import Tabs from 'ui/components/Material/Tabs';
 import { Tab } from 'react-toolbox/lib/tabs';
+import { XVSY } from 'ui/utils/constants';
 import TypeEditor from './TypeEditor';
 import SeriesEditor from './SeriesEditor';
 import AxesEditor from './AxesEditor/AxesEditor';
 import styles from '../visualiseform.css';
+import OptionsEditor from './OptionsEditor';
 
 const SCHEMA = 'visualisation';
 
@@ -67,6 +69,10 @@ class Editor extends Component {
         <Tab label="Series">
           {this.renderSeriesEditor()}
         </Tab>
+        {this.props.model.get('type') === XVSY &&
+          <Tab label="Options">
+            {this.renderOptionsEditor()}
+          </Tab> }
       </Tabs>
     </div>
   )
@@ -75,6 +81,11 @@ class Editor extends Component {
     <SeriesEditor
       model={this.props.model}
       exportVisualisation={this.props.exportVisualisation} />
+  )
+
+  renderOptionsEditor = () => (
+    <OptionsEditor
+      model={this.props.model} />
   )
 
   renderSteps = () => (
