@@ -64,7 +64,7 @@ class StatementForwarding extends Component {
             buttons={[PrivacyToggleButton, DeleteButton]}
             filter={queryStringToQuery(this.props.searchString, schema)}
             ModelForm={StatementForwardingForm}
-            getDescription={model => model.get('description', '~ Unnamed Statement Forwarding')} />
+            getDescription={model => model.get('description', 'Unnamed Statement Forwarding')} />
         </div>
       </div>
     </div>
