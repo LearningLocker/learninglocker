@@ -32,17 +32,14 @@ class XvsY extends Component {
     results: new List()
   }
 
-  shouldComponentUpdate = (nextProps) => {
-    console.log('nextProps', nextProps.trendLines);
-    return !(
+  shouldComponentUpdate = (nextProps) => !(
       this.props.results.equals(nextProps.results) &&
       this.props.axesLabels.xLabel === nextProps.axesLabels.xLabel &&
       this.props.axesLabels.yLabel === nextProps.axesLabels.yLabel &&
       this.props.colors.equals(nextProps.colors) &&
       this.props.labels.equals(nextProps.labels) &&
       this.props.trendLines === nextProps.trendLines
-    );
-  }
+    )
 
   getLargestSeriesSize = () => (
     this.props.results.map(this.getLargestAxisSize).max()
