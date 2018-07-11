@@ -55,7 +55,7 @@ export class BarAxesEditor extends BaseAxesEditor {
         </div>
       </div>
     </div>
-  );
+    )
 }
 
 export default connect(() => ({}), { updateModel })(BarAxesEditor);

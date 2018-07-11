@@ -7,6 +7,7 @@ import {
   FREQUENCY,
   COUNTER,
   PIE,
+  COMPOSITE,
 } from 'ui/utils/constants';
 import BarAxesEditor from './BarAxesEditor';
 import ColumnAxesEditor from './ColumnAxesEditor';
@@ -14,6 +15,7 @@ import LineAxesEditor from './LineAxesEditor';
 import ScatterAxesEditor from './ScatterAxesEditor';
 import CounterAxesEditor from './CounterAxesEditor';
 import PieAxesEditor from './PieAxesEditor';
+import CompositeAxesEditor from './CompositeAxesEditor';
 
 export default ({ model }) => {
   switch (model.get('type')) {
@@ -25,6 +27,7 @@ export default ({ model }) => {
     case FREQUENCY: return <LineAxesEditor model={model} />;
     case COUNTER: return <CounterAxesEditor model={model} />;
     case PIE: return <PieAxesEditor model={model} />;
+    case COMPOSITE: return <CompositeAxesEditor model={model} />;
     default: return <div>renderDefault</div>;
   }
 };

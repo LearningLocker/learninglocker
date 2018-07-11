@@ -13,6 +13,7 @@ import {
   FREQUENCY,
   COUNTER,
   PIE,
+  COMPOSITE,
 } from '../../utils/constants';
 import LEADERBOARD_IMAGE from './assets/ll-icon-bar-graph.png';
 import XVSY_IMAGE from './assets/ll-icon-correlation.png';
@@ -21,6 +22,8 @@ import FREQUENCY_IMAGE from './assets/ll-icon-frequency.png';
 import COUNTER_IMAGE from './assets/ll-icon-counter.png';
 import PIE_IMAGE from './assets/ll-icon-pie-chart.png';
 import SESSIONS_IMAGE from './assets/ll-icon-accumulation.png';
+
+const COMPOSITE_IMAGE = SESSIONS_IMAGE;
 
 const PLATFORMS_IMAGE = SESSIONS_IMAGE;
 const QUESTIONANALYSIS_IMAGE = SESSIONS_IMAGE;
@@ -66,6 +69,7 @@ class VisualiseIcon extends Component {
       case SESSIONS: return SESSIONS_IMAGE;
       case PLATFORMS: return PLATFORMS_IMAGE;
       case QUESTIONANALYSIS: return QUESTIONANALYSIS_IMAGE;
+      case COMPOSITE: return COMPOSITE_IMAGE;
       default: return '';
     }
   }

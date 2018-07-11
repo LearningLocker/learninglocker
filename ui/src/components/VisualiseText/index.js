@@ -5,7 +5,8 @@ import {
   PIE,
   XVSY,
   STATEMENTS,
-  FREQUENCY
+  FREQUENCY,
+  COMPOSITE
 } from '../../utils/constants';
 
 export default class VisualiseIcon extends Component {
@@ -21,6 +22,7 @@ export default class VisualiseIcon extends Component {
       case FREQUENCY: return 'Use the Frequency graph to show statements over time in multiple series. Up to 5 series can be shown. Use it to answer the question, how does the activity of X compare to the activity of Y?';
       case COUNTER: return 'Use the Counter visualisation to show a single number (e.g. total number of users)';
       case PIE: return 'Use the Pie chart to show show how your statements are divided (e.g. number of statements per course)';
+      case COMPOSITE: return 'Use a composite graph to show multiple things on one graph';
       default: return '';
     }
   }

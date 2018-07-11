@@ -52,6 +52,11 @@ export default class CountEditor extends Component {
     const operatorOptions = this.getOperatorOptions();
     const hasUniquenessOp = this.isUniquenessOp(operator);
 
+    console.log('------------------------------------------');
+    console.log('501', operator);
+    console.log('501.1', operatorOptions.get(operator));
+    console.log('501.2', value);
+
     return (
       <div>
         <AutoComplete

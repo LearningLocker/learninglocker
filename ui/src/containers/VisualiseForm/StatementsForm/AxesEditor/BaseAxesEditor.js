@@ -27,7 +27,11 @@ export default class BaseAxesEditor extends Component {
   };
 
   getAxesValue = (key, notSetValue) => {
+    console.log('101 getAxesValue', key);
+    console.log('101.1 model', this.props.model);
     const value = this.props.model.get(VISUALISE_AXES_PREFIX + key, notSetValue);
+    console.log('101.2 value', value);
+
     return value;
   };
 
