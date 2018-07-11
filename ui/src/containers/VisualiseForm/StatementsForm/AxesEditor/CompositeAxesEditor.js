@@ -9,11 +9,12 @@ import CountEditor from './CountEditor';
 import GroupEditor from './GroupEditor';
 
 const renderBarAxes = (props) => {
-  console.log('004', props.model);
-  console.log('005 props.getAxesValue', props.getAxesValue('value'));
+  console.log('001');
+  console.log('002', props.changeAxes);
+
   return (<div>
     <div className="form-group">
-      <label htmlFor="toggleInput" className="clearfix">X Axis</label>
+      <label htmlFor="xAxisLabel" className="clearfix">X Axis</label>
       <div className="form-group">
         <DebounceInput
           id={'xAxisLabel'}
@@ -34,7 +35,7 @@ const renderBarAxes = (props) => {
       </div>
     </div>
     <div className="form-group">
-      <label htmlFor="toggleInput" className="clearfix">Y Axis</label>
+      <label htmlFor="yAxisLabel" className="clearfix">Y Axis</label>
       <div className="form-group">
         <DebounceInput
           id={'yAxisLabel'}
@@ -51,6 +52,42 @@ const renderBarAxes = (props) => {
           changeGroup={props.changeAxes.bind(null, 'group')} />
       </div>
     </div>
+
+    <div className="form-group">
+      <label htmlFor="xTopAxesLabel" className="clearfix">Top X Axis</label>
+      <div className="form-group">
+        <DebounceInput
+          id="xTopAxesLabel"
+          className="form-control"
+          placeholder="X-Top-Axis"
+          debounceTimeout={377}
+          style={{ fontWeight: 'bold' }}
+          value={props.getAxesValue('xTopLabel')}
+          onChange={props.handleAxesChange('xTopLabel')} />
+      </div>
+    </div>
+    <div className="form-group">
+      <label htmlFor="yRightAxesLabel" className="clearfix">Right Y Axis</label>
+      <div className="form-group">
+        <DebounceInput
+          id="yRightAxesLabel"
+          className="form-control"
+          placeholder="Y-Right-Axis"
+          debounceTimeout={377}
+          style={{ fontWeight: 'bold' }}
+          value={props.getAxesValue('yRightLabel')}
+          onChange={props.handleAxesChange('yRightLabel')} />
+      </div>
+      <div className="form-group">
+        <CountEditor
+          type={LEADERBOARD}
+          className="form-control"
+          operator={props.getAxesValue('yRightOperator')}
+          changeValue={props.changeAxes('yRightValue')}
+          changeOperator={props.changeAxes('yRightOperators')} />
+      </div>
+    </div>
+
   </div>);
 };
 
