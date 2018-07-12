@@ -28,12 +28,12 @@ export default class CountEditor extends Component {
   }
 
   componentWillMount = () => {
+    console.log('000', this.props.operator);
     this.props.changeOperator(this.props.operator);
     this.props.changeValue(this.props.value);
   }
 
-  changeOperator = newOperator =>
-    this.props.changeOperator(newOperator.keySeq().first())
+  changeOperator = newOperator => this.props.changeOperator(newOperator.keySeq().first())
 
   includes = ys => xs =>
     xs.indexOf(ys) !== -1
@@ -52,11 +52,6 @@ export default class CountEditor extends Component {
     const operatorOptions = this.getOperatorOptions();
     const hasUniquenessOp = this.isUniquenessOp(operator);
 
-    console.log('------------------------------------------');
-    console.log('501', operator);
-    console.log('501.1', operatorOptions.get(operator));
-    console.log('501.2', value);
-
     return (
       <div>
         <AutoComplete
@@ -66,7 +61,7 @@ export default class CountEditor extends Component {
           options={operatorOptions}
           multi={false}
           onChangeFilter={this.changeOperatorInput}
-          onChange={this.changeOperator} />
+          onChange={this.changeOperator(...arguments)} />
         <CacheKeysAutoComplete
           selectedOption={value}
           localOptions={hasUniquenessOp ? UNIQUENESS_VALUE_OPTS : VALUE_OPTS}
