@@ -23,6 +23,11 @@ export const LAST_2_YEARS = 'LAST_1_YEARS';
 export const TYPES = 'stages/TYPES';
 export const STORES = 'stages/STORES';
 export const NONE = 'stages/NONE';
+export const FIVE = 5;
+export const TEN = 10;
+export const FIFTEEN = 15;
+export const TWENTY = 20;
+
 
 export const IN_PROGRESS = 'IN_PROGRESS';
 export const COMPLETED = 'COMPLETED';

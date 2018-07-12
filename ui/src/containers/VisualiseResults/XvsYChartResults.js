@@ -8,22 +8,16 @@ export default withStatementsVisualisation(({
   results,
   labels,
   colors,
-<<<<<<< HEAD
-  model
-=======
+  model,
   axes,
   trendLines
->>>>>>> visualisations-b
 }) => (
   <XvsY
     colors={colors}
     results={getFormattedResults(results)}
     labels={labels}
-<<<<<<< HEAD
     model={model}
-=======
     trendLines={trendLines}
->>>>>>> visualisations-b
     axesLabels={{
       xLabel: shorten(model.getIn(['axesxValue', 'searchString'], 'X-Axis')),
       yLabel: shorten(model.getIn(['axesyValue', 'searchString'], 'Y-Axis'))

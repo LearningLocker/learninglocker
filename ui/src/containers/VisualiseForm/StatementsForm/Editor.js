@@ -5,7 +5,6 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { updateModel } from 'ui/redux/modules/models';
 import Tabs from 'ui/components/Material/Tabs';
 import { Tab } from 'react-toolbox/lib/tabs';
-import { XVSY } from 'ui/utils/constants';
 import TypeEditor from './TypeEditor';
 import SeriesEditor from './SeriesEditor';
 import AxesEditor from './AxesEditor/AxesEditor';
@@ -59,8 +58,8 @@ class Editor extends Component {
     </div>
   )
 
-  renderTabs = () => (
-    <div className={styles.tab}>
+  renderTabs = () =>
+    (<div className={styles.tab}>
       { this.renderDescription(this.props.model.get('description')) }
       <Tabs index={this.state.step} onChange={this.changeStep}>
         <Tab label="Axes">
@@ -69,13 +68,12 @@ class Editor extends Component {
         <Tab label="Series">
           {this.renderSeriesEditor()}
         </Tab>
-        {this.props.model.get('type') === XVSY &&
-          <Tab label="Options">
-            {this.renderOptionsEditor()}
-          </Tab> }
+        <Tab label="Options">
+          {this.renderOptionsEditor()}
+        </Tab>
       </Tabs>
     </div>
-  )
+  );
 
   renderSeriesEditor = () => (
     <SeriesEditor

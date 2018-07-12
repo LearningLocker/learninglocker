@@ -44,7 +44,7 @@ class BarChart extends Component {
 
   displayPrevPage = () => this.setState({ activePage: this.state.activePage - 1 })
   displayNextPage = () => this.setState({ activePage: this.state.activePage + 1 })
-  getDataChunk = data => page => data.slice(10 * page, 10 * (page + 1))
+  getDataChunk = model => data => page => data.slice(model.get('barChartGroupingLimit') * page, model.get('barChartGroupingLimit') * (page + 1))
   getPages = data => Math.ceil(data.size / 10)
   hasPrevPage = pages => page => pages > 0 && page > 0
   hasNextPage = pages => page => pages > 0 && page < pages - 1
@@ -75,7 +75,7 @@ class BarChart extends Component {
     </span>
   )
 
-  renderBarChart = colors => labels => data => stacked => page => ({ width, height }) => {
+  renderBarChart = model => colors => labels => data => stacked => page => ({ width, height }) => {
     const chartUuid = uuid.v4();
     /* eslint-disable react/no-danger */
     return (
@@ -87,10 +87,9 @@ class BarChart extends Component {
               visibility: hidden !important;
             }
           ` }} />
-          
         <Chart
           className={`grid-${chartUuid}`}
-          data={getChartData(this.getDataChunk(data)(page), this.props.hiddenSeries)}
+          data={getChartData(this.getDataChunk(model)(data)(page), this.props.hiddenSeries)}
           width={width}
           height={height}
           layout="vertical"> 
@@ -110,10 +109,9 @@ class BarChart extends Component {
     /* eslint-enable react/no-danger */
   };
 
-  renderResults = results => colors => labels => (stacked) => {
+  renderResults = model => results => colors => labels => (stacked) => {
     const { activePage } = this.state;
     const data = this.getSortedData(results)(labels);
-    const pages = this.getPages(data);
 
     return (
       <div className={`${styles.chart}`}>
@@ -124,10 +122,10 @@ class BarChart extends Component {
         <div className={`${styles.withPrevNext} clearfix`} />
         <div className={`${styles.barContainer}`}>
           <span className={styles.yAxis}>
-            {this.props.axesLabels.yLabel || this.props.model.getIn(['axesgroup','searchString'], 'Y-Axis')}
+            {this.props.axesLabels.yLabel || this.props.model.getIn(['axesgroup', 'searchString'], 'Y-Axis')}
           </span>
           <div className={styles.chartWrapper}>
-            {this.props.chartWrapperFn((this.renderBarChart(colors)(labels)(data)(stacked)(activePage)))}
+            {this.props.chartWrapperFn((this.renderBarChart(model)(colors)(labels)(data)(stacked)(activePage)))}
           </div>
         </div>
         <div className={styles.xAxisLabel}>
@@ -140,10 +138,10 @@ class BarChart extends Component {
   }
 
   render = () => {
-    const { results, labels, stacked, colors } = this.props;
+    const { results, labels, stacked, colors, model } = this.props;
     return (
       hasData(this.props.results)
-      ? this.renderResults(results)(colors)(labels)(stacked)
+      ? this.renderResults(model)(results)(colors)(labels)(stacked)
       : <NoData />
     );
   }
