@@ -40,11 +40,6 @@ const BarEditorComponent = ({ model, barChartGroupingLimitHandler }) => (
       <option value={FIFTEEN}>Top 15</option>
       <option value={TWENTY}>Top 20</option>
     </select>
-    <select className={"options-menu"}>
-      <option value={'Length'}>Length of string</option>
-      <option value={'Length2'}>Really long</option>
-      <option value={'Length3'}>Unnecesarily and annoyingly long</option>
-    </select>
   </div>
 );
 
