@@ -92,8 +92,8 @@ class BarChart extends Component {
           data={getChartData(this.getDataChunk(model)(data)(page), this.props.hiddenSeries)}
           width={width}
           height={height}
-          layout="vertical"> 
-          <CartesianGrid strokeDasharray="1 1"/>
+          layout="vertical">
+          <CartesianGrid strokeDasharray="1 1" />
           <YAxis
             dataKey="cellId"
             tickFormatter={getShortModel(data)}
@@ -105,7 +105,7 @@ class BarChart extends Component {
           {renderTooltips(data, this.props.hiddenSeries)}
         </Chart>
       </div>
-      );
+    );
     /* eslint-enable react/no-danger */
   };
 
@@ -115,10 +115,6 @@ class BarChart extends Component {
 
     return (
       <div className={`${styles.chart}`}>
-        {/* <div className={`${styles.buttons}`}>
-          {this.hasPrevPage(pages)(activePage) && this.renderPrevButton()}
-          {this.hasNextPage(pages)(activePage) && this.renderNextButton()}
-        </div> */}
         <div className={`${styles.withPrevNext} clearfix`} />
         <div className={`${styles.barContainer}`}>
           <span className={styles.yAxis}>
