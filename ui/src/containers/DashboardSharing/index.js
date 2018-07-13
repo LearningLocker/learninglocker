@@ -83,6 +83,10 @@ const handlers = withHandlers({
       path: 'validDomains',
       value: event.target.value
     });
+  },
+  copyToClipBoard: () => urlId => () => {
+    window.document.getElementById(urlId).select();
+    window.document.execCommand('copy');
   }
 });
 
@@ -92,7 +96,8 @@ const ModelFormComponent = ({
   handleVisibilityChange,
   handleDomainsChange,
   model,
-  parentModel
+  parentModel,
+  copyToClipBoard
 }) => {
   const titleId = uuid.v4();
   const filterId = uuid.v4();
@@ -113,12 +118,19 @@ const ModelFormComponent = ({
       <label htmlFor={urlId}>Shareable link</label>
       <input
         id={urlId}
-        className="form-control"
-        disabled="true"
+        className={`form-control ${styles.gray}`}
         value={getShareableUrl({
           model,
           parentModel
         })} />
+    </div>
+    <div className="form-group">
+      <button
+        className="btn btn-primary"
+        onClick={copyToClipBoard(urlId)}>
+        Copy link
+      </button>
+      <ion-icon name="clipboard" />
     </div>
 
     <div className="form-group">
@@ -165,6 +177,7 @@ const ModelFormComponent = ({
 };
 
 const ModelForm = compose(
+  withStyles(styles),
   utilHandlers,
   handlers
 )(ModelFormComponent);

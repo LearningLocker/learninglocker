@@ -29,19 +29,21 @@ export default class QueryEditor extends Component {
 
   hasQuery = () => this.props.query !== undefined;
 
-  render = () => (
-    <div>
-      <Switch
-        checked={this.hasQuery()}
-        label="Query"
-        onChange={this.toggleQuery} />
-      {
-        this.hasQuery() &&
-          <QueryBuilder
-            componentPath={this.props.componentPath}
-            query={this.props.query.get('$match', new Map())}
-            onChange={this.changeQuery} />
-      }
-    </div>
-  );
+  render = () => {
+    return (
+      <div>
+        <Switch
+          checked={this.hasQuery()}
+          label="Query"
+          onChange={this.toggleQuery} />
+        {
+          this.hasQuery() &&
+            <QueryBuilder
+              componentPath={this.props.componentPath}
+              query={this.props.query.get('$match', new Map())}
+              onChange={this.changeQuery} />
+        }
+      </div>
+    );
+  }
 }

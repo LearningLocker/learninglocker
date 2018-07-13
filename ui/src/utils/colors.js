@@ -6,6 +6,15 @@ const hexToRgb = (hex) => {
     b: parseInt(result[3], 16)
   } : null;
 };
+const COLORS = ['#E77E04', '#F6AB35', '#CD7228', '#006692', '#E73304'];
+
+const colorCycle = (value) => {
+  if (value > (COLORS.length - 1)) {
+    return colorCycle(value - (COLORS.length));
+  } else {
+    return COLORS[value];
+  }
+};
 
 export default ({
   hexColor = '#f5d76e',
@@ -13,11 +22,17 @@ export default ({
   value,
   minOpacity = 0.2,
   maxOpacity = 1,
+  shading = 'opacity'
 }) => {
-  const rgb = hexToRgb(hexColor);
-  const opacityRange = maxOpacity - minOpacity;
-  const opacityInterval = (range > 1 ? opacityRange / (range - 1) : opacityRange);
-  const opacity = (opacityInterval * value) + minOpacity;
-  return `rgba(${rgb.r},${rgb.g},${rgb.b},${opacity})`;
+  switch (shading) {
+    case 'opacity':
+      const rgb = hexToRgb(hexColor);
+      const opacityRange = maxOpacity - minOpacity;
+      const opacityInterval = (range > 1 ? opacityRange / (range - 1) : opacityRange);
+      const opacity = (opacityInterval * value) + minOpacity;
+      return `rgba(${rgb.r},${rgb.g},${rgb.b},${opacity})`;
+    case 'colors':  return colorCycle(value);
+    default: return null;
+  }
 };
 

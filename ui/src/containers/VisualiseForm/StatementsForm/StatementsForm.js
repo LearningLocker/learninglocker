@@ -112,7 +112,7 @@ class StatementsForm extends Component {
         </div>
       </div>
     </div>
-  )
+    );
 
   renderEditorOnly = () => (
     <div className="row">

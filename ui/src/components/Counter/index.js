@@ -22,7 +22,7 @@ const renderCount = color => count => (
     style={{ color }}
     label={formatShortNumber(count)}
     tooltip={formatLongNumber(count)}
-    tooltipPosition="right"
+    tooltipPosition="top"
     tooltipDelay={600}
     active />
 );

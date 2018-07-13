@@ -1,14 +1,15 @@
 import React from 'react';
 import { withStatementsVisualisation } from 'ui/utils/hocs';
 import BarChart from 'ui/components/Charts/BarChart';
-
+import { shorten } from 'ui/utils/defaultTitles';
 export default withStatementsVisualisation(({
   getFormattedResults,
   results,
   labels,
   colors,
   stacked,
-  axes
+  axes,
+  model
 }) =>
   (
     <BarChart
@@ -16,9 +17,10 @@ export default withStatementsVisualisation(({
       labels={labels}
       colors={colors}
       stacked={stacked}
+      model={model}
       axesLabels={{
-        xLabel: axes.get('xLabel', 'X-Axes'),
-        yLabel: axes.get('yLabel', 'Y-Axes')
+        yLabel: shorten(axes.get('xLabel', axes.getIn(['group', 'searchString'], 'X-Axis'))),
+        xLabel: shorten(axes.get('yLabel', axes.getIn(['value', 'searchString'], 'Y-Axis')))
       }} />
   )
 );

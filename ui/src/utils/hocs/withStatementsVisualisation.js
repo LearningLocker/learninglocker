@@ -45,8 +45,10 @@ const withStatementsVisualisation = (WrappedComponent) => {
       this.props.results.equals(results) &&
       this.getAxes().equals(unflattenAxes(model)) &&
       this.props.model.get('stacked') === model.get('stacked') &&
+      this.props.model.get('barChartGroupingLimit') === model.get('barChartGroupingLimit') &&
       this.props.model.get('filters').equals(model.get('filters')) &&
-      this.props.fetchState === fetchState
+      this.props.fetchState === fetchState &&
+      this.props.model.get('trendLines') === model.get('trendLines')
     );
 
     fetchIfRequired = (props) => {
@@ -69,7 +71,9 @@ const withStatementsVisualisation = (WrappedComponent) => {
           {...this.props}
           previewPeriod={this.props.model.get('previewPeriod')}
           stacked={this.props.model.get('stacked', true)}
+          trendLines={this.props.model.get('trendLines', false)}
           axes={this.getAxes()}
+          model={this.props.model}
           labels={this.props.model.get('filters', new List()).map(filter => filter.get('label'))}
           colors={this.props.model.get('filters', new List()).map((filter, index) => filter.get('color') || VISUALISATION_COLORS[index])}
           getFormattedResults={this.getFormattedResults} />
@@ -109,5 +113,5 @@ export default compose(
     schema: 'visualisation',
   })),
   withModel,
-  withStatementsVisualisation,
+  withStatementsVisualisation
 );
