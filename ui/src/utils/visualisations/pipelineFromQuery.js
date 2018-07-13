@@ -1,5 +1,6 @@
 import { Map, fromJS } from 'immutable';
 import { memoize } from 'lodash';
+import { moment } from 'moment';
 import { periodToDate } from 'ui/utils/dates';
 import aggregateChart from 'ui/utils/visualisations/aggregateChart';
 import aggregateCounter from 'ui/utils/visualisations/aggregateCounter';
@@ -11,7 +12,7 @@ import {
   STATEMENTS,
   FREQUENCY,
   COUNTER,
-  PIE,
+  PIE
 } from 'ui/utils/constants';
 
 export default memoize((args = new Map()) => {
@@ -19,12 +20,17 @@ export default memoize((args = new Map()) => {
   const previewPeriod = args.get('previewPeriod');
   const today = args.get('today');
   const queryMatch = query.size === 0 ? [] : [{ $match: query }];
+  const previousStartDate = periodToDate(previewPeriod, today, 2).toISOString();
   const previewPeriodMatch = [{ $match: {
     timestamp: { $gte: { $dte: periodToDate(previewPeriod, today).toISOString() } }
+  } }];
+  const benchmarkPeriodMatch = [{ $match: {
+    timestamp: { $gte: { $dte: previousStartDate }, $lte: { $dte: periodToDate(previewPeriod, today).toISOString() } }
   } }];
   const type = args.get('type');
   const axes = args.get('axes');
   const preReqs = fromJS(previewPeriodMatch.concat(queryMatch));
+  const benchmarkPreReqs = fromJS(benchmarkPeriodMatch.concat(queryMatch));
   switch (type) {
     case POPULARACTIVITIES:
     case LEADERBOARD:

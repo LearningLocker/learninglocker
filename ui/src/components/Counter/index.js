@@ -33,8 +33,10 @@ const renderCounter = color => rs => (
 );
 const renderResults = rs => color => renderCounter(color)(rs);
 
-const counter = ({ results, color }) => (
+const counter = ({ results, color }) => { 
+  console.log('res', results)
+  return (
   hasData(results) ? renderResults(results)(color) : <NoData />
-);
+);}
 
 export default withStyles(styles)(counter);

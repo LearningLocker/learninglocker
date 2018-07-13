@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { compose, withHandlers } from 'recompose';
 import { updateModel } from 'ui/redux/modules/models';
 import Switch from 'ui/components/Material/Switch';
-import { XVSY, FIVE, TEN, FIFTEEN, TWENTY, LEADERBOARD } from 'ui/utils/constants';
+import { XVSY, FIVE, TEN, FIFTEEN, TWENTY, LEADERBOARD, COUNTER } from 'ui/utils/constants';
 
 const XvsYOptionsEditorComponent = ({ model, trendLinesHandler }) => (<div>
 
@@ -31,7 +31,7 @@ export const XvsYOptionsEditor = compose(
 const BarEditorComponent = ({ model, barChartGroupingLimitHandler }) => (
   <div>
     <select
-      id={'brap'}
+      id={'barEditorComponent'}
       className={'options-menu'}
       value={model.get('barChartGroupingLimit')}
       onChange={barChartGroupingLimitHandler}>
@@ -43,10 +43,22 @@ const BarEditorComponent = ({ model, barChartGroupingLimitHandler }) => (
   </div>
 );
 
+const CounterEditorComponent = ({ model, benchmarkingHandler }) => (
+  <div className="form-group">
+    <label htmlFor="toggleInput">Enable Benchmarking</label>
+    <div id="toggleInput">
+      <Switch
+        id={'counterEditorComponent'}
+        checked={model.get('benchmarkingEnabled')}
+        onChange={benchmarkingHandler} />
+    </div>
+  </div>
+);
+
 const BarEditor = compose(
   connect(() => ({}), { updateModel }),
   withHandlers({
-    barChartGroupingLimitHandler: ({ updateModel: updateModelAction, model }) => (event) => {
+    barChartGroupingLimitHandler: ({ updateModel: updateModelAction, model }) => {
       updateModelAction({
         schema: 'visualisation',
         id: model.get('_id'),
@@ -57,13 +69,27 @@ const BarEditor = compose(
   })
 )(BarEditorComponent);
 
-// onChange={this.onChangeAttr.bind(null, 'previewPeriod')}
+const CounterEditor = compose(
+  connect(() => ({}), { updateModel }),
+  withHandlers({
+    benchmarkingHandler: ({ updateModel: updateModelAction, model }) => {
+      updateModelAction({
+        schema: 'visualisation',
+        id: model.get('_id'),
+        path: 'benchmarkingEnabled',
+        value: !model.get('benchmarkingEnabled')
+      });
+    }
+  })
+)(CounterEditorComponent);
+
 const OptionsEditor = ({ model }) => (
   <div>
     {model.get('type') === XVSY && <XvsYOptionsEditor model={model} />}
     {(model.get('type') === LEADERBOARD) && <BarEditor model={model} />}
+    {(model.get('type') === COUNTER) && <CounterEditor model={model} />}
   </div>
-  );
+);
 
 
 export default OptionsEditor;

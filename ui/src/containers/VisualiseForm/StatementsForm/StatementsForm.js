@@ -75,7 +75,9 @@ class StatementsForm extends Component {
     <Editor model={this.props.model} exportVisualisation={this.props.exportVisualisation} />
   );
 
-  renderTimePicker = () => (
+  renderTimePicker = () => { 
+    console.log('RTP', this.props)
+    return(
     <select
       id={`${this.props.model.get('_id')}previewPeriodInput`}
       className="form-control"
@@ -89,7 +91,7 @@ class StatementsForm extends Component {
       <option value={LAST_1_YEAR}>Last 1 year</option>
       <option value={LAST_2_YEARS}>Last 2 years</option>
     </select>
-  )
+  )}
 
   renderFormWithResults = () => (
     <div className="row">
