@@ -20,6 +20,14 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
   - Better logging of queue subscription errors (#1180)
   - Editing export projection now requires submit action (#1185)
 
+## [2.4.1]
+### Fixes
+  - Speeds up worker requests with SQS
+  - Better error handling and logging for statementForwards (#1196)
+  - Deadletter queue prefix fix (#1187)
+    - Please note that you will need to clear down the existing SQS queues in order to amend the redrive policy
+  - Worker garbage collection (#1195)
+
 ## [2.4.0]
 ### Fixes
   - Logs out the user when their token has expired (#1167)
