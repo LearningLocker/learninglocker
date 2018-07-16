@@ -76,8 +76,7 @@ class StatementsForm extends Component {
     <Editor model={this.props.model} exportVisualisation={this.props.exportVisualisation} />
   );
 
-  renderTimePicker = () => { 
-    console.log('RTP', this.props)
+  renderTimePicker = () => {
     return(
     <select
       id={`${this.props.model.get('_id')}previewPeriodInput`}

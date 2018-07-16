@@ -15,7 +15,6 @@ import {
 } from 'ui/utils/constants';
 
 export default memoize((args = new Map()) => {
-  console.log('000', args);
   const query = args.getIn(['query', '$match'], new Map());
   const previewPeriod = args.get('previewPeriod');
   const today = args.get('today');
@@ -27,8 +26,6 @@ export default memoize((args = new Map()) => {
   } }];
 
   if (args.get('benchmarkingEnabled')) {
-    console.log('001', previousStartDate);
-    console.log('001.1', periodToDate(previewPeriod, today).toISOString());
     previewPeriodMatch = [{ $match: {
       timestamp: { $gte: { $dte: previousStartDate }, $lte: { $dte: periodToDate(previewPeriod, today).toISOString() } }
     } }];

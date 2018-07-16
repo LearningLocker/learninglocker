@@ -33,7 +33,6 @@ class XvsY extends Component {
   }
 
   shouldComponentUpdate = (nextProps) => {
-    console.log('nextProps', nextProps.trendLines);
     return !(
       this.props.results.equals(nextProps.results) &&
       this.props.axesLabels.xLabel === nextProps.axesLabels.xLabel &&
