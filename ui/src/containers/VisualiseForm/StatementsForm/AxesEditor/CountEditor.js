@@ -28,7 +28,6 @@ export default class CountEditor extends Component {
   }
 
   componentWillMount = () => {
-    console.log('000', this.props.operator);
     this.props.changeOperator(this.props.operator);
     this.props.changeValue(this.props.value);
   }
@@ -61,7 +60,7 @@ export default class CountEditor extends Component {
           options={operatorOptions}
           multi={false}
           onChangeFilter={this.changeOperatorInput}
-          onChange={this.changeOperator(...arguments)} />
+          onChange={this.changeOperator} />
         <CacheKeysAutoComplete
           selectedOption={value}
           localOptions={hasUniquenessOp ? UNIQUENESS_VALUE_OPTS : VALUE_OPTS}

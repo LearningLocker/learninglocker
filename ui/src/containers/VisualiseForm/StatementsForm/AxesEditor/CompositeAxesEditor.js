@@ -22,12 +22,12 @@ const renderBarAxes = props => (<div>
         onChange={props.handleAxesChange.bind(null, 'xLabel')} />
     </div>
     <div className="form-group">
-      <CountEditor
-        type={/* props.model.get('type')*/ LEADERBOARD}
+      {/* <CountEditor
+        type={LEADERBOARD}
         value={props.getAxesValue('value')}
         operator={props.getAxesValue('operator')}
         changeValue={props.changeAxes.bind(null, 'value')}
-        changeOperator={props.changeAxes.bind(null, 'operator')} />
+        changeOperator={props.changeAxes.bind(null, 'operator')} /> */}
     </div>
   </div>
   <div className="form-group">
@@ -43,9 +43,9 @@ const renderBarAxes = props => (<div>
         onChange={props.handleAxesChange.bind(null, 'yLabel')} />
     </div>
     <div className="form-group">
-      <GroupEditor
+      {/* <GroupEditor
         group={props.getAxesValue('group')}
-        changeGroup={props.changeAxes.bind(null, 'group')} />
+        changeGroup={props.changeAxes.bind(null, 'group')} /> */}
     </div>
   </div>
 
