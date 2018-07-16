@@ -4,14 +4,12 @@ import { compose, withHandlers } from 'recompose';
 import { updateModel } from 'ui/redux/modules/models';
 import Switch from 'ui/components/Material/Switch';
 import { XVSY, FIVE, TEN, FIFTEEN, TWENTY, LEADERBOARD, COUNTER } from 'ui/utils/constants';
-
 const XvsYOptionsEditorComponent = ({ model, trendLinesHandler }) => (<div>
 
   <Switch
     checked={model.get('trendLines')}
     label="Trend Lines"
     onChange={trendLinesHandler} />
-
 </div>);
 
 export const XvsYOptionsEditor = compose(
@@ -35,10 +33,10 @@ const BarEditorComponent = ({ model, barChartGroupingLimitHandler }) => (
       className={'options-menu'}
       value={model.get('barChartGroupingLimit')}
       onChange={barChartGroupingLimitHandler}>
-      <option value={FIVE}>Top 5</option>
-      <option value={TEN}>Top 10</option>
-      <option value={FIFTEEN}>Top 15</option>
-      <option value={TWENTY}>Top 20</option>
+      <option value={FIVE}>Show 5</option>
+      <option value={TEN}>Show 10</option>
+      <option value={FIFTEEN}>Show 15</option>
+      <option value={TWENTY}>Show 20</option>
     </select>
   </div>
 );
