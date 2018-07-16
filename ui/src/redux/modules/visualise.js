@@ -46,9 +46,10 @@ export const FETCH_VISUALISATION = 'learninglocker/models/learninglocker/visuali
 /**
  * @param  {String} id of visualisation to fetch data for
  */
-export const fetchVisualisation = id => ({
+export const fetchVisualisation = (id, benchmark) => ({
   type: FETCH_VISUALISATION,
-  id
+  id,
+  benchmark
 });
 
 
@@ -157,6 +158,7 @@ export const visualisationPiplelinesSelector = (
     const type = visualisation.get('type');
     const journey = visualisation.get('journey');
     const previewPeriod = visualisation.get('previewPeriod');
+    const benchmarkingEnabled = visualisation.get('benchmarkingEnabled', false);
     const queries = visualisation.get('filters', new List()).map((vFilter) => {
       if (!filter) {
         return vFilter;
@@ -173,7 +175,7 @@ export const visualisationPiplelinesSelector = (
     });
 
     const axes = unflattenAxes(visualisation);
-    return cb(queries, axes, type, previewPeriod, journey);
+    return cb(queries, axes, type, previewPeriod, journey, benchmarkingEnabled);
   }
 );
 

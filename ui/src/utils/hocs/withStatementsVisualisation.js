@@ -98,12 +98,13 @@ const withStatementsVisualisation = (WrappedComponent) => {
       </div>
     );
   }
-  return connect((state, { id }) =>
-    ({
+  return connect((state, { id }) => {
+    return ({
       results: visualisationResultsSelector(id)(state),
       shouldFetch: visualisationShouldFetchSelector(id)(state),
       fetchState: visualisationFetchStateSelector(id)(state)
-    })
+    });
+  }
   ,
   { fetchVisualisation })(WithStatementsVisualisation);
 };
