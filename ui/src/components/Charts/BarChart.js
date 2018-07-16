@@ -45,7 +45,7 @@ class BarChart extends Component {
   displayPrevPage = () => this.setState({ activePage: this.state.activePage - 1 })
   displayNextPage = () => this.setState({ activePage: this.state.activePage + 1 })
   getDataChunk = model => data => page => data.slice(model.get('barChartGroupingLimit') * page, model.get('barChartGroupingLimit') * (page + 1))
-  getPages = data => Math.ceil(data.size / 10)
+  getPages = (model, data) => Math.ceil(data.size / (model.get('barChartGroupingLimit') + 1));
   hasPrevPage = pages => page => pages > 0 && page > 0
   hasNextPage = pages => page => pages > 0 && page < pages - 1
   sortData = data => data.sortBy(e => -e.get('total'))
@@ -112,11 +112,17 @@ class BarChart extends Component {
   renderResults = model => results => colors => labels => (stacked) => {
     const { activePage } = this.state;
     const data = this.getSortedData(results)(labels);
+    const pages = this.getPages(model, data);
 
     return (
       <div className={`${styles.chart}`}>
+        <div className={`${styles.buttons}`}>
+          {this.hasPrevPage(pages)(activePage) && this.renderPrevButton()}
+          {this.hasNextPage(pages)(activePage) && this.renderNextButton()}
+        </div>
         <div className={`${styles.withPrevNext} clearfix`} />
         <div className={`${styles.barContainer}`}>
+       
           <span className={styles.yAxis}>
             {this.props.axesLabels.yLabel || this.props.model.getIn(['axesgroup', 'searchString'], 'Y-Axis')}
           </span>

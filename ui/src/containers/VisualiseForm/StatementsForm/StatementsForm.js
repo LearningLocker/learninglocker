@@ -11,7 +11,8 @@ import {
   LAST_6_MONTHS,
   LAST_24_HOURS,
   LAST_1_YEAR,
-  LAST_2_YEARS
+  LAST_2_YEARS,
+  TODAY
 } from 'ui/utils/constants';
 import Switch from 'ui/components/Material/Switch';
 import {
@@ -83,6 +84,7 @@ class StatementsForm extends Component {
       className="form-control"
       value={this.props.model.get('previewPeriod')}
       onChange={this.onChangeAttr.bind(null, 'previewPeriod')}>
+      <option value={TODAY}>Today</option>
       <option value={LAST_24_HOURS}>Last 24 hours</option>
       <option value={LAST_7_DAYS}>Last 7 days</option>
       <option value={LAST_30_DAYS}>Last 30 days</option>

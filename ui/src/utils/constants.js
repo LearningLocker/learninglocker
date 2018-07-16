@@ -13,6 +13,7 @@ export const PIE = 'PIE';
 export const LINE = 'LINE';
 export const COLUMN = 'COLUMN';
 
+export const TODAY = 'TODAY';
 export const LAST_7_DAYS = 'LAST_7_DAYS';
 export const LAST_30_DAYS = 'LAST_30_DAYS';
 export const LAST_2_MONTHS = 'LAST_2_MONTHS';

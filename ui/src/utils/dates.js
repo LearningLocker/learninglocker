@@ -5,13 +5,15 @@ import {
   LAST_6_MONTHS,
   LAST_24_HOURS,
   LAST_1_YEAR,
-  LAST_2_YEARS
+  LAST_2_YEARS,
+  TODAY
 } from 'ui/utils/constants';
 import moment from 'moment';
 
 export const periodToDate = (datePeriod, today, benchmark = 1 ) => {
   const today2 = moment(today); // Clones the date so it's not mutated.
   switch (datePeriod) {
+    case TODAY: return (moment().subtract(1 * benchmark, 'days').startOf('day'));
     case LAST_24_HOURS: return today2.subtract(24 * benchmark, 'hours');
     case LAST_7_DAYS: default: return today2.subtract(7 * benchmark, 'days');
     case LAST_30_DAYS: return today2.subtract(30 * benchmark, 'days');

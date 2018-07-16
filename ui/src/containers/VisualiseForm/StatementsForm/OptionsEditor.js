@@ -58,7 +58,7 @@ const CounterEditorComponent = ({ model, benchmarkingHandler }) => (
 const BarEditor = compose(
   connect(() => ({}), { updateModel }),
   withHandlers({
-    barChartGroupingLimitHandler: ({ updateModel: updateModelAction, model }) => {
+    barChartGroupingLimitHandler: ({ updateModel: updateModelAction, model }) => (event) => {
       updateModelAction({
         schema: 'visualisation',
         id: model.get('_id'),
