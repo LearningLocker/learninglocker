@@ -9,6 +9,17 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.5.0]
+### Added
+  - Button to copy shareable link (#1190)
+  - Shareable dashboard dynamic filtering (#1177)
+### Fixes
+  - Fixes freeze when uploading org logo (#1179)
+  - Changed order of persona imports (#1182)
+  - Adjusted worker garbage collection (#1186)
+  - Better logging of queue subscription errors (#1180)
+  - Editing export projection now requires submit action (#1185)
+
 ## [2.4.1]
 ### Fixes
   - Speeds up worker requests with SQS

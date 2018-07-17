@@ -42,6 +42,7 @@ export default compose(
   deselectOption,
   selectedId,
   parseOption,
+  parseOptionString,
   parseOptionTooltip,
   searchStringToFilter,
   searchFilterToString = searchFilter2 => searchFilter2 && searchFilter2.first() && searchFilter2.first().get('$regex') || '',
@@ -60,7 +61,7 @@ export default compose(
           placeholder={placeholder}
           fields={fields}
           defaultValues={defaultValues}
-          parseOption={option => (option ? parseOption(option) : '')}
+          parseOption={option => (option ? parseOptionString(option) || parseOption(option) : '')}
           parseOptionTooltip={option => (option ? parseOptionTooltip(option) : '')}
           schema={schema}
           id={id || selectedId}

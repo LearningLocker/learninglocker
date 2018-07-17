@@ -13,6 +13,7 @@ import DropDownMenu from 'ui/components/DropDownMenu';
 import WidgetVisualisePicker from 'ui/containers/WidgetVisualisePicker';
 import VisualiseResults from 'ui/containers/VisualiseResults';
 import DeleteConfirm from 'ui/containers/DeleteConfirm';
+import { createDefaultTitle } from 'ui/utils/defaultTitles';
 import styles from './widget.css';
 
 const schema = 'widget';
@@ -79,6 +80,8 @@ class Widget extends Component {
     });
   }
 
+  getTitle = model => model.get('title') || <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>{createDefaultTitle(this.props.visualisation, '')}</span>;
+
   renderTitle = () => {
     const { model } = this.props;
     const isEditingTitle = true;
@@ -87,6 +90,9 @@ class Widget extends Component {
     ) : (
       null
     );
+  }
+
+  toggleEditingTitle = () => {
   }
 
   renderMenu = () => {
@@ -111,6 +117,14 @@ class Widget extends Component {
           <i className={`ion ${styles.marginRight} ion-gear-b grey`} />
           Settings
         </a>
+        { this.props.editable &&
+          <a
+            onClick={this.openDeleteModal}
+            title="Delete"
+            className={styles.closeButton}>
+            <i className={`ion ${styles.marginRight}  ion-close-round grey`} />Delete
+          </a>
+                    }
       </DropDownMenu>
     );
   }
@@ -139,15 +153,7 @@ class Widget extends Component {
             onDoubleClick={this.toggleEditingTitle}>
             <div className={`panel-title ${titleStyles} react-drag-handle`}>
               { this.props.editable && this.renderMenu(styles) }
-              <span style={{ cursor: 'initial' }}>{ model.get('title') }</span>
-              { this.props.editable &&
-                <a
-                  onClick={this.openDeleteModal}
-                  title="Delete"
-                  className={styles.closeButton}>
-                  <i className="ion ion-close-round grey" />
-                </a>
-              }
+              <span style={{ cursor: 'initial' }}>{this.getTitle(model, this.props)}</span>
             </div>
           </div>
           <div className={`panel-body ${styles.body}`}>

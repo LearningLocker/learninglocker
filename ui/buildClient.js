@@ -4,7 +4,6 @@ import run from '../lib/tools/run';
 import bundle from '../lib/tools/bundle';
 import getWebpackConfig from '../lib/tools/getWebpackConfig';
 import config from './src/config';
-import boolean from 'boolean';
 
 const isDebug = !process.argv.includes('--release');
 const isVerbose = !!process.argv.includes('--verbose');

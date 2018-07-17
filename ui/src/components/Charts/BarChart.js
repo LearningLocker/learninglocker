@@ -1,16 +1,18 @@
 import React, { Component, PropTypes } from 'react';
 import { List } from 'immutable';
 import { AutoSizer } from 'react-virtualized';
-import { BarChart as Chart, XAxis, YAxis } from 'recharts';
+import { BarChart as Chart, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { compose } from 'recompose';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import NoData from 'ui/components/Graphs/NoData';
 import { Button } from 'react-toolbox/lib/button';
+import uuid from 'uuid';
+import { connect } from 'react-redux';
+import { getMetadataSelector, setInMetadata } from 'ui/redux/modules/metadata';
 import {
   getResultsData,
   getShortModel,
   getChartData,
-  getDomain,
   hasData,
   renderTooltips,
   renderBars,
@@ -19,9 +21,17 @@ import {
 } from './Chart';
 import styles from './styles.css';
 
+
 const enhance = compose(
   withStyles(styles),
-  hiddenSeriesState
+  hiddenSeriesState,
+  connect((state, { model }) =>
+    ({
+      activePage: getMetadataSelector({
+        schema: 'visualisation',
+        id: model.get('_id')
+      })(state).get('activePage', 0)
+    }), { setInMetadata })
 );
 
 class BarChart extends Component {
@@ -31,21 +41,35 @@ class BarChart extends Component {
     colors: PropTypes.instanceOf(List),
     stacked: PropTypes.bool,
     axesLabels: PropTypes.instanceOf(Object),
-    chartWrapperFn: PropTypes.instanceOf(Function)
+    chartWrapperFn: PropTypes.instanceOf(Function),
+    // activePage: PropTypes.instanceOf(Number)
   }
 
   static defaultProps = {
     chartWrapperFn: component => (<AutoSizer>{component}</AutoSizer>)
   }
 
-  state = {
-    activePage: 0,
-  }
+  // displayPrevPage = () => this.setState({ activePage: this.state.activePage - 1 })
+  displayPrevPage = () => this.props.setInMetadata({
+    schema: 'visualisation',
+    id: this.props.model.get('_id'),
+    path: ['activePage'],
+    value: this.props.activePage - 1
+  });
 
-  displayPrevPage = () => this.setState({ activePage: this.state.activePage - 1 })
-  displayNextPage = () => this.setState({ activePage: this.state.activePage + 1 })
-  getDataChunk = data => page => data.slice(10 * page, 10 * (page + 1))
-  getPages = data => Math.ceil(data.size / 10)
+  // displayNextPage = () => this.setState({ activePage: this.state.activePage + 1 })
+  displayNextPage = () => {
+    console.log('008', this.props.model.get('_id'));
+    return this.props.setInMetadata({
+      schema: 'visualisation',
+      id: this.props.model.get('_id'),
+      path: ['activePage'],
+      value: this.props.activePage + 1
+    });
+  };
+
+  getDataChunk = model => data => page => data.slice(model.get('barChartGroupingLimit') * page, model.get('barChartGroupingLimit') * (page + 1))
+  getPages = (model, data) => Math.ceil(data.size / (model.get('barChartGroupingLimit') + 1));
   hasPrevPage = pages => page => pages > 0 && page > 0
   hasNextPage = pages => page => pages > 0 && page < pages - 1
   sortData = data => data.sortBy(e => -e.get('total'))
@@ -75,28 +99,44 @@ class BarChart extends Component {
     </span>
   )
 
-  renderBarChart = colors => labels => data => stacked => page => ({ width, height }) => (
-    <Chart
-      data={getChartData(this.getDataChunk(data)(page), this.props.hiddenSeries)}
-      width={width}
-      height={height}
-      layout="vertical">
-      <YAxis
-        dataKey="cellId"
-        tickFormatter={getShortModel(data)}
-        type="category"
-        width={90} />
-      <XAxis type="number" domain={getDomain(data)} />
-      {renderLegend(labels, this.props.toggleHiddenSeries)}
-      {renderBars(colors)(labels)(stacked)}
-      {renderTooltips(data, this.props.hiddenSeries)}
-    </Chart>
-    )
+  renderBarChart = model => colors => labels => data => stacked => page => ({ width, height }) => {
+    const chartUuid = uuid.v4();
+    /* eslint-disable react/no-danger */
+    return (
+      <div>
+        <style
+          dangerouslySetInnerHTML={{ __html: `
+            .grid-${chartUuid} .recharts-cartesian-grid-horizontal {
+              background-color: 'yellow';
+              visibility: hidden !important;
+            }
+          ` }} />
+        <Chart
+          className={`grid-${chartUuid}`}
+          data={getChartData(this.getDataChunk(model)(data)(page), this.props.hiddenSeries)}
+          width={width}
+          height={height}
+          layout="vertical">
+          <CartesianGrid strokeDasharray="1 1" />
+          <YAxis
+            dataKey="cellId"
+            tickFormatter={getShortModel(data)}
+            type="category"
+            width={90} />
+          <XAxis type="number" />
+          {renderLegend(labels, this.props.toggleHiddenSeries)}
+          {renderBars(colors)(labels)(stacked)}
+          {renderTooltips(data, this.props.hiddenSeries)}
+        </Chart>
+      </div>
+    );
+    /* eslint-enable react/no-danger */
+  };
 
-  renderResults = results => colors => labels => (stacked) => {
-    const { activePage } = this.state;
+  renderResults = model => results => colors => labels => (stacked) => {
+    const { activePage } = this.props;
     const data = this.getSortedData(results)(labels);
-    const pages = this.getPages(data);
+    const pages = this.getPages(model, data);
 
     return (
       <div className={`${styles.chart}`}>
@@ -104,30 +144,30 @@ class BarChart extends Component {
           {this.hasPrevPage(pages)(activePage) && this.renderPrevButton()}
           {this.hasNextPage(pages)(activePage) && this.renderNextButton()}
         </div>
-        <div className={`${styles.xAxisLabel} ${styles.withPrevNext} clearfix`}>
-          <span className={styles.xAxis}>
-            {this.props.axesLabels.xLabel || 'X Axis'}
-          </span>
-        </div>
+        <div className={`${styles.withPrevNext} clearfix`} />
         <div className={`${styles.barContainer}`}>
-          <div className={styles.yAxisLabel}>
-            <span className={styles.yAxis}>
-              {this.props.axesLabels.yLabel || 'Y Axis'}
-            </span>
-          </div>
+          <span className={styles.yAxis}>
+            {this.props.axesLabels.yLabel || this.props.model.getIn(['axesgroup', 'searchString'], 'Y-Axis')}
+          </span>
           <div className={styles.chartWrapper}>
-            {this.props.chartWrapperFn((this.renderBarChart(colors)(labels)(data)(stacked)(activePage)))}
+            {this.props.chartWrapperFn((this.renderBarChart(model)(colors)(labels)(data)(stacked)(activePage)))}
           </div>
+        </div>
+        <div className={styles.xAxisLabel}>
+          <span className={styles.xAxis}>
+            {this.props.axesLabels.xLabel || this.props.model.getIn(['axesvalue', 'searchString'], 'X-Axis')}
+          </span>
         </div>
       </div>
     );
   }
 
   render = () => {
-    const { results, labels, stacked, colors } = this.props;
+    console.log('003', this.props.activePage);
+    const { results, labels, stacked, colors, model } = this.props;
     return (
       hasData(this.props.results)
-      ? this.renderResults(results)(colors)(labels)(stacked)
+      ? this.renderResults(model)(results)(colors)(labels)(stacked)
       : <NoData />
     );
   }
