@@ -1,6 +1,6 @@
 import React from 'react';
-import VisualisationTypeIcon from '../containers/Visualise/VisualisationTypeIcon';
 import uuid from 'uuid';
+import VisualisationTypeIcon from '../containers/Visualise/VisualisationTypeIcon';
 
 export const shorten = (shortening) => {
   if (shortening.length >= 20) {
@@ -26,11 +26,11 @@ export const getLegend = (key, props) => {
 
 export const createVisualisationName = (model, prefix) => {
   switch (model.get('type', 'Unnamed')) {
-    case ('FREQUENCY'): return [<span key={uuid.v4()}>{prefix} </span>, <span  key={uuid.v4()} style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em'}}>( X: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue','searchString'])} Y: Time )</span>];
-    case ('XVSY'): return [<span key={uuid.v4()}>{prefix} </span>, <span  key={uuid.v4()} style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>( X: {model.getIn(['axesxValue', 'searchString'])}   Y: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue', 'searchString'])} )</span>];
-    case ('COUNTER'): return [<span key={uuid.v4()}>{prefix} </span>, <span  key={uuid.v4()} style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em'}}>( {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue','searchString'])} )</span>];
-    case ('PIE'): return [<span key={uuid.v4()}>{prefix} </span>, <span  key={uuid.v4()} style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>( {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue', 'searchString'])} / {model.getIn(['axesgroup', 'searchString'])} )</span>];
-    default: return [<span key={uuid.v4()}>{prefix} </span>, <span  key={uuid.v4()} style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>( X: {model.getIn(['axesgroup', 'searchString'])}   Y: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue', 'searchString'])} )</span>];
+    case ('FREQUENCY'): return [<span key={uuid.v4()}>{prefix} </span>, <span key={uuid.v4()} style={{ color: '#B9B9B9', fontWeight: '100' }}>X: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue','searchString'])} Y: Time</span>];
+    case ('XVSY'): return [<span key={uuid.v4()}>{prefix} </span>, <span key={uuid.v4()} style={{ color: '#B9B9B9', fontWeight: '100' }}>X: {model.getIn(['axesxValue', 'searchString'])}   Y: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue', 'searchString'])}</span>];
+    case ('COUNTER'): return [<span key={uuid.v4()}>{prefix} </span>, <span key={uuid.v4()} style={{ color: '#B9B9B9', fontWeight: '100' }}>{model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue','searchString'])}</span>];
+    case ('PIE'): return [<span key={uuid.v4()}>{prefix} </span>, <span key={uuid.v4()} style={{ color: '#B9B9B9', fontWeight: '100' }}>{model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue', 'searchString'])} / {model.getIn(['axesgroup', 'searchString'])}</span>];
+    default: return [<span key={uuid.v4()}>{prefix} </span>, <span key={uuid.v4()} style={{ color: '#B9B9B9', fontWeight: '100' }}>X: {model.getIn(['axesgroup', 'searchString'])}   Y: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue', 'searchString'])}</span>];
   }
 };
 
@@ -47,16 +47,14 @@ export const createVisualisationText = (model, prefix = '') => {
 };
 
 export const createDefaultTitleWithIcon = model => <span><VisualisationTypeIcon id={model.get('_id')} />{createVisualisationName(model)}</span>;
-
 export const createDefaultTitle = (model, prefix) => createVisualisationText(model, prefix);
-
 export const getPercentage = (res1, res2) => {
   const newValue = res1 || 0;
   const oldValue = res2 || 0;
-  const percentage = parseInt(Math.round((oldValue - newValue) / newValue) * 100);
+  const percentage = parseInt(Math.round(((newValue - oldValue) / newValue) * 100));
   let formattedResult;
   switch (true) {
-    case percentage === Infinity || isNaN(percentage) : formattedResult = { result: 'N/A', color: '#9BA5AB' }; break;
+    case res2 === 0 : formattedResult = { result: 'N/A', color: '#9BA5AB' }; break;
     case percentage < 0 : formattedResult = { result: `${percentage}%`, color: '#E73304' }; break;
     default: formattedResult = { result: `+${percentage}%`, color: '#23A17E' }; break;
   }

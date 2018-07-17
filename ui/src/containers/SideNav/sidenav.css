@@ -37,7 +37,6 @@
     .sidenav ul li a {
       padding: 12px 24px 12px 28px;
       color: #515253;
-      letter-spacing: .025em; 
       font-weight: 400; }
     .sidenav ul li a i {
       font-size: 20px;
@@ -48,7 +47,6 @@
     .sidenav ul li a.active,
     .sidenav ul li a:hover {
       color: #F5AB35;
-      font-weight: 600;
       background: transparent;
       box-shadow: inset 20px 0 0px -15px #F5AB35; }
     .sidenav .fa-sidenav {

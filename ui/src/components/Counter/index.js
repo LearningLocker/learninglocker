@@ -33,15 +33,12 @@ const renderCounter = color => (rs) => {
   return (
     <div className={styles.counter} >
       {renderCount(color)(getResultCount(rs))}
-      {rs.size > 1 && (<div style={{ fontSize: '0.4em', color: percentage.color }}>
+      {rs.size > 1 && (<div style={{ fontSize: '0.4em', color: percentage.color, fontWeight: '300' }}>
         {percentage.result}
       </div>)}
     </div>
   );
 };
 const renderResults = rs => color => renderCounter(color)(rs);
-
 const counter = ({ results, color }) => (hasData(results) ? renderResults(results)(color) : <NoData />);
-
-
 export default withStyles(styles)(counter);
