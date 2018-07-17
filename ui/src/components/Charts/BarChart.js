@@ -7,6 +7,8 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import NoData from 'ui/components/Graphs/NoData';
 import { Button } from 'react-toolbox/lib/button';
 import uuid from 'uuid';
+import { connect } from 'react-redux';
+import { getMetadataSelector, setInMetadata } from 'ui/redux/modules/metadata';
 import {
   getResultsData,
   getShortModel,
@@ -19,9 +21,17 @@ import {
 } from './Chart';
 import styles from './styles.css';
 
+
 const enhance = compose(
   withStyles(styles),
-  hiddenSeriesState
+  hiddenSeriesState,
+  connect((state, { model }) =>
+    ({
+      activePage: getMetadataSelector({
+        schema: 'visualisation',
+        id: model.get('_id')
+      })(state).get('activePage', 0)
+    }), { setInMetadata })
 );
 
 class BarChart extends Component {
@@ -31,19 +41,33 @@ class BarChart extends Component {
     colors: PropTypes.instanceOf(List),
     stacked: PropTypes.bool,
     axesLabels: PropTypes.instanceOf(Object),
-    chartWrapperFn: PropTypes.instanceOf(Function)
+    chartWrapperFn: PropTypes.instanceOf(Function),
+    // activePage: PropTypes.instanceOf(Number)
   }
 
   static defaultProps = {
     chartWrapperFn: component => (<AutoSizer>{component}</AutoSizer>)
   }
 
-  state = {
-    activePage: 0,
-  }
+  // displayPrevPage = () => this.setState({ activePage: this.state.activePage - 1 })
+  displayPrevPage = () => this.props.setInMetadata({
+    schema: 'visualisation',
+    id: this.props.model.get('_id'),
+    path: ['activePage'],
+    value: this.props.activePage - 1
+  });
 
-  displayPrevPage = () => this.setState({ activePage: this.state.activePage - 1 })
-  displayNextPage = () => this.setState({ activePage: this.state.activePage + 1 })
+  // displayNextPage = () => this.setState({ activePage: this.state.activePage + 1 })
+  displayNextPage = () => {
+    console.log('008', this.props.model.get('_id'));
+    return this.props.setInMetadata({
+      schema: 'visualisation',
+      id: this.props.model.get('_id'),
+      path: ['activePage'],
+      value: this.props.activePage + 1
+    });
+  };
+
   getDataChunk = model => data => page => data.slice(model.get('barChartGroupingLimit') * page, model.get('barChartGroupingLimit') * (page + 1))
   getPages = (model, data) => Math.ceil(data.size / (model.get('barChartGroupingLimit') + 1));
   hasPrevPage = pages => page => pages > 0 && page > 0
@@ -110,7 +134,7 @@ class BarChart extends Component {
   };
 
   renderResults = model => results => colors => labels => (stacked) => {
-    const { activePage } = this.state;
+    const { activePage } = this.props;
     const data = this.getSortedData(results)(labels);
     const pages = this.getPages(model, data);
 
@@ -122,7 +146,6 @@ class BarChart extends Component {
         </div>
         <div className={`${styles.withPrevNext} clearfix`} />
         <div className={`${styles.barContainer}`}>
-       
           <span className={styles.yAxis}>
             {this.props.axesLabels.yLabel || this.props.model.getIn(['axesgroup', 'searchString'], 'Y-Axis')}
           </span>
@@ -140,6 +163,7 @@ class BarChart extends Component {
   }
 
   render = () => {
+    console.log('003', this.props.activePage);
     const { results, labels, stacked, colors, model } = this.props;
     return (
       hasData(this.props.results)

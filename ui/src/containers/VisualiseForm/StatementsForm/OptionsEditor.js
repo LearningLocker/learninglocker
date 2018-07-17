@@ -4,6 +4,8 @@ import { compose, withHandlers } from 'recompose';
 import { updateModel } from 'ui/redux/modules/models';
 import Switch from 'ui/components/Material/Switch';
 import { XVSY, FIVE, TEN, FIFTEEN, TWENTY, LEADERBOARD, COUNTER } from 'ui/utils/constants';
+import { setInMetadata } from 'ui/redux/modules/metadata';
+
 const XvsYOptionsEditorComponent = ({ model, trendLinesHandler }) => (<div>
 
   <Switch
@@ -54,14 +56,22 @@ const CounterEditorComponent = ({ model, benchmarkingHandler }) => (
 );
 
 const BarEditor = compose(
-  connect(() => ({}), { updateModel }),
+  connect(() => ({}), { updateModel, setInMetadata }),
   withHandlers({
-    barChartGroupingLimitHandler: ({ updateModel: updateModelAction, model }) => (event) => {
+    barChartGroupingLimitHandler: ({ updateModel: updateModelAction, model, setInMetadata: setInMetadataAction }) => (event) => {
+      console.log('model', model);
       updateModelAction({
         schema: 'visualisation',
         id: model.get('_id'),
         path: 'barChartGroupingLimit',
         value: parseInt(event.target.value)
+      });
+
+      setInMetadataAction({
+        schema: 'visualisation',
+        id: model.get('_id'),
+        path: ['activePage'],
+        value: 0
       });
     }
   })
