@@ -17,7 +17,7 @@ export default function createStore(llClient, router, data) {
   ];
 
   let finalCreateStore;
-  if (__DEVELOPMENT__ && __CLIENT__ && (__DEVTOOLS__ || window.devToolsExtension)) {
+  if (__DEVELOPMENT__ && __CLIENT__ && __DEVTOOLS__) {
     const { persistState } = require('redux-devtools');
     const DevTools = require('../containers/DevTools/DevTools');
 
