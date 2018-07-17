@@ -148,7 +148,7 @@ class SideNav extends Component {
             routeParams={{ organisationId }}
             label={'Data'}
             manuallyExpanded={!!groups['organisation.data']}
-            icon={'ion ion-folder'} >
+            icon={'ion ion-ionic'} >
             {this.renderLink(activeClass, 'organisation.data.dashboards', 'Dashboards')}
             {this.renderLink(activeClass, 'organisation.data.visualise', 'Visualise')}
             {this.renderLink(activeClass, 'organisation.data.source', 'Source')}
