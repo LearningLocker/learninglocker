@@ -18,8 +18,8 @@ export default class journeyDBHelpers {
             },
             insertDone
           ),
-        user: insertDone =>
-          User.create(
+        user: (insertDone) => {
+          const out = User.create(
             {
               _id: '561a679c0c5d017e4004714f',
               email: 'testy@mctestface.com',
@@ -34,7 +34,9 @@ export default class journeyDBHelpers {
               scopes: []
             },
             insertDone
-          ),
+          );
+          return out;
+        },
         lrs: insertDone =>
           Lrs.create(
             {

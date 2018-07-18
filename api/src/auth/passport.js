@@ -150,8 +150,7 @@ passport.use(
       if (user.ownerOrganisationSettings.LOCKOUT_ENABLED) {
         // is there currently a lockout associated with the user?
         if (user.authLockoutExpiry) {
-          // const lockoutMs = user.ownerOrganisationSettings.LOCKOUT_SECONDS * 1000;
-          const lockoutMs = 30 * 1000;
+          const lockoutMs = (user.ownerOrganisationSettings.LOCKOUT_SECONDS || 30) * 1000;
           const acceptExpiresSince = new Date(Date.now() - lockoutMs);
 
           // is the current lockout still valid? (i.e. should we reject them?)
