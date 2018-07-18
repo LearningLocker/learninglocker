@@ -24,6 +24,9 @@ export const getLegend = (key, props) => {
   }
 };
 
+const defaultSelector = (model, prefix) => {
+  
+}
 export const createVisualisationName = (model, prefix) => {
   switch (model.get('type', 'Unnamed')) {
     case ('FREQUENCY'): return [<span key={uuid.v4()}>{prefix} </span>, <span key={uuid.v4()} style={{ color: '#B9B9B9', fontWeight: '100' }}>X: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue','searchString'])} Y: Time</span>];
