@@ -52,7 +52,6 @@ const renderPie = colors => data => (label, i, labels) =>
       data={getChartData(data)}
       nameKey={'_id'}
       dataKey={`s${i}`}
-    
       innerRadius={getInnerRadius(getPieSize(labels.size))(i)}
       outerRadius={getOuterRadius(getPieSize(labels.size))(i)}>
       {/* innerRadius={90} */}
