@@ -163,7 +163,6 @@ class BarChart extends Component {
   }
 
   render = () => {
-    console.log('003', this.props.activePage);
     const { results, labels, stacked, colors, model } = this.props;
     return (
       hasData(this.props.results)
