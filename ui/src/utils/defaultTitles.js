@@ -1,55 +1,65 @@
 import React from 'react';
+
+import { COMPONENT, TEXT } from 'ui/utils/constants';
 import uuid from 'uuid';
 import VisualisationTypeIcon from '../containers/Visualise/VisualisationTypeIcon';
 
-export const shorten = (shortening) => {
-  if (shortening.length >= 20) {
+const axv = 'axesvalue';
+const axV = 'axesxValue';
+const ayV = 'axesyValue';
+const axg = 'axesgroup';
+
+export const shorten = (target) => {
+  if (target.length >= 20) {
     switch (true) {
-      case shortening.indexOf(' ') !== -1: return shortening.split(' ')[0];
-      case shortening.indexOf('.') !== -1: return shortening.split('.')[0];
-      default: return shortening.substring(0, 24);
+      case target.indexOf(' ') !== -1: return target.split(' ')[0];
+      case target.indexOf('.') !== -1: return target.split('.')[0];
+      default: return target.substring(0, 24);
     }
   } else {
-    return shortening;
+    return target;
   }
 };
 
 export const getLegend = (key, props) => {
-  const x = shorten(props.model.get('axesxLabel', props.model.getIn(['axesgroup', 'searchString'], 'X-Axis')));
-  const y = shorten(props.model.get('axesyLabel', props.model.getIn(['axesvalue', 'searchString'], 'Y-Axis')));
+  const select = (ky, axis) => props.model.getIn([ky, 'searchString'], axis);
+  const x = shorten(props.model.get('axesxLabel', select(axg, 'X-Axis')));
+  const y = shorten(props.model.get('axesyLabel', select(axv, 'Y-Axis')));
   switch (key) {
-    case 'x': return x.length > 1 ? x : shorten(props.model.getIn(['axesgroup', 'searchString'], 'X-Axis'));
-    case 'y': return y.length > 1 ? y : shorten(props.model.getIn(['axesvalue', 'searchString'], 'Y-Axis'));
+    case 'x': return x.length > 1 ? x : shorten(select(axg, 'X-Axis'));
+    case 'y': return y.length > 1 ? y : shorten(select(axv, 'Y-Axis'));
     default: return null;
   }
 };
 
-const defaultSelector = (model, prefix) => {
-  
-}
-export const createVisualisationName = (model, prefix) => {
-  switch (model.get('type', 'Unnamed')) {
-    case ('FREQUENCY'): return [<span key={uuid.v4()}>{prefix} </span>, <span key={uuid.v4()} style={{ color: '#B9B9B9', fontWeight: '100' }}>X: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue','searchString'])} Y: Time</span>];
-    case ('XVSY'): return [<span key={uuid.v4()}>{prefix} </span>, <span key={uuid.v4()} style={{ color: '#B9B9B9', fontWeight: '100' }}>X: {model.getIn(['axesxValue', 'searchString'])}   Y: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue', 'searchString'])}</span>];
-    case ('COUNTER'): return [<span key={uuid.v4()}>{prefix} </span>, <span key={uuid.v4()} style={{ color: '#B9B9B9', fontWeight: '100' }}>{model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue','searchString'])}</span>];
-    case ('PIE'): return [<span key={uuid.v4()}>{prefix} </span>, <span key={uuid.v4()} style={{ color: '#B9B9B9', fontWeight: '100' }}>{model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue', 'searchString'])} / {model.getIn(['axesgroup', 'searchString'])}</span>];
-    default: return [<span key={uuid.v4()}>{prefix} </span>, <span key={uuid.v4()} style={{ color: '#B9B9B9', fontWeight: '100' }}>X: {model.getIn(['axesgroup', 'searchString'])}   Y: {model.getIn(['axesvalue', 'searchString']) || model.getIn(['axesyValue', 'searchString'])}</span>];
-  }
-};
+const defaultSelector = (model, type, prefix, format = TEXT) => {
+  const formattedDefault = () => {
+    const select = key => model.getIn([key, 'searchString'], '');
+    const addXY = (selectedX, selectedY = 'Time') => `X: ${selectedX} Y: ${selectedY}`;
 
-export const createVisualisationText = (model, prefix = '') => {
-  if (model !== undefined) {
-    switch (model.get('type', 'Unnamed')) {
-      case ('FREQUENCY'): return `${prefix}X: ${model.getIn(['axesvalue', 'searchString'], '') || model.getIn(['axesyValue', 'searchString'], '')} Y: Time `;
-      case ('XVSY'): return `${prefix}X: ${model.getIn(['axesxValue', 'searchString'], '')}  Y: ${model.getIn(['axesvalue', 'searchString'], '') || model.getIn(['axesyValue', 'searchString'], '')}`;
-      case ('COUNTER'): return `${prefix} ${model.getIn(['axesvalue', 'searchString'], '') || model.getIn(['axesyValue', 'searchString'], '')}`;
-      case ('PIE'): return `${prefix} ${model.getIn(['axesvalue', 'searchString'], '') || model.getIn(['axesyValue', 'searchString'], '')} / ${model.getIn(['axesgroup', 'searchString'], '')} `;
-      default: return `${prefix} X: ${model.getIn(['axesgroup', 'searchString'], '')}   Y: ${model.getIn(['axesvalue', 'searchString'], '') || model.getIn(['axesyValue', 'searchString'], '')}`;
+    switch (type) {
+      case ('FREQUENCY'): return addXY(select(axv) || select(ayV), 'Time');
+      case ('XVSY'): return addXY(select(axV), select(axv) || select(ayV));
+      case ('COUNTER'): return select(axv) || select(ayV);
+      case ('PIE'): return `${select(axv) || select(ayV)} / ${select(axg)}`;
+      default: return addXY(select(axg), select(axv) || select(ayV));
     }
-  }
+  };
+
+  const formatDefaultComponent = (pre, formatted) => {
+    return [<span key={uuid.v4()}>
+      {pre}
+    </span>,
+      <span key={uuid.v4()} style={{ color: '#B9B9B9', fontWeight: '100' }}>
+        {` ${formatted}`}
+      </span>];
+  };
+  return format === COMPONENT ? formatDefaultComponent(prefix, formattedDefault(type)) : `${prefix} ${formattedDefault(type)}`;
 };
 
-export const createDefaultTitleWithIcon = model => <span><VisualisationTypeIcon id={model.get('_id')} />{createVisualisationName(model)}</span>;
+export const createVisualisationName = (model, prefix) => defaultSelector(model, model.get('type', 'Unnamed'), prefix, COMPONENT);
+export const createVisualisationText = (model, prefix = '') => defaultSelector(model, model.get('type', 'Unnamed'), prefix, TEXT);
+export const createDefaultTitleWithIcon = model => <span><VisualisationTypeIcon id={model.get('_id')} /><span style={{ marginLeft: '3px' }}>{createVisualisationName(model)}</span></span>;
 export const createDefaultTitle = (model, prefix) => createVisualisationText(model, prefix);
 export const getPercentage = (res1, res2) => {
   const newValue = res1 || 0;

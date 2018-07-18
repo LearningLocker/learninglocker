@@ -12,6 +12,8 @@ export const COUNTER = 'COUNTER';
 export const PIE = 'PIE';
 export const LINE = 'LINE';
 export const COLUMN = 'COLUMN';
+export const COMPONENT = 'COMPONENT';
+export const TEXT = 'TEXT';
 
 export const TODAY = 'TODAY';
 export const LAST_7_DAYS = 'LAST_7_DAYS';
