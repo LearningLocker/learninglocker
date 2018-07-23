@@ -155,8 +155,8 @@ export const renderLegend = (labels, toggleHiddenSeries) =>
       onClick={toggleHiddenSeries ? onLegendClick(toggleHiddenSeries) : null} /> : <noscript />
   );
 
-export const renderTooltips = (data, hiddenSeries) =>
-  <Tooltip content={<CustomTooltip display={getLongModel(data, hiddenSeries)} />} />;
+export const renderTooltips = (data, hiddenSeries, colors = ['grey']) =>
+  <Tooltip cursor={{ fill: colors[0], fillOpacity: 0.1 }} content={<CustomTooltip display={getLongModel(data, hiddenSeries)} />} />;
 
 
 export const hiddenSeriesState = withStateHandlers({

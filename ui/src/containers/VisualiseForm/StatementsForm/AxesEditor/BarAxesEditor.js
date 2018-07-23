@@ -22,10 +22,10 @@ export class BarAxesEditor extends BaseAxesEditor {
           <DebounceInput
             id={'xAxisLabel'}
             className="form-control"
-            placeholder={getLegend('y', this.props)}
+            placeholder={getLegend('x', this.props)}
             debounceTimeout={377}
             style={{ fontWeight: 'bold' }}
-            value={getLegend('y', this.props)}
+            value={getLegend('x', this.props)}
             onChange={this.handleAxesChange.bind(this, 'yLabel')} />
         </div>
         <div className="form-group">
@@ -43,10 +43,10 @@ export class BarAxesEditor extends BaseAxesEditor {
           <DebounceInput
             id={'yAxisLabel'}
             className="form-control"
-            placeholder={getLegend('x', this.props)}
+            placeholder={getLegend('y', this.props)}
             debounceTimeout={377}
             style={{ fontWeight: 'bold' }}
-            value={getLegend('x', this.props)}
+            value={getLegend('y', this.props)}
             onChange={this.handleAxesChange.bind(this, 'xLabel')} />
         </div>
         <div className="form-group">

@@ -23,11 +23,11 @@ export const shorten = (target) => {
 
 export const getLegend = (key, props) => {
   const select = (ky, axis) => props.model.getIn([ky, 'searchString'], axis);
-  const x = shorten(props.model.get('axesxLabel', select(axg, 'X-Axis')));
-  const y = shorten(props.model.get('axesyLabel', select(axv, 'Y-Axis')));
+  const x = shorten(props.model.get('axesxLabel', select(axv, 'X-Axis')));
+  const y = shorten(props.model.get('axesyLabel', select(axg, 'Y-Axis')));
   switch (key) {
-    case 'x': return x.length > 1 ? x : shorten(select(axg, 'X-Axis'));
-    case 'y': return y.length > 1 ? y : shorten(select(axv, 'Y-Axis'));
+    case 'x': return x.length > 1 ? x : shorten(select(axv, 'X-Axis'));
+    case 'y': return y.length > 1 ? y : shorten(select(axg, 'Y-Axis'));
     default: return null;
   }
 };
