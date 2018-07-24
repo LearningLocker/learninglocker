@@ -1,0 +1,29 @@
+# Please use this template for commit messages
+
+# type(scope): Summary message
+# ie. git commit -m fix(visualisations): removed deprecated method 'oldMethod'
+#
+# (Long message) - Line 1
+#                - Line 2
+#                etc.
+
+# TYPE                  DESCRIPTION                             RELEASE
+
+# feat                  Features                                Bumps minor
+# fix                   Bug fixes (updating prod dependencies)  Bumps patch
+# perf                  Performance improovements               Bumps patch
+# docs                  Documentation changes                   No release
+# style                 Styling changes                         No release
+# refactor              Code refactoring                        No release
+# test                  Test changes                            No release
+# build                 Build Changes                           No release
+# ci                    Continuous integration changes          No release
+# chore                 Chores (updating dev dependencies)      No release
+# BREAKING CHANGE       Some breaking change                    No release
+
+# To add this as your default commit message: git config --global commit.template </your LL folder path> .git-commit-template.txt
+
+
+
+
+
