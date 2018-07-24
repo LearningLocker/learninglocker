@@ -67,7 +67,7 @@ export const getPercentage = (res1, res2) => {
   const percentage = parseInt(Math.round(((newValue - oldValue) / newValue) * 100));
   let formattedResult;
   switch (true) {
-    case res2 === 0 : formattedResult = { result: 'N/A', color: '#9BA5AB' }; break;
+    case res2 === 0 || isNaN(percentage): formattedResult = { result: 'N/A', color: '#9BA5AB' }; break;
     case percentage < 0 : formattedResult = { result: `${percentage}%`, color: '#E73304' }; break;
     default: formattedResult = { result: `+${percentage}%`, color: '#23A17E' }; break;
   }

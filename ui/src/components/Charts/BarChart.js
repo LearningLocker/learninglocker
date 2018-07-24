@@ -59,7 +59,6 @@ class BarChart extends Component {
 
   // displayNextPage = () => this.setState({ activePage: this.state.activePage + 1 })
   displayNextPage = () => {
-    console.log('008', this.props.model.get('_id'));
     return this.props.setInMetadata({
       schema: 'visualisation',
       id: this.props.model.get('_id'),
