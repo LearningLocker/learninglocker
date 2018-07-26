@@ -206,12 +206,13 @@ export const initialSections = fromJS({
     keyPath: new List(['statement', 'object']),
     getModelIdent: model => objectIdentToString(model.get('value')),
     getModelDisplay: displayCacheValue(displayActivity),
-    getModelQuery: model => new Map({
-      'statement.object.id': model.getIn(['value', 'id'])
-    }),
-    getQueryModel: query => new Map({
-      'value.id': query.get('statement.object.id')
-    }),
+    getModelQuery: model => model.getIn(['value', 'id']),
+    getQueryModel: query => {
+      console.log('getQueryModel', query)
+      return new Map({
+      'value.id': query
+      // 'value.id': query.get('statement.object.id')
+    })},
     operators: operators.DISCRETE,
     children: {
       type: {

@@ -13,8 +13,7 @@ const convertPathToKeys = path =>
 const setValueAtPath = (model, value, path) =>
   model.setIn(convertPathToKeys(path), value);
 
-const convertValueToModel = map =>
-  map.reduce(setValueAtPath, new Map());
+const convertValueToModel = map => map.reduce(setValueAtPath, new Map());
 
 const removeObjectId = value =>
   (Iterable.isIterable(value) ? value.get('$oid', value) : value);
@@ -35,9 +34,13 @@ const withLoadedOptions = connect((state, { schema }) => ({
   loadedModels: modelsByFilterSelector(schema)(state)
 }));
 
-const withSelectedOptions = withProps(({ models, values, loadedModels }) => ({
+const withSelectedOptions = withProps(({ models, values, loadedModels }) => {
+  console.log('withSelectedOptions',models,values,loadedModels)
+return ({
   selectedOptions: models.size > 0 ? models : convertValuesToModel(values)(loadedModels)
-}));
+})
+}
+);
 
 const defaultSearchStringToFilter = (searchString) => {
   switch (searchString) {

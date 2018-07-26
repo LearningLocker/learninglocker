@@ -51,6 +51,12 @@ export const queriesSelectedIdSelector = keyPath => createSelector(
   [queriesSelector],
   queryState => queryState.getIn([keyPath, 'selectedId'], 'selectedId')
 );
+// export const queriesSelectedIdSelector = (keyPath) => (state) => {
+//   const queryState = queriesSelector(state);
+//   return queryState.getIn([keyPath, 'selectedId'], 'selectedId');
+// }
+// const bobQuerySelectedIdSelector = queriesSelectedIdSelector('bob');
+// const bob = bobQuerySelectedIdSelector(globalState);
 export const queriesSelectedModelSelector = keyPath => createSelector(
   [state => state, queriesSelectedIdSelector(keyPath)],
   (state, queryId) => modelsSchemaIdSelector('query', queryId)(state)

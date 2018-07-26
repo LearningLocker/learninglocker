@@ -29,7 +29,7 @@ export default class Criteria extends Component {
 
   addCriterion = () => {
     this.props.onAddCriterion(new Map({
-      $or: [],
+      $at: [],
     }), this.props.section);
   }
 
