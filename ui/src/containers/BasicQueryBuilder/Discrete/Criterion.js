@@ -52,24 +52,53 @@ class Criterion extends Component {
     return this.props.section.get('getQueryModel')(query)
   }
 
+  getPath = () => `${this.props.filter.getIn(['path','$eq'])}.id`
   // createCriterionArray = (props, criterion) => criterion.
   getCriterionQuery = (operator, criterion) => {
+    console.log('cq', this.props, `${this.props.filter.getIn(['path','$eq'])}.id`)
+    switch (operator) {
+      case 'Out': return new Map({ $nor: criterion });
+      default: console.log('switch',this.getPath(), new Map({[ `${this.props.filter.getIn(['path','$eq'])}.id` ]: new Map({ $in: criterion })})); return new Map({[ `${this.props.filter.getIn(['path','$eq'])}.id` ]: new Map({ $in: criterion })})
+    }
+  }
+
+  getActorCriterionQuery = (operator, criterion) => {
     console.log('cq', this.props, operator, criterion, this.props.filter.getIn(['path','$eq']))
     switch (operator) {
       case 'Out': return new Map({ $nor: criterion });
-      default: console.log('default: ',{[ this.props.filter.getIn(['path','$eq']) ]: new Map({ $in: criterion })});return new Map({[ this.props.filter.getIn(['path','$eq']) ]: new Map({ $in: criterion })})
+      default: return new Map({[ this.props.filter.getIn(['path','$eq']) ]: new Map({ $in: criterion })})
     }
   }
 
   getValues = () => {
     if (!this.canDeleteCriterion()) return new List();
+    console.log('QueryValues', queryValues)
     const operator = this.getOperator();
     let queryValues;
-    console.log('finding path', this.props.criterion.get(this.props.filter.getIn(['path','$eq'])).get('$in'))
+    //console.log('getValues props (.criterion chk)',this.props.criterion.get(this.props.filter.getIn(['path','$eq']))), ' and props:',this.props)
+    console.log('​Criterion -> getValues -', this.props)
+
+// this.props.criterion.get(this.props.filter.getIn(['path','$eq'])
+    if (operator === 'Out') { 
+      queryValues = this.props.criterion.get('$nor');
+    } else if (this.props.section.get('title') === 'Actor') {
+      console.log('if actor')
+      queryValues = this.props.criterion.get('$or');
+    } else {
+      console.log('if not actor')
+     queryValues = this.props.criterion.get(`${this.props.filter.getIn(['path','$eq'])}.id`).get('$in');
+    }
+    return queryValues;
+  }
+
+  getActorValues = () => {
+    if (!this.canDeleteCriterion()) return new List();
+    const operator = this.getOperator();
+    let queryValues;
+    console.log('QueryValues the second', queryValues)
     //console.log('getValues props (.criterion chk)',this.props.criterion.get(this.props.filter.getIn(['path','$eq']))), ' and props:',this.props)
     if (operator === 'Out') queryValues = this.props.criterion.get('$nor');
-    else queryValues = this.props.criterion.get(this.props.filter.getIn(['path','$eq'])).get('$in');
-    console.log('QueryValues', queryValues)
+    else  queryValues = this.props.criterion.get('$or');
     return queryValues;
   }
 
@@ -79,10 +108,17 @@ class Criterion extends Component {
     return 'In';
   }
 
-  changeCriterion = (operator, values) =>
-    this.props.onCriterionChange(new Map({
-      $comment: this.props.criterion.get('$comment'),
-    }).merge(this.getCriterionQuery(operator, values)))
+  changeCriterion = (operator, values) => {
+    if (this.props.section.get('title') === 'Actor') {
+      this.props.onCriterionChange(new Map({
+        $comment: this.props.criterion.get('$comment'),
+      }).merge(this.getActorCriterionQuery(operator, values)))
+    } else {
+      this.props.onCriterionChange(new Map({
+        $comment: this.props.criterion.get('$comment'),
+      }).merge(this.getCriterionQuery(operator, values)))
+    }
+  }
 
   changeValues = (values) => {
     console.log('Criterion ChangeValues (this.getOperator,values)', this.getOperator(), values)
@@ -95,7 +131,7 @@ class Criterion extends Component {
 
   onAddOption = (model) => {
     if (!model.isEmpty()) {
-      console.log('onAddOption model', model)
+      console.log('onAddOption model', model, this.props.section,  this.props.section.get('title'))
       const values = this.getValues();
       const newValue = this.getOptionQuery(model);
       console.log('newValue',newValue)
@@ -106,9 +142,22 @@ class Criterion extends Component {
   onRemoveOption = (model) => {
     const values = this.getValues();
     const newValue = this.getOptionQuery(model);
-    console.log('onRemoveOption (values,newValue)', values, newValue)
+    console.log('onRemoveOption (values,newValue)', this.props.section.get('title'), values, newValue)
+    if (this.props.section.get('title') === 'Actor') {
+      console.log('actor')
+      this.changeValues(values.filter(value => !value.equals(newValue)));
+    } else {
+      console.log('not actor')
+      this.changeValues(values.filter(value => !(value === newValue)));
+    }
+  }
+
+  onRemoveActorOption = (model) => {
+    const values = this.getValues();
+    const newValue = this.getOptionQuery(model);
     this.changeValues(
-      values.filter(value => !(value === newValue))
+      values.filter(value => !value.equals(newValue))
+      // values.filter(value => !(value === newValue))
     );
   }
 
@@ -116,6 +165,7 @@ class Criterion extends Component {
     if (!this.canDeleteCriterion()) {
       return this.setState({ tempOperator: operator });
     }
+    console.log('change operator')
     return this.changeCriterion(operator, this.getValues());
   }
 

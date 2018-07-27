@@ -193,12 +193,8 @@ export const initialSections = fromJS({
     getModelIdent: model => identToString(model.get('value')),
     getModelDisplay: displayCacheValue(displayVerb),
     searchStringToFilter: searchStringToVerbFilter,
-    getModelQuery: model => new Map({
-      'statement.verb.id': model.getIn(['value', 'id'])
-    }),
-    getQueryModel: query => new Map({
-      'value.id': query.get('statement.verb.id')
-    }),
+    getModelQuery: model => model.getIn(['value', 'id']),
+    getQueryModel: query => new Map({ 'value.id': query }),
     operators: operators.DISCRETE,
   },
   objects: {
@@ -207,13 +203,7 @@ export const initialSections = fromJS({
     getModelIdent: model => objectIdentToString(model.get('value')),
     getModelDisplay: displayCacheValue(displayActivity),
     getModelQuery: model => model.getIn(['value', 'id']),
-    getQueryModel: query => {
-      console.log('getQueryModel', query)
-      return new Map({
-      'value.id': query,
-      expOp: '$in'
-      // 'value.id': query.get('statement.object.id')
-    })},
+    getQueryModel: query => new Map({ 'value.id': query }),
     operators: operators.DISCRETE,
     children: {
       type: {
@@ -221,12 +211,8 @@ export const initialSections = fromJS({
         keyPath: new List(['statement', 'object', 'definition', 'type']),
         getModelIdent: model => model.get('value'),
         getModelDisplay: displayCacheValue(identity),
-        getModelQuery: model => new Map({
-          'statement.object.definition.type': model.get('value')
-        }),
-        getQueryModel: query => new Map({
-          value: query.get('statement.object.definition.type')
-        }),
+        getModelQuery: model => model.get('value'),
+        getQueryModel: query => new Map({ 'value.id': query }),
         operators: operators.DISCRETE,
       },
       extensions: {
