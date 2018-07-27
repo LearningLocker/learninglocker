@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import QueryBuilderAutoComplete from
   'ui/components/AutoComplete2/QueryBuilderAutoComplete';
 import Operator from '../Operator';
+import { $in, $or } from 'ui/utils/constants';
 
 class Criterion extends Component {
   static propTypes = {
@@ -47,17 +48,22 @@ class Criterion extends Component {
   getOptionIdentifier = option =>
     this.props.section.get('getModelIdent')(option)
 
+  getPath = () => `${this.props.filter.getIn(['path', '$eq'])}.id`
   getQueryOption = query =>{
     console.log('getQueryOption(query) and function', query, this.props.section.get('getQueryModel')(query))
     return this.props.section.get('getQueryModel')(query)
   }
-
-  // createCriterionArray = (props, criterion) => criterion.
+  getQueryOperator = () => {
+    console.log('​Criterion -> getQueryOperator -> this.props.section', this.props.section, this.props.section.title, this.props.section.get('title'));
+   return (this.props.section.get('title') === 'Actor' ? $or : $in);
+  }
+  
   getCriterionQuery = (operator, criterion) => {
-    console.log('cq', this.props, operator, criterion, this.props.filter.getIn(['path','$eq']))
-    switch (operator) {
-      case 'Out': return new Map({ $nor: criterion });
-      default: console.log('default: ',{[ this.props.filter.getIn(['path','$eq']) ]: new Map({ $in: criterion })});return new Map({[ this.props.filter.getIn(['path','$eq']) ]: new Map({ $in: criterion })})
+    console.log('cq', this.props, this.getPath())
+    switch (true) {
+      case operator === 'Out': return new Map({ $nor: criterion });
+      case this.getQueryOperator() === $or : return new Map({ $or: criterion.map(item => new Map({ [this.getPath()]: item })) });
+      default: return new Map({ [this.getPath()]: new Map({ $in: criterion }) });
     }
   }
 
@@ -65,10 +71,17 @@ class Criterion extends Component {
     if (!this.canDeleteCriterion()) return new List();
     const operator = this.getOperator();
     let queryValues;
-    console.log('finding path', this.props.criterion.get(this.props.filter.getIn(['path','$eq'])).get('$in'))
+    console.log('​Criterion -> getValues -> .get(this.getQueryOperator())', this.getPath(), this.props);
+    // this.props.criterion.get(this.getPath()).get('$or'))
+    // console.log('finding path', this.props.criterion.get(this.getPath()).get('$in'))
+    // console.log('​Criterion -> getValues -> this.props.criterion.get(this.getPath()).get(this.getQueryOperator())', this.props.criterion.get(this.getPath()).get(this.getQueryOperator()));
+
     //console.log('getValues props (.criterion chk)',this.props.criterion.get(this.props.filter.getIn(['path','$eq']))), ' and props:',this.props)
-    if (operator === 'Out') queryValues = this.props.criterion.get('$nor');
-    else queryValues = this.props.criterion.get(this.props.filter.getIn(['path','$eq'])).get('$in');
+    switch (true) {
+      case (operator === 'Out'): queryValues = this.props.criterion.get('$nor'); break;
+      case this.getQueryOperator() === $or : queryValues = Map(this.props.criterion.get('$or').get(0).get(this.getPath()));console.log('query val or', queryValues);break;
+      default: queryValues = this.props.criterion.get(this.getPath()).get(this.getQueryOperator());  console.log('query val in', queryValues)
+    }
     return queryValues;
   }
 
@@ -105,10 +118,11 @@ class Criterion extends Component {
   onRemoveOption = (model) => {
     const values = this.getValues();
     const newValue = this.getOptionQuery(model);
-    console.log('onRemoveOption (values,newValue)', values, newValue)
-    this.changeValues(
-      values.filter(value => !(value === newValue))
-    );
+    console.log('typeof', this.props.section.get('title'), Array.isArray(values), this.props)
+    switch (this.props.section.get('title')) {
+      case 'Actor': console.log('in or');return this.changeValues(values.filter(value => !value.equals(newValue)));
+      default:  console.log('in def');return this.changeValues(values.filter(value => !(value === newValue)));
+    }
   }
 
   changeOperator = (operator) => {
