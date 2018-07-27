@@ -63,10 +63,10 @@ class Criterion extends Component {
   }
 
   getActorCriterionQuery = (operator, criterion) => {
-    console.log('cq', this.props, operator, criterion, this.props.filter.getIn(['path','$eq']))
+    console.log('cq other', this.props, operator, criterion, this.props.filter.getIn(['path','$eq']))
     switch (operator) {
       case 'Out': return new Map({ $nor: criterion });
-      default: return new Map({[ this.props.filter.getIn(['path','$eq']) ]: new Map({ $in: criterion })})
+      default: return new Map({ $or: criterion });
     }
   }
 
@@ -82,11 +82,11 @@ class Criterion extends Component {
     if (operator === 'Out') { 
       queryValues = this.props.criterion.get('$nor');
     } else if (this.props.section.get('title') === 'Actor') {
-      console.log('if actor')
       queryValues = this.props.criterion.get('$or');
+      console.log('queryValues actor', this.props, queryValues)
     } else {
-      console.log('if not actor')
      queryValues = this.props.criterion.get(`${this.props.filter.getIn(['path','$eq'])}.id`).get('$in');
+     console.log('queryValues not actor', queryValues)
     }
     return queryValues;
   }
