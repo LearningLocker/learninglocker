@@ -210,7 +210,8 @@ export const initialSections = fromJS({
     getQueryModel: query => {
       console.log('getQueryModel', query)
       return new Map({
-      'value.id': query
+      'value.id': query,
+      expOp: '$in'
       // 'value.id': query.get('statement.object.id')
     })},
     operators: operators.DISCRETE,

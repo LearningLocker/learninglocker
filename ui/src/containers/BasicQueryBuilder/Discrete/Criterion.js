@@ -69,6 +69,7 @@ class Criterion extends Component {
     //console.log('getValues props (.criterion chk)',this.props.criterion.get(this.props.filter.getIn(['path','$eq']))), ' and props:',this.props)
     if (operator === 'Out') queryValues = this.props.criterion.get('$nor');
     else queryValues = this.props.criterion.get(this.props.filter.getIn(['path','$eq'])).get('$in');
+    console.log('QueryValues', queryValues)
     return queryValues;
   }
 
