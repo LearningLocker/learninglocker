@@ -57,9 +57,10 @@ class Criterion extends Component {
   getCriterionQuery = (operator, criterion) => {
     console.log('cq', this.props, `${this.props.filter.getIn(['path','$eq'])}.id`)
     switch (true) {
-      case operator==='Out': return new Map({ $nor: criterion });
+      case operator ==='Out': return new Map({ $nor: criterion });
       case this.props.section.get('title') === 'Actor': return new Map({ $or: criterion });
       case this.props.section.get('title') === 'Who': return new Map({ $or: criterion });
+      case this.props.section.get('title') === 'Type': return new Map({ [this.props.filter.getIn(['path', '$eq'])]: new Map({ $in: criterion }) });
       default: return new Map({ [`${this.props.filter.getIn(['path', '$eq'])}.id`]: new Map({ $in: criterion }) });
     }
   }
@@ -76,7 +77,8 @@ class Criterion extends Component {
       case operator==='Out':  queryValues = this.props.criterion.get('$nor'); break;
       case this.props.section.get('title') === 'Actor': queryValues = this.props.criterion.get('$or'); break;
       case this.props.section.get('title') === 'Who': queryValues = this.props.criterion.get('$or'); break;
-      default: queryValues = this.props.criterion.get(`${this.props.filter.getIn(['path','$eq'])}.id`).get('$in');
+      case this.props.section.get('title') === 'Type': queryValues = this.props.criterion.get(this.props.filter.getIn(['path', '$eq'])).get('$in'); break;
+      default: queryValues = this.props.criterion.get(`${this.props.filter.getIn(['path', '$eq'])}.id`).get('$in');
     }
     return queryValues;
   }
@@ -116,13 +118,11 @@ class Criterion extends Component {
     const values = this.getValues();
     const newValue = this.getOptionQuery(model);
     console.log('onRemoveOption (values,newValue)', this.props.section.get('title'), values, newValue)
-    if (this.props.section.get('title') === 'Actor' || this.props.section.get('title') === 'Who') {
-      console.log('actor')
-      this.changeValues(values.filter(value => !value.equals(newValue)));
-    } else {
-      console.log('not actor')
-      console.log(values.filter(value => !(value === newValue)))
-      this.changeValues(values.filter(value => !(value === newValue)));
+    switch (true) {
+      case this.props.section.get('title') === 'Actor': this.changeValues(values.filter(value => !value.equals(newValue))); break;
+      case this.props.section.get('title') === 'Who': this.changeValues(values.filter(value => !value.equals(newValue))); break;
+      case this.props.section.get('title') === 'Type': this.changeValues(values.filter(value => !(value === newValue.get('id')))); break;
+      default: this.changeValues(values.filter(value => !(value === newValue)));
     }
   }
 
