@@ -28,6 +28,10 @@ export const IN_PROGRESS = 'IN_PROGRESS';
 export const COMPLETED = 'COMPLETED';
 export const FAILED = 'FAILED';
 
+export const $in = '$in';
+export const $or = '$or';
+
+
 export const keyCodes = {
   ENTER: 13,
   UP: 38,

@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import QueryBuilderAutoComplete from
   'ui/components/AutoComplete2/QueryBuilderAutoComplete';
 import Operator from '../Operator';
+import { $in, $or } from 'ui/utils/constants';
 
 class Criterion extends Component {
   static propTypes = {
