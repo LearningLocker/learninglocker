@@ -64,14 +64,6 @@ class Criterion extends Component {
     }
   }
 
-  getActorCriterionQuery = (operator, criterion) => {
-    console.log('cq other', this.props, operator, criterion, this.props.filter.getIn(['path','$eq']))
-    switch (operator) {
-      case 'Out': return new Map({ $nor: criterion });
-      default: return new Map({ $or: criterion });
-    }
-  }
-
   getValues = () => {
     if (!this.canDeleteCriterion()) return new List();
     const operator = this.getOperator();
@@ -86,17 +78,6 @@ class Criterion extends Component {
       case this.props.section.get('title') === 'Who': console.log('getValues who', this.props, this.props.criterion.get('persona._id').get('$in')); queryValues = this.props.criterion.get('persona._id').get('$in'); break;
       default: queryValues = this.props.criterion.get(`${this.props.filter.getIn(['path','$eq'])}.id`).get('$in');
     }
-    return queryValues;
-  }
-
-  getActorValues = () => {
-    if (!this.canDeleteCriterion()) return new List();
-    const operator = this.getOperator();
-    let queryValues;
-    console.log('QueryValues the second', queryValues)
-    //console.log('getValues props (.criterion chk)',this.props.criterion.get(this.props.filter.getIn(['path','$eq']))), ' and props:',this.props)
-    if (operator === 'Out') queryValues = this.props.criterion.get('$nor');
-    else  queryValues = this.props.criterion.get('$or');
     return queryValues;
   }
 
@@ -135,22 +116,14 @@ class Criterion extends Component {
     const values = this.getValues();
     const newValue = this.getOptionQuery(model);
     console.log('onRemoveOption (values,newValue)', this.props.section.get('title'), values, newValue)
-    if (this.props.section.get('title') === 'Actor') {
+    if (this.props.section.get('title') === 'Actor' || this.props.section.get('title') === 'Who') {
       console.log('actor')
       this.changeValues(values.filter(value => !value.equals(newValue)));
     } else {
       console.log('not actor')
+      console.log(values.filter(value => !(value === newValue)))
       this.changeValues(values.filter(value => !(value === newValue)));
     }
-  }
-
-  onRemoveActorOption = (model) => {
-    const values = this.getValues();
-    const newValue = this.getOptionQuery(model);
-    this.changeValues(
-      values.filter(value => !value.equals(newValue))
-      // values.filter(value => !(value === newValue))
-    );
   }
 
   changeOperator = (operator) => {

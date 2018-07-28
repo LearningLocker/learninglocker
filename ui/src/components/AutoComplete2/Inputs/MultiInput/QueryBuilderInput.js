@@ -34,12 +34,9 @@ const withLoadedOptions = connect((state, { schema }) => ({
   loadedModels: modelsByFilterSelector(schema)(state)
 }));
 
-const withSelectedOptions = withProps(({ models, values, loadedModels }) => {
-  console.log('withSelectedOptions',models,values,loadedModels)
-return ({
+const withSelectedOptions = withProps(({ models, values, loadedModels }) => ({
   selectedOptions: models.size > 0 ? models : convertValuesToModel(values)(loadedModels)
 })
-}
 );
 
 const defaultSearchStringToFilter = (searchString) => {
