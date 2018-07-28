@@ -59,7 +59,7 @@ class Criterion extends Component {
     switch (true) {
       case operator==='Out': return new Map({ $nor: criterion });
       case this.props.section.get('title') === 'Actor': return new Map({ $or: criterion });
-      case this.props.section.get('title') === 'Who': return new Map({ 'persona._id': new Map({ $in: criterion }) });
+      case this.props.section.get('title') === 'Who': return new Map({ $or: criterion });
       default: return new Map({ [`${this.props.filter.getIn(['path', '$eq'])}.id`]: new Map({ $in: criterion }) });
     }
   }
@@ -75,7 +75,7 @@ class Criterion extends Component {
     switch (true) {
       case operator==='Out':  queryValues = this.props.criterion.get('$nor'); break;
       case this.props.section.get('title') === 'Actor': queryValues = this.props.criterion.get('$or'); break;
-      case this.props.section.get('title') === 'Who': console.log('getValues who', this.props, this.props.criterion.get('persona._id').get('$in')); queryValues = this.props.criterion.get('persona._id').get('$in'); break;
+      case this.props.section.get('title') === 'Who': queryValues = this.props.criterion.get('$or'); break;
       default: queryValues = this.props.criterion.get(`${this.props.filter.getIn(['path','$eq'])}.id`).get('$in');
     }
     return queryValues;
