@@ -40,6 +40,7 @@ export const reduceMap = (mapPath, mapQuery, map) => {
 
 export const getActorQuery = (actor) => {
   const result = reduceMap('statement.actor', new Map(), actor);
+  console.log('getActorQuery', result)
   return result
     .delete('statement.actor.name')
     .delete('statement.actor.objectType');
@@ -113,11 +114,12 @@ export const initialSections = fromJS({
     searchStringToFilter: searchStringToPersonaFilter,
     getModelIdent: model => model.get('_id'),
     getModelDisplay: model => model.get('name', model.get('_id')),
-    getModelQuery: model => new Map({
-      'person._id': new Map({ $oid: model.get('_id') })
-    }),
+    getModelQuery: model => new Map({ $oid: model.get('_id') }),
+    // getModelQuery: model => new Map({
+    //   'person._id': new Map({ $oid: model.get('_id') })
+    // }),
     getQueryModel: query => new Map({
-      _id: query.get('person._id')
+      _id: query.get('$oid')
     }),
     operators: operators.DISCRETE,
     children: {

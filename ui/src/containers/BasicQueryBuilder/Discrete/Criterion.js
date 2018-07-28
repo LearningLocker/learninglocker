@@ -58,7 +58,7 @@ class Criterion extends Component {
     console.log('cq', this.props, `${this.props.filter.getIn(['path','$eq'])}.id`)
     switch (operator) {
       case 'Out': return new Map({ $nor: criterion });
-      default: console.log('switch',this.getPath(), new Map({[ `${this.props.filter.getIn(['path','$eq'])}.id` ]: new Map({ $in: criterion })})); return new Map({[ `${this.props.filter.getIn(['path','$eq'])}.id` ]: new Map({ $in: criterion })})
+      default: console.log('switch', criterion, this.getPath(), new Map({[ `${this.props.filter.getIn(['path','$eq'])}.id` ]: new Map({ $in: criterion })})); return new Map({[ `${this.props.filter.getIn(['path','$eq'])}.id` ]: new Map({ $in: criterion })})
     }
   }
 
@@ -72,7 +72,6 @@ class Criterion extends Component {
 
   getValues = () => {
     if (!this.canDeleteCriterion()) return new List();
-    console.log('QueryValues', queryValues)
     const operator = this.getOperator();
     let queryValues;
     //console.log('getValues props (.criterion chk)',this.props.criterion.get(this.props.filter.getIn(['path','$eq']))), ' and props:',this.props)
