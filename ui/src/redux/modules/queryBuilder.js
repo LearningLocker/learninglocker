@@ -40,7 +40,6 @@ export const reduceMap = (mapPath, mapQuery, map) => {
 
 export const getActorQuery = (actor) => {
   const result = reduceMap('statement.actor', new Map(), actor);
-  console.log('getActorQuery', result)
   return result
     .delete('statement.actor.name')
     .delete('statement.actor.objectType');

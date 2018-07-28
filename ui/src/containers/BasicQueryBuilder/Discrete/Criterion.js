@@ -36,10 +36,7 @@ class Criterion extends Component {
   getSearchStringToFilter = () =>
     this.props.section.get('searchStringToFilter')
 
-  getOptionQuery = option =>{
-    console.log('getOptionQuery', option)
-    return this.props.section.get('getModelQuery')(option)
-  }
+  getOptionQuery = option => this.props.section.get('getModelQuery')(option)
 
   getOptionDisplay = option =>
     this.props.section.get('getModelDisplay')(option)
@@ -47,20 +44,19 @@ class Criterion extends Component {
   getOptionIdentifier = option =>
     this.props.section.get('getModelIdent')(option)
 
-  getQueryOption = query =>{
-    console.log('getQueryOption(query) and function', query, this.props.section.get('getQueryModel')(query))
-    return this.props.section.get('getQueryModel')(query)
-  }
+  getQueryOption = query => this.props.section.get('getQueryModel')(query)
+  
 
-  getPath = () => `${this.props.filter.getIn(['path','$eq'])}.id`
-  // createCriterionArray = (props, criterion) => criterion.
   getCriterionQuery = (operator, criterion) => {
-    console.log('cq', this.props, `${this.props.filter.getIn(['path','$eq'])}.id`)
     switch (true) {
       case operator ==='Out': return new Map({ $nor: criterion });
       case this.props.section.get('title') === 'Actor': return new Map({ $or: criterion });
       case this.props.section.get('title') === 'Who': return new Map({ $or: criterion });
+      case this.props.section.get('title') === 'grouping': return new Map({ $or: criterion });
+      case this.props.section.get('title') === 'Store': return new Map({ $or: criterion });
+      case this.props.section.get('title') === 'parent': return new Map({ $or: criterion });
       case this.props.section.get('title') === 'Type': return new Map({ [this.props.filter.getIn(['path', '$eq'])]: new Map({ $in: criterion }) });
+      case this.props.section.get('title').includes('http'): return new Map({ [this.props.filter.getIn(['path', '$eq'])]: new Map({ $in: criterion }) });
       default: return new Map({ [`${this.props.filter.getIn(['path', '$eq'])}.id`]: new Map({ $in: criterion }) });
     }
   }
@@ -69,15 +65,15 @@ class Criterion extends Component {
     if (!this.canDeleteCriterion()) return new List();
     const operator = this.getOperator();
     let queryValues;
-    //console.log('getValues props (.criterion chk)',this.props.criterion.get(this.props.filter.getIn(['path','$eq']))), ' and props:',this.props)
-    console.log('​Criterion -> getValues -', this.props)
-
-// this.props.criterion.get(this.props.filter.getIn(['path','$eq'])
     switch (true) {
-      case operator==='Out':  queryValues = this.props.criterion.get('$nor'); break;
+      case operator === 'Out': queryValues = this.props.criterion.get('$nor'); break;
       case this.props.section.get('title') === 'Actor': queryValues = this.props.criterion.get('$or'); break;
       case this.props.section.get('title') === 'Who': queryValues = this.props.criterion.get('$or'); break;
+      case this.props.section.get('title') === 'grouping': queryValues = this.props.criterion.get('$or'); break;
+      case this.props.section.get('title') === 'Store': queryValues = this.props.criterion.get('$or'); break;
+      case this.props.section.get('title') === 'parent': queryValues = this.props.criterion.get('$or'); break;
       case this.props.section.get('title') === 'Type': queryValues = this.props.criterion.get(this.props.filter.getIn(['path', '$eq'])).get('$in'); break;
+      case this.props.section.get('title').includes('http'): queryValues = this.props.criterion.get(this.props.filter.getIn(['path', '$eq'])).get('$in'); break;
       default: queryValues = this.props.criterion.get(`${this.props.filter.getIn(['path', '$eq'])}.id`).get('$in');
     }
     return queryValues;
@@ -96,7 +92,6 @@ class Criterion extends Component {
   }
 
   changeValues = (values) => {
-    console.log('Criterion ChangeValues (this.getOperator,values)', this.getOperator(), values)
     const canDeleteCriterion = values.size === 0 && this.canDeleteCriterion();
     if (canDeleteCriterion) {
       return this.props.onDeleteCriterion();
@@ -106,10 +101,8 @@ class Criterion extends Component {
 
   onAddOption = (model) => {
     if (!model.isEmpty()) {
-      console.log('onAddOption model', model, this.props.section,  this.props.section.get('title'))
       const values = this.getValues();
       const newValue = this.getOptionQuery(model);
-      console.log('newValue',newValue)
       this.changeValues(values.push(newValue));
     }
   }
@@ -117,11 +110,14 @@ class Criterion extends Component {
   onRemoveOption = (model) => {
     const values = this.getValues();
     const newValue = this.getOptionQuery(model);
-    console.log('onRemoveOption (values,newValue)', this.props.section.get('title'), values, newValue)
     switch (true) {
       case this.props.section.get('title') === 'Actor': this.changeValues(values.filter(value => !value.equals(newValue))); break;
       case this.props.section.get('title') === 'Who': this.changeValues(values.filter(value => !value.equals(newValue))); break;
+      case this.props.section.get('title') === 'grouping': this.changeValues(values.filter(value => !value.equals(newValue))); break;
+      case this.props.section.get('title') === 'parent': this.changeValues(values.filter(value => !value.equals(newValue))); break;
+      case this.props.section.get('title') === 'Store': this.changeValues(values.filter(value => !value.equals(newValue))); break;
       case this.props.section.get('title') === 'Type': this.changeValues(values.filter(value => !(value === newValue.get('id')))); break;
+      case this.props.section.get('title').includes('http'): this.changeValues(values.filter(value => !value.equals(newValue))); break;
       default: this.changeValues(values.filter(value => !(value === newValue)));
     }
   }
@@ -130,7 +126,6 @@ class Criterion extends Component {
     if (!this.canDeleteCriterion()) {
       return this.setState({ tempOperator: operator });
     }
-    console.log('change operator')
     return this.changeCriterion(operator, this.getValues());
   }
 
