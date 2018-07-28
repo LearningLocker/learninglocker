@@ -56,9 +56,11 @@ class Criterion extends Component {
   // createCriterionArray = (props, criterion) => criterion.
   getCriterionQuery = (operator, criterion) => {
     console.log('cq', this.props, `${this.props.filter.getIn(['path','$eq'])}.id`)
-    switch (operator) {
-      case 'Out': return new Map({ $nor: criterion });
-      default: console.log('switch', criterion, this.getPath(), new Map({[ `${this.props.filter.getIn(['path','$eq'])}.id` ]: new Map({ $in: criterion })})); return new Map({[ `${this.props.filter.getIn(['path','$eq'])}.id` ]: new Map({ $in: criterion })})
+    switch (true) {
+      case operator==='Out': return new Map({ $nor: criterion });
+      case this.props.section.get('title') === 'Actor': return new Map({ $or: criterion });
+      case this.props.section.get('title') === 'Who': return new Map({ 'persona._id': new Map({ $in: criterion }) });
+      default: return new Map({ [`${this.props.filter.getIn(['path', '$eq'])}.id`]: new Map({ $in: criterion }) });
     }
   }
 
@@ -78,14 +80,11 @@ class Criterion extends Component {
     console.log('​Criterion -> getValues -', this.props)
 
 // this.props.criterion.get(this.props.filter.getIn(['path','$eq'])
-    if (operator === 'Out') { 
-      queryValues = this.props.criterion.get('$nor');
-    } else if (this.props.section.get('title') === 'Actor') {
-      queryValues = this.props.criterion.get('$or');
-      console.log('queryValues actor', this.props, queryValues)
-    } else {
-     queryValues = this.props.criterion.get(`${this.props.filter.getIn(['path','$eq'])}.id`).get('$in');
-     console.log('queryValues not actor', queryValues)
+    switch (true) {
+      case operator==='Out':  queryValues = this.props.criterion.get('$nor'); break;
+      case this.props.section.get('title') === 'Actor': queryValues = this.props.criterion.get('$or'); break;
+      case this.props.section.get('title') === 'Who': console.log('getValues who', this.props, this.props.criterion.get('persona._id').get('$in')); queryValues = this.props.criterion.get('persona._id').get('$in'); break;
+      default: queryValues = this.props.criterion.get(`${this.props.filter.getIn(['path','$eq'])}.id`).get('$in');
     }
     return queryValues;
   }
@@ -108,15 +107,9 @@ class Criterion extends Component {
   }
 
   changeCriterion = (operator, values) => {
-    if (this.props.section.get('title') === 'Actor') {
-      this.props.onCriterionChange(new Map({
-        $comment: this.props.criterion.get('$comment'),
-      }).merge(this.getActorCriterionQuery(operator, values)))
-    } else {
-      this.props.onCriterionChange(new Map({
-        $comment: this.props.criterion.get('$comment'),
-      }).merge(this.getCriterionQuery(operator, values)))
-    }
+    this.props.onCriterionChange(new Map({
+      $comment: this.props.criterion.get('$comment'),
+    }).merge(this.getCriterionQuery(operator, values)))
   }
 
   changeValues = (values) => {
