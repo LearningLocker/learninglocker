@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import QueryBuilderAutoComplete from
   'ui/components/AutoComplete2/QueryBuilderAutoComplete';
 import Operator from '../Operator';
-import { $in, $or } from 'ui/utils/constants';
 
 class Criterion extends Component {
   static propTypes = {
@@ -46,7 +45,6 @@ class Criterion extends Component {
     this.props.section.get('getModelIdent')(option)
 
   getQueryOption = query => this.props.section.get('getQueryModel')(query)
-  
 
   getCriterionQuery = (operator, criterion) => {
     switch (true) {
