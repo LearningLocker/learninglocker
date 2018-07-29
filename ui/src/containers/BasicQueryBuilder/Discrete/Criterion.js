@@ -51,14 +51,11 @@ class Criterion extends Component {
   getCriterionQuery = (operator, criterion) => {
     switch (true) {
       case operator ==='Out': return new Map({ $nor: criterion });
-      case this.props.section.get('title') === 'Actor': return new Map({ $or: criterion });
-      case this.props.section.get('title') === 'Who': return new Map({ $or: criterion });
-      case this.props.section.get('title') === 'grouping': return new Map({ $or: criterion });
-      case this.props.section.get('title') === 'Store': return new Map({ $or: criterion });
-      case this.props.section.get('title') === 'parent': return new Map({ $or: criterion });
+      case this.props.section.get('title') === 'What': return new Map({ [`${this.props.filter.getIn(['path', '$eq'])}.id`]: new Map({ $in: criterion }) });
+      case this.props.section.get('title') === 'Did': return new Map({ [`${this.props.filter.getIn(['path', '$eq'])}.id`]: new Map({ $in: criterion }) });
       case this.props.section.get('title') === 'Type': return new Map({ [this.props.filter.getIn(['path', '$eq'])]: new Map({ $in: criterion }) });
       case this.props.section.get('title').includes('http'): return new Map({ [this.props.filter.getIn(['path', '$eq'])]: new Map({ $in: criterion }) });
-      default: return new Map({ [`${this.props.filter.getIn(['path', '$eq'])}.id`]: new Map({ $in: criterion }) });
+      default: return new Map({ $or: criterion });
     }
   }
 
@@ -68,14 +65,11 @@ class Criterion extends Component {
     let queryValues;
     switch (true) {
       case operator === 'Out': queryValues = this.props.criterion.get('$nor'); break;
-      case this.props.section.get('title') === 'Actor': queryValues = this.props.criterion.get('$or'); break;
-      case this.props.section.get('title') === 'Who': queryValues = this.props.criterion.get('$or'); break;
-      case this.props.section.get('title') === 'grouping': queryValues = this.props.criterion.get('$or'); break;
-      case this.props.section.get('title') === 'Store': queryValues = this.props.criterion.get('$or'); break;
-      case this.props.section.get('title') === 'parent': queryValues = this.props.criterion.get('$or'); break;
+      case this.props.section.get('title') === 'What': queryValues = this.props.criterion.get(`${this.props.filter.getIn(['path', '$eq'])}.id`).get('$in'); break;
+      case this.props.section.get('title') === 'Did': queryValues = this.props.criterion.get(`${this.props.filter.getIn(['path', '$eq'])}.id`).get('$in'); break;
       case this.props.section.get('title') === 'Type': queryValues = this.props.criterion.get(this.props.filter.getIn(['path', '$eq'])).get('$in'); break;
       case this.props.section.get('title').includes('http'): queryValues = this.props.criterion.get(this.props.filter.getIn(['path', '$eq'])).get('$in'); break;
-      default: queryValues = this.props.criterion.get(`${this.props.filter.getIn(['path', '$eq'])}.id`).get('$in');
+      default: queryValues = this.props.criterion.get('$or'); break;
     }
     return queryValues;
   }
@@ -112,14 +106,11 @@ class Criterion extends Component {
     const values = this.getValues();
     const newValue = this.getOptionQuery(model);
     switch (true) {
-      case this.props.section.get('title') === 'Actor': this.changeValues(values.filter(value => !value.equals(newValue))); break;
-      case this.props.section.get('title') === 'Who': this.changeValues(values.filter(value => !value.equals(newValue))); break;
-      case this.props.section.get('title') === 'grouping': this.changeValues(values.filter(value => !value.equals(newValue))); break;
-      case this.props.section.get('title') === 'parent': this.changeValues(values.filter(value => !value.equals(newValue))); break;
-      case this.props.section.get('title') === 'Store': this.changeValues(values.filter(value => !value.equals(newValue))); break;
+      case this.props.section.get('title') === 'What': this.changeValues(values.filter(value => !(value === newValue))); break;
+      case this.props.section.get('title') === 'Did': this.changeValues(values.filter(value => !(value === newValue))); break;
       case this.props.section.get('title') === 'Type': this.changeValues(values.filter(value => !(value === newValue.get('id')))); break;
       case this.props.section.get('title').includes('http'): this.changeValues(values.filter(value => !value.equals(newValue))); break;
-      default: this.changeValues(values.filter(value => !(value === newValue)));
+      default: this.changeValues(values.filter(value => !value.equals(newValue))); break;
     }
   }
 
