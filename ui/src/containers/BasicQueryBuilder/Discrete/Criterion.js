@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import QueryBuilderAutoComplete from
   'ui/components/AutoComplete2/QueryBuilderAutoComplete';
 import Operator from '../Operator';
+import { verb } from '../../../../../node_modules/@learninglocker/xapi-validation/dist/factory';
 
 class Criterion extends Component {
   static propTypes = {
@@ -48,10 +49,49 @@ class Criterion extends Component {
   getQueryOption = query =>
     this.props.section.get('getQueryModel')(query)
 
+  toInQuery = (items) => {
+    const keyItems = items.reduce((acc, item) => acc.add(item.keySeq().first()), new Set());
+
+    if (
+      items.find(item => item.size > 1
+        || item.first().startsWith('$')
+      ) || keyItems.size > 1
+    ) {
+      return new Map({ $or: items });
+    }
+
+    const inValues = items.map(item => item.first());
+
+    const out = new Map();
+    const outIn = out.set(keyItems.first(), new Map({ $in: inValues }));
+    return outIn;
+  }
+
+  fromInQuery = (query) => {
+    const out = query.reduce((acc, subQuery, key) => {
+      // Ignore comments
+      if (key.startsWith('$')) {
+        return acc;
+      }
+
+      // If not an in query, then just a standard query
+      if (subQuery.keySeq().first() !== '$in') {
+        return acc.set(subQuery);
+      }
+
+      return acc.push(
+        ...subQuery.get('$in').map(item => new Map({ [key]: item }))
+      );
+    }, new List());
+    return out;
+  }
+
   getCriterionQuery = (operator, criterion) => {
     switch (operator) {
       case 'Out': return new Map({ $nor: criterion });
-      default: return new Map({ $or: criterion });
+      default: {
+        return new Map(this.toInQuery(criterion));
+      }
     }
   }
 
@@ -60,8 +100,11 @@ class Criterion extends Component {
     const operator = this.getOperator();
     let queryValues;
 
-    if (operator === 'Out') queryValues = this.props.criterion.get('$nor');
-    else queryValues = this.props.criterion.get('$or');
+    if (operator === 'Out') {
+      queryValues = this.props.criterion.get('$nor');
+    } else {
+      queryValues = this.props.criterion.get('$or') || this.fromInQuery(this.props.criterion);
+    }
     return queryValues;
   }
 
