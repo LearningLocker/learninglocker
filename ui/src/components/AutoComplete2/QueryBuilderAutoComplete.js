@@ -19,6 +19,7 @@ import { compose, withProps, withState } from 'recompose';
 // merges that with the existing filter
 const withValuesFilter = compose(
   withProps(({ values, filter }) => {
+    console.log('withValuesFilter values, filter', values,filter)
     if (values.isEmpty()) return { valuesFilter: new Map({ _id: null }) };
 
     const inFilter = new Map({
@@ -56,7 +57,8 @@ export default compose(
   searchStringToFilter,
   valuesFilter
 }) =>
-  (<AutoComplete2
+{ console.log('Auto Complete compose values', values)
+ return (<AutoComplete2
     renderInput={({ hasFocus }) => (
       <QueryBuilderInput
         filter={valuesFilter}
@@ -81,4 +83,5 @@ export default compose(
         schema={schema} />
     )} />
   )
+}
 );

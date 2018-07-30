@@ -36,8 +36,7 @@ class Criterion extends Component {
   getSearchStringToFilter = () =>
     this.props.section.get('searchStringToFilter')
 
-  getOptionQuery = option =>
-    this.props.section.get('getModelQuery')(option)
+  getOptionQuery = option => this.props.section.get('getModelQuery')(option)
 
   getOptionDisplay = option =>
     this.props.section.get('getModelDisplay')(option)
@@ -45,12 +44,15 @@ class Criterion extends Component {
   getOptionIdentifier = option =>
     this.props.section.get('getModelIdent')(option)
 
-  getQueryOption = query =>
-    this.props.section.get('getQueryModel')(query)
+  getQueryOption = query => this.props.section.get('getQueryModel')(query)
 
   getCriterionQuery = (operator, criterion) => {
-    switch (operator) {
-      case 'Out': return new Map({ $nor: criterion });
+    switch (true) {
+      case operator === 'Out': return new Map({ $nor: criterion });
+      case this.props.section.get('title') === 'What': return new Map({ [`${this.props.filter.getIn(['path', '$eq'])}.id`]: new Map({ $in: criterion }) });
+      case this.props.section.get('title') === 'Did': return new Map({ [`${this.props.filter.getIn(['path', '$eq'])}.id`]: new Map({ $in: criterion }) });
+      case this.props.section.get('title') === 'Type': return new Map({ [this.props.filter.getIn(['path', '$eq'])]: new Map({ $in: criterion }) });
+      case this.props.section.get('title').includes('http'): return new Map({ [this.props.filter.getIn(['path', '$eq'])]: new Map({ $in: criterion }) });
       default: return new Map({ $or: criterion });
     }
   }
@@ -58,11 +60,26 @@ class Criterion extends Component {
   getValues = () => {
     if (!this.canDeleteCriterion()) return new List();
     const operator = this.getOperator();
-    let queryValues;
 
-    if (operator === 'Out') queryValues = this.props.criterion.get('$nor');
-    else queryValues = this.props.criterion.get('$or');
-    return queryValues;
+    if (operator === 'Out') {
+      return this.props.criterion.get('$nor');
+    }
+
+    const title = this.props.section.get('title');
+    if (
+      title === 'What' ||
+      title === 'Did'
+    ) {
+      return this.props.criterion.get(`${this.props.filter.getIn(['path', '$eq'])}.id`).get('$in');
+    }
+
+    if (
+      title === 'Type' || title.includes('http')
+    ) {
+      this.props.criterion.get(this.props.filter.getIn(['path', '$eq'])).get('$in');
+    }
+
+    return this.props.criterion.get('$or');
   }
 
   getOperator = () => {
@@ -71,10 +88,11 @@ class Criterion extends Component {
     return 'In';
   }
 
-  changeCriterion = (operator, values) =>
+  changeCriterion = (operator, values) => {
     this.props.onCriterionChange(new Map({
       $comment: this.props.criterion.get('$comment'),
-    }).merge(this.getCriterionQuery(operator, values)))
+    }).merge(this.getCriterionQuery(operator, values)));
+  }
 
   changeValues = (values) => {
     const canDeleteCriterion = values.size === 0 && this.canDeleteCriterion();
@@ -95,10 +113,13 @@ class Criterion extends Component {
   onRemoveOption = (model) => {
     const values = this.getValues();
     const newValue = this.getOptionQuery(model);
-
-    this.changeValues(
-      values.filter(value => !value.equals(newValue))
-    );
+    switch (true) {
+      case this.props.section.get('title') === 'What': this.changeValues(values.filter(value => !(value === newValue))); break;
+      case this.props.section.get('title') === 'Did': this.changeValues(values.filter(value => !(value === newValue))); break;
+      case this.props.section.get('title') === 'Type': this.changeValues(values.filter(value => !(value === newValue.get('id')))); break;
+      case this.props.section.get('title').includes('http'): this.changeValues(values.filter(value => !value.equals(newValue))); break;
+      default: this.changeValues(values.filter(value => !value.equals(newValue))); break;
+    }
   }
 
   changeOperator = (operator) => {

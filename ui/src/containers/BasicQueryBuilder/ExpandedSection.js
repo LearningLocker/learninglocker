@@ -20,6 +20,7 @@ export const queryBuilderCacheFilterGenerator = ({ section }) => {
     const childGenerators = section.get('childGenerators');
 
     const orQueryList = map(childGenerators.toJS(), (item) => {
+      console.log('has child gen', childGenerators.toJS(), item)
       const keyPath = item.path;
       const keyPathQuery = merge({},
         ...map(keyPath, (item2, index) =>
@@ -31,20 +32,22 @@ export const queryBuilderCacheFilterGenerator = ({ section }) => {
 
     const maxItem = maxBy(orQueryList, item => size(item));
     const maxSize = size(maxItem);
-
     query = { $and: [
       { $or: orQueryList },
       { path: { $size: (maxSize + 1) } }
     ] };
   } else if (section.has('keyPath')) {
-    const andQuery = map(section.get('keyPath', new List()).toJS(), (item, index) =>
-        ({ [`path.${index}`]: { $eq: item } })
+    const andQuery = map(section.get('keyPath', new List()).toJS(), (item, index) =>{
+        return ({ [`path.${index}`]: { $eq: item } })
+    }
       );
 
     query = { $and: [
       { $and: andQuery },
       { path: { $size: (size(andQuery) + 1) } }
     ] };
+    console.log('query', query)
+    return query
   }
 
   return { queryBuilderCacheFilter: query };
@@ -118,6 +121,7 @@ class ExpandedSection extends Component {
   };
 
   renderCriteria = () => {
+    console.log('rendercri', this.props)
     const ops = this.props.section.get('operators');
 
     switch (ops) {
