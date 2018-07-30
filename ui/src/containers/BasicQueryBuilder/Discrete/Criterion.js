@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import QueryBuilderAutoComplete from
   'ui/components/AutoComplete2/QueryBuilderAutoComplete';
 import Operator from '../Operator';
-import { verb } from '../../../../../node_modules/@learninglocker/xapi-validation/dist/factory';
 
 class Criterion extends Component {
   static propTypes = {
