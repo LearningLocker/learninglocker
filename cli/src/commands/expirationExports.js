@@ -7,15 +7,13 @@ import { map } from 'bluebird';
 import Organisation from 'lib/models/organisation';
 
 const expireExportsForOrgatinasion = async (organisation) => {
-  const ttl = organisation.settings.EXPIRE_EXPORTS.ttl;
-
   const todayDate = moment();
-  const cutOffDate = todayDate.subtract(ttl, 'seconds');
+  // const cutOffDate = todayDate.subtract(ttl, 'seconds');
 
   const exports = await Download.find({
     organisation: organisation._id,
     upload: { $exists: true },
-    time: { $lt: cutOffDate } // DEBUG ONLY, uncomment
+    expireTTL: { $lt: todayDate } // DEBUG ONLY, uncomment
   });
 
 
