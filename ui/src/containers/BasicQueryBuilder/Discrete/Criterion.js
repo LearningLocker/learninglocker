@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { Map, Set, List } from 'immutable';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { isString } from 'lodash';
 import QueryBuilderAutoComplete from
   'ui/components/AutoComplete2/QueryBuilderAutoComplete';
 import Operator from '../Operator';
@@ -51,10 +52,11 @@ class Criterion extends Component {
   toInQuery = (items) => {
     const keyItems = items.reduce((acc, item) => acc.add(item.keySeq().first()), new Set());
 
+
     if (
       items.find(item => item.size > 1
-        || item.first().startsWith('$')
-      ) || keyItems.size > 1
+          || (!isString(item.first()) && item.first().keySeq().first().startsWith('$'))) ||
+      keyItems.size > 1
     ) {
       return new Map({ $or: items });
     }
