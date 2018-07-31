@@ -6,7 +6,7 @@ import moment from 'moment';
 import { map } from 'bluebird';
 import Organisation from 'lib/models/organisation';
 
-const expireExportsForOrgatinasion = async (organisation) => {
+const expireExportsForOrganisation = async (organisation) => {
   const todayDate = moment();
   // const cutOffDate = todayDate.subtract(ttl, 'seconds');
 
@@ -43,7 +43,7 @@ export default async function ({
     'settings.EXPIRE_EXPORTS.expireExports': true,
   });
 
-  await map(organisations, expireExportsForOrgatinasion);
+  await map(organisations, expireExportsForOrganisation);
 
   if (!dontExit) {
     process.exit();

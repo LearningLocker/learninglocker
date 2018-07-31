@@ -8,18 +8,25 @@ import moment from 'moment';
 import createdAt from 'ui/containers/Owner/CreatedAt';
 
 const DownloadListItem = (props) => {
-  const { download, deleteDownloadModel, exporationExport } = props;
+  // TODO: remove exporationExprots
+  const { download, deleteDownloadModel } = props;
 
-  const expireExports = moment(download.get('time')).add(exporationExport.get('ttl'), 'seconds');
-  const formattedExpireExports = createdAt(expireExports, {
-    future: 'Expires',
-    past: 'Expired' // If we're waiting for the schedualer no run
-  });
+  let expireExportsString = '';
+
+  if (download.get('expireTTL')) {
+    const expireExports = moment(download.get('expireTTL'));
+    const formattedExpireExports = createdAt(expireExports, {
+      future: 'Expires',
+      past: 'Expired' // If we're waiting for the schedualer no run
+    });
+    expireExportsString = ` - (${formattedExpireExports})`;
+  }
+
 
   if (download.get('isReady')) {
     return (
       <OptionListItem
-        label={`${download.get('name')} - (${formattedExpireExports})`}
+        label={`${download.get('name')}${expireExportsString}`}
         href={download.get('url')}
         target="_blank"
         rel="noreferrer noopener"
