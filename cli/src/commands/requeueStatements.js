@@ -1,7 +1,7 @@
 import logger from 'lib/logger';
 import Statement from 'lib/models/statement';
-import { map, toString } from 'lodash';
-import statementHandler, { addStatementToPendingQueues } from 'worker/handlers/statement/statementHandler';
+import { map } from 'lodash';
+import { addStatementToPendingQueues } from 'worker/handlers/statement/statementHandler';
 import highland from 'highland';
 import moment from 'moment';
 
@@ -20,7 +20,7 @@ export default function (lrsId, options) {
   logger.info('query: ', query);
 
   logger.info('Looking for statements...');
-  const statementStream = highland(Statement.find(query).select({_id:1, completedQueues: 1, processingQueues: 1}).cursor());
+  const statementStream = highland(Statement.find(query).select({ _id: 1, completedQueues: 1, processingQueues: 1 }).cursor());
 
   statementStream.on('error', (err) => {
     logger.error(err);
@@ -32,15 +32,14 @@ export default function (lrsId, options) {
   const queueAddStream = statementStream
     .batch(batchSize)
     .flatMap((statements) => {
-      const promises = map(statements, (statement) => {
+      const promises = map(statements, statement =>
         // do something with the mongoose document
-        return new Promise((resolve, reject) => {
-          addStatementToPendingQueues(statement, undefined, (err) => {
-            if (err) return reject(err);
-            return resolve();
-          });
-        });
-      });
+         new Promise((resolve, reject) => {
+           addStatementToPendingQueues(statement, undefined, (err) => {
+             if (err) return reject(err);
+             return resolve();
+           });
+         }));
       return highland(Promise.all(promises));
     });
 

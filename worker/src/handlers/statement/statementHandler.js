@@ -57,7 +57,7 @@ export const addStatementToPendingQueues = (statement, passedQueues, done) => {
     },
     {
       lean: true,
-      select: {_id: 1}
+      select: { _id: 1 }
     },
     (err) => {
       if (err) return done(err);
@@ -98,7 +98,7 @@ export default ({ status, statementId }, jobDone) => {
         {
           new: true,
           lean: true,
-          select: {_id: 1, completedQueues: 1, processingQueues: 1}
+          select: { _id: 1, completedQueues: 1, processingQueues: 1 }
         },
         (err, statement) => {
           if (err) logger.error('Statement.findByIdAndUpdate error', err);
@@ -115,7 +115,7 @@ export default ({ status, statementId }, jobDone) => {
     logger.debug(`NO STATUS, statementId: ${statementId}`);
     return Statement.findById(
       statementId,
-      {_id:1, completedQueues, processingQueues: 1},
+      { _id: 1, completedQueues: 1, processingQueues: 1 },
       (err, statement) => {
         addStatementToPendingQueues(statement, queueDependencies, (err) => {
           if (err) logger.error('addStatementToPendingQueues error', err);
