@@ -83,7 +83,7 @@ const addStatementToPendingQueues = (statement, queues, done) => {
 export default ({ status, statementId }, jobDone) => {
   try {
     if (status) {
-      logger.info(`COMPLETED ${statementId} - ${status}`);
+      logger.debug(`COMPLETED ${statementId} - ${status}`);
       return Statement.findByIdAndUpdate(
         statementId,
         {
