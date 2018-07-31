@@ -11,7 +11,10 @@ const DownloadListItem = (props) => {
   const { download, deleteDownloadModel, exporationExport } = props;
 
   const expireExports = moment(download.get('time')).add(exporationExport.get('ttl'), 'seconds');
-  const formattedExpireExports = createdAt(expireExports, 'Expires');
+  const formattedExpireExports = createdAt(expireExports, {
+    future: 'Expires',
+    past: 'Expired' // If we're waiting for the schedualer no run
+  });
 
   if (download.get('isReady')) {
     return (
@@ -20,8 +23,7 @@ const DownloadListItem = (props) => {
         href={download.get('url')}
         target="_blank"
         rel="noreferrer noopener"
-        onDelete={() => deleteDownloadModel({ id: download.get('_id') })} 
-        />
+        onDelete={() => deleteDownloadModel({ id: download.get('_id') })} />
     );
   }
 
