@@ -9,6 +9,12 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.4.2]
+### Fixes
+  - Worker garbage collection (#1214)
+  - Efficiencies for recalculation (#1216)
+  - Remove max memory restart values for PM2 and replace with garbage collection across the board
+
 ## [2.4.1]
 ### Fixes
   - Speeds up worker requests with SQS
