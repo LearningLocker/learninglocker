@@ -11,8 +11,8 @@
       "exec_mode": "cluster",
       "wait_ready": true,
       "listen_timeout": 30000,
-      "watch": [".env"],
-      "max_memory_restart" : "500M"
+      "node_args": "--max-executable-size=192 --max-old-space-size=256 --max-semi-space-size=2",
+      "watch": [".env"]
     },
     {
       "name": "UIServer",
@@ -25,8 +25,8 @@
       "exec_mode": "cluster",
       "wait_ready": true,
       "listen_timeout": 30000,
-      "watch": [".env"],
-      "max_memory_restart" : "500M"
+      "node_args": "--max-executable-size=192 --max-old-space-size=256 --max-semi-space-size=2",
+      "watch": [".env"]
     },
     {
       "name": "Worker",
@@ -41,7 +41,6 @@
       "listen_timeout": 30000,
       "node_args": "--max-executable-size=192 --max-old-space-size=256 --max-semi-space-size=2",
       "watch": [".env"],
-      "max_memory_restart" : "500M"
     },
     {
       "name": "Scheduler",
@@ -54,8 +53,8 @@
       "exec_mode": "cluster",
       "detached": true,
       "listen_timeout": 30000,
+      "node_args": "--max-executable-size=192 --max-old-space-size=256 --max-semi-space-size=2",
       "watch": [".env"],
-      "max_memory_restart" : "500M"
     }
   ]
 }
