@@ -348,7 +348,7 @@ const openLinkButton = ({ parentModel }) => compose(
 const dashboardSharingHandlers = withHandlers({
   addShareable: ({ updateModel, model }) => () => {
     const newShareable = model.get('shareable', new List()).push(new Map({
-      title: '~ Shareable',
+      title: 'Shareable',
       createdAt: new Date(),
     }));
     updateModel({

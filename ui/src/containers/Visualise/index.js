@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { routeNodeSelector } from 'redux-router5';
 import { withProps, compose } from 'recompose';
+import { createVisualisationName } from 'ui/utils/defaultTitles'
 import { Map, fromJS } from 'immutable';
 import { queryStringToQuery, modelQueryStringSelector } from 'ui/redux/modules/search';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
@@ -78,10 +79,10 @@ class Visualise extends Component {
             buttons={[PrivacyToggleButton, DeleteButton]}
             getDescription={model => (
               <span>
-                <span style={{ paddingRight: 5 }}>
+                <span style={{ paddingRight: 10 }}>
                   <VisualisationTypeIcon id={model.get('_id')} />
                 </span>
-                { model.get('description') || '~ Unnamed Visualisation'}
+                { model.get('description') || createVisualisationName(model)}
               </span>
             )} />
         </div>

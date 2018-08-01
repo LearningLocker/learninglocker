@@ -11,7 +11,7 @@ import {
   STATEMENTS,
   FREQUENCY,
   COUNTER,
-  PIE,
+  PIE
 } from 'ui/utils/constants';
 
 export default memoize((args = new Map()) => {
@@ -19,9 +19,18 @@ export default memoize((args = new Map()) => {
   const previewPeriod = args.get('previewPeriod');
   const today = args.get('today');
   const queryMatch = query.size === 0 ? [] : [{ $match: query }];
-  const previewPeriodMatch = [{ $match: {
+  const previousStartDate = periodToDate(previewPeriod, today, 2).toISOString();
+
+  let previewPeriodMatch = [{ $match: {
     timestamp: { $gte: { $dte: periodToDate(previewPeriod, today).toISOString() } }
   } }];
+
+  if (args.get('benchmarkingEnabled')) {
+    previewPeriodMatch = [{ $match: {
+      timestamp: { $gte: { $dte: previousStartDate }, $lte: { $dte: periodToDate(previewPeriod, today).toISOString() } }
+    } }];
+  }
+
   const type = args.get('type');
   const axes = args.get('axes');
   const preReqs = fromJS(previewPeriodMatch.concat(queryMatch));

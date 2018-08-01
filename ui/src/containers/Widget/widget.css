@@ -26,8 +26,13 @@
   padding: 8px; }
 
 .closeButton {
-  margin-right: 8px;
-  float: right; }
+  float: left;
+  padding-left: 20px !important; 
+  margin-right: 10px !important; 
+}
+.delete {
+  vertical-align: middle;
+}
 
 .open .menuButton {
   color: #CCC; }

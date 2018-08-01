@@ -11,7 +11,8 @@ import {
   LAST_6_MONTHS,
   LAST_24_HOURS,
   LAST_1_YEAR,
-  LAST_2_YEARS
+  LAST_2_YEARS,
+  TODAY
 } from 'ui/utils/constants';
 import Switch from 'ui/components/Material/Switch';
 import {
@@ -75,12 +76,14 @@ class StatementsForm extends Component {
     <Editor model={this.props.model} exportVisualisation={this.props.exportVisualisation} />
   );
 
-  renderTimePicker = () => (
+  renderTimePicker = () => {
+    return(
     <select
       id={`${this.props.model.get('_id')}previewPeriodInput`}
       className="form-control"
       value={this.props.model.get('previewPeriod')}
       onChange={this.onChangeAttr.bind(null, 'previewPeriod')}>
+      <option value={TODAY}>Today</option>
       <option value={LAST_24_HOURS}>Last 24 hours</option>
       <option value={LAST_7_DAYS}>Last 7 days</option>
       <option value={LAST_30_DAYS}>Last 30 days</option>
@@ -89,7 +92,7 @@ class StatementsForm extends Component {
       <option value={LAST_1_YEAR}>Last 1 year</option>
       <option value={LAST_2_YEARS}>Last 2 years</option>
     </select>
-  )
+  )}
 
   renderFormWithResults = () => (
     <div className="row">
@@ -112,7 +115,7 @@ class StatementsForm extends Component {
         </div>
       </div>
     </div>
-  )
+    );
 
   renderEditorOnly = () => (
     <div className="row">
