@@ -10,10 +10,12 @@ const ayV = 'axesyValue';
 const axg = 'axesgroup';
 
 export const shorten = (target) => {
+  console.log('target',target)
   if (target.length >= 20) {
     switch (true) {
       case target.indexOf(' ') !== -1: return target.split(' ')[0];
       case target.indexOf('.') !== -1: return target.split('.')[0];
+      case target.indexOf('%20') !== -1: return target.split('%20')[target.split('%20').length];
       default: return target.substring(0, 24);
     }
   } else {
@@ -21,10 +23,10 @@ export const shorten = (target) => {
   }
 };
 
-export const getLegend = (key, props) => {
-  const select = (ky, axis) => props.model.getIn([ky, 'searchString'], axis);
-  const x = shorten(props.model.get('axesxLabel', select(axv, 'X-Axis')));
-  const y = shorten(props.model.get('axesyLabel', select(axg, 'Y-Axis')));
+export const getLegend = (key, model) => {
+  const select = (ky, axis) => model.getIn([ky, 'searchString'], axis);
+  const x = shorten(model.get('axesxLabel', select(axv, 'X-Axis')));
+  const y = shorten(model.get('axesyLabel', select(axg, 'Y-Axis')));
   switch (key) {
     case 'x': return x.length > 1 ? x : shorten(select(axv, 'X-Axis'));
     case 'y': return y.length > 1 ? y : shorten(select(axg, 'Y-Axis'));

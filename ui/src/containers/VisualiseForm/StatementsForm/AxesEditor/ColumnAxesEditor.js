@@ -15,7 +15,9 @@ class ColumnAxesEditor extends BaseAxesEditor {
     groupOptions: PropTypes.instanceOf(Map)
   };
 
-  render = () => (
+  render = () => {
+    console.log('props',this.props)
+    return (
     <div>
       <div className="form-group">
         <label htmlFor="toggleInput" className="clearfix">X Axis</label>
@@ -23,10 +25,10 @@ class ColumnAxesEditor extends BaseAxesEditor {
           <DebounceInput
             id={'xAxisLabel'}
             className="form-control"
-            placeholder={getLegend('x', this.props)}
+            placeholder={getLegend('x', this.props.model)}
             debounceTimeout={377}
             style={{ fontWeight: 'bold' }}
-            value={getLegend('x', this.props)}
+            value={getLegend('x', this.props.model)}
             onChange={this.handleAxesChange.bind(this, 'xLabel')} />
         </div>
         <div className="form-group">
@@ -42,10 +44,10 @@ class ColumnAxesEditor extends BaseAxesEditor {
           <DebounceInput
             id={'yAxisLabel'}
             className="form-control"
-            placeholder={getLegend('y', this.props)}
+            placeholder={getLegend('y', this.props.model)}
             debounceTimeout={377}
             style={{ fontWeight: 'bold' }}
-            value={getLegend('y', this.props)}
+            value={getLegend('y', this.props.model)}
             onChange={this.handleAxesChange.bind(this, 'yLabel')} />
         </div>
         <div className="form-group">
@@ -58,7 +60,9 @@ class ColumnAxesEditor extends BaseAxesEditor {
         </div>
       </div>
     </div>
-  );
+  )
+}
+  ;
 }
 
 export default connect(() => ({}), { updateModel })(ColumnAxesEditor);

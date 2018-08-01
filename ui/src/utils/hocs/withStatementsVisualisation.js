@@ -74,6 +74,7 @@ const withStatementsVisualisation = (WrappedComponent) => {
           trendLines={this.props.model.get('trendLines', false)}
           axes={this.getAxes()}
           model={this.props.model}
+          visualisation={this.props.model}
           labels={this.props.model.get('filters', new List()).map(filter => filter.get('label'))}
           colors={this.props.model.get('filters', new List()).map((filter, index) => filter.get('color') || VISUALISATION_COLORS[index])}
           getFormattedResults={this.getFormattedResults} />

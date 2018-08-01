@@ -12,6 +12,7 @@ import Link from 'ui/containers/Link';
 import DropDownMenu from 'ui/components/DropDownMenu';
 import WidgetVisualisePicker from 'ui/containers/WidgetVisualisePicker';
 import VisualiseResults from 'ui/containers/VisualiseResults';
+import SourceResults from 'ui/containers/VisualiseResults/SourceResults';
 import DeleteConfirm from 'ui/containers/DeleteConfirm';
 import { createDefaultTitle } from 'ui/utils/defaultTitles';
 import styles from './widget.css';
@@ -112,6 +113,7 @@ class Widget extends Component {
               <i className={`ion ${styles.marginRight} ion-edit grey`} />
               Go to visualisation
             </Link>
+            
         }
         <a onClick={this.openModal.bind(null, VISUALISATION)} title="Widget settings">
           <i className={`ion ${styles.marginRight} ion-gear-b grey`} />
@@ -157,8 +159,9 @@ class Widget extends Component {
             </div>
           </div>
           <div className={`panel-body ${styles.body}`}>
-            { model.has('visualisation') &&
-              <VisualiseResults id={model.get('visualisation')} />
+            {!this.props.visualisation.get('sourceView') && model.has('visualisation') && <VisualiseResults id={model.get('visualisation')} />}
+            {this.props.visualisation.get('sourceView') &&
+              <SourceResults id={model.get('visualisation')} />
             }
           </div>
           {

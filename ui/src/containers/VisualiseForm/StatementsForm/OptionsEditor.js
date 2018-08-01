@@ -3,33 +3,39 @@ import { connect } from 'react-redux';
 import { compose, withHandlers } from 'recompose';
 import { updateModel } from 'ui/redux/modules/models';
 import Switch from 'ui/components/Material/Switch';
-import { XVSY, FIVE, TEN, FIFTEEN, TWENTY, LEADERBOARD, COUNTER } from 'ui/utils/constants';
+import { XVSY, FIVE, TEN, FIFTEEN, TWENTY, LEADERBOARD, COUNTER, STATEMENTS, PIE, FREQUENCY } from 'ui/utils/constants';
 import { setInMetadata } from 'ui/redux/modules/metadata';
 
-const XvsYOptionsEditorComponent = ({ model, trendLinesHandler }) => (<div>
+const DefaultEditorComponent = ({ model, sourceViewHandler }) => (
+  <div className="form-group">
+    <Switch
+      label="View as table"
+      id={'DefaultEditorComponent'}
+      checked={model.get('sourceView')}
+      onChange={sourceViewHandler} />
+  </div>
+);
 
-  <Switch
-    checked={model.get('trendLines')}
-    label="Trend Lines"
-    onChange={trendLinesHandler} />
-</div>);
+const XvsYOptionsEditorComponent = ({ model, trendLinesHandler, sourceViewHandler }) => (
+  <div className="form-group">
+    <Switch
+      label="View as table"
+      id={'XvsYOptionsEditorComponent'}
+      checked={model.get('sourceView')}
+      onChange={sourceViewHandler} />
+    {!model.get('sourceView') && <Switch
+      checked={model.get('trendLines')}
+      label="Trend Lines"
+      onChange={trendLinesHandler} />}
+  </div>);
 
-export const XvsYOptionsEditor = compose(
-  connect(() => ({}), { updateModel }),
-  withHandlers({
-    trendLinesHandler: ({ updateModel: updateModelAction, model }) => (value) => {
-      updateModelAction({
-        schema: 'visualisation',
-        id: model.get('_id'),
-        path: 'trendLines',
-        value
-      });
-    }
-  })
-)(XvsYOptionsEditorComponent);
-
-const BarEditorComponent = ({ model, barChartGroupingLimitHandler }) => (
-  <div>
+const BarEditorComponent = ({ model, sourceViewHandler, barChartGroupingLimitHandler }) => (
+  <div className="form-group">
+    <Switch
+      label="View as table"
+      id={'BarEditorComponent'}
+      checked={model.get('sourceView')}
+      onChange={sourceViewHandler} />
     <select
       id={'barEditorComponent'}
       className={'options-menu'}
@@ -55,6 +61,28 @@ const CounterEditorComponent = ({ model, benchmarkingHandler }) => (
   </div>
 );
 
+export const XvsYOptionsEditor = compose(
+  connect(() => ({}), { updateModel }),
+  withHandlers({
+    trendLinesHandler: ({ updateModel: updateModelAction, model }) => (value) => {
+      updateModelAction({
+        schema: 'visualisation',
+        id: model.get('_id'),
+        path: 'trendLines',
+        value
+      });
+    },
+    sourceViewHandler: ({ updateModel: updateModelAction, model }) => {
+      updateModelAction({
+        schema: 'visualisation',
+        id: model.get('_id'),
+        path: 'sourceView',
+        value: !model.get('sourceView')
+      });
+    }
+  })
+)(XvsYOptionsEditorComponent);
+
 const BarEditor = compose(
   connect(() => ({}), { updateModel, setInMetadata }),
   withHandlers({
@@ -72,6 +100,14 @@ const BarEditor = compose(
         id: model.get('_id'),
         path: ['activePage'],
         value: 0
+      });
+    },
+    sourceViewHandler: ({ updateModel: updateModelAction, model }) => {
+      updateModelAction({
+        schema: 'visualisation',
+        id: model.get('_id'),
+        path: 'sourceView',
+        value: !model.get('sourceView')
       });
     }
   })
@@ -91,13 +127,29 @@ const CounterEditor = compose(
   })
 )(CounterEditorComponent);
 
+const DefaultEditor = compose(
+  connect(() => ({}), { updateModel }),
+  withHandlers({
+    sourceViewHandler: ({ updateModel: updateModelAction, model }) => {
+      updateModelAction({
+        schema: 'visualisation',
+        id: model.get('_id'),
+        path: 'sourceView',
+        value: !model.get('sourceView')
+      });
+    }
+  })
+)(DefaultEditorComponent);
+
 const OptionsEditor = ({ model }) => (
   <div>
     {model.get('type') === XVSY && <XvsYOptionsEditor model={model} />}
     {(model.get('type') === LEADERBOARD) && <BarEditor model={model} />}
     {(model.get('type') === COUNTER) && <CounterEditor model={model} />}
+    {(model.get('type') === STATEMENTS) && <DefaultEditor model={model} />}
+    {(model.get('type') === PIE) && <DefaultEditor model={model} />}
+    {(model.get('type') === FREQUENCY) && <DefaultEditor model={model} />}
   </div>
 );
-
 
 export default OptionsEditor;

@@ -20,7 +20,9 @@ class CustomTooltip extends Component {
 
     if (active) {
       const { payload, label } = this.props;
+      console.log('​CustomTooltip -> render -> payload', this.props);
       return (
+        <div></div>
         <div className={styles.customTooltip}>
           <p className={styles.label}>{`${display(label)}`}</p>
           <div className={styles.value}>
