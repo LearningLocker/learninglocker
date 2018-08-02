@@ -40,7 +40,7 @@
       "wait_ready": true,
       "listen_timeout": 30000,
       "node_args": "--max-executable-size=192 --max-old-space-size=256 --max-semi-space-size=2",
-      "watch": [".env"],
+      "watch": [".env"]
     },
     {
       "name": "Scheduler",
@@ -54,7 +54,7 @@
       "detached": true,
       "listen_timeout": 30000,
       "node_args": "--max-executable-size=192 --max-old-space-size=256 --max-semi-space-size=2",
-      "watch": [".env"],
+      "watch": [".env"]
     }
   ]
 }
