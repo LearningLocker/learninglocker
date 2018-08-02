@@ -17,6 +17,8 @@ const getAxes = (index, axes) => {
   }
 };
 
+const moreThanOneSeries = (tData) => tData.first().size > 1;
+
 // Save some logs for those long winters of content
 // const shortenResult = (result, length) => {
 //   if (result.length > length) {
@@ -70,12 +72,14 @@ export default compose(
     <div className={styles.sourceResultsContainer}>
       <table className="table table-bordered table-striped">
         <tbody>
-          <tr>
+          {moreThanOneSeries(tableData) && <tr>
             <th />
-            {tableData.first().map((item, key) => (
+            {tableData.first().map((item, key) => {
+              console.log('​item', key);
+              return (
               <th colSpan={item.size}>{key}</th>
-            ))}
-          </tr>
+            )})}
+          </tr>}
           <tr>
             <th>{getLegend('y', visualisation)}</th>
             {
@@ -90,7 +94,8 @@ export default compose(
             <tr>
               <td>{key}</td>
               {item.map(series =>
-                series.map(axes2 =>(<td>{axes2.get('count')}</td>)
+                series.map(axes2 =>{ console.log('axes2', axes2)
+                  return (<td>{axes2.get('count')}</td>)}
                 )
               )}
             </tr>

@@ -2,7 +2,7 @@ import formatDate from 'ui/utils/visualisations/helpers/formatDate';
 import { map as periodMap } from 'ui/utils/visualisations/projections/period';
 
 const map = {
-  people: '$statement.actor',
+  people: '$person.display',
   activities: {
     id: '$statement.object.id',
     definition: {
