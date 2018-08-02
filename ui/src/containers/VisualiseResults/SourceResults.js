@@ -72,7 +72,7 @@ const formatKeyToFriendlyString = (key) => {
 };
 
 const getAxisLabel = (axis, visualisation, type, axesKey) => {
-  if (!type === 'XVSY') {
+  if (!(type === 'XVSY')) {
     return getLegend(axis, visualisation);
   }
   return getLegend(axis, visualisation, 'XVSY', axesKey);
