@@ -13,7 +13,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Fixes
   - Worker garbage collection (#1214)
   - Efficiencies for recalculation (#1216)
-  - Remove max memory restart values for PM2 and replace with garbage collection across the board
+  - Remove max memory restart values for PM2 and replace with garbage collection on all services
 
 ## [2.4.1]
 ### Fixes
