@@ -21,7 +21,7 @@ export const shorten = (target) => {
   }
 };
 
-export const getLegend = (key, model, type = "yomuma", axesKey = null) => {
+export const getLegend = (key, model, type = null, axesKey = null) => {
   const select = (ky, axis) => model.getIn([ky, 'searchString'], axis);
   const x = shorten(model.get('axesxLabel', select(axv, 'X-Axis')));
   const y = shorten(model.get('axesyLabel', select(axg, 'Y-Axis')));
