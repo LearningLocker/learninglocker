@@ -10,7 +10,6 @@ const ayV = 'axesyValue';
 const axg = 'axesgroup';
 
 export const shorten = (target) => {
-  console.log('target',target)
   if (target.length >= 20) {
     switch (true) {
       case target.indexOf(' ') !== -1: return target.split(' ')[0];

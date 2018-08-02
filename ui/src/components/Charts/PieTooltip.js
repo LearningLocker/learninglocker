@@ -20,7 +20,7 @@ class PieTooltip extends Component {
     label || `Series ${i + 1}`
 
   getValue = entry => i =>
-    round(entry[`s${i}`], 2)
+    round(entry.payload[`s${i}`], 2);
 
   renderLabel = entry => (label, i) => (
     <p key={i}>
@@ -36,7 +36,7 @@ class PieTooltip extends Component {
       const entry = payload[0];
       return (
         <div className={styles.customTooltip}>
-          <p className={styles.label}>{`${display(entry.id)}`}</p>
+          <p className={styles.label}>{`${display(entry.payload.id)}`}</p>
           <div className={styles.value}>
             {labels.map(this.renderLabel(entry))}
           </div>

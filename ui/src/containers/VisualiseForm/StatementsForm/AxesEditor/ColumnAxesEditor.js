@@ -15,9 +15,7 @@ class ColumnAxesEditor extends BaseAxesEditor {
     groupOptions: PropTypes.instanceOf(Map)
   };
 
-  render = () => {
-    console.log('props',this.props)
-    return (
+  render = () => (
     <div>
       <div className="form-group">
         <label htmlFor="toggleInput" className="clearfix">X Axis</label>
@@ -61,8 +59,6 @@ class ColumnAxesEditor extends BaseAxesEditor {
       </div>
     </div>
   )
-}
-  ;
 }
 
 export default connect(() => ({}), { updateModel })(ColumnAxesEditor);

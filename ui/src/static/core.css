@@ -3078,7 +3078,7 @@ select[multiple].input-lg {
 .btn.focus,
 .btn:active.focus,
 .btn.active.focus {
-  outline-color: #525252;
+  outline-color: #c07718;
   outline-offset: -2px;
 }
 .btn:hover,
@@ -6865,8 +6865,8 @@ section, div {
   border: 0px; }
 
 .btn-primary:hover {
-  background: #ED7030;
-  border-color: #ED7030; }
+  background: #f19500;
+  border-color: #f19500; }
 
 .btn-inverse,
 .btn-inverse:visited,
