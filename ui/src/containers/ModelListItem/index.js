@@ -54,7 +54,6 @@ export class ModelListItem extends Component {
       displayOwner,
       ...other
     } = this.props;
-    console.log('ModelListItem', this.props)
     const isExpanded = !!getMetadata('isExpanded');
 
     const wrapClasses = classNames({

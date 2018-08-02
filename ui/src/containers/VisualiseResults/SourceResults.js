@@ -1,10 +1,12 @@
 import React from 'react';
 import { compose } from 'recompose';
-import { OrderedMap } from 'immutable';
+import { Map, OrderedMap } from 'immutable';
+import isString from 'lodash/isString';
 import { withStatementsVisualisation } from 'ui/utils/hocs';
-import { getLegend  } from 'ui/utils/defaultTitles';
+import { getLegend } from 'ui/utils/defaultTitles';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import styles from './styles.css';
+import { displayVerb, displayActivity } from '../../utils/xapi';
 
 const getAxes = (index, axes) => {
   switch (index) {
@@ -17,24 +19,13 @@ const getAxes = (index, axes) => {
   }
 };
 
-const moreThanOneSeries = (tData) => tData.first().size > 1;
-
-// Save some logs for those long winters of content
-// const shortenResult = (result, length) => {
-//   if (result.length > length) {
-//     return `...${result.substring(result.length - length || 0, result.length)}`;
-//   } else {
-//     return result
-//   }
-// }
-
-// const getWidth = widgetWidth => Math.round(widgetWidth * 5);
+const moreThanOneSeries = tData => tData.first().size > 1;
 
 export const generateTableData = (results, labels, axes) => {
   const seriesList = labels.zip(results);
   const seriesList2 = seriesList.map(([key, item], i) => {
     if (key === undefined) {
-      return [`s${i}`, item];
+      return [`Series ${i}`, item];
     }
     return [key, item];
   });
@@ -55,6 +46,37 @@ export const generateTableData = (results, labels, axes) => {
   return result;
 };
 
+const formatKeyToFriendlyString = (key) => {
+  // return directly if just a string
+  if (isString(key)) return key;
+
+  if (Map.isMap(key)) {
+    if (key.get('objectType')) {
+      // call xapi activity helper
+      return displayActivity(key);
+    }
+    if (key.get('display')) {
+      // call xapi verb helper
+      return displayVerb(key);
+    }
+
+    if (key.has('id')) {
+      // if it has an id, lets just throw that back
+      return key.get('id');
+    }
+
+    return JSON.stringify(key.toJS(), null, 2);
+  }
+
+  return JSON.stringify(key, null, 2);
+};
+
+const getAxisLabel = (axis, visualisation, type, axesKey) => {
+  if (!type === 'XVSY') {
+    return getLegend(axis, visualisation);
+  }
+  return getLegend(axis, visualisation, 'XVSY', axesKey);
+};
 export default compose(
   withStatementsVisualisation,
   withStyles(styles)
@@ -68,34 +90,31 @@ export default compose(
 }) => {
   const formattedResults = getFormattedResults(results);
   const tableData = generateTableData(formattedResults, labels, axes);
-    return (
+  return (
     <div className={styles.sourceResultsContainer}>
       <table className="table table-bordered table-striped">
         <tbody>
           {moreThanOneSeries(tableData) && <tr>
             <th />
-            {tableData.first().map((item, key) => {
-              console.log('​item', key);
-              return (
+            {tableData.first().map((item, key) => (
               <th colSpan={item.size}>{key}</th>
-            )})}
+            ))}
           </tr>}
           <tr>
-            <th>{getLegend('y', visualisation)}</th>
+            <th>{getAxisLabel('y', visualisation, model.get('type'))}</th>
             {
               tableData.first().map(series => (
                 series.map((axes2, axesKey) => (
-                  <th>{getLegend('x', visualisation)}</th>
+                  <th>{getAxisLabel('x', visualisation, model.get('type'), axesKey)}</th>
                 ))
               ))
             }
           </tr>
           {tableData.map((item, key) => (
             <tr>
-              <td>{key}</td>
+              <td>{formatKeyToFriendlyString(key)}</td>
               {item.map(series =>
-                series.map(axes2 =>{ console.log('axes2', axes2)
-                  return (<td>{axes2.get('count')}</td>)}
+                series.map(axes2 => (<td>{axes2.get('count')}</td>)
                 )
               )}
             </tr>

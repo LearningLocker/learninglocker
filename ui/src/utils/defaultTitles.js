@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { COMPONENT, TEXT } from 'ui/utils/constants';
 import uuid from 'uuid';
 import VisualisationTypeIcon from '../containers/Visualise/VisualisationTypeIcon';
@@ -22,13 +21,23 @@ export const shorten = (target) => {
   }
 };
 
-export const getLegend = (key, model) => {
+export const getLegend = (key, model, type = "yomuma", axesKey = null) => {
   const select = (ky, axis) => model.getIn([ky, 'searchString'], axis);
   const x = shorten(model.get('axesxLabel', select(axv, 'X-Axis')));
   const y = shorten(model.get('axesyLabel', select(axg, 'Y-Axis')));
+  const getResultForXY = () => (axesKey === 'X-Axes' ? model.getIn([axV, 'searchString'], 'X-Axis') : model.getIn([ayV, 'searchString'], 'Y-Axis'));
+  if (type !== 'XVSY') {
+    switch (key) {
+      case 'x': return x.length > 1 ? x : shorten(select(axv, 'X-Axis'));
+      case 'y': return y.length > 1 ? y : shorten(select(axg, 'Y-Axis'));
+      default: return null;
+    }
+  }
   switch (key) {
-    case 'x': return x.length > 1 ? x : shorten(select(axv, 'X-Axis'));
+    case 'x': return getResultForXY(axesKey);
+    // shorten(select(axv, 'X-Axis'))
     case 'y': return y.length > 1 ? y : shorten(select(axg, 'Y-Axis'));
+    // shorten(select(axg, 'Y-Axis')) THIS WORKS
     default: return null;
   }
 };

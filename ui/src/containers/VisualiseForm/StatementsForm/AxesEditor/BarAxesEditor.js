@@ -26,7 +26,7 @@ export class BarAxesEditor extends BaseAxesEditor {
             debounceTimeout={377}
             style={{ fontWeight: 'bold' }}
             value={getLegend('x', this.props.model)}
-            onChange={this.handleAxesChange.bind(this, 'yLabel')} />
+            onChange={this.handleAxesChange.bind(this, 'xLabel')} />
         </div>
         <div className="form-group">
           <CountEditor
@@ -47,7 +47,7 @@ export class BarAxesEditor extends BaseAxesEditor {
             debounceTimeout={377}
             style={{ fontWeight: 'bold' }}
             value={getLegend('y', this.props.model)}
-            onChange={this.handleAxesChange.bind(this, 'xLabel')} />
+            onChange={this.handleAxesChange.bind(this, 'yLabel')} />
         </div>
         <div className="form-group">
           <GroupEditor

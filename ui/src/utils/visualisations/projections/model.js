@@ -4,6 +4,7 @@ import { map as periodMap } from 'ui/utils/visualisations/projections/period';
 const map = {
   people: '$person.display',
   activities: {
+    objectType: '$statement.object.objectType',
     id: '$statement.object.id',
     definition: {
       name: '$statement.object.definition.name'
