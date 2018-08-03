@@ -66,7 +66,9 @@ const withStatementsVisualisation = (WrappedComponent) => {
     getAxes = () => unflattenAxes(this.props.model);
 
     renderPreview = () =>
-      (
+      { 
+        console.log('​WithStatementsVisualisation -> withStatementsVisualisation -> this.props', this.props);
+        return (
         <WrappedComponent
           {...this.props}
           previewPeriod={this.props.model.get('previewPeriod')}
@@ -78,7 +80,7 @@ const withStatementsVisualisation = (WrappedComponent) => {
           labels={this.props.model.get('filters', new List()).map(filter => filter.get('label'))}
           colors={this.props.model.get('filters', new List()).map((filter, index) => filter.get('color') || VISUALISATION_COLORS[index])}
           getFormattedResults={this.getFormattedResults} />
-      );
+      )};
 
     renderSpinner = () => (
       <div
