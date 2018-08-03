@@ -11,7 +11,9 @@ export default withStatementsVisualisation(({
   model,
   axes,
   trendLines
-}) => (
+}) => { 
+  console.log('xy', model, axes)
+  return (
   <XvsY
     colors={colors}
     results={getFormattedResults(results)}
@@ -22,4 +24,4 @@ export default withStatementsVisualisation(({
       xLabel: shorten(model.getIn(['axesxValue', 'searchString'], 'X-Axis')),
       yLabel: shorten(model.getIn(['axesyValue', 'searchString'], 'Y-Axis'))
     }} />
-  ));
+  )});

@@ -19,8 +19,8 @@ export default withStatementsVisualisation(({
       stacked={stacked}
       model={model}
       axesLabels={{
-        yLabel: shorten(axes.get('xLabel', axes.getIn(['group', 'searchString'], 'X-Axis'))),
-        xLabel: shorten(axes.get('yLabel', axes.getIn(['value', 'searchString'], 'Y-Axis')))
+        yLabel: shorten(axes.get('yLabel', axes.getIn(['group', 'searchString'], 'Y-Axis'))),
+        xLabel: shorten(axes.get('xLabel', axes.getIn(['value', 'searchString'], 'X-Axis')))
       }} />
   )
 );

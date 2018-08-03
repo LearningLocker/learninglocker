@@ -108,6 +108,10 @@ class XvsY extends Component {
     this.getModelsOfSeries(this.props.results.map(this.getSeriesData))
   )
 
+  log = (data) => {
+    console.log('log', data)
+  }
+
   hasData = () => this.getLargestSeriesSize() < 1
 
   displayModelAtPosition = models => (x, y) => (
@@ -143,11 +147,12 @@ class XvsY extends Component {
     </ScatterChart>
     )
 
-  renderChart = () => (
+  renderChart = () => { console.log('xychart', this.props.model )
+    return (
     <div className={styles.chart}>
       <div className={`${styles.barContainer}`}>
-          <span className={styles.yAxis}>
-            {this.props.axesLabels.yLabel || 'Y Axis'}
+          <span className={styles.yAxis}>{this.log(this.props.model.get('axesyLabel'))}
+            {this.props.model.get('axesyLabel')|| this.props.axesLabels.yLabel || 'Y Axis'}
           </span>
         <div className={styles.chartWrapper}>
           <AutoSizer forceChange={this.props.results}>
@@ -157,11 +162,11 @@ class XvsY extends Component {
       </div>
       <div className={styles.xAxisLabel}>
         <span className={styles.xAxis}>
-          {this.props.axesLabels.xLabel || 'X Axis'}
+          {this.props.model.get('axesxLabel') || this.props.axesLabels.xLabel || 'X Axis'}
         </span>
       </div>
     </div>
-  )
+  )}
 
   render = () => (
     this.hasData() ? <NoData /> : this.renderChart()

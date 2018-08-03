@@ -22,7 +22,7 @@ export class LineAxesEditor extends BaseAxesEditor {
             <DebounceInput
               id={'yAxisLabel'}
               className="form-control"
-              placeholder={getLegend('y', this.props.model)}
+              placeholder={this.props.model.getIn(['axesvalue', 'searchString'], 'Y-Axis')}
               debounceTimeout={377}
               style={{ fontWeight: 'bold' }}
               value={getLegend('y', this.props.model)}
@@ -44,10 +44,10 @@ export class LineAxesEditor extends BaseAxesEditor {
           <DebounceInput
             id={'xAxisLabel'}
             className="form-control"
-            placeholder={getLegend('x', this.props.model)}
+            placeholder={'yyyy/mm/dd'}
             debounceTimeout={377}
             style={{ fontWeight: 'bold' }}
-            value={getLegend('x', this.props.model)}
+            value={getLegend('y', this.props.model)}
             onChange={this.handleAxesChange.bind(this, 'xLabel')} />
         </div>
       </div>

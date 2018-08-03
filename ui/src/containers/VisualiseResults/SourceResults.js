@@ -77,6 +77,20 @@ const getAxisLabel = (axis, visualisation, type, axesKey) => {
   }
   return getLegend(axis, visualisation, 'XVSY', axesKey);
 };
+
+const createSelectIfXVSY = (series, visualisation, type, axesKey, axis) => {
+  if (type !== 'XVSY') {
+    return getAxisLabel(axis, visualisation, null, axesKey);
+  }
+  if (axesKey.length) {
+    return axesKey;
+  }
+  if (series) {
+    return getAxisLabel('y', visualisation, 'XVSY');
+  }
+  return getAxisLabel('x', visualisation, 'XVSY');
+};
+
 export default compose(
   withStatementsVisualisation,
   withStyles(styles)
@@ -104,9 +118,10 @@ export default compose(
             <th>{getAxisLabel('y', visualisation, model.get('type'))}</th>
             {
               tableData.first().map(series => (
-                series.map((axes2, axesKey) => (
-                  <th>{getAxisLabel('x', visualisation, model.get('type'), axesKey)}</th>
-                ))
+                series.map((axes2, axesKey) => {
+                  return (
+                  <th>{createSelectIfXVSY(series, visualisation, model.get('type'), axesKey, 'x')}</th>
+                )})
               ))
             }
           </tr>
