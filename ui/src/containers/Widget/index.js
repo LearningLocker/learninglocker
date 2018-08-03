@@ -142,12 +142,11 @@ class Widget extends Component {
           Settings
         </a>
         { this.props.editable &&
-          <span
+          <a
             onClick={this.openDeleteModal}
-            title="Delete Widget"
-            className={styles.closeButton}>
+            title="Delete Widget">
             <i className={`ion ${styles.marginRight}  ion-close-round grey`} />Delete
-          </span>
+          </a>
                     }
       </DropDownMenu>
     );
