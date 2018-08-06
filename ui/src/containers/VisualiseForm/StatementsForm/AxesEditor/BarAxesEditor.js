@@ -6,7 +6,6 @@ import DebounceInput from 'react-debounce-input';
 import CountEditor from './CountEditor';
 import GroupEditor from './GroupEditor';
 import BaseAxesEditor from './BaseAxesEditor';
-import { getLegend } from 'ui/utils/defaultTitles';
 
 export class BarAxesEditor extends BaseAxesEditor {
   static propTypes = {
@@ -22,11 +21,11 @@ export class BarAxesEditor extends BaseAxesEditor {
           <DebounceInput
             id={'xAxisLabel'}
             className="form-control"
-            placeholder={getLegend('x', this.props)}
+            placeholder={this.props.model.getIn(['axesvalue', 'searchString'], 'X-Axis')}
             debounceTimeout={377}
             style={{ fontWeight: 'bold' }}
-            value={getLegend('x', this.props)}
-            onChange={this.handleAxesChange.bind(this, 'yLabel')} />
+            value={this.props.model.axesxLabel}
+            onChange={this.handleAxesChange.bind(this, 'xLabel')} />
         </div>
         <div className="form-group">
           <CountEditor
@@ -43,11 +42,11 @@ export class BarAxesEditor extends BaseAxesEditor {
           <DebounceInput
             id={'yAxisLabel'}
             className="form-control"
-            placeholder={getLegend('y', this.props)}
+            placeholder={this.props.model.getIn(['axesgroup', 'searchString'], 'Y-Axis')}
             debounceTimeout={377}
             style={{ fontWeight: 'bold' }}
-            value={getLegend('y', this.props)}
-            onChange={this.handleAxesChange.bind(this, 'xLabel')} />
+            value={this.props.model.axesyLabel}
+            onChange={this.handleAxesChange.bind(this, 'yLabel')} />
         </div>
         <div className="form-group">
           <GroupEditor

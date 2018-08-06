@@ -152,7 +152,7 @@ const onLegendClick = toggleHiddenSeries => (bar) => {
 export const renderLegend = (labels, toggleHiddenSeries) =>
   (labels.size > 1 ?
     <Legend
-      onClick={toggleHiddenSeries ? onLegendClick(toggleHiddenSeries) : null} /> : <noscript />
+      verticalAlign="top" align="center" height={30} onClick={toggleHiddenSeries ? onLegendClick(toggleHiddenSeries) : null} /> : <noscript />
   );
 
 export const renderTooltips = (data, hiddenSeries, colors = ['grey']) =>

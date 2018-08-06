@@ -49,11 +49,11 @@ const renderLineChart = (labels, toggleHiddenSeries, hiddenSeries) => colors => 
   </Chart>
   );
 
-const renderChart = (component, axesLabels, chartWrapperFn) => (
+const renderChart = (component, axesLabels, chartWrapperFn, model) => (
   <div className={styles.chart}>
     <div className={`${styles.barContainer}`}>
         <span className={styles.yAxis}>
-          {axesLabels.yLabel || this.props.model.getIn(['axesgroup', 'searchString'], 'Y-Axis')}
+          {axesLabels.yLabel || model.getIn(['axesvalue', 'searchString'], 'Y-Axis')}
         </span>
       <div className={styles.chartWrapper}>
         {chartWrapperFn(component)}
@@ -61,7 +61,7 @@ const renderChart = (component, axesLabels, chartWrapperFn) => (
     </div>
     <div className={styles.xAxisLabel}>
       <span className={styles.xAxis}>
-        {axesLabels.xLabel || this.props.model.getIn(['axesvalue', 'searchString'], 'X-Axis')}
+        {axesLabels.xLabel || 'yyyy/mm/dd'}
       </span>
     </div>
   </div>
@@ -70,8 +70,8 @@ const renderChart = (component, axesLabels, chartWrapperFn) => (
 const renderChartResults = (labels, toggleHiddenSeries, hiddenSeries) => colors => results =>
   renderLineChart(labels, toggleHiddenSeries, hiddenSeries)(colors)(getSortedData(results)(labels));
 
-const renderResults = results => (labels, toggleHiddenSeries, hiddenSeries) => colors => axesLabels => chartWrapperFn =>
-  renderChart(renderChartResults(labels, toggleHiddenSeries, hiddenSeries)(colors)(results), axesLabels, chartWrapperFn);
+const renderResults = results => (labels, toggleHiddenSeries, hiddenSeries) => colors => axesLabels => chartWrapperFn => model =>
+  renderChart(renderChartResults(labels, toggleHiddenSeries, hiddenSeries)(colors)(results), axesLabels, chartWrapperFn, model);
 
 export default compose(
   withStyles(styles),
@@ -83,7 +83,8 @@ export default compose(
   axesLabels,
   chartWrapperFn = component => (<AutoSizer>{component}</AutoSizer>),
   toggleHiddenSeries,
-  hiddenSeries
+  hiddenSeries,
+  model
 }) =>
-  (hasData(results) ? renderResults(results)(labels, toggleHiddenSeries, hiddenSeries)(colors)(axesLabels)(chartWrapperFn) : <NoData />)
+  (hasData(results) ? renderResults(results)(labels, toggleHiddenSeries, hiddenSeries)(colors)(axesLabels)(chartWrapperFn)(model) : <NoData />)
 );

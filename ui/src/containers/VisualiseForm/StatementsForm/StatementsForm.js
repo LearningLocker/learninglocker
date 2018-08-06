@@ -14,7 +14,6 @@ import {
   LAST_2_YEARS,
   TODAY
 } from 'ui/utils/constants';
-import Switch from 'ui/components/Material/Switch';
 import {
   getMetadataSelector,
   setInMetadata
@@ -56,28 +55,11 @@ class StatementsForm extends Component {
     value: e.target.value
   })
 
-  toggleSource = (value) => {
-    this.props.setInMetadata({
-      schema: SCHEMA,
-      id: this.props.model.get('_id'),
-      path: ['source'],
-      value
-    });
-  }
-
-  renderSourceToggle = () => (
-    <Switch
-      checked={this.props.source}
-      label="Source"
-      onChange={this.toggleSource} />
-  );
-
   renderEditor = () => (
     <Editor model={this.props.model} exportVisualisation={this.props.exportVisualisation} />
   );
 
-  renderTimePicker = () => {
-    return(
+  renderTimePicker = () => (
     <select
       id={`${this.props.model.get('_id')}previewPeriodInput`}
       className="form-control"
@@ -92,7 +74,7 @@ class StatementsForm extends Component {
       <option value={LAST_1_YEAR}>Last 1 year</option>
       <option value={LAST_2_YEARS}>Last 2 years</option>
     </select>
-  )}
+  )
 
   renderFormWithResults = () => (
     <div className="row">
@@ -101,21 +83,18 @@ class StatementsForm extends Component {
       </div>
       <div
         className="col-md-6">
-        <div style={{ float: 'left' }}>
-          { this.renderSourceToggle() }
-        </div>
         <div className="form-group form-inline" style={{ textAlign: 'right' }}>
           { this.renderTimePicker() }
         </div>
         <div style={{ height: '400px', paddingTop: 5 }}>
-          {!this.props.source && <VisualiseResults id={this.props.model.get('_id')} />}
-          {this.props.source &&
+          {!this.props.model.get('sourceView') && <VisualiseResults id={this.props.model.get('_id')} />}
+          {this.props.model.get('sourceView') &&
             <SourceResults id={this.props.model.get('_id')} />
           }
         </div>
       </div>
     </div>
-    );
+  );
 
   renderEditorOnly = () => (
     <div className="row">

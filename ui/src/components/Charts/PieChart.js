@@ -22,8 +22,10 @@ const getInnerRadius = size => i =>
 const getOuterRadius = size => i =>
   (size * (i + 1)) + (cellPadding * i);
 
-const getPieSize = cells =>
-  175 / cells;
+const getPieSize = ( cells, maxSize = 375 ) => {
+  const widgetSize = maxSize
+  return (widgetSize / 2.5) / cells;
+}
 
 const sortData = data =>
   data.sortBy(e => e.get('total'));
@@ -41,31 +43,27 @@ const renderCell = numberOfEntries => color => (entry, i) => (
     key={`cell-${i}`} />
 );
 
-const renderTooltips = labels => data =>
-  (<Tooltip content={<PieTooltip display={getLongModel(data)} labels={labels} />} />);
+const renderTooltips = labels => data => count => grouping => (<Tooltip content={<PieTooltip display={getLongModel(data)} labels={labels} count={count} grouping={grouping}/>} />);
 
 
-const renderPie = colors => data => (label, i, labels) =>
-  (
+const renderPie = colors => data => maxSize => (label, i, labels) =>(
     <Pie
       key={i}
       data={getChartData(data)}
       nameKey={'_id'}
       dataKey={`s${i}`}
-      innerRadius={getInnerRadius(getPieSize(labels.size))(i)}
-      outerRadius={getOuterRadius(getPieSize(labels.size))(i)}>
-      {/* innerRadius={90} */}
+      innerRadius={getInnerRadius(getPieSize(labels.size, maxSize))(i)}
+      outerRadius={getOuterRadius(getPieSize(labels.size, maxSize))(i)}>
       {data.valueSeq().map(renderCell(data.size)(colors.get(i)))}
     </Pie>
   );
+const renderPies = labels => colors => data => maxSize =>
+  labels.map(renderPie(colors)(data)(maxSize)).valueSeq();
 
-const renderPies = labels => colors => data =>
-  labels.map(renderPie(colors)(data)).valueSeq();
-
-const renderPieChart = labels => colors => data => ({ width, height }) => (
+const renderPieChart = labels => colors => data => count => grouping => ({ width, height }) => (
   <Chart width={width} height={height}>
-    {renderPies(labels)(colors)(data)}
-    {renderTooltips(labels)(data)}
+    {renderPies(labels)(colors)(data)(Math.min(width, height))}
+    {renderTooltips(labels)(data)(count)(grouping)}
   </Chart>
 );
 
@@ -75,12 +73,12 @@ const renderChart = chart => (
   </div>
 );
 
-const renderChartResults = labels => results => colors =>
-  renderPieChart(labels)(colors)(getSortedData(results)(labels));
+const renderChartResults = labels => results => colors => count => grouping =>
+  renderPieChart(labels)(colors)(getSortedData(results)(labels))(count)(grouping);
 
-const renderResults = results => labels => colors =>
-  renderChart(renderChartResults(labels)(results)(colors));
+const renderResults = results => labels => colors => count => grouping =>
+  renderChart(renderChartResults(labels)(results)(colors)(count)(grouping));
 
-export default withStyles(styles)(({ results, labels, colors }) =>
-  (hasData(results) ? renderResults(results)(labels)(colors) : <NoData />)
+export default withStyles(styles)(({ results, labels, colors, count, grouping }) =>
+  (hasData(results) ? renderResults(results)(labels)(colors)(count)(grouping) : <NoData />)
 );

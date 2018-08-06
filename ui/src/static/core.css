@@ -3078,8 +3078,10 @@ select[multiple].input-lg {
 .btn.focus,
 .btn:active.focus,
 .btn.active.focus {
-  outline-color: #525252;
-  outline-offset: -2px;
+  outline-color:  rgb(236, 144, 6);
+  outline-offset: -3px;
+  outline-width: 2px;
+  outline-style: solid
 }
 .btn:hover,
 .btn:focus,
@@ -3090,6 +3092,7 @@ select[multiple].input-lg {
 .btn:active,
 .btn.active {
   background-color: #F5AB35;
+  color: white;
   background-image: none;
   outline: 0;
   -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
@@ -3185,8 +3188,8 @@ fieldset[disabled] .btn-default.focus {
 .btn-primary.active,
 .open > .dropdown-toggle.btn-primary {
   color: #fff;
-  background-color: #286090;
-  border-color: #204d74;
+  background-color:   rgb(235, 146, 46);
+  /* border-color:  #CD7228; */
 }
 .btn-primary:active:hover,
 .btn-primary.active:hover,
@@ -3198,8 +3201,7 @@ fieldset[disabled] .btn-default.focus {
 .btn-primary.active.focus,
 .open > .dropdown-toggle.btn-primary.focus {
   color: #fff;
-  background-color: #204d74;
-  border-color: #122b40;
+  background-color:  rgb(235, 146, 46);
 }
 .btn-primary:active,
 .btn-primary.active,
@@ -6865,8 +6867,8 @@ section, div {
   border: 0px; }
 
 .btn-primary:hover {
-  background: #ED7030;
-  border-color: #ED7030; }
+  background: #f19500;
+  border-color: #f19500; }
 
 .btn-inverse,
 .btn-inverse:visited,
