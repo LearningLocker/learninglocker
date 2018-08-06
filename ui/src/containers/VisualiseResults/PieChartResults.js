@@ -8,13 +8,11 @@ export default withStatementsVisualisation(({
   labels,
   colors,
   visualisation
-}) => {
-  console.log('​visualisation', visualisation);
-  return (
+}) => (
   <PieChart
     results={getFormattedResults(results)}
     labels={labels}
     count={visualisation.getIn(['axesvalue', 'searchString'], 'Count')}
     grouping={visualisation.getIn(['axesgroup', 'searchString'], 'Group')}
     colors={colors} />
-)});
+));

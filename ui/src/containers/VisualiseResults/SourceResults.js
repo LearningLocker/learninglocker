@@ -9,7 +9,6 @@ import styles from './styles.css';
 import { displayVerb, displayActivity } from '../../utils/xapi';
 
 const getAxes = (index, axes) => {
-  console.log('axes', axes)
   switch (index) {
     case 0: return axes.get('xLabel') !== '' ? axes.get('xLabel') : axes.getIn(['xValue', 'searchString'], 'X-Axis');
     case 1: return axes.get('yLabel') !== '' ? axes.get('yLabel') : axes.getIn(['yValue', 'searchString'], 'Y-Axis');
@@ -63,7 +62,6 @@ const formatKeyToFriendlyString = (key) => {
 };
 
 const getAxisLabel = (axis, visualisation, type, axesKey) => {
-  console.log('​getAxisLabel -> axis, visualisation, type, axesKey', axis, visualisation, type, axesKey);
   if (!(type === 'XVSY')) {
     return getLegend(axis, visualisation);
   }
@@ -72,7 +70,6 @@ const getAxisLabel = (axis, visualisation, type, axesKey) => {
 
 const createSelectIfXVSY = (index, visualisation, type, title, axis) => {
   if (type !== 'XVSY') {
-    console.log('not xy')
     return getAxisLabel(axis, visualisation, null, title);
   }
   if (title.length) {

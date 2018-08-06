@@ -105,11 +105,7 @@ class XvsY extends Component {
   getModels = () => (
     this.getModelsOfSeries(this.props.results.map(this.getSeriesData))
   )
-
-  log = (data) => {
-    console.log('log', data)
-  }
-
+  
   hasData = () => this.getLargestSeriesSize() < 1
 
   displayModelAtPosition = models => (x, y) => (
@@ -148,7 +144,7 @@ class XvsY extends Component {
   renderChart = () => (
     <div className={styles.chart}>
       <div className={`${styles.barContainer}`}>
-          <span className={styles.yAxis}>{this.log(this.props.model.get('axesyLabel'))}
+          <span className={styles.yAxis}>
             {this.props.model.get('axesyLabel') || shorten(this.props.model.getIn(['axesyValue', 'searchString'], 'Y-Axis'))}
           </span>
         <div className={styles.chartWrapper}>

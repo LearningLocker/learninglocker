@@ -49,9 +49,7 @@ const renderLineChart = (labels, toggleHiddenSeries, hiddenSeries) => colors => 
   </Chart>
   );
 
-const renderChart = (component, axesLabels, chartWrapperFn, model) => {
-  console.log(model)
-  return (
+const renderChart = (component, axesLabels, chartWrapperFn, model) => (
   <div className={styles.chart}>
     <div className={`${styles.barContainer}`}>
         <span className={styles.yAxis}>
@@ -67,7 +65,7 @@ const renderChart = (component, axesLabels, chartWrapperFn, model) => {
       </span>
     </div>
   </div>
-)};
+);
 
 const renderChartResults = (labels, toggleHiddenSeries, hiddenSeries) => colors => results =>
   renderLineChart(labels, toggleHiddenSeries, hiddenSeries)(colors)(getSortedData(results)(labels));

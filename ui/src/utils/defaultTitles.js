@@ -43,8 +43,8 @@ export const getLegend = (key, model, type = null, axesKey = null) => {
     }
   }
   switch (key) {
-    case 'x': console.log('inxvsy x key', key, 'model', model, 'axeskey', axesKey);return getResultForXY(key);
-    case 'y': console.log('inxvsy y');return getResultForXY(key)
+    case 'x': return getResultForXY(key);
+    case 'y': return getResultForXY(key)
     default: return null;
   }
 };
