@@ -46,16 +46,16 @@ const renderCell = numberOfEntries => color => (entry, i) => (
 const renderTooltips = labels => data => count => grouping => (<Tooltip content={<PieTooltip display={getLongModel(data)} labels={labels} count={count} grouping={grouping} />} />);
 
 
-const renderPie = colors => data => maxSize => (label, i, labels) =>(
-    <Pie
-      key={i}
-      data={getChartData(data)}
-      nameKey={'_id'}
-      dataKey={`s${i}`}
-      innerRadius={getInnerRadius(getPieSize(labels.size, maxSize))(i)}
-      outerRadius={getOuterRadius(getPieSize(labels.size, maxSize))(i)}>
-      {data.valueSeq().map(renderCell(data.size)(colors.get(i)))}
-    </Pie>
+const renderPie = colors => data => maxSize => (label, i, labels) => (
+  <Pie
+    key={i}
+    data={getChartData(data)}
+    nameKey={'_id'}
+    dataKey={`s${i}`}
+    innerRadius={getInnerRadius(getPieSize(labels.size, maxSize))(i)}
+    outerRadius={getOuterRadius(getPieSize(labels.size, maxSize))(i)}>
+    {data.valueSeq().map(renderCell(data.size)(colors.get(i)))}
+  </Pie>
   );
 const renderPies = labels => colors => data => maxSize =>
   labels.map(renderPie(colors)(data)(maxSize)).valueSeq();

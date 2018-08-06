@@ -6,14 +6,14 @@ const hexToRgb = (hex) => {
     b: parseInt(result[3], 16)
   } : null;
 };
+// eslint-disable-next-line no-case-declarations
 const COLORS = ['#E77E04', '#F6AB35', '#CD7228', '#006692', '#E73304'];
 
 const colorCycle = (value) => {
   if (value > (COLORS.length - 1)) {
     return colorCycle(value - (COLORS.length));
-  } else {
-    return COLORS[value];
   }
+  return COLORS[value];
 };
 
 export default ({
@@ -24,15 +24,17 @@ export default ({
   maxOpacity = 1,
   shading = 'opacity'
 }) => {
-  switch (shading) {
-    case 'opacity':
-      const rgb = hexToRgb(hexColor);
-      const opacityRange = maxOpacity - minOpacity;
-      const opacityInterval = (range > 1 ? opacityRange / (range - 1) : opacityRange);
-      const opacity = (opacityInterval * value) + minOpacity;
-      return `rgba(${rgb.r},${rgb.g},${rgb.b},${opacity})`;
-    case 'colors':  return colorCycle(value);
-    default: return null;
+  if (shading === 'opacity') {
+    const rgb = hexToRgb(hexColor);
+    const opacityRange = maxOpacity - minOpacity;
+    const opacityInterval = (range > 1 ? opacityRange / (range - 1) : opacityRange);
+    const opacity = (opacityInterval * value) + minOpacity;
+    return `rgba(${rgb.r},${rgb.g},${rgb.b},${opacity})`;
   }
+  if (shading === 'colors') {
+    return colorCycle(value);
+  }
+
+  return null;
 };
 

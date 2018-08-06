@@ -100,6 +100,9 @@ class Widget extends Component {
 
   getTitle = model => model.get('title') || <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>{createDefaultTitle(this.props.visualisation, '')}</span>;
 
+  toggleEditingTitle = () => {
+  }
+
   renderTitle = () => {
     const { model } = this.props;
     const isEditingTitle = true;
@@ -108,9 +111,6 @@ class Widget extends Component {
     ) : (
       null
     );
-  }
-
-  toggleEditingTitle = () => {
   }
 
   renderMenu = () => {

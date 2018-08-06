@@ -31,7 +31,7 @@ class PieTooltip extends Component {
     const { display, active } = this.props;
     if (active) {
       const { payload, labels, count, grouping } = this.props;
-      const entry = payload[0];  
+      const entry = payload[0];
       return (
         <div className={styles.customTooltip}>
           <p className={styles.label}>{`${grouping}: ${display(entry.payload.id)}`}</p>

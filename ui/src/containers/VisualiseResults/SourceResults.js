@@ -18,7 +18,7 @@ const getAxes = (index, axes) => {
 
 const moreThanOneSeries = tData => tData.first().size > 1;
 
-export const generateTableData = (results, labels, axes, type, ) => {
+export const generateTableData = (results, labels, axes, type) => {
   const seriesList = labels.zip(results);
   const seriesList2 = seriesList.map(([key, item], i) => {
     if (key === undefined) {
@@ -31,12 +31,10 @@ export const generateTableData = (results, labels, axes, type, ) => {
 
   const result = seriesMap.reduce((reduction, series, seriesKey) =>
 
-    series.reduce((axesReduction, axes2, axesKey) => {
-      return axes2.reduce((seriesReduction, item) => seriesReduction.setIn(
+    series.reduce((axesReduction, axes2, axesKey) => axes2.reduce((seriesReduction, item) => seriesReduction.setIn(
           [item.get('model'), seriesKey, getAxes(axesKey, axes, type)],
           item
-        ), axesReduction);
-    }, reduction)
+        ), axesReduction), reduction)
   , new OrderedMap());
   return result;
 };

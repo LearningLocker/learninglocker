@@ -40,9 +40,7 @@ class BarChart extends Component {
     labels: PropTypes.instanceOf(List),
     colors: PropTypes.instanceOf(List),
     stacked: PropTypes.bool,
-    axesLabels: PropTypes.instanceOf(Object),
     chartWrapperFn: PropTypes.instanceOf(Function),
-    // activePage: PropTypes.instanceOf(Number)
   }
 
   static defaultProps = {
@@ -58,14 +56,12 @@ class BarChart extends Component {
   });
 
   // displayNextPage = () => this.setState({ activePage: this.state.activePage + 1 })
-  displayNextPage = () => {
-    return this.props.setInMetadata({
-      schema: 'visualisation',
-      id: this.props.model.get('_id'),
-      path: ['activePage'],
-      value: this.props.activePage + 1
-    });
-  };
+  displayNextPage = () => this.props.setInMetadata({
+    schema: 'visualisation',
+    id: this.props.model.get('_id'),
+    path: ['activePage'],
+    value: this.props.activePage + 1
+  });
 
   getDataChunk = model => data => page => data.slice(model.get('barChartGroupingLimit') * page, model.get('barChartGroupingLimit') * (page + 1))
   getPages = (model, data) => Math.ceil(data.size / (model.get('barChartGroupingLimit') + 1));

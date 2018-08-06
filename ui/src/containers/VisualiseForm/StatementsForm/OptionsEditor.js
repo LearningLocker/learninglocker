@@ -87,7 +87,6 @@ const BarEditor = compose(
   connect(() => ({}), { updateModel, setInMetadata }),
   withHandlers({
     barChartGroupingLimitHandler: ({ updateModel: updateModelAction, model, setInMetadata: setInMetadataAction }) => (event) => {
-     
       updateModelAction({
         schema: 'visualisation',
         id: model.get('_id'),

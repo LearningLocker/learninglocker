@@ -44,7 +44,7 @@ export const getLegend = (key, model, type = null) => {
   }
   switch (key) {
     case 'x': return getResultForXY(key);
-    case 'y': return getResultForXY(key)
+    case 'y': return getResultForXY(key);
     default: return null;
   }
 };

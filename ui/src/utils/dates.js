@@ -10,7 +10,7 @@ import {
 } from 'ui/utils/constants';
 import moment from 'moment';
 
-export const periodToDate = (datePeriod, today, benchmark = 1 ) => {
+export const periodToDate = (datePeriod, today, benchmark = 1) => {
   const today2 = moment(today); // Clones the date so it's not mutated.
   switch (datePeriod) {
     case TODAY: return (moment().subtract(1 * benchmark, 'days').startOf('day'));

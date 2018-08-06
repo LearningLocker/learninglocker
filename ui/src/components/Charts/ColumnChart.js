@@ -37,7 +37,7 @@ const renderBarChart = colors => (labels, toggleHiddenSeries, hiddenSeries) => s
       layout="horizontal">
       <XAxis type="category" dataKey="cellId" tickFormatter={getShortModel(data)} />
       <YAxis type="number" />
-      <CartesianGrid strokeDasharray="1 1"/>
+      <CartesianGrid strokeDasharray="1 1" />
       {renderLegend(labels, toggleHiddenSeries)}
       {renderBars(colors)(labels)(stacked)}
       {renderTooltips(data)}
@@ -45,12 +45,12 @@ const renderBarChart = colors => (labels, toggleHiddenSeries, hiddenSeries) => s
   </div>
   /* eslint-enable react/no-danger */
 );
-const renderChart = (model, component, axesLabels, chartWrapperFn) => 
+const renderChart = (model, component, axesLabels, chartWrapperFn) =>
 (
   <div className={styles.chart}>
     <div className={`${styles.barContainer}`}>
       <span className={styles.yAxis}>
-        {axesLabels.yLabel || model.getIn(['axesvalue','searchString'], 'Y-Axis')}
+        {axesLabels.yLabel || model.getIn(['axesvalue', 'searchString'], 'Y-Axis')}
       </span>
       <div className={styles.chartWrapper}>
         {chartWrapperFn(component)}
@@ -58,7 +58,7 @@ const renderChart = (model, component, axesLabels, chartWrapperFn) =>
     </div>
     <div className={styles.xAxisLabel}>
       <span className={styles.xAxis}>
-        {axesLabels.xLabel || model.getIn(['axesgroup','searchString'], 'X-Axis')}
+        {axesLabels.xLabel || model.getIn(['axesgroup', 'searchString'], 'X-Axis')}
       </span>
     </div>
   </div>

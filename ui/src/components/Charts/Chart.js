@@ -97,7 +97,7 @@ const renderBar = index => stacked => label => color => (
     key={index}
     dataKey={`s${index}`}
     fill={color}
-    name={label} 
+    name={label}
     stackId={stacked ? 1 : index} />
 );
 

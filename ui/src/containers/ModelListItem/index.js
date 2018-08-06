@@ -87,7 +87,7 @@ export class ModelListItem extends Component {
           <i className={iconClasses} />
           <span
             title={getIdentifier(model)}
-            className={styles['builder-description']}> 
+            className={styles['builder-description']}>
             {getDescription(model)}
           </span>
           { displayOwner &&

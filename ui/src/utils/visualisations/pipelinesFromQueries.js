@@ -8,7 +8,7 @@ export default (
   type,
   previewPeriod,
   id,
-  benchmarkingEnabled = false, 
+  benchmarkingEnabled = false,
   today = moment().utc().startOf('day')
 ) => {
   if (benchmarkingEnabled) {

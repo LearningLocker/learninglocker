@@ -21,18 +21,16 @@ const getResultCount = rs => rs.getIn([0, 0, null, 'count'], 0);
 const getBenchmarkResultCount = rs => rs.getIn([1, 0, null, 'count'], 0);
 const hasData = rs => getLargestSeriesSize(rs) > 0;
 const makeHumanReadable = previewPeriod => previewPeriod.split('_').map(word => `${word.toLowerCase()} `).join('');
-const renderCount = color => count => (benchmarkResult) => {
-  return (
-    <TooltipLink
-      style={{ color }}
-      label={formatShortNumber(count)}
-      tooltip={formatTooltip(count, benchmarkResult)}
-      tooltipPosition="top"
-      tooltipDelay={600}
-      active />
+const renderCount = color => count => benchmarkResult => (
+  <TooltipLink
+    style={{ color }}
+    label={formatShortNumber(count)}
+    tooltip={formatTooltip(count, benchmarkResult)}
+    tooltipPosition="top"
+    tooltipDelay={600}
+    active />
   );
-};
-const renderCounter = color => rs => (model) => (maxSize, width) => {
+const renderCounter = color => rs => model => (maxSize, width) => {
   const percentage = getPercentage(getResultCount(rs), getBenchmarkResultCount(rs));
   return (
     <div className="outerCounter" >

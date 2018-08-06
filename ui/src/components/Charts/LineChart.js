@@ -42,7 +42,7 @@ const renderLineChart = (labels, toggleHiddenSeries, hiddenSeries) => colors => 
     margin={{ top: 10, right: 35, left: -20, bottom: 5 }}>
     <XAxis type="category" dataKey="cellId" tickFormatter={getShortModel(data)} />
     <YAxis type="number" />
-    <CartesianGrid strokeDasharray="1 1"/>
+    <CartesianGrid strokeDasharray="1 1" />
     {renderLegend(labels, toggleHiddenSeries)}
     {renderLines(labels)(colors)}
     {renderTooltips(data)}
@@ -52,9 +52,9 @@ const renderLineChart = (labels, toggleHiddenSeries, hiddenSeries) => colors => 
 const renderChart = (component, axesLabels, chartWrapperFn, model) => (
   <div className={styles.chart}>
     <div className={`${styles.barContainer}`}>
-        <span className={styles.yAxis}>
-          {axesLabels.yLabel || model.getIn(['axesvalue', 'searchString'], 'Y-Axis')}
-        </span>
+      <span className={styles.yAxis}>
+        {axesLabels.yLabel || model.getIn(['axesvalue', 'searchString'], 'Y-Axis')}
+      </span>
       <div className={styles.chartWrapper}>
         {chartWrapperFn(component)}
       </div>

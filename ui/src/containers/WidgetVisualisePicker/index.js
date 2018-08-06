@@ -13,7 +13,7 @@ const schema = 'visualisation';
 class WidgetVisualisePicker extends Component {
   static propTypes = {
     isOpened: PropTypes.bool,
-    onClickClose: PropTypes.func, 
+    onClickClose: PropTypes.func,
     onChangeTitle: PropTypes.func,
     onChangeVisualisation: PropTypes.func
   };
@@ -23,9 +23,7 @@ class WidgetVisualisePicker extends Component {
     model: new Map()
   };
 
-  getTitle = (props, defaultValue) => {
-    return props.model.getIn(['title'], defaultValue);
-  };
+  getTitle = (props, defaultValue) => props.model.getIn(['title'], defaultValue);
 
   getVisualisationId = () => this.props.model.get('visualisation')
 
