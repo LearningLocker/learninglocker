@@ -80,6 +80,16 @@ class VisualiseIcon extends Component {
     );
   }
 
+  // return type !== 'undefined' ? (
+  //   <img
+  //     className={styles[className]}
+  //     src={this.getIcon(type)}
+  //     alt={this.getTitle(type)} />
+  // ) : <img
+  //   className={styles.visualisationSmall}
+  //   src={this.getIcon(SESSIONS)}
+  //   alt={this.getTitle(SESSIONS)} />;
+
   render = () => {
     const { type, active, onClick, isSmall, className } = this.props;
     const classes = classNames({

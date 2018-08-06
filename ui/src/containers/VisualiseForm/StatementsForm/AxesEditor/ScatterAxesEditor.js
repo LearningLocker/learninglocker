@@ -19,22 +19,27 @@ export class ScatterAxesEditor extends BaseAxesEditor {
   };
 
   getAxisDefault = (axis, model) => {
-    console.log('gad', model.axesxLabel, axis);
+    console.log('​ScatterAxesEditor -> getAxisDefault -> axis', axis);
     const labelString = axis === 'x' ? model.axesxLabel : model.axesyLabel;
-    const defaultLabel = axis === 'x' ? model.getIn(['axesxValue', 'searchString'], 'X-Axis') : model.getIn(['axesgroup', 'searchString'], 'Y-Axis')
+    const defaultLabel = axis === 'x' ? model.getIn(['axesxValue', 'searchString'], 'X-Axis') : model.getIn(['axesyValue', 'searchString'], 'Y-Axis');
     if (labelString && labelString.length) {
       return labelString;
     }
+    console.log('def', defaultLabel, labelString)
     return defaultLabel;
   };
 
-  renderAxis = axis => (
+  renderAxis = axis => {
+  console.log('​ScatterAxesEditor ->  axis',  axis);
+
+    
+    return (
     <div>
       <div className="form-group">
         <DebounceInput
           id={`${axis}AxisLabel`}
           className="form-control"
-          placeholder={this.getAxisDefault(axis, this.props.model) }
+          placeholder={this.getAxisDefault(axis, this.props.model)}
           debounceTimeout={377}
           style={{ fontWeight: 'bold' }}
           value={this.getAxesValue(`${axis}Label`, '')}
@@ -58,7 +63,7 @@ export class ScatterAxesEditor extends BaseAxesEditor {
           } />
       </div>
     </div>
-  );
+  );}
 
   render = () => (
     <div>

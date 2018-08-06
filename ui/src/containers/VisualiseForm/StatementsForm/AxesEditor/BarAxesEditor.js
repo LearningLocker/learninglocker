@@ -6,7 +6,6 @@ import DebounceInput from 'react-debounce-input';
 import CountEditor from './CountEditor';
 import GroupEditor from './GroupEditor';
 import BaseAxesEditor from './BaseAxesEditor';
-import { getLegend } from 'ui/utils/defaultTitles';
 
 export class BarAxesEditor extends BaseAxesEditor {
   static propTypes = {
@@ -22,7 +21,7 @@ export class BarAxesEditor extends BaseAxesEditor {
           <DebounceInput
             id={'xAxisLabel'}
             className="form-control"
-            placeholder={getLegend('x', this.props.model)}
+            placeholder={this.props.model.getIn(['axesvalue', 'searchString'], 'X-Axis')}
             debounceTimeout={377}
             style={{ fontWeight: 'bold' }}
             value={this.props.model.axesxLabel}

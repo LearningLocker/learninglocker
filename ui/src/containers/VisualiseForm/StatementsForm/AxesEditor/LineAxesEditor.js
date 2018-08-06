@@ -5,7 +5,6 @@ import { updateModel } from 'ui/redux/modules/models';
 import DebounceInput from 'react-debounce-input';
 import CountEditor from './CountEditor';
 import BaseAxesEditor from './BaseAxesEditor';
-import { getLegend } from 'ui/utils/defaultTitles';
 
 export class LineAxesEditor extends BaseAxesEditor {
   static propTypes = {
@@ -25,7 +24,7 @@ export class LineAxesEditor extends BaseAxesEditor {
               placeholder={this.props.model.getIn(['axesvalue', 'searchString'], 'Y-Axis')}
               debounceTimeout={377}
               style={{ fontWeight: 'bold' }}
-              value={getLegend('y', this.props.model)}
+              value={this.props.model.get('axesyLabel')}
               onChange={this.handleAxesChange.bind(this, 'yLabel')} />
           </div>
         </div>
@@ -47,7 +46,7 @@ export class LineAxesEditor extends BaseAxesEditor {
             placeholder={'yyyy/mm/dd'}
             debounceTimeout={377}
             style={{ fontWeight: 'bold' }}
-            value={getLegend('y', this.props.model)}
+            value={this.props.model.get('axesxLabel')}
             onChange={this.handleAxesChange.bind(this, 'xLabel')} />
         </div>
       </div>

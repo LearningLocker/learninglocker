@@ -6,7 +6,6 @@ import DebounceInput from 'react-debounce-input';
 import CountEditor from './CountEditor';
 import GroupEditor from './GroupEditor';
 import BaseAxesEditor from './BaseAxesEditor';
-import { getLegend } from 'ui/utils/defaultTitles';
 
 class ColumnAxesEditor extends BaseAxesEditor {
   static propTypes = {
@@ -47,7 +46,7 @@ class ColumnAxesEditor extends BaseAxesEditor {
             placeholder={this.props.model.getIn(['axesvalue', 'searchString'], 'Y-Axis')}
             debounceTimeout={377}
             style={{ fontWeight: 'bold' }}
-            value={getLegend('y', this.props.model)}
+            value={this.props.model.axesyLabel}
             onChange={this.handleAxesChange.bind(this, 'yLabel')} />
         </div>
         <div className="form-group">

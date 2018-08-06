@@ -9,19 +9,17 @@ import styles from './styles.css';
 import { displayVerb, displayActivity } from '../../utils/xapi';
 
 const getAxes = (index, axes) => {
+  console.log('axes', axes)
   switch (index) {
-    case 0:
-      return axes.get('xLabel', 'X-Axes');
-    case 1:
-      return axes.get('yLabel', 'Y-Axes');
-    default:
-      return axes.get('xLabel', 'X-Axes');
+    case 0: return axes.get('xLabel') !== '' ? axes.get('xLabel') : axes.getIn(['xValue', 'searchString'], 'X-Axis');
+    case 1: return axes.get('yLabel') !== '' ? axes.get('yLabel') : axes.getIn(['yValue', 'searchString'], 'Y-Axis');
+    default: return axes.get('xLabel', 'X-Axes');
   }
 };
 
 const moreThanOneSeries = tData => tData.first().size > 1;
 
-export const generateTableData = (results, labels, axes) => {
+export const generateTableData = (results, labels, axes, type, ) => {
   const seriesList = labels.zip(results);
   const seriesList2 = seriesList.map(([key, item], i) => {
     if (key === undefined) {
@@ -34,34 +32,27 @@ export const generateTableData = (results, labels, axes) => {
 
   const result = seriesMap.reduce((reduction, series, seriesKey) =>
 
-    series.reduce((axesReduction, axes2, axesKey) =>
-
-      axes2.reduce((seriesReduction, item) => seriesReduction.setIn(
-          [item.get('model'), seriesKey, getAxes(axesKey, axes)],
+    series.reduce((axesReduction, axes2, axesKey) => {
+      return axes2.reduce((seriesReduction, item) => seriesReduction.setIn(
+          [item.get('model'), seriesKey, getAxes(axesKey, axes, type)],
           item
-        ), axesReduction)
-    , reduction)
+        ), axesReduction);
+    }, reduction)
   , new OrderedMap());
-
   return result;
 };
 
 const formatKeyToFriendlyString = (key) => {
-  // return directly if just a string
   if (isString(key)) return key;
 
   if (Map.isMap(key)) {
     if (key.get('objectType')) {
-      // call xapi activity helper
       return displayActivity(key);
     }
     if (key.get('display')) {
-      // call xapi verb helper
       return displayVerb(key);
     }
-
     if (key.has('id')) {
-      // if it has an id, lets just throw that back
       return key.get('id');
     }
 
@@ -72,23 +63,25 @@ const formatKeyToFriendlyString = (key) => {
 };
 
 const getAxisLabel = (axis, visualisation, type, axesKey) => {
+  console.log('​getAxisLabel -> axis, visualisation, type, axesKey', axis, visualisation, type, axesKey);
   if (!(type === 'XVSY')) {
     return getLegend(axis, visualisation);
   }
   return getLegend(axis, visualisation, 'XVSY', axesKey);
 };
 
-const createSelectIfXVSY = (series, visualisation, type, axesKey, axis) => {
+const createSelectIfXVSY = (index, visualisation, type, title, axis) => {
   if (type !== 'XVSY') {
-    return getAxisLabel(axis, visualisation, null, axesKey);
+    console.log('not xy')
+    return getAxisLabel(axis, visualisation, null, title);
   }
-  if (axesKey.length) {
-    return axesKey;
+  if (title.length) {
+    return title;
   }
-  if (series) {
-    return getAxisLabel('y', visualisation, 'XVSY');
+  if (index !== 0) {
+    return visualisation.getIn(['axesxValue', 'searchString'], 'No value');
   }
-  return getAxisLabel('x', visualisation, 'XVSY');
+  return visualisation.getIn(['axesyValue', 'searchString'], 'No value');
 };
 
 export default compose(
@@ -103,7 +96,7 @@ export default compose(
   visualisation
 }) => {
   const formattedResults = getFormattedResults(results);
-  const tableData = generateTableData(formattedResults, labels, axes);
+  const tableData = generateTableData(formattedResults, labels, axes, visualisation.get('type'));
   return (
     <div className={styles.sourceResultsContainer}>
       <table className="table table-bordered table-striped">
@@ -117,12 +110,14 @@ export default compose(
           <tr>
             <th>{getAxisLabel('y', visualisation, model.get('type'))}</th>
             {
-              tableData.first().map(series => (
-                series.map((axes2, axesKey) => {
-                  return (
-                  <th>{createSelectIfXVSY(series, visualisation, model.get('type'), axesKey, 'x')}</th>
-                )})
-              ))
+              tableData.first().map((series) => {
+                const out = series.mapEntries((title, index) =>
+                  [index, (
+                    <th>{createSelectIfXVSY(index, visualisation, model.get('type'), title[0], 'x')}</th>
+                  )]
+                );
+                return out;
+              })
             }
           </tr>
           {tableData.map((item, key) => (

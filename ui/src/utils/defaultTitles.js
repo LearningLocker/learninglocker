@@ -54,13 +54,14 @@ const defaultSelector = (model, type, prefix, format = TEXT) => {
     const select = key => model.getIn([key, 'searchString'], '');
     const addXY = (selectedX, selectedY = 'Time') => `X: ${selectedX} Y: ${selectedY}`;
     const addYX = (selectedX, selectedY = 'Time') => `X: ${selectedY} Y: ${selectedX}`;
-
+    console.log('type', type)
     switch (type) {
       case ('FREQUENCY'): return addYX(select(axv) || select(ayV), 'Time');
       case ('LEADERBOARD'): return addYX(select(axg), select(axv) || select(ayV));
       case ('XVSY'): return addXY(select(axV), select(axv) || select(ayV));
       case ('COUNTER'): return select(axv) || select(ayV);
       case ('PIE'): return `${select(axv) || select(ayV)} / ${select(axg)}`;
+      case ('Unnamed'): return 'Pick a visualisation'
       default: return addXY(select(axg), select(axv) || select(ayV));
     }
   };
