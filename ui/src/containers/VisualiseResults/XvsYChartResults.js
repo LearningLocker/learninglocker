@@ -11,17 +11,15 @@ export default withStatementsVisualisation(({
   model,
   axes,
   trendLines
-}) => {
-  console.log('xy', model, axes, shorten(model.getIn(['axesxValue', 'searchString'], 'X-Axis')))
-  return (
-    <XvsY
-      colors={colors}
-      results={getFormattedResults(results)}
-      labels={labels}
-      model={model}
-      trendLines={trendLines}
-      axesLabels={{
-        xLabel: axes.get('xLabel', shorten(model.getIn(['axesxValue', 'searchString'], 'X-Axis'))),
-        yLabel: axes.get('yLabel', shorten(model.getIn(['axesyValue', 'searchString'], 'Y-Axis')))
+}) => (
+  <XvsY
+    colors={colors}
+    results={getFormattedResults(results)}
+    labels={labels}
+    model={model}
+    trendLines={trendLines}
+    axesLabels={{
+      xLabel: axes.get('xLabel', shorten(model.getIn(['axesxValue', 'searchString'], 'X-Axis'))),
+      yLabel: axes.get('yLabel', shorten(model.getIn(['axesyValue', 'searchString'], 'Y-Axis')))
     }} />
-  )});
+));

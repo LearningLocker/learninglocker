@@ -8,8 +8,7 @@ import {
   YAxis,
   Tooltip,
   Scatter,
-  CartesianGrid,
-  Line
+  CartesianGrid
 } from 'recharts';
 import NoData from 'ui/components/Graphs/NoData';
 import { displayAuto } from 'ui/redux/modules/queryBuilder';
@@ -33,20 +32,14 @@ class XvsY extends Component {
     results: new List()
   }
 
-  shouldComponentUpdate = (nextProps) => {
-    
-    console.log('001', this.props.axesLabels, nextProps );
-    const out = !(
+  shouldComponentUpdate = (nextProps) => !(
       this.props.results.equals(nextProps.results) &&
       this.props.axesLabels.xLabel === nextProps.axesLabels.xLabel &&
       this.props.axesLabels.yLabel === nextProps.axesLabels.yLabel &&
       this.props.colors.equals(nextProps.colors) &&
       this.props.labels.equals(nextProps.labels) &&
       this.props.trendLines === nextProps.trendLines
-    );
-    console.log('002', out);
-    return out;
-  }
+    )
 
   getLargestSeriesSize = () => (
     this.props.results.map(this.getLargestAxisSize).max()
@@ -152,8 +145,7 @@ class XvsY extends Component {
     </ScatterChart>
     )
 
-  renderChart = () => { console.log('xychart', this.props.model )
-    return (
+  renderChart = () => (
     <div className={styles.chart}>
       <div className={`${styles.barContainer}`}>
           <span className={styles.yAxis}>{this.log(this.props.model.get('axesyLabel'))}
@@ -171,7 +163,7 @@ class XvsY extends Component {
         </span>
       </div>
     </div>
-  )}
+  )
 
   render = () => (
     this.hasData() ? <NoData /> : this.renderChart()
