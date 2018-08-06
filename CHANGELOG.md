@@ -20,6 +20,12 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
   - Better logging of queue subscription errors (#1180)
   - Editing export projection now requires submit action (#1185)
 
+## [2.4.2]
+### Fixes
+  - Worker garbage collection (#1214)
+  - Efficiencies for requeuing statements (#1216)
+  - Remove max memory restart values for PM2 and replace with garbage collection on all services
+
 ## [2.4.1]
 ### Fixes
   - Speeds up worker requests with SQS
