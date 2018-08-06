@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Map, List } from 'immutable';
 import { AutoSizer } from 'react-virtualized';
+import { shorten } from 'ui/utils/defaultTitles';
 import {
   ScatterChart,
   XAxis,
@@ -33,7 +34,9 @@ class XvsY extends Component {
   }
 
   shouldComponentUpdate = (nextProps) => {
-    return !(
+    
+    console.log('001', this.props.axesLabels, nextProps );
+    const out = !(
       this.props.results.equals(nextProps.results) &&
       this.props.axesLabels.xLabel === nextProps.axesLabels.xLabel &&
       this.props.axesLabels.yLabel === nextProps.axesLabels.yLabel &&
@@ -41,6 +44,8 @@ class XvsY extends Component {
       this.props.labels.equals(nextProps.labels) &&
       this.props.trendLines === nextProps.trendLines
     );
+    console.log('002', out);
+    return out;
   }
 
   getLargestSeriesSize = () => (
@@ -152,7 +157,7 @@ class XvsY extends Component {
     <div className={styles.chart}>
       <div className={`${styles.barContainer}`}>
           <span className={styles.yAxis}>{this.log(this.props.model.get('axesyLabel'))}
-            {this.props.model.get('axesyLabel')|| this.props.axesLabels.yLabel || 'Y Axis'}
+            {this.props.model.get('axesyLabel') || shorten(this.props.model.getIn(['axesyValue', 'searchString'], 'Y-Axis'))}
           </span>
         <div className={styles.chartWrapper}>
           <AutoSizer forceChange={this.props.results}>
@@ -162,7 +167,7 @@ class XvsY extends Component {
       </div>
       <div className={styles.xAxisLabel}>
         <span className={styles.xAxis}>
-          {this.props.model.get('axesxLabel') || this.props.axesLabels.xLabel || 'X Axis'}
+          {this.props.model.get('axesxLabel') || shorten(this.props.model.getIn(['axesxValue', 'searchString'], 'X-Axis'))}
         </span>
       </div>
     </div>
