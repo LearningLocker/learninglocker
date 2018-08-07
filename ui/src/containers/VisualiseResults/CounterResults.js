@@ -13,7 +13,8 @@ const component = args => ({ width, height }) => {
       color={colors.get(0)}
       results={results}
       maxSize={Math.min(width, height)}
-      model={model} />
+      model={model}
+      width={width} />
   );
 };
 

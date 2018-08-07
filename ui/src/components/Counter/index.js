@@ -24,7 +24,7 @@ const makeHumanReadable = previewPeriod => previewPeriod.split('_').map(word => 
 const renderCount = color => count => (benchmarkResult) => {
   return (
     <TooltipLink
-      style={{ color}}
+      style={{ color }}
       label={formatShortNumber(count)}
       tooltip={formatTooltip(count, benchmarkResult)}
       tooltipPosition="top"
@@ -32,18 +32,20 @@ const renderCount = color => count => (benchmarkResult) => {
       active />
   );
 };
-const renderCounter = color => rs => (model) => (maxSize) => {
-  const percentage = getPercentage(getResultCount(rs), getBenchmarkResultCount(rs));   
+const renderCounter = color => rs => (model) => (maxSize, width) => {
+  const percentage = getPercentage(getResultCount(rs), getBenchmarkResultCount(rs));
   return (
-    <div className={styles.counter} style={{ marginLeft: `${maxSize / 3}px`, fontSize: `${ maxSize / 35}em` }}>
-      {renderCount(color)(getResultCount(rs))(getBenchmarkResultCount(rs))}
-      {rs.size > 1 && ([<div style={{ fontSize: '0.3em', color: percentage.color, fontWeight: '300' }}>
-        {percentage.result}
-      </div>,
-        <div style={{ fontSize: '0.2em', color: percentage.color, fontWeight: '300' }}>{percentage.result !== 'N/A' && `since ${makeHumanReadable(model.get('previewPeriod', ''))}`}</div>])}
+    <div className="outerCounter" >
+      <div style={{ textAlign: 'center', width: `${width}px`, marginLeft: `${width / 5}px!important`, fontSize: `${maxSize / 35}em` }}>
+        {renderCount(color)(getResultCount(rs))(getBenchmarkResultCount(rs))}
+        {rs.size > 1 && ([<div style={{ textAlign: 'center', fontSize: '0.3em', color: percentage.color, fontWeight: '300' }}>
+          {percentage.result}
+        </div>,
+          <div style={{ textAlign: 'center', fontSize: '0.25em', color: percentage.color, fontWeight: '300' }}>{percentage.result !== 'N/A' && `vs ${makeHumanReadable(model.get('previewPeriod', ''))}`}</div>])}
+      </div>
     </div>
   );
 };
-const renderResults = rs => color => model => maxSize => renderCounter(color)(rs)(model)(maxSize);
-const counter = ({ results, color, model, maxSize }) => (hasData(results) ? renderResults(results)(color)(model)(maxSize) : <NoData />);
+const renderResults = rs => color => model => (maxSize, width) => renderCounter(color)(rs)(model)(maxSize, width);
+const counter = ({ results, color, model, maxSize, width }) => (hasData(results) ? renderResults(results)(color)(model)(maxSize, width) : <NoData />);
 export default withStyles(styles)(counter);
