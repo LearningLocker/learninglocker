@@ -80,7 +80,7 @@ class Visualise extends Component {
             getDescription={model => (
               <span>
                 <span style={{ paddingRight: 10 }}>
-                  <VisualisationTypeIcon id={model.get('_id')} />
+                  <VisualisationTypeIcon id={model.get('_id')} tableIcon={false} />
                 </span>
                 { model.get('description') || createVisualisationName(model)}
               </span>

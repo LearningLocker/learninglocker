@@ -13,32 +13,37 @@ const TooltipLink = tooltipFactory(Link);
 const trimNumber = x => numeral(x).format('0.[0]a');
 const formatShortNumber = x => trimNumber(round(x, 2));
 const formatLongNumber = x => x.toLocaleString();
+const formatTooltip = (count, benchmarkResult) => `Current: ${formatLongNumber(count)}   Previous: ${benchmarkResult}`;
 const getAxisSize = x => (Map.isMap(x) ? x.size : 0);
 const getLargestAxisSize = axes => axes.map(getAxisSize).max();
 const getLargestSeriesSize = rs => rs.map(getLargestAxisSize).max();
 const getResultCount = rs => rs.getIn([0, 0, null, 'count'], 0);
 const getBenchmarkResultCount = rs => rs.getIn([1, 0, null, 'count'], 0);
 const hasData = rs => getLargestSeriesSize(rs) > 0;
-const renderCount = color => count => (
-  <TooltipLink
-    style={{ color }}
-    label={formatShortNumber(count)}
-    tooltip={formatLongNumber(count)}
-    tooltipPosition="top"
-    tooltipDelay={600}
-    active />
-);
-const renderCounter = color => (rs) => {
-  const percentage = getPercentage(getResultCount(rs), getBenchmarkResultCount(rs));
+const makeHumanReadable = previewPeriod => previewPeriod.split('_').map(word => `${word.toLowerCase()} `).join('');
+const renderCount = color => count => (benchmarkResult) => {
   return (
-    <div className={styles.counter} >
-      {renderCount(color)(getResultCount(rs))}
-      {rs.size > 1 && (<div style={{ fontSize: '0.4em', color: percentage.color, fontWeight: '300' }}>
+    <TooltipLink
+      style={{ color}}
+      label={formatShortNumber(count)}
+      tooltip={formatTooltip(count, benchmarkResult)}
+      tooltipPosition="top"
+      tooltipDelay={600}
+      active />
+  );
+};
+const renderCounter = color => rs => (model) => (maxSize) => {
+  const percentage = getPercentage(getResultCount(rs), getBenchmarkResultCount(rs));   
+  return (
+    <div className={styles.counter} style={{ marginLeft: `${maxSize / 3}px`, fontSize: `${ maxSize / 35}em` }}>
+      {renderCount(color)(getResultCount(rs))(getBenchmarkResultCount(rs))}
+      {rs.size > 1 && ([<div style={{ fontSize: '0.3em', color: percentage.color, fontWeight: '300' }}>
         {percentage.result}
-      </div>)}
+      </div>,
+        <div style={{ fontSize: '0.2em', color: percentage.color, fontWeight: '300' }}>{percentage.result !== 'N/A' && `since ${makeHumanReadable(model.get('previewPeriod', ''))}`}</div>])}
     </div>
   );
 };
-const renderResults = rs => color => renderCounter(color)(rs);
-const counter = ({ results, color }) => (hasData(results) ? renderResults(results)(color) : <NoData />);
+const renderResults = rs => color => model => maxSize => renderCounter(color)(rs)(model)(maxSize);
+const counter = ({ results, color, model, maxSize }) => (hasData(results) ? renderResults(results)(color)(model)(maxSize) : <NoData />);
 export default withStyles(styles)(counter);

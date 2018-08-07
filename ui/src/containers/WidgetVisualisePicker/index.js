@@ -72,7 +72,7 @@ class WidgetVisualisePicker extends Component {
             schema={schema}
             id={this.getVisualisationId()}
             displayCount={3}
-            parseOption={model => model.get('description', createDefaultTitleWithIcon(model))}
+            parseOption={model => createDefaultTitleWithIcon(model, model.get('description'))}
             parseOptionString={model => model.get('description', createDefaultTitle(model))}
             parseOptionTooltip={model => model.get('description', createDefaultTitle(model))}
             onChange={this.onClickVisualisation}

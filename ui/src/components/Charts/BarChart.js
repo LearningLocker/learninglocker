@@ -146,7 +146,7 @@ class BarChart extends Component {
         <div className={`${styles.withPrevNext} clearfix`} />
         <div className={`${styles.barContainer}`}>
           <span className={styles.yAxis}>
-            {this.props.axesLabels.yLabel || this.props.model.getIn(['axesgroup', 'searchString'], 'Y-Axis')}
+            {this.props.model.get('axesyLabel') || this.props.model.getIn(['axesgroup', 'searchString'], 'Y-Axis')}
           </span>
           <div className={styles.chartWrapper}>
             {this.props.chartWrapperFn((this.renderBarChart(model)(colors)(labels)(data)(stacked)(activePage)))}
@@ -154,7 +154,7 @@ class BarChart extends Component {
         </div>
         <div className={styles.xAxisLabel}>
           <span className={styles.xAxis}>
-            {this.props.axesLabels.xLabel || this.props.model.getIn(['axesvalue', 'searchString'], 'X-Axis')}
+            {this.props.model.get('axesxLabel') || this.props.model.getIn(['axesvalue', 'searchString'], 'X-Axis')}
           </span>
         </div>
       </div>

@@ -21,14 +21,14 @@ export const shorten = (target) => {
   }
 };
 
-export const getLegend = (key, model, type = null, axesKey = null) => {
+export const getLegend = (key, model, type = null) => {
   const select = (ky, axis) => model.getIn([ky, 'searchString'], axis);
   const x = shorten(model.get('axesxLabel', select(axv, 'X-Axis')));
   const y = shorten(model.get('axesyLabel', select(axg, 'Y-Axis')));
 
   const getResultForXY = () => {
     const labelString = key === 'x' ? model.axesxLabel : model.axesyLabel;
-    const defaultLabel = key === 'x' ? model.getIn(['axesxValue', 'searchString'], 'X-Axis') : model.getIn(['axesgroup', 'searchString'], 'Y-Axis')
+    const defaultLabel = key === 'x' ? model.getIn(['axesxValue', 'searchString'], 'X-Axis') : model.getIn(['axesgroup', 'searchString'], 'Y-Axis');
     if (labelString && labelString.length) {
       return labelString;
     }
@@ -77,8 +77,8 @@ const defaultSelector = (model, type, prefix, format = TEXT) => {
 };
 
 export const createVisualisationName = (model, prefix) => defaultSelector(model, model.get('type', 'Unnamed'), prefix, COMPONENT);
-export const createVisualisationText = (model, prefix = '') => {defaultSelector(model, model.get('type', 'Unnamed'), prefix, TEXT);}
-export const createDefaultTitleWithIcon = model => <span><VisualisationTypeIcon id={model.get('_id')} /><span style={{ marginLeft: '3px' }}>{createVisualisationName(model)}</span></span>;
+export const createVisualisationText = (model, prefix = '') => defaultSelector(model, model.get('type', 'Unnamed'), prefix, TEXT);
+export const createDefaultTitleWithIcon = (model, name) => <span><VisualisationTypeIcon id={model.get('_id')} sourceView={model.get('sourceView')} /><span style={{ marginLeft: '3px' }}>{name || createVisualisationName(model)}</span></span>;
 export const createDefaultTitle = (model, prefix) => createVisualisationText(model, prefix);
 export const getPercentage = (res1, res2) => {
   const newValue = res1 || 0;

@@ -22,10 +22,10 @@ const getInnerRadius = size => i =>
 const getOuterRadius = size => i =>
   (size * (i + 1)) + (cellPadding * i);
 
-const getPieSize = ( cells, maxSize = 375 ) => {
-  const widgetSize = maxSize
+const getPieSize = (cells, maxSize = 375) => {
+  const widgetSize = maxSize;
   return (widgetSize / 2.5) / cells;
-}
+};
 
 const sortData = data =>
   data.sortBy(e => e.get('total'));
@@ -43,7 +43,7 @@ const renderCell = numberOfEntries => color => (entry, i) => (
     key={`cell-${i}`} />
 );
 
-const renderTooltips = labels => data => count => grouping => (<Tooltip content={<PieTooltip display={getLongModel(data)} labels={labels} count={count} grouping={grouping}/>} />);
+const renderTooltips = labels => data => count => grouping => (<Tooltip content={<PieTooltip display={getLongModel(data)} labels={labels} count={count} grouping={grouping} />} />);
 
 
 const renderPie = colors => data => maxSize => (label, i, labels) =>(
