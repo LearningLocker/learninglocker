@@ -41,7 +41,7 @@ const renderCell = numberOfEntries => color => (entry, i) => (
       value: i
     })}
     key={`cell-${i}`} />
-);
+  );
 
 const renderTooltips = labels => data => count => grouping => (<Tooltip content={<PieTooltip display={getLongModel(data)} labels={labels} count={count} grouping={grouping} />} />);
 
@@ -76,9 +76,11 @@ const renderChart = chart => (
 const renderChartResults = labels => results => colors => count => grouping =>
   renderPieChart(labels)(colors)(getSortedData(results)(labels))(count)(grouping);
 
-const renderResults = results => labels => colors => count => grouping =>
-  renderChart(renderChartResults(labels)(results)(colors)(count)(grouping));
+const renderResults = results => labels => colors => count => grouping => renderChart(renderChartResults(labels)(results)(colors)(count)(grouping));
 
-export default withStyles(styles)(({ results, labels, colors, count, grouping }) =>
-  (hasData(results) ? renderResults(results)(labels)(colors)(count)(grouping) : <NoData />)
+export const PieChartComponent = ({ results, labels, colors, count, grouping }) =>
+(hasData(results) ? renderResults(results)(labels)(colors)(count)(grouping) : <NoData />);
+
+export default withStyles(styles)(
+  PieChartComponent
 );

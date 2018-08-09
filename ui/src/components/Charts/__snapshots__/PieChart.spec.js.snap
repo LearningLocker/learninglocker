@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PieChart should render 1`] = `
+<div
+  class="chart"
+>
+  <div
+    style="overflow:visible;height:0;width:0;"
+  >
+    
+  </div>
+</div>
+`;
+
+exports[`PieChart should render no data 1`] = `<Component />`;

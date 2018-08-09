@@ -5,6 +5,20 @@ exports[`ColumnChartResult should render axes 1`] = `
   className="chart"
 >
   <div
+    className="barContainer"
+  >
+    <span
+      className="yAxis"
+    >
+      THE-Y
+    </span>
+    <div
+      className="chartWrapper"
+    >
+      <div />
+    </div>
+  </div>
+  <div
     className="xAxisLabel"
   >
     <span
@@ -12,24 +26,6 @@ exports[`ColumnChartResult should render axes 1`] = `
     >
       THE-X
     </span>
-  </div>
-  <div
-    className="barContainer"
-  >
-    <div
-      className="yAxisLabel"
-    >
-      <span
-        className="yAxis"
-      >
-        THE-Y
-      </span>
-    </div>
-    <div
-      className="chartWrapper"
-    >
-      <div />
-    </div>
   </div>
 </div>
 `;
