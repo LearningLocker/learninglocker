@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { Map, OrderedMap } from 'immutable';
 import isString from 'lodash/isString';
 import { withStatementsVisualisation } from 'ui/utils/hocs';
-import { getLegend } from 'ui/utils/defaultTitles';
+import { getAxesString } from 'ui/utils/defaultTitles';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import styles from './styles.css';
 import { displayVerb, displayActivity } from '../../utils/xapi';
@@ -61,9 +61,9 @@ const formatKeyToFriendlyString = (key) => {
 
 const getAxisLabel = (axis, visualisation, type, axesKey) => {
   if (!(type === 'XVSY')) {
-    return getLegend(axis, visualisation);
+    return getAxesString(axis, visualisation);
   }
-  return getLegend(axis, visualisation, 'XVSY', axesKey);
+  return getAxesString(axis, visualisation, 'XVSY', axesKey);
 };
 
 const createSelectIfXVSY = (index, visualisation, type, title, axis) => {

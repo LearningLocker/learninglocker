@@ -1,8 +1,8 @@
 import React from 'react';
 import 'jest-enzyme';
-import { createDefaultTitleWithIcon } from './defaultTitles';
+import { createDefaultTitleWithIcon, getPercentage, getAxesString } from './defaultTitles';
 import { shallow } from 'enzyme';
-import { Map } from 'immutable';
+import { Map, fromJS } from 'immutable';
 
 test('defaultTitles should create a title with an icon', () => {
   const model = new Map({
@@ -12,4 +12,35 @@ test('defaultTitles should create a title with an icon', () => {
 
   const rendered = shallow(<div>{createDefaultTitleWithIcon(model, name)}</div>);
   expect(rendered).toMatchSnapshot();
+});
+
+test('defaultTitle should getPercentage', () => {
+  const result = getPercentage(50, 100);
+
+  expect(result.result).toEqual('-100%');
+  expect(result.color).toBe('#E73304');
+});
+
+test('defaultTitle should getAxesString', () => {
+  const model = fromJS({
+    axesxValue: {
+      searchString: 'The search string'
+    }
+  });
+
+  const result = getAxesString('x', model);
+
+  expect(result).toEqual('X-Axis');
+});
+
+test('defaultTitle should getAxesString for XVSY', () => {
+  const model = fromJS({
+    axesxValue: {
+      searchString: 'The search string'
+    }
+  });
+
+  const result = getAxesString('x', model, 'XVSY');
+
+  expect(result).toEqual('The search string');
 });

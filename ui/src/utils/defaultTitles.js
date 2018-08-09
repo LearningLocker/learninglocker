@@ -21,7 +21,7 @@ export const shorten = (target) => {
   }
 };
 
-export const getLegend = (key, model, type = null) => {
+export const getAxesString = (key, model, type = null) => {
   const select = (ky, axis) => model.getIn([ky, 'searchString'], axis);
   const x = shorten(model.get('axesxLabel', select(axv, 'X-Axis')));
   const y = shorten(model.get('axesyLabel', select(axg, 'Y-Axis')));
@@ -42,11 +42,8 @@ export const getLegend = (key, model, type = null) => {
       default: return null;
     }
   }
-  switch (key) {
-    case 'x': return getResultForXY(key);
-    case 'y': return getResultForXY(key);
-    default: return null;
-  }
+
+  return getResultForXY();
 };
 
 const defaultSelector = (model, type, prefix, format = TEXT) => {
