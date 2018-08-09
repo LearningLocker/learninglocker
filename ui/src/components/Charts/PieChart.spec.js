@@ -1,5 +1,4 @@
 import React from 'react';
-import { withInsertCSS } from 'ui/utils/hocs';
 import 'jest-enzyme';
 import { List, fromJS } from 'immutable';
 import { render, shallow } from 'enzyme';
@@ -13,7 +12,7 @@ test('PieChart should render no data', () => {
   expect(pieChart).toMatchSnapshot();
 });
 
-test.only('PieChart should render', () => {
+test('PieChart should render', () => {
   const results = fromJS([[{
     0: {
       _id: 0,

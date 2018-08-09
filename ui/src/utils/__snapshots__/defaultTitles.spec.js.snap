@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`defaultTitles should create a title with an icon 1`] = `
+<div>
+  <span>
+    <withProps(Connect(WithModel))
+      id="1111"
+    />
+    <span
+      style={
+        Object {
+          "marginLeft": "3px",
+        }
+      }
+    >
+      dave
+    </span>
+  </span>
+</div>
+`;
