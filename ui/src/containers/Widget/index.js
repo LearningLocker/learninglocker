@@ -13,6 +13,7 @@ import DropDownMenu from 'ui/components/DropDownMenu';
 import WidgetVisualisePicker from 'ui/containers/WidgetVisualisePicker';
 import VisualiseResults from 'ui/containers/VisualiseResults';
 import SourceResults from 'ui/containers/VisualiseResults/SourceResults';
+import TableResults from 'ui/containers/VisualiseResults/TableResults';
 import DeleteConfirm from 'ui/containers/DeleteConfirm';
 import { createDefaultTitle } from 'ui/utils/defaultTitles';
 import styles from './widget.css';
@@ -168,6 +169,8 @@ class Widget extends Component {
       [styles.draggableTitle]: this.props.editable,
     });
 
+ 
+    console.log('​Widget -> render -> <TableResults>', TableResults);
     return (
       <div className={`panel panel-default animated fadeIn ${styles.widget}`} >
         <div className={styles.widgetContent}>
@@ -182,7 +185,7 @@ class Widget extends Component {
           <div className={`panel-body ${styles.body}`}>
             {!this.props.visualisation.get('sourceView') && model.has('visualisation') && <VisualiseResults id={model.get('visualisation')} />}
             {this.props.visualisation.get('sourceView') &&
-              <SourceResults id={model.get('visualisation')} />
+              <TableResults id={model.get('visualisation')} />
             }
           </div>
           {

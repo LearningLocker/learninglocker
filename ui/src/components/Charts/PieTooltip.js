@@ -5,6 +5,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import styles from './styles.css';
 
 class PieTooltip extends Component {
+
   static propTypes = {
     payload: PropTypes.arrayOf(PropTypes.object),
     labels: PropTypes.instanceOf(List),
@@ -16,8 +17,7 @@ class PieTooltip extends Component {
     display: label => label,
   }
 
-  getLabel = label => i =>
-    label || `Series ${i + 1}`
+  getLabel = label => i => label || `Series ${i + 1}`
 
   getValue = entry => i => round(entry.payload[`s${i}`], 2);
 

@@ -3,7 +3,7 @@ import { Map } from 'immutable';
 import { updateModel } from 'ui/redux/modules/models';
 import { connect } from 'react-redux';
 import VisualiseResults from 'ui/containers/VisualiseResults';
-import SourceResults from 'ui/containers/VisualiseResults/SourceResults';
+import SourceResults from 'ui/containers/VisualiseResults/TableResults';
 import {
   LAST_30_DAYS,
   LAST_7_DAYS,
