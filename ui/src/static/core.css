@@ -1569,6 +1569,7 @@ pre {
   background-color: #f5f5f5;
   border: 1px solid #ccc;
   border-radius: 4px;
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 pre code {
   padding: 0;
