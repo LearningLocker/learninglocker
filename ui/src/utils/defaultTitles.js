@@ -8,23 +8,25 @@ const axV = 'axesxValue';
 const ayV = 'axesyValue';
 const axg = 'axesgroup';
 
-export const shorten = (target) => {
-  if (target.length >= 20) {
+export const shorten = (target, forXAxis) => {
+  if (target.length >= 20 && forXAxis) {
     switch (true) {
       case target.indexOf(' ') !== -1: return target.split(' ')[0];
       case target.indexOf('.') !== -1: return target.split('.')[0];
       case target.indexOf('%20') !== -1: return target.split('%20')[target.split('%20').length];
       default: return target.substring(0, 24);
     }
+  } else if (target.length >= 20) {
+    return target.substring(0, 46);
   } else {
     return target;
   }
 };
 
-export const getAxesString = (key, model, type = null) => {
+export const getAxesString = (key, model, type = null, shortened = true) => {
   const select = (ky, axis) => model.getIn([ky, 'searchString'], axis);
-  const x = shorten(model.get('axesxLabel', select(axv, 'X-Axis')));
-  const y = shorten(model.get('axesyLabel', select(axg, 'Y-Axis')));
+  const x = shortened ? shorten(model.get('axesxLabel', select(axv, 'X-Axis'))) : model.get('axesxLabel', select(axv, 'X-Axis'));
+  const y = shortened ? shorten(model.get('axesyLabel', select(axg, 'Y-Axis')), false) : model.get('axesyLabel', select(axg, 'Y-Axis'));
 
   const getResultForXY = () => {
     const labelString = key === 'x' ? model.axesxLabel : model.axesyLabel;

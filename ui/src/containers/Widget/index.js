@@ -181,8 +181,7 @@ class Widget extends Component {
           </div>
           <div className={`panel-body ${styles.body}`}>
             {!this.props.visualisation.get('sourceView') && model.has('visualisation') && <VisualiseResults id={model.get('visualisation')} />}
-            {this.props.visualisation.get('sourceView') &&
-              <SourceResults id={model.get('visualisation')} />
+            {this.props.visualisation.get('sourceView') && <SourceResults id={model.get('visualisation')} />
             }
           </div>
           {

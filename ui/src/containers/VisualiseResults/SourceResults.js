@@ -1,5 +1,5 @@
 import React from 'react';
-import { compose } from 'recompose';
+import { compose, withProps } from 'recompose';
 import { Map, OrderedMap } from 'immutable';
 import isString from 'lodash/isString';
 import { withStatementsVisualisation } from 'ui/utils/hocs';
@@ -61,9 +61,9 @@ const formatKeyToFriendlyString = (key) => {
 
 const getAxisLabel = (axis, visualisation, type, axesKey) => {
   if (!(type === 'XVSY')) {
-    return getAxesString(axis, visualisation);
+    return getAxesString(axis, visualisation, null, false);
   }
-  return getAxesString(axis, visualisation, 'XVSY', axesKey);
+  return getAxesString(axis, visualisation, 'XVSY', false);
 };
 
 const createSelectIfXVSY = (index, visualisation, type, title, axis) => {
@@ -81,7 +81,7 @@ const createSelectIfXVSY = (index, visualisation, type, title, axis) => {
 
 export default compose(
   withStatementsVisualisation,
-  withStyles(styles)
+  withStyles(styles),
 )(({
   getFormattedResults,
   results,
@@ -119,7 +119,7 @@ export default compose(
             <tr>
               <td>{formatKeyToFriendlyString(key)}</td>
               {item.map(series =>
-                series.map(axes2 => (<td>{axes2.get('count')}</td>)
+                series.map(axes2 => (<td>{axes2.get('count').toFixed(2)}</td>)
                 )
               )}
             </tr>

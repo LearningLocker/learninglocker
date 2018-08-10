@@ -25,7 +25,7 @@ class ColumnAxesEditor extends BaseAxesEditor {
             placeholder={this.props.model.getIn(['axesgroup', 'searchString'], 'X-Axis')}
             debounceTimeout={377}
             style={{ fontWeight: 'bold' }}
-            value={this.props.model.axesxLabel}
+            value={this.props.model.get('axesxLabel')}
             onChange={this.handleAxesChange.bind(this, 'xLabel')} />
         </div>
         <div className="form-group">
@@ -44,7 +44,7 @@ class ColumnAxesEditor extends BaseAxesEditor {
             placeholder={this.props.model.getIn(['axesvalue', 'searchString'], 'Y-Axis')}
             debounceTimeout={377}
             style={{ fontWeight: 'bold' }}
-            value={this.props.model.axesyLabel}
+            value={this.props.model.get('axesyLabel')}
             onChange={this.handleAxesChange.bind(this, 'yLabel')} />
         </div>
         <div className="form-group">
