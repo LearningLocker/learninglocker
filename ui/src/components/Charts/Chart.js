@@ -89,6 +89,8 @@ const getGroupModel = data => group =>
 const getMinAndMax = counts =>
   [0, counts.max()];
 
+const getLegendPosition = height => height >= 66 ? 'top' : 'bottom';
+
 const getTotal = entry =>
   entry.get('total', 0);
 
@@ -149,10 +151,9 @@ const onLegendClick = toggleHiddenSeries => (bar) => {
   toggleHiddenSeries(bar.dataKey);
 };
 
-export const renderLegend = (labels, toggleHiddenSeries) =>
-  (labels.size > 1 ?
-    <Legend
-      verticalAlign="top" align="center" height={30} onClick={toggleHiddenSeries ? onLegendClick(toggleHiddenSeries) : null} /> : <noscript />
+export const renderLegend = (labels, toggleHiddenSeries, height) => (labels.size > 1 ?
+  <Legend
+    verticalAlign={getLegendPosition(height)} aheight={30} onClick={toggleHiddenSeries ? onLegendClick(toggleHiddenSeries) : null} /> : <noscript />
   );
 
 export const renderTooltips = (data, hiddenSeries, colors = ['grey']) =>

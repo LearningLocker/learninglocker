@@ -119,7 +119,7 @@ class BarChart extends Component {
             type="category"
             width={90} />
           <XAxis type="number" />
-          {renderLegend(labels, this.props.toggleHiddenSeries)}
+          {renderLegend(labels, this.props.toggleHiddenSeries, height)}
           {renderBars(colors)(labels)(stacked)}
           {renderTooltips(data, this.props.hiddenSeries)}
         </Chart>
