@@ -1,5 +1,5 @@
 import * as popsicle from 'popsicle';
-import { assign } from 'lodash';
+import { assign, isPlainObject } from 'lodash';
 import { Map } from 'immutable';
 import logger from 'lib/logger';
 import Statement, { mapDot } from 'lib/models/statement';
@@ -44,28 +44,41 @@ const sendRequest = async (statement, statementForwarding) => {
     body: mapDot(statement),
     url: urlString,
     headers,
-    timeout: 16000,
+    timeout: 5000,
     options: {
       followRedirects: (() => true)
     }
   };
-  const request = popsicle.request(requestOptions);
-
   try {
+    const request = popsicle.request(requestOptions);
     const response = await request;
     if (!(response.status >= 200 && response.status < 400)) {
       throw new ForwardingRequestError(
-        `Status code was invalid: (${response.status})`,
-        response.body,
+        'Status code was invalid',
+        {
+          headers: requestOptions.headers,
+          responseBody: response.body,
+          responseStatus: response.status,
+          url: requestOptions.url,
+        }
       );
     }
+
+    return request;
   } catch (err) {
+    if (err instanceof ForwardingRequestError) {
+      throw err;
+    }
     throw new ForwardingRequestError(
-      `Error with popsicle request/response: ${JSON.stringify(requestOptions)}`,
+      err.message,
+      {
+        headers: requestOptions.headers,
+        responseBody: null,
+        responseStatus: null,
+        url: requestOptions.url,
+      }
     );
   }
-
-  return request;
 };
 
 const setPendingStatements = (statement, statementForwardingId) =>
@@ -123,9 +136,9 @@ const statementForwardingRequestHandler = async (
     };
 
     if (err.messageBody) {
-      update = assign({}, update, {
-        messageBody: err.messageBody
-      });
+      if (isPlainObject(err.messageBody)) {
+        update = assign({}, update, { errorInfo: err.messageBody });
+      }
     }
 
     try {

@@ -32,8 +32,15 @@ class ExportForm extends Component {
     download: false
   }
 
-  selectIndex = (index) => {
-    this.setState({ activeIndex: index });
+  componentDidMount = () => {
+    this.state.projectionString = this.getActiveProjection();
+  }
+
+  componentDidUpdate = () => {
+    if (this.state.download === true) {
+      this.postDownloadExport();
+      this.state.download = false;
+    }
   };
 
   onChangeProjection = (projection) => {
@@ -53,16 +60,9 @@ class ExportForm extends Component {
     }
   }
 
-  componentDidUpdate = () => {
-    if (this.state.download === true) {
-      this.postDownloadExport();
-      this.state.download = false;
-    }
+  selectIndex = (index) => {
+    this.setState({ activeIndex: index });
   };
-
-  componentDidMount = () => {
-    this.state.projectionString = this.getActiveProjection();
-  }
 
   postDownloadExport = () => {
     this.props.setDownloadRequestStates(downloadRequestStates.waiting);
