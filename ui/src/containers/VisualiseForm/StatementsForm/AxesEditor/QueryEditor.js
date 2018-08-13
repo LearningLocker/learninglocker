@@ -14,7 +14,10 @@ export default class QueryEditor extends Component {
     this.props.query === undefined &&
     nextProps.query !== undefined
   ) && (
-    this.props.query !== undefined &&
+    this.props.query == null &&
+    nextProps.query !== null
+  ) && (
+    (this.props.query !== undefined && this.props.query !== null) &&
     this.props.query.equals(nextProps.query)
   ));
 
@@ -27,7 +30,7 @@ export default class QueryEditor extends Component {
     this.props.changeQuery(fromJS({ $match: query }));
   }
 
-  hasQuery = () => this.props.query !== undefined;
+  hasQuery = () => this.props.query !== undefined && this.props.query !== null;
 
   render = () => (
     <div>
