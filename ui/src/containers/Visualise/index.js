@@ -52,6 +52,13 @@ class Visualise extends Component {
     });
   }
 
+  populateTitle = (model) => {
+    if (model.get('description')) {
+      return <span style={{ fontWeight: 700 }}>{model.get('description')}</span>;
+    }
+    return createVisualisationName(model);
+  }
+
   render = () => (
     <div>
       <header id="topbar">
@@ -82,7 +89,7 @@ class Visualise extends Component {
                 <span style={{ paddingRight: 10 }}>
                   <VisualisationTypeIcon id={model.get('_id')} tableIcon={false} />
                 </span>
-                { model.get('description') || createVisualisationName(model)}
+                {this.populateTitle(model)}
               </span>
             )} />
         </div>

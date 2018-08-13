@@ -16,7 +16,7 @@ const getAxes = (index, axes) => {
   }
 };
 
-const moreThanOneSeries = tData => tData.first().size > 1;
+const moreThanOneSeries = tData => tData.first() !== 'undefined' && tData.first().size > 1;
 
 export const generateTableData = (results, labels, axes, type) => {
   const seriesList = labels.zip(results);
@@ -60,15 +60,15 @@ const formatKeyToFriendlyString = (key) => {
 };
 
 const getAxisLabel = (axis, visualisation, type, axesKey) => {
-  if (!(type === 'XVSY')) {
-    return getAxesString(axis, visualisation, null, false);
+  if (type !== 'XVSY') {
+    return getAxesString(axis, visualisation, type, false);
   }
-  return getAxesString(axis, visualisation, 'XVSY', false);
+  return visualisation.getIn(['axesgroup', 'searchString'], 'No value');
 };
 
 const createSelectIfXVSY = (index, visualisation, type, title, axis) => {
-  if (type !== 'XVSY') {
-    return getAxisLabel(axis, visualisation, null, title);
+  if (!(type === 'XVSY')) {
+    return getAxisLabel(axis, visualisation, type, title);
   }
   if (title.length) {
     return title;
@@ -103,12 +103,12 @@ export default compose(
             ))}
           </tr>}
           <tr>
-            <th>{getAxisLabel('y', visualisation, model.get('type'))}</th>
+            <th>{getAxisLabel('x', visualisation, model.get('type'))}</th>
             {
               tableData.first().map((series) => {
                 const out = series.mapEntries((title, index) =>
                   [index, (
-                    <th>{createSelectIfXVSY(index, visualisation, model.get('type'), title[0], 'x')}</th>
+                    <th>{createSelectIfXVSY(index, visualisation, model.get('type'), title[0], 'y')}</th>
                   )]
                 );
                 return out;

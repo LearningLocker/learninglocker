@@ -10,23 +10,26 @@ const axg = 'axesgroup';
 
 export const shorten = (target, forXAxis) => {
   if (target.length >= 20 && forXAxis) {
-    switch (true) {
-      case target.indexOf(' ') !== -1: return target.split(' ')[0];
-      case target.indexOf('.') !== -1: return target.split('.')[0];
-      case target.indexOf('%20') !== -1: return target.split('%20')[target.split('%20').length];
-      default: return target.substring(0, 24);
+    if (target.indexOf(' ') !== -1) {
+      return target.split(' ')[0];
     }
+    if (target.indexOf('.') !== -1) {
+      return target.split('.')[0];
+    }
+    if (target.indexOf('%20') !== -1) {
+      return target.split('%20')[target.split('%20').length];
+    }
+    return target.substring(0, 24);
   } else if (target.length >= 20) {
     return target.substring(0, 46);
-  } else {
-    return target;
   }
+  return target;
 };
 
 export const getAxesString = (key, model, type = null, shortened = true) => {
   const select = (ky, axis) => model.getIn([ky, 'searchString'], axis);
-  const x = shortened ? shorten(model.get('axesxLabel', select(axv, 'X-Axis'))) : model.get('axesxLabel', select(axv, 'X-Axis'));
-  const y = shortened ? shorten(model.get('axesyLabel', select(axg, 'Y-Axis')), false) : model.get('axesyLabel', select(axg, 'Y-Axis'));
+  const x = shortened ? shorten(model.get('axesxLabel', select(axg, 'X-Axis'))) : model.get('axesxLabel', select(axg, 'X-Axis'));
+  const y = shortened ? shorten(model.get('axesyLabel', select(axv, 'Y-Axis')), false) : model.get('axesyLabel', select(axv, 'Y-Axis'));
 
   const getResultForXY = () => {
     const labelString = key === 'x' ? model.axesxLabel : model.axesyLabel;
@@ -37,14 +40,21 @@ export const getAxesString = (key, model, type = null, shortened = true) => {
     return defaultLabel;
   };
 
-  if (type !== 'XVSY') {
+  if (type === 'LEADERBOARD') {
     switch (key) {
-      case 'x': return x.length > 1 ? x : shorten(select(axv, 'X-Axis'));
-      case 'y': return y.length > 1 ? y : shorten(select(axg, 'Y-Axis'));
+      case 'x': return y.length > 1 ? y : model.getIn(['axesgroup', 'searchString'], 'X-Axis')
+      case 'y': return x.length > 1 ? x :model.getIn(['axesvalue', 'searchString'], 'Y-Axis')
       default: return null;
     }
   }
 
+  if (type !== 'XVSY') {
+    switch (key) {
+      case 'x': return x.length > 1 ? x : select(axg, 'yyyy/mm/dd');
+      case 'y': return y.length > 1 ? y : select(axv, 'Y-Axis');
+      default: return null;
+    }
+  }
   return getResultForXY();
 };
 

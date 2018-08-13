@@ -53,8 +53,8 @@ class WidgetVisualisePicker extends Component {
         <input
           id={htmlFor}
           className="form-control"
-          placeholder={'Unnamed'}
-          value={this.getTitle(this.props, 'Unnamed')}
+          placeholder={'Title'}
+          value={this.getTitle(this.props, 'Title')}
           onChange={this.onChangeTitle} />
       </div>
     );
