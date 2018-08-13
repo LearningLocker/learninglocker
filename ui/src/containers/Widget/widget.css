@@ -5,18 +5,26 @@
 
 .widgetContent {
   overflow: hidden;
-  height: 100%; }
+  height: 100%; 
+  display: flex;
+  flex-direction: column;
+}
 
 .marginRight {
   margin-right: 8px; }
 
 .body {
   padding: 0px 10px 10px 10px;
-  height: calc( 100% - 43px ); }
+  /*h eight: calc( 100% - 43px ); */
+  height: 0px;
+  flex-grow: 1;
+
+}
 
 .heading {
   padding: 0px;
-  height: 43px; }
+  /* height: 43px;  */
+}
 
 .title {
   cursor: move;
