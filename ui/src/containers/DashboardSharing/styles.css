@@ -9,3 +9,7 @@
 .gray {
   background-color: #ccc;
 }
+
+.contextHelp {
+  font-style: italic;
+}

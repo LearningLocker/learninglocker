@@ -45,5 +45,5 @@ export default compose(
       setInMetadata
     }
   ),
-  stateProps
+  stateProps,
 )(ModelListItem);
