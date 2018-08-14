@@ -7,7 +7,6 @@ import importPersona from 'lib/services/importPersonas/importPersona';
 import moment from 'moment';
 import PersonasImport from 'lib/models/personasImport';
 import { addErrorsToCsv } from 'lib/services/importPersonas/importPersonas';
-import logger from 'lib/logger';
 
 const LOCK_TIMEOUT = 120; // seconds
 
@@ -33,7 +32,7 @@ export const establishLock = async ({
     // DuplicateKey
     if (err.code && err.code === 11000) {
       const models = ImportPersonasLock.find({
-        organisation: organisation,
+        organisation,
         ifis: {
           $in: ifis
         }
