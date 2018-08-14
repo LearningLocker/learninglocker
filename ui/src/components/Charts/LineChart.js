@@ -23,8 +23,8 @@ const getSortedData = results => labels =>
 
 const renderLine = colors => (label, i) => (
   <Line
-    key={i}
-    dataKey={`s${i}`}
+    key={i+1}
+    dataKey={`Series ${i+1}`}
     type="monotone"
     dot={false}
     stroke={colors.get(i)}

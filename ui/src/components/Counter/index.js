@@ -45,5 +45,5 @@ const renderCounter = color => rs => model => (maxSize, width) => {
   );
 };
 const renderResults = rs => color => model => (maxSize, width) => renderCounter(color)(rs)(model)(maxSize, width);
-const counter = ({ results, color, model, maxSize, width }) => (hasData(results) ? renderResults(results)(color)(model)(maxSize, width) : <NoData />);
+const counter = ({ results, color, model, maxSize, width }) => (results ? renderResults(results)(color)(model)(maxSize, width) : <NoData />);
 export default withStyles(styles)(counter);

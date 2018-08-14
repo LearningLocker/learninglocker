@@ -1,6 +1,7 @@
 import React from 'react';
 import { COMPONENT, TEXT } from 'ui/utils/constants';
 import uuid from 'uuid';
+import { startCase, toLower } from 'lodash';
 import VisualisationTypeIcon from '../containers/Visualise/VisualisationTypeIcon';
 
 const axv = 'axesvalue';
@@ -42,16 +43,16 @@ export const getAxesString = (key, model, type = null, shortened = true) => {
 
   if (type === 'LEADERBOARD') {
     switch (key) {
-      case 'x': return y.length > 1 ? y : model.getIn(['axesgroup', 'searchString'], 'X-Axis')
-      case 'y': return x.length > 1 ? x :model.getIn(['axesvalue', 'searchString'], 'Y-Axis')
+      case 'x': return y.length ? y : model.getIn(['axesgroup', 'searchString'], 'X-Axis');
+      case 'y': return x.length ? x : model.getIn(['axesvalue', 'searchString'], 'Y-Axis');
       default: return null;
     }
   }
 
   if (type !== 'XVSY') {
     switch (key) {
-      case 'x': return x.length > 1 ? x : select(axg, 'yyyy/mm/dd');
-      case 'y': return y.length > 1 ? y : select(axv, 'Y-Axis');
+      case 'x': return x.length ? x : select(axg, 'yyyy/mm/dd');
+      case 'y': return y.length ? y : select(axv, 'Y-Axis');
       default: return null;
     }
   }
@@ -61,8 +62,8 @@ export const getAxesString = (key, model, type = null, shortened = true) => {
 const defaultSelector = (model, type, prefix, format = TEXT) => {
   const formattedDefault = () => {
     const select = key => model.getIn([key, 'searchString'], '');
-    const addXY = (selectedX, selectedY = 'Time') => `X: ${selectedX} Y: ${selectedY}`;
-    const addYX = (selectedX, selectedY = 'Time') => `X: ${selectedY} Y: ${selectedX}`;
+    const addXY = (selectedX, selectedY = 'Time') => `X: ${startCase(toLower(selectedX))} Y: ${startCase(toLower(selectedY))}`;
+    const addYX = (selectedX, selectedY = 'Time') => `X: ${startCase(toLower(selectedY))} Y: ${startCase(toLower(selectedX))}`;
     switch (type) {
       case ('FREQUENCY'): return addYX(select(axv) || select(ayV), 'Time');
       case ('LEADERBOARD'): return addYX(select(axg), select(axv) || select(ayV));

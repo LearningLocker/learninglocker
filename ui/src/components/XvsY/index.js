@@ -115,7 +115,7 @@ class XvsY extends Component {
   renderOneSeries = ({ trendLines }) => (series, index) =>
     (
       <Scatter
-        dataKey={`s${index}`}
+        dataKey={`Series ${index+1}`}
         name={this.props.labels.get(index)}
         key={index}
         line={trendLines}

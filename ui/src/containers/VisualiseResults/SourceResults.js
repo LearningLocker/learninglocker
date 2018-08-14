@@ -1,5 +1,6 @@
 import React from 'react';
 import { compose, withProps } from 'recompose';
+import NoData from 'ui/components/Graphs/NoData';
 import { Map, OrderedMap } from 'immutable';
 import isString from 'lodash/isString';
 import { withStatementsVisualisation } from 'ui/utils/hocs';
@@ -16,7 +17,7 @@ const getAxes = (index, axes) => {
   }
 };
 
-const moreThanOneSeries = tData => tData.first() !== 'undefined' && tData.first().size > 1;
+const moreThanOneSeries = tData => tData.first() !== undefined && tData.first().size > 1;
 
 export const generateTableData = (results, labels, axes, type) => {
   const seriesList = labels.zip(results);
@@ -59,7 +60,7 @@ const formatKeyToFriendlyString = (key) => {
   return JSON.stringify(key, null, 2);
 };
 
-const getAxisLabel = (axis, visualisation, type, axesKey) => {
+const getAxisLabel = (axis, visualisation, type) => {
   if (type !== 'XVSY') {
     return getAxesString(axis, visualisation, type, false);
   }
@@ -79,6 +80,13 @@ const createSelectIfXVSY = (index, visualisation, type, title, axis) => {
   return visualisation.getIn(['axesyValue', 'searchString'], 'No value');
 };
 
+const formatNumber = (selectedAxes) => {
+  if (selectedAxes.get('count') % 1 !== 0) {
+    return selectedAxes.get('count').toFixed(2);
+  }
+  return selectedAxes.get('count');
+};
+
 export default compose(
   withStatementsVisualisation,
   withStyles(styles),
@@ -92,40 +100,42 @@ export default compose(
 }) => {
   const formattedResults = getFormattedResults(results);
   const tableData = generateTableData(formattedResults, labels, axes, visualisation.get('type'));
-  return (
-    <div className={styles.sourceResultsContainer}>
-      <table className="table table-bordered table-striped">
-        <tbody>
-          {moreThanOneSeries(tableData) && <tr>
-            <th />
-            {tableData.first().map((item, key) => (
-              <th colSpan={item.size}>{key}</th>
-            ))}
-          </tr>}
-          <tr>
-            <th>{getAxisLabel('x', visualisation, model.get('type'))}</th>
-            {
-              tableData.first().map((series) => {
-                const out = series.mapEntries((title, index) =>
-                  [index, (
-                    <th>{createSelectIfXVSY(index, visualisation, model.get('type'), title[0], 'y')}</th>
-                  )]
-                );
-                return out;
-              })
-            }
-          </tr>
-          {tableData.map((item, key) => (
+  if (tableData.first()) {
+    return (
+      <div className={styles.sourceResultsContainer}>
+        <table className="table table-bordered table-striped">
+          <tbody>
+            {moreThanOneSeries(tableData) && <tr>
+              <th />
+              {tableData.first().map((item, key) => (
+                <th colSpan={item.size}>{key}</th>
+              ))}
+            </tr>}
             <tr>
-              <td>{formatKeyToFriendlyString(key)}</td>
-              {item.map(series =>
-                series.map(axes2 => (<td>{axes2.get('count').toFixed(2)}</td>)
-                )
-              )}
+              <th>{getAxisLabel('x', visualisation, model.get('type'))}</th>
+              {tableData.first().map((series) => {
+                  const out = series.mapEntries((title, index) =>
+                    [index, (
+                      <th>{createSelectIfXVSY(index, visualisation, model.get('type'), title[0], 'y')}</th>
+                    )]
+                  );
+                  return out;
+                })
+              }
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+            {tableData.map((item, key) => (
+              <tr>
+                <td>{formatKeyToFriendlyString(key)}</td>
+                {item.map(series =>
+                  series.map(axes2 => (<td>{formatNumber(axes2)}</td>)
+                  )
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+  return (<NoData />);
 });
