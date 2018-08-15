@@ -19,7 +19,7 @@ class PieTooltip extends Component {
   getLabel = label => i =>
     label || `Series ${i + 1}`
 
-  getValue = entry => i => round(entry.payload[`Series ${i}`], 2);
+  getValue = entry => i => round(entry.payload[`Series ${i + 1}`], 2);
 
   renderLabel = entry => count => (label, i) => (
     <p key={i}>

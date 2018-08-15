@@ -77,7 +77,7 @@ const getEntryData = i => (entry) => {
 const getEntriesData = i => entries => entries.map(getEntryData(i)).mapKeys((k, data) => data.get('cellId'));
 
 const getSeriesData = series => i =>
-  getEntriesData(i)(series.get(0, new Map()));
+  getEntriesData( i + 1 )(series.get(0, new Map()));
 
 const mergeEntryData = (prev, next) => prev.merge(next).set('total', next.get('total') + prev.get('total'));
 

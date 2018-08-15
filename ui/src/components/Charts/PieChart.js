@@ -51,7 +51,7 @@ const renderPie = colors => data => maxSize => (label, i, labels) => (
     key={i}
     data={getChartData(data)}
     nameKey={'_id'}
-    dataKey={`Series ${i}`}
+    dataKey={`Series ${i + 1}`}
     innerRadius={getInnerRadius(getPieSize(labels.size, maxSize))(i)}
     outerRadius={getOuterRadius(getPieSize(labels.size, maxSize))(i)}>
     {data.valueSeq().map(renderCell(data.size)(colors.get(i)))}
