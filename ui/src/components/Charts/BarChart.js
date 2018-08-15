@@ -47,7 +47,6 @@ class BarChart extends Component {
     chartWrapperFn: component => (<AutoSizer>{component}</AutoSizer>)
   }
 
-  // displayPrevPage = () => this.setState({ activePage: this.state.activePage - 1 })
   displayPrevPage = () => this.props.setInMetadata({
     schema: 'visualisation',
     id: this.props.model.get('_id'),
@@ -55,7 +54,6 @@ class BarChart extends Component {
     value: this.props.activePage - 1
   });
 
-  // displayNextPage = () => this.setState({ activePage: this.state.activePage + 1 })
   displayNextPage = () => this.props.setInMetadata({
     schema: 'visualisation',
     id: this.props.model.get('_id'),
