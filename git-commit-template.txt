@@ -1,7 +1,7 @@
 # Please use this template for commit messages
 
 # type(scope): Summary message
-# ie. git commit -m fix(visualisations): removed deprecated method 'oldMethod'
+# i.e. git commit -m fix(visualisations): removed deprecated method 'oldMethod'
 #
 # (Long message) - Line 1
 #                - Line 2
@@ -11,7 +11,7 @@
 
 # feat                  Features                                Bumps minor
 # fix                   Bug fixes (updating prod dependencies)  Bumps patch
-# perf                  Performance improovements               Bumps patch
+# perf                  Performance improvements               Bumps patch
 # docs                  Documentation changes                   No release
 # style                 Styling changes                         No release
 # refactor              Code refactoring                        No release
