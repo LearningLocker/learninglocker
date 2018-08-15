@@ -1,21 +1,13 @@
-
 # Please use this template for commit messages
-
-<<<<<<< HEAD
-# type(scope): Summary message
-# ie. git commit -m fix(visualisations): removed deprecated library
-=======
-# COMMIT TEMPLATE
-# ------------------------------------------
+#
 # type(scope): Summary message goes here.
->>>>>>> 700e0a8cb1ade0bec357f50a88859a187a80f463
 #
 # Long message goes here.
-
+#
 # EXAMPLE 1 - Fix
 # ------------------------------------------
-# fix(visualisations): removed deprecated method 'oldMethod'
-
+# fix(visualisations): removed deprecated method oldMethod
+#
 # EXAMPLE 2 - Refactor with 2 breaking changes
 # ------------------------------------------
 # refactor: Changes imports
