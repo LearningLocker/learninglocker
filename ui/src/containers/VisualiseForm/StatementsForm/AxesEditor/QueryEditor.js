@@ -39,12 +39,12 @@ export default class QueryEditor extends Component {
         label="Query"
         onChange={this.toggleQuery} />
       {
-        this.hasQuery() &&
-          <QueryBuilder
-            componentPath={this.props.componentPath}
-            query={this.props.query.get('$match', new Map())}
-            onChange={this.changeQuery} />
-      }
+          this.hasQuery() &&
+            <QueryBuilder
+              componentPath={this.props.componentPath}
+              query={this.props.query.get('$match', new Map())}
+              onChange={this.changeQuery} />
+        }
     </div>
-  );
+    )
 }

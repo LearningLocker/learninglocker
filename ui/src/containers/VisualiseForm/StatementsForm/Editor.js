@@ -9,6 +9,7 @@ import TypeEditor from './TypeEditor';
 import SeriesEditor from './SeriesEditor';
 import AxesEditor from './AxesEditor/AxesEditor';
 import styles from '../visualiseform.css';
+import OptionsEditor from './OptionsEditor';
 
 const SCHEMA = 'visualisation';
 
@@ -57,8 +58,8 @@ class Editor extends Component {
     </div>
   )
 
-  renderTabs = () => (
-    <div className={styles.tab}>
+  renderTabs = () =>
+    (<div className={styles.tab}>
       { this.renderDescription(this.props.model.get('description')) }
       <Tabs index={this.state.step} onChange={this.changeStep}>
         <Tab label="Axes">
@@ -67,14 +68,22 @@ class Editor extends Component {
         <Tab label="Series">
           {this.renderSeriesEditor()}
         </Tab>
+        <Tab label="Options">
+          {this.renderOptionsEditor()}
+        </Tab>
       </Tabs>
     </div>
-  )
+  );
 
   renderSeriesEditor = () => (
     <SeriesEditor
       model={this.props.model}
       exportVisualisation={this.props.exportVisualisation} />
+  )
+
+  renderOptionsEditor = () => (
+    <OptionsEditor
+      model={this.props.model} />
   )
 
   renderSteps = () => (

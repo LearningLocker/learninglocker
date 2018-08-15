@@ -76,8 +76,8 @@ const getLayout = widgets =>
       y: widget.get('y', 0),
       w: widget.get('w', 4),
       h: widget.get('h', 4),
-      minW: 2,
-      minH: 4
+      minW: 3,
+      minH: 5
     };
   });
 

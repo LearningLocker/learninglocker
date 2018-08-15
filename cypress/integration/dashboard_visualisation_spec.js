@@ -1,8 +1,6 @@
 
 
 describe('dashboard visulaisation', () => {
-
-
   it('should go to the visulaisation from the dashboard', () => {
     cy.exec('node --version').then((result) => {
       cy.log('node version', result.stdout);
@@ -32,7 +30,7 @@ describe('dashboard visulaisation', () => {
 
       // Go to visualisation from dashboard
       cy.get('.ion-navicon-round').click();
-      cy.contains('Go to visualisation').click();
+      cy.contains('Edit visualisation').click();
 
       // Test we've landed in the right place.
       cy.get('input[placeholder="What does this visualisation show?"]').should('have.value', 'test 1');

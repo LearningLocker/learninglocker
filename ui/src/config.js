@@ -3,7 +3,6 @@ import defaultTo from 'lodash/defaultTo';
 
 const title = 'Learning Locker';
 const description = 'The open source learning record store';
-
 const isProduction = process.env.NODE_ENV === 'production';
 const host = process.env.UI_HOST || '127.0.0.1';
 const enableFrameguard = boolean(defaultTo(process.env.ENABLE_FRAMEGUARD, true));
