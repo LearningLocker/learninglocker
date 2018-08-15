@@ -1,5 +1,5 @@
 import React from 'react';
-import { compose, withProps } from 'recompose';
+import { compose } from 'recompose';
 import NoData from 'ui/components/Graphs/NoData';
 import { Map, OrderedMap } from 'immutable';
 import isString from 'lodash/isString';
@@ -23,7 +23,7 @@ export const generateTableData = (results, labels, axes, type) => {
   const seriesList = labels.zip(results);
   const seriesList2 = seriesList.map(([key, item], i) => {
     if (key === undefined) {
-      return [`Series ${i+1}`, item];
+      return [`Series ${i + 1}`, item];
     }
     return [key, item];
   });
@@ -114,13 +114,13 @@ export default compose(
             <tr>
               <th>{getAxisLabel('x', visualisation, model.get('type'))}</th>
               {tableData.first().map((series) => {
-                  const out = series.mapEntries((title, index) =>
-                    [index, (
-                      <th>{createSelectIfXVSY(index, visualisation, model.get('type'), title[0], 'y')}</th>
+                const out = series.mapEntries((title, index) =>
+                  [index, (
+                    <th>{createSelectIfXVSY(index, visualisation, model.get('type'), title[0], 'y')}</th>
                     )]
                   );
-                  return out;
-                })
+                return out;
+              })
               }
             </tr>
             {tableData.map((item, key) => (

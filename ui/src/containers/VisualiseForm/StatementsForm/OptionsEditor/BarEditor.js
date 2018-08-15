@@ -1,9 +1,9 @@
 import React from 'react';
 import Switch from 'ui/components/Material/Switch';
 import { FIVE, TEN, FIFTEEN, TWENTY } from 'ui/utils/constants';
-import { compose } from 'recompose';
+import { compose, withHandlers } from 'recompose';
 import { setInMetadata } from 'ui/redux/modules/metadata';
-import { connect, withHandlers } from 'react-redux';
+import { connect } from 'react-redux';
 import { updateModel } from 'ui/redux/modules/models';
 
 const BarEditorComponent = ({ model, sourceViewHandler, barChartGroupingLimitHandler }) => (
