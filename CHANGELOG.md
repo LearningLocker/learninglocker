@@ -11,8 +11,10 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [2.5.0]
 ### Added
+  - Node 8 support (#1131)
   - Button to copy shareable link (#1190)
   - Shareable dashboard dynamic filtering (#1177)
+  - Can delete uncompleted exports (#1184)
 ### Fixes
   - Fixes freeze when uploading org logo (#1179)
   - Changed order of persona imports (#1182)
