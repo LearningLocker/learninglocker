@@ -30,7 +30,8 @@ const queueDependencies = {
   },
 };
 
-const addStatementToPendingQueues = (statement, queues, done) => {
+export const addStatementToPendingQueues = (statement, passedQueues, done) => {
+  const queues = passedQueues || queueDependencies;
   if (!statement) return done(new Error('Statement must be provided'));
 
   const queueNames = keys(queues);
@@ -51,9 +52,13 @@ const addStatementToPendingQueues = (statement, queues, done) => {
 
   return Statement.findByIdAndUpdate(
     statement._id,
-    { $addToSet: { processingQueues: {
-      $each: pendingQueueNames
-    } } },
+    {
+      $addToSet: { processingQueues: { $each: pendingQueueNames } }
+    },
+    {
+      lean: true,
+      select: { _id: 1 }
+    },
     (err) => {
       if (err) return done(err);
       // adding to queue returns a promise
@@ -83,14 +88,18 @@ const addStatementToPendingQueues = (statement, queues, done) => {
 export default ({ status, statementId }, jobDone) => {
   try {
     if (status) {
-      logger.info(`COMPLETED ${statementId} - ${status}`);
+      logger.debug(`COMPLETED ${statementId} - ${status}`);
       return Statement.findByIdAndUpdate(
         statementId,
         {
           $addToSet: { completedQueues: status },
           $pull: { processingQueues: status }
         },
-        { new: true },
+        {
+          new: true,
+          lean: true,
+          select: { _id: 1, completedQueues: 1, processingQueues: 1 }
+        },
         (err, statement) => {
           if (err) logger.error('Statement.findByIdAndUpdate error', err);
           if (err) return jobDone(err);
@@ -106,6 +115,7 @@ export default ({ status, statementId }, jobDone) => {
     logger.debug(`NO STATUS, statementId: ${statementId}`);
     return Statement.findById(
       statementId,
+      { _id: 1, completedQueues: 1, processingQueues: 1 },
       (err, statement) => {
         addStatementToPendingQueues(statement, queueDependencies, (err) => {
           if (err) logger.error('addStatementToPendingQueues error', err);

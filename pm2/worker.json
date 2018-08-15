@@ -11,8 +11,8 @@
       "exec_mode": "cluster",
       "wait_ready": true,
       "listen_timeout": 30000,
-      "watch": [".env"],
-      "max_memory_restart" : "500M"
+      "node_args": "--max-old-space-size=256 --max-semi-space-size=2",
+      "watch": [".env"]
     },
     {
       "name": "Scheduler",
@@ -24,10 +24,8 @@
       "instances": 1,
       "exec_mode": "cluster",
       "detached": true,
-      "node_args": "--max-executable-size=192 --max-old-space-size=256 --max-semi-space-size=2",
       "listen_timeout": 30000,
-      "watch": [".env"],
-      "max_memory_restart" : "500M"
+      "watch": [".env"]
     }
    ]
  }

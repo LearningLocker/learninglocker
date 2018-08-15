@@ -9,6 +9,38 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.6.0]
+### Added
+  - Overhaul of visualisations
+    - Trend lines in X v Y
+    - Benchmarking in counters
+    - Improved table views of graph data
+    - Table views available in dashboards
+    - Axis labels now default to field/grouping type
+    - More conistent intervals for axis labels
+    - Choice of number of results visible per page on bar charts
+    - Today added as time option filter
+  - UI tweaks (font, styling etc)
+
+## [2.5.0]
+### Added
+  - Node 8 support (#1131)
+  - Button to copy shareable link (#1190)
+  - Shareable dashboard dynamic filtering (#1177)
+  - Can delete uncompleted exports (#1184)
+### Fixes
+  - Fixes freeze when uploading org logo (#1179)
+  - Changed order of persona imports (#1182)
+  - Adjusted worker garbage collection (#1186)
+  - Better logging of queue subscription errors (#1180)
+  - Editing export projection now requires submit action (#1185)
+
+## [2.4.2]
+### Fixes
+  - Worker garbage collection (#1214)
+  - Efficiencies for requeuing statements (#1216)
+  - Remove max memory restart values for PM2 and replace with garbage collection on all services
+
 ## [2.4.1]
 ### Fixes
   - Speeds up worker requests with SQS

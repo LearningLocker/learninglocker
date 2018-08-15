@@ -7,6 +7,7 @@
   padding: 0px 8px;
   display: flex; }
   .linkWrapper:hover {
+    text-decoration: none;
     background: #eee; }
 
 .textWrapper {
@@ -20,6 +21,7 @@
     text-overflow: ellipsis;
   }
   .textWrapper a {
+    text-decoration: none;
     min-width: 0;
     color: #000; }
 

@@ -6,10 +6,13 @@ export default withStatementsVisualisation(({
   getFormattedResults,
   results,
   labels,
-  colors
+  colors,
+  visualisation
 }) => (
   <PieChart
     results={getFormattedResults(results)}
     labels={labels}
+    count={visualisation.getIn(['axesvalue', 'searchString'], 'Count')}
+    grouping={visualisation.getIn(['axesgroup', 'searchString'], 'Group')}
     colors={colors} />
 ));

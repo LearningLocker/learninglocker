@@ -1,7 +1,7 @@
-import { List, Map } from 'immutable';
+import { List, Map, fromJS } from 'immutable';
 import { createSelector } from 'reselect';
 import { take, takeEvery, put, fork, select } from 'redux-saga/effects';
-import { identity } from 'lodash';
+import { identity, get } from 'lodash';
 import moment from 'moment';
 import {
   fetchAggregation,
@@ -36,6 +36,7 @@ import {
 import { pipelinesFromQueries, getJourney } from 'ui/utils/visualisations';
 import { unflattenAxes } from 'lib/helpers/visualisation';
 import { periodToDate } from 'ui/utils/dates';
+import { OFF, ANY } from 'lib/constants/dashboard';
 
 export const FETCH_VISUALISATION = 'learninglocker/models/learninglocker/visualise/FETCH_VISUALISATION';
 
@@ -46,9 +47,10 @@ export const FETCH_VISUALISATION = 'learninglocker/models/learninglocker/visuali
 /**
  * @param  {String} id of visualisation to fetch data for
  */
-export const fetchVisualisation = id => ({
+export const fetchVisualisation = (id, benchmark) => ({
   type: FETCH_VISUALISATION,
-  id
+  id,
+  benchmark
 });
 
 
@@ -82,6 +84,8 @@ const routeNameSelector = (state) => {
   return out;
 };
 
+const routeFilterSelector = state => get(state, ['router', 'route', 'params', 'filter']);
+
  /**
  * gets the visualisation pipeline associated with the provided ID
  * @param  {String}          id  id of visualisation
@@ -89,8 +93,15 @@ const routeNameSelector = (state) => {
  */
 
 const shareableDashboardFilterSelector = () => createSelector(
-  [metadataSelector, modelsSelector, dashboardShareableIdSelector, dashboardIdSelector, routeNameSelector],
-  (metadata, models, routeShareableId, routeDashboardId, routeName) => {
+  [
+    metadataSelector,
+    modelsSelector,
+    dashboardShareableIdSelector,
+    dashboardIdSelector,
+    routeNameSelector,
+    routeFilterSelector
+  ],
+  (metadata, models, routeShareableId, routeDashboardId, routeName, filter) => {
     const viewingDashboardExternally = (routeName && routeName.indexOf('embedded-dashboard') !== -1);
     const dashboards = models.get('dashboard', new Map());
 
@@ -98,26 +109,46 @@ const shareableDashboardFilterSelector = () => createSelector(
     if (viewingDashboardExternally) {
       if (!routeDashboardId) {
         console.warn('Dashboard ID should exist on this route');
-        return new Map();
+        return [new Map()];
       }
 
       const theDashboard = dashboards.get(routeDashboardId, new Map());
       if (!theDashboard) {
         // No dashboard found, return an empty filter
-        return new Map();
+        return [new Map()];
       }
 
       if (!routeShareableId) {
         // must be a legacy link (no shareable ID) - use the first filter
         const legacyShare = theDashboard.get('remoteCache', new Map()).get('shareable', new List()).first();
-        return legacyShare.get('filter', new Map());
+        return [legacyShare.get('filter', new Map())];
       }
 
       // otherwise find the filter on the dasboard's shareables and return it
       const theShare = theDashboard.get('remoteCache', new Map())
         .get('shareable', new List())
         .find(share => share.get('_id') === routeShareableId);
-      return theShare.get('filter', new Map());
+
+      // get paramater filter
+      if (
+        theShare.get('filterMode', OFF) !== OFF && filter
+      ) {
+        let parsedFilter = filter; // either JSON or JWT
+        if (theShare.get('filterMode') === ANY) {
+          try {
+            // if JSON, attempt to parse
+            parsedFilter = fromJS(JSON.parse(decodeURI(filter)));
+          } catch (err) {
+            parsedFilter = fromJS({});
+          }
+        }
+        return [
+          theShare.get('filter', new Map()),
+          parsedFilter
+        ];
+      }
+
+      return [theShare.get('filter', new Map())];
     }
 
     const expandedKey = (metadata || new Map())
@@ -126,7 +157,7 @@ const shareableDashboardFilterSelector = () => createSelector(
 
     if (!expandedKey) {
       // we aren't filtering - return empty filter
-      return new Map();
+      return [new Map()];
     }
 
     // if we are filtering due to an expanded shareable model
@@ -140,10 +171,10 @@ const shareableDashboardFilterSelector = () => createSelector(
     );
 
     // return the filter from that dashboard's shareable model
-    return theDashboard.get('remoteCache', new Map())
+    return [theDashboard.get('remoteCache', new Map())
       .get('shareable', new List())
       .find(share => share.get('_id') === expandedKey)
-      .get('filter', new Map());
+      .get('filter', new Map())];
   }
 );
 
@@ -157,23 +188,26 @@ export const visualisationPiplelinesSelector = (
     const type = visualisation.get('type');
     const journey = visualisation.get('journey');
     const previewPeriod = visualisation.get('previewPeriod');
+    const benchmarkingEnabled = visualisation.get('benchmarkingEnabled', false);
     const queries = visualisation.get('filters', new List()).map((vFilter) => {
       if (!filter) {
         return vFilter;
       }
 
-      return new Map({
+      const out = new Map({
         $match: new Map({
           $and: new List([
             vFilter.get('$match', new Map()),
-            filter
+            ...filter,
           ])
         })
       });
+
+      return out;
     });
 
     const axes = unflattenAxes(visualisation);
-    return cb(queries, axes, type, previewPeriod, journey);
+    return cb(queries, axes, type, previewPeriod, journey, benchmarkingEnabled);
   }
 );
 
@@ -417,10 +451,24 @@ export const getDateRange = (period) => {
   }
 };
 
-const MAX_NAME_LENGTH = 12;
+const MAX_NAME_LENGTH = 17;
 export const trimName = (name, length = MAX_NAME_LENGTH) => {
-  if (name.length <= length) return name;
-  return `...${name.substr(-length)}`;
+  if (name.length >= length) {
+    let formattedName;
+    if (name.indexOf('/') !== -1) {
+      formattedName = name.split('/')[name.split('/').length - 1];
+    } else if (name.indexOf('@') !== -1) {
+      formattedName = name.split('@')[0];
+    } else if (name.indexOf(' ') !== -1) {
+      formattedName = name.split(' ')[name.split(' ').length - 1];
+    } else if (name.indexOf('.') !== -1) {
+      formattedName = name.split('.')[name.split('.').length - 1];
+    } else {
+      formattedName = `${name.substr(0, 12)} ${name.substr(12, 12)}`;
+    }
+    return formattedName.length >= length ? `${formattedName.substr(-length)}...` : formattedName;
+  }
+  return name || 'Unnamed';
 };
 
 export const isDateRange = () => {
