@@ -88,7 +88,11 @@ const updateHandlers = withHandlers({
         newHeadersString
       )
     });
-  }
+  },
+  changeFullDocument: ({ updateModel }) => value => updateModel({
+    path: ['fullDocument'],
+    value
+  })
 });
 
 const withProtocols = withProps(() => ({
@@ -113,7 +117,8 @@ const StatementForwardingForm = ({
   changeQuery,
   authTypes,
   changeMaxRetries,
-  changeHeaders
+  changeHeaders,
+  changeFullDocument
 }) => (
   <div>
     <div className="row">
@@ -294,6 +299,13 @@ const StatementForwardingForm = ({
                 <ValidationList errors={model.getIn(['errors', 'messages', 'configuration.headers'])} />
               </span>)
             }
+        </div>
+
+        <div className="form-group">
+          <Switch
+            label="Full Document"
+            onChange={changeFullDocument}
+            checked={model.get('fullDocument', false)} />
         </div>
 
         <div className="form-group">

@@ -112,7 +112,7 @@ const statementForwardingRequestHandler = async (
     );
 
     await sendRequest(
-      statement.statement,
+      statementForwarding.fullDocument ? statement : statement.statement,
       statementForwarding
     );
 
