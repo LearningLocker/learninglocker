@@ -9,6 +9,19 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.6.0]
+### Added
+  - Overhaul of visualisations
+    - Trend lines in X v Y
+    - Benchmarking in counters
+    - Improved table views of graph data
+    - Table views available in dashboards
+    - Axis labels now default to field/grouping type
+    - More conistent intervals for axis labels
+    - Choice of number of results visible per page on bar charts
+    - Today added as time option filter
+  - UI tweaks (font, styling etc)
+
 ## [2.5.0]
 ### Added
   - Node 8 support (#1131)
