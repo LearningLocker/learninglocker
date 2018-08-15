@@ -1,7 +1,6 @@
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { round } from 'lodash';
-import { Map } from 'immutable';
 import NoData from 'ui/components/Graphs/NoData';
 import numeral from 'numeral';
 import tooltipFactory from 'react-toolbox/lib/tooltip';
@@ -14,12 +13,8 @@ const trimNumber = x => numeral(x).format('0.[0]a');
 const formatShortNumber = x => trimNumber(round(x, 2));
 const formatLongNumber = x => x.toLocaleString();
 const formatTooltip = (count, benchmarkResult) => `Current: ${formatLongNumber(count)}   Previous: ${benchmarkResult}`;
-const getAxisSize = x => (Map.isMap(x) ? x.size : 0);
-const getLargestAxisSize = axes => axes.map(getAxisSize).max();
-const getLargestSeriesSize = rs => rs.map(getLargestAxisSize).max();
 const getResultCount = rs => rs.getIn([0, 0, null, 'count'], 0);
 const getBenchmarkResultCount = rs => rs.getIn([1, 0, null, 'count'], 0);
-const hasData = rs => getLargestSeriesSize(rs) > 0;
 const makeHumanReadable = previewPeriod => previewPeriod.split('_').map(word => `${word.toLowerCase()} `).join('');
 const renderCount = color => count => benchmarkResult => (
   <TooltipLink

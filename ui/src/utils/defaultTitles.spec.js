@@ -1,8 +1,8 @@
 import React from 'react';
 import 'jest-enzyme';
-import { createDefaultTitleWithIcon, getPercentage, getAxesString } from './defaultTitles';
 import { shallow } from 'enzyme';
 import { Map, fromJS } from 'immutable';
+import { createDefaultTitleWithIcon, getPercentage, getAxesString } from './defaultTitles';
 
 test('defaultTitles should create a title with an icon', () => {
   const model = new Map({

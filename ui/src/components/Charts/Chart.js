@@ -95,7 +95,7 @@ const getTotal = entry =>
 const renderBar = index => stacked => label => color => (
   <Bar
     key={index}
-    dataKey={`Series ${index+1}`}
+    dataKey={`Series ${index + 1}`}
     fill={color}
     name={label}
     stackId={stacked ? 1 : index} />
@@ -104,7 +104,7 @@ const renderBar = index => stacked => label => color => (
 const reduceResults = results => results.reduce(mergeSeriesData, new Map());
 
 const addSeries = (entry, l, i) =>
-  entry.set(`Series ${i + 1}`, entry.get(`Series ${i+1}`, 0));
+  entry.set(`Series ${i + 1}`, entry.get(`Series ${i + 1}`, 0));
 
 const formatEntry = labels => entry =>
   labels.reduce(addSeries, entry);

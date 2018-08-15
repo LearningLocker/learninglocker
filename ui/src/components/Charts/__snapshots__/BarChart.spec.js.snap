@@ -42,7 +42,7 @@ exports[`BarChartResults should render 1`] = `
     Object {
       "marginTop": 20,
       "textAlign": "center",
-      "width": "300px",
+      "width": "100%",
     }
   }
 >
