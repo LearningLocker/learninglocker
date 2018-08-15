@@ -23,7 +23,7 @@ export const generateTableData = (results, labels, axes, type) => {
   const seriesList = labels.zip(results);
   const seriesList2 = seriesList.map(([key, item], i) => {
     if (key === undefined) {
-      return [`Series ${i}`, item];
+      return [`Series ${i+1}`, item];
     }
     return [key, item];
   });

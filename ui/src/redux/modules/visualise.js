@@ -453,14 +453,18 @@ export const getDateRange = (period) => {
 
 const MAX_NAME_LENGTH = 17;
 export const trimName = (name, length = MAX_NAME_LENGTH) => {
-  let formattedName;
   if (name.length >= length) {
-    switch (true) {
-      case name.indexOf('/') !== -1: formattedName = name.split('/')[name.split('/').length - 1]; break;
-      case name.indexOf('@') !== -1: formattedName = name.split('@')[0]; break;
-      case name.indexOf(' ') !== -1: formattedName = name.split(' ')[name.split(' ').length - 1]; break;
-      case name.indexOf('.') !== -1: formattedName = name.split('.')[name.split('.').length - 1]; break;
-      default: formattedName = `${name.substr(0, 12)} ${name.substr(12, 12)}`;
+    let formattedName;
+    if (name.indexOf('/') !== -1) {
+      formattedName = name.split('/')[name.split('/').length - 1];
+    } else if (name.indexOf('@') !== -1) {
+      formattedName = name.split('@')[0];
+    } else if (name.indexOf(' ') !== -1) {
+      formattedName = name.split(' ')[name.split(' ').length - 1];
+    } else if (name.indexOf('.') !== -1) {
+      formattedName = name.split('.')[name.split('.').length - 1]; 
+    } else {
+      formattedName = `${name.substr(0, 12)} ${name.substr(12, 12)}`;
     }
     return formattedName.length >= length ? `${formattedName.substr(-length)}...` : formattedName;
   }
