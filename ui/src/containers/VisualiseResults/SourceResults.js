@@ -11,7 +11,7 @@ import { displayVerb, displayActivity } from '../../utils/xapi';
 
 const moreThanOneSeries = tData => tData.first() !== undefined && tData.first().size > 1;
 
-export const generateTableData = (results, labels, axes, type) => {
+export const generateTableData = (results, labels) => {
   const seriesList = labels.zip(results);
   const seriesList2 = seriesList.map(([key, item], i) => {
     if (key === undefined) {
@@ -88,12 +88,11 @@ export default compose(
   getFormattedResults,
   results,
   labels,
-  axes,
   model,
   visualisation
 }) => {
   const formattedResults = getFormattedResults(results);
-  const tableData = generateTableData(formattedResults, labels, axes, visualisation.get('type'));
+  const tableData = generateTableData(formattedResults, labels);
   if (tableData.first()) {
     return (
       <div className={styles.sourceResultsContainer}>
@@ -112,9 +111,7 @@ export default compose(
                   ([title], index) =>
                     [
                       index,
-                      (
-                        <th key={`${key}-${index}`}>{createSelectIfXVSY(index, visualisation, model.get('type'), title, 'y')}</th>
-                      )
+                      (<th key={`${key}-${index}`}>{createSelectIfXVSY(index, visualisation, model.get('type'), title, 'y')}</th>)
                     ]
                   );
                 return out.valueSeq();

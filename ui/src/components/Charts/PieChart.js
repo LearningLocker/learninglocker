@@ -64,7 +64,7 @@ const renderPieChart = labels => colors => data => count => grouping => ({ width
   <div>
     <div style={{ width: '600px', position: 'absolute' }}>
       {(colors.size > 1) && colors.map((colour, i) => (
-        <div style={{ fontSize: '0.9em' }}>
+        <div key={i} style={{ fontSize: '0.9em' }}>
           <div style={{ display: 'inline-block', width: '12px', height: '12px', backgroundColor: colour, marginRight: '8px', marginBottom: '2px', verticalAlign: 'middle' }} />
           {labels.get(i) || `Series ${i + 1}`}
         </div>)
