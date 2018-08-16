@@ -1,8 +1,10 @@
 import React from 'react';
+import { OPERATOR_OPTS } from 'ui/utils/visualisations/localOptions';
 import { COMPONENT, TEXT } from 'ui/utils/constants';
 import uuid from 'uuid';
 import { startCase, toLower } from 'lodash';
 import VisualisationTypeIcon from '../containers/Visualise/VisualisationTypeIcon';
+
 
 const axv = 'axesvalue';
 const axV = 'axesxValue';
@@ -59,19 +61,8 @@ export const getAxesString = (key, model, type = null, shortened = true) => {
   return getResultForXY();
 };
 
-const makeOperatorReadable = (model, attribute = 'axesoperator') => {
-  const operatorTranslation = {
-    uniqueCount: '',
-    uniqueMax: 'Max unique number of ',
-    uniqueMin: 'Min unique number of ',
-    uniqueAverage: 'Average unique number of ',
-    count: 'Sum of ',
-    average: 'Average of ',
-    max: 'Max from ',
-    min: 'Min from ',
-  };
-  return operatorTranslation[model.get(attribute)];
-}
+const makeOperatorReadable = (model, attribute = 'axesoperator') => `${OPERATOR_OPTS.get(model.get(attribute))} `;
+
 
 const defaultSelector = (model, type, prefix, format = TEXT) => {
   const formattedDefault = () => {
