@@ -9,14 +9,6 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import styles from './styles.css';
 import { displayVerb, displayActivity } from '../../utils/xapi';
 
-const getAxes = (index, axes) => {
-  switch (index) {
-    case 0: return axes.get('xLabel') !== '' ? axes.get('xLabel') : axes.getIn(['xValue', 'searchString'], 'X-Axis');
-    case 1: return axes.get('yLabel') !== '' ? axes.get('yLabel') : axes.getIn(['yValue', 'searchString'], 'Y-Axis');
-    default: return axes.get('xLabel', 'X-Axes');
-  }
-};
-
 const moreThanOneSeries = tData => tData.first() !== undefined && tData.first().size > 1;
 
 export const generateTableData = (results, labels, axes, type) => {
@@ -29,13 +21,18 @@ export const generateTableData = (results, labels, axes, type) => {
   });
 
   const seriesMap = new OrderedMap(seriesList2);
-
   const result = seriesMap.reduce((reduction, series, seriesKey) =>
-
-    series.reduce((axesReduction, axes2, axesKey) => axes2.reduce((seriesReduction, item) => seriesReduction.setIn(
-          [item.get('model'), seriesKey, getAxes(axesKey, axes, type)],
-          item
-        ), axesReduction), reduction)
+    series.reduce(
+      (axesReduction, axes2, axesKey) => axes2.reduce(
+        (seriesReduction, item) => {
+          const dataKeyName = [item.get('_id'), 'rowData', seriesKey, axesKey];
+          const modelKeyName = [item.get('_id'), 'model'];
+          return seriesReduction
+            .setIn(dataKeyName, item)
+            .setIn(modelKeyName, item.get('model'));
+        },
+      axesReduction),
+    reduction)
   , new OrderedMap());
   return result;
 };
@@ -68,16 +65,13 @@ const getAxisLabel = (axis, visualisation, type) => {
 };
 
 const createSelectIfXVSY = (index, visualisation, type, title, axis) => {
-  if (!(type === 'XVSY')) {
+  if (type !== 'XVSY') {
     return getAxisLabel(axis, visualisation, type, title);
   }
-  if (title.length) {
-    return title;
+  if (index === 0) {
+    return visualisation.get('axesxLabel', visualisation.getIn(['axesxValue', 'searchString'], 'No value'));
   }
-  if (index !== 0) {
-    return visualisation.getIn(['axesxValue', 'searchString'], 'No value');
-  }
-  return visualisation.getIn(['axesyValue', 'searchString'], 'No value');
+  return visualisation.get('axesyLabel', visualisation.getIn(['axesyValue', 'searchString'], 'No value'));
 };
 
 const formatNumber = (selectedAxes) => {
@@ -107,31 +101,36 @@ export default compose(
           <tbody>
             {moreThanOneSeries(tableData) && <tr>
               <th />
-              {tableData.first().map((item, key) => (
-                <th colSpan={item.size}>{key}</th>
-              ))}
+              {tableData.first().get('rowData', new Map()).map((item, key) => (
+                <th key={key} colSpan={item.size}>{key}</th>
+              )).valueSeq()}
             </tr>}
             <tr>
               <th>{getAxisLabel('x', visualisation, model.get('type'))}</th>
-              {tableData.first().map((series) => {
-                const out = series.mapEntries((title, index) =>
-                  [index, (
-                    <th>{createSelectIfXVSY(index, visualisation, model.get('type'), title[0], 'y')}</th>
-                    )]
+              {tableData.first().get('rowData', new Map()).map((series, key) => {
+                const out = series.mapEntries(
+                  ([title], index) =>
+                    [
+                      index,
+                      (
+                        <th key={`${key}-${index}`}>{createSelectIfXVSY(index, visualisation, model.get('type'), title, 'y')}</th>
+                      )
+                    ]
                   );
-                return out;
-              })
+                return out.valueSeq();
+              }).valueSeq()
               }
             </tr>
-            {tableData.map((item, key) => (
-              <tr>
-                <td>{formatKeyToFriendlyString(key)}</td>
-                {item.map(series =>
-                  series.map(axes2 => (<td>{formatNumber(axes2)}</td>)
-                  )
-                )}
+            {tableData.map((row, key) => (
+              <tr key={key}>
+                <td title={key}>{formatKeyToFriendlyString(row.get('model', key))}</td>
+                {row.get('rowData', new Map()).map(series =>
+                  series.map(axes2 => (
+                    <td>{formatNumber(axes2)}</td>)
+                  ).valueSeq()
+                ).valueSeq()}
               </tr>
-            ))}
+            )).valueSeq()}
           </tbody>
         </table>
       </div>
