@@ -21,22 +21,22 @@ class PieTooltip extends Component {
 
   getValue = entry => i => round(entry.payload[`Series ${i + 1}`], 2);
 
-  renderLabel = entry => count => (label, i) => (
+  renderLabel = entry => (label, i) => (
     <p key={i}>
-      {`${this.getLabel(label)(i)} - ${this.getValue(entry)(i)} ${count}`}
+      {`${this.getLabel(label)(i)} - ${this.getValue(entry)(i)}`}
     </p>
   )
 
   render = () => {
     const { display, active } = this.props;
     if (active) {
-      const { payload, labels, count, grouping } = this.props;
+      const { payload, labels, grouping } = this.props;
       const entry = payload[0];
       return (
         <div className={styles.customTooltip}>
           <p className={styles.label}>{`${grouping}: ${display(entry.payload.id)}`}</p>
           <div className={styles.value}>
-            {labels.map(this.renderLabel(entry)(count))}
+            {labels.map(this.renderLabel(entry))}
           </div>
         </div>
       );

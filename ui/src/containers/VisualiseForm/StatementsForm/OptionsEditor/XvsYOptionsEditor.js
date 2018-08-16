@@ -28,7 +28,7 @@ export const XvsYOptionsEditor = compose(
         value
       });
     },
-    sourceViewHandler: ({ updateModel: updateModelAction, model }) => {
+    sourceViewHandler: ({ updateModel: updateModelAction, model }) => () => {
       updateModelAction({
         schema: 'visualisation',
         id: model.get('_id'),
