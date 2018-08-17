@@ -7,8 +7,12 @@ import { withStateHandlers } from 'recompose';
 import { displayAuto } from 'ui/redux/modules/queryBuilder';
 import CustomTooltip from './CustomTooltip';
 
-const getAxisSize = axis =>
-  (Map.isMap(axis) ? axis.size : 0);
+const getAxisSize = (axis) => {
+  if (!axis.find(axes => axes.get('count') > 0)) {
+    return 0;
+  }
+  return Map.isMap(axis) ? axis.size : 0;
+};
 
 const getLargestAxisSize = axes =>
   axes.map(getAxisSize).max();
