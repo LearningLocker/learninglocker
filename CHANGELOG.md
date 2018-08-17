@@ -9,6 +9,10 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.5.1]
+### Fixed
+  - Empty filter in series accesible via shareable dashboards
+
 ## [2.5.0]
 ### Added
   - Node 8 support (#1131)
