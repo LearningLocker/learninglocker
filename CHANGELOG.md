@@ -22,7 +22,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
     - Today added as time option filter
   - UI tweaks (font, styling etc)
 
-## [2.5.0]
+## [2.5.1]
 ### Fixed
   - Empty filter in series accesible via shareable dashboards
 
