@@ -23,6 +23,10 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
   - UI tweaks (font, styling etc)
 
 ## [2.5.0]
+### Fixed
+  - Empty filter in series accesible via shareable dashboards
+
+## [2.5.0]
 ### Added
   - Node 8 support (#1131)
   - Button to copy shareable link (#1190)
