@@ -86,5 +86,5 @@ export default compose(
   hiddenSeries,
   model
 }) =>
-  (hasDate(results) ? renderResults(results)(labels, toggleHiddenSeries, hiddenSeries)(colors)(axesLabels)(chartWrapperFn)(model) : <NoData />)
+  (hasData(results) ? renderResults(results)(labels, toggleHiddenSeries, hiddenSeries)(colors)(axesLabels)(chartWrapperFn)(model) : <NoData />)
 );
