@@ -3,6 +3,7 @@ import catchErrors from 'api/controllers/utils/catchErrors';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import Statement from 'lib/models/statement';
 import mongoose from 'mongoose';
+import { mapKeys } from 'lodash';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -22,13 +23,9 @@ export const patchStatementMetadata = catchErrors(async (req, res) => {
     ]
   };
 
-  const model = await Statement.findOne(filter);
-
-  model.metadata = {
-    ...model.metadata,
-    ...req.body
-  };
-  await model.save();
+  const model = await Statement.findOneAndUpdate(filter, {
+    $set: mapKeys(req.body, (_value, key) => `metadata.${key}`)
+  }, { new: true, fields: ['_id'] });
 
   return res.status(200).send({ _id: model._id });
 });
@@ -49,10 +46,9 @@ export const postStatementMetadata = catchErrors(async (req, res) => {
     ]
   };
 
-  const model = await Statement.findOne(filter);
-
-  model.metadata = req.body;
-  await model.save();
+  const model = await Statement.findOneAndUpdate(filter, {
+    metadata: req.body
+  }, { new: true, fields: '_id' });
 
   return res.status(200).send({ _id: model._id });
 });
