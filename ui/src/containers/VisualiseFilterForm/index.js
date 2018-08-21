@@ -10,6 +10,7 @@ import {
   POPULARACTIVITIES,
   LEADERBOARD,
   FREQUENCY,
+  TABLE
 } from '../../utils/constants';
 
 class VisualiseFilterForm extends Component {
@@ -122,6 +123,8 @@ class VisualiseFilterForm extends Component {
       case FREQUENCY:
         return this.renderFrequency();
       case STATEMENTS:
+        return this.renderStatements(queries);
+      case TABLE:
         return this.renderStatements(queries);
       case LEADERBOARD:
         return this.renderLeaderboard(queries);

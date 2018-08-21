@@ -7,6 +7,7 @@ import {
   FREQUENCY,
   COUNTER,
   PIE,
+  TABLE
 } from 'ui/utils/constants';
 
 const createOptionModel = (searchString, optionKey) => new Map({ optionKey, searchString });
@@ -68,6 +69,7 @@ export const getTypeOpts = (type) => {
     case POPULARACTIVITIES:
     case LEADERBOARD:
     case COUNTER:
+    case TABLE:
     case PIE:
       return OPERATOR_OPTS;
     default:

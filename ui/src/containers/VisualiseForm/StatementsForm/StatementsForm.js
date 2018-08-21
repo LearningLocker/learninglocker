@@ -76,7 +76,9 @@ class StatementsForm extends Component {
     </select>
   )
 
-  renderFormWithResults = () => (
+  renderFormWithResults = () => {
+    console.log('​StatementsForm -> renderFormWithResults -> we here');
+    return (
     <div className="row">
       <div className="col-md-6 left-border">
         { this.renderEditor() }
@@ -94,7 +96,7 @@ class StatementsForm extends Component {
         </div>
       </div>
     </div>
-  );
+  )};
 
   renderEditorOnly = () => (
     <div className="row">
