@@ -258,7 +258,10 @@ restify.serve(router, Client);
 restify.serve(router, Visualisation);
 restify.serve(router, Dashboard);
 restify.serve(router, LRS);
-restify.serve(router, Statement);
+restify.serve(router, Statement, {
+  preDelete: (req, res) => res.sendStatus(405),
+  preUpdate: (req, res) => res.sendStatus(405),
+});
 restify.serve(router, StatementForwarding);
 restify.serve(router, QueryBuilderCache);
 restify.serve(router, QueryBuilderCacheValue);
