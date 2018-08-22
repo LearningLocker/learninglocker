@@ -61,7 +61,12 @@ export const getAxesString = (key, model, type = null, shortened = true) => {
   return getResultForXY();
 };
 
-const makeOperatorReadable = (model, attribute = 'axesoperator') => `${OPERATOR_OPTS.get(model.get(attribute))} `;
+const makeOperatorReadable = (model, attribute = 'axesoperator') => {
+  if (model.get(attribute) !== 'uniqueCount') {
+    return `${OPERATOR_OPTS.get(model.get(attribute))} `;
+  }
+  return '';
+};
 
 
 const defaultSelector = (model, type, prefix, format = TEXT) => {
