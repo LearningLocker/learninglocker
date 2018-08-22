@@ -3,6 +3,7 @@ import { memoize } from 'lodash';
 import { periodToDate } from 'ui/utils/dates';
 import aggregateChart from 'ui/utils/visualisations/aggregateChart';
 import aggregateCounter from 'ui/utils/visualisations/aggregateCounter';
+import aggregateTable from 'ui/utils/visualisations/aggregateTable';
 import aggregateXvsY from 'ui/utils/visualisations/aggregateXvsY';
 import {
   POPULARACTIVITIES,
@@ -11,7 +12,8 @@ import {
   STATEMENTS,
   FREQUENCY,
   COUNTER,
-  PIE
+  PIE,
+  TABLE
 } from 'ui/utils/constants';
 
 export default memoize((args = new Map()) => {
@@ -45,6 +47,8 @@ export default memoize((args = new Map()) => {
       return aggregateXvsY(preReqs, axes);
     case COUNTER:
       return aggregateCounter(preReqs, axes);
+    case TABLE:
+      return aggregateTable(preReqs, axes);
     default:
       return query;
   }

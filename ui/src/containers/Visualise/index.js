@@ -58,20 +58,20 @@ class Visualise extends Component {
     }
     return createVisualisationName(model);
   }
-
   render = () => (
     <div>
       <header id="topbar">
         <div className="heading heading-light">
-          <span className="pull-right open_panel_btn">
+          <span className="pull-right open_panel_btn" >
             <button
               className="btn btn-primary btn-sm"
+              styles={{ marginRight: '100px' }}
               ref={(ref) => { this.addButton = ref; }}
               onClick={this.onClickAdd}>
               <i className="ion ion-plus" /> Add new
             </button>
           </span>
-          <span className="pull-right open_panel_btn" style={{ width: '25%' }}>
+          <span className="pull-right open_panel_btn">
             <SearchBox schema={schema} />
           </span>
           Visualise
