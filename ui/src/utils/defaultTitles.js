@@ -71,7 +71,6 @@ const defaultSelector = (model, type, prefix, format = TEXT) => {
     const addXVSYXY = (selectedX, selectedY = 'Time') => `X: ${makeOperatorReadable(model, 'axesxOperator')} ${startCase(toLower(selectedX))} Y: ${makeOperatorReadable(model, 'axesyOperator')} ${startCase(toLower(selectedY))}`;
     const addYX = (selectedX, selectedY = 'Time') => `X: ${startCase(toLower(selectedY))} Y: ${makeOperatorReadable(model)} ${startCase(toLower(selectedX))}`;
     const addYXforBar = (selectedX, selectedY = 'Time') => `X: ${makeOperatorReadable(model)} ${startCase(toLower(selectedY))} Y: ${startCase(toLower(selectedX))}`;
-    console.log('type', )
     switch (type) {
       case ('FREQUENCY'): return addYX(select(axv) || select(ayV), 'Time');
       case ('LEADERBOARD'): return addYXforBar(select(axg), select(axv) || select(ayV));
