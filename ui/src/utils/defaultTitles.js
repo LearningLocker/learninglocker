@@ -70,9 +70,11 @@ const defaultSelector = (model, type, prefix, format = TEXT) => {
     const addXY = (selectedX, selectedY = 'Time') => `X: ${startCase(toLower(selectedX))} Y: ${makeOperatorReadable(model)} ${startCase(toLower(selectedY))}`;
     const addXVSYXY = (selectedX, selectedY = 'Time') => `X: ${makeOperatorReadable(model, 'axesxOperator')} ${startCase(toLower(selectedX))} Y: ${makeOperatorReadable(model, 'axesyOperator')} ${startCase(toLower(selectedY))}`;
     const addYX = (selectedX, selectedY = 'Time') => `X: ${startCase(toLower(selectedY))} Y: ${makeOperatorReadable(model)} ${startCase(toLower(selectedX))}`;
+    const addYXforBar = (selectedX, selectedY = 'Time') => `X: ${makeOperatorReadable(model)} ${startCase(toLower(selectedY))} Y: ${startCase(toLower(selectedX))}`;
+    console.log('type', )
     switch (type) {
       case ('FREQUENCY'): return addYX(select(axv) || select(ayV), 'Time');
-      case ('LEADERBOARD'): return addYX(select(axg), select(axv) || select(ayV));
+      case ('LEADERBOARD'): return addYXforBar(select(axg), select(axv) || select(ayV));
       case ('XVSY'): return addXVSYXY(select(axV), select(axv) || select(ayV));
       case ('COUNTER'): return `${makeOperatorReadable(model)}${select(axv) || select(ayV)}`;
       case ('PIE'): return `${makeOperatorReadable(model)}${select(axv) || select(ayV)} / ${select(axg)}`;
