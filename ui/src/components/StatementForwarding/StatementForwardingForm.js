@@ -1,5 +1,5 @@
 import React from 'react';
-import { fromJS, List, Map } from 'immutable';
+import { List, Map } from 'immutable';
 import { withModel } from 'ui/utils/hocs';
 import { withProps, compose, withHandlers } from 'recompose';
 import Switch from 'ui/components/Material/Switch';
@@ -7,7 +7,8 @@ import QueryBuilder from 'ui/containers/QueryBuilder';
 import classNames from 'classnames';
 import ValidationList from 'ui/components/ValidationList';
 import TableInput from 'ui/components/TableInput';
-import { getAuthHeaders } from 'lib/helpers/statementForwarding';
+// import { getHeaders } from 'lib/models/statementForwarding';
+import { getAuthHeaders, getHeaders } from 'lib/helpers/statementForwarding';
 import { AUTH_TYPES, AUTH_TYPE_NO_AUTH, STATAMENT_FORWARDING_MAX_RETRIES } from 'lib/constants/statementForwarding';
 
 const schema = 'statementForwarding';
@@ -275,7 +276,6 @@ const StatementForwardingForm = ({
               </span>
               )}
         </div>
-
         <div
           className={classNames({
             'form-group': true,
@@ -289,9 +289,11 @@ const StatementForwardingForm = ({
               configuration: model.get('configuration').toJS()
             }).merge(new Map({
               'Content-Type': 'application/json',
-              'Content-Length': '${Content-Length}' // eslint-disable-line no-template-curly-in-string
+              'Content-Length': '${Content-Length}', // eslint-disable-line no-template-curly-in-string
             }))}
-            values={fromJS(JSON.parse(model.getIn(['configuration', 'headers'], '{}')))}
+            values={
+              getHeaders(model)
+            }
             onChange={changeHeaders} />
           {
               model.getIn(['errors', 'messages', 'configuration.headers'], false) &&
