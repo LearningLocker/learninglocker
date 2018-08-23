@@ -3869,7 +3869,6 @@ tbody.collapse.in {
   pointer-events: none;
 }
 .input-group {
-  margin-right: 17px;
   position: relative;
   display: table;
   border-collapse: separate;
@@ -11469,8 +11468,8 @@ a:focus {
 }
 
 .open_panel_btn {
-  margin-top: -5px;
-  margin-right: 1px; }
+  margin-top: -9px;
+  margin-right: 10px; }
 
 .breadcrumb {
   float: left;

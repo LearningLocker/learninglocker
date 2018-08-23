@@ -52,7 +52,6 @@ class VisualiseIcon extends Component {
       case SESSIONS: return 'Sessions';
       case PLATFORMS: return 'Platforms';
       case QUESTIONANALYSIS: return 'Question analysis';
-      case TABLE: return 'Table';
       default: return '';
     }
   }

@@ -7,7 +7,6 @@ import {
   FREQUENCY,
   COUNTER,
   PIE,
-  TABLE
 } from 'ui/utils/constants';
 import BarAxesEditor from './BarAxesEditor';
 import ColumnAxesEditor from './ColumnAxesEditor';
@@ -25,7 +24,6 @@ export default ({ model }) => {
     case STATEMENTS: return <ColumnAxesEditor model={model} />;
     case FREQUENCY: return <LineAxesEditor model={model} />;
     case COUNTER: return <CounterAxesEditor model={model} />;
-    case TABLE: return <PieAxesEditor model={model} />;
     case PIE: return <PieAxesEditor model={model} />;
     default: return <div>renderDefault</div>;
   }
