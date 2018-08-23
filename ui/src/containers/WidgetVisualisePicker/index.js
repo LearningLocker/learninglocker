@@ -27,7 +27,9 @@ class WidgetVisualisePicker extends Component {
 
   getVisualisationId = () => this.props.model.get('visualisation')
 
-  onClickVisualisation = visualisation => this.props.onChangeVisualisation(visualisation.get('_id'), (this.props.model.get('title') || visualisation.get('description') || createDefaultTitle(visualisation)));
+  onClickVisualisation = visualisation => {
+    console.log('​WidgetVisualisePicker -> this.props', this.props);
+    return this.props.onChangeVisualisation(this.props.model.get('_id'), (this.props.model.get('title') || visualisation.get('description') || createDefaultTitle(visualisation)));}
 
   onChangeTitle = e => this.props.onChangeTitle(e.target.value);
 

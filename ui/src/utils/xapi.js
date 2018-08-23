@@ -40,6 +40,7 @@ export const displayVerb = (verb = new Map()) =>
   displayLangMap(verb.get('display', new Map()), verb.get('id'));
 
 export const displayActivity = (activity = new Map()) => {
+  console.log('activity', activity)
   if (Iterable.isIterable(activity)) {
     const objectType = activity.get('objectType', 'Activity');
     if (objectType === 'Activity') {
