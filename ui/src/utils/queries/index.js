@@ -198,18 +198,29 @@ export const mergeQueries = (query1, query2) => {
   return changeCriteria(merged);
 };
 
+const plural = (size) => {
+  if (size === 1) {
+    return '';
+  }
+  return 's';
+};
 
 const criterionToString = (criterion, criterionKey) =>
-  `${criterionKey.get('criteriaPath').join('.')} ${getValueFromCriterion(criterion).size} items`;
+  `${criterionKey.get('criteriaPath').join('.')} (${getValueFromCriterion(criterion).size} item${plural(getValueFromCriterion(criterion).size)})`;
 
 /**
  * Returns a human readable representation of a query
  * @param {Map} query
  */
-export const queryToString = (query) => {
+export const queryToString = (query, {
+  join = true
+}) => {
   const criteria = getCriteria(query);
   const output = criteria.reduce((description, criterion, criterionKey) =>
     description.push(criterionToString(criterion, criterionKey))
   , new List());
-  return output.join(' - ');
+  if (join) {
+    return output.join(' - ');
+  }
+  return output;
 };
