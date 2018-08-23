@@ -66,7 +66,6 @@ class Visualise extends Component {
           <span className="pull-right open_panel_btn" >
             <button
               className="btn btn-primary btn-sm"
-              styles={{ marginRight: '100px' }}
               ref={(ref) => { this.addButton = ref; }}
               onClick={this.onClickAdd}>
               <i className="ion ion-plus" /> Add new

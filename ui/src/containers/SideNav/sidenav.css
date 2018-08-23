@@ -30,6 +30,10 @@
       background-color:  rgba(245, 171, 53, 0.801)!important;
       color: white!important;
     }
+    .sidenav a:focus {
+      outline: none;
+      color: rgba(245, 171, 53, 0.801)
+    }
     .sidenav ul.navSidenav {
       margin: 20px -20px 0px -20px;
       padding: 0;
