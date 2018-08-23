@@ -58,22 +58,36 @@ class Editor extends Component {
     </div>
   )
 
-  renderTabs = () =>
-    (<div className={styles.tab}>
+  renderTabs = () => {
+    if (this.props.model.get('type') !== 'COUNTER') {
+      return (<div className={styles.tab}>
+        { this.renderDescription(this.props.model.get('description')) }
+        <Tabs index={this.state.step} onChange={this.changeStep}>
+          <Tab label="Axes">
+            <AxesEditor model={this.props.model} />
+          </Tab>
+          <Tab label="Series">
+            {this.renderSeriesEditor()}
+          </Tab>
+          <Tab label="Options">
+            {this.renderOptionsEditor()}
+          </Tab>
+        </Tabs>
+      </div>
+      );
+    }
+    return (<div className={styles.tab}>
       { this.renderDescription(this.props.model.get('description')) }
       <Tabs index={this.state.step} onChange={this.changeStep}>
         <Tab label="Axes">
           <AxesEditor model={this.props.model} />
         </Tab>
-        <Tab label="Series">
-          {this.renderSeriesEditor()}
-        </Tab>
         <Tab label="Options">
           {this.renderOptionsEditor()}
         </Tab>
       </Tabs>
-    </div>
-  );
+    </div>);
+  }
 
   renderSeriesEditor = () => (
     <SeriesEditor
