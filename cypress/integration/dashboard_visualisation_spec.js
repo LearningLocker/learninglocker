@@ -30,7 +30,7 @@ describe('dashboard visulaisation', () => {
 
       // Go to visualisation from dashboard
       cy.get('.ion-navicon-round').click();
-      cy.contains('Edit visualisation').click();
+      cy.contains('Go to visualisation').click();
 
       // Test we've landed in the right place.
       cy.get('input[placeholder="What does this visualisation show?"]').should('have.value', 'test 1');
