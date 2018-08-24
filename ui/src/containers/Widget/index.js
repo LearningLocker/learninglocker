@@ -115,6 +115,7 @@ class Widget extends Component {
 
   renderMenu = () => {
     const { model, organisationId } = this.props;
+
     return (
       <DropDownMenu
         button={
@@ -129,7 +130,7 @@ class Widget extends Component {
             className={styles.closeButton}>
             <i className={`ion ${styles.marginRight} ion-edit grey`} />{this.getSourceView()}
           </a>}
-        { model.has('visualisation') &&
+        { model.has('visualisation') && this.props.visualisation.size > 0 &&
           <Link
             routeName={'organisation.data.visualise.visualisation'}
             routeParams={{ organisationId, visualisationId: this.props.visualisation.get('_id') }} >
@@ -179,11 +180,19 @@ class Widget extends Component {
               <span style={{ cursor: 'initial' }}>{this.getTitle(model, this.props)}</span>
             </div>
           </div>
-          <div className={`panel-body ${styles.body}`}>
-            {!this.props.visualisation.get('sourceView') && model.has('visualisation') && <VisualiseResults id={model.get('visualisation')} />}
-            {this.props.visualisation.get('sourceView') && <SourceResults id={model.get('visualisation')} />
-            }
-          </div>
+          { this.props.visualisation.size > 0 &&
+            <div className={`panel-body ${styles.body}`}>
+              {!this.props.visualisation.get('sourceView') && model.has('visualisation') && <VisualiseResults id={model.get('visualisation')} />}
+              {this.props.visualisation.get('sourceView') && <SourceResults id={model.get('visualisation')} />
+              }
+            </div>
+          }
+          {
+            this.props.visualisation.size === 0 &&
+            <div className={`panel-body ${styles.body}`}>
+              No visualisation found
+            </div>
+          }
           {
             isModalOpen &&
               <WidgetVisualisePicker
