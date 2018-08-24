@@ -27,7 +27,21 @@ class WidgetVisualisePicker extends Component {
 
   getVisualisationId = () => this.props.model.get('visualisation')
 
-  onClickVisualisation = visualisation => this.props.onChangeVisualisation(visualisation.get('_id'), (this.props.model.get('title') || visualisation.get('description') || createDefaultTitle(visualisation)));
+  onClickVisualisation = (visualisation) => {
+    if (!visualisation) {
+      return this.props.onChangeVisualisation(
+        null,
+        (this.props.model.get('title') || 'No visualisation')
+      );
+    }
+
+    const out = this.props.onChangeVisualisation(
+      visualisation.get('_id'),
+      (this.props.model.get('title') || visualisation.get('description') || createDefaultTitle(visualisation))
+    );
+
+    return out;
+  }
 
   onChangeTitle = e => this.props.onChangeTitle(e.target.value);
 
@@ -75,6 +89,7 @@ class WidgetVisualisePicker extends Component {
             parseOptionTooltip={model => model.get('description', createDefaultTitle(model))}
             onChange={this.onClickVisualisation}
             searchStringToFilter={this.searchStringToFilter}
+            canEdit={() => false}
             fields={['description']} />
         </div>
       </div>
