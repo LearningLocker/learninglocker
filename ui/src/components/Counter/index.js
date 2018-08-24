@@ -27,17 +27,19 @@ const renderCount = color => count => benchmarkResult => (
     active />
   );
 const renderCounter = color => rs => model => (maxSize, width) => {
-  const chartUuid = uuid.v4();
-  const chartUuid2 = uuid.v4();
   const percentage = getPercentage(getResultCount(rs), getBenchmarkResultCount(rs));
   return (
     <div className="outerCounter" >
       <div style={{ textAlign: 'center', width: `${width}px`, marginLeft: `${width / 5}px!important`, fontSize: `${maxSize / 35}em` }}>
         {renderCount(color)(getResultCount(rs))(getBenchmarkResultCount(rs))}
-        {rs.size > 1 && ([<div key={chartUuid} style={{ textAlign: 'center', fontSize: '0.3em', color: percentage.color, fontWeight: '300' }}>
-          {percentage.result}
-        </div>,
-          <div key={chartUuid2} style={{ textAlign: 'center', fontSize: '0.25em', color: percentage.color, fontWeight: '300' }}>{percentage.result !== 'N/A' && `vs ${makeHumanReadable(model.get('previewPeriod', ''))}`}</div>])}
+        {rs.size > 1 && ([
+          <div key={'count-1'} style={{ textAlign: 'center', fontSize: '0.3em', color: percentage.color, fontWeight: '300' }}>
+            {percentage.result}
+          </div>,
+          <div key={'count-2'} style={{ textAlign: 'center', fontSize: '0.25em', color: percentage.color, fontWeight: '300' }}>
+            {percentage.result !== 'N/A' && `vs ${makeHumanReadable(model.get('previewPeriod', ''))}`}
+          </div>
+        ])}
       </div>
     </div>
   );
