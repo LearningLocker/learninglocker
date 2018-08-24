@@ -62,13 +62,13 @@ class Editor extends Component {
     // The Tabs component requires its children to be Tab items
     // We cannot do inline conditionals, therefore we construct the children and pass them in via the props
     const tabs = [
-      <Tab label="Axes"><AxesEditor model={this.props.model} /></Tab>,
-      <Tab label="Options">{ this.renderOptionsEditor() }</Tab>
+      <Tab key="axes" label="Axes"><AxesEditor model={this.props.model} /></Tab>,
+      <Tab key="options" label="Options">{ this.renderOptionsEditor() }</Tab>
     ];
 
     const isCounter = (this.props.model.get('type') === 'COUNTER');
     if (!isCounter) {
-      const seriesTab = <Tab label="Series">{ this.renderSeriesEditor() }</Tab>;
+      const seriesTab = <Tab key="series" label="Series">{ this.renderSeriesEditor() }</Tab>;
       tabs.splice(1, 0, seriesTab);
     }
 
