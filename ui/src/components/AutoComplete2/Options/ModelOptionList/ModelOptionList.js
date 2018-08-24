@@ -51,6 +51,7 @@ const renderOption = ({
         }} />
     );
   }
+
   return (
     <OptionListItem
       data={option}

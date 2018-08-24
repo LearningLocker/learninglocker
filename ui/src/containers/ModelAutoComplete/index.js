@@ -50,7 +50,8 @@ export default compose(
   fields,
   placeholder,
   defaultValues,
-  defaultNewValues
+  defaultNewValues,
+  canEdit = () => true,
 }) => {
   const searchString = searchFilterToString(searchFilter);
 
@@ -69,7 +70,8 @@ export default compose(
           hasFocus={hasFocus}
           searchStringToFilter={searchStringToFilter}
           onChangeFilter={searchFilter2 => setSearchFilter(searchFilter2)}
-          searchString={searchString} />
+          searchString={searchString}
+          canEdit={canEdit} />
       )}
       renderOptions={({ onBlur }) => (
         <ModelOptionList
@@ -83,7 +85,8 @@ export default compose(
           parseOptionTooltip={option => (option ? parseOptionTooltip(option) : '')}
           filter={filter}
           schema={schema}
-          displayCount={displayCount} />
+          displayCount={displayCount}
+          canEdit={canEdit} />
       )} />
   );
 });
