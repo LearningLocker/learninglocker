@@ -180,17 +180,11 @@ class Widget extends Component {
               <span style={{ cursor: 'initial' }}>{this.getTitle(model, this.props)}</span>
             </div>
           </div>
-          { this.props.visualisation.size > 0 &&
+          {
             <div className={`panel-body ${styles.body}`}>
               {!this.props.visualisation.get('sourceView') && model.has('visualisation') && <VisualiseResults id={model.get('visualisation')} />}
               {this.props.visualisation.get('sourceView') && <SourceResults id={model.get('visualisation')} />
               }
-            </div>
-          }
-          {
-            this.props.visualisation.size === 0 &&
-            <div className={`panel-body ${styles.body}`}>
-              No visualisation found
             </div>
           }
           {
