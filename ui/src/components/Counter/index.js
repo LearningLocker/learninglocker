@@ -6,7 +6,6 @@ import numeral from 'numeral';
 import tooltipFactory from 'react-toolbox/lib/tooltip';
 import { Link } from 'react-toolbox/lib/link';
 import { getPercentage } from 'ui/utils/defaultTitles';
-import uuid from 'uuid';
 import styles from './styles.css';
 
 const TooltipLink = tooltipFactory(Link);
