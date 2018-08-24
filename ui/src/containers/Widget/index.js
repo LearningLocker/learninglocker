@@ -123,7 +123,7 @@ class Widget extends Component {
             <i className="ion ion-navicon-round" />
           </a>
         }>
-        { this.props.visualisation.get('type') !== COUNTER && model.has('visualisation') &&
+        { this.props.visualisation.size > 0 && this.props.visualisation.get('type') !== COUNTER && model.has('visualisation') &&
           <a
             onClick={this.toggleSourceView}
             title="Table mode"
@@ -135,7 +135,7 @@ class Widget extends Component {
             routeName={'organisation.data.visualise.visualisation'}
             routeParams={{ organisationId, visualisationId: this.props.visualisation.get('_id') }} >
             <i className={`ion ${styles.marginRight} ion-edit grey`} />
-            Edit visualisation
+            Goto visualisation
           </Link>
         }
         <a onClick={this.openModal.bind(null, VISUALISATION)} title="Widget settings">
