@@ -135,7 +135,7 @@ class Widget extends Component {
             routeName={'organisation.data.visualise.visualisation'}
             routeParams={{ organisationId, visualisationId: this.props.visualisation.get('_id') }} >
             <i className={`ion ${styles.marginRight} ion-edit grey`} />
-            Goto visualisation
+            Go to visualisation
           </Link>
         }
         <a onClick={this.openModal.bind(null, VISUALISATION)} title="Widget settings">
