@@ -10,6 +10,7 @@ import {
   XVSY,
   SESSIONS,
   STATEMENTS,
+  STATEMENT,
   FREQUENCY,
   COUNTER,
   PIE,
@@ -52,6 +53,7 @@ class VisualiseIcon extends Component {
       case SESSIONS: return 'Sessions';
       case PLATFORMS: return 'Platforms';
       case QUESTIONANALYSIS: return 'Question analysis';
+      case STATEMENT: return 'Statement';
       default: return '';
     }
   }
@@ -70,6 +72,7 @@ class VisualiseIcon extends Component {
       case SESSIONS: return SESSIONS_IMAGE;
       case PLATFORMS: return PLATFORMS_IMAGE;
       case TABLE: return TABLE_IMAGE;
+      case STATEMENT: return TABLE_IMAGE;
       case QUESTIONANALYSIS: return QUESTIONANALYSIS_IMAGE;
       default: return '';
     }

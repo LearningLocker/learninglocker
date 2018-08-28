@@ -7,9 +7,10 @@ import TabbedQueriesBuilder from 'ui/components/TabbedQueriesBuilder';
 import {
   XVSY,
   STATEMENTS,
+  STATEMENT,
   POPULARACTIVITIES,
   LEADERBOARD,
-  FREQUENCY,
+  FREQUENCY
 } from '../../utils/constants';
 
 class VisualiseFilterForm extends Component {
@@ -122,6 +123,8 @@ class VisualiseFilterForm extends Component {
       case FREQUENCY:
         return this.renderFrequency();
       case STATEMENTS:
+        return this.renderStatements(queries);
+      case STATEMENT:
         return this.renderStatements(queries);
       case LEADERBOARD:
         return this.renderLeaderboard(queries);

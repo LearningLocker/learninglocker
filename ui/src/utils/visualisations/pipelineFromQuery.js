@@ -2,6 +2,7 @@ import { Map, fromJS } from 'immutable';
 import { memoize } from 'lodash';
 import { periodToDate } from 'ui/utils/dates';
 import aggregateChart from 'ui/utils/visualisations/aggregateChart';
+import aggregateStatement from 'ui/utils/visualisations/aggregateStatement';
 import aggregateCounter from 'ui/utils/visualisations/aggregateCounter';
 import aggregateXvsY from 'ui/utils/visualisations/aggregateXvsY';
 import {
@@ -9,6 +10,7 @@ import {
   LEADERBOARD,
   XVSY,
   STATEMENTS,
+  STATEMENT,
   FREQUENCY,
   COUNTER,
   PIE
@@ -45,6 +47,8 @@ export default memoize((args = new Map()) => {
       return aggregateXvsY(preReqs, axes);
     case COUNTER:
       return aggregateCounter(preReqs, axes);
+    case STATEMENT:
+      return aggregateStatement(preReqs, axes);
     default:
       return query;
   }

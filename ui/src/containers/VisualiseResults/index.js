@@ -5,6 +5,7 @@ import { withModel } from 'ui/utils/hocs';
 import BarChartResults from 'ui/containers/VisualiseResults/BarChartResults';
 import XvsYChartResults from 'ui/containers/VisualiseResults/XvsYChartResults';
 import LineChartResults from 'ui/containers/VisualiseResults/LineChartResults';
+import StatementResults from 'ui/containers/VisualiseResults/StatementResults';
 import ColumnChartResults from 'ui/containers/VisualiseResults/ColumnChartResults';
 import CounterResults from 'ui/containers/VisualiseResults/CounterResults';
 import PieChartResults from 'ui/containers/VisualiseResults/PieChartResults';
@@ -12,6 +13,7 @@ import {
   LEADERBOARD,
   XVSY,
   STATEMENTS,
+  STATEMENT,
   FREQUENCY,
   COUNTER,
   PIE,
@@ -33,6 +35,8 @@ export default compose(
       return <BarChartResults id={visualisationId} />;
     case STATEMENTS:
       return <ColumnChartResults id={visualisationId} />;
+    case STATEMENT:
+      return <StatementResults id={visualisationId} />;
     case XVSY:
       return <XvsYChartResults id={visualisationId} />;
     case COUNTER:

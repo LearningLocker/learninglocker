@@ -38,13 +38,16 @@ class TypeEditor extends Component {
 
   isActive = type => this.state.type === type
 
-  renderIcon = (type, index) => (
+  renderIcon = (type, index) => { 
+  console.log('​TypeEditor -> renderIcon -> type', type);
+    
+    return (
     <VisualiseIcon
       key={index}
       type={type}
       active={this.isActive(type)}
       onClick={this.onClickType.bind(null, type)} />
-  )
+  )}
 
   render = () => (
     <div>

@@ -82,6 +82,7 @@ const defaultSelector = (model, type, prefix, format = TEXT) => {
       case ('COUNTER'): return `${makeOperatorReadable(model)}${select(axv) || select(ayV)}`;
       case ('PIE'): return `${makeOperatorReadable(model)}${select(axv) || select(ayV)} / ${select(axg)}`;
       case ('STATEMENTS'): return addXY(select(axg), select(axv) || select(ayV));
+      case ('STATEMENT'): return 'Untitled Statement Visualisation';
       case ('Unnamed'): return 'Pick a visualisation';
       default: return 'Empty';
     }

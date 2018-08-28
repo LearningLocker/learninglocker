@@ -3,6 +3,7 @@ import {
   XVSY,
   STATEMENTS,
   POPULARACTIVITIES,
+  STATEMENT,
   LEADERBOARD,
   FREQUENCY,
   COUNTER,
@@ -65,6 +66,7 @@ export const getTypeOpts = (type) => {
       return LINE_OPERATOR_OPTS;
     case XVSY:
     case STATEMENTS:
+    case STATEMENT:
     case POPULARACTIVITIES:
     case LEADERBOARD:
     case COUNTER:

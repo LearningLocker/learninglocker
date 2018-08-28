@@ -41,6 +41,7 @@ const updateModel = ({ schema, id, path, value, silent = false }) => ({
   type: UPDATE_MODEL,
   schema,
   id,
+  test: 'test',
   path: (isArray(path) ? path : [path]),
   value,
   silent
