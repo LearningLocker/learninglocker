@@ -76,11 +76,11 @@ class SeriesEditor extends Component {
 
   renderSeriesAdder = () => (
     <div className="form-group">
-      <button
+      {this.props.model.get('type') !== 'STATEMENT' && <button
         className="btn btn-primary btn-sm"
         onClick={this.onAddQuery}>
         <i className="ion ion-plus" /> Add query
-      </button>
+      </button>}
     </div>
   )
 

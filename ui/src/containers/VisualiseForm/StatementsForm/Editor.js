@@ -75,13 +75,14 @@ class Editor extends Component {
     console.log('is?', isCounter, isStatement)
     if (!isCounter) {
       const seriesTab = <Tab key="series" label="Series">{ this.renderSeriesEditor() }</Tab>;
-      isStatement ? statementTabs.splice(1, 0, seriesTab) : tabs.splice(1, 0, seriesTab);
+      const StatementSeriesTab = <Tab key="filter" label="Filter">{ this.renderSeriesEditor() }</Tab>;
+      isStatement ? statementTabs.splice(1, 0, StatementSeriesTab) : tabs.splice(1, 0, seriesTab);
     }
 
     return (
       <div className={styles.tab}>
         { this.renderDescription(this.props.model.get('description')) }
-        <Tabs index={this.state.step} onChange={this.changeStep}> children={tabs}</Tabs>
+        <Tabs index={this.state.step} onChange={this.changeStep}> children={isStatement ? statementTabs : tabs}</Tabs>
       </div>
     );
   }
