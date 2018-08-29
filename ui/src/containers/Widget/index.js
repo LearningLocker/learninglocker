@@ -115,6 +115,7 @@ class Widget extends Component {
 
   renderMenu = () => {
     const { model, organisationId } = this.props;
+
     return (
       <DropDownMenu
         button={
@@ -122,19 +123,19 @@ class Widget extends Component {
             <i className="ion ion-navicon-round" />
           </a>
         }>
-        { this.props.visualisation.get('type') !== COUNTER && model.has('visualisation') &&
+        { this.props.visualisation.size > 0 && this.props.visualisation.get('type') !== COUNTER && model.has('visualisation') &&
           <a
             onClick={this.toggleSourceView}
             title="Table mode"
             className={styles.closeButton}>
             <i className={`ion ${styles.marginRight} ion-edit grey`} />{this.getSourceView()}
           </a>}
-        { model.has('visualisation') &&
+        { model.has('visualisation') && this.props.visualisation.size > 0 &&
           <Link
             routeName={'organisation.data.visualise.visualisation'}
             routeParams={{ organisationId, visualisationId: this.props.visualisation.get('_id') }} >
             <i className={`ion ${styles.marginRight} ion-edit grey`} />
-            Edit visualisation
+            Go to visualisation
           </Link>
         }
         <a onClick={this.openModal.bind(null, VISUALISATION)} title="Widget settings">
@@ -179,11 +180,13 @@ class Widget extends Component {
               <span style={{ cursor: 'initial' }}>{this.getTitle(model, this.props)}</span>
             </div>
           </div>
-          <div className={`panel-body ${styles.body}`}>
-            {!this.props.visualisation.get('sourceView') && model.has('visualisation') && <VisualiseResults id={model.get('visualisation')} />}
-            {this.props.visualisation.get('sourceView') && <SourceResults id={model.get('visualisation')} />
-            }
-          </div>
+          {
+            <div className={`panel-body ${styles.body}`}>
+              {!this.props.visualisation.get('sourceView') && model.has('visualisation') && <VisualiseResults id={model.get('visualisation')} />}
+              {this.props.visualisation.get('sourceView') && <SourceResults id={model.get('visualisation')} />
+              }
+            </div>
+          }
           {
             isModalOpen &&
               <WidgetVisualisePicker

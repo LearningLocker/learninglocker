@@ -58,22 +58,27 @@ class Editor extends Component {
     </div>
   )
 
-  renderTabs = () =>
-    (<div className={styles.tab}>
-      { this.renderDescription(this.props.model.get('description')) }
-      <Tabs index={this.state.step} onChange={this.changeStep}>
-        <Tab label="Axes">
-          <AxesEditor model={this.props.model} />
-        </Tab>
-        <Tab label="Series">
-          {this.renderSeriesEditor()}
-        </Tab>
-        <Tab label="Options">
-          {this.renderOptionsEditor()}
-        </Tab>
-      </Tabs>
-    </div>
-  );
+  renderTabs = () => {
+    // The Tabs component requires its children to be Tab items
+    // We cannot do inline conditionals, therefore we construct the children and pass them in via the props
+    const tabs = [
+      <Tab key="axes" label="Axes"><AxesEditor model={this.props.model} /></Tab>,
+      <Tab key="options" label="Options">{ this.renderOptionsEditor() }</Tab>
+    ];
+
+    const isCounter = (this.props.model.get('type') === 'COUNTER');
+    if (!isCounter) {
+      const seriesTab = <Tab key="series" label="Series">{ this.renderSeriesEditor() }</Tab>;
+      tabs.splice(1, 0, seriesTab);
+    }
+
+    return (
+      <div className={styles.tab}>
+        { this.renderDescription(this.props.model.get('description')) }
+        <Tabs index={this.state.step} onChange={this.changeStep}> children={tabs}</Tabs>
+      </div>
+    );
+  }
 
   renderSeriesEditor = () => (
     <SeriesEditor

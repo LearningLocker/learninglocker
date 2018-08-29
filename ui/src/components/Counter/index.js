@@ -31,10 +31,14 @@ const renderCounter = color => rs => model => (maxSize, width) => {
     <div className="outerCounter" >
       <div style={{ textAlign: 'center', width: `${width}px`, marginLeft: `${width / 5}px!important`, fontSize: `${maxSize / 35}em` }}>
         {renderCount(color)(getResultCount(rs))(getBenchmarkResultCount(rs))}
-        {rs.size > 1 && ([<div style={{ textAlign: 'center', fontSize: '0.3em', color: percentage.color, fontWeight: '300' }}>
-          {percentage.result}
-        </div>,
-          <div style={{ textAlign: 'center', fontSize: '0.25em', color: percentage.color, fontWeight: '300' }}>{percentage.result !== 'N/A' && `vs ${makeHumanReadable(model.get('previewPeriod', ''))}`}</div>])}
+        {rs.size > 1 && ([
+          <div key={'count-1'} style={{ textAlign: 'center', fontSize: '0.3em', color: percentage.color, fontWeight: '300' }}>
+            {percentage.result}
+          </div>,
+          <div key={'count-2'} style={{ textAlign: 'center', fontSize: '0.25em', color: percentage.color, fontWeight: '300' }}>
+            {percentage.result !== 'N/A' && `vs ${makeHumanReadable(model.get('previewPeriod', ''))}`}
+          </div>
+        ])}
       </div>
     </div>
   );
