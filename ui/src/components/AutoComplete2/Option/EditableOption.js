@@ -36,10 +36,10 @@ const EditableOption = ({
       tooltip={parseOptionTooltip(option)}
       data={option}
       onClick={onClick}
-      onEdit={(() => canEdit(option)) && (() => {
+      onEdit={canEdit(option) && (() => {
         setIsEditing(true);
       })}
-      onDelete={(() => canEdit(option)) && onDelete} />
+      onDelete={canEdit(option) && onDelete} />
   );
 };
 
