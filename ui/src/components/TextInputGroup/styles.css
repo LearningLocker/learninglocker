@@ -2,9 +2,16 @@
   padding-left: 8px;
   border: 1px solid #ccc;
   border-radius: 2px;
-  flex-grow: 1; }
+  flex-grow: 1;
+  background-color: white;
+  position: relative;
+  z-index: 9999;
+  display: flex;
+}
 
 .buttons {
-  float: right; }
+  float: right;
+  margin: 10px 0;
+}
 
 

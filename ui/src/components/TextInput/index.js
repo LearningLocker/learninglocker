@@ -7,6 +7,7 @@ class TextInput extends Component {
   static propTypes = {
     onCancel: PropTypes.func,
     label: PropTypes.string,
+    name: PropTypes.string,
     autoFocus: PropTypes.bool,
     defaultValue: PropTypes.string,
   }
@@ -26,7 +27,7 @@ class TextInput extends Component {
   }
 
   onChange = (e) => {
-    this.props.onChange(e.target.value, this.props.label);
+    this.props.onChange(e.target.value, this.props.label || this.props.name);
     this.setState({ value: e.target.value });
   }
 
@@ -42,14 +43,14 @@ class TextInput extends Component {
   }
 
   render = () => {
-    const { label, onFocus, autoFocus } = this.props;
+    const { label, onFocus, autoFocus, name } = this.props;
     const { value } = this.state;
 
     return (
       <div className={`form-group ${styles.group}`}>
-        <label htmlFor={label} className={styles.label}>
+        {label && <label htmlFor={label} className={styles.label}>
           {label}
-        </label>
+        </label>}
         <div className={`form-control ${styles.input}`}>
           <input
             autoFocus={autoFocus}
@@ -57,7 +58,7 @@ class TextInput extends Component {
             label={label}
             onChange={this.onChange}
             defaultValue={value}
-            name={label}
+            name={label || name}
             onFocus={onFocus} />
         </div>
       </div>
