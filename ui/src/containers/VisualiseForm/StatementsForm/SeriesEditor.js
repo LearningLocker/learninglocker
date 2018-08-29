@@ -61,7 +61,7 @@ class SeriesEditor extends Component {
   canStack = type =>
     STACKED_TYPES.indexOf(type) !== -1
 
-  canAddSeries = () => filters => filters.count() < 5
+  canAddSeries = () => filters => filters.count() < 5 && this.props.model.get('type') !== 'STATEMENT' && this.props.model.get('type') !== 'COUNTER'
 
   renderStackToggle = () => (
     <div className="form-group">

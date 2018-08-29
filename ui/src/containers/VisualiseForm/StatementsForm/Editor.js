@@ -66,12 +66,18 @@ class Editor extends Component {
       <Tab key="options" label="Options">{ this.renderOptionsEditor() }</Tab>
     ];
 
+
     const isCounter = (this.props.model.get('type') === 'COUNTER');
-    if (!isCounter) {
-      const seriesTab = <Tab key="series" label="Series">{ this.renderSeriesEditor() }</Tab>;
+    const isStatement = (this.props.model.get('type') === 'STATEMENT');
+    const seriesTab = <Tab key="series" label="Series">{ this.renderSeriesEditor() }</Tab>;
+    const StatementSeriesTab = <Tab key="filter" label="Filter">{ this.renderSeriesEditor() }</Tab>;
+    if (isStatement) {
+      statementTabs.splice(1, 0, StatementSeriesTab)
+    } else if (isCounter) {
+      tabs.splice(1, 0, StatementSeriesTab) 
+    } else {
       tabs.splice(1, 0, seriesTab);
     }
-
     return (
       <div className={styles.tab}>
         { this.renderDescription(this.props.model.get('description')) }
