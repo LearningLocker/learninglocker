@@ -7,10 +7,11 @@ import TabbedQueriesBuilder from 'ui/components/TabbedQueriesBuilder';
 import {
   XVSY,
   STATEMENTS,
-  STATEMENT,
   POPULARACTIVITIES,
   LEADERBOARD,
-  FREQUENCY
+  FREQUENCY,
+  COUNTER,
+  STATEMENT
 } from '../../utils/constants';
 
 class VisualiseFilterForm extends Component {
@@ -74,13 +75,13 @@ class VisualiseFilterForm extends Component {
     });
   }
 
-  renderTabbedQueryBuilder = (labelled = true, defaults = {}) => {
+  renderTabbedQueryBuilder = (labelled = true, defaults = {}, text = 'Build your query') => {
     const queries = this.props.model.get('filters', new List());
 
     return (
       <div>
-        <label htmlFor="tabbedQueriesBuilder" className="clearfix">
-          Build your query
+        <label htmlFor="tabbedQueriesBuilder" className="clearfix" style={{ marginLeft: '3px' }}>
+          {text}
         </label>
         <TabbedQueriesBuilder
           queries={queries}
@@ -103,6 +104,10 @@ class VisualiseFilterForm extends Component {
   renderLeaderboard = () =>
     this.renderTabbedQueryBuilder(false, { verbs: { expanded: true } });
 
+  renderStatementOrCounter = () =>{
+    console.log('render statement or counter')
+  return this.renderTabbedQueryBuilder(false, { verbs: { expanded: true } });}
+
   renderPopularActivities = () =>
     this.renderTabbedQueryBuilder(false, { objects: { expanded: true } });
 
@@ -116,20 +121,24 @@ class VisualiseFilterForm extends Component {
     const { model } = this.props;
     const type = model.get('type');
     const queries = model.get('filters', new List());
+    console.log('type', type);
+    
 
     switch (type) {
       case XVSY:
         return this.renderXvsY();
       case FREQUENCY:
         return this.renderFrequency();
-      case STATEMENTS:
-        return this.renderStatements(queries);
       case STATEMENT:
+        return this.renderStatementOrCounter();
+      case STATEMENTS:
         return this.renderStatements(queries);
       case LEADERBOARD:
         return this.renderLeaderboard(queries);
       case POPULARACTIVITIES:
         return this.renderPopularActivities();
+      case COUNTER:
+        return this.renderStatementOrCounter();
       default:
         return this.renderDefault(queries);
     }
