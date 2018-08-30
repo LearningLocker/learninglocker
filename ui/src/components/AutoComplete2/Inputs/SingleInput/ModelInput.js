@@ -30,7 +30,8 @@ const withModelInputProps = withProps(({
   deselectOption,
   fields,
   defaultValues,
-  canEdit = () => true
+  canEdit = () => true,
+  onFocus,
 }) => ({
   onChangeSearchString: (e) => {
     const searchString = e.target.value;
@@ -46,14 +47,15 @@ const withModelInputProps = withProps(({
       parseOptionTooltip={parseOptionTooltip}
       option={option}
       onSubmit={payload =>
-          mapValues(payload, (value, key) => {
-            updateModel({ path: [key], value });
-          })
-        }
+            mapValues(payload, (value, key) => {
+              updateModel({ path: [key], value });
+            })
+          }
       onDelete={() => {
         deselectOption();
         deleteModel();
       }}
+      onClick={onFocus}
       canEdit={canEdit} />
     )
 }));
