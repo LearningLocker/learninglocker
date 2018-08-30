@@ -26,10 +26,11 @@ const AutoComplete = ({
   return (
     <div onKeyPress={onKeyPress} className={styles.wrapper}>
       <FocusGroup
-        onFocus={() => setInputFocus(true)}
+        onFocus={() => {}}
         onBlur={onBlurInput}
         hasFocus={hasInputFocus} >
         {renderInput({
+          onFocus: () => setInputFocus(true),
           hasFocus: hasInputFocus
         })}
         <div

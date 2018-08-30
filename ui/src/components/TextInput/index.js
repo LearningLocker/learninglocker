@@ -57,6 +57,9 @@ class TextInput extends Component {
             type="text"
             label={label}
             onChange={this.onChange}
+            onClick={(event) => {
+              event.preventDefault();
+            }}
             defaultValue={value}
             name={label || name}
             onFocus={onFocus} />

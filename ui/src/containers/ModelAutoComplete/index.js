@@ -57,8 +57,9 @@ export default compose(
 
   return (
     <AutoComplete2
-      renderInput={({ hasFocus }) => (
+      renderInput={({ hasFocus, onFocus }) => (
         <ModelInput
+          onFocus={onFocus}
           placeholder={placeholder}
           fields={fields}
           defaultValues={defaultValues}
