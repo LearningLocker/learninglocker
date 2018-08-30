@@ -98,7 +98,6 @@ export default compose(
       <div className={styles.sourceResultsContainer}>
         <table className="table table-bordered table-striped">
           <tbody>
-     
             <tr>
               <th>{getAxisLabel('x', visualisation, model.get('type'))}</th>
               {tableData.first().get('rowData', new Map()).map((series, key) => {

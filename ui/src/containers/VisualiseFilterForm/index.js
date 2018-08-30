@@ -104,9 +104,8 @@ class VisualiseFilterForm extends Component {
   renderLeaderboard = () =>
     this.renderTabbedQueryBuilder(false, { verbs: { expanded: true } });
 
-  renderStatementOrCounter = () =>{
-    console.log('render statement or counter')
-  return this.renderTabbedQueryBuilder(false, { verbs: { expanded: true } });}
+  renderStatementOrCounter = () =>
+    this.renderTabbedQueryBuilder(false, { verbs: { expanded: true } });
 
   renderPopularActivities = () =>
     this.renderTabbedQueryBuilder(false, { objects: { expanded: true } });
@@ -121,8 +120,6 @@ class VisualiseFilterForm extends Component {
     const { model } = this.props;
     const type = model.get('type');
     const queries = model.get('filters', new List());
-    console.log('type', type);
-    
 
     switch (type) {
       case XVSY:

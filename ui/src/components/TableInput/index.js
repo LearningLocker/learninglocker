@@ -53,9 +53,10 @@ const withHandlersEnhance = withHandlers(
         values.delete(key)
       );
     },
-    add: ({ values, onChange }) => () => {
+    add: ({ values, onChange, isStatementVisualisation }) => () => {
+      console.log('add props',onChange,values)
       onChange(
-        values.set('New', '')
+      isStatementVisualisation ? values.set('Test', '') : values.set('New', '')
       );
     }
   }
@@ -115,6 +116,16 @@ const renderItems = ({
   return [staticValuesRendered, valuesRendered];
 };
 
+const createButton = (isStatementVisualisation, add) => {
+  if (!isStatementVisualisation){
+   return <a className="btn btn-sm btn-inverse" style={{ width: '33px' }} onClick={add}>
+    <i className={"icon ion-plus"} />
+  </a>
+  }
+  return (<button className="btn btn-primary btn-sm" style={{marginTop: '0px', marginLeft: '-13px'}}onClick={add}>
+    <i className="ion ion-plus" /> Add Column
+  </button>);
+}
 const render = ({
   keyName = 'Column',
   valueName = 'Source',
@@ -126,6 +137,7 @@ const render = ({
   add,
   onKeyChange,
   onValueChange,
+  isStatementVisualisation
 }) => {
   const items = renderItems({
     staticValues,
@@ -148,9 +160,7 @@ const render = ({
       </thead>
       <tbody id="models">{items}</tbody>
     </table>
-    <a className="btn btn-sm btn-inverse" style={{ width: '33px' }} onClick={add}>
-      <i className="icon ion-plus" />
-    </a>
+  {createButton(isStatementVisualisation, add)}
   </span>);
 };
 

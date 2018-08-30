@@ -1,20 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import { Map, List } from 'immutable';
 import { AutoSizer } from 'react-virtualized';
-import { shorten } from 'ui/utils/defaultTitles';
-import {
-  ScatterChart,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Scatter,
-  CartesianGrid
-} from 'recharts';
 import NoData from 'ui/components/Graphs/NoData';
 import { displayAuto } from 'ui/redux/modules/queryBuilder';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { renderLegend } from 'ui/components/Charts/Chart';
-import CustomTooltip from './CustomTooltip';
 import styles from './styles.css';
 
 class XvsY extends Component {

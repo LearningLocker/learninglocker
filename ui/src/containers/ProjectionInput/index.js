@@ -47,7 +47,7 @@ class ProjectionInput extends Component {
       onSelectOption={onChange} />);
 
   render = () => {
-    const { projection, onChange, setReviver, rawMode } = this.props;
+    const { projection, onChange, setReviver, rawMode, isStatementVisualisation } = this.props;
 
     return (
       <div style={{ marginTop: '10px' }} >
@@ -60,6 +60,7 @@ class ProjectionInput extends Component {
             values={projection}
             onChange={this.onChange}
             onValueChange={this.onEditFieldVal}
+            isStatementVisualisation={isStatementVisualisation}
             inputComponent={this.renderInputComponent} />
         )}
       </div>

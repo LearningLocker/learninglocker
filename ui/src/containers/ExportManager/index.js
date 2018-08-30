@@ -26,7 +26,7 @@ const enhance = compose(
   })),
   withHandlers({
     onAddExport: ({ addModel, userId, setSelectedExportId }) => async () => {
-      const { model } = await addModel({ props: { owner: userId, name: 'TestExport' } });
+      const { model } = await addModel({ props: { owner: userId, name: 'New Export' } });
       setSelectedExportId(model.get('_id'));
     },
     setSelectedExport: ({ setSelectedExportId }) => (model) => {

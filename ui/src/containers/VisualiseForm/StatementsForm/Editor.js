@@ -1,11 +1,16 @@
 import React, { Component, PropTypes } from 'react';
-import { Map } from 'immutable';
+import { Map, toJS, fromJS } from 'immutable';
 import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { updateModel } from 'ui/redux/modules/models';
 import Tabs from 'ui/components/Material/Tabs';
+import { withModel } from 'ui/utils/hocs';
+import { withProps } from 'recompose';
 import { Tab } from 'react-toolbox/lib/tabs';
 import TypeEditor from './TypeEditor';
+import ExportForm from 'ui/components/ExportForm';
+import { getDefaultProjectionFromType } from 'ui/redux/modules/exports';
+import ProjectionInput from 'ui/containers/ProjectionInput';
 import SeriesEditor from './SeriesEditor';
 import AxesEditor from './AxesEditor/AxesEditor';
 import styles from '../visualiseform.css';
@@ -30,6 +35,32 @@ class Editor extends Component {
       path: attr,
       value: newValue
     })
+
+  getActiveProjection = () => {
+    const { model } = this.props;
+    const { activeIndex } = this.state;
+  console.log('statementColumns',model.get(
+      'statementColumns' ))
+  return model.get('statementColumns')
+  }
+
+  onChangeProjection = (projection) => {
+
+    console.log('TCL: Editor -> onChangeProjection -> projection', projection, 'length', projection.size, 'merge',  projection.merge(this.props.model.get('StatementColumns')));
+
+    console.log('001', projection);
+
+    if (projection) {
+      this.props.updateModel({
+        schema: SCHEMA,
+        id: this.props.model.get('_id'),
+        path: ['statementColumns'],
+        value: projection
+      });
+    }
+
+    console.log('TCL: Editor -> onChangeProjection -> this.props.model', this.props.model);
+  }
 
   onChangeAttr = attr => event =>
     this.changeAttr(attr)(event.target.value)
@@ -65,9 +96,15 @@ class Editor extends Component {
       <Tab key="axes" label="Axes"><AxesEditor model={this.props.model} /></Tab>,
       <Tab key="options" label="Options">{ this.renderOptionsEditor() }</Tab>
     ];
-    
+
+    console.log('TCL: Editor -> renderTabs -> this.model', this.props.model);
     const statementTabs = [
-      <Tab key="Columns" label="Columns"><AxesEditor model={this.props.model} /></Tab>
+      <Tab key="Columns" label="Columns">
+        <ProjectionInput
+          projection={this.getActiveProjection()}
+          isStatementVisualisation={1}
+          onChange={this.onChangeProjection} />
+      </Tab>
     ];
 
     const isStatement = this.props.model.get('type') === 'STATEMENT';

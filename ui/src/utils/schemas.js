@@ -89,7 +89,9 @@ const visualisation = new LLSchema('visualisation', { idAttribute: '_id', sortKe
       filters => filters.map(
         query => JSON.stringify(query.toJS())
       )
-    ).update('axes', new Map(), axes => JSON.stringify(axes.toJS()))
+    )
+    .update('statementColumns', new Map(), statementColumn => JSON.stringify(statementColumn.toJS()))
+    .update('axes', new Map(), axes => JSON.stringify(axes.toJS()))
       .merge(
       model
         .filter((item, key) => key.startsWith('axes') && includes(axesToJsList, key))
@@ -118,6 +120,10 @@ const visualisation = new LLSchema('visualisation', { idAttribute: '_id', sortKe
     }
 
     let out = value.toMap();
+    if (isString(value.get('statementColumns'))) {
+      out = out.set('statementColumns', fromJS(JSON.parse(value.get('statementColumns'))));
+    }
+
     if (isString(value.get('axes'))) {
       out = out.set('axes', fromJS(JSON.parse(value.get('axes'))));
     }

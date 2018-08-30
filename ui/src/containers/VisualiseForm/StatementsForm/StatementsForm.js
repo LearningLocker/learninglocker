@@ -55,10 +55,9 @@ class StatementsForm extends Component {
     value: e.target.value
   })
 
-  renderEditor = () => { console.log('mod', this.props.model)
-    return (
+  renderEditor = () => (
     <Editor model={this.props.model} exportVisualisation={this.props.exportVisualisation} />
-  );}
+  );
 
   renderTimePicker = () => (
     <select
