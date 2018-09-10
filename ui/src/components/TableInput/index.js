@@ -2,7 +2,7 @@ import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { map } from 'lodash';
 import DebounceInput from 'react-debounce-input';
-import { Map, List } from 'immutable';
+import { Map } from 'immutable';
 import {
   compose,
   withHandlers,
@@ -122,7 +122,6 @@ const render = ({
   keyName = 'Column',
   valueName = 'Source',
   staticValues = new Map(),
-  editableStaticValues = new List(),
   values, // key value object
   onChange,
   remove,

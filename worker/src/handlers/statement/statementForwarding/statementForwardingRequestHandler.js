@@ -1,5 +1,5 @@
 import * as popsicle from 'popsicle';
-import { assign, isPlainObject, get } from 'lodash';
+import { assign, isPlainObject } from 'lodash';
 import { Map } from 'immutable';
 import logger from 'lib/logger';
 import Statement, { mapDot } from 'lib/models/statement';
