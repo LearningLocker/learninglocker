@@ -25,25 +25,21 @@ const withHandlersEnhance = withHandlers(
   {
     onKeyChange: ({ values, onChange }) => key => (element) => {
       const newKey = element.target.value;
-
       const newValues = values.mapKeys(k =>
         ((k === key) ? newKey : k)
       );
-
       onChange(newValues);
     },
     onValueChange: props => key => (element) => {
       if (props.onValueChange) {
         return props.onValueChange(props)(key)(element);
       }
-
       const { values, onChange } = props;
 
       let newValue = element;
       if (element.target) {
         newValue = element.target.value;
       }
-
       onChange(
         values.set(key, newValue)
       );
@@ -54,9 +50,8 @@ const withHandlersEnhance = withHandlers(
       );
     },
     add: ({ values, onChange, isStatementVisualisation }) => () => {
-      console.log('add props',onChange,values)
       onChange(
-      isStatementVisualisation ? values.set('Test', '') : values.set('New', '')
+      isStatementVisualisation ? values.set('Unnamed', '') : values.set('New', '')
       );
     }
   }
@@ -117,15 +112,19 @@ const renderItems = ({
 };
 
 const createButton = (isStatementVisualisation, add) => {
-  if (!isStatementVisualisation){
-   return <a className="btn btn-sm btn-inverse" style={{ width: '33px' }} onClick={add}>
-    <i className={"icon ion-plus"} />
-  </a>
+  if (!isStatementVisualisation) {
+    return (<a className="btn btn-sm btn-inverse" style={{ width: '33px' }} onClick={add}>
+      <i className={'icon ion-plus'} />
+    </a>);
   }
-  return (<button className="btn btn-primary btn-sm" style={{marginTop: '0px', marginLeft: '-13px'}}onClick={add}>
+  return (<button
+    className="btn btn-primary btn-sm"
+    style={{ marginTop: '0px', marginLeft: '-13px' }}
+    onClick={add}>
     <i className="ion ion-plus" /> Add Column
   </button>);
-}
+};
+
 const render = ({
   keyName = 'Column',
   valueName = 'Source',
@@ -160,7 +159,7 @@ const render = ({
       </thead>
       <tbody id="models">{items}</tbody>
     </table>
-  {createButton(isStatementVisualisation, add)}
+    {createButton(isStatementVisualisation, add)}
   </span>);
 };
 

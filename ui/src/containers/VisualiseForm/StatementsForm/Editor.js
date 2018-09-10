@@ -39,16 +39,10 @@ class Editor extends Component {
   getActiveProjection = () => {
     const { model } = this.props;
     const { activeIndex } = this.state;
-  console.log('statementColumns',model.get(
-      'statementColumns' ))
-  return model.get('statementColumns')
+    return model.get('statementColumns')
   }
 
   onChangeProjection = (projection) => {
-
-    console.log('TCL: Editor -> onChangeProjection -> projection', projection, 'length', projection.size, 'merge',  projection.merge(this.props.model.get('StatementColumns')));
-
-    console.log('001', projection);
 
     if (projection) {
       this.props.updateModel({
@@ -59,7 +53,6 @@ class Editor extends Component {
       });
     }
 
-    console.log('TCL: Editor -> onChangeProjection -> this.props.model', this.props.model);
   }
 
   onChangeAttr = attr => event =>
@@ -96,8 +89,6 @@ class Editor extends Component {
       <Tab key="axes" label="Axes"><AxesEditor model={this.props.model} /></Tab>,
       <Tab key="options" label="Options">{ this.renderOptionsEditor() }</Tab>
     ];
-
-    console.log('TCL: Editor -> renderTabs -> this.model', this.props.model);
     const statementTabs = [
       <Tab key="Columns" label="Columns">
         <ProjectionInput

@@ -26,7 +26,35 @@ class ProjectionInput extends Component {
     onChange,
     values,
   }) => key => (value) => {
-    const updated = values.setIn([key], `$${value}`);
+    const addDefaultKey = (oldKey) => {
+      // Has not yet been renamed so rename to human readable source
+      const defaultTitle = oldValue => (oldValue.split('.').map(word => word.charAt(0).toUpperCase() + word.substr(1))).join(' ');
+      if (oldKey === 'Unnamed' || oldKey === '') {
+        // find unnamed key in the map and replace with the default value
+        const newMap = values.mapKeys((k) => {
+          if (k === oldKey) {
+            return defaultTitle(value);
+          }
+          return k;
+        });
+        // return the new map and set the new keys value
+        return newMap.setIn([defaultTitle(value) || value], `$${value}`);
+      }
+      // Has been named
+      console.log('test key ', oldKey, 'def ', defaultTitle(oldKey), 'vals', values)
+      if (oldKey === defaultTitle(oldKey)) {
+        const newMap = values.mapKeys((k) => {
+          if (k === oldKey) {
+            return defaultTitle(value);
+          }
+          return k;
+        });
+        return newMap.setIn([defaultTitle(value)], `$${value}`);
+      }
+      return values.setIn([oldKey], `$${value}`);
+    };
+
+    const updated = addDefaultKey(key);
     onChange(updated);
   }
 
