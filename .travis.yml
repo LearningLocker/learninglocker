@@ -1,5 +1,5 @@
 language: node_js
-node_js: "6"
+node_js: "8"
 sudo: false
 
 env:
@@ -8,7 +8,7 @@ env:
     - YARN_CMD=test
     - YARN_CMD=ci-test-integrations
   global:
-    - MONGODB=3.2.13
+    - MONGODB=3.4.16
     - APP_SECRET=44E52D2227F93179525E252EC3AB5
 install:
   - wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${MONGODB}.tgz

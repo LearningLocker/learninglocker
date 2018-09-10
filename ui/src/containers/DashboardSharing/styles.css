@@ -5,3 +5,11 @@
 .shareableHeader {
   margin-bottom: 20px;
 }
+
+.gray {
+  background-color: #ccc;
+}
+
+.contextHelp {
+  font-style: italic;
+}

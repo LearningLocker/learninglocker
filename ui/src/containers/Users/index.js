@@ -185,7 +185,7 @@ export default compose(
   withStyles(styles),
   connect(
     state => ({ searchString: modelQueryStringSelector(schema)(state) }),
-    { addModel }
+  { addModel }
   )
 )(Users);
 

@@ -46,23 +46,6 @@ class SubOrgForm extends Component {
     };
   }
 
-  componentWillReceiveProps = (nextProps) => {
-    const logoPath = this.props.uploadState.getIn([
-      schema,
-      this.props.model.get('_id'),
-      'logoPath'
-    ]);
-    if (logoPath) {
-      this.props.updateModel({
-        schema,
-        id: this.props.model.get('_id'),
-        path: 'logoPath',
-        value: logoPath
-      });
-      this.setState({ filePath: nextProps.model.get('logoPath') });
-    }
-  };
-
   onChangeAttr = (attr, e) => {
     this.props.updateModel({
       schema,
