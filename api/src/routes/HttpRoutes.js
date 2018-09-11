@@ -259,6 +259,7 @@ restify.serve(router, Visualisation);
 restify.serve(router, Dashboard);
 restify.serve(router, LRS);
 restify.serve(router, Statement, {
+  preCreate: (req, res) => res.sendStatus(405),
   preDelete: (req, res) => res.sendStatus(405),
   preUpdate: (req, res) => res.sendStatus(405),
 });
