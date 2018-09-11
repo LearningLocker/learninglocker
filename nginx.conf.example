@@ -1,0 +1,65 @@
+server {
+  listen       80 default_server;
+  listen       [::]:80 default_server;
+  server_name  SITE_URL;
+
+  access_log  /var/log/nginx/access.log;
+
+  # Max request size
+  client_max_body_size 20M;
+  large_client_header_buffers 4 256k;
+
+  root /SITE_ROOT/ui/dist/public;
+
+  # xAPI endpoints
+  location ~* ^/data/xAPI(.*)$ {
+    proxy_pass http://127.0.0.1:XAPI_PORT/data/xAPI$1$is_args$args;
+  }
+
+  # API endpoints
+  location = /api {
+    rewrite /api / break;
+    proxy_redirect off;
+    proxy_pass http://127.0.0.1:API_PORT;
+  }
+
+  location ~* ^/api(.*)$ {
+    proxy_pass http://127.0.0.1:API_PORT$1$is_args$args;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_cache_bypass $http_upgrade;
+  }
+
+  # All other traffic directed to statics or Node server
+  location / {
+    try_files $uri @node_server;
+  }
+
+  # Node UI server
+  location @node_server {
+    proxy_pass http://localhost:UI_PORT;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_cache_bypass $http_upgrade;
+  }
+
+  # Load configuration files for the default server block.
+  error_page 404 /404.html;
+  location = /40x.html {
+    root /usr/share/nginx/html;
+  }
+
+  error_page 500 502 503 504 /50x.html;
+  location = /50x.html {
+    root /usr/share/nginx/html;
+  }
+
+  # We don't need .ht files with nginx.
+  location ~ /\.ht {
+    deny all;
+  }
+}
