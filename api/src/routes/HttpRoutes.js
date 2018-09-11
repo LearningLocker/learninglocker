@@ -27,6 +27,7 @@ import StatementController from 'api/controllers/StatementController';
 import generateConnectionController from 'api/controllers/ConnectionController';
 import generateIndexesController from 'api/controllers/IndexesController';
 import ImportPersonasController from 'api/controllers/ImportPersonasController';
+import StatementMetadataController from 'api/controllers/StatementMetadataController';
 
 // REST
 import LRS from 'lib/models/lrs';
@@ -187,6 +188,18 @@ router.get(
   StatementController.count
 );
 
+router.patch(
+  routes.STATEMENT_METADATA,
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  StatementMetadataController.patchStatementMetadata
+);
+router.post(
+  routes.STATEMENT_METADATA,
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  StatementMetadataController.postStatementMetadata
+);
+
+
 /**
  * V1 compatability
  */
@@ -245,7 +258,11 @@ restify.serve(router, Client);
 restify.serve(router, Visualisation);
 restify.serve(router, Dashboard);
 restify.serve(router, LRS);
-restify.serve(router, Statement);
+restify.serve(router, Statement, {
+  preCreate: (req, res) => res.sendStatus(405),
+  preDelete: (req, res) => res.sendStatus(405),
+  preUpdate: (req, res) => res.sendStatus(405),
+});
 restify.serve(router, StatementForwarding);
 restify.serve(router, QueryBuilderCache);
 restify.serve(router, QueryBuilderCacheValue);

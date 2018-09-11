@@ -9,6 +9,12 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.5.2]
+### Added
+  - Metadata POST/PATCH endpoint for statements
+  - Send entire document in Statement Forward toggle
+  - Automatically add X-Experience-API-Version to Statement Forwards
+
 ## [2.5.1]
 ### Fixed
   - Empty filter in series accesible via shareable dashboards
