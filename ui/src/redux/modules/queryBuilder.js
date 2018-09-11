@@ -242,6 +242,9 @@ export const initialSections = fromJS({
     childGenerators: new List([
       new Map({
         path: new List(['statement', 'context'])
+      }),
+      new Map({
+        path: new List(['metadata'])
       })
     ]),
   },
@@ -414,19 +417,32 @@ const criteriaToValue = (basePath, criteria) => {
   return criteria.mapKeys(key => key.replace(basePath, 'value'));
 };
 
-const buildInputChild = generator => (keyPath) => {
+const getChildOveridesFromValueType = (valueType, generator) => {
+  if (valueType === 'Number') {
+    return {
+      operators: operators.RANGE,
+      getValueQuery: value => value
+    }
+  }
+  return {
+    operators: generator.get('childOperators', operators.DISCRETE)
+  };
+}
+
+const buildInputChild = generator => (keyPath, valueType) => {
   const getQuery = generator.get('getQuery', valueToCriteria);
   const getModel = generator.get('getModel', criteriaToValue);
   const joinedPath = keyPath.join('.');
   const childGenerator = generator.set('path', generator.get('path').push(keyPath.last()));
+  const childOverides = getChildOveridesFromValueType(valueType, generator);
   return new Map({
     keyPath,
     getModelDisplay: generator.get('getChildDisplay', displayCacheValue(displayAuto)),
     getModelIdent: generator.get('getChildIdent', model => identToString(model.get('value'))),
     getModelQuery: getQuery.bind(null, joinedPath),
     getQueryModel: getModel.bind(null, joinedPath),
-    operators: generator.get('childOperators', operators.DISCRETE),
-    childGenerators: new List([childGenerator])
+    childGenerators: new List([childGenerator]),
+    ...childOverides,
   });
 };
 
@@ -434,22 +450,23 @@ const getChildPaths = caches => (generator) => {
   const generatorPath = generator.get('path');
   const defaultPathMatcher = isChildKey(generatorPath);
   const pathMatcher = generator.get('pathMatcher', defaultPathMatcher);
-  const cachePaths = caches.map(cache => cache.get('path')).toList();
   const depth = generatorPath.size + 1;
-  const matchedPaths = cachePaths.filter(pathMatcher);
-  return matchedPaths.groupBy(path => path.take(depth));
+  const matchedCaches = caches.filter((cache) => pathMatcher(cache.get('path')));
+  return matchedCaches.groupBy(cache => cache.get('path').take(depth));
 };
 
 export const buildChildrenFromCaches = caches => (generator) => {
-  const groupedPaths = getChildPaths(caches)(generator);
-  return groupedPaths.map((paths, keyPath) => {
+  const groupedCaches = getChildPaths(caches)(generator);
+  return groupedCaches.map((groupedCache, keyPath) => {
+    console.log('TCL: groupedCache', groupedCache);
+    const paths = groupedCache.map(cache => cache.get('path'));
     const hasInput = paths.includes(keyPath);
     const hasChildren = paths.size > (hasInput ? 1 : 0);
     const childGenerator = new Map({ path: keyPath });
     const title = keyPath.skip(generator.get('path').size).join('.');
     const child = new Map({ title });
     const childWithInput = (hasInput ?
-      buildInputChild(generator)(keyPath) : new Map()
+      buildInputChild(generator)(keyPath, groupedCache.first().get('valueType')) : new Map()
     );
     const childWithChildren = new Map({ children: (hasChildren ?
       buildChildrenFromCaches(caches)(childGenerator) : new Map()
