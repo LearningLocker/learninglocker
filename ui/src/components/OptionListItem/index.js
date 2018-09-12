@@ -69,7 +69,7 @@ class OptionListItem extends Component {
       icon
     };
 
-    if (tooltip) return <TooltipLink {...linkProps} tooltip={ tooltip } />;
+    if (tooltip) return <TooltipLink {...linkProps} tooltip={tooltip} />;
     return <MaterialLink {...linkProps} />;
   }
 
