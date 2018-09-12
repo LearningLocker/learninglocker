@@ -458,7 +458,6 @@ const getChildPaths = caches => (generator) => {
 export const buildChildrenFromCaches = caches => (generator) => {
   const groupedCaches = getChildPaths(caches)(generator);
   return groupedCaches.map((groupedCache, keyPath) => {
-    console.log('TCL: groupedCache', groupedCache);
     const paths = groupedCache.map(cache => cache.get('path'));
     const hasInput = paths.includes(keyPath);
     const hasChildren = paths.size > (hasInput ? 1 : 0);

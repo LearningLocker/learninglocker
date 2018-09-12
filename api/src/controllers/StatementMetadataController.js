@@ -1,7 +1,7 @@
 import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
 import catchErrors from 'api/controllers/utils/catchErrors';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
-import generateQueryBuilderCaches from 'lib/';
+import { generateQueryBuilderCaches } from 'lib/services/querybuildercache';
 import Statement, { mapDot } from 'lib/models/statement';
 import encodeDot from 'lib/helpers/encodeDot';
 import mongoose from 'mongoose';
