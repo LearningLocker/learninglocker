@@ -28,10 +28,10 @@ export const patchStatementMetadata = catchErrors(async (req, res) => {
   const metadata = mapDot(req.body, encodeDot);
   const model = await Statement.findOneAndUpdate(filter, {
     $set: mapKeys(metadata, (_value, key) => `metadata.${key}`)
-  }, { new: true, fields: { _id: 1, organisation: 1 } });
+  }, { new: true, fields: { _id: 1, organisation: 1, metadata: 1 } });
   generateQueryBuilderCaches({ metadata }, model.organisation);
 
-  return res.status(200).send({ _id: model._id });
+  return res.status(200).send(mapDot({ _id: model._id, metadata: model.metadata }))
 });
 
 export const postStatementMetadata = catchErrors(async (req, res) => {
@@ -52,10 +52,10 @@ export const postStatementMetadata = catchErrors(async (req, res) => {
   const metadata = mapDot(req.body, encodeDot);
 
   const update = { metadata };
-  const model = await Statement.findOneAndUpdate(filter, update, { new: true, fields: { _id: 1, organisation: 1 } });
+  const model = await Statement.findOneAndUpdate(filter, update, { new: true, fields: { _id: 1, organisation: 1, metadata: 1 } });
   generateQueryBuilderCaches(update, model.organisation);
 
-  return res.status(200).send({ _id: model._id });
+  return res.status(200).send(mapDot({ _id: model._id, metadata: model.metadata }));
 });
 
 export default {
