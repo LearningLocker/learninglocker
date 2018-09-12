@@ -422,12 +422,12 @@ const getChildOveridesFromValueType = (valueType, generator) => {
     return {
       operators: operators.RANGE,
       getValueQuery: value => value
-    }
+    };
   }
   return {
     operators: generator.get('childOperators', operators.DISCRETE)
   };
-}
+};
 
 const buildInputChild = generator => (keyPath, valueType) => {
   const getQuery = generator.get('getQuery', valueToCriteria);
@@ -451,7 +451,7 @@ const getChildPaths = caches => (generator) => {
   const defaultPathMatcher = isChildKey(generatorPath);
   const pathMatcher = generator.get('pathMatcher', defaultPathMatcher);
   const depth = generatorPath.size + 1;
-  const matchedCaches = caches.filter((cache) => pathMatcher(cache.get('path')));
+  const matchedCaches = caches.filter(cache => pathMatcher(cache.get('path')));
   return matchedCaches.groupBy(cache => cache.get('path').take(depth));
 };
 
