@@ -9,6 +9,13 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.5.3]
+### Added
+- Query by metadata (New Metadata section in querybuilder...)
+- Use metadata in visualisations
+### Fixed
+- Decodes `.` in metadata keys
+
 ## [2.5.2]
 ### Added
   - Metadata POST/PATCH endpoint for statements
