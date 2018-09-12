@@ -1,7 +1,9 @@
 import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
 import catchErrors from 'api/controllers/utils/catchErrors';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
-import Statement from 'lib/models/statement';
+import { generateQueryBuilderCaches } from 'lib/services/querybuildercache';
+import Statement, { mapDot } from 'lib/models/statement';
+import encodeDot from 'lib/helpers/encodeDot';
 import mongoose from 'mongoose';
 import { mapKeys } from 'lodash';
 
@@ -23,11 +25,13 @@ export const patchStatementMetadata = catchErrors(async (req, res) => {
     ]
   };
 
+  const metadata = mapDot(req.body, encodeDot);
   const model = await Statement.findOneAndUpdate(filter, {
-    $set: mapKeys(req.body, (_value, key) => `metadata.${key}`)
-  }, { new: true, fields: ['_id'] });
+    $set: mapKeys(metadata, (_value, key) => `metadata.${key}`)
+  }, { new: true, fields: { _id: 1, organisation: 1, metadata: 1 } });
+  generateQueryBuilderCaches({ metadata }, model.organisation);
 
-  return res.status(200).send({ _id: model._id });
+  return res.status(200).send(mapDot({ _id: model._id, metadata: model.metadata }))
 });
 
 export const postStatementMetadata = catchErrors(async (req, res) => {
@@ -45,12 +49,13 @@ export const postStatementMetadata = catchErrors(async (req, res) => {
       scopeFilter
     ]
   };
+  const metadata = mapDot(req.body, encodeDot);
 
-  const model = await Statement.findOneAndUpdate(filter, {
-    metadata: req.body
-  }, { new: true, fields: '_id' });
+  const update = { metadata };
+  const model = await Statement.findOneAndUpdate(filter, update, { new: true, fields: { _id: 1, organisation: 1, metadata: 1 } });
+  generateQueryBuilderCaches(update, model.organisation);
 
-  return res.status(200).send({ _id: model._id });
+  return res.status(200).send(mapDot({ _id: model._id, metadata: model.metadata }));
 });
 
 export default {

@@ -119,10 +119,16 @@ class ExpandedSection extends Component {
 
   renderCriteria = () => {
     const ops = this.props.section.get('operators');
-
     switch (ops) {
       case operators.CONTINUOUS: return this.renderContinuousCriteria();
-      case operators.RANGE: return this.renderRangeCriteria();
+      case operators.RANGE:
+      // Shows both the range (number) picker and the dropdown picker
+        return (
+          <div>
+            { this.renderRangeCriteria() }
+            { this.renderDiscreteCriteria() }
+          </div>
+        );
       case operators.BOOLEAN: return this.renderBooleanCriteria();
       default: return this.renderDiscreteCriteria();
     }
