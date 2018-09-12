@@ -242,11 +242,16 @@ export const initialSections = fromJS({
     childGenerators: new List([
       new Map({
         path: new List(['statement', 'context'])
-      }),
+      })
+    ]),
+  },
+  metadata: {
+    title: 'Metadata',
+    childGenerators: new List([
       new Map({
         path: new List(['metadata'])
       })
-    ]),
+    ])
   },
   result: {
     title: 'Result',
