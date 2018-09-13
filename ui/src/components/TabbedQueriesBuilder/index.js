@@ -39,7 +39,7 @@ class TabbedQueriesBuilder extends Component {
     this.props.onDeleteQuery(index);
   }
 
-  renderQueryBuilder = index => (
+  renderQueryBuilder = ( index, circlePicker) => (
     <div>
       <div className="form-group">
         <QueryBuilder
@@ -49,18 +49,18 @@ class TabbedQueriesBuilder extends Component {
           defaults={this.props.defaults} />
       </div>
       <div className="form-group">
-        <CirclePicker
+      { circlePicker && <CirclePicker
           onChangeComplete={(color) => {
             this.props.onChangeColor(index, color.hex);
           }}
           width="auto"
           colors={VISUALISATION_COLORS}
-          color={this.props.queries.getIn([index, 'color'])} />
+          color={this.props.queries.getIn([index, 'color'])} />}
       </div>
     </div>
   );
 
-  renderLabelledQuery = index => (
+  renderLabelledQuery = (index, circlePicker) => (
     <span>
       <div className="form-group">
         <label htmlFor="labelInput">Label</label>
@@ -80,29 +80,29 @@ class TabbedQueriesBuilder extends Component {
           onChange={this.props.onChangeLabel.bind(null, index)} />
       </div>
 
-      {this.renderQueryBuilder(index)}
+      {this.renderQueryBuilder(index, circlePicker)}
 
     </span>
   );
 
-  renderQuery = index => (
+  renderQuery = ( index, circlePicker = true) => (
     this.props.labelled === false ?
-    this.renderQueryBuilder(index) :
-    this.renderLabelledQuery(index)
+    this.renderQueryBuilder(index, circlePicker) :
+    this.renderLabelledQuery(index, circlePicker)
   );
 
-  renderOneQuery = () => this.renderQuery(0);
+  renderOneQuery = (circlePicker) => this.renderQuery(0, circlePicker);
 
-  renderQueryTab = (query, index) => {
+  renderQueryTab = (query, index, circlePicker = true) => {
     const label = query.get('label') || `Series ${index + 1}`;
     return (
       <Tab label={label} key={index}>
-        {this.renderLabelledQuery(index)}
+        {this.renderLabelledQuery(index, circlePicker)}
       </Tab>
     );
   }
 
-  renderManyQueries = () => (
+  renderManyQueries = (circlePicker) => (
     <Tabs
       index={this.state.tabIndex}
       onChange={this.changeTab}>
@@ -112,10 +112,13 @@ class TabbedQueriesBuilder extends Component {
 
   render = () => {
     const hasNoQuery = this.props.queries.size === 0;
+    console.log('has no query')
     if (hasNoQuery) return <span />;
     const hasOneQuery = this.props.queries.size === 1;
-    if (hasOneQuery) return this.renderOneQuery();
-    return this.renderManyQueries();
+    console.log('has one query')
+    if (hasOneQuery) return this.renderOneQuery(this.props.circlePicker);
+    console.log('has many queries')
+    return this.renderManyQueries(this.props.circlePicker);
   }
 }
 

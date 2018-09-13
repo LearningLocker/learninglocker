@@ -69,6 +69,7 @@ class Source extends Component {
     const pipelines = fromJS([
       [{ $match: this.props.query }]
     ]);
+    {console.log('source', new List(['source']))}
     return (
       <div>
         <header id="topbar">

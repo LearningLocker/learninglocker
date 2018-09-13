@@ -122,7 +122,7 @@ class ExportForm extends Component {
     const rawMode = model.get('rawMode');
     const { activeIndex } = this.state;
     const activeProjection = this.getActiveProjection();
-
+    console.log('EX Frm (mod, pipel, actP, actI ):', model, pipelines, activeProjection, activeIndex);
     return (
       <div>
         <div className={`${styles.exportForm} row rowadding`}>

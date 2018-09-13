@@ -55,7 +55,10 @@ const enhance = compose(
   })
 );
 
-const renderSelectedExport = ({ pipelines, selectedExportId, setSelectedExport }) => (
+const renderSelectedExport = ({ pipelines, selectedExportId, setSelectedExport }) => {
+console.log('TCL: renderSelectedExport -> pipelines', pipelines);
+
+  return (
   <div>
     <div key={0} className={styles.pickerContainer}>
       <ModelAutoComplete
@@ -70,7 +73,7 @@ const renderSelectedExport = ({ pipelines, selectedExportId, setSelectedExport }
       id={selectedExportId}
       pipelines={pipelines} />
   </div>
-);
+);}
 
 const renderNoExport = onAddExport => (
   <AddModelPrompt

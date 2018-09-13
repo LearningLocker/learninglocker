@@ -74,15 +74,17 @@ class SeriesEditor extends Component {
     </div>
   )
 
-  renderSeriesAdder = () => (
-    <div className="form-group">
-      {this.props.model.get('type') !== 'STATEMENT' && this.props.model.get('type') !== 'COUNTER' && <button
-        className="btn btn-primary btn-sm"
-        onClick={this.onAddQuery}>
-        <i className="ion ion-plus" /> Add query
-      </button>}
-    </div>
-  )
+  renderSeriesAdder = () => {
+    return (
+      <div className="form-group">
+        {this.props.model.get('type') !== 'STATEMENT' && this.props.model.get('type') !== 'COUNTER' && <button
+          className="btn btn-primary btn-sm"
+          onClick={this.onAddQuery}>
+          <i className="ion ion-plus" /> Add query
+        </button>}
+      </div>
+    );
+  }
 
   render = () => {
     const { model } = this.props;

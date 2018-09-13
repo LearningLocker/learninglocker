@@ -75,7 +75,7 @@ class VisualiseFilterForm extends Component {
     });
   }
 
-  renderTabbedQueryBuilder = (labelled = true, defaults = {}, text = 'Build your query') => {
+  renderTabbedQueryBuilder = (labelled = true, defaults = {}, text = 'Build your query', circlePicker) => {
     const queries = this.props.model.get('filters', new List());
 
     return (
@@ -84,6 +84,7 @@ class VisualiseFilterForm extends Component {
           {text}
         </label>
         <TabbedQueriesBuilder
+          circlePicker={circlePicker}
           queries={queries}
           labelled={labelled}
           componentBasePath={
@@ -104,8 +105,11 @@ class VisualiseFilterForm extends Component {
   renderLeaderboard = () =>
     this.renderTabbedQueryBuilder(false, { verbs: { expanded: true } });
 
-  renderStatementOrCounter = () =>
+  renderCounter = () =>
     this.renderTabbedQueryBuilder(false, { verbs: { expanded: true } });
+
+  renderStatement = () =>
+    this.renderTabbedQueryBuilder(false, { verbs: { expanded: true } }, 'Build your filter', false);
 
   renderPopularActivities = () =>
     this.renderTabbedQueryBuilder(false, { objects: { expanded: true } });
@@ -127,7 +131,7 @@ class VisualiseFilterForm extends Component {
       case FREQUENCY:
         return this.renderFrequency();
       case STATEMENT:
-        return this.renderStatementOrCounter();
+        return this.renderStatement();
       case STATEMENTS:
         return this.renderStatements(queries);
       case LEADERBOARD:
@@ -135,7 +139,7 @@ class VisualiseFilterForm extends Component {
       case POPULARACTIVITIES:
         return this.renderPopularActivities();
       case COUNTER:
-        return this.renderStatementOrCounter();
+        return this.renderCounter();
       default:
         return this.renderDefault(queries);
     }

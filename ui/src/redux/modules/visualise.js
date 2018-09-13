@@ -32,8 +32,9 @@ import {
   NONE,
   JOURNEY,
   JOURNEY_PROGRESS,
+  STATEMENT
 } from 'ui/utils/constants';
-import { pipelinesFromQueries, getJourney } from 'ui/utils/visualisations';
+import { pipelinesFromQueries, getJourney, pipelineFromQuery } from 'ui/utils/visualisations';
 import { unflattenAxes } from 'lib/helpers/visualisation';
 import { periodToDate } from 'ui/utils/dates';
 import { OFF, ANY } from 'lib/constants/dashboard';
@@ -178,7 +179,7 @@ const shareableDashboardFilterSelector = () => createSelector(
   }
 );
 
-export const visualisationPiplelinesSelector = (
+export const visualisationPipelinesSelector = (
   id,
   cb = pipelinesFromQueries // whilst waiting for https://github.com/facebook/jest/issues/3608
 ) => createSelector(
@@ -211,6 +212,38 @@ export const visualisationPiplelinesSelector = (
   }
 );
 
+export const statementVisualisationPipelinesSelector = (
+  id,
+  cb = pipelinesFromQueries // whilst waiting for https://github.com/facebook/jest/issues/3608
+) => createSelector(
+  [modelsSchemaIdSelector('visualisation', id), shareableDashboardFilterSelector()],
+  (visualisation, filter) => {
+    if (!visualisation) return new List();
+    const type = visualisation.get('type');
+    const journey = visualisation.get('journey');
+    const previewPeriod = visualisation.get('previewPeriod');
+    const benchmarkingEnabled = visualisation.get('benchmarkingEnabled', false);
+    const queries = visualisation.get('filters', new List()).map((vFilter) => {
+      if (!filter) {
+        return vFilter;
+      }
+
+      const out = new Map({
+        $match: new Map({
+          $and: new List([
+            vFilter.get('$match', new Map()),
+            ...filter,
+          ])
+        })
+      });
+
+      return out;
+    });
+
+    const axes = unflattenAxes(visualisation);
+    return cb(queries, axes, type, previewPeriod, journey, benchmarkingEnabled);
+  }
+);
 /**
  * Takes a visualisation object and suggests a wizard step to be completed
  * e.g. visualisation.type is not completed, a popup for choosing a type is suggested
@@ -251,7 +284,7 @@ const shouldFetchJourney = (pipelines, state) =>
  */
 export const visualisationShouldFetchSelector = visualisationId => createSelector([
   identity,
-  visualisationPiplelinesSelector(visualisationId),
+  visualisationPipelinesSelector(visualisationId),
   modelsSchemaIdSelector('visualisation', visualisationId)
 ], (state, pipelines, visualisation) => {
   switch (visualisation.get('type')) {
@@ -285,7 +318,7 @@ const getPipelinesResults = state => pipelines => pipelines.map(pipeline => (
 ));
 
 const getSeriesResults = (visualisationId, state) => {
-  const series = visualisationPiplelinesSelector(visualisationId)(state);
+  const series = visualisationPipelinesSelector(visualisationId)(state);
   const out = series.map(getPipelinesResults(state));
   return out;
 };
@@ -327,7 +360,7 @@ const getSeriesFetchStates = (series, state) =>
 
 const getVisualisationFetchStates = (id, state) => {
   const visualisation = modelsSchemaIdSelector('visualisation', id)(state);
-  const pipelines = visualisationPiplelinesSelector(id)(state);
+  const pipelines = visualisationPipelinesSelector(id)(state);
   switch (visualisation.get('type')) {
     case JOURNEY_PROGRESS:
       return getWaypointFetchStates(visualisation, pipelines, state);
@@ -386,15 +419,26 @@ export function* fetchVisualisationSaga(state, id) {
   const visualisation = modelsSchemaIdSelector('visualisation', id)(state);
 
   if (visualisation.get('type') === JOURNEY_PROGRESS) {
-    const pipelines = visualisationPiplelinesSelector(id)(state);
+    const pipelines = visualisationPipelinesSelector(id)(state);
     for (let i = 0; i < pipelines.size; i += 1) {
       const journeyId = visualisation.get('journey');
       const filter = new Map({ journey: journeyId });
       yield put(fetchModelsCount('journeyProgress', filter));
       yield put(fetchModels('journey', new Map({ _id: journeyId })));
     }
+  } else if (visualisation.get('type') !== STATEMENT) {
+    const series = visualisationPipelinesSelector(id)(state);
+    for (let s = 0; s < series.size; s += 1) {
+      const pipelines = series.get(s);
+      for (let p = 0; p < pipelines.size; p += 1) {
+        const shouldFetch = shouldFetchPipeline(pipelines.get(p), state);
+        if (shouldFetch) yield put(fetchAggregation({ pipeline: pipelines.get(p) }));
+      }
+    }
   } else {
-    const series = visualisationPiplelinesSelector(id)(state);
+    console.log('we here', id, state, visualisation )
+    const series = statementVisualisationPipelinesSelector (id)(state);
+    console.log('series', series)
     for (let s = 0; s < series.size; s += 1) {
       const pipelines = series.get(s);
       for (let p = 0; p < pipelines.size; p += 1) {

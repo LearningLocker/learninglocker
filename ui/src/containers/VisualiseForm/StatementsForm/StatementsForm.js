@@ -86,7 +86,7 @@ class StatementsForm extends Component {
         <div className="form-group form-inline" style={{ textAlign: 'right' }}>
           { this.renderTimePicker() }
         </div>
-        <div style={{ height: '400px', paddingTop: 5 }}>
+        <div style={{ paddingTop: 5, height: '400px' }}>
           {!this.props.model.get('sourceView') && <VisualiseResults id={this.props.model.get('_id')} />}
           {this.props.model.get('sourceView') &&
             <SourceResults id={this.props.model.get('_id')} />

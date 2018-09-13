@@ -27,7 +27,6 @@ class ProjectionInput extends Component {
     values,
   }) => key => (value) => {
     const addDefaultKey = (oldKey) => {
-      // Has not yet been renamed so rename to human readable source
       const defaultTitle = oldValue => (oldValue.split('.').map(word => word.charAt(0).toUpperCase() + word.substr(1))).join(' ');
       if (oldKey === 'Unnamed' || oldKey === '') {
         // find unnamed key in the map and replace with the default value
@@ -40,8 +39,7 @@ class ProjectionInput extends Component {
         // return the new map and set the new keys value
         return newMap.setIn([defaultTitle(value) || value], `$${value}`);
       }
-      // Has been named
-      console.log('test key ', oldKey, 'def ', defaultTitle(oldKey), 'vals', values)
+      // if the value is changed and previously the title was default make a new default title
       if (oldKey === defaultTitle(oldKey)) {
         const newMap = values.mapKeys((k) => {
           if (k === oldKey) {
@@ -51,6 +49,7 @@ class ProjectionInput extends Component {
         });
         return newMap.setIn([defaultTitle(value)], `$${value}`);
       }
+      // if the key has been named then return the human named key with the new value
       return values.setIn([oldKey], `$${value}`);
     };
 

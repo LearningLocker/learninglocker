@@ -1,41 +1,18 @@
 import React from 'react';
-import { compose } from 'recompose';
+import { compose, withProps, shouldUpdate } from 'recompose';
+import { connect } from 'react-redux';
+import { v4 as uuid } from 'uuid';
 import NoData from 'ui/components/Graphs/NoData';
-import { Map, OrderedMap } from 'immutable';
+import { statementQuerySelector } from 'ui/redux/selectors';
+import { Map, fromJS } from 'immutable';
 import isString from 'lodash/isString';
-import { withStatementsVisualisation } from 'ui/utils/hocs';
-import { getAxesString } from 'ui/utils/defaultTitles';
+import { withStatementsVisualisation, withModels } from 'ui/utils/hocs';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import styles from './styles.css';
 import { displayVerb, displayActivity } from '../../utils/xapi';
 
-const moreThanOneSeries = tData => tData.first() !== undefined && tData.first().size > 1;
 
-export const generateTableData = (results, labels) => {
-  const seriesList = labels.zip(results);
-  const seriesList2 = seriesList.map(([key, item], i) => {
-    if (key === undefined) {
-      return [`Series ${i + 1}`, item];
-    }
-    return [key, item];
-  });
 
-  const seriesMap = new OrderedMap(seriesList2);
-  const result = seriesMap.reduce((reduction, series, seriesKey) =>
-    series.reduce(
-      (axesReduction, axes2, axesKey) => axes2.reduce(
-        (seriesReduction, item) => {
-          const dataKeyName = [item.get('_id'), 'rowData', seriesKey, axesKey];
-          const modelKeyName = [item.get('_id'), 'model'];
-          return seriesReduction
-            .setIn(dataKeyName, item)
-            .setIn(modelKeyName, item.get('model'));
-        },
-      axesReduction),
-    reduction)
-  , new OrderedMap());
-  return result;
-};
 
 const formatKeyToFriendlyString = (key) => {
   if (isString(key)) return key;
@@ -57,71 +34,58 @@ const formatKeyToFriendlyString = (key) => {
   return JSON.stringify(key, null, 2);
 };
 
-const getAxisLabel = (axis, visualisation, type) => {
-  if (type !== 'XVSY') {
-    return getAxesString(axis, visualisation, type, false);
-  }
-  return visualisation.getIn(['axesgroup', 'searchString'], 'No value');
-};
+// onAddQuery = () => {
+//   const { model } = this.props;
+//   const queries = model.get('filters');
+//   const modelId = model.get('_id');
+//   const newQueries = queries.push(new Map());
+//   this.props.updateModel({
+//     schema: 'visualisation',
+//     id: modelId,
+//     path: 'filters',
+//     value: newQueries
+//   });
+// }
 
-const createSelectIfXVSY = (index, visualisation, type, title, axis) => {
-  if (type !== 'XVSY') {
-    return getAxisLabel(axis, visualisation, type, title);
-  }
-  if (index === 0) {
-    return visualisation.get('axesxLabel', visualisation.getIn(['axesxValue', 'searchString'], 'No value'));
-  }
-  return visualisation.get('axesyLabel', visualisation.getIn(['axesyValue', 'searchString'], 'No value'));
-};
-
-const formatNumber = (selectedAxes) => {
-  if (selectedAxes.get('count') % 1 !== 0) {
-    return selectedAxes.get('count').toFixed(2);
-  }
-  return selectedAxes.get('count');
-};
-
-export default compose(
-  withStatementsVisualisation,
+const enhance = compose(
+  connect(state => ({
+    query: statementQuerySelector(state),
+    state
+  }), {  }),
   withStyles(styles),
-)(({
-  getFormattedResults,
-  results,
-  labels,
+  withModels,
+  withProps((props) => {
+    return { props };
+  }),
+  withStatementsVisualisation,
+  shouldUpdate((props, nextProps) => !(
+      props.model.get('statementColumns').equals(nextProps.model.get('statementColumns')) 
+    )
+  ),
+);
+// PROBLEM ONE - WHY WONT THE STATE UPDATE WHEN STATEMENT COLUMN CHANGES?
+// PROBLEM TWO - HOW TO GET THE SELECTED FIELDS FOR THE FILTERED RESULTS
+export default enhance(({
   model,
-  visualisation
+  query,
+  state,
+  results,
+  props
 }) => {
-  const formattedResults = getFormattedResults(results);
-  const tableData = generateTableData(formattedResults, labels);
-  if (tableData.first()) {
+  const pipelines = fromJS([
+    [{ $match: query }]
+  ]);
+  const { activeIndex } = state;
+  console.log('sr (mod, pipel, actP, props, results): ', model, pipelines, activeIndex, props, results);
+  if (results) {
     return (
-      <div className={styles.sourceResultsContainer}>
+      <div style={{ overflow: 'auto', height: '-webkit-fill-available', position: 'relative' }}>
         <table className="table table-bordered table-striped">
           <tbody>
             <tr>
-              <th>{getAxisLabel('x', visualisation, model.get('type'))}</th>
-              {tableData.first().get('rowData', new Map()).map((series, key) => {
-                const out = series.mapEntries(
-                  ([title], index) =>
-                    [
-                      index,
-                      (<th key={`${key}-${index}`}>{createSelectIfXVSY(index, visualisation, model.get('type'), title, 'y')}</th>)
-                    ]
-                  );
-                return out.valueSeq();
-              }).valueSeq()
-              }
+              {model.get('statementColumns').keySeq().map(header => <th key={uuid()}>{header}</th>)}
             </tr>
-            {tableData.map((row, key) => (
-              <tr key={key}>
-                <td title={key}>{formatKeyToFriendlyString(row.get('model', key))}</td>
-                {row.get('rowData', new Map()).map(series =>
-                  series.map(axes2 => (
-                    <td>{formatNumber(axes2)}</td>)
-                  ).valueSeq()
-                ).valueSeq()}
-              </tr>
-            )).valueSeq()}
+            { results.first().first().map(res => <tr key={uuid()}><td key={uuid()}>{res}</td></tr>)}
           </tbody>
         </table>
       </div>

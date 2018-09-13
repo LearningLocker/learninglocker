@@ -13,8 +13,7 @@ export class StatementEditor extends BaseAxesEditor {
 
   render = () => (
     <div className="form-group">
-      <label htmlFor="toggleInput" className="clearfix" style={{ marginLeft: '3px', marginBottom: '20px'}}>Add your Column</label><br />
-      yo yo
+      <label htmlFor="toggleInput" className="clearfix" style={{ marginLeft: '3px', marginBottom: '20px' }}>Add your Column</label><br />
       <CountEditor
         type={this.props.model.get('type')}
         value={this.getAxesValue('value')}
