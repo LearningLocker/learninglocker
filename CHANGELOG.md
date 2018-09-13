@@ -9,6 +9,11 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.5.4]
+### Fixed
+- Upgraded to latest persona-service
+  - Fixes concurrency issues with personaIdentifier creation
+
 ## [2.5.3]
 ### Added
 - Query by metadata (New Metadata section in querybuilder...)
