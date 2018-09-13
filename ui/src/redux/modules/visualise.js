@@ -222,7 +222,7 @@ export const statementVisualisationPipelinesSelector = (
     const type = visualisation.get('type');
     const journey = visualisation.get('journey');
     const previewPeriod = visualisation.get('previewPeriod');
-    const benchmarkingEnabled = visualisation.get('benchmarkingEnabled', false);
+    const benchmarkingEnabled = false;
     const queries = visualisation.get('filters', new List()).map((vFilter) => {
       if (!filter) {
         return vFilter;
@@ -236,7 +236,6 @@ export const statementVisualisationPipelinesSelector = (
           ])
         })
       });
-
       return out;
     });
 
@@ -335,6 +334,8 @@ export const visualisationResultsSelector = (visualisationId, filter) => createS
   switch (visualisation.get('type')) {
     case JOURNEY_PROGRESS:
       return getJourneyResults(visualisation, filter)(state);
+    case STATEMENT:
+      return statementVisualisationPipelinesSelector(visualisationId)(state);
     default:
       return getSeriesResults(visualisationId, state);
   }
@@ -438,11 +439,14 @@ export function* fetchVisualisationSaga(state, id) {
   } else {
     console.log('we here', id, state, visualisation )
     const series = statementVisualisationPipelinesSelector (id)(state);
-    console.log('series', series)
+    console.log('series', series, series.size)
     for (let s = 0; s < series.size; s += 1) {
-      const pipelines = series.get(s);
+      const pipelines = series.get(s)
+      .push(new Map({ $sort: { timestamp: -1, _id: 1 } }))
+      .push(new Map({ $project: visualisation.get('statementColumns') }))
       for (let p = 0; p < pipelines.size; p += 1) {
         const shouldFetch = shouldFetchPipeline(pipelines.get(p), state);
+        console.log('pipline', pipelines.get(p))
         if (shouldFetch) yield put(fetchAggregation({ pipeline: pipelines.get(p) }));
       }
     }
