@@ -64,9 +64,9 @@ const getAxisLabel = (axis, visualisation, type) => {
   return visualisation.getIn(['axesgroup', 'searchString'], 'No value');
 };
 
-const createSelectIfXVSY = (index, visualisation, type, title, axis) => {
+const createSelectIfXVSY = (index, visualisation, type, axis) => {
   if (type !== 'XVSY') {
-    return getAxisLabel(axis, visualisation, type, title);
+    return getAxisLabel(axis, visualisation, type);
   }
   if (index === 0) {
     return visualisation.get('axesxLabel', visualisation.getIn(['axesxValue', 'searchString'], 'No value'));
@@ -111,7 +111,7 @@ export default compose(
                   ([title], index) =>
                     [
                       index,
-                      (<th key={`${key}-${index}`}>{createSelectIfXVSY(index, visualisation, model.get('type'), title, 'y')}</th>)
+                      (<th key={`${key}-${index}`}>{createSelectIfXVSY(index, visualisation, model.get('type'), 'y')}</th>)
                     ]
                   );
                 return out.valueSeq();

@@ -19,7 +19,7 @@ const series = fromJS(['series 1']);
 const axes = fromJS({ xLabel: 'the-x-label' });
 
 test('SourceResults generate correct data', () => {
-  const result = generateTableData(data, series, axes);
+  const result = generateTableData(data, series);
   expect(result.getIn(['monday', 'rowData', 'series 1', 0, 'count'])).toEqual(5);
 });
 

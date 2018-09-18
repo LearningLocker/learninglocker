@@ -5,5 +5,5 @@ import {
   } from 'ui/redux/modules/visualise';
 
 export default compose(
-    connect((() => ({}), fetchVisualisation))
+    connect(() => ({}), fetchVisualisation)
 );

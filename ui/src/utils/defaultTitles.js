@@ -68,34 +68,33 @@ const makeOperatorReadable = (model, attribute = 'axesoperator') => {
   return '';
 };
 
+const formattedDefault = (model, type, prefix, format) => {
+  const select = key => model.getIn([key, 'searchString'], '');
+  const addXY = (selectedX, selectedY = 'Time') => `X: ${startCase(toLower(selectedX))} Y: ${makeOperatorReadable(model)} ${startCase(toLower(selectedY))}`;
+  const addXVSYXY = (selectedX, selectedY = 'Time') => `X: ${makeOperatorReadable(model, 'axesxOperator')} ${startCase(toLower(selectedX))} Y: ${makeOperatorReadable(model, 'axesyOperator')} ${startCase(toLower(selectedY))}`;
+  const addYX = (selectedX, selectedY = 'Time') => `X: ${startCase(toLower(selectedY))} Y: ${makeOperatorReadable(model)} ${startCase(toLower(selectedX))}`;
+  switch (type) {
+    case ('FREQUENCY'): return addYX(select(axv) || select(ayV), 'Time');
+    case ('LEADERBOARD'): return addYX(select(axg), select(axv) || select(ayV));
+    case ('XVSY'): return addXVSYXY(select(axV), select(axv) || select(ayV));
+    case ('COUNTER'): return `${makeOperatorReadable(model)}${select(axv) || select(ayV)}`;
+    case ('PIE'): return `${makeOperatorReadable(model)}${select(axv) || select(ayV)} / ${select(axg)}`;
+    case ('STATEMENTS'): return addXY(select(axg), select(axv) || select(ayV));
+    case ('Unnamed'): return 'Pick a visualisation';
+    default: return 'Empty';
+  }
+};
+
+const formatDefaultComponent = (prefix, formatted) => ([
+  <span key={uuid.v4()}>{prefix}</span>,
+  <span key={uuid.v4()} style={{ color: '#B9B9B9', fontWeight: '100' }}>
+    {` ${formatted}`}
+  </span>
+]);
 
 const defaultSelector = (model, type, prefix, format = TEXT) => {
-  const formattedDefault = () => {
-    const select = key => model.getIn([key, 'searchString'], '');
-    const addXY = (selectedX, selectedY = 'Time') => `X: ${startCase(toLower(selectedX))} Y: ${makeOperatorReadable(model)} ${startCase(toLower(selectedY))}`;
-    const addXVSYXY = (selectedX, selectedY = 'Time') => `X: ${makeOperatorReadable(model, 'axesxOperator')} ${startCase(toLower(selectedX))} Y: ${makeOperatorReadable(model, 'axesyOperator')} ${startCase(toLower(selectedY))}`;
-    const addYX = (selectedX, selectedY = 'Time') => `X: ${startCase(toLower(selectedY))} Y: ${makeOperatorReadable(model)} ${startCase(toLower(selectedX))}`;
-    switch (type) {
-      case ('FREQUENCY'): return addYX(select(axv) || select(ayV), 'Time');
-      case ('LEADERBOARD'): return addYX(select(axg), select(axv) || select(ayV));
-      case ('XVSY'): return addXVSYXY(select(axV), select(axv) || select(ayV));
-      case ('COUNTER'): return `${makeOperatorReadable(model)}${select(axv) || select(ayV)}`;
-      case ('PIE'): return `${makeOperatorReadable(model)}${select(axv) || select(ayV)} / ${select(axg)}`;
-      case ('STATEMENTS'): return addXY(select(axg), select(axv) || select(ayV));
-      case ('Unnamed'): return 'Pick a visualisation';
-      default: return 'Empty';
-    }
-  };
-
-  const formatDefaultComponent = (pre, formatted) => ([<span key={uuid.v4()}>
-    {pre}
-  </span>,
-    <span key={uuid.v4()} style={{ color: '#B9B9B9', fontWeight: '100' }}>
-      {` ${formatted}`}
-    </span>]
-  );
-
-  return format === COMPONENT ? formatDefaultComponent(prefix, formattedDefault(type)) : `${prefix} ${formattedDefault(type)}`;
+  const formatted = formattedDefault(model, type, prefix, format);
+  return format === COMPONENT ? formatDefaultComponent(prefix, formatted) : `${prefix} ${formatted}`;
 };
 
 export const createVisualisationName = (model, prefix) => defaultSelector(model, model.get('type', 'Unnamed'), prefix, COMPONENT);
