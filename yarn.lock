@@ -305,8 +305,8 @@
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-2.2.44.tgz#1d4a798e53f35212fd5ad4d04050620171cd5b5e"
 
 "@types/node@*", "@types/node@^10.1.0":
-  version "10.10.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.10.0.tgz#2b08a1a7d1fa317173a776c2130bf240545cc33e"
+  version "10.9.4"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.9.4.tgz#0f4cb2dc7c1de6096055357f70179043c33e9897"
 
 "@types/sinon-chai@2.7.29":
   version "2.7.29"
@@ -782,8 +782,8 @@ autoprefixer@^6.3.1:
     postcss-value-parser "^3.2.3"
 
 aws-sdk@^2.0.1, aws-sdk@^2.100.0, aws-sdk@^2.2.43, aws-sdk@^2.249.1, aws-sdk@^2.58.0, aws-sdk@^2.77.0:
-  version "2.315.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.315.0.tgz#7f393162af038cbef722374444a9bc9ae1bdbbe9"
+  version "2.314.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.314.0.tgz#5d7babb0761ca9509707dec31c65730bd61e6e47"
   dependencies:
     buffer "4.9.1"
     events "1.1.1"
@@ -6062,8 +6062,8 @@ img-stats@^0.5.2:
     xmldom "^0.1.19"
 
 immutability-helper@^2.0.0:
-  version "2.8.1"
-  resolved "https://registry.yarnpkg.com/immutability-helper/-/immutability-helper-2.8.1.tgz#3c5ec05fcd83676bfae7146f319595243ad904f4"
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/immutability-helper/-/immutability-helper-2.8.0.tgz#f2ade82c23c93dfead3c2c3c4c1753cce47544f6"
   dependencies:
     invariant "^2.2.0"
 
@@ -8350,8 +8350,8 @@ mongoose-validators@^0.1.0:
     validator "3.16.0"
 
 mongoose@^5.0.13:
-  version "5.2.15"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.2.15.tgz#3e6459bd7a074f9cbc142052f4d56eae0097adea"
+  version "5.2.14"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.2.14.tgz#ce149749a17fffb324a9ff3bd2fa50701e75743a"
   dependencies:
     async "2.6.1"
     bson "~1.0.5"
@@ -10750,8 +10750,8 @@ react-inline-css@^2.0.0:
     prop-types "15.5.10"
 
 react-is@^16.4.2:
-  version "16.5.1"
-  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.5.1.tgz#c6e8734fd548a22e1cef4fd0833afbeb433b85ee"
+  version "16.5.0"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.5.0.tgz#2ec7c192709698591efe13722fab3ef56144ba55"
 
 react-json-tree@^0.11.0:
   version "0.11.0"
@@ -13478,8 +13478,8 @@ webpack-dev-middleware@^1.0.11, webpack-dev-middleware@^1.10.1:
     time-stamp "^2.0.0"
 
 webpack-hot-middleware@^2.5.0:
-  version "2.24.0"
-  resolved "https://registry.yarnpkg.com/webpack-hot-middleware/-/webpack-hot-middleware-2.24.0.tgz#d67ae5107edff29debbab3631a424c998856fd47"
+  version "2.23.1"
+  resolved "https://registry.yarnpkg.com/webpack-hot-middleware/-/webpack-hot-middleware-2.23.1.tgz#56b06abc25821466451fd7d2481a0014aef023bb"
   dependencies:
     ansi-html "0.0.7"
     html-entities "^1.2.0"

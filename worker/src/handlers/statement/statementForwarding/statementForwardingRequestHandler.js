@@ -14,7 +14,7 @@ import * as Queue from 'lib/services/queue';
 
 const objectId = mongoose.Types.ObjectId;
 
-const generateHeaders = (statementContent, statementForwarding) => {
+const generateHeaders = (statementContent, statementForwarding, statement) => {
   const headersWithLength = new Map({
     'Content-Type': 'application/json',
     'Content-Length': Buffer.byteLength(statementContent)
@@ -24,24 +24,24 @@ const generateHeaders = (statementContent, statementForwarding) => {
     headersWithLength.merge(statementForwardingModel.getAuthHeaders());
 
   const headersWithAuthAndLengthAndHeaders =
-    headersWithAuthAndLength.merge(statementForwardingModel.getHeaders());
+  headersWithAuthAndLength.merge(statementForwardingModel.getHeaders(statement));
 
   return headersWithAuthAndLengthAndHeaders.toJS();
 };
 
-const sendRequest = async (statement, statementForwarding) => {
+const sendRequest = async (statementToSend, statementForwarding, fullStatement) => {
   const urlString = `${statementForwarding.configuration
     .protocol}://${statementForwarding.configuration.url}`;
 
   const statementContent = JSON.stringify(mapDot(
-    statement
+    statementToSend
   ));
 
-  const headers = generateHeaders(statementContent, statementForwarding);
+  const headers = generateHeaders(statementContent, statementForwarding, fullStatement);
 
   const requestOptions = {
     method: 'POST',
-    body: mapDot(statement),
+    body: mapDot(statementToSend),
     url: urlString,
     headers,
     timeout: 5000,
@@ -112,8 +112,9 @@ const statementForwardingRequestHandler = async (
     );
 
     await sendRequest(
-      statement.statement,
-      statementForwarding
+      statementForwarding.fullDocument ? statement : statement.statement,
+      statementForwarding,
+      statement
     );
 
     await setCompleteStatements(statement, statementForwarding._id);

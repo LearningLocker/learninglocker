@@ -71,15 +71,18 @@ const renderItems = ({
 }) => {
   const valuesJs = values.toJS();
 
-  const staticValuesRendered = map(staticValues.toJS(), (value, key) =>
-    (<tr>
-      <td>
-        <input className="form-control" type="text" value={key} disabled="true" />
-      </td>
-      <td>
-        <input className="form-control" type="text" value={value} disabled="true" />
-      </td>
-    </tr>)
+  const staticValuesRendered = map(staticValues.toJS(), (value, key) => (<tr>
+    <td>
+      <input className="form-control" type="text" value={key} disabled="true" />
+    </td>
+    <td>
+      <input
+        className="form-control"
+        type="text"
+        value={value}
+        disabled="true" />
+    </td>
+  </tr>)
   );
 
   let trKey = 0;
@@ -118,7 +121,7 @@ const renderItems = ({
 const render = ({
   keyName = 'Column',
   valueName = 'Source',
-  staticValues = new Map(), // can't be changed
+  staticValues = new Map(),
   values, // key value object
   onChange,
   remove,
