@@ -78,10 +78,6 @@ class ExportForm extends Component {
   getActiveProjection = () => {
     const { model } = this.props;
     const { activeIndex } = this.state;
-    console.log('getActiveProjection ', model.getIn(
-      ['projections', activeIndex],
-      getDefaultProjectionFromType(model.get('type'))
-    ))
     return model.getIn(
       ['projections', activeIndex],
       getDefaultProjectionFromType(model.get('type'))
@@ -92,7 +88,6 @@ class ExportForm extends Component {
     const { pipelines } = this.props;
     const { activeIndex } = this.state;
     const activeProjection = this.getActiveProjection();
-    console.log('act ', this.activeProjection())
     const activePipeline = pipelines.get(activeIndex, new List());
     return activePipeline
       .push(new Map({ $sort: { timestamp: -1, _id: 1 } }))
@@ -127,7 +122,6 @@ class ExportForm extends Component {
     const rawMode = model.get('rawMode');
     const { activeIndex } = this.state;
     const activeProjection = this.getActiveProjection();
-    console.log('EX Frm (mod, pipel, actP, actI ):', model, pipelines, activeProjection, activeIndex);
     return (
       <div>
         <div className={`${styles.exportForm} row rowadding`}>

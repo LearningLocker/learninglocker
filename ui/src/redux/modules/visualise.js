@@ -34,7 +34,7 @@ import {
   JOURNEY_PROGRESS,
   STATEMENT
 } from 'ui/utils/constants';
-import { pipelinesFromQueries, getJourney, pipelineFromQuery } from 'ui/utils/visualisations';
+import { pipelinesFromQueries, getJourney } from 'ui/utils/visualisations';
 import { unflattenAxes } from 'lib/helpers/visualisation';
 import { periodToDate } from 'ui/utils/dates';
 import { OFF, ANY } from 'lib/constants/dashboard';
@@ -238,9 +238,12 @@ export const statementVisualisationPipelinesSelector = (
       });
       return out;
     });
+    const project = visualisation.get('statementColumns')
+      .filter(value => value !== '');
+    const queriesProject = queries.push(new Map({ $project: project }));
 
     const axes = unflattenAxes(visualisation);
-    return cb(queries, axes, type, previewPeriod, journey, benchmarkingEnabled);
+    return cb(queriesProject, axes, type, previewPeriod, journey, benchmarkingEnabled);
   }
 );
 /**
@@ -312,13 +315,22 @@ const getJourneyResults = (visualisation, filter, state) => {
   return journeyProgressResultsSelector(journey, filter)(state);
 };
 
-const getPipelinesResults = state => pipelines => pipelines.map(pipeline => (
-  aggregationResultsSelector(pipeline)(state) || new Map()
-));
+const getPipelinesResults = state => pipelines => pipelines.map((pipeline) => {
+  const out = (
+    aggregationResultsSelector(pipeline)(state) || new Map()
+  );
+  return out;
+});
 
 const getSeriesResults = (visualisationId, state) => {
   const series = visualisationPipelinesSelector(visualisationId)(state);
   const out = series.map(getPipelinesResults(state));
+  return out;
+};
+
+const getStatementSeriesResults = (visualisationId, state) => {
+  const pipelines = statementVisualisationPipelinesSelector(visualisationId)(state);
+  const out = pipelines.map(getPipelinesResults(state));
   return out;
 };
 
@@ -335,9 +347,11 @@ export const visualisationResultsSelector = (visualisationId, filter) => createS
     case JOURNEY_PROGRESS:
       return getJourneyResults(visualisation, filter)(state);
     case STATEMENT:
-      return statementVisualisationPipelinesSelector(visualisationId)(state);
+      const out = getStatementSeriesResults(visualisationId, state);
+      return out;
     default:
-      return getSeriesResults(visualisationId, state);
+      const out2 = getSeriesResults(visualisationId, state);
+      return out2;
   }
 });
 
@@ -427,7 +441,17 @@ export function* fetchVisualisationSaga(state, id) {
       yield put(fetchModelsCount('journeyProgress', filter));
       yield put(fetchModels('journey', new Map({ _id: journeyId })));
     }
-  } else if (visualisation.get('type') !== STATEMENT) {
+  } else if (visualisation.get('type') === STATEMENT) {
+    const series = statementVisualisationPipelinesSelector(id)(state);
+    for (let s = 0; s < series.size; s += 1) {
+      const pipelines = series.get(s);
+      for (let p = 0; p < pipelines.size; p += 1) {
+        const pipeline = pipelines.get(p);
+        const shouldFetch = shouldFetchPipeline(pipeline, state);
+        if (shouldFetch) yield put(fetchAggregation({ pipeline }));
+      }
+    }
+  } else {
     const series = visualisationPipelinesSelector(id)(state);
     for (let s = 0; s < series.size; s += 1) {
       const pipelines = series.get(s);
@@ -436,22 +460,9 @@ export function* fetchVisualisationSaga(state, id) {
         if (shouldFetch) yield put(fetchAggregation({ pipeline: pipelines.get(p) }));
       }
     }
-  } else {
-    console.log('we here', id, state, visualisation )
-    const series = statementVisualisationPipelinesSelector (id)(state);
-    console.log('series', series, series.size)
-    for (let s = 0; s < series.size; s += 1) {
-      const pipelines = series.get(s)
-      .push(new Map({ $sort: { timestamp: -1, _id: 1 } }))
-      .push(new Map({ $project: visualisation.get('statementColumns') }))
-      for (let p = 0; p < pipelines.size; p += 1) {
-        const shouldFetch = shouldFetchPipeline(pipelines.get(p), state);
-        console.log('pipline', pipelines.get(p))
-        if (shouldFetch) yield put(fetchAggregation({ pipeline: pipelines.get(p) }));
-      }
-    }
   }
 }
+
 
 export function* watchFetchVisualisation() {
   while (__CLIENT__) {

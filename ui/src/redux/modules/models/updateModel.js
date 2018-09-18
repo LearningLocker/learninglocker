@@ -37,9 +37,7 @@ const reduceClearPending = (state, { schema, id }) =>
 /**
  * ACTIONS
  */
-const updateModel = ({ schema, id, path, value, silent = false }) => {
-  console.log('TCL: schema, id, path, value, silent', schema, id, path, value, silent);
-  return ({
+const updateModel = ({ schema, id, path, value, silent = false }) => ({
   type: UPDATE_MODEL,
   schema,
   id,
@@ -47,7 +45,7 @@ const updateModel = ({ schema, id, path, value, silent = false }) => {
   path: (isArray(path) ? path : [path]),
   value,
   silent
-});}
+});
 
 const updateModelErrors = (schema, id, errors) => ({
   type: UPDATE_MODEL_ERRORS,

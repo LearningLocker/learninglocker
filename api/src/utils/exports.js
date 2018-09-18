@@ -43,14 +43,15 @@ export const exportCSV = ({ authInfo, pipelines }) => new Promise((resolve, reje
 
   async.map(
     pipelines,
-    (pipeline, next) =>
-      Statement.aggregateByAuth(authInfo, pipeline, {
+    (pipeline, next) => {
+      return Statement.aggregateByAuth(authInfo, pipeline, {
         batchSize: 100,
         limit: 500000,
         getStream: true,
         maxTimeMS: 0,
         maxScan: 0,
-      }, next),
+      }, next);
+    },
     (err, streams) => {
       if (err) reject(err);
       const highlandStreams = _.map(streams, highland);

@@ -42,14 +42,15 @@ const withStatementsVisualisation = (WrappedComponent) => {
     }
 
     shouldComponentUpdate = ({ results, model, fetchState }) => !(
-      this.props.results.equals(results) &&
-      this.getAxes().equals(unflattenAxes(model)) &&
-      this.props.model.get('stacked') === model.get('stacked') &&
-      this.props.model.get('barChartGroupingLimit') === model.get('barChartGroupingLimit') &&
-      this.props.model.get('filters').equals(model.get('filters')) &&
-      this.props.fetchState === fetchState &&
-      this.props.model.get('trendLines') === model.get('trendLines')
-    );
+        this.props.results.equals(results) &&
+        this.getAxes().equals(unflattenAxes(model)) &&
+        this.props.model.get('stacked') === model.get('stacked') &&
+        this.props.model.get('barChartGroupingLimit') === model.get('barChartGroupingLimit') &&
+        this.props.model.get('filters').equals(model.get('filters')) &&
+        this.props.fetchState === fetchState &&
+        this.props.model.get('trendLines') === model.get('trendLines') &&
+        this.props.model.get('statementColumns').equals(model.get('statementColumns'))
+      );
 
     fetchIfRequired = (props) => {
       if (props.shouldFetch) {
@@ -92,11 +93,13 @@ const withStatementsVisualisation = (WrappedComponent) => {
       </div>
     )
 
-    render = () => (
-      <div style={{ height: '100%' }}>
-        {this.isLoading() ? this.renderSpinner() : this.renderPreview()}
-      </div>
-    );
+    render = () => {
+      return (
+        <div style={{ height: '100%' }}>
+          {this.isLoading() ? this.renderSpinner() : this.renderPreview()}
+        </div>
+      );
+    }
   }
   return connect((state, { id }) => ({
     results: visualisationResultsSelector(id)(state),

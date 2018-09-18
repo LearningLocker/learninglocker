@@ -112,12 +112,9 @@ class TabbedQueriesBuilder extends Component {
 
   render = () => {
     const hasNoQuery = this.props.queries.size === 0;
-    console.log('has no query')
     if (hasNoQuery) return <span />;
     const hasOneQuery = this.props.queries.size === 1;
-    console.log('has one query')
     if (hasOneQuery) return this.renderOneQuery(this.props.circlePicker);
-    console.log('has many queries')
     return this.renderManyQueries(this.props.circlePicker);
   }
 }

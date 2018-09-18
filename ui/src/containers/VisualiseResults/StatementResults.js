@@ -11,9 +11,6 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import styles from './styles.css';
 import { displayVerb, displayActivity } from '../../utils/xapi';
 
-
-
-
 const formatKeyToFriendlyString = (key) => {
   if (isString(key)) return key;
 
@@ -48,35 +45,19 @@ const formatKeyToFriendlyString = (key) => {
 // }
 
 const enhance = compose(
-  connect(state => ({
-    query: statementQuerySelector(state),
-    state
-  }), {  }),
   withStyles(styles),
-  withModels,
-  withProps((props) => {
-    return { props };
-  }),
   withStatementsVisualisation,
-  shouldUpdate((props, nextProps) => !(
-      props.model.get('statementColumns').equals(nextProps.model.get('statementColumns')) 
-    )
-  ),
 );
 // PROBLEM ONE - WHY WONT THE STATE UPDATE WHEN STATEMENT COLUMN CHANGES?
 // PROBLEM TWO - HOW TO GET THE SELECTED FIELDS FOR THE FILTERED RESULTS
 export default enhance(({
   model,
-  query,
-  state,
   results,
-  props
 }) => {
-  const pipelines = fromJS([
-    [{ $match: query }]
-  ]);
-  const { activeIndex } = state;
-  console.log('sr (mod, pipel, actP, props, results): ', model, pipelines, activeIndex, props, results);
+  // const pipelines = fromJS([
+  //   [{ $match: query }]
+  // ]);
+  // const { activeIndex } = state;
   if (results) {
     return (
       <div style={{ overflow: 'auto', height: '-webkit-fill-available', position: 'relative' }}>
