@@ -68,7 +68,7 @@ const makeOperatorReadable = (model, attribute = 'axesoperator') => {
   return '';
 };
 
-const formattedDefault = (model, type, prefix, format) => {
+const formattedDefault = (model, type) => {
   const select = key => model.getIn([key, 'searchString'], '');
   const addXY = (selectedX, selectedY = 'Time') => `X: ${startCase(toLower(selectedX))} Y: ${makeOperatorReadable(model)} ${startCase(toLower(selectedY))}`;
   const addXVSYXY = (selectedX, selectedY = 'Time') => `X: ${makeOperatorReadable(model, 'axesxOperator')} ${startCase(toLower(selectedX))} Y: ${makeOperatorReadable(model, 'axesyOperator')} ${startCase(toLower(selectedY))}`;

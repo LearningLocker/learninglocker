@@ -31,7 +31,7 @@ export const patchStatementMetadata = catchErrors(async (req, res) => {
   }, { new: true, fields: { _id: 1, organisation: 1, metadata: 1 } });
   generateQueryBuilderCaches({ metadata }, model.organisation);
 
-  return res.status(200).send(mapDot({ _id: model._id, metadata: model.metadata }))
+  return res.status(200).send(mapDot({ _id: model._id, metadata: model.metadata }));
 });
 
 export const postStatementMetadata = catchErrors(async (req, res) => {
