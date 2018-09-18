@@ -46,7 +46,7 @@ const formatKeyToFriendlyString = (key) => {
 
 const enhance = compose(
   withStyles(styles),
-  withStatementsVisualisation,
+  withStatementsVisualisation
 );
 // PROBLEM ONE - WHY WONT THE STATE UPDATE WHEN STATEMENT COLUMN CHANGES?
 // PROBLEM TWO - HOW TO GET THE SELECTED FIELDS FOR THE FILTERED RESULTS
