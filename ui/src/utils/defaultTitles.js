@@ -93,7 +93,7 @@ const formatDefaultComponent = (prefix, formatted) => ([
 ]);
 
 const defaultSelector = (model, type, prefix, format = TEXT) => {
-  const formatted = formattedDefault(model, type, prefix, format);
+  const formatted = formattedDefault(model, type);
   return format === COMPONENT ? formatDefaultComponent(prefix, formatted) : `${prefix} ${formatted}`;
 };
 
