@@ -9,6 +9,10 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.5.5]
+### Fixed
+- Ensure readPreference passed to express-restify-mongoose settings
+
 ## [2.5.4]
 ### Fixed
 - Upgraded to latest persona-service
