@@ -95,17 +95,6 @@ const enhance = compose(
     project: new Map()
   }),
   withModels,
-  withProps(({ models, project }) => {
-    const results = models && models.map(model =>
-      project.map((value, key) => (
-        isString(value) ?
-        model.getIn(value.replace('$', '').split('.')) :
-        model.getIn(key.split('.'))
-      ))
-    ).toList();
-    const headings = project.keySeq();
-    return { results, headings };
-  }),
   withProps(() =>
   ({
     updated: (new Date()),
@@ -115,48 +104,54 @@ const enhance = compose(
 // PROBLEM ONE - WHY WONT THE STATE UPDATE WHEN STATEMENT COLUMN CHANGES?
 // PROBLEM TWO - HOW TO GET THE SELECTED FIELDS FOR THE FILTERED RESULTS
 export default enhance(({
+  model,
+  models,
   results,
   headings,
-  updated
 }) => {
-
-  console.log('res_parsed', results, 'headings', headings);
+  console.log('res_parsed', results, 'headings', headings, 'model', model);
   // const pipelines = fromJS([
   //   [{ $match: query }]
   // ]);
   // const { activeIndex } = state;
+  // withProps(({ models, project }) => {
+  //   console.log('TCL: models, project', models, project);
+  //     const results_filt = models && models.map(model =>
+  //       project.map((value, key) => (
+  //         isString(value) ?
+  //         model.getIn(value.replace('$', '').split('.')) :
+  //         model.getIn(key.split('.'))
+  //       ))
+  //     ).toList();
+  //     const headings = project.keySeq();
+  //     return { results_filt, headings };
+  //   })
 
-        // <div style={{ overflow: 'auto', height: '-webkit-fill-available', position: 'relative' }}>
-      //   <table className="table table-bordered table-striped">
-      //     <tbody>
-      //       <tr>
-      //         {model.get('statementColumns').keySeq().map(header => <th key={uuid()}>{header}</th>)}
-      //       </tr>
-      //       { results.first().first().map(res => <tr key={uuid()}><td key={uuid()}>{res}</td></tr>)}
-      //     </tbody>
-      //   </table>
-      // </div>
-  
+  console.log('701', results);
   if (results.size) {
+    console.log('702');
     return (
-      <AutoSizer>
-      {({ width, height }) =>{
-        console.log('width, height', width, height);
-        return (
-          <MultiGrid
-            updated={updated}
-            cellRenderer={renderCell(results, headings)}
-            columnWidth={200}
-            columnCount={headings.size}
-            fixedRowCount={1}
-            rowHeight={40}
-            rowCount={results.size + 1}
-            width={width}
-            height={height} />
-        );
-      }
-    }
-    </AutoSizer>
+      <div style={{ overflow: 'auto', height: '-webkit-fill-available', position: 'relative' }}>
+      <table className="table table-bordered table-striped">
+        <tbody>
+          <tr>
+            {model.get('statementColumns').keySeq().map((header) => <th key={uuid()}>{header}</th>)}
+          </tr>
+          { results.first().first().map((res) => {
+            return (<tr key={uuid()}>
+              { model.get('statementColumns').keySeq()
+                .map((header) => {
+                  return (<td key={uuid()}>{(res.get(header, '').toJS ?
+                    JSON.stringify(res.get(header, '').toJS()) : res.get(header, '')) }
+                  </td>);
+                })
+              }
+            </tr>);
+          }).toList()
+        }
+        </tbody>
+      </table>
+    </div>
     );
   }
   return (<NoData />);
