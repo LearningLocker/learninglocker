@@ -228,22 +228,23 @@ export const statementVisualisationPipelinesSelector = (
         return vFilter;
       }
 
+      const project = visualisation.get('statementColumns')
+        .filter(value => value !== '');
+
       const out = new Map({
         $match: new Map({
           $and: new List([
             vFilter.get('$match', new Map()),
             ...filter,
           ])
-        })
+        }),
+        $project: project
       });
       return out;
     });
-    const project = visualisation.get('statementColumns')
-      .filter(value => value !== '');
-    const queriesProject = queries.push(new Map({ $project: project }));
 
     const axes = unflattenAxes(visualisation);
-    return cb(queriesProject, axes, type, previewPeriod, journey, benchmarkingEnabled);
+    return cb(queries, axes, type, previewPeriod, journey, benchmarkingEnabled);
   }
 );
 /**

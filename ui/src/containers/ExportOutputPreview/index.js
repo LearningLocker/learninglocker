@@ -75,6 +75,7 @@ const renderResultContent = (results, headings) =>
   };
 
 const renderCell = (results, headings) => {
+console.log('TCL: renderCell -> results, headings', results, headings);
   const renderHeadingCell = renderHeading(headings);
   const renderResultContentCell = renderResultContent(results, headings);
   return ({ columnIndex, rowIndex, key, style }) =>
@@ -85,24 +86,26 @@ const renderCell = (results, headings) => {
     );
 };
 
-const render = ({ results, headings, updated }) =>
-  (
-    <AutoSizer>
-      {({ width, height }) =>
-        (
-          <MultiGrid
-            updated={updated}
-            cellRenderer={renderCell(results, headings)}
-            columnWidth={200}
-            columnCount={headings.size}
-            fixedRowCount={1}
-            rowHeight={40}
-            rowCount={results.size + 1}
-            width={width}
-            height={height} />
-        )
-      }
-    </AutoSizer>
-  );
+const render = ({ results, headings, updated }) => {
+  console.log('res', results, 'res_parsed', results_parsed, 'headings', headings)
+  return (
+      <AutoSizer>
+        {({ width, height }) =>
+          (
+            <MultiGrid
+              updated={updated}
+              cellRenderer={renderCell(results, headings)}
+              columnWidth={200}
+              columnCount={headings.size}
+              fixedRowCount={1}
+              rowHeight={40}
+              rowCount={results.size + 1}
+              width={width}
+              height={height} />
+          )
+        }
+      </AutoSizer>
+    );
+}
 
 export default enhance(render);

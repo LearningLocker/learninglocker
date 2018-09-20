@@ -25,7 +25,9 @@ export default (
     return out;
   }
 
-  return queries.map(query => pipelineFromQuery(new Map({
+  const out = queries.map(query => pipelineFromQuery(new Map({
     query, axes, type, previewPeriod, id, today
   })));
+
+  return out;
 };

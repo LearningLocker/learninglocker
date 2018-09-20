@@ -33,6 +33,14 @@ export default memoize((args = new Map()) => {
     } }];
   }
 
+  if (args.getIn(['query', '$project'])) {
+    previewPeriodMatch = [{ $match: {
+      timestamp: { $gte: { $dte: periodToDate(previewPeriod, today).toISOString() } }
+    } }, {
+      $project: args.getIn(['query', '$project'])
+    }];
+  }
+
   const type = args.get('type');
   const axes = args.get('axes');
   const preReqs = fromJS(previewPeriodMatch.concat(queryMatch));

@@ -94,6 +94,7 @@ const withStatementsVisualisation = (WrappedComponent) => {
     )
 
     render = () => {
+      console.log('003', this.isLoading());
       return (
         <div style={{ height: '100%' }}>
           {this.isLoading() ? this.renderSpinner() : this.renderPreview()}
