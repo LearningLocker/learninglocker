@@ -228,7 +228,7 @@ export const statementVisualisationPipelinesSelector = (
         return vFilter;
       }
 
-      const project = visualisation.get('statementColumns')
+      const project = visualisation.get('statementColumns', new Map())
         .filter(value => value !== '');
 
       const out = new Map({
@@ -376,10 +376,13 @@ const getSeriesFetchStates = (series, state) =>
 
 const getVisualisationFetchStates = (id, state) => {
   const visualisation = modelsSchemaIdSelector('visualisation', id)(state);
-  const pipelines = visualisationPipelinesSelector(id)(state);
+  let pipelines = visualisationPipelinesSelector(id)(state);
   switch (visualisation.get('type')) {
     case JOURNEY_PROGRESS:
       return getWaypointFetchStates(visualisation, pipelines, state);
+    case STATEMENT:
+      pipelines = statementVisualisationPipelinesSelector(id)(state);
+      return getSeriesFetchStates(pipelines, state);
     default:
       return getSeriesFetchStates(pipelines, state);
   }

@@ -49,7 +49,7 @@ const withStatementsVisualisation = (WrappedComponent) => {
         this.props.model.get('filters').equals(model.get('filters')) &&
         this.props.fetchState === fetchState &&
         this.props.model.get('trendLines') === model.get('trendLines') &&
-        this.props.model.get('statementColumns').equals(model.get('statementColumns'))
+        this.props.model.get('statementColumns', new Map()).equals(model.get('statementColumns'))
       );
 
     fetchIfRequired = (props) => {
