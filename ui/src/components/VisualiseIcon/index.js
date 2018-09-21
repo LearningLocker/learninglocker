@@ -23,6 +23,7 @@ import FREQUENCY_IMAGE from './assets/ll-icon-frequency.png';
 import COUNTER_IMAGE from './assets/ll-icon-counter.png';
 import PIE_IMAGE from './assets/ll-icon-pie-chart.png';
 import TABLE_IMAGE from './assets/ll-table-icon.png';
+import STATEMENT_IMAGE from './assets/ll-statement-component-table.png';
 import SESSIONS_IMAGE from './assets/ll-icon-accumulation.png';
 
 const PLATFORMS_IMAGE = SESSIONS_IMAGE;
@@ -72,7 +73,7 @@ class VisualiseIcon extends Component {
       case SESSIONS: return SESSIONS_IMAGE;
       case PLATFORMS: return PLATFORMS_IMAGE;
       case TABLE: return TABLE_IMAGE;
-      case STATEMENT: return TABLE_IMAGE;
+      case STATEMENT: return STATEMENT_IMAGE;
       case QUESTIONANALYSIS: return QUESTIONANALYSIS_IMAGE;
       default: return '';
     }
@@ -87,17 +88,7 @@ class VisualiseIcon extends Component {
         alt={this.getTitle(type)} />
     );
   }
-
-  // return type !== 'undefined' ? (
-  //   <img
-  //     className={styles[className]}
-  //     src={this.getIcon(type)}
-  //     alt={this.getTitle(type)} />
-  // ) : <img
-  //   className={styles.visualisationSmall}
-  //   src={this.getIcon(SESSIONS)}
-  //   alt={this.getTitle(SESSIONS)} />;
-
+  
   render = () => {
     const { type, active, onClick, isSmall, className } = this.props;
     const classes = classNames({

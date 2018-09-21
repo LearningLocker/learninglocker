@@ -66,10 +66,12 @@ const renderChart = (model, component, axesLabels, chartWrapperFn) =>
 const renderChartResults = colors => (labels, toggleHiddenSeries, hiddenSeries) => stacked => results => (
   renderBarChart(colors)(labels, toggleHiddenSeries, hiddenSeries)(stacked)(getSortedData(results)(labels))
 );
-const renderResults = results => model => colors => (labels, toggleHiddenSeries, hiddenSeries) => stacked => axesLabels => chartWrapperFn => (
+const renderResults = results => model => colors => (labels, toggleHiddenSeries, hiddenSeries) => stacked => axesLabels => chartWrapperFn => {
+  console.log(chartWrapperFn)
+return (
   renderChart(model, renderChartResults(colors)(labels, toggleHiddenSeries, hiddenSeries)(stacked)(results), axesLabels, chartWrapperFn)
 );
-
+}
 export default compose(
   withStyles(styles),
   hiddenSeriesState
