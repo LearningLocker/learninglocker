@@ -20,6 +20,13 @@ import {
   countSelector
 } from 'ui/redux/modules/pagination';
 import {
+  isLoadingSelector
+} from 'ui/redux/selectors';
+
+// import {
+//   modelsByFilterSelector
+// } from 'ui/redux/selectors';
+import {
   modelsSchemaIdSelector,
   modelsByFilterSelector,
   updateModel
@@ -316,9 +323,19 @@ const getJourneyResults = (visualisation, filter, state) => {
   return journeyProgressResultsSelector(journey, filter)(state);
 };
 
+const getFilterFromPipeline = (pipeline) => {
+  return pipeline.getIn([2, '$match']);
+};
+
 const getPipelinesResults = state => pipelines => pipelines.map((pipeline) => {
   const out = (
     aggregationResultsSelector(pipeline)(state) || new Map()
+  );
+  return out;
+});
+const getStatementPipelinesResults = state => pipelines => pipelines.map((pipeline) => {
+  const out = (
+    modelsByFilterSelector('statement', getFilterFromPipeline(pipeline))(state) || new Map()
   );
   return out;
 });
@@ -331,7 +348,7 @@ const getSeriesResults = (visualisationId, state) => {
 
 const getStatementSeriesResults = (visualisationId, state) => {
   const pipelines = statementVisualisationPipelinesSelector(visualisationId)(state);
-  const out = pipelines.map(getPipelinesResults(state));
+  const out = pipelines.map(getStatementPipelinesResults(state));
   return out;
 };
 
@@ -348,11 +365,9 @@ export const visualisationResultsSelector = (visualisationId, filter) => createS
     case JOURNEY_PROGRESS:
       return getJourneyResults(visualisation, filter)(state);
     case STATEMENT:
-      const out = getStatementSeriesResults(visualisationId, state);
-      return out;
+      return getStatementSeriesResults(visualisationId, state);
     default:
-      const out2 = getSeriesResults(visualisationId, state);
-      return out2;
+      return getSeriesResults(visualisationId, state);
   }
 });
 
@@ -367,6 +382,13 @@ const getWaypointFetchStates = (visualisation, pipelines, state) => {
 const getPipelinesFetchStates = (pipelines, state) => pipelines.map(pipeline => (
   aggregationRequestStateSelector(pipeline)(state)
 ));
+const getStatementPipelinesFetchStates = (pipelines, state) => pipelines.map((pipeline) => {
+  // aggregationRequestStateSelector(pipeline)(state)
+  console.log('filter', getFilterFromPipeline(pipeline));
+  const out = isLoadingSelector({ schema: 'statement', filter: getFilterFromPipeline(pipeline) })(state);
+  console.log('006', out);
+  return out;
+});
 
 const getSeriesFetchStates = (series, state) =>
   series.reduce((fetchStates, pipelines) => {
@@ -374,15 +396,22 @@ const getSeriesFetchStates = (series, state) =>
     return fetchStates.concat(states);
   }, new List());
 
+const getStatementSeriesFetchStates = (series, state) =>
+  series.reduce((fetchStates, pipelines) => {
+    const states = getStatementPipelinesFetchStates(pipelines, state);
+    return fetchStates.concat(states);
+  }, new List());
+
 const getVisualisationFetchStates = (id, state) => {
   const visualisation = modelsSchemaIdSelector('visualisation', id)(state);
   let pipelines = visualisationPipelinesSelector(id)(state);
+  console.log('005.1', visualisation.get('type'));
   switch (visualisation.get('type')) {
     case JOURNEY_PROGRESS:
       return getWaypointFetchStates(visualisation, pipelines, state);
     case STATEMENT:
       pipelines = statementVisualisationPipelinesSelector(id)(state);
-      return getSeriesFetchStates(pipelines, state);
+      return getStatementSeriesFetchStates(pipelines, state);
     default:
       return getSeriesFetchStates(pipelines, state);
   }
@@ -405,10 +434,13 @@ const getOverallFetchState = (fetchStates) => {
  * @return {Immutable.List}
  */
 export const visualisationFetchStateSelector =
-  visualisationId => createSelector([identity], (state) => {
-    const fetchStates = getVisualisationFetchStates(visualisationId, state);
-    return getOverallFetchState(fetchStates);
-  });
+  (visualisationId) => {
+    console.log('005.2');
+    return createSelector([identity], (state) => {
+      const fetchStates = getVisualisationFetchStates(visualisationId, state);
+      return getOverallFetchState(fetchStates);
+    });
+  }
 
 function* handleVisualisation(action) {
   const { keyPath, silent } = action;
@@ -451,8 +483,12 @@ export function* fetchVisualisationSaga(state, id) {
       const pipelines = series.get(s);
       for (let p = 0; p < pipelines.size; p += 1) {
         const pipeline = pipelines.get(p);
-        const shouldFetch = shouldFetchPipeline(pipeline, state);
-        if (shouldFetch) yield put(fetchAggregation({ pipeline }));
+        // const shouldFetch = shouldFetchPipeline(pipeline, state);
+        // if (shouldFetch) yield put(fetchAggregation({ pipeline }));
+        yield put(fetchModels({
+          schema: 'statement',
+          filter: getFilterFromPipeline(pipeline) 
+        }));
       }
     }
   } else {

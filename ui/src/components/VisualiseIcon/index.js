@@ -23,7 +23,7 @@ import FREQUENCY_IMAGE from './assets/ll-icon-frequency.png';
 import COUNTER_IMAGE from './assets/ll-icon-counter.png';
 import PIE_IMAGE from './assets/ll-icon-pie-chart.png';
 import TABLE_IMAGE from './assets/ll-table-icon.png';
-import STATEMENT_IMAGE from './assets/ll-statement-component-table.png';
+import STATEMENT_IMAGE from './assets/ll-statement-component-table.svg';
 import SESSIONS_IMAGE from './assets/ll-icon-accumulation.png';
 
 const PLATFORMS_IMAGE = SESSIONS_IMAGE;
