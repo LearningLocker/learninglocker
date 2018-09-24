@@ -12,27 +12,33 @@ const columnWidth = {
   maxWidth: '150px'
 };
 
-const makeData = (results) => {
+const makeData = (results, model) => {
   const makeResult = (row, header) => {
     return {
-      header: header,
-      row: row,
-    }
-  }
+      header,
+      row,
+    };
+  };
+  let parsedResults = []
   const out = results
     .first()
     .first()
-    .map((res) => { 
-      return res
+    .forEach((res) => { 
+      console.log('res' , model.get('statementColumns').keySeq().map(e => e))
+      let dataObject = {}
+      model
         .get('statementColumns')
-        .keySeq()
-        .map((header) => {
-          if (res.get(header, '').toJS) {
-            return makeResults(JSON.stringify(res.get(header, '').toJS()), header);
-          }                  
-          return makeResults(res.get(header, ''), header);
-      });
+        .forEach((header) => {
+          const headerArray = header.replace(/^\$/, '').split('.');
+          if (res.getIn(headerArray, '').toJS) {
+            dataObject[header.replace(/^\$/, '')] = JSON.stringify(res.getIn(headerArray, '').toJS())
+          } else {
+            dataObject[header.replace(/^\$/, '')] = res.getIn(headerArray, '');
+          }
+        });
+       parsedResults.push(dataObject)
     });
+    console.log('out',parsedResults)
   return out;
 }
 
@@ -75,7 +81,7 @@ export default enhance(({
       <AutoSizer>{({ height, width }) => (
         <div style={{ overflow: 'auto', height, width, position: 'relative' }}>
           <ReactTable
-          data={makeData(results)}
+          data={makeData(results, model)}
           pageSizeOptions={[15, 25, 50 ,100]}
           defaultPageSize={15}
           columns={makeColumns(results)}
