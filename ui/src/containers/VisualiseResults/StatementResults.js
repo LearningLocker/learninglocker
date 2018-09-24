@@ -99,11 +99,18 @@ export default enhance(({
               </tr>
               { results.first().first().map(res =>
                 (<tr key={uuid()}>
-                  { model.get('statementColumns').keySeq()
-                    .map(header => (<td style={columnWidth} key={uuid()}>{(res.get(header, '').toJS ?
-                        JSON.stringify(res.get(header, '').toJS()) : res.get(header, '')) }
-                    </td>)
-                    )
+                  { model.get('statementColumns')
+                    .map(
+                      (header) => {
+                        const headerArray = header.replace(/^\$/, '')
+                          .split('.')
+                          .map(item => item.replace(/&46;/g, '.')); // Not sure if we need this
+                        const value = res.getIn(headerArray, '');
+
+                        return (<td style={columnWidth} key={uuid()}>{(value.toJS ?
+                          JSON.stringify(value.toJS()) : value) }
+                        </td>);
+                      }).toList()
                   }
                 </tr>)
               ).toList()
