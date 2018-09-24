@@ -1,7 +1,7 @@
 import { List, Map, fromJS } from 'immutable';
 import { createSelector } from 'reselect';
 import { take, takeEvery, put, fork, select } from 'redux-saga/effects';
-import { identity, get } from 'lodash';
+import { identity, get, isNull } from 'lodash';
 import moment from 'moment';
 import {
   fetchAggregation,
@@ -12,20 +12,17 @@ import {
   SUCCESS,
   FAILED,
 } from 'ui/redux/modules/aggregation';
+import { COMPLETED } from 'ui/utils/constants';
 import {
   shouldFetchSelector,
-  requestStateSelector,
   fetchModels,
   fetchModelsCount,
   countSelector
 } from 'ui/redux/modules/pagination';
-import {
-  isLoadingSelector
-} from 'ui/redux/selectors';
 
-// import {
-//   modelsByFilterSelector
-// } from 'ui/redux/selectors';
+import {
+  selectors
+} from 'ui/redux/modules/pagination/fetchModels';
 import {
   modelsSchemaIdSelector,
   modelsByFilterSelector,
@@ -375,7 +372,7 @@ const getWaypointFetchStates = (visualisation, pipelines, state) => {
   const journeyId = visualisation.get('journey');
   return pipelines.map(() => {
     const waypoint = getJourney(journeyId, 'waypoint');
-    return requestStateSelector('journeyProgress', waypoint)(state);
+    return selectors.requestStateSelector('journeyProgress', waypoint)(state);
   });
 };
 
@@ -383,10 +380,10 @@ const getPipelinesFetchStates = (pipelines, state) => pipelines.map(pipeline => 
   aggregationRequestStateSelector(pipeline)(state)
 ));
 const getStatementPipelinesFetchStates = (pipelines, state) => pipelines.map((pipeline) => {
-  // aggregationRequestStateSelector(pipeline)(state)
-  console.log('filter', getFilterFromPipeline(pipeline));
-  const out = isLoadingSelector({ schema: 'statement', filter: getFilterFromPipeline(pipeline) })(state);
-  console.log('006', out);
+  const out = selectors.requestStateSelector({
+    schema: 'statement',
+    filter: getFilterFromPipeline(pipeline)
+  })(state);
   return out;
 });
 
@@ -405,7 +402,6 @@ const getStatementSeriesFetchStates = (series, state) =>
 const getVisualisationFetchStates = (id, state) => {
   const visualisation = modelsSchemaIdSelector('visualisation', id)(state);
   let pipelines = visualisationPipelinesSelector(id)(state);
-  console.log('005.1', visualisation.get('type'));
   switch (visualisation.get('type')) {
     case JOURNEY_PROGRESS:
       return getWaypointFetchStates(visualisation, pipelines, state);
@@ -418,7 +414,7 @@ const getVisualisationFetchStates = (id, state) => {
 };
 
 const getOverallFetchState = (fetchStates) => {
-  const potentialStates = new List([IN_PROGRESS, SUCCESS, FAILED]);
+  const potentialStates = new List([IN_PROGRESS, SUCCESS, null, FAILED]);
   return fetchStates.reduce((reduction, requestState) => {
     const reductionPriority = potentialStates.indexOf(reduction);
     const requestStatePriority = potentialStates.indexOf(requestState);
@@ -433,14 +429,16 @@ const getOverallFetchState = (fetchStates) => {
  * @param  {visualisationId} id of the visualisation to check
  * @return {Immutable.List}
  */
-export const visualisationFetchStateSelector =
-  (visualisationId) => {
-    console.log('005.2');
-    return createSelector([identity], (state) => {
-      const fetchStates = getVisualisationFetchStates(visualisationId, state);
-      return getOverallFetchState(fetchStates);
-    });
-  }
+export const visualisationFetchStateSelector = (visualisationId) => {
+  return createSelector([identity], (state) => {
+    const fetchStates = getVisualisationFetchStates(visualisationId, state);
+    const overallFetchState = getOverallFetchState(fetchStates);
+    if (isNull(overallFetchState)) {
+      return COMPLETED;
+    }
+    return overallFetchState;
+  });
+};
 
 function* handleVisualisation(action) {
   const { keyPath, silent } = action;
