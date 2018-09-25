@@ -76,7 +76,7 @@ class StatementsForm extends Component {
     </select>
   )
 
-  renderFormWithResults = () => (
+  renderFormWithResults = (height = 400) => (
     <div className="row">
       <div className="col-md-6 left-border">
         { this.renderEditor() }
@@ -86,7 +86,7 @@ class StatementsForm extends Component {
         <div className="form-group form-inline" style={{ textAlign: 'right' }}>
           { this.renderTimePicker() }
         </div>
-        <div style={{ paddingTop: 5, height: '400px' }}>
+        <div style={{ paddingTop: 5, height }}>
           {!this.props.model.get('sourceView') && <VisualiseResults id={this.props.model.get('_id')} />}
           {this.props.model.get('sourceView') &&
             <SourceResults id={this.props.model.get('_id')} />
@@ -107,6 +107,9 @@ class StatementsForm extends Component {
   render = () => {
     if (this.props.model.has('type')) {
       // include the results if type is selected
+      if (this.props.model.get('type') === 'STATEMENT') {
+        return this.renderFormWithResults(435);
+      }
       return this.renderFormWithResults();
     }
     // if not type is selected, only show the editor

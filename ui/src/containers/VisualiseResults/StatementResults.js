@@ -1,58 +1,50 @@
 import React, { PropTypes } from 'react';
 import { withProps, compose, setPropTypes, defaultProps } from 'recompose';
-import { v4 as uuid } from 'uuid';
 import ReactTable from 'react-table';
 import { AutoSizer } from 'react-virtualized';
 import NoData from 'ui/components/Graphs/NoData';
 import { Map } from 'immutable';
 import { withStatementsVisualisation, withModels } from 'ui/utils/hocs';
 
-const columnWidth = {
-  wordWrap: 'break-word',
-  maxWidth: '150px'
-};
-
 const makeData = (results, model) => {
-  const makeResult = (row, header) => {
-    return {
-      header,
-      row,
-    };
-  };
-  let parsedResults = []
-  const out = results
+
+  const serialisedData = [];
+  results
     .first()
     .first()
-    .forEach((res) => { 
-      console.log('res' , model.get('statementColumns').keySeq().map(e => e))
-      let dataObject = {}
+    .forEach((res) => {
+      const columnObject = {};
       model
         .get('statementColumns')
-        .forEach((header) => {
-          const headerArray = header.replace(/^\$/, '').split('.');
-          if (res.getIn(headerArray, '').toJS) {
-            dataObject[header.replace(/^\$/, '')] = JSON.stringify(res.getIn(headerArray, '').toJS())
+        .forEach((value, key) => {
+          const valueArray = value.replace(/^\$/, '').split('.');
+          if (res.getIn(valueArray, '').toJS) {
+            columnObject[key] = JSON.stringify(res.getIn(valueArray, '').toJS());
           } else {
-            dataObject[header.replace(/^\$/, '')] = res.getIn(headerArray, '');
+            columnObject[key] = res.getIn(valueArray, '');
           }
         });
-       parsedResults.push(dataObject)
+      serialisedData.push(columnObject);
     });
-    console.log('out',parsedResults)
-  return out;
-}
+  return serialisedData;
+};
 
-const makeColumns = (data) => {
-  const out = data.map((row) => {
-    return {
-      Header: row.header,
-      accessor: 'row',
-      style: { textAlign: 'center' },
-      width: 100,
-    }
-  })
-}
+const makeColumns = (model) => {
+  const columns = [];
+  model.get('statementColumns').forEach((value, key) => {
+    columns.push({
+      Header: key,
+      accessor: key,
+      style: { textAlign: 'left' },
+    });
+  });
+  return columns;
+};
 
+const getPageOptions = (pages) => {
+  const pageOptions = [25, 50, 100];
+  return [10].concat(pageOptions.filter(option => option < pages));
+};
 const enhance = compose(
   withStatementsVisualisation,
   setPropTypes({
@@ -67,6 +59,7 @@ const enhance = compose(
   withProps(() =>
   ({
     updated: (new Date()),
+    loading: false
   })
   )
 );
@@ -74,55 +67,23 @@ const enhance = compose(
 export default enhance(({
   model,
   results,
+  loading
 }) => {
-  console.log('TCL:  model,results', model, results);
   if (results.size) {
     return (
       <AutoSizer>{({ height, width }) => (
-        <div style={{ overflow: 'auto', height, width, position: 'relative' }}>
+        <div style={{ overflow: 'auto', height: Math.round(height) + 10, width, position: 'relative' }}>
           <ReactTable
-          data={makeData(results, model)}
-          pageSizeOptions={[15, 25, 50 ,100]}
-          defaultPageSize={15}
-          columns={makeColumns(results)}
-          className="-striped -highlight"
-          />
+            data={makeData(results, model)}
+            pageSizeOptions={[10, 25, 50, 100]}
+            pageSizeOptions={getPageOptions(makeData(results, model).length)}
+            defaultPageSize={10}
+            // manual
+            loading={loading}
+            columns={makeColumns(model)} />
         </div>
-      )
-      }</AutoSizer>
-    )
+      )}</AutoSizer>
+    );
   }
   return (<NoData />);
 });
-
-    {/* return (
-      <AutoSizer>{({ height, width }) => (
-        <div style={{ overflow: 'auto', height, width, position: 'relative' }}>
-          <table className="table table-bordered table-striped">
-            <tbody>
-              <tr>
-                {model.get('statementColumns').keySeq().map((header) => <th style={columnWidth} key={uuid()}>{header}</th>)}
-              </tr>
-              { results.first().first().map(res =>
-                (<tr key={uuid()}>
-                  { model.get('statementColumns')
-                    .map(
-                      (header) => {
-                        const headerArray = header.replace(/^\$/, '')
-                          .split('.')
-                          .map(item => item.replace(/&46;/g, '.')); // Not sure if we need this
-                        const value = res.getIn(headerArray, '');
-
-                        return (<td style={columnWidth} key={uuid()}>{(value.toJS ?
-                          JSON.stringify(value.toJS()) : value) }
-                        </td>);
-                      }).toList()
-                  }
-                </tr>)
-              ).toList()
-            }
-            </tbody>
-          </table>
-        </div>)
-      }</AutoSizer>
-    ); */}
