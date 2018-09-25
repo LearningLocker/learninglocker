@@ -12,7 +12,6 @@ import {
   SUCCESS,
   FAILED,
 } from 'ui/redux/modules/aggregation';
-import { COMPLETED } from 'ui/utils/constants';
 import {
   shouldFetchSelector,
   fetchModels,
@@ -21,7 +20,9 @@ import {
 } from 'ui/redux/modules/pagination';
 
 import {
-  selectors
+  FORWARD,
+  selectors,
+  defaultSort
 } from 'ui/redux/modules/pagination/fetchModels';
 import {
   modelsSchemaIdSelector,
@@ -36,12 +37,14 @@ import {
   NONE,
   JOURNEY,
   JOURNEY_PROGRESS,
-  STATEMENT
+  STATEMENT,
+  COMPLETED
 } from 'ui/utils/constants';
 import { pipelinesFromQueries, getJourney } from 'ui/utils/visualisations';
 import { unflattenAxes } from 'lib/helpers/visualisation';
 import { periodToDate } from 'ui/utils/dates';
 import { OFF, ANY } from 'lib/constants/dashboard';
+import { cursorSelector } from './pagination';
 
 export const FETCH_VISUALISATION = 'learninglocker/models/learninglocker/visualise/FETCH_VISUALISATION';
 
@@ -464,6 +467,39 @@ export function* watchUpdateVisualisation() {
   }
 }
 
+export const fetchMore = ({
+  schema = 'statement',
+  filter,
+  sort = defaultSort,
+  direction = FORWARD,
+  first = 10,
+  last
+}) => (dispatch, getState) => {
+  dispatch(fetchModels({
+    schema,
+    filter,
+    sort,
+    direction,
+    first,
+    last,
+    cursor: cursorSelector(schema, filter, sort, direction)(getState()),
+  },
+    getState()
+  ));
+};
+
+export const fetchMoreStatements = id => (dispatch, getState) => {
+  const series = statementVisualisationPipelinesSelector(id)(getState());
+  const pipeline = series.first().first();
+
+  const filter = getFilterFromPipeline(pipeline);
+  dispatch(
+    fetchMore({
+      filter
+    })
+  );
+};
+
 export function* fetchVisualisationSaga(state, id) {
   const visualisation = modelsSchemaIdSelector('visualisation', id)(state);
 
@@ -485,7 +521,7 @@ export function* fetchVisualisationSaga(state, id) {
         // if (shouldFetch) yield put(fetchAggregation({ pipeline }));
         yield put(fetchModels({
           schema: 'statement',
-          filter: getFilterFromPipeline(pipeline) 
+          filter: getFilterFromPipeline(pipeline),
         }));
       }
     }

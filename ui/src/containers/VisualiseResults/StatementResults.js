@@ -5,6 +5,8 @@ import { AutoSizer } from 'react-virtualized';
 import NoData from 'ui/components/Graphs/NoData';
 import { Map } from 'immutable';
 import { withStatementsVisualisation, withModels } from 'ui/utils/hocs';
+import { fetchMoreStatements } from 'ui/redux/modules/visualise';
+import { connect } from 'react-redux';
 
 const makeData = (results, model) => {
 
@@ -61,13 +63,15 @@ const enhance = compose(
     updated: (new Date()),
     loading: false
   })
-  )
+  ),
+  connect(() => ({}), { fetchMoreStatements })
 );
 
 export default enhance(({
   model,
   results,
-  loading
+  loading,
+  fetchMoreStatements,
 }) => {
   if (results.size) {
     return (
@@ -81,6 +85,9 @@ export default enhance(({
             // manual
             loading={loading}
             columns={makeColumns(model)} />
+          <button
+            onClick={() => { fetchMoreStatements(model.get('_id')); }}
+          >Fetch More</button>
         </div>
       )}</AutoSizer>
     );

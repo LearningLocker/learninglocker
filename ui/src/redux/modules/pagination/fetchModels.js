@@ -28,7 +28,7 @@ export const BACKWARD = 'BACKWARD'; // backward pagination direction
 const cacheDuration = moment.duration({ minute: 3 });
 
 const defaultFilter = new Map();
-const defaultSort = new Map({ createdAt: -1, _id: 1 });
+export const defaultSort = new Map({ createdAt: -1, _id: 1 });
 
 const paginationSelector = state => state.pagination;
 
@@ -343,7 +343,8 @@ const fetchMore = ({
   direction = FORWARD,
   first = 10,
   last
-}) => (dispatch, getState) => (dispatch(
+}) => (dispatch, getState) => {
+  return (dispatch(
     fetchModels.actions.start(
       { schema,
         filter,
@@ -355,8 +356,8 @@ const fetchMore = ({
       },
       getState()
     )
-  )
-);
+  ));
+};
 
 export const selectors = {
   paginationSelector,
