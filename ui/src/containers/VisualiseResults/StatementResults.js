@@ -4,8 +4,8 @@ import ReactTable from 'react-table';
 import { AutoSizer } from 'react-virtualized';
 import NoData from 'ui/components/Graphs/NoData';
 import { Map } from 'immutable';
-import { withStatementsVisualisation, withModels } from 'ui/utils/hocs';
-import { fetchMoreStatements } from 'ui/redux/modules/visualise';
+import { withStatementsVisualisation, withModels, withModelCount } from 'ui/utils/hocs';
+import { fetchMoreStatements, fetchCountStatements } from 'ui/redux/modules/visualise';
 import { connect } from 'react-redux';
 
 const makeData = (results, model) => {
@@ -45,7 +45,7 @@ const makeColumns = (model) => {
 
 const getPageOptions = (pages) => {
   const pageOptions = [25, 50, 100];
-  return [10].concat(pageOptions.filter(option => option < pages));
+  return [5, 10].concat(pageOptions.filter(option => option < pages));
 };
 const enhance = compose(
   withStatementsVisualisation,
@@ -58,36 +58,37 @@ const enhance = compose(
     project: new Map()
   }),
   withModels,
-  withProps(() =>
+  withModelCount,
+  withProps((props) =>
   ({
     updated: (new Date()),
     loading: false,
+    fetchModelsCountAction: props.fetchModelsCount,
   })
   ),
   connect(() => ({}), { fetchMoreStatements })
 );
 
 export default enhance(({
-  model,
   results,
+  model,
   loading,
-  fetchMoreStatements
+  fetchModelsCountAction,
 }) => {
-  if (results.size) {
+  if (true) {
+    console.log('ft', model)
     return (
       <AutoSizer>{({ height, width }) => (
         <div style={{ overflow: 'auto', height: Math.round(height) + 35, width, position: 'relative' }}>
           <ReactTable
             data={makeData(results, model)}
             pageSizeOptions={getPageOptions(makeData(results, model).length)}
-            defaultPageSize={10}
-            onPageChange={(pageIndex) => {fetchMoreStatements(model.get('_id'))}}
+            defaultPageSize={5}
+            onPageChange={() => { fetchMoreStatements(model.get('_id')); }}
+            pages={fetchModelsCountAction('statement', model.get('filters').first().first())}
             // manual
             loading={loading}
             columns={makeColumns(model)} />
-     
-            {/* onClick={() => { fetchMoreStatements(model.get('_id')); }}
-          >Fetch More</button> */}
         </div>
       )}</AutoSizer>
     );

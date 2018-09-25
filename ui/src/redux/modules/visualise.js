@@ -475,7 +475,7 @@ export const fetchMore = ({
   filter,
   sort = defaultSort,
   direction = FORWARD,
-  first = 12,
+  first = 10,
   last
 }) => (dispatch, getState) => {
   dispatch(fetchModels({
@@ -498,6 +498,18 @@ export const fetchMoreStatements = id => (dispatch, getState) => {
   const filter = getFilterFromPipeline(pipeline);
   dispatch(
     fetchMore({
+      filter
+    })
+  );
+};
+
+export const fetchCountStatements = (id, action) => (dispatch, getState) => {
+  const series = statementVisualisationPipelinesSelector(id)(getState());
+  const pipeline = series.first().first();
+
+  const filter = getFilterFromPipeline(pipeline);
+  dispatch(
+    action({
       filter
     })
   );

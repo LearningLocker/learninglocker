@@ -242,6 +242,7 @@ const fetchModels = createAsyncDuck({
     first,
     last
   }) {
+    console.log('last ', first)
     const plainFilter = Iterable.isIterable(filter) ? filter.toJS() : filter;
     const plainSort = Iterable.isIterable(sort) ? sort.toJS() : sort;
     const plainCursor = Iterable.isIterable(cursor) ? cursor.toJS() : cursor;
