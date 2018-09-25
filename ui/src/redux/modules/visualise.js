@@ -436,8 +436,11 @@ export const visualisationFetchStateSelector = (visualisationId) => {
   return createSelector([identity], (state) => {
     const fetchStates = getVisualisationFetchStates(visualisationId, state);
     const overallFetchState = getOverallFetchState(fetchStates);
-    if (isNull(overallFetchState)) {
+    if (isNull(overallFetchState) ) {
       return COMPLETED;
+    }
+    if (overallFetchState === false) {
+      return IN_PROGRESS;
     }
     return overallFetchState;
   });
@@ -472,7 +475,7 @@ export const fetchMore = ({
   filter,
   sort = defaultSort,
   direction = FORWARD,
-  first = 10,
+  first = 12,
   last
 }) => (dispatch, getState) => {
   dispatch(fetchModels({

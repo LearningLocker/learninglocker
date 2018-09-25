@@ -36,6 +36,7 @@ export default compose(
     case STATEMENTS:
       return <ColumnChartResults id={visualisationId} />;
     case STATEMENT:
+      console.log('001')
       return <StatementResults id={visualisationId} />;
     case XVSY:
       return <XvsYChartResults id={visualisationId} />;

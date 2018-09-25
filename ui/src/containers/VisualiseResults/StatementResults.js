@@ -71,28 +71,23 @@ export default enhance(({
   model,
   results,
   loading,
-<<<<<<< Updated upstream
-  fetchMoreStatements,
-=======
-  fetchMore,
->>>>>>> Stashed changes
+  fetchMoreStatements
 }) => {
   if (results.size) {
-    console.log('fm',fetchMore)
     return (
       <AutoSizer>{({ height, width }) => (
-        <div style={{ overflow: 'auto', height: Math.round(height) + 10, width, position: 'relative' }}>
+        <div style={{ overflow: 'auto', height: Math.round(height) + 35, width, position: 'relative' }}>
           <ReactTable
             data={makeData(results, model)}
-            pageSizeOptions={[10, 25, 50, 100]}
             pageSizeOptions={getPageOptions(makeData(results, model).length)}
             defaultPageSize={10}
+            onPageChange={(pageIndex) => {fetchMoreStatements(model.get('_id'))}}
             // manual
             loading={loading}
             columns={makeColumns(model)} />
-          <button
-            onClick={() => { fetchMoreStatements(model.get('_id')); }}
-          >Fetch More</button>
+     
+            {/* onClick={() => { fetchMoreStatements(model.get('_id')); }}
+          >Fetch More</button> */}
         </div>
       )}</AutoSizer>
     );
