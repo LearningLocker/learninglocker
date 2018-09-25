@@ -61,7 +61,7 @@ const enhance = compose(
   withProps(() =>
   ({
     updated: (new Date()),
-    loading: false
+    loading: false,
   })
   ),
   connect(() => ({}), { fetchMoreStatements })
@@ -71,9 +71,14 @@ export default enhance(({
   model,
   results,
   loading,
+<<<<<<< Updated upstream
   fetchMoreStatements,
+=======
+  fetchMore,
+>>>>>>> Stashed changes
 }) => {
   if (results.size) {
+    console.log('fm',fetchMore)
     return (
       <AutoSizer>{({ height, width }) => (
         <div style={{ overflow: 'auto', height: Math.round(height) + 10, width, position: 'relative' }}>
