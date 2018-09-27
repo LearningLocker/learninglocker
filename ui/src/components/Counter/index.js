@@ -15,7 +15,17 @@ const formatLongNumber = x => x.toLocaleString();
 const formatTooltip = (count, benchmarkResult) => `Current: ${formatLongNumber(count)}   Previous: ${benchmarkResult}`;
 const getResultCount = rs => rs.getIn([0, 0, null, 'count'], 0);
 const getBenchmarkResultCount = rs => rs.getIn([1, 0, null, 'count'], 0);
-const makeHumanReadable = previewPeriod => previewPeriod.split('_').map(word => `${word.toLowerCase()} `).join('');
+const makeHumanReadable = (previewPeriod) => {
+  console.log('preview ', previewPeriod)
+  if (previewPeriod !== 'Today') {
+    return previewPeriod.split('LAST_')[1].replace('_', ' ').toLowerCase();
+  }
+  return previewPeriod;
+};
+const resultsIconStyles = {
+  height: '40px',
+  width: '40px'
+};
 const renderCount = color => count => benchmarkResult => (
   <TooltipLink
     style={{ color }}
@@ -25,20 +35,36 @@ const renderCount = color => count => benchmarkResult => (
     tooltipDelay={600}
     active />
   );
+const renderBenchmark = (percentage, rs, model) => {
+  if (percentage.result === 'N/A') {
+    return percentage.result;
+  }
+  return (<div
+    style={{
+      backgroundColor: '#F4F4F4',
+      borderRadius: '40px',
+      width: 'fit-content',
+      padding: '6px 17px 2px 5px',
+      color: '#595959',
+    }}>
+    <img
+      className="counterResIcon"
+      role="presentation"
+      style={resultsIconStyles}
+      src={percentage.icon} />{`${percentage.result} (${makeHumanReadable(model.get('previewPeriod', ''))})`}</div>);
+};
+
 const renderCounter = color => rs => model => (maxSize, width) => {
   const percentage = getPercentage(getResultCount(rs), getBenchmarkResultCount(rs));
   return (
     <div className="outerCounter" >
-      <div style={{ textAlign: 'center', width: `${width}px`, marginLeft: `${width / 5}px!important`, fontSize: `${maxSize / 35}em` }}>
+      <div style={{ textAlign: 'center', width: `${width}px`, marginLeft: `${width / 5}px!important`, fontSize: `${maxSize / 40}em` }}>
         {renderCount(color)(getResultCount(rs))(getBenchmarkResultCount(rs))}
-        {rs.size > 1 && ([
-          <div key={'count-1'} style={{ textAlign: 'center', fontSize: '0.3em', color: percentage.color, fontWeight: '300' }}>
-            {percentage.result}
-          </div>,
-          <div key={'count-2'} style={{ textAlign: 'center', fontSize: '0.25em', color: percentage.color, fontWeight: '300' }}>
-            {percentage.result !== 'N/A' && `vs ${makeHumanReadable(model.get('previewPeriod', ''))}`}
+        {rs.size > 1 &&
+          <div key={'count-1'} style={{ textAlign: 'center', justifyContent: 'center', display: 'flex', fontSize: '0.2em', color: percentage.color, fontWeight: '300' }}>
+            {renderBenchmark(percentage, rs, model, width)}
           </div>
-        ])}
+        }
       </div>
     </div>
   );

@@ -4,6 +4,8 @@ import { COMPONENT, TEXT } from 'ui/utils/constants';
 import uuid from 'uuid';
 import { startCase, toLower } from 'lodash';
 import VisualisationTypeIcon from '../containers/Visualise/VisualisationTypeIcon';
+import chevronUpIcon from './assets/ll-chevron-up-icon.svg';
+import chevronDownIcon from './assets/ll-chevron-down-icon.svg';
 
 
 const axv = 'axesvalue';
@@ -111,8 +113,8 @@ export const getPercentage = (res1, res2) => {
   }
 
   if (percentage < 0) {
-    return { result: `${percentage}%`, color: '#E73304' };
+    return { result: `${percentage.toString().replace(/^-/, '')}%`, icon: chevronDownIcon };
   }
 
-  return { result: `+${percentage}%`, color: '#23A17E' };
+  return { result: `+${percentage}%`, icon: chevronUpIcon };
 };
