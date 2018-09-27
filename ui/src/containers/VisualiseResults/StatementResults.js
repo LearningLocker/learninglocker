@@ -69,9 +69,10 @@ export default enhance(({
             }
             </tbody>
           </table>
+          {count > results.first().first().size &&
           <button
             className="tableButton"
-            onClick={() => { fetchMoreStatementsAction(model.get('_id')); }}> {`More results (${results.first().first().size} of ${count})`}</button>
+            onClick={() => { fetchMoreStatementsAction(model.get('_id')); }}> {`More results (${results.first().first().size} of ${count})`}</button>}
         </div>)
       }</AutoSizer>
     );
