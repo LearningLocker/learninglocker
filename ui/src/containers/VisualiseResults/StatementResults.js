@@ -1,52 +1,14 @@
 import React, { PropTypes } from 'react';
 import { withProps, compose, setPropTypes, defaultProps } from 'recompose';
-import ReactTable from 'react-table';
+import { v4 as uuid } from 'uuid';
 import { AutoSizer } from 'react-virtualized';
 import NoData from 'ui/components/Graphs/NoData';
 import { Map } from 'immutable';
 import { withStatementsVisualisation, withModels, withModelCount } from 'ui/utils/hocs';
-import { fetchMoreStatements, fetchCountStatements } from 'ui/redux/modules/visualise';
+import { fetchMoreStatements } from 'ui/redux/modules/visualise';
 import { connect } from 'react-redux';
 
-const makeData = (results, model) => {
 
-  const serialisedData = [];
-  results
-    .first()
-    .first()
-    .forEach((res) => {
-      const columnObject = {};
-      model
-        .get('statementColumns')
-        .forEach((value, key) => {
-          const valueArray = value.replace(/^\$/, '').split('.');
-          if (res.getIn(valueArray, '').toJS) {
-            columnObject[key] = JSON.stringify(res.getIn(valueArray, '').toJS());
-          } else {
-            columnObject[key] = res.getIn(valueArray, '');
-          }
-        });
-      serialisedData.push(columnObject);
-    });
-  return serialisedData;
-};
-
-const makeColumns = (model) => {
-  const columns = [];
-  model.get('statementColumns').forEach((value, key) => {
-    columns.push({
-      Header: key,
-      accessor: key,
-      style: { textAlign: 'left' },
-    });
-  });
-  return columns;
-};
-
-const getPageOptions = (pages) => {
-  const pageOptions = [25, 50, 100];
-  return [5, 10].concat(pageOptions.filter(option => option < pages));
-};
 const enhance = compose(
   withStatementsVisualisation,
   setPropTypes({
@@ -59,38 +21,59 @@ const enhance = compose(
   }),
   withModels,
   withModelCount,
-  withProps((props) =>
+  withProps(() =>
   ({
     updated: (new Date()),
     loading: false,
-    fetchModelsCountAction: props.fetchModelsCount,
-  })
-  ),
-  connect(() => ({}), { fetchMoreStatements })
+  }))
+  ,
+  connect(() => ({}), { fetchMoreStatementsAction: fetchMoreStatements })
 );
 
+const columnWidth = {
+  wordWrap: 'break-word',
+  maxWidth: '150px'
+};
+
 export default enhance(({
-  results,
+  count,
   model,
-  loading,
-  fetchModelsCountAction,
+  results,
+  fetchMoreStatementsAction
 }) => {
-  if (true) {
-    console.log('ft', model)
+  if (results.size) {
     return (
       <AutoSizer>{({ height, width }) => (
-        <div style={{ overflow: 'auto', height: Math.round(height) + 35, width, position: 'relative' }}>
-          <ReactTable
-            data={makeData(results, model)}
-            pageSizeOptions={getPageOptions(makeData(results, model).length)}
-            defaultPageSize={5}
-            onPageChange={() => { fetchMoreStatements(model.get('_id')); }}
-            pages={fetchModelsCountAction('statement', model.get('filters').first().first())}
-            // manual
-            loading={loading}
-            columns={makeColumns(model)} />
-        </div>
-      )}</AutoSizer>
+        <div style={{ overflow: 'auto', height, width, position: 'relative' }}>
+          <table className="table table-bordered table-striped">
+            <tbody>
+              <tr>
+                {model.get('statementColumns').keySeq().map((header) => <th style={columnWidth} key={uuid()}>{header}</th>)}
+              </tr>
+              { results.first().first().map(res =>
+                (<tr key={uuid()}>
+                  { model.get('statementColumns')
+                    .map(
+                      (header) => {
+                        const headerArray = header.replace(/^\$/, '')
+                          .split('.')
+                          .map(item => item.replace(/&46;/g, '.')); 
+                        const value = res.getIn(headerArray, '');
+                        return (<td style={columnWidth} key={uuid()}>{(value.toJS ?
+                          JSON.stringify(value.toJS()) : value) }
+                        </td>);
+                      }).toList()
+                  }
+                </tr>)
+              ).toList()
+            }
+            </tbody>
+          </table>
+          <button
+            className="tableButton"
+            onClick={() => { fetchMoreStatementsAction(model.get('_id')); }}> {`More results (${results.first().first().size} of ${count})`}</button>
+        </div>)
+      }</AutoSizer>
     );
   }
   return (<NoData />);

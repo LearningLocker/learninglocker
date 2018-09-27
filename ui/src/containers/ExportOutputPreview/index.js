@@ -75,7 +75,6 @@ const renderResultContent = (results, headings) =>
   };
 
 const renderCell = (results, headings) => {
-console.log('TCL: renderCell -> results, headings', results, headings);
   const renderHeadingCell = renderHeading(headings);
   const renderResultContentCell = renderResultContent(results, headings);
   return ({ columnIndex, rowIndex, key, style }) =>

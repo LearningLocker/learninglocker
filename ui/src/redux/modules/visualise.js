@@ -186,6 +186,10 @@ const shareableDashboardFilterSelector = () => createSelector(
   }
 );
 
+const getFilterFromPipeline = (pipeline) => {
+  return pipeline.getIn([2, '$match']);
+};
+
 export const visualisationPipelinesSelector = (
   id,
   cb = pipelinesFromQueries // whilst waiting for https://github.com/facebook/jest/issues/3608
@@ -303,6 +307,17 @@ export const visualisationShouldFetchSelector = visualisationId => createSelecto
   }
 });
 
+export const visualisationCountSelector = visualisationId => createSelector([
+  identity,
+  visualisationPipelinesSelector(visualisationId),
+  modelsSchemaIdSelector('visualisation', visualisationId)
+], (state, pipelines, visualisation) => {
+  const filter = pipelines.first().first().getIn([1, '$match']);
+  switch (visualisation.get('type')) {
+    case STATEMENT: return countSelector('statement', filter)(state);
+    default: return 0;
+  }
+});
 /**
  * Takes a JourneyProgress pipeline and returns
  * the corresponding journeyProgress in a format for graphing
@@ -321,10 +336,6 @@ export const journeyProgressResultsSelector =
 const getJourneyResults = (visualisation, filter, state) => {
   const journey = visualisation.get('journey');
   return journeyProgressResultsSelector(journey, filter)(state);
-};
-
-const getFilterFromPipeline = (pipeline) => {
-  return pipeline.getIn([2, '$match']);
 };
 
 const getPipelinesResults = state => pipelines => pipelines.map((pipeline) => {
@@ -491,6 +502,27 @@ export const fetchMore = ({
   ));
 };
 
+export const fetchCount = ({
+  schema = 'statement',
+  filter,
+  sort = defaultSort,
+  direction = FORWARD,
+  first = 10,
+  last
+}) => (dispatch, getState) => {
+  dispatch(fetchModelsCount({
+    schema,
+    filter,
+    sort,
+    direction,
+    first,
+    last,
+    cursor: cursorSelector(schema, filter, sort, direction)(getState()),
+  },
+    getState()
+  ));
+};
+
 export const fetchMoreStatements = id => (dispatch, getState) => {
   const series = statementVisualisationPipelinesSelector(id)(getState());
   const pipeline = series.first().first();
@@ -507,13 +539,14 @@ export const fetchCountStatements = (id, action) => (dispatch, getState) => {
   const series = statementVisualisationPipelinesSelector(id)(getState());
   const pipeline = series.first().first();
 
-  const filter = getFilterFromPipeline(pipeline);
+  const filter = getFilterFromPipeline(pipeline); 
   dispatch(
-    action({
+    fetchCount({
       filter
     })
   );
 };
+
 
 export function* fetchVisualisationSaga(state, id) {
   const visualisation = modelsSchemaIdSelector('visualisation', id)(state);
@@ -532,11 +565,13 @@ export function* fetchVisualisationSaga(state, id) {
       const pipelines = series.get(s);
       for (let p = 0; p < pipelines.size; p += 1) {
         const pipeline = pipelines.get(p);
-        // const shouldFetch = shouldFetchPipeline(pipeline, state);
-        // if (shouldFetch) yield put(fetchAggregation({ pipeline }));
         yield put(fetchModels({
           schema: 'statement',
           filter: getFilterFromPipeline(pipeline),
+        }));
+        yield put(fetchModelsCount({
+          schema: 'statement',
+          filter: getFilterFromPipeline(pipeline)
         }));
       }
     }

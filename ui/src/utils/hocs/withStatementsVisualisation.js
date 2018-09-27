@@ -6,7 +6,8 @@ import {
   visualisationResultsSelector,
   visualisationShouldFetchSelector,
   visualisationFetchStateSelector,
-  fetchVisualisation
+  fetchVisualisation,
+  visualisationCountSelector
 } from 'ui/redux/modules/visualise';
 import { unflattenAxes } from 'lib/helpers/visualisation';
 import { IN_PROGRESS, VISUALISATION_COLORS } from 'ui/utils/constants';
@@ -103,13 +104,14 @@ const withStatementsVisualisation = (WrappedComponent) => {
   }
   return connect((state, { id }) => ({
     results: visualisationResultsSelector(id)(state),
+    count: visualisationCountSelector(id)(state),
     shouldFetch: visualisationShouldFetchSelector(id)(state),
     fetchState: visualisationFetchStateSelector(id)(state)
   })
   ,
   { fetchVisualisation })(WithStatementsVisualisation);
 };
-
+// ok and then how does that get added to the props?
 export default compose(
   withProps(() => ({
     schema: 'visualisation',
