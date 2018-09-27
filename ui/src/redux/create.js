@@ -17,7 +17,7 @@ export default function createStore(llClient, router, data) {
   ];
 
   let finalCreateStore;
-  if (__DEVELOPMENT__ && __CLIENT__ && __DEVTOOLS__) {
+  if (__DEVELOPMENT__ && __CLIENT__ ) {
     const { persistState } = require('redux-devtools');
     const DevTools = require('../containers/DevTools/DevTools');
 
@@ -35,3 +35,5 @@ export default function createStore(llClient, router, data) {
 
   return store;
 }
+
+// UNICORN

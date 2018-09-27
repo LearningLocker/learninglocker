@@ -45,6 +45,7 @@ const withStatementsVisualisation = (WrappedComponent) => {
       this.props.results.equals(results) &&
       this.getAxes().equals(unflattenAxes(model)) &&
       this.props.model.get('stacked') === model.get('stacked') &&
+      this.props.model.get('isDonut') === model.get('isDonut') &&
       this.props.model.get('barChartGroupingLimit') === model.get('barChartGroupingLimit') &&
       this.props.model.get('filters').equals(model.get('filters')) &&
       this.props.fetchState === fetchState &&
