@@ -15,14 +15,14 @@ import {
   PIE,
   TABLE
 } from '../../utils/constants';
-import LEADERBOARD_IMAGE from './assets/ll-icon-bar-graph.png';
-import XVSY_IMAGE from './assets/ll-icon-correlation.png';
-import STATEMENTS_IMAGE from './assets/ll-icon-column-graph.png';
-import FREQUENCY_IMAGE from './assets/ll-icon-frequency.png';
-import COUNTER_IMAGE from './assets/ll-icon-counter.png';
-import PIE_IMAGE from './assets/ll-icon-pie-chart.png';
-import TABLE_IMAGE from './assets/ll-table-icon.png';
-import SESSIONS_IMAGE from './assets/ll-icon-accumulation.png';
+import LEADERBOARD_IMAGE from './assets/ll-icon-bar-graph.svg';
+import XVSY_IMAGE from './assets/ll-icon-correlation.svg';
+import STATEMENTS_IMAGE from './assets/ll-icon-column-graph.svg';
+import FREQUENCY_IMAGE from './assets/ll-icon-frequency.svg';
+import COUNTER_IMAGE from './assets/ll-icon-counter.svg';
+import PIE_IMAGE from './assets/ll-icon-pie-chart.svg';
+import TABLE_IMAGE from './assets/ll-table-icon.svg';
+import SESSIONS_IMAGE from './assets/ll-icon-accumulation.svg';
 
 const PLATFORMS_IMAGE = SESSIONS_IMAGE;
 const QUESTIONANALYSIS_IMAGE = SESSIONS_IMAGE;
