@@ -83,6 +83,7 @@ const renderPies = labels => colors => data => isDonut => (maxSize) => {
 const renderPieChart = labels => colors => data => count => grouping => isDonut => ({ width, height }) => (
   <div>
     <div style={{ width: '600px', position: 'absolute' }}>
+    // 30ox margin right
       {(colors.size > 1) && colors.map((colour, i) => (
         <div key={i} style={{ fontSize: '0.9em' }}>
           <div style={{ display: 'inline-block', width: '12px', height: '12px', backgroundColor: colour, marginRight: '8px', marginBottom: '2px', verticalAlign: 'middle' }} />
@@ -90,15 +91,18 @@ const renderPieChart = labels => colors => data => count => grouping => isDonut 
         </div>)
       )}
     </div>
-    <Chart width={width} height={height}>
-      {renderPies(labels)(colors)(data)(isDonut)(Math.min(width, height))}
-      {renderTooltips(labels)(data)(count)(grouping)}
-    </Chart>
+    <div style={{marginRight: '30px'}}>
+      <Chart width={width} height={height}>
+        {renderPies(labels)(colors)(data)(isDonut)(Math.min(width, height))}
+        {renderTooltips(labels)(data)(count)(grouping)}
+      </Chart>
+    </div>
   </div>
 );
 
 const renderChart = chart => (
-  <div className={styles.chart}>
+  <div
+    className={styles.chart}>
     <AutoSizer>{chart}</AutoSizer>
   </div>
 );

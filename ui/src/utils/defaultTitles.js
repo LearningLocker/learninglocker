@@ -113,8 +113,8 @@ export const getPercentage = (res1, res2) => {
   }
 
   if (percentage < 0) {
-    return { result: `${percentage.toString().replace(/^-/, '')}%`, icon: chevronDownIcon };
+    return { result: `${percentage.toString().replace(/^-/, '')}%`, icon: chevronDownIcon, marginBottom: '0' };
   }
 
-  return { result: `+${percentage}%`, icon: chevronUpIcon };
+  return { result: `+${percentage}%`, icon: chevronUpIcon, marginBottom: '6%' };
 };

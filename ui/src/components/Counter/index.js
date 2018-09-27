@@ -24,7 +24,7 @@ const makeHumanReadable = (previewPeriod) => {
 };
 const resultsIconStyles = {
   height: '40px',
-  width: '40px'
+  width: '40px',
 };
 const renderCount = color => count => benchmarkResult => (
   <TooltipLink
@@ -39,29 +39,32 @@ const renderBenchmark = (percentage, rs, model) => {
   if (percentage.result === 'N/A') {
     return percentage.result;
   }
+
   return (<div
     style={{
       backgroundColor: '#F4F4F4',
       borderRadius: '40px',
       width: 'fit-content',
-      padding: '6px 17px 2px 5px',
+      padding: '1.3% 7% 0.8% 3%',
       color: '#595959',
     }}>
     <img
       className="counterResIcon"
       role="presentation"
-      style={resultsIconStyles}
+      style={{ marginBottom: percentage.marginBottom, ...resultsIconStyles }}
       src={percentage.icon} />{`${percentage.result} (${makeHumanReadable(model.get('previewPeriod', ''))})`}</div>);
 };
 
 const renderCounter = color => rs => model => (maxSize, width) => {
+  const fontSize = (width < 332) || (maxSize < 245) ? '13px' : '0.2em';
+  console.log('maxSize', maxSize)
   const percentage = getPercentage(getResultCount(rs), getBenchmarkResultCount(rs));
   return (
     <div className="outerCounter" >
       <div style={{ textAlign: 'center', width: `${width}px`, marginLeft: `${width / 5}px!important`, fontSize: `${maxSize / 40}em` }}>
         {renderCount(color)(getResultCount(rs))(getBenchmarkResultCount(rs))}
         {rs.size > 1 &&
-          <div key={'count-1'} style={{ textAlign: 'center', justifyContent: 'center', display: 'flex', fontSize: '0.2em', color: percentage.color, fontWeight: '300' }}>
+          <div key={'count-1'} style={{ textAlign: 'center', justifyContent: 'center', display: 'flex', fontSize, color: percentage.color, fontWeight: '300' }}>
             {renderBenchmark(percentage, rs, model, width)}
           </div>
         }
