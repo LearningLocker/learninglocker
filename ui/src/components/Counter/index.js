@@ -34,7 +34,7 @@ const renderCount = color => count => benchmarkResult => (
     tooltipDelay={600}
     active />
   );
-const renderBenchmark = (percentage, rs, model) => {
+const renderBenchmark = (percentage, model) => {
   if (percentage.result === 'N/A') {
     return percentage.result;
   }
@@ -63,7 +63,7 @@ const renderCounter = color => rs => model => (maxSize, width) => {
         {renderCount(color)(getResultCount(rs))(getBenchmarkResultCount(rs))}
         {rs.size > 1 &&
           <div key={'count-1'} style={{ textAlign: 'center', justifyContent: 'center', display: 'flex', fontSize, color: percentage.color, fontWeight: '300' }}>
-            {renderBenchmark(percentage, rs, model, width)}
+            {renderBenchmark(percentage, model)}
           </div>
         }
       </div>
