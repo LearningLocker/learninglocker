@@ -16,7 +16,6 @@ const formatTooltip = (count, benchmarkResult) => `Current: ${formatLongNumber(c
 const getResultCount = rs => rs.getIn([0, 0, null, 'count'], 0);
 const getBenchmarkResultCount = rs => rs.getIn([1, 0, null, 'count'], 0);
 const makeHumanReadable = (previewPeriod) => {
-  console.log('preview ', previewPeriod)
   if (previewPeriod !== 'Today') {
     return previewPeriod.split('LAST_')[1].replace('_', ' ').toLowerCase();
   }
@@ -57,7 +56,6 @@ const renderBenchmark = (percentage, rs, model) => {
 
 const renderCounter = color => rs => model => (maxSize, width) => {
   const fontSize = (width < 332) || (maxSize < 245) ? '13px' : '0.2em';
-  console.log('maxSize', maxSize)
   const percentage = getPercentage(getResultCount(rs), getBenchmarkResultCount(rs));
   return (
     <div className="outerCounter" >

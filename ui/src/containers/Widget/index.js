@@ -16,7 +16,7 @@ import SourceResults from 'ui/containers/VisualiseResults/SourceResults';
 import DeleteConfirm from 'ui/containers/DeleteConfirm';
 import { createDefaultTitle } from 'ui/utils/defaultTitles';
 import styles from './widget.css';
-import { COUNTER } from '../../utils/constants';
+import { COUNTER, PIE } from '../../utils/constants';
 
 const schema = 'widget';
 const VISUALISATION = 'stages/VISUALISATION';
@@ -85,6 +85,15 @@ class Widget extends Component {
     });
   }
 
+  toggleDonutView = () => {
+    this.props.updateModel({
+      schema: 'visualisation',
+      id: this.props.model.get('visualisation'),
+      path: 'isDonut',
+      value: !this.props.visualisation.get('isDonut')
+    });
+  }
+
   openDeleteModal = () => {
     this.setState({
       isDeleteOpen: true
@@ -96,6 +105,13 @@ class Widget extends Component {
       return 'Disable table view';
     }
     return 'Enable table view';
+  }
+
+  getDonutView = () => {
+    if (this.props.visualisation.get('isDonut')) {
+      return 'Disable donut';
+    }
+    return 'Enable donut';
   }
 
   getTitle = model => model.get('title') || <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>{createDefaultTitle(this.props.visualisation, '')}</span>;
@@ -129,7 +145,19 @@ class Widget extends Component {
             title="Table mode"
             className={styles.closeButton}>
             <i className={`ion ${styles.marginRight} ion-edit grey`} />{this.getSourceView()}
-          </a>}
+          </a>
+        }
+        { this.props.visualisation.size > 0
+          && this.props.visualisation.get('type') === PIE
+          && !this.props.visualisation.get('sourceView')
+          && model.has('visualisation') &&
+          <a
+            onClick={this.toggleDonutView}
+            title="Donut mode"
+            className={styles.closeButton}>
+            <i className={`ion ${styles.marginRight} ion-edit grey`} />{this.getDonutView()}
+          </a>
+        }
         { model.has('visualisation') && this.props.visualisation.size > 0 &&
           <Link
             routeName={'organisation.data.visualise.visualisation'}

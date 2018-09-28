@@ -3,6 +3,7 @@ import 'jest-enzyme';
 import { shallow } from 'enzyme';
 import { Map, fromJS } from 'immutable';
 import { createDefaultTitleWithIcon, getPercentage, getAxesString } from './defaultTitles';
+import chevronDownIcon from './assets/ll-chevron-down-icon.svg';
 
 test('defaultTitles should create a title with an icon', () => {
   const model = new Map({
@@ -17,8 +18,8 @@ test('defaultTitles should create a title with an icon', () => {
 test('defaultTitle should getPercentage', () => {
   const result = getPercentage(50, 100);
 
-  expect(result.result).toEqual('-100%');
-  expect(result.color).toBe('#E73304');
+  expect(result.result).toEqual('100%');
+  expect(result.icon).toBe(chevronDownIcon);
 });
 
 test('defaultTitle should getAxesString', () => {

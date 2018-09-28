@@ -32,6 +32,11 @@ exports[`PieChart should render 1`] = `
           Series 2
         </div>
       </div>
+      <div
+        style="margin-left:20px;"
+      >
+        
+      </div>
     </div>
   </div>
 </div>
