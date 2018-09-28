@@ -11,7 +11,7 @@ const DefaultEditorComponent = ({ model, sourceViewHandler, donutHandler }) => (
       id={'DefaultEditorComponent'}
       checked={model.get('sourceView')}
       onChange={sourceViewHandler} />
-    {!model.get('sourceView') && <Switch
+    {!model.get('sourceView') && model.get('type') === 'PIE' && <Switch
       label="Donut chart"
       id={'DefaultEditorComponent'}
       checked={model.get('isDonut')}
