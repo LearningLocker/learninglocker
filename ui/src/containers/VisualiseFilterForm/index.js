@@ -7,6 +7,7 @@ import TabbedQueriesBuilder from 'ui/components/TabbedQueriesBuilder';
 import {
   XVSY,
   STATEMENTS,
+  STACKED,
   POPULARACTIVITIES,
   LEADERBOARD,
   FREQUENCY,
@@ -102,7 +103,8 @@ class VisualiseFilterForm extends Component {
 
   renderLeaderboard = () =>
     this.renderTabbedQueryBuilder(false, { verbs: { expanded: true } });
-
+  renderStacked = () =>
+    this.renderTabbedQueryBuilder(false, { verbs: { expanded: true } });
   renderCounter = () =>
   this.renderTabbedQueryBuilder(false, { verbs: { expanded: true } });
 
@@ -127,6 +129,8 @@ class VisualiseFilterForm extends Component {
         return this.renderFrequency();
       case STATEMENTS:
         return this.renderStatements(queries);
+      case STACKED:
+        return this.renderStacked(queries);
       case LEADERBOARD:
         return this.renderLeaderboard(queries);
       case POPULARACTIVITIES:

@@ -14,6 +14,7 @@ export const LINE = 'LINE';
 export const COLUMN = 'COLUMN';
 export const COMPONENT = 'COMPONENT';
 export const TABLE = 'TABLE';
+export const STACKED = 'STACKED';
 export const TEXT = 'TEXT';
 
 export const TODAY = 'TODAY';
@@ -72,7 +73,7 @@ export const PROGRESS_MODELS = {
 export const STACKED_TYPES = [LEADERBOARD, POPULARACTIVITIES, STATEMENTS];
 
 export const VISUALISATION_TYPES = [
-  LEADERBOARD, XVSY, STATEMENTS, FREQUENCY, COUNTER, PIE
+  LEADERBOARD, XVSY, STATEMENTS, FREQUENCY, COUNTER, PIE, STACKED
 ];
 
 export const VISUALISATION_COLORS = ['#F5AB36', '#DB0A5B', '#36D7B7', '#9B59B6', '#F77F3F', '#1E8BC3', '#ED4444'];

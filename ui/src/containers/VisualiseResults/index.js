@@ -8,12 +8,14 @@ import LineChartResults from 'ui/containers/VisualiseResults/LineChartResults';
 import ColumnChartResults from 'ui/containers/VisualiseResults/ColumnChartResults';
 import CounterResults from 'ui/containers/VisualiseResults/CounterResults';
 import PieChartResults from 'ui/containers/VisualiseResults/PieChartResults';
+import StackedChartResults from 'ui/containers/VisualiseResults/StackedChartResults';
 import {
   LEADERBOARD,
   XVSY,
   STATEMENTS,
   FREQUENCY,
   COUNTER,
+  STACKED,
   PIE,
 } from 'ui/utils/constants';
 import styles from './visualiseresults.css';
@@ -31,6 +33,8 @@ export default compose(
   switch (visualisationType) {
     case LEADERBOARD:
       return <BarChartResults id={visualisationId} />;
+    case STACKED:
+      return <StackedChartResults id={visualisationId} />;
     case STATEMENTS:
       return <ColumnChartResults id={visualisationId} />;
     case XVSY:

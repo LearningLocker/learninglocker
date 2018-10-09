@@ -9,6 +9,7 @@ import {
   LEADERBOARD,
   XVSY,
   STATEMENTS,
+  STACKED,
   FREQUENCY,
   COUNTER,
   PIE
@@ -38,6 +39,7 @@ export default memoize((args = new Map()) => {
     case POPULARACTIVITIES:
     case LEADERBOARD:
     case PIE:
+    case STACKED:
     case STATEMENTS:
     case FREQUENCY:
       return aggregateChart(preReqs, axes);
