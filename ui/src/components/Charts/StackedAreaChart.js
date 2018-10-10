@@ -1,5 +1,6 @@
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip} from 'recharts';
+import { toJS } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { AutoSizer } from 'react-virtualized';
 import NoData from 'ui/components/Graphs/NoData';
@@ -17,11 +18,26 @@ import {
 } from './Chart';
 import styles from './styles.css';
 
-const sortData = data => data.sortBy(e => e.get('id'));
-const getSortedData = results => labels => sortData(getResultsData(results)(labels));
+const sortData = data => data.sortBy((e) => e.get('id'));
+
+const serializeForStack = (sortedData, labels) => {  
+  const jsData = {
+    data: sortedData.toJS(),
+    labels: labels.toJs()
+  };
+  const serializedData = labels.map((result) => {
+
+  })
+ return sortedData
+}
+
+const getLayers = (colors) => {
+    return colors
+}
+const getSortedData = results => labels => serializeForStack(sortData(getResultsData(results)(labels)), labels);
 const chartUuid = uuid.v4();
-const renderStackChart = colors => labels => cData => rawResults => ({ width, height }) => { 
-    console.log('data', cData, labels, rawResults)
+const renderStackChart = colors => labels => rawResults => cData => ({ width, height }) => { 
+    console.log('TCL: colors => labels => rawResults => cData', colors, labels, rawResults, cData);
     const data = [
         {name: 'Page A', uv: 4000, pv: 2400, amt: 2400},
         {name: 'Page B', uv: 3000, pv: 1398, amt: 2210},
