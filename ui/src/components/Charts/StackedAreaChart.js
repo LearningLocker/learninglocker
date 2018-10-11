@@ -7,10 +7,11 @@ import NoData from 'ui/components/Graphs/NoData';
 import { compose } from 'recompose';
 import uuid from 'uuid';
 import {
-  getResultsData,
+  getStackResultsData,
   getShortModel,
   getChartData,
   hasData,
+  getSeriesLabels,
   renderTooltips,
   renderBars,
   renderLegend,
@@ -18,34 +19,41 @@ import {
 } from './Chart';
 import styles from './styles.css';
 
-const sortData = data => data.sortBy((e) => e.get('id'));
+const sortData = data => data.sortBy(e => e.get('id'));
 
-const serializeForStack = (sortedData, labels) => {  
-  const jsData = {
-    data: sortedData.toJS(),
-    labels: labels.toJs()
-  };
-  const serializedData = labels.map((result) => {
+const renderAreas = (labels, colors) => {
+  const out = labels.map((label, i) => <Area type="monotone" dataKey={label} stackId="1" stroke={colors[i]} fill={colors[i]} />
+  );
+  return out;
+};
+// const serializeForStack = (sortedData, labels) => {
+//   const jsData = {
+//     data: sortedData.toJS(),
+//     labels: labels.toJs()
+//   };
+//   const serializedData = labels.map((result) => {
 
-  })
- return sortedData
-}
+//   })
+//  return sortedData
+// }
 
-const getLayers = (colors) => {
-    return colors
-}
-const getSortedData = results => labels => serializeForStack(sortData(getResultsData(results)(labels)), labels);
+// const getLayers = (colors) => {
+//     return colors
+// }
+const getSortedData = results => labels => sortData(getStackResultsData(results)(labels));
+// const getSortedData = results => labels => serializeForStack(sortData(getResultsData(results)(labels)), labels);
 const chartUuid = uuid.v4();
-const renderStackChart = colors => labels => rawResults => cData => ({ width, height }) => { 
-    console.log('TCL: colors => labels => rawResults => cData', colors, labels, rawResults, cData);
-    const data = [
-        {name: 'Page A', uv: 4000, pv: 2400, amt: 2400},
-        {name: 'Page B', uv: 3000, pv: 1398, amt: 2210},
-        {name: 'Page C', uv: 2000, pv: 9800, amt: 2290},
-        {name: 'Page D', uv: 2780, pv: 3908, amt: 2000},
-        {name: 'Page E', uv: 1890, pv: 4800, amt: 2181},
-        {name: 'Page F', uv: 2390, pv: 3800, amt: 2500},
-        {name: 'Page G', uv: 3490, pv: 4300, amt: 2100},
+const renderStackChart = colors => labels => rawResults => cData => ({ width, height }) => {
+  console.log('TCL: colors => labels => rawResults => cData', colors, labels, rawResults, cData);
+  console.log('get series', getSeriesLabels(labels))
+  const data = [
+    {name: 'Page A', uv: 4000, pv: 2400, amt: 2400},
+    {name: 'Page B', uv: 3000, pv: 1398, amt: 2210},
+    {name: 'Page C', uv: 2000, pv: 9800, amt: 2290},
+    {name: 'Page D', uv: 2780, pv: 3908, amt: 2000},
+    {name: 'Page E', uv: 1890, pv: 4800, amt: 2181},
+    {name: 'Page F', uv: 2390, pv: 3800, amt: 2500},
+    {name: 'Page G', uv: 3490, pv: 4300, amt: 2100},
   ]
       //   data={getChartData(data, hiddenSeries)}
     return (
@@ -57,7 +65,7 @@ const renderStackChart = colors => labels => rawResults => cData => ({ width, he
           visibility: hidden !important;
         }
       ` }} />
-   <AreaChart 
+    <AreaChart 
         data={data}
         margin={{top: 10, right: 30, left: 0, bottom: 0}}
         width={width}
@@ -66,6 +74,7 @@ const renderStackChart = colors => labels => rawResults => cData => ({ width, he
         <XAxis dataKey="name"/>
         <YAxis/>
         <Tooltip/>
+        {renderAreas(getSeriesLabels(labels), colors)}
         <Area type='monotone' dataKey='uv' stackId="1" stroke='#8884d8' fill='#8884d8' />
         <Area type='monotone' dataKey='pv' stackId="1" stroke='#82ca9d' fill='#82ca9d' />
         <Area type='monotone' dataKey='amt' stackId="1" stroke='#ffc658' fill='#ffc658' />

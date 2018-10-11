@@ -78,15 +78,42 @@ const getEntryData = i => (entry) => {
   });
 };
 
+const getStackEntryData = (i, labels) => (entry) => {
+  const entryId = entry.get('_id');
+  const entryModel = displayAuto(entry.get('model'));
+  const entryCount = entry.get('count', 0);
+  // console.log('labels', labels.getIn((i - 1), `Series ${i}`))
+  const out = new Map({
+    cellId: isString(entryId) || isNumber(entryId) ? entryId : getLabel(entryId),
+    id: getId(entryId)(entryModel),
+    model: entryModel,
+    [labels.get(i - 1) || `Series ${i}`]: entryCount,
+    total: entryCount,
+  });
+  return out;
+};
+
 const getEntriesData = i => entries => entries.map(getEntryData(i)).mapKeys((k, data) => data.get('cellId'));
+
+const getStackEntriesData = i => entries => labels => entries.map(getStackEntryData(i, labels)).mapKeys((k, data) => data.get('cellId'));
 
 const getSeriesData = series => i =>
   getEntriesData(i + 1)(series.get(0, new Map()));
 
+const getStackSeriesData = series => i => (labels) => {
+  return getStackEntriesData(i + 1)(series.get(0, new Map()))(labels);
+}
+
 const mergeEntryData = (prev, next) => prev.merge(next).set('total', next.get('total') + prev.get('total'));
 
-const mergeSeriesData = (data, series, i) => data.mergeWith(mergeEntryData, getSeriesData(series)(i));
+const mergeSeriesData = (data, series, i) => {
+  return data.mergeWith(mergeEntryData, getSeriesData(series)(i));
+}
 
+const mergeStackSeriesData = labels => (data, series, i) => {
+  console.log('yo', data.mergeWith(mergeEntryData, getStackSeriesData(series)(i)(labels)))
+  return data.mergeWith(mergeEntryData, getStackSeriesData(series)(i)(labels));
+}
 const getGroupModel = data => group =>
   data.getIn([group, 'model'], group);
 
@@ -107,6 +134,9 @@ const renderBar = index => stacked => label => color => (
 
 const reduceResults = results => results.reduce(mergeSeriesData, new Map());
 
+const reduceStackResults = results => labels => results.reduce(mergeStackSeriesData(labels), new Map());
+// const reduceStackResults = results => labels => results.reduce(mergeStackSeriesData(labels), new Map());
+
 const addSeries = (entry, l, i) =>
   entry.set(`Series ${i + 1}`, entry.get(`Series ${i + 1}`, 0));
 
@@ -116,11 +146,18 @@ const formatEntry = labels => entry =>
 const mapEntries = entries => labels =>
   entries.map(formatEntry(labels));
 
+const addSeriesWithLabels = (entry, l, i, labels) =>
+entry.set(labels[i] || `Series ${i + 1}`, entry.get(`Serie~s ${i + 1}`, 0));
+
 export const getDomain = data =>
   getMinAndMax(data.map(getTotal));
 
-export const getResultsData = results => labels =>
-  mapEntries(reduceResults(results))(labels);
+export const getResultsData = results => labels => mapEntries(reduceResults(results))(labels);
+
+export const getStackResultsData = results => (labels) => {
+  console.log('yoyo', reduceStackResults(results)(labels));
+  return mapEntries(reduceResults(results))(labels)
+}
 
 export const getLongModel = memoize(data => memoize(group => (
   getGroupModel(data)(group)
@@ -141,6 +178,8 @@ export const getChartData = (data, hiddenSeries = new Set()) => {
 
   return filteredData.valueSeq().toJS();
 };
+
+export const getSeriesLabels = labels => labels.toJS().map((label, i) => label || `Series ${i}`);
 
 export const hasData = results =>
   getLargestSeriesSize(results) > 0;
