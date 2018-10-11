@@ -68,7 +68,7 @@ const getEntryData = i => (entry) => {
   const entryId = entry.get('_id');
   const entryModel = displayAuto(entry.get('model'));
   const entryCount = entry.get('count', 0);
-
+  // console.log('entry', entry, i)
   return new Map({
     cellId: isString(entryId) || isNumber(entryId) ? entryId : getLabel(entryId),
     id: getId(entryId)(entryModel),
@@ -79,17 +79,19 @@ const getEntryData = i => (entry) => {
 };
 
 const getStackEntryData = (i, labels) => (entry) => {
+  // console.log('entry s', entry, i)
   const entryId = entry.get('_id');
   const entryModel = displayAuto(entry.get('model'));
   const entryCount = entry.get('count', 0);
-  // console.log('labels', labels.getIn((i - 1), `Series ${i}`))
+
   const out = new Map({
     cellId: isString(entryId) || isNumber(entryId) ? entryId : getLabel(entryId),
     id: getId(entryId)(entryModel),
     model: entryModel,
-    [labels.get(i - 1) || `Series ${i}`]: entryCount,
+    [labels.get(i) || `Series ${i}`]: entryCount,
     total: entryCount,
   });
+  // console.log('out', out)
   return out;
 };
 
@@ -100,18 +102,16 @@ const getStackEntriesData = i => entries => labels => entries.map(getStackEntryD
 const getSeriesData = series => i =>
   getEntriesData(i + 1)(series.get(0, new Map()));
 
-const getStackSeriesData = series => i => (labels) => {
-  return getStackEntriesData(i + 1)(series.get(0, new Map()))(labels);
-}
+const getStackSeriesData = series => i => labels =>
+  getStackEntriesData(i + 1)(series.get(0, new Map()))(labels);
 
 const mergeEntryData = (prev, next) => prev.merge(next).set('total', next.get('total') + prev.get('total'));
 
-const mergeSeriesData = (data, series, i) => {
-  return data.mergeWith(mergeEntryData, getSeriesData(series)(i));
-}
+const mergeSeriesData = (data, series, i) =>
+  data.mergeWith(mergeEntryData, getSeriesData(series)(i));
 
 const mergeStackSeriesData = labels => (data, series, i) => {
-  console.log('yo', data.mergeWith(mergeEntryData, getStackSeriesData(series)(i)(labels)))
+  // console.log('yo', data.mergeWith(mergeEntryData, getStackSeriesData(series)(i)(labels)))
   return data.mergeWith(mergeEntryData, getStackSeriesData(series)(i)(labels));
 }
 const getGroupModel = data => group =>
@@ -132,9 +132,15 @@ const renderBar = index => stacked => label => color => (
     stackId={stacked ? 1 : index} />
 );
 
-const reduceResults = results => results.reduce(mergeSeriesData, new Map());
+const reduceResults = results => {
+  console.log('stack res ', results)
+  return results.reduce(mergeSeriesData, new Map());
+}
 
-const reduceStackResults = results => labels => results.reduce(mergeStackSeriesData(labels), new Map());
+const reduceStackResults = results => labels => {
+  console.log('red stack res ', results)
+  return results.reduce(mergeStackSeriesData(labels), new Map());
+}
 // const reduceStackResults = results => labels => results.reduce(mergeStackSeriesData(labels), new Map());
 
 const addSeries = (entry, l, i) =>
@@ -155,8 +161,8 @@ export const getDomain = data =>
 export const getResultsData = results => labels => mapEntries(reduceResults(results))(labels);
 
 export const getStackResultsData = results => (labels) => {
-  console.log('yoyo', reduceStackResults(results)(labels));
-  return mapEntries(reduceResults(results))(labels)
+  console.log('yoyo', mapEntries(reduceStackResults(results)(labels))(labels));
+  return mapEntries(reduceStackResults(results)(labels))(labels)
 }
 
 export const getLongModel = memoize(data => memoize(group => (

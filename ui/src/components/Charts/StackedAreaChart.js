@@ -21,67 +21,31 @@ import styles from './styles.css';
 
 const sortData = data => data.sortBy(e => e.get('id'));
 
-const renderAreas = (labels, colors) => {
-  const out = labels.map((label, i) => <Area type="monotone" dataKey={label} stackId="1" stroke={colors[i]} fill={colors[i]} />
-  );
-  return out;
-};
-// const serializeForStack = (sortedData, labels) => {
-//   const jsData = {
-//     data: sortedData.toJS(),
-//     labels: labels.toJs()
-//   };
-//   const serializedData = labels.map((result) => {
+const renderAreas = (labels, colors) => labels.map((label, i) => {
+  console.log('area', label, i, colors.get(i))
+return <Area type="monotone" dataKey={label} stackId={i} stroke={colors.get(i)} fill={colors.get(i)} />
+});
 
-//   })
-//  return sortedData
-// }
-
-// const getLayers = (colors) => {
-//     return colors
-// }
 const getSortedData = results => labels => sortData(getStackResultsData(results)(labels));
 // const getSortedData = results => labels => serializeForStack(sortData(getResultsData(results)(labels)), labels);
 const chartUuid = uuid.v4();
-const renderStackChart = colors => labels => rawResults => cData => ({ width, height }) => {
-  console.log('TCL: colors => labels => rawResults => cData', colors, labels, rawResults, cData);
-  console.log('get series', getSeriesLabels(labels))
-  const data = [
-    {name: 'Page A', uv: 4000, pv: 2400, amt: 2400},
-    {name: 'Page B', uv: 3000, pv: 1398, amt: 2210},
-    {name: 'Page C', uv: 2000, pv: 9800, amt: 2290},
-    {name: 'Page D', uv: 2780, pv: 3908, amt: 2000},
-    {name: 'Page E', uv: 1890, pv: 4800, amt: 2181},
-    {name: 'Page F', uv: 2390, pv: 3800, amt: 2500},
-    {name: 'Page G', uv: 3490, pv: 4300, amt: 2100},
-  ]
-      //   data={getChartData(data, hiddenSeries)}
-    return (
-  /* eslint-disable react/no-danger */
-  <div>
-    <style
-      dangerouslySetInnerHTML={{ __html: `
-        .grid-${chartUuid} .recharts-cartesian-grid-vertical {
-          visibility: hidden !important;
-        }
-      ` }} />
-    <AreaChart 
-        data={data}
-        margin={{top: 10, right: 30, left: 0, bottom: 0}}
-        width={width}
-        height={height}>
-        <CartesianGrid strokeDasharray="3 3"/>
-        <XAxis dataKey="name"/>
-        <YAxis/>
-        <Tooltip/>
-        {renderAreas(getSeriesLabels(labels), colors)}
-        <Area type='monotone' dataKey='uv' stackId="1" stroke='#8884d8' fill='#8884d8' />
-        <Area type='monotone' dataKey='pv' stackId="1" stroke='#82ca9d' fill='#82ca9d' />
-        <Area type='monotone' dataKey='amt' stackId="1" stroke='#ffc658' fill='#ffc658' />
-      </AreaChart>
-  </div>
-  /* eslint-enable react/no-danger */
-);}
+
+
+const renderStackChart = (labels, toggleHiddenSeries, hiddenSeries) => colors => data => ({ width, height }) => (
+  <AreaChart
+    data={getChartData(data, hiddenSeries)}
+    width={width}
+    height={height}
+    margin={{ top: 10, right: 35, left: -20, bottom: 5 }}>
+    <XAxis type="category" dataKey="cellId" tickFormatter={getShortModel(data)} />
+    <YAxis type="number" />
+    <CartesianGrid strokeDasharray="1 1" />
+    {renderLegend(labels, toggleHiddenSeries)}
+    {renderAreas(getSeriesLabels(labels), colors)}
+    {renderTooltips(data)}
+  </AreaChart>
+  );
+
 const renderChart = (model, component, axesLabels, chartWrapperFn) =>
 (
   <div className={styles.chart}>
@@ -100,24 +64,26 @@ const renderChart = (model, component, axesLabels, chartWrapperFn) =>
     </div>
   </div>
 );
-const renderChartResults = colors => labels => results => rawResults => (
-  renderStackChart(colors)(labels)(rawResults)(getSortedData(results)(labels))
-);
-const renderResults = results => rawResults => model => colors => labels => axesLabels => chartWrapperFn => (
-  renderChart(model, renderChartResults(colors)(labels)(results)(rawResults), axesLabels, chartWrapperFn)
-);
+
+const renderChartResults = (labels, toggleHiddenSeries, hiddenSeries) => colors => results =>
+  renderStackChart(labels, toggleHiddenSeries, hiddenSeries)(colors)(getSortedData(results)(labels));
+
+const renderResults = results => (labels, toggleHiddenSeries, hiddenSeries) => colors => axesLabels => chartWrapperFn => model =>
+  renderChart(renderChartResults(labels, toggleHiddenSeries, hiddenSeries)(colors)(results), axesLabels, chartWrapperFn, model);
+
 
 export default compose(
   withStyles(styles),
   hiddenSeriesState
 )(({
   results,
-  rawResults,
   labels,
   colors,
   axesLabels,
   chartWrapperFn = component => (<AutoSizer>{component}</AutoSizer>),
+  toggleHiddenSeries,
+  hiddenSeries,
   model
-}) => (
-  hasData(results) ? renderResults(results)(rawResults)(model)(colors)(labels)(axesLabels)(chartWrapperFn) : <NoData />
-));
+}) =>
+  (hasData(results) ? renderResults(results)(labels, toggleHiddenSeries, hiddenSeries)(colors)(axesLabels)(chartWrapperFn)(model) : <NoData />)
+);
