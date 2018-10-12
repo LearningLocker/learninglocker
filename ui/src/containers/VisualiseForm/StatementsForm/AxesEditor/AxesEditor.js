@@ -2,6 +2,7 @@ import React from 'react';
 import {
   XVSY,
   STATEMENTS,
+  STACKED,
   POPULARACTIVITIES,
   LEADERBOARD,
   FREQUENCY,
@@ -12,16 +13,18 @@ import BarAxesEditor from './BarAxesEditor';
 import ColumnAxesEditor from './ColumnAxesEditor';
 import LineAxesEditor from './LineAxesEditor';
 import ScatterAxesEditor from './ScatterAxesEditor';
+import StackAxesEditor from './StackAxesEditor';
 import CounterAxesEditor from './CounterAxesEditor';
 import PieAxesEditor from './PieAxesEditor';
 
 export default ({ model }) => {
+  console.log(model.get('type'))
   switch (model.get('type')) {
     case LEADERBOARD:
-    case POPULARACTIVITIES:
-      return <BarAxesEditor model={model} />;
+    case POPULARACTIVITIES: return <BarAxesEditor model={model} />;
     case XVSY: return <ScatterAxesEditor model={model} />;
     case STATEMENTS: return <ColumnAxesEditor model={model} />;
+    case STACKED: return <StackAxesEditor model={model} />;
     case FREQUENCY: return <LineAxesEditor model={model} />;
     case COUNTER: return <CounterAxesEditor model={model} />;
     case PIE: return <PieAxesEditor model={model} />;

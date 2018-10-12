@@ -68,7 +68,7 @@ const getEntryData = i => (entry) => {
   const entryId = entry.get('_id');
   const entryModel = displayAuto(entry.get('model'));
   const entryCount = entry.get('count', 0);
-
+  // console.log('entry', entry, i)
   return new Map({
     cellId: isString(entryId) || isNumber(entryId) ? entryId : getLabel(entryId),
     id: getId(entryId)(entryModel),
@@ -85,7 +85,8 @@ const getSeriesData = series => i =>
 
 const mergeEntryData = (prev, next) => prev.merge(next).set('total', next.get('total') + prev.get('total'));
 
-const mergeSeriesData = (data, series, i) => data.mergeWith(mergeEntryData, getSeriesData(series)(i));
+const mergeSeriesData = (data, series, i) =>
+  data.mergeWith(mergeEntryData, getSeriesData(series)(i));
 
 const getGroupModel = data => group =>
   data.getIn([group, 'model'], group);
@@ -107,6 +108,8 @@ const renderBar = index => stacked => label => color => (
 
 const reduceResults = results => results.reduce(mergeSeriesData, new Map());
 
+// const reduceStackResults = results => labels => results.reduce(mergeStackSeriesData(labels), new Map());
+
 const addSeries = (entry, l, i) =>
   entry.set(`Series ${i + 1}`, entry.get(`Series ${i + 1}`, 0));
 
@@ -119,8 +122,7 @@ const mapEntries = entries => labels =>
 export const getDomain = data =>
   getMinAndMax(data.map(getTotal));
 
-export const getResultsData = results => labels =>
-  mapEntries(reduceResults(results))(labels);
+export const getResultsData = results => labels => mapEntries(reduceResults(results))(labels);
 
 export const getLongModel = memoize(data => memoize(group => (
   getGroupModel(data)(group)
@@ -142,6 +144,9 @@ export const getChartData = (data, hiddenSeries = new Set()) => {
   return filteredData.valueSeq().toJS();
 };
 
+export const getSeriesLabels = labels => labels.toJS().map((label, i) => label || `Series ${i}`);
+export const getStackSeriesLabels = labels => labels.toJS().map((label, i) => label || `Series ${i + 1}`);
+
 export const hasData = results =>
   getLargestSeriesSize(results) > 0;
 
@@ -155,7 +160,7 @@ const onLegendClick = toggleHiddenSeries => (bar) => {
 
 export const renderLegend = (labels, toggleHiddenSeries) => (labels.size > 1 ?
   <Legend
-    verticalAlign={'top'} align="center" height={30} onClick={toggleHiddenSeries ? onLegendClick(toggleHiddenSeries) : null} /> : <noscript />
+    iconType="square" iconSize={12} verticalAlign={'top'} align="center" height={30} onClick={toggleHiddenSeries ? onLegendClick(toggleHiddenSeries) : null} /> : <noscript />
   );
 
 export const renderTooltips = (data, hiddenSeries, colors = ['grey']) =>

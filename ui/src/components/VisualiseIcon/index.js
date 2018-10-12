@@ -13,6 +13,7 @@ import {
   FREQUENCY,
   COUNTER,
   PIE,
+  STACKED,
   TABLE
 } from '../../utils/constants';
 import LEADERBOARD_IMAGE from './assets/ll-icon-bar-graph.svg';
@@ -23,6 +24,7 @@ import COUNTER_IMAGE from './assets/ll-icon-counter.svg';
 import PIE_IMAGE from './assets/ll-icon-pie-chart.svg';
 import TABLE_IMAGE from './assets/ll-table-icon.svg';
 import SESSIONS_IMAGE from './assets/ll-icon-accumulation.svg';
+import STACKED_IMAGE from './assets/ll-icon-stacked-area.svg';
 
 const PLATFORMS_IMAGE = SESSIONS_IMAGE;
 const QUESTIONANALYSIS_IMAGE = SESSIONS_IMAGE;
@@ -52,6 +54,7 @@ class VisualiseIcon extends Component {
       case SESSIONS: return 'Sessions';
       case PLATFORMS: return 'Platforms';
       case QUESTIONANALYSIS: return 'Question analysis';
+      case STACKED: return 'Stacked area';
       default: return '';
     }
   }
@@ -71,6 +74,7 @@ class VisualiseIcon extends Component {
       case PLATFORMS: return PLATFORMS_IMAGE;
       case TABLE: return TABLE_IMAGE;
       case QUESTIONANALYSIS: return QUESTIONANALYSIS_IMAGE;
+      case STACKED: return STACKED_IMAGE;
       default: return '';
     }
   }
