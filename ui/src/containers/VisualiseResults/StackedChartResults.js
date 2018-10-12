@@ -5,7 +5,9 @@ import StackedAreaChart from 'ui/components/Charts/StackedAreaChart';
 
 export default withStatementsVisualisation(({
   getFormattedResults, results, labels, colors, previewPeriod, axes, model
-}) => (
+}) => {
+  console.log('model stackchartres', model)
+  return (
   <StackedAreaChart
     results={getFormattedResults(results)}
     labels={labels}
@@ -16,4 +18,5 @@ export default withStatementsVisualisation(({
       xLabel: shorten(axes.get('xLabel', axes.getIn(['group', 'searchString'], 'yyyy-mm-dd'))),
       yLabel: shorten(axes.get('yLabel', axes.getIn(['value', 'searchString'], 'Y-Axis')))
     }} />
-));
+)}
+);

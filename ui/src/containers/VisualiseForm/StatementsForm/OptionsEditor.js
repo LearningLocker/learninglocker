@@ -6,7 +6,9 @@ import CounterEditor from './OptionsEditor/CounterEditor';
 import DefaultEditor from './OptionsEditor/DefaultEditor';
 
 
-const OptionsEditor = ({ model }) => (
+const OptionsEditor = ({ model }) => {
+  console.log('model opt', model)
+  return (
   <div>
     {model.get('type') === XVSY && <XvsYOptionsEditor model={model} />}
     {(model.get('type') === LEADERBOARD) && <BarEditor model={model} />}
@@ -16,6 +18,6 @@ const OptionsEditor = ({ model }) => (
     {(model.get('type') === PIE) && <DefaultEditor model={model} />}
     {(model.get('type') === FREQUENCY) && <DefaultEditor model={model} />}
   </div>
-);
+);}
 
 export default OptionsEditor;

@@ -5,6 +5,7 @@ import {
   POPULARACTIVITIES,
   LEADERBOARD,
   FREQUENCY,
+  STACKED,
   COUNTER,
   PIE,
 } from 'ui/utils/constants';
@@ -60,8 +61,11 @@ export const GROUP_OPTS = createOptionModels({
 });
 
 export const getTypeOpts = (type) => {
+  console.log('type in get type', type)
   switch (type) {
     case FREQUENCY:
+      return LINE_OPERATOR_OPTS;
+    case STACKED :
       return LINE_OPERATOR_OPTS;
     case XVSY:
     case STATEMENTS:

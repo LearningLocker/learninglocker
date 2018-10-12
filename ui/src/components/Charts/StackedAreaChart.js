@@ -1,19 +1,16 @@
 import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip} from 'recharts';
-import { toJS } from 'immutable';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid,} from 'recharts';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { AutoSizer } from 'react-virtualized';
 import NoData from 'ui/components/Graphs/NoData';
 import { compose } from 'recompose';
-import uuid from 'uuid';
 import {
-  getStackResultsData,
+  getResultsData,
   getShortModel,
   getChartData,
   hasData,
-  getSeriesLabels,
+  getStackSeriesLabels,
   renderTooltips,
-  renderBars,
   renderLegend,
   hiddenSeriesState
 } from './Chart';
@@ -21,15 +18,17 @@ import styles from './styles.css';
 
 const sortData = data => data.sortBy(e => e.get('id'));
 
-const renderAreas = (labels, colors) => labels.map((label, i) => {
-  console.log('area', label, i, colors.get(i))
-return <Area type="monotone" dataKey={label} stackId={i} stroke={colors.get(i)} fill={colors.get(i)} />
-});
+const renderAreas = (labels, colors) => labels.map((label, i) => (<Area
+  type="natural"
+  dataKey={`Series ${i + 1}`}
+  key={i}
+  name={label || `Series ${i + 1}`}
+  stackId={1}
+  stroke={colors.get(i)}
+  fill={colors.get(i)} />)
+);
 
-const getSortedData = results => labels => sortData(getStackResultsData(results)(labels));
-// const getSortedData = results => labels => serializeForStack(sortData(getResultsData(results)(labels)), labels);
-const chartUuid = uuid.v4();
-
+const getSortedData = results => labels => sortData(getResultsData(results)(labels));
 
 const renderStackChart = (labels, toggleHiddenSeries, hiddenSeries) => colors => data => ({ width, height }) => (
   <AreaChart
@@ -41,13 +40,13 @@ const renderStackChart = (labels, toggleHiddenSeries, hiddenSeries) => colors =>
     <YAxis type="number" />
     <CartesianGrid strokeDasharray="1 1" />
     {renderLegend(labels, toggleHiddenSeries)}
-    {renderAreas(getSeriesLabels(labels), colors)}
+    {renderAreas(getStackSeriesLabels(labels), colors)}
     {renderTooltips(data)}
   </AreaChart>
-  );
+);
 
-const renderChart = (model, component, axesLabels, chartWrapperFn) =>
-(
+
+const renderChart = (component, axesLabels, chartWrapperFn, model) => (
   <div className={styles.chart}>
     <div className={`${styles.barContainer}`}>
       <span className={styles.yAxis}>
@@ -65,12 +64,9 @@ const renderChart = (model, component, axesLabels, chartWrapperFn) =>
   </div>
 );
 
-const renderChartResults = (labels, toggleHiddenSeries, hiddenSeries) => colors => results =>
-  renderStackChart(labels, toggleHiddenSeries, hiddenSeries)(colors)(getSortedData(results)(labels));
+const renderChartResults = (labels, toggleHiddenSeries, hiddenSeries) => colors => (results) => renderStackChart(labels, toggleHiddenSeries, hiddenSeries)(colors)(getSortedData(results)(labels));
 
-const renderResults = results => (labels, toggleHiddenSeries, hiddenSeries) => colors => axesLabels => chartWrapperFn => model =>
-  renderChart(renderChartResults(labels, toggleHiddenSeries, hiddenSeries)(colors)(results), axesLabels, chartWrapperFn, model);
-
+const renderResults = results => (labels, toggleHiddenSeries, hiddenSeries) => colors => axesLabels => chartWrapperFn => (model) => renderChart(renderChartResults(labels, toggleHiddenSeries, hiddenSeries)(colors)(results), axesLabels, chartWrapperFn, model);
 
 export default compose(
   withStyles(styles),
@@ -84,6 +80,4 @@ export default compose(
   toggleHiddenSeries,
   hiddenSeries,
   model
-}) =>
-  (hasData(results) ? renderResults(results)(labels, toggleHiddenSeries, hiddenSeries)(colors)(axesLabels)(chartWrapperFn)(model) : <NoData />)
-);
+}) => (hasData(results) ? renderResults(results)(labels, toggleHiddenSeries, hiddenSeries)(colors)(axesLabels)(chartWrapperFn)(model) : <NoData />));

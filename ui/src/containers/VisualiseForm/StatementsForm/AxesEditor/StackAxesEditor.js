@@ -12,7 +12,9 @@ export class StackAxesEditor extends BaseAxesEditor {
     updateModel: PropTypes.func
   };
 
-  render = () => (
+  render = () => {
+    console.log('this', this)
+    return (
     <div>
       <div className="form-group">
         <label htmlFor="toggleInput" className="clearfix">Y Axis</label>
@@ -51,7 +53,7 @@ export class StackAxesEditor extends BaseAxesEditor {
         </div>
       </div>
     </div>
-  );
+  );}
 }
 
 export default connect(() => ({}), { updateModel })(StackAxesEditor);
