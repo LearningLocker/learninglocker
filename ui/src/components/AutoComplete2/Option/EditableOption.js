@@ -30,16 +30,18 @@ const EditableOption = ({
     );
   }
 
+  const canEditOption = canEdit(option);
+  const canEditHandler = canEditOption ? () => { setIsEditing(true); } : () => {};
+  const canDeleteHandler = canEditOption ? onDelete : () => {};
+
   return (
     <OptionListItem
       label={parseOption(option)}
       tooltip={parseOptionTooltip(option)}
       data={option}
       onClick={onClick}
-      onEdit={canEdit(option) && (() => {
-        setIsEditing(true);
-      })}
-      onDelete={canEdit(option) && onDelete} />
+      onEdit={canEditHandler}
+      onDelete={canDeleteHandler} />
   );
 };
 
