@@ -60,7 +60,7 @@ class TextInputGroup extends Component {
             key={key}
             autoFocus={key === 0}
             defaultValue={defaultValues[key]}
-            label={field}
+            name={field}
             onChange={this.onChangeField} />
         )}
         <div className={`${styles.buttons} clearfix`}>

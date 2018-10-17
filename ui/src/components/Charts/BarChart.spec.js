@@ -1,15 +1,38 @@
 import React from 'react';
 import ReactTestRenderer from 'react-test-renderer';
 import { withInsertCSS } from 'ui/utils/hocs';
-import { List, fromJS } from 'immutable';
+import { List, fromJS, Map } from 'immutable';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 import BarChart from './BarChart';
 
 const WrappedBarChart = withInsertCSS(BarChart);
 
 test('BarChartResults should render', () => {
+  const mockStore = createStore(
+    (data, action) => {
+      switch (action.type) {
+        case '@@redux/INIT':
+          return data;
+        default:
+          return data;
+      }
+    },
+    {
+      metadata: new Map()
+    }
+  );
+
+  const mockModel = new Map({
+    _id: '1111111111111111'
+  });
+
   const barChart = ReactTestRenderer.create(
-    <WrappedBarChart
-      results={new List()} />
+    <Provider store={mockStore}>
+      <WrappedBarChart
+        results={new List()}
+        model={mockModel} />
+    </Provider>
   ).toJSON();
 
   expect(barChart).toMatchSnapshot();
@@ -24,15 +47,36 @@ test('BarChartResult should render axes', () => {
     }
   }]]);
 
+  const mockStore = createStore(
+    (data, action) => {
+      switch (action.type) {
+        case '@@redux/INIT':
+          return data;
+        default:
+          return data;
+      }
+    },
+    { // state
+      metadata: new Map()
+    }
+  );
+
+  const mockModel = new Map({
+    _id: '1111111111111111',
+  });
+
   const barChart = ReactTestRenderer.create(
-    <WrappedBarChart
-      results={mockResult}
-      labels={fromJS([undefined])}
-      axesLabels={{
-        yLabel: 'THE-Y',
-        xLabel: 'THE-X'
-      }}
-      chartWrapperFn={() => (<div />)} />
+    <Provider store={mockStore}>
+      <WrappedBarChart
+        results={mockResult}
+        labels={fromJS([undefined])}
+        axesLabels={{
+          yLabel: 'THE-Y',
+          xLabel: 'THE-X'
+        }}
+        chartWrapperFn={() => (<div />)}
+        model={mockModel} />
+    </Provider>
   ).toJSON();
 
   expect(barChart).toMatchSnapshot();

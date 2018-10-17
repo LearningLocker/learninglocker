@@ -47,9 +47,10 @@ export const FETCH_VISUALISATION = 'learninglocker/models/learninglocker/visuali
 /**
  * @param  {String} id of visualisation to fetch data for
  */
-export const fetchVisualisation = id => ({
+export const fetchVisualisation = (id, benchmark) => ({
   type: FETCH_VISUALISATION,
-  id
+  id,
+  benchmark
 });
 
 
@@ -187,6 +188,7 @@ export const visualisationPiplelinesSelector = (
     const type = visualisation.get('type');
     const journey = visualisation.get('journey');
     const previewPeriod = visualisation.get('previewPeriod');
+    const benchmarkingEnabled = visualisation.get('benchmarkingEnabled', false);
     const queries = visualisation.get('filters', new List()).map((vFilter) => {
       if (!filter) {
         return vFilter;
@@ -205,7 +207,7 @@ export const visualisationPiplelinesSelector = (
     });
 
     const axes = unflattenAxes(visualisation);
-    return cb(queries, axes, type, previewPeriod, journey);
+    return cb(queries, axes, type, previewPeriod, journey, benchmarkingEnabled);
   }
 );
 
@@ -449,10 +451,24 @@ export const getDateRange = (period) => {
   }
 };
 
-const MAX_NAME_LENGTH = 12;
+const MAX_NAME_LENGTH = 17;
 export const trimName = (name, length = MAX_NAME_LENGTH) => {
-  if (name.length <= length) return name;
-  return `...${name.substr(-length)}`;
+  if (name.length >= length) {
+    let formattedName;
+    if (name.indexOf('/') !== -1) {
+      formattedName = name.split('/')[name.split('/').length - 1];
+    } else if (name.indexOf('@') !== -1) {
+      formattedName = name.split('@')[0];
+    } else if (name.indexOf(' ') !== -1) {
+      formattedName = name.split(' ')[name.split(' ').length - 1];
+    } else if (name.indexOf('.') !== -1) {
+      formattedName = name.split('.')[name.split('.').length - 1];
+    } else {
+      formattedName = `${name.substr(0, 12)} ${name.substr(12, 12)}`;
+    }
+    return formattedName.length >= length ? `${formattedName.substr(-length)}...` : formattedName;
+  }
+  return name || 'Unnamed';
 };
 
 export const isDateRange = () => {

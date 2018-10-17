@@ -58,7 +58,7 @@ export default class CountEditor extends Component {
           values={new Map({
             [operator]: operatorOptions.get(operator)
           })}
-          options={operatorOptions}
+          options={operatorOptions.map(option => `${option}...`)}
           multi={false}
           onChangeFilter={this.changeOperatorInput}
           onChange={this.changeOperator} />
@@ -73,5 +73,4 @@ export default class CountEditor extends Component {
       </div>
     );
   }
-
 }

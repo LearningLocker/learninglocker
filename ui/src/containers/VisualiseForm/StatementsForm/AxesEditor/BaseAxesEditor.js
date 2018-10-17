@@ -31,7 +31,14 @@ export default class BaseAxesEditor extends Component {
     return value;
   };
 
+  setAxesValue = (key, newValue) => {
+    const value = this.props.model.set(VISUALISE_AXES_PREFIX + key, newValue);
+    return value;
+  };
+
   handleAxesChange = (key, event) => {
     this.changeAxes(key, event.target.value);
   };
+
+
 }

@@ -10,17 +10,24 @@ import SingleInput from 'ui/components/AutoComplete2/Inputs/SingleInput/SingleIn
 const includes = ys => xs => xs.toLowerCase().indexOf(ys) !== -1;
 
 const renderOption = ({
-  useTooltip = false
+  useTooltip = false,
+  onFocus = () => {},
 }) => ({
   option = new Map(),
-  onSelectOption
-}) => (
-  <OptionListItem
-    data={option}
-    label={option.get('searchString')}
-    tooltip={useTooltip ? option.get('searchString') : null}
-    onClick={onSelectOption} />
-);
+  onSelectOption = () => {}
+}) => {
+  const out = (
+    <OptionListItem
+      data={option}
+      label={option.get('searchString')}
+      tooltip={useTooltip ? option.get('searchString') : null}
+      onClick={(event) => {
+        onFocus(event);
+        onSelectOption(event);
+      }} />
+  );
+  return out;
+};
 
 const withSearchString = withState('searchString', 'setSearchString');
 
@@ -75,12 +82,13 @@ const CacheKeysAutoComplete = ({
   selectOptionBlur
 }) => (
   <AutoComplete2
-    renderInput={({ hasFocus }) => (
+    renderInput={({ hasFocus, onFocus }) => (
       <SingleInput
         hasFocus={hasFocus}
+        onFocus={onFocus}
         searchString={searchString}
         parseOption={option => option.get('searchString')}
-        renderOption={renderOption({ useTooltip })}
+        renderOption={renderOption({ useTooltip, onFocus })}
         onChangeSearchString={e => setSearchString(e.target.value)}
         selectedOption={selectedOption} />
       )}

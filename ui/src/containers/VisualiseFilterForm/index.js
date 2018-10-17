@@ -10,6 +10,7 @@ import {
   POPULARACTIVITIES,
   LEADERBOARD,
   FREQUENCY,
+  COUNTER
 } from '../../utils/constants';
 
 class VisualiseFilterForm extends Component {
@@ -73,13 +74,13 @@ class VisualiseFilterForm extends Component {
     });
   }
 
-  renderTabbedQueryBuilder = (labelled = true, defaults = {}) => {
+  renderTabbedQueryBuilder = (labelled = true, defaults = {}, text = 'Build your query') => {
     const queries = this.props.model.get('filters', new List());
 
     return (
       <div>
-        <label htmlFor="tabbedQueriesBuilder" className="clearfix">
-          Build your query
+        <label htmlFor="tabbedQueriesBuilder" className="clearfix" style={{ marginLeft: '3px' }}>
+          {text}
         </label>
         <TabbedQueriesBuilder
           queries={queries}
@@ -101,6 +102,9 @@ class VisualiseFilterForm extends Component {
 
   renderLeaderboard = () =>
     this.renderTabbedQueryBuilder(false, { verbs: { expanded: true } });
+
+  renderCounter = () =>
+  this.renderTabbedQueryBuilder(false, { verbs: { expanded: true } });
 
   renderPopularActivities = () =>
     this.renderTabbedQueryBuilder(false, { objects: { expanded: true } });
@@ -127,6 +131,8 @@ class VisualiseFilterForm extends Component {
         return this.renderLeaderboard(queries);
       case POPULARACTIVITIES:
         return this.renderPopularActivities();
+      case COUNTER:
+        return this.renderCounter();
       default:
         return this.renderDefault(queries);
     }

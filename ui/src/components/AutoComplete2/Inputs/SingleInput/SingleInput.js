@@ -8,6 +8,7 @@ import styles from '../styles.css';
 const withFocusState = withState('inputFocused', 'setInputFocused', false);
 const withFocusStateHandlers = withHandlers({
   setInputFocusedTrue: props => () => {
+    props.onFocus();
     props.setInputFocused(true);
   },
   setInputFocusedFalse: props => () => {
@@ -47,6 +48,7 @@ const SingleInput = ({
   setInputFocusedTrue
 }) => {
   const shouldRenderSearch = hasFocus || !selectedOption;
+
   const wrapperClasses = classNames({
     [styles.inputWrapper]: true,
     [styles.open]: hasFocus

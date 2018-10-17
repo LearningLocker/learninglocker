@@ -10,7 +10,8 @@ import styles from '../styles.css';
 const BasicInput = ({
   value,
   onChange = () => {},
-  hasFocus
+  hasFocus,
+  onFocus,
 }) => {
   const classes = classNames({
     [styles.inputWrapper]: true,
@@ -22,7 +23,8 @@ const BasicInput = ({
         className="form-control"
         debounceTimeout={377}
         value={value}
-        onChange={onChange} />
+        onChange={onChange}
+        onFocus={onFocus} />
     </div>
   );
 };
