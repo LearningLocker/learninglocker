@@ -1,12 +1,21 @@
 import React from 'react';
 import { OPERATOR_OPTS } from 'ui/utils/visualisations/localOptions';
-import { COMPONENT, TEXT } from 'ui/utils/constants';
 import uuid from 'uuid';
+import {
+  LEADERBOARD,
+  XVSY,
+  STATEMENTS,
+  FREQUENCY,
+  COUNTER,
+  PIE,
+  BOXPLOT,
+  COMPONENT,
+  TEXT
+} from 'ui/utils/constants';
 import { startCase, toLower } from 'lodash';
 import VisualisationTypeIcon from '../containers/Visualise/VisualisationTypeIcon';
 import chevronUpIcon from './assets/ll-chevron-up-icon.svg';
 import chevronDownIcon from './assets/ll-chevron-down-icon.svg';
-
 
 const axv = 'axesvalue';
 const axV = 'axesxValue';
@@ -76,12 +85,13 @@ const formattedDefault = (model, type) => {
   const addXVSYXY = (selectedX, selectedY = 'Time') => `X: ${makeOperatorReadable(model, 'axesxOperator')} ${startCase(toLower(selectedX))} Y: ${makeOperatorReadable(model, 'axesyOperator')} ${startCase(toLower(selectedY))}`;
   const addYX = (selectedX, selectedY = 'Time') => `X: ${startCase(toLower(selectedY))} Y: ${makeOperatorReadable(model)} ${startCase(toLower(selectedX))}`;
   switch (type) {
-    case ('FREQUENCY'): return addYX(select(axv) || select(ayV), 'Time');
-    case ('LEADERBOARD'): return addYX(select(axg), select(axv) || select(ayV));
-    case ('XVSY'): return addXVSYXY(select(axV), select(axv) || select(ayV));
-    case ('COUNTER'): return `${makeOperatorReadable(model)}${select(axv) || select(ayV)}`;
-    case ('PIE'): return `${makeOperatorReadable(model)}${select(axv) || select(ayV)} / ${select(axg)}`;
-    case ('STATEMENTS'): return addXY(select(axg), select(axv) || select(ayV));
+    case (FREQUENCY): return addYX(select(axv) || select(ayV), 'Time');
+    case (LEADERBOARD): return addYX(select(axg), select(axv) || select(ayV));
+    case (XVSY): return addXVSYXY(select(axV), select(axv) || select(ayV));
+    case (BOXPLOT): return addYX(select(axg), select(axv) || select(ayV));
+    case (COUNTER): return `${makeOperatorReadable(model)}${select(axv) || select(ayV)}`;
+    case (PIE): return `${makeOperatorReadable(model)}${select(axv) || select(ayV)} / ${select(axg)}`;
+    case (STATEMENTS): return addXY(select(axg), select(axv) || select(ayV));
     case ('Unnamed'): return 'Pick a visualisation';
     default: return 'Empty';
   }

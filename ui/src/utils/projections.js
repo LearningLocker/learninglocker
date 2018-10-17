@@ -76,6 +76,19 @@ export const sections = {
     '$_id.openid',
     '$count'
   ],
+  BOXPLOT: [
+    '$_id',
+    '$_id.account',
+    '$_id.account.name',
+    '$_id.account.homePage',
+    '$_id.mbox',
+    '$_id.mbox_sha1sum',
+    '$_id.member',
+    '$_id.name',
+    '$_id.objectType',
+    '$_id.openid',
+    '$count'
+  ],
   POPULARACTIVITIES: [
     '$activity',
     '$activity.id',

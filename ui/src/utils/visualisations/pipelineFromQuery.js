@@ -7,6 +7,7 @@ import aggregateXvsY from 'ui/utils/visualisations/aggregateXvsY';
 import {
   POPULARACTIVITIES,
   LEADERBOARD,
+  BOXPLOT,
   XVSY,
   STATEMENTS,
   FREQUENCY,
@@ -38,6 +39,7 @@ export default memoize((args = new Map()) => {
     case POPULARACTIVITIES:
     case LEADERBOARD:
     case PIE:
+    case BOXPLOT:
     case STATEMENTS:
     case FREQUENCY:
       return aggregateChart(preReqs, axes);

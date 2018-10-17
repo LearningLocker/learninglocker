@@ -5,6 +5,7 @@ import {
   PIE,
   XVSY,
   STATEMENTS,
+  BOXPLOT,
   FREQUENCY
 } from '../../utils/constants';
 
@@ -20,6 +21,7 @@ export default class VisualiseIcon extends Component {
       case STATEMENTS: return 'Use the Column Graph to show statements over time. Use it to answer the question, how much activity has there been?';
       case FREQUENCY: return 'Use the Frequency graph to show statements over time in multiple series. Up to 5 series can be shown. Use it to answer the question, how does the activity of X compare to the activity of Y?';
       case COUNTER: return 'Use the Counter visualisation to show a single number (e.g. total number of users)';
+      case BOXPLOT: return 'Use the Boxplot visualisation to impress your peers and colleagues';
       case PIE: return 'Use the Pie chart to show show how your statements are divided (e.g. number of statements per course)';
       default: return '';
     }

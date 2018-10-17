@@ -12,6 +12,7 @@ import {
   STATEMENTS,
   FREQUENCY,
   COUNTER,
+  BOXPLOT,
   PIE,
   TABLE
 } from '../../utils/constants';
@@ -21,6 +22,7 @@ import STATEMENTS_IMAGE from './assets/ll-icon-column-graph.svg';
 import FREQUENCY_IMAGE from './assets/ll-icon-frequency.svg';
 import COUNTER_IMAGE from './assets/ll-icon-counter.svg';
 import PIE_IMAGE from './assets/ll-icon-pie-chart.svg';
+import BOXPLOT_IMAGE from './assets/ll-icon-pie-chart.svg';
 import TABLE_IMAGE from './assets/ll-table-icon.svg';
 import SESSIONS_IMAGE from './assets/ll-icon-accumulation.svg';
 
@@ -46,6 +48,7 @@ class VisualiseIcon extends Component {
       case LEADERBOARD: return 'Bar';
       case XVSY: return 'Correlation';
       case STATEMENTS: return 'Column';
+      case BOXPLOT: return 'Boxplot';
       case FREQUENCY: return 'Line';
       case COUNTER: return 'Counter';
       case PIE: return 'Pie';
@@ -67,6 +70,7 @@ class VisualiseIcon extends Component {
       case FREQUENCY: return FREQUENCY_IMAGE;
       case COUNTER: return COUNTER_IMAGE;
       case PIE: return PIE_IMAGE;
+      case BOXPLOT: return BOXPLOT_IMAGE;
       case SESSIONS: return SESSIONS_IMAGE;
       case PLATFORMS: return PLATFORMS_IMAGE;
       case TABLE: return TABLE_IMAGE;

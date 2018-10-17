@@ -2,6 +2,7 @@ import { Map, OrderedMap } from 'immutable';
 import {
   XVSY,
   STATEMENTS,
+  BOXPLOT,
   POPULARACTIVITIES,
   LEADERBOARD,
   FREQUENCY,
@@ -65,6 +66,7 @@ export const getTypeOpts = (type) => {
       return LINE_OPERATOR_OPTS;
     case XVSY:
     case STATEMENTS:
+    case BOXPLOT:
     case POPULARACTIVITIES:
     case LEADERBOARD:
     case COUNTER:

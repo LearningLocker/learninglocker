@@ -10,6 +10,7 @@ import {
   POPULARACTIVITIES,
   LEADERBOARD,
   FREQUENCY,
+  BOXPLOT,
   COUNTER
 } from '../../utils/constants';
 
@@ -119,12 +120,13 @@ class VisualiseFilterForm extends Component {
     const { model } = this.props;
     const type = model.get('type');
     const queries = model.get('filters', new List());
-
     switch (type) {
       case XVSY:
         return this.renderXvsY();
       case FREQUENCY:
         return this.renderFrequency();
+      case BOXPLOT:
+        return this.renderLeaderboard(queries);
       case STATEMENTS:
         return this.renderStatements(queries);
       case LEADERBOARD:

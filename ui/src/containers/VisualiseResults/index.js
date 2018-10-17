@@ -3,6 +3,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import BarChartResults from 'ui/containers/VisualiseResults/BarChartResults';
+import BoxPlotResults from 'ui/containers/VisualiseResults/BoxPlotResults';
 import XvsYChartResults from 'ui/containers/VisualiseResults/XvsYChartResults';
 import LineChartResults from 'ui/containers/VisualiseResults/LineChartResults';
 import ColumnChartResults from 'ui/containers/VisualiseResults/ColumnChartResults';
@@ -15,6 +16,7 @@ import {
   FREQUENCY,
   COUNTER,
   PIE,
+  BOXPLOT
 } from 'ui/utils/constants';
 import styles from './visualiseresults.css';
 
@@ -39,6 +41,8 @@ export default compose(
       return <CounterResults id={visualisationId} />;
     case PIE:
       return <PieChartResults id={visualisationId} />;
+    case BOXPLOT:
+      return <BoxPlotResults id={visualisationId} />;
     case FREQUENCY:
       return <LineChartResults id={visualisationId} />;
     default:
