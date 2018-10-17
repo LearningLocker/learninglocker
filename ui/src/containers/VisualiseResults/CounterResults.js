@@ -12,9 +12,9 @@ const component = args => ({ width, height }) => {
     <Counter
       color={colors.get(0)}
       results={results}
-      maxSize={Math.min(width, height)}
       model={model}
-      width={width} />
+      width={width}
+      height={height} />
   );
 };
 
