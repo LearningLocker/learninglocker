@@ -1,4 +1,9 @@
+.outerCounter {
+  height: 100%;
+}
+
 .counter {
+  height: 100%;
   text-align: center;
 }
 

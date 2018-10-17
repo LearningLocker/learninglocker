@@ -24,8 +24,8 @@ const formatTooltip = (count) => {
   return 'No data';
 };
 
-const formatBenchmarkTooltip = ({ count, benchmarkResult }) => {
-  const benchmarkText = isNumber(benchmarkResult) ? benchmarkResult : 'No data';
+const formatBenchmarkTooltip = ({ count, benchmarkCount }) => {
+  const benchmarkText = isNumber(benchmarkCount) ? benchmarkCount : 'No data';
   return `Current: ${formatTooltip(count)} - Previous: ${benchmarkText}`;
 };
 
@@ -42,9 +42,9 @@ const resultsIconStyles = {
   width: '40px',
 };
 
-const renderCount = ({ color, count, tooltip }) => (
+const renderCount = ({ color, count, tooltip, hasBenchmark }) => (
   <TooltipLink
-    style={{ color }}
+    style={{ color, height: hasBenchmark ? null : '100%' }}
     label={formatShortNumber(count)}
     tooltip={tooltip}
     tooltipPosition="top"
@@ -99,16 +99,16 @@ const renderCounter = ({ color, results, model, height, width }) => {
 
   const tooltip = hasBenchmark ? formatBenchmarkTooltip({ count, benchmarkCount }) : formatTooltip(count);
   const countFontsize = getCountFontsize({ height, width, hasBenchmark, maxSize });
-  const renderedCount = renderCount({ color, count, tooltip });
+  const renderedCount = renderCount({ color, count, tooltip, hasBenchmark });
   const renderedBenchmark = hasBenchmark ? renderBenchmark({ percentage, model }) : null;
 
 
   return (
-    <div className="outerCounter" >
+    <div className={styles.outerCounter}>
       <div
         className={styles.counter}
         style={{ width, fontSize: countFontsize }}>
-        <div key='count'>{ renderedCount }</div>
+        { renderedCount }
         <div
           key='benchmark'
           className={styles.benchmark}

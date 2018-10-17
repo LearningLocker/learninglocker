@@ -18,7 +18,7 @@ const component = args => ({ width, height }) => {
   );
 };
 
-const Sizer = (...args) => <AutoSizer>{component(...args)}</AutoSizer>;
+const Sizer = (...args) => <AutoSizer style={{ minHeight: '100%'}}>{component(...args)}</AutoSizer>;
 
 export default compose(
   withStatementsVisualisation,
