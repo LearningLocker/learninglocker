@@ -234,10 +234,10 @@ class BoxPlot extends Component {
 
     return (
       <div className={`${styles.chart}`}>
-        <div className={`${styles.buttons}`}>
+        {/* <div className={`${styles.buttons}`}>
           {this.hasPrevPage(pages)(activePage) && this.renderPrevButton()}
           {this.hasNextPage(pages)(activePage) && this.renderNextButton()}
-        </div>
+        </div> */}
         <div className={`${styles.withPrevNext} clearfix`} />
         <div className={`${styles.barContainer}`}>
           <span className={styles.yAxis}>
