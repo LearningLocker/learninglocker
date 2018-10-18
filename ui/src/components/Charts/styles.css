@@ -90,3 +90,29 @@
   flex-grow: 1;
   flex-shrink: 0;
 }
+/* 
+label {
+  display: inline-block;
+  max-width: 100%;
+  margin-top: 70px;
+  margin-left: -00px;
+  margin-bottom: 5px;
+  font-weight: bold;
+  position: absolute;
+  margin-left: -166px;
+} */
+
+label, .checkBox, .theme-field-3naKV  {
+  margin-top: 60px!important;
+  margin-left: -80px;
+}
+
+.field .check.checked,
+.field .ripple {
+  background-color: rgb(245,171,53);
+  border-color: rgb(245,171,53);
+  color: rgb(82, 80, 80);
+}
+.theme-selected-xbyQ1 {
+  color: rgb(82, 80, 80);
+}

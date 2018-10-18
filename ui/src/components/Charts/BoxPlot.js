@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { List } from 'immutable';
 import { AutoSizer } from 'react-virtualized';
 import Dropdown from 'react-toolbox/lib/dropdown';
+import Checkbox from 'react-toolbox/lib/checkbox';
 import { BarChart as Chart, XAxis, YAxis, CartesianGrid } from 'recharts';
 import ReactEcharts from 'echarts-for-react';
 import { compose } from 'recompose';
@@ -9,6 +10,7 @@ import { omitBy, isFunction } from 'lodash';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import NoData from 'ui/components/Graphs/NoData';
 import { Button } from 'react-toolbox/lib/button';
+import {VISUALISATION_COLORS} from 'ui/utils/constants'
 import uuid from 'uuid';
 import { connect } from 'react-redux';
 import { getMetadataSelector, setInMetadata } from 'ui/redux/modules/metadata';
@@ -23,6 +25,7 @@ import {
   hiddenSeriesState
 } from './Chart';
 import styles from './styles.css';
+const theme = omitBy(styles, isFunction);
 
 
 const enhance = compose(
@@ -46,22 +49,34 @@ class BoxPlot extends Component {
     chartWrapperFn: PropTypes.instanceOf(Function),
   }
 
+  // chartState: [{
+  //   barType: 'bar',
+  //   smooth: false,
+  //   pieType: 'pie',
+  // }, {
+  //   barType: 'line',
+  //   smooth: false,
+  //   pieType: 'pie',
+  // },{
+  //   barType: Line,
+  //   smooth: true,
+  //   pieType: 'pie',
+  // }]
   constructor(props) {
     super(props);
     this.state = {
-      barTypes: ['bar','line','bar', 'line'],
-      pieTypes: ['pie','pie', 'pie', 'pie'],
+      barTypes: ['bar', 'line', 'bar', 'line'],
+      pieTypes: ['pie', 'pie', 'pie', 'pie'],
       chartType: 'barTypes',
-      seriesType: [0,0,0],
+      seriesType: [0, 0, 0],
       dropdownOptions: [
         { value: 'barTypes', label: 'Bar/Line Chart' },
         { value: 'pieTypes', label: 'Pie Chart'},
       ],
-      eventFactory:{
-        'click': this.handleEvent,
+      eventFactory: {
+        click: this.handleEvent,
       }
-
-    }
+    };
   }
 
   static defaultProps = {
@@ -122,26 +137,34 @@ class BoxPlot extends Component {
   chartTypeToggle = (index, series) => {
     console.log('si', series[index], this.state[this.state.chartType], this.state[this.state.chartType].length -1)
     if (series[index] === this.state[this.state.chartType].length -1){
-      series[index] = 0
+      series[index] = 0;
     } else {
-      series[index] ++
+      series[index] += 1;
     }
-    return series
+    return series;
   }
   handleLegendEvent = (e) => {
     console.log('legend event ', e)
   }
+
+  handleStyle = (index, color) => {
+    if (this.state[this.state.chartType][this.state.seriesType[index]] === 'bar' ||
+    this.state[this.state.chartType][this.state.seriesType[index]] === 'line'
+    ) {
+      return { color: VISUALISATION_COLORS[color] };
+    }
+    return {};
+  }
+
   renderBarChart = model => colors => labels => data => stacked => page => ({ width, height }) => {
     console.log('model => colors => labels => data => stacked => page', model, colors, labels, data, stacked, page)
     const chartUuid = uuid.v4();
     console.log('state', this.state)
-    // specify chart configuration item and data]
     const getOption = () => {
       return {
           legend: {},
           tooltip: {},
           dataset: {
-              // Provide data.
               source: [
                   ['Person', '2015', '2016', '2017'],
                   ['Ian Blackburn', 43.3, 85.8, 93.7],
@@ -150,33 +173,35 @@ class BoxPlot extends Component {
                   ['Chris Bishop', 72.4, 53.9, 39.1]
               ]
           },
-          // Declare X axis, which is a category axis, mapping
-          // to the first column by default.
-          xAxis: {type: 'category'},
-          // Declare Y axis, which is a value axis.
+          xAxis: { type: 'category' },
           yAxis: {},
-          // Declare several series, each of them mapped to a
-          // column of the dataset by default.
           series: [
-              {type: this.state[this.state.chartType][this.state.seriesType[0]], stack: false},
-              {type: this.state[this.state.chartType][this.state.seriesType[1]], stack: false},
-              {type: this.state[this.state.chartType][this.state.seriesType[2]], stack: false}
+            { type: this.state[this.state.chartType][this.state.seriesType[0]], 
+              stack: this.state.stacked,
+              itemStyle: this.handleStyle(0, 0)
+            },
+            { type: this.state[this.state.chartType][this.state.seriesType[1]],
+              stack: this.state.stacked,
+              itemStyle: this.handleStyle(0, 1)
+            },
+            { type: this.state[this.state.chartType][this.state.seriesType[2]],
+              stack: this.state.stacked,
+              itemStyle: this.handleStyle(0, 4) 
+            }
           ]
-      }
-    }
-
+      };
+    };
     // use configuration item and data specified to show chart
     /* eslint-disable react/no-danger */
     return (
-     <ReactEcharts
-  option={getOption()}
-  notMerge={true}
-  lazyUpdate={true}
-  theme={"theme_name"}
-  style={{width, height}}
-
-  onEvents={this.state.eventFactory}
-  onChartReady={this.onChartReadyCallback}/>
+      <ReactEcharts
+        option={getOption()}
+        notMerge={true}
+        lazyUpdate={true}
+        theme={'theme_name'}
+        style={{ width, height }}
+        onEvents={this.state.eventFactory}
+        onChartReady={this.onChartReadyCallback} />
 
     );
     /* eslint-enable react/no-danger */
@@ -225,8 +250,15 @@ class BoxPlot extends Component {
             // theme={omitBy(styles, isFunction)}
             source={this.state.dropdownOptions}
             auto
+            theme={theme}
             value={this.state.chartType}
             onChange={this.handleChange} />
+            <Checkbox
+              theme={theme}
+              className="checkBox"
+              checked={this.state.stacked}
+              label={'Stacked'}
+              onChange={() => this.setState({ stacked: !this.state.stacked })} />
         </div>
         <div className={styles.xAxisLabel}>
           <span className={styles.xAxis}>
