@@ -1,8 +1,9 @@
 import React from 'react';
 import { compose } from 'recompose';
 import NoData from 'ui/components/Graphs/NoData';
-import { Map, OrderedMap } from 'immutable';
+import { Map, OrderedMap, fromJS } from 'immutable';
 import isString from 'lodash/isString';
+import _ from 'lodash';
 import { withStatementsVisualisation } from 'ui/utils/hocs';
 import { getAxesString } from 'ui/utils/defaultTitles';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
@@ -10,6 +11,46 @@ import styles from './styles.css';
 import { displayVerb, displayActivity } from '../../utils/xapi';
 
 const moreThanOneSeries = tData => tData.first() !== undefined && tData.first().size > 1;
+
+const getPaths = (obj, path = [], level = 0) => {
+  if (level === 5) {
+    return [path];
+  }
+
+  return _.flatten(_.map(obj, (ob, key) => {
+    const out = getPaths(ob, [...path, key], level + 1);
+    return out;
+  }));
+};
+
+const setDefaults = (obj, defaultArray, level = 0) => {
+  if (defaultArray.length === 0 || !_.isObject(obj)) {
+    return obj;
+  }
+
+  const defaultObj = _.merge({}, ..._.map(defaultArray, (path) => {
+    if (path.length === 0) {
+      return {};
+    }
+    return { [path[0]]: 'default' };
+  }));
+
+  const subObj = _.reduce(obj, (acc, subOb, key) => {
+
+    return _.set(acc, key, setDefaults(
+        subOb,
+        _.map(defaultArray, item => _.drop(item)),
+        level + 1
+    ));
+  }, {});
+
+  const out = {
+    ...defaultObj,
+    ...subObj
+  };
+
+  return out;
+};
 
 export const generateTableData = (results, labels) => {
   const seriesList = labels.zip(results);
@@ -19,8 +60,8 @@ export const generateTableData = (results, labels) => {
     }
     return [key, item];
   });
-
   const seriesMap = new OrderedMap(seriesList2);
+
   const result = seriesMap.reduce((reduction, series, seriesKey) =>
     series.reduce(
       (axesReduction, axes2, axesKey) => axes2.reduce(
@@ -34,7 +75,13 @@ export const generateTableData = (results, labels) => {
       axesReduction),
     reduction)
   , new OrderedMap());
-  return result;
+
+  const resultJs = result.toJS();
+
+  const paths = getPaths(resultJs);
+  const out = setDefaults(resultJs, paths);
+
+  return fromJS(out);
 };
 
 const formatKeyToFriendlyString = (key) => {
@@ -93,6 +140,7 @@ export default compose(
 }) => {
   const formattedResults = getFormattedResults(results);
   const tableData = generateTableData(formattedResults, labels);
+
   if (tableData.first()) {
     return (
       <div className={styles.sourceResultsContainer}>
