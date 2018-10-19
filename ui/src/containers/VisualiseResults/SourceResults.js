@@ -32,16 +32,16 @@ const setDefaults = (obj, defaultArray, level = 0) => {
     if (path.length === 0) {
       return {};
     }
-    return { [path[0]]: 'default' };
+    return _.set({}, path, 'default');
   }));
 
   const subObj = _.reduce(obj, (acc, subOb, key) => {
-
-    return _.set(acc, key, setDefaults(
+    const out = _.set(acc, key, setDefaults(
         subOb,
         _.map(defaultArray, item => _.drop(item)),
         level + 1
     ));
+    return out;
   }, {});
 
   const out = {
