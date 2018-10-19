@@ -12,6 +12,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ## [2.6.1]
 ### Fixed
   - Counter scale and centering
+  - Today time filtering fix
 
 ## [2.6.0]
 ### Added
