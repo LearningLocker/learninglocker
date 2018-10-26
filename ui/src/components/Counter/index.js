@@ -110,7 +110,7 @@ const renderCounter = ({ color, results, model, height, width }) => {
         style={{ width, fontSize: countFontsize }}>
         { renderedCount }
         <div
-          key='benchmark'
+          key="benchmark"
           className={styles.benchmark}
           style={{
             fontSize,
