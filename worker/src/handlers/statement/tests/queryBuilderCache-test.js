@@ -90,7 +90,7 @@ describe('Query builder cache handler test', () => {
       done();
     });
 
-    it.only('should get context parent type', (done) => {
+    it('should get context parent type', (done) => {
       const definitionType = 'http://example.org/parent-definition-type';
       const statement = {
         id: '561a679c0c5d017e4004714f',
