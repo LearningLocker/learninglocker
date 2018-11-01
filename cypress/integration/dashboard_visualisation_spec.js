@@ -28,7 +28,7 @@ describe('dashboard visulaisation', () => {
       cy.get('input[placeholder="Choose an option"]').click();
 
       cy.contains('test 1').should('be.visible');
-      cy.wait(500); // Some reason it still may no be visible, dispite the above line :(.
+      cy.wait(1000); // Some reason it still may no be visible, dispite the above line :(.
 
       cy.contains('test 1').click();
 
