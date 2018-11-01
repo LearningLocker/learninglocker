@@ -30,10 +30,22 @@ const searchStringToFilter = (searchString) => {
   }
 };
 const parseOption = option => (option ? option.get('name') : '');
-const parseOptionTooltip = option => (option
-  ? queryToString(option.get('conditions'))
-  : ''
-);
+const parseOptionTooltip = (option) => {
+  const out = (option
+    ? (<div> {
+      queryToString(option.get('conditions'), {
+        join: false
+      }).map(item =>
+        <div>
+          {item}
+        </div>
+      )
+    }
+    </div>)
+    : ''
+  );
+  return out;
+};
 
 const withSelectedQuery = compose(
   withState('selectedQueryId', 'setSelectedQueryId'),

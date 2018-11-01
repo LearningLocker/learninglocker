@@ -102,7 +102,7 @@ class Criterion extends Component {
     let queryValues;
 
     if (operator === 'Out') {
-      queryValues = this.props.criterion.get('$nor');
+      queryValues = this.props.criterion.get('$nor', new List());
     } else {
       queryValues = this.props.criterion.get('$or') || this.fromInQuery(this.props.criterion);
     }

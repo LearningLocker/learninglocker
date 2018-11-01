@@ -8,7 +8,8 @@ const data = fromJS([[
   {
     0: {
       count: 5,
-      model: 'monday'
+      model: 'monday',
+      _id: 'monday'
     }
   }
 ]]);
@@ -18,9 +19,8 @@ const series = fromJS(['series 1']);
 const axes = fromJS({ xLabel: 'the-x-label' });
 
 test('SourceResults generate correct data', () => {
-  const result = generateTableData(data, series, axes);
-
-  expect(result.getIn(['monday', 'series 1', 'the-x-label', 'count'])).toEqual(5);
+  const result = generateTableData(data, series);
+  expect(result.getIn(['monday', 'rowData', 'series 1', 0, 'count'])).toEqual(5);
 });
 
 test('SourceResults should render', () => {

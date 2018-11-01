@@ -1,8 +1,6 @@
 
 
 describe('dashboard visulaisation', () => {
-
-
   it('should go to the visulaisation from the dashboard', () => {
     cy.exec('node --version').then((result) => {
       cy.log('node version', result.stdout);

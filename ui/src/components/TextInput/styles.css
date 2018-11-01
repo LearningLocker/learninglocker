@@ -25,9 +25,12 @@
     border-bottom: 1px #CCC solid; }
 
 .group {
-  margin: 10px 0px; }
-  .group .label {
-    font-weight: bold;
-    margin-bottom: 0; }
+  margin-bottom: 0px;
+  flex-grow: 1;
+}
+.group .label {
+  font-weight: bold;
+  margin-bottom: 0;
+}
 
 

@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { routeNodeSelector } from 'redux-router5';
 import { withProps, compose } from 'recompose';
+import { createVisualisationName } from 'ui/utils/defaultTitles';
 import { Map, fromJS } from 'immutable';
 import { queryStringToQuery, modelQueryStringSelector } from 'ui/redux/modules/search';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
@@ -51,11 +52,18 @@ class Visualise extends Component {
     });
   }
 
+  populateTitle = (model) => {
+    if (model.get('description')) {
+      return <span style={{ fontWeight: 700 }}>{model.get('description')}</span>;
+    }
+    return createVisualisationName(model);
+  }
+
   render = () => (
     <div>
       <header id="topbar">
         <div className="heading heading-light">
-          <span className="pull-right open_panel_btn">
+          <span className="pull-right open_panel_btn" >
             <button
               className="btn btn-primary btn-sm"
               ref={(ref) => { this.addButton = ref; }}
@@ -63,7 +71,7 @@ class Visualise extends Component {
               <i className="ion ion-plus" /> Add new
             </button>
           </span>
-          <span className="pull-right open_panel_btn" style={{ width: '25%' }}>
+          <span className="pull-right open_panel_btn">
             <SearchBox schema={schema} />
           </span>
           Visualise
@@ -78,10 +86,10 @@ class Visualise extends Component {
             buttons={[PrivacyToggleButton, DeleteButton]}
             getDescription={model => (
               <span>
-                <span style={{ paddingRight: 5 }}>
-                  <VisualisationTypeIcon id={model.get('_id')} />
+                <span style={{ paddingRight: 10 }}>
+                  <VisualisationTypeIcon id={model.get('_id')} tableIcon={false} />
                 </span>
-                { model.get('description') || '~ Unnamed Visualisation'}
+                {this.populateTitle(model)}
               </span>
             )} />
         </div>

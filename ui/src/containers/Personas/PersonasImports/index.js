@@ -25,7 +25,6 @@ const ImportList = compose(
   withProps({
     schema,
     sort: fromJS({
-      importedAt: -1,
       createdAt: -1,
       _id: -1
     }),
@@ -72,7 +71,7 @@ export const PersonasImportsComponent = ({
           <ImportList
             filter={new Map()}
             ModelForm={PersonasImportForm}
-            getDescription={model => model.get('title', '~ Unnamed Import')} />
+            getDescription={model => model.get('title', 'Unnamed Import')} />
         </div>
       </div>
     </div>

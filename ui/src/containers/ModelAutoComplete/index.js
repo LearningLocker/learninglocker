@@ -42,6 +42,7 @@ export default compose(
   deselectOption,
   selectedId,
   parseOption,
+  parseOptionString,
   parseOptionTooltip,
   searchStringToFilter,
   searchFilterToString = searchFilter2 => searchFilter2 && searchFilter2.first() && searchFilter2.first().get('$regex') || '',
@@ -49,18 +50,20 @@ export default compose(
   fields,
   placeholder,
   defaultValues,
-  defaultNewValues
+  defaultNewValues,
+  canEdit = () => true,
 }) => {
   const searchString = searchFilterToString(searchFilter);
 
   return (
     <AutoComplete2
-      renderInput={({ hasFocus }) => (
+      renderInput={({ hasFocus, onFocus }) => (
         <ModelInput
+          onFocus={onFocus}
           placeholder={placeholder}
           fields={fields}
           defaultValues={defaultValues}
-          parseOption={option => (option ? parseOption(option) : '')}
+          parseOption={option => (option ? (parseOptionString && parseOptionString(option)) || parseOption(option) : '')}
           parseOptionTooltip={option => (option ? parseOptionTooltip(option) : '')}
           schema={schema}
           id={id || selectedId}
@@ -68,7 +71,8 @@ export default compose(
           hasFocus={hasFocus}
           searchStringToFilter={searchStringToFilter}
           onChangeFilter={searchFilter2 => setSearchFilter(searchFilter2)}
-          searchString={searchString} />
+          searchString={searchString}
+          canEdit={canEdit} />
       )}
       renderOptions={({ onBlur }) => (
         <ModelOptionList
@@ -82,7 +86,8 @@ export default compose(
           parseOptionTooltip={option => (option ? parseOptionTooltip(option) : '')}
           filter={filter}
           schema={schema}
-          displayCount={displayCount} />
+          displayCount={displayCount}
+          canEdit={canEdit} />
       )} />
   );
 });

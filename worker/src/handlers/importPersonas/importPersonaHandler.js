@@ -31,12 +31,10 @@ export const establishLock = async ({
   } catch (err) {
     // DuplicateKey
     if (err.code && err.code === 11000) {
-      const op = err.getOperation();
-
       const models = ImportPersonasLock.find({
-        organisation: op.organisation,
+        organisation,
         ifis: {
-          $in: op.ifis
+          $in: ifis
         }
       });
 

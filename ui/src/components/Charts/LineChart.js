@@ -1,6 +1,6 @@
 import React from 'react';
 import { AutoSizer } from 'react-virtualized';
-import { LineChart as Chart, XAxis, YAxis, Line } from 'recharts';
+import { LineChart as Chart, XAxis, YAxis, Line, CartesianGrid } from 'recharts';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import NoData from 'ui/components/Graphs/NoData';
 import { compose } from 'recompose';
@@ -23,8 +23,8 @@ const getSortedData = results => labels =>
 
 const renderLine = colors => (label, i) => (
   <Line
-    key={i}
-    dataKey={`s${i}`}
+    key={i + 1}
+    dataKey={`Series ${i + 1}`}
     type="monotone"
     dot={false}
     stroke={colors.get(i)}
@@ -42,30 +42,27 @@ const renderLineChart = (labels, toggleHiddenSeries, hiddenSeries) => colors => 
     margin={{ top: 10, right: 35, left: -20, bottom: 5 }}>
     <XAxis type="category" dataKey="cellId" tickFormatter={getShortModel(data)} />
     <YAxis type="number" />
+    <CartesianGrid strokeDasharray="1 1" />
     {renderLegend(labels, toggleHiddenSeries)}
     {renderLines(labels)(colors)}
     {renderTooltips(data)}
   </Chart>
   );
 
-const renderChart = (component, axesLabels, chartWrapperFn) => (
+const renderChart = (component, axesLabels, chartWrapperFn, model) => (
   <div className={styles.chart}>
-
-    <div className={styles.xAxisLabel}>
-      <span className={styles.xAxis}>
-        {axesLabels.xLabel || 'X Axis'}
-      </span>
-    </div>
-
     <div className={`${styles.barContainer}`}>
-      <div className={styles.yAxisLabel}>
-        <span className={styles.yAxis}>
-          {axesLabels.yLabel || 'Y Axis'}
-        </span>
-      </div>
+      <span className={styles.yAxis}>
+        {axesLabels.yLabel || model.getIn(['axesvalue', 'searchString'], 'Y-Axis')}
+      </span>
       <div className={styles.chartWrapper}>
         {chartWrapperFn(component)}
       </div>
+    </div>
+    <div className={styles.xAxisLabel}>
+      <span className={styles.xAxis}>
+        {axesLabels.xLabel || 'yyyy/mm/dd'}
+      </span>
     </div>
   </div>
 );
@@ -73,8 +70,8 @@ const renderChart = (component, axesLabels, chartWrapperFn) => (
 const renderChartResults = (labels, toggleHiddenSeries, hiddenSeries) => colors => results =>
   renderLineChart(labels, toggleHiddenSeries, hiddenSeries)(colors)(getSortedData(results)(labels));
 
-const renderResults = results => (labels, toggleHiddenSeries, hiddenSeries) => colors => axesLabels => chartWrapperFn =>
-  renderChart(renderChartResults(labels, toggleHiddenSeries, hiddenSeries)(colors)(results), axesLabels, chartWrapperFn);
+const renderResults = results => (labels, toggleHiddenSeries, hiddenSeries) => colors => axesLabels => chartWrapperFn => model =>
+  renderChart(renderChartResults(labels, toggleHiddenSeries, hiddenSeries)(colors)(results), axesLabels, chartWrapperFn, model);
 
 export default compose(
   withStyles(styles),
@@ -86,7 +83,8 @@ export default compose(
   axesLabels,
   chartWrapperFn = component => (<AutoSizer>{component}</AutoSizer>),
   toggleHiddenSeries,
-  hiddenSeries
+  hiddenSeries,
+  model
 }) =>
-  (hasData(results) ? renderResults(results)(labels, toggleHiddenSeries, hiddenSeries)(colors)(axesLabels)(chartWrapperFn) : <NoData />)
+  (hasData(results) ? renderResults(results)(labels, toggleHiddenSeries, hiddenSeries)(colors)(axesLabels)(chartWrapperFn)(model) : <NoData />)
 );

@@ -22,8 +22,8 @@ import {
   STATEMENT_FORWARDING_DEADLETTER_QUEUE
 } from 'lib/constants/statements';
 
-const defaultHandleResponse = (err) => {
-  if (err) logger.error('ERROR SUBSCRIBING TO QUEUE', err);
+const defaultHandleResponse = queueName => (err) => {
+  if (err) logger.error(`ERROR SUBSCRIBING TO QUEUE ${queueName}`, err);
   return err;
 };
 
@@ -44,22 +44,22 @@ export default (
     handler: statementHandler,
     onEmpty: statementHandlerEmpty,
     onProccessed: statementHandlerProccessed
-  }, handleResponse);
+  }, handleResponse(STATEMENT_QUEUE));
 
   Queue.subscribe({
     queueName: STATEMENT_EXTRACT_PERSONAS_QUEUE,
     handler: extractPersonasHandler(personaService)
-  }, handleResponse);
+  }, handleResponse(STATEMENT_EXTRACT_PERSONAS_QUEUE));
 
   Queue.subscribe({
     queueName: STATEMENT_QUERYBUILDERCACHE_QUEUE,
     handler: queryBuilderCacheHandler
-  }, handleResponse);
+  }, handleResponse(STATEMENT_QUERYBUILDERCACHE_QUEUE));
 
   Queue.subscribe({
     queueName: STATEMENT_FORWARDING_QUEUE,
     handler: statementForwardingHandler
-  }, handleResponse);
+  }, handleResponse(STATEMENT_FORWARDING_QUEUE));
 
   const RETRY_DELAY = 900; // 900 (15 minutes, max allowed DelaySeconds: http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SQS.html)
 
@@ -67,17 +67,17 @@ export default (
     queueName: STATEMENT_FORWARDING_REQUEST_QUEUE,
     handler: statementForwardingRequestHandler,
     deadLetter: STATEMENT_FORWARDING_DEADLETTER_QUEUE,
-  }, handleResponse);
+  }, handleResponse(STATEMENT_FORWARDING_REQUEST_QUEUE));
 
   Queue.subscribe({
     queueName: STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE,
     handler: statementForwardingRequestHandler,
     deadLetter: STATEMENT_FORWARDING_DEADLETTER_QUEUE,
     retryDelay: RETRY_DELAY
-  }, handleResponse);
+  }, handleResponse(STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE));
 
   Queue.subscribe({
     queueName: STATEMENT_FORWARDING_DEADLETTER_QUEUE,
     handler: statementForwardingDeadLetterHandler,
-  }, handleResponse);
+  }, handleResponse(STATEMENT_FORWARDING_DEADLETTER_QUEUE));
 };
