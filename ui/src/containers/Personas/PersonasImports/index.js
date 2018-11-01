@@ -71,7 +71,7 @@ export const PersonasImportsComponent = ({
           <ImportList
             filter={new Map()}
             ModelForm={PersonasImportForm}
-            getDescription={model => model.get('title', '~ Unnamed Import')} />
+            getDescription={model => model.get('title', 'Unnamed Import')} />
         </div>
       </div>
     </div>

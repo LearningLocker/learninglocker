@@ -58,11 +58,8 @@ class Criterion extends Component {
   getValues = () => {
     if (!this.canDeleteCriterion()) return new List();
     const operator = this.getOperator();
-    let queryValues;
-
-    if (operator === 'Out') queryValues = this.props.criterion.get('$nor');
-    else queryValues = this.props.criterion.get('$or');
-    return queryValues;
+    if (operator === 'Out') return this.props.criterion.get('$nor', new List());
+    return this.props.criterion.get('$or', new List());
   }
 
   getOperator = () => {

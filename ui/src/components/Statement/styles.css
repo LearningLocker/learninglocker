@@ -4,4 +4,8 @@
 .actor, .verb {
   color: #555459; }
 
+  .verb {
+    font-weight: 600;
+  }
+
 

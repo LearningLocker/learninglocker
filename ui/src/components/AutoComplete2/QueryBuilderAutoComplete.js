@@ -69,20 +69,22 @@ export default compose(
   parseOption,
   parseOptionTooltip,
   searchStringToFilter,
-  valuesFilter,
-}) => (<AutoComplete2
-  renderInput={({ hasFocus }) => (
-    <QueryBuilderInput
-      filter={valuesFilter}
-      values={values}
-      first={1000}
-      parseOption={option => (option ? parseOption(option) : '')}
-      parseOptionTooltip={option => (option ? parseOption(option) : '')}
-      schema={schema}
-      deselectOption={deselectOption}
-      hasFocus={hasFocus}
-      searchStringToFilter={searchStringToFilter}
-      onChangeFilter={searchFilter => setSearchFilter(searchFilter)} />
+  valuesFilter
+}) =>
+  (<AutoComplete2
+    renderInput={({ hasFocus, onFocus }) => (
+      <QueryBuilderInput
+        filter={valuesFilter}
+        values={values}
+        first={1000}
+        parseOption={option => (option ? parseOption(option) : '')}
+        parseOptionTooltip={option => (option ? parseOption(option) : '')}
+        schema={schema}
+        deselectOption={deselectOption}
+        hasFocus={hasFocus}
+        onFocus={onFocus}
+        searchStringToFilter={searchStringToFilter}
+        onChangeFilter={searchFilter => setSearchFilter(searchFilter)} />
     )}
   renderOptions={() => (
     <ModelOptionList
