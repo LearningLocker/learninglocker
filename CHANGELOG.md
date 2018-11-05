@@ -9,6 +9,10 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.6.1]
+### Fixed
+  - 
+
 ## [2.6.0]
 ### Added
   - Overhaul of visualisations
