@@ -106,7 +106,7 @@ export default ({ valueType, groupType, operatorType }) => {
 
   const countPipeline = fromJS(getGroupPipeline({ operatorType, groupType, valueOpCase, projections }));
   const sort = { $sort: { count: -1 } };
-  const limit = { $limit: 366 };
+  const limit = { $limit: 10000 };
   const finalProject = { $project: { _id: 1, count: 1, model: 1 } };
 
   const postReqs = fromJS([sort, limit, finalProject]);
