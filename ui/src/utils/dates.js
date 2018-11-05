@@ -12,8 +12,10 @@ import moment from 'moment';
 
 export const periodToDate = (datePeriod, today, benchmark = 1) => {
   const today2 = moment(today); // Clones the date so it's not mutated.
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
   switch (datePeriod) {
-    case TODAY: return (moment().subtract(1 * benchmark, 'days').startOf('day'));
+    case TODAY: return (today2.subtract(start));
     case LAST_24_HOURS: return today2.subtract(24 * benchmark, 'hours');
     case LAST_7_DAYS: default: return today2.subtract(7 * benchmark, 'days');
     case LAST_30_DAYS: return today2.subtract(30 * benchmark, 'days');

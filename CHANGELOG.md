@@ -9,6 +9,12 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.6.1]
+### Fixed
+  - Workers discard deleted statements
+  - Increased $limit on grouped visualisations
+  - Time limit of "Today"
+
 ## [2.6.0]
 ### Added
   - Overhaul of visualisations
