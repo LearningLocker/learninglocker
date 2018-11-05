@@ -32,6 +32,11 @@ before_script:
 
 cache:
   yarn: true
+  directories: 
+    - api/src/node_modules/
+    - cli/src/node_modules/
+    - ui/src/node_modules/
+    - worker/src/node_modules/
 
 script:
   - yarn $YARN_CMD

@@ -30,8 +30,7 @@ const MultiInput = ({
         debounceTimeout={377}
         value={searchString}
         onChange={onChangeSearchString}
-        onFocus={onFocus}
-        />
+        onFocus={onFocus} />
     </div>
   );
 };
