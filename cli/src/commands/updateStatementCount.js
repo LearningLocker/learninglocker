@@ -1,24 +1,18 @@
 import logger from 'lib/logger';
 import Lrs from 'lib/models/lrs';
 import Statement from 'lib/models/statement';
-import async from 'async';
 
 export default function () {
-  Lrs.find({}, (err, stores) => {
+  Lrs.find({}, async (err, stores) => {
     logger.info(`Found ${stores.length} stores to update count on.`);
-    async.each(stores,
-      (store, asyncdone) => {
-        Statement.count({ lrs_id: store._id, active: true }, (err, count) => {
-          if (err) asyncdone(err);
-          store.statementCount = count;
-          store.save(asyncdone);
-        });
-      },
-      (err) => {
-        if (err) logger.error(err);
-        logger.info('Statement counts updated');
-        process.exit();
-      }
-    );
+    await stores.reduce( async (promise, store) => {
+        await promise;
+        logger.info(`Updating count on ${store.title}`);
+        const count = await Statement.countDocuments({ lrs_id: store._id });
+        store.statementCount = count;
+        store.save();
+        logger.info('Saved');
+    }, Promise.resolve());
+    process.exit();
   });
 }
