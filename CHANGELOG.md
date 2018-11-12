@@ -9,6 +9,9 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.6.2]
+### Fixed
+
 ## [2.6.1]
 ### Fixed
   - Workers discard deleted statements
