@@ -13,6 +13,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Fixed
   - Counter scale and centering
   - Allow merging from non-existent persona
+  - Allow upsert for toPersona on import
 
 ## [2.6.1]
 ### Fixed
