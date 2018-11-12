@@ -14,6 +14,7 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
   - Counter scale and centering
   - Allow merging from non-existent persona
   - Allow upsert for toPersona on import
+  - Update LRS statement count one by one
 
 ## [2.6.1]
 ### Fixed
