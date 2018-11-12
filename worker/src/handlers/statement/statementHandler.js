@@ -32,7 +32,10 @@ const queueDependencies = {
 
 export const addStatementToPendingQueues = (statement, passedQueues, done) => {
   const queues = passedQueues || queueDependencies;
-  if (!statement) return done(new Error('Statement must be provided'));
+  if (!statement) {
+    logger.error('No statement provided');
+    return done();
+  }
 
   const queueNames = keys(queues);
   const pendingQueueNames = reject(queueNames, (queueName) => {
