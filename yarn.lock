@@ -122,8 +122,8 @@
     xdg-basedir "^3.0.0"
 
 "@learninglocker/persona-service@^1.6.11":
-  version "1.6.14"
-  resolved "https://registry.yarnpkg.com/@learninglocker/persona-service/-/persona-service-1.6.14.tgz#a205ae7ac6aa3949300cde2ffa91966ba655691d"
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@learninglocker/persona-service/-/persona-service-1.7.0.tgz#41dd5c6c2343c21382a07d8d28eac21445fdbc7e"
   dependencies:
     aws-sdk "^2.0.1"
     bluebird "^3.5.0"
