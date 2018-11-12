@@ -11,6 +11,8 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [2.6.2]
 ### Fixed
+  - Allow merging from non-existent persona
+  - Allow upsert for toPersona on import
 
 ## [2.6.1]
 ### Fixed
