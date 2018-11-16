@@ -78,6 +78,7 @@ const formattedDefault = (model, type) => {
   switch (type) {
     case ('FREQUENCY'): return addYX(select(axv) || select(ayV), 'Time');
     case ('LEADERBOARD'): return addYX(select(axg), select(axv) || select(ayV));
+    case ('STACKED'): return addYX(select(axv) || select(ayV), 'Time');
     case ('XVSY'): return addXVSYXY(select(axV), select(axv) || select(ayV));
     case ('COUNTER'): return `${makeOperatorReadable(model)}${select(axv) || select(ayV)}`;
     case ('PIE'): return `${makeOperatorReadable(model)}${select(axv) || select(ayV)} / ${select(axg)}`;
