@@ -13,12 +13,12 @@
 }
 
 .customTooltip {
-  width: auto;
+  width: 90%;
   margin: 0;
   padding-top: 5px;
   padding-left: 5px;
   padding-right: 5px;
-  line-height: 8px;
+  line-height: 150%;
   border: 2px solid #f5f5f5;
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 2px;

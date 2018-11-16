@@ -29,7 +29,7 @@ const renderBarChart = colors => (labels, toggleHiddenSeries, hiddenSeries) => s
           visibility: hidden !important;
         }
       ` }} />
-    <Chart
+    {/* <Chart
       className={`grid-${chartUuid}`}
       data={getChartData(data, hiddenSeries)}
       width={width}
@@ -41,7 +41,7 @@ const renderBarChart = colors => (labels, toggleHiddenSeries, hiddenSeries) => s
       {renderLegend(labels, toggleHiddenSeries)}
       {renderBars(colors)(labels)(stacked)}
       {renderTooltips(data)}
-    </Chart>
+    </Chart> */}
   </div>
   /* eslint-enable react/no-danger */
 );
