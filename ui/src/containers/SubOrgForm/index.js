@@ -77,7 +77,7 @@ class SubOrgForm extends Component {
     const { model } = this.props;
     const modelId = model.get('_id');
     const oldSettings = model.get('settings');
-    
+
     if (!isArray(attr)) {
       attr = [attr];
     }
@@ -93,7 +93,6 @@ class SubOrgForm extends Component {
   };
 
   onChangeSettingsAttr = (attr, e) => {
-
     this.changeSettingsAttr(attr, e.target.value);
   };
 

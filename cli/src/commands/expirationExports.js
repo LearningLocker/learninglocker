@@ -10,19 +10,10 @@ const expireExportsForOrganisation = async (organisation) => {
   const todayDate = moment();
   // const cutOffDate = todayDate.subtract(ttl, 'seconds');
 
-  const exports = await Download.find({
+  await Download.remove({
     organisation: organisation._id,
     upload: { $exists: true },
     expireTTL: { $lt: todayDate } // DEBUG ONLY, uncomment
-  });
-
-
-  await map(exports, async (expor) => {
-    try {
-      await expor.remove();
-    } catch (err) {
-      console.error('err', err);
-    }
   });
 };
 

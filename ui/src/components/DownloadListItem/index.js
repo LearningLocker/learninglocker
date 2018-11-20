@@ -7,9 +7,8 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import createdAt from 'ui/containers/Owner/CreatedAt';
 
-const DownloadListItem = (props) => {
+const DownloadListItem = ({ download, deleteDownloadModel }) => {
   // TODO: remove exporationExprots
-  const { download, deleteDownloadModel } = props;
 
   let expireExportsString = '';
 

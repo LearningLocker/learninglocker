@@ -21,14 +21,13 @@ class ExportDownloadManager extends Component {
     if (isLoading) return (<Spinner />);
     return (
       <div>
-        { 
-          models.map((model, id) =>
-          <DownloadListItem
+        { models.map((model, id) =>
+          (<DownloadListItem
             key={id}
             model={model}
-            exporationExport={this.props.organisation.getIn(['settings', 'EXPIRE_EXPORTS'])}
-            deleteModel={this.props.deleteModel} />
-        ).valueSeq() }
+            expirationExport={this.props.organisation.getIn(['settings', 'EXPIRE_EXPORTS'])}
+            deleteModel={this.props.deleteModel} />)
+      ).valueSeq() }
       </div>
     );
   }
@@ -39,8 +38,7 @@ export default compose(
     sort: new Map({ time: -1, _id: 1 }),
     schema: 'organisation'
   }),
-
-  connect((state) => ({
+  connect(state => ({
     id: activeOrgIdSelector(state)
   })),
   withModel,
