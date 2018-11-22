@@ -132,7 +132,8 @@ class Criterion extends Component {
     if (!model.isEmpty()) {
       const values = this.getValues();
       const newValue = this.getOptionQuery(model);
-      this.changeValues(values.push(newValue));
+
+      this.changeValues(Set.isSet(values) ? values.add(newValue) : values.push(newValue));
     }
   }
 
