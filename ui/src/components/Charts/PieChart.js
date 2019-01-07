@@ -67,35 +67,31 @@ const renderPie = colors => data => maxSize => isDonut => (label, i, labels) => 
 const renderPies = labels => colors => data => isDonut => maxSize => labels.map(renderPie(colors)(data)(maxSize)(isDonut)).valueSeq();
 
 const renderPieChart = labels => colors => data => count => grouping => isDonut => ({ width, height }) => (
-  <div>
-    <div style={{ width: '600px', position: 'absolute' }}>
-      {(colors.size > 1) && colors.map((colour, i) => (
-        <div key={i} style={{ fontSize: '0.9em' }}>
-          <div style={{ display: 'inline-block', width: '12px', height: '12px', backgroundColor: colour, marginRight: '8px', marginBottom: '2px', verticalAlign: 'middle' }} />
-          {labels.get(i) || `Series ${i + 1}`}
-        </div>)
-      )}
-    </div>
-    <div style={{ marginLeft: '20px' }}>
-      <Chart width={width} height={height}>
-        {renderPies(labels)(colors)(data)(isDonut)(Math.min(width, height))}
-        {renderTooltips(labels)(data)(count)(grouping)}
-      </Chart>
-    </div>
-  </div>
-);
-
-const renderChart = chart => (
-  <div
-    className={styles.chart}>
-    <AutoSizer>{chart}</AutoSizer>
-  </div>
+  <Chart width={width} height={height}>
+    {renderPies(labels)(colors)(data)(isDonut)(Math.min(width, height))}
+    {renderTooltips(labels)(data)(count)(grouping)}
+  </Chart>
 );
 
 const renderChartResults = labels => results => colors => count => grouping => isDonut =>
   renderPieChart(labels)(colors)(getSortedData(results)(labels))(count)(grouping)(isDonut);
 
-const renderResults = results => labels => colors => count => grouping => isDonut => renderChart(renderChartResults(labels)(results)(colors)(count)(grouping)(isDonut));
+const renderResults = results => labels => colors => count => grouping => isDonut => (
+  <div className={styles.chart}>
+    <div>
+      {(colors.size > 1) && colors.map((colour, i) => (
+        <div key={i} style={{ fontSize: '0.9em' }}>
+          <div
+            style={{ display: 'inline-block', width: '12px', height: '12px', backgroundColor: colour, marginRight: '8px', marginBottom: '2px', verticalAlign: 'middle' }} />
+          <span title={labels.get(i) || `Series ${i + 1}`}>{labels.get(i).substr(0, 45) || `Series ${i + 1}`}</span>
+        </div>)
+      )}
+    </div>
+    <div style={{ height: '100%', width: '100%' }}>
+      <AutoSizer>{renderChartResults(labels)(results)(colors)(count)(grouping)(isDonut)}</AutoSizer>
+    </div>
+  </div>
+);
 
 export const PieChartComponent = ({ results, labels, colors, count, grouping, isDonut }) =>
 (hasData(results) ? renderResults(results)(labels)(colors)(count)(grouping)(isDonut) : <NoData />);
