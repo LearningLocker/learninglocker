@@ -12539,10 +12539,6 @@ time-stamp@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/time-stamp/-/time-stamp-2.1.0.tgz#6c5c0b2bc835a244616abcfddf81ce13a1975c9f"
 
-timekeeper@0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/timekeeper/-/timekeeper-0.0.5.tgz#0ca6e718ce4ef118477c91139a36bbbb6fa01c1d"
-
 timers-browserify@^2.0.2, timers-browserify@^2.0.4:
   version "2.0.10"
   resolved "https://registry.yarnpkg.com/timers-browserify/-/timers-browserify-2.0.10.tgz#1d28e3d2aadf1d5a5996c4e9f95601cd053480ae"
