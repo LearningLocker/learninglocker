@@ -223,7 +223,6 @@
     "string_score": "^0.1.22",
     "superagent": "^1.4.0",
     "supertest": "^1.2.0",
-    "svgo": "^0.7.2",
     "url-loader": "^0.5.7",
     "url-parse": "^1.1.8",
     "uuid": "^2.0.2",
