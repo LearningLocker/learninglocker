@@ -267,7 +267,6 @@
     "json-loader": "^0.5.4",
     "mocha": "^2.3.3",
     "nock": "^9.0.13",
-    "node-mocks-http": "^1.5.2",
     "react-a11y": "^0.2.6",
     "react-test-renderer": "^15.5.4",
     "react-transform-catch-errors": "1.0.2",
