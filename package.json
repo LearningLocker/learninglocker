@@ -108,7 +108,6 @@
     "hoist-non-react-statics": "^1.0.3",
     "html-to-text": "^2.1.0",
     "http-proxy": "^1.12.0",
-    "immutability-helper": "^2.0.0",
     "immutable": "^3.8.1",
     "ioredis": "^3.2.2",
     "isomorphic-style-loader": "^2.0.0",
