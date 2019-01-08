@@ -126,7 +126,6 @@
     "marked": "^0.3.5",
     "mdiff": "1.0.1",
     "micromatch": "^2.3.11",
-    "mingo": "^0.6.3",
     "mkdirp": "^0.5.1",
     "mocha-mongoose": "^1.2.0",
     "mocha-webpack": "^0.7.0",
