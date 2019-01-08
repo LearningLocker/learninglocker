@@ -95,7 +95,6 @@
     "eslint-plugin-jsx-a11y": "^2.2.2",
     "eslint-plugin-react": "^6.3.0",
     "express": "^4.13.4",
-    "express-markdown-browser": "0.0.2",
     "express-restify-mongoose": "^3.2.0",
     "faker": "^3.0.1",
     "fast-csv": "^2.3.0",
