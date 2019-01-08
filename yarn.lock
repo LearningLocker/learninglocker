@@ -9937,12 +9937,6 @@ redux-actions@^0.9.1:
     flux-standard-action "^0.6.0"
     reduce-reducers "^0.1.0"
 
-redux-cursor@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/redux-cursor/-/redux-cursor-3.0.0.tgz#4f3f1a86d953625e2379719a0b4043860e6c8159"
-  dependencies:
-    object-assign "^4.0.1"
-
 redux-devtools-dock-monitor@^1.0.0-beta-3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/redux-devtools-dock-monitor/-/redux-devtools-dock-monitor-1.1.3.tgz#1205e823c82536570aac8551a1c4b70972cba6aa"
