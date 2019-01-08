@@ -7242,12 +7242,6 @@ min-document@^2.19.0:
   dependencies:
     dom-walk "^0.1.0"
 
-mingo@^0.6.3:
-  version "0.6.5"
-  resolved "http://registry.npmjs.org/mingo/-/mingo-0.6.5.tgz#454e604e989014a011a678207b59aa7a49801a25"
-  dependencies:
-    underscore ">=1.8.2"
-
 minimalistic-assert@^1.0.0, minimalistic-assert@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/minimalistic-assert/-/minimalistic-assert-1.0.1.tgz#2e194de044626d4a10e7f7fbc00ce73e83e4d5c7"
@@ -11353,7 +11347,7 @@ underscore@1.5.x:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.5.2.tgz#1335c5e4f5e6d33bbb4b006ba8c86a00f556de08"
 
-underscore@>=1.8.2, underscore@^1.8.3:
+underscore@^1.8.3:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.9.1.tgz#06dce34a0e68a7babc29b365b8e74b8925203961"
 
