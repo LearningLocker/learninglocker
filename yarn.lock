@@ -9550,10 +9550,6 @@ react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
 
-react-list@^0.7.20:
-  version "0.7.22"
-  resolved "https://registry.yarnpkg.com/react-list/-/react-list-0.7.22.tgz#d2e11011a2e81191a8926580c0ad6e23350b41aa"
-
 react-onclickoutside@^5.9.0:
   version "5.11.1"
   resolved "https://registry.yarnpkg.com/react-onclickoutside/-/react-onclickoutside-5.11.1.tgz#00314e52567cf55faba94cabbacd119619070623"
