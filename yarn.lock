@@ -8561,7 +8561,7 @@ node-mocks-http@^1.5.2:
     range-parser "^1.2.0"
     type-is "^1.6.16"
 
-node-notifier@^5.0.1, node-notifier@^5.1.2:
+node-notifier@^5.0.1:
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/node-notifier/-/node-notifier-5.2.1.tgz#fa313dd08f5517db0e2502e5758d664ac69f9dea"
   dependencies:
@@ -13218,14 +13218,6 @@ webpack-info-plugin@^0.1.0:
 webpack-node-externals@^1.5.4:
   version "1.7.2"
   resolved "http://registry.npmjs.org/webpack-node-externals/-/webpack-node-externals-1.7.2.tgz#6e1ee79ac67c070402ba700ef033a9b8d52ac4e3"
-
-webpack-notifier@^1.2.1:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/webpack-notifier/-/webpack-notifier-1.6.0.tgz#ffac8e55ff8c469752b8c1bbb011a16f10986e02"
-  dependencies:
-    node-notifier "^5.1.2"
-    object-assign "^4.1.0"
-    strip-ansi "^3.0.1"
 
 webpack-sources@^0.1.1:
   version "0.1.5"
