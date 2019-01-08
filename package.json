@@ -131,7 +131,6 @@
     "mocha-mongoose": "^1.2.0",
     "mocha-webpack": "^0.7.0",
     "mockery": "^1.6.2",
-    "mollusc": "2.*",
     "moment": "^2.11.2",
     "mongodb": "^2.1.4",
     "mongoose": "^5.0.13",
