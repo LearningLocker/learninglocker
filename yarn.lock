@@ -11147,7 +11147,7 @@ stubs@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/stubs/-/stubs-3.0.0.tgz#e8d2ba1fa9c90570303c030b6900f7d5f89abe5b"
 
-superagent@^1.4.0, superagent@^1.7.2:
+superagent@^1.7.2:
   version "1.8.5"
   resolved "http://registry.npmjs.org/superagent/-/superagent-1.8.5.tgz#1c0ddc3af30e80eb84ebc05cb2122da8fe940b55"
   dependencies:
