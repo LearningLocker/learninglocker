@@ -283,7 +283,6 @@
     "redux-devtools-dock-monitor": "^1.0.0-beta-3",
     "redux-devtools-log-monitor": "^1.0.0-beta-3",
     "redux-mock-store": "^1.2.3",
-    "webpack-hot-middleware": "^2.5.0",
     "webpack-notifier": "^1.2.1"
   }
 }
