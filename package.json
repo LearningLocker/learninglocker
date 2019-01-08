@@ -259,8 +259,6 @@
     "eslint-plugin-jsx-a11y": "^2.2.2",
     "eslint-plugin-no-only-tests": "^2.0.0",
     "eslint-plugin-react": "^6.3.0",
-    "font-awesome": "^4.4.0",
-    "font-awesome-webpack": "0.0.4",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^19.0.2",
     "jest-enzyme": "^4.0.1",
