@@ -81,7 +81,6 @@
     "btoa": "^1.1.2",
     "bull": "^3.3.10",
     "chai-fs": "1.0.*",
-    "chai-immutable": "^1.6.0",
     "clamscan": "^0.8.4",
     "classnames": "^2.2.5",
     "commander": "^2.9.0",

@@ -2111,10 +2111,6 @@ chai-fs@1.0.*:
     bit-mask "0.0.2-alpha"
     readdir-enhanced "^1.4.0"
 
-chai-immutable@^1.6.0:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/chai-immutable/-/chai-immutable-1.6.0.tgz#9ec00bdd67948b13b20fcbb89cbf4af2ce6f9247"
-
 chai@^3.3.0:
   version "3.5.0"
   resolved "http://registry.npmjs.org/chai/-/chai-3.5.0.tgz#4d02637b067fe958bdbfdd3a40ec56fef7373247"
