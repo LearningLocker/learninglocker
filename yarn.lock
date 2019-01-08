@@ -5864,7 +5864,7 @@ is-windows@^1.0.1, is-windows@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/is-windows/-/is-windows-1.0.2.tgz#d1850eb9791ecd18e6182ce12a30f396634bb19d"
 
-is@^3.0.1, is@^3.2.0, is@^3.2.1:
+is@^3.0.1, is@^3.2.0:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/is/-/is-3.2.1.tgz#d0ac2ad55eb7b0bec926a5266f6c662aaa83dca5"
 
@@ -7451,19 +7451,6 @@ mongoose-legacy-pluralize@1.0.2:
 mongoose-timestamp@^0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/mongoose-timestamp/-/mongoose-timestamp-0.5.0.tgz#21e33f8d8b699f91728198bf8d1fc32badde0b54"
-
-mongoose-validator@^1.2.4:
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/mongoose-validator/-/mongoose-validator-1.3.2.tgz#49f39c345432c2ed5828104d56bce029887b6682"
-  dependencies:
-    is "^3.2.1"
-    validator "^7.0.0"
-
-mongoose-validators@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/mongoose-validators/-/mongoose-validators-0.1.0.tgz#7e5c829e5d55ffb81ef196a9dd793bd5104ff74c"
-  dependencies:
-    validator "3.16.0"
 
 mongoose@^5.0.13:
   version "5.3.2"
@@ -11577,17 +11564,9 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
-validator@3.16.0:
-  version "3.16.0"
-  resolved "http://registry.npmjs.org/validator/-/validator-3.16.0.tgz#ec2c6c3a8be5f7e7085cb79e1b1681fc5bd27846"
-
 validator@^5.2.0:
   version "5.7.0"
   resolved "http://registry.npmjs.org/validator/-/validator-5.7.0.tgz#7a87a58146b695ac486071141c0c49d67da05e5c"
-
-validator@^7.0.0:
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/validator/-/validator-7.2.0.tgz#a63dcbaba51d4350bf8df20988e0d5a54d711791"
 
 vary@^1, vary@~1.1.2:
   version "1.1.2"

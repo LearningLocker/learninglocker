@@ -137,8 +137,6 @@
     "mongoose": "^5.0.13",
     "mongoose-findorcreate": "^0.1.2",
     "mongoose-timestamp": "^0.5.0",
-    "mongoose-validator": "^1.2.4",
-    "mongoose-validators": "^0.1.0",
     "morgan": "^1.7.0",
     "multer": "^1.1.0",
     "multiparty": "^4.1.2",
