@@ -7384,12 +7384,6 @@ modelo@^4.2.0:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/modelo/-/modelo-4.2.3.tgz#b278588a4db87fc1e5107ae3a277c0876f38d894"
 
-mollusc@2.*:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/mollusc/-/mollusc-2.0.0.tgz#3ac5cb5a84f1cc3dbbed8645122ff4d377d19369"
-  dependencies:
-    unicode "^10.0.0"
-
 moment-timezone@^0.5.0:
   version "0.5.21"
   resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.21.tgz#3cba247d84492174dbf71de2a9848fa13207b845"
@@ -11374,10 +11368,6 @@ underscore@~1.4.4:
 underscore@~1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.7.0.tgz#6bbaf0877500d36be34ecaa584e0db9fef035209"
-
-unicode@^10.0.0:
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/unicode/-/unicode-10.0.0.tgz#e5d51c1db93b6c71a0b879e0b0c4af7e6fdf688e"
 
 union-value@^1.0.0:
   version "1.0.0"
