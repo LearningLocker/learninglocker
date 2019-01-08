@@ -212,8 +212,6 @@
     "router5.helpers": "^1.2.0",
     "sass-loader": "^6.0.3",
     "serialize-javascript": "^1.1.2",
-    "serve-favicon": "^2.3.0",
-    "serve-file-download": "0.0.1",
     "sha1": "^1.1.1",
     "sift": "^5.0.0",
     "source-map-support": "^0.4.10",
