@@ -12576,12 +12576,6 @@ timers-browserify@^2.0.2, timers-browserify@^2.0.4:
   dependencies:
     setimmediate "^1.0.4"
 
-tincanjs@^0.41.1:
-  version "0.41.1"
-  resolved "https://registry.yarnpkg.com/tincanjs/-/tincanjs-0.41.1.tgz#b4411afd84aba4b332bec329525a543c1cc59cef"
-  dependencies:
-    xhr2 "0.0.7"
-
 tinycolor2@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/tinycolor2/-/tinycolor2-1.4.1.tgz#f4fad333447bc0b07d4dc8e9209d8f39a8ac77e8"
@@ -13531,10 +13525,6 @@ x-xss-protection@1.1.0:
 xdg-basedir@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/xdg-basedir/-/xdg-basedir-3.0.0.tgz#496b2cc109eca8dbacfe2dc72b603c17c5870ad4"
-
-xhr2@0.0.7:
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/xhr2/-/xhr2-0.0.7.tgz#fcb61f704e80c3aabe424295479407c6072d25b3"
 
 xml-name-validator@^2.0.1:
   version "2.0.1"

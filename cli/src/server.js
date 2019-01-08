@@ -1,6 +1,5 @@
 import program from 'commander';
 
-import bulkInsert from 'cli/commands/bulkInsert';
 import createSiteAdmin from 'cli/commands/createSiteAdmin';
 import updateStatementOrganisation from 'cli/commands/updateStatementOrganisation';
 import updateStatementCount from 'cli/commands/updateStatementCount';
@@ -36,9 +35,6 @@ program
   .command('clearAggregationCache')
   .option('-o, --org [org]', 'Organisation ID')
   .action(clearAggregationCache);
-
-program.command('bulkInsert [host] [username] [password] [total] [batchSize]').action(bulkInsert);
-// node cli/dist/server bulkInsert http://localhost/learninglocker_cloud/public/data/xAPI/ 611f0d520c168c8a94e0e9b407afe4a01e283fac a5905b55ef2d3ab864e6e8eedc7dc99b196cfc50 1 1
 
 program
   .command('createSiteAdmin [email] [organisation] [password] ')
