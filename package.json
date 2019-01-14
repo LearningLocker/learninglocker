@@ -146,7 +146,6 @@
     "node-safe-filesaver": "^0.1.0",
     "node-sass": "^4.5.0",
     "nodemailer": "^2.3.2",
-    "nodemon": "^1.9.2",
     "normalizr": "^2.0.0",
     "numeral": "^1.5.3",
     "object-hash": "^1.1.2",
