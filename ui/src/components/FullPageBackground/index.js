@@ -46,7 +46,7 @@ const FullPageBackground = ({ version, children, width = 600 }) => (
       <div style={{ width }}>
         { children }
       </div>
-      <p className={styles.copyright}>&copy; {new Date().getFullYear()} <a href="https://www.ht2labs.com" title="HT2 Labs - Pioneers in Workplace Digital Learning" title="_blank">HT2 Labs</a></p>
+      <p className={styles.copyright}>&copy; {new Date().getFullYear()} <a href="https://www.ht2labs.com" title="HT2 Labs - Pioneers in Workplace Digital Learning" target="_blank">HT2 Labs</a></p>
       { versionDisplay(version) }
     </div>
   </div>
