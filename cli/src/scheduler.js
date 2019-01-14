@@ -1,9 +1,13 @@
 import expirationNotificationEmails from 'cli/commands/expirationNotificationEmails';
+import orgUsageTracker from 'cli/commands/orgUsageTracker';
 import logger from 'lib/logger';
 
-const timeout = 15 * 60 * 1000;
+/**
+ * Run expirationNotificationEmails every 15 minutes
+ */
+const expirationTimeout = 15 * 60 * 1000;
 
-const run = async () => {
+const runExpiration = async () => {
   logger.info('processing expiration');
   const startTime = Date.now();
 
@@ -11,7 +15,36 @@ const run = async () => {
     dontExit: true
   });
 
-  setTimeout(run, (startTime - Date.now()) + timeout);
+  setTimeout(runExpiration, expirationTimeout - (Date.now() - startTime));
 };
 
-run();
+runExpiration();
+
+
+/**
+ * Run orgUsageTracker at 3 am everyday
+ */
+const orgUsageTimeout = 24 * 60 * 60 * 1000;
+
+const runOrgUsage = async () => {
+  logger.info('processing org usage');
+  const startTime = Date.now();
+
+  await orgUsageTracker({
+    dontExit: true
+  });
+
+  setTimeout(runOrgUsage, orgUsageTimeout - (Date.now() - startTime));
+};
+
+const today3am = new Date();
+today3am.setHours(3, 0, 0, 0);
+
+const tomorrow3am = new Date();
+tomorrow3am.setHours(3, 0, 0, 0);
+tomorrow3am.setDate(tomorrow3am.getDate() + 1);
+
+const firstRunDatetime = Date.now() < today3am ? today3am : tomorrow3am;
+
+logger.info(`The first org usage tracking is at ${firstRunDatetime}`);
+setTimeout(runOrgUsage, firstRunDatetime - Date.now());

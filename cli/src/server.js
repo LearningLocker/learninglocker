@@ -29,6 +29,7 @@ import migrateMongo, { MIGRATIONS_PATH } from 'cli/migrateMongo';
 
 import seed from 'cli/seed';
 import expirationNotificationEmails from 'cli/commands/expirationNotificationEmails';
+import orgUsageTracker from 'cli/commands/orgUsageTracker';
 
 program.version('0.0.1');
 
@@ -153,5 +154,9 @@ program
   .action(expirationNotificationEmails)
   .option('--weekBefore [weekBefore]', 'The date of when to send the week before email');
 // node cli/dist/server expirationNotificationEmails
+
+program
+  .command('orgUsageTracker')
+  .action(orgUsageTracker);
 
 program.parse(process.argv);
