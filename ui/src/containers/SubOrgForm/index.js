@@ -462,7 +462,7 @@ class SubOrgForm extends Component {
               readonly={!this.props.isSiteAdmin} />
           </div>
 
-          {usageStats &&
+          {this.props.isSiteAdmin && usageStats &&
             <div className="form-group">
               <p>
                 Usage: {usageStats.get('OWN_COUNT').toLocaleString('en')} statements
