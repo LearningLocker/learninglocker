@@ -133,7 +133,7 @@ describe('PersonaController.mergePersona', () => {
     });
   });
 
-  it('should not merge a non existing persona into an existing one', async () => {
+  it('should merge a non existing persona into an existing one', async () => {
     const { persona } = await personaService.createPersona({
       organisation: testId,
       name: 'Dave'
@@ -148,10 +148,10 @@ describe('PersonaController.mergePersona', () => {
       persona: persona.id
     });
 
-    await assertFailedMerge({
+    await mergePersona({
       mergePersonaFromId: '0000000aa0a000a00aa00000',
       mergePersonaToId: persona.id.toString(),
-      expectedCode: 404
+      expectedCode: 200
     });
   });
 
