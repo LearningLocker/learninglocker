@@ -44,6 +44,7 @@ describe('aggregationGroup grouper', () => {
       expect(result.toJS().map(stage => Object.keys(stage)[0]))
         .toEqual([
           '$lookup',
+          '$match',
           '$unwind',
           '$match',
           '$project',
@@ -63,13 +64,16 @@ describe('aggregationGroup grouper', () => {
         foreignField: 'personaId'
       });
 
-      expect(result.getIn([1, '$unwind']).toJS())
+      expect(result.getIn([1, '$match']).toJS())
+        .toEqual({ 'personaAttrs': { $exists: true } });
+
+      expect(result.getIn([2, '$unwind']).toJS())
         .toEqual({ path: '$personaAttrs' });
 
-      expect(result.getIn([2, '$match']).toJS())
+      expect(result.getIn([3, '$match']).toJS())
         .toEqual({ 'personaAttrs.key': 'abcde' });
 
-      expect(result.getIn([3, '$project']).toJS())
+      expect(result.getIn([4, '$project']).toJS())
         .toEqual({
           group: '$personaAttrs.value',
           model: '$personaAttrs.value',

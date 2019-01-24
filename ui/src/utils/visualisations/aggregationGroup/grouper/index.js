@@ -86,6 +86,10 @@ const createPersonaAttributeStages = ({ groupType }) => {
     foreignField: 'personaId'
   });
 
+  const existsMatchStage = createStagePipeline('$match', {
+    'personaAttrs': { $exists: true }
+  });
+
   const unwindStage = createStagePipeline('$unwind', {
     path: '$personaAttrs'
   });
@@ -95,6 +99,7 @@ const createPersonaAttributeStages = ({ groupType }) => {
   });
 
   return lookupStage
+    .concat(existsMatchStage)
     .concat(unwindStage)
     .concat(matchAttrsKeyStage);
 };
