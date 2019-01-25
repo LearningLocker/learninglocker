@@ -9,6 +9,7 @@ const objectId = mongoose.Types.ObjectId;
 const SAMPLE_SIZE = 10000;
 const MIN_SAMPLES = 5;
 const MAX_SAMPLES = 10;
+const ACCEPTABLE_SAMPLE_THRESHOLD_PERCENTAGE = 5;
 
 const runSample = async (orgStatsList) => {
   // Sampling
@@ -20,15 +21,7 @@ const runSample = async (orgStatsList) => {
     .allowDiskUse(true)
     .exec();
 
-  // Count items of each organisation in the sample
-  const aggregated = await StatementSample
-    .aggregate([
-      { $group: { _id: '$organisation', count: { $sum: 1 } } }
-    ])
-    .hint({ organisation: 1, timestamp: -1, _id: 1 })
-    .allowDiskUse(true)
-    .exec();
-  const sampleStatementCounts = aggregated.reduce((acc, r) => ({ ...acc, [r._id.toString()]: r.count }), {});
+  const totalSampleCount = await StatementSample.count();
 
   for (const orgStats of orgStatsList) {
     if (!orgStats.finished) {
@@ -42,10 +35,13 @@ const runSample = async (orgStatsList) => {
 
       orgStats.avgObjSizes.push(stats.avgObjSize || 0);
 
+      const orgSampleCount = await Statement
+        .find({ organisation: orgStats.organisation }, { _id: 0, organisation: 1 })
+        .count();
+
       // HELP: @asahd Please add comment about this accepting logic
-      const orgSampleCount = sampleStatementCounts[orgStats.organisation] || 0;
-      const orgSamplePercentage = 100 * orgSampleCount / SAMPLE_SIZE;
-      if (orgSamplePercentage >= orgStats.totalPercentage - 2) {
+      const orgSamplePercentage = 100 * orgSampleCount / totalSampleCount;
+      if (orgSamplePercentage >= orgStats.totalPercentage - ACCEPTABLE_SAMPLE_THRESHOLD_PERCENTAGE) {
         orgStats.acceptableTries += 1;
       }
 

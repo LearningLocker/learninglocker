@@ -8,27 +8,24 @@ import { Statement } from 'lib/models';
  * @returns {Promise<Object[]>} initialized orgStats list
  */
 export default async (organisations) => {
-  const isoDate = (new Date()).toISOString();
+  const runDate = (new Date()).toISOString();
 
-  const aggregated = await Statement
-    .aggregate([
-      { $group: { _id: '$organisation', count: { $sum: 1 } } }
-    ])
-    .hint({ organisation: 1, timestamp: -1, _id: 1 })
-    .allowDiskUse(true)
-    .exec();
+  const totalStatements = await Statement.count();
 
-  const statementCounts = aggregated.reduce((acc, r) => ({ ...acc, [r._id.toString()]: r.count }), {});
-  const totalStatements = aggregated.reduce((acc, r) => acc + r.count, 0);
+  const orgStatsList = await organisations.reduce(async (accP, org) => {
+    const acc = await accP;
 
-  return organisations.reduce((acc, org) => {
-    const ownCount = statementCounts[org.id] || 0;
+    const ownCount = await Statement
+      .find({ organisation: org._id }, { _id: 0, organisation: 1 })
+      .hint({ organisation: 1, timestamp: -1, _id: 1 })
+      .count();
+
     const totalPercentage = totalStatements > 0 ? 100 * ownCount / totalStatements : 0;
 
     const orgStats = {
       organisation: org.id,
       name: org.get('name'),
-      date: isoDate,
+      date: runDate,
       totalPercentage,
       children: [],
       finished: false,
@@ -47,4 +44,6 @@ export default async (organisations) => {
 
     return [...acc, orgStats];
   }, Promise.resolve([]));
+
+  return orgStatsList;
 };
