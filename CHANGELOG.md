@@ -9,6 +9,12 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.6.4]
+### Added
+  - Adds context activity types to query builder
+### Fixed
+  - Hide server version in headers by default
+
 ## [2.6.3]
 ### Fixed
   - Counter scale and centering
