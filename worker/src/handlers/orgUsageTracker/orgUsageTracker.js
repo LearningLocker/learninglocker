@@ -39,7 +39,6 @@ const runSample = async (orgStatsList) => {
         .find({ organisation: orgStats.organisation }, { _id: 0, organisation: 1 })
         .count();
 
-      // HELP: @asahd Please add comment about this accepting logic
       const orgSamplePercentage = 100 * orgSampleCount / totalSampleCount;
       if (orgSamplePercentage >= orgStats.totalPercentage - ACCEPTABLE_SAMPLE_THRESHOLD_PERCENTAGE) {
         orgStats.acceptableTries += 1;
