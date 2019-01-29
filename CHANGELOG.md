@@ -9,6 +9,23 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Security
 ### Migrations
 
+## [2.6.4]
+### Added
+  - Adds context activity types to query builder
+### Fixed
+  - Hide server version in headers by default
+
+## [2.6.3]
+### Fixed
+  - Counter scale and centering
+  - Allow merging from non-existent persona
+  - Allow upsert for toPersona on import
+  - Update LRS statement count one by one
+
+## [2.6.2]
+### Fixed
+  - Removed unused nodemon package, solves for flatmap dependency
+
 ## [2.6.1]
 ### Fixed
   - Workers discard deleted statements

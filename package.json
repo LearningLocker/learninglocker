@@ -2,7 +2,7 @@
   "name": "learning_locker",
   "description": "An open source learning record store",
   "license": "GPL-3.0",
-  "version": "2.6.1",
+  "version": "2.6.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/LearningLocker/learninglocker"
@@ -171,7 +171,7 @@
     "react-redux": "^5.0.3",
     "react-textarea-autosize": "^4.0.5",
     "react-toolbox": "1.3.4",
-    "react-virtualized": "^8.11.4",
+    "react-virtualized": "^9.20.1",
     "recharts": "^1.0.1",
     "recompose": "^0.26.0",
     "redis": "^2.5.3",
