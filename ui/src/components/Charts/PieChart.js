@@ -83,7 +83,7 @@ const renderResults = results => labels => colors => count => grouping => isDonu
         <div key={i} style={{ fontSize: '0.9em' }}>
           <div
             style={{ display: 'inline-block', width: '12px', height: '12px', backgroundColor: colour, marginRight: '8px', marginBottom: '2px', verticalAlign: 'middle' }} />
-          <span title={labels.get(i) || `Series ${i + 1}`}>{(labels && labels.get(i).substr(0, 45)) || `Series ${i + 1}`}</span>
+          <span title={labels.get(i) || `Series ${i + 1}`}>{(labels.get(i) && labels.get(i).substr(0, 45)) || `Series ${i + 1}`}</span>
         </div>)
       )}
     </div>
