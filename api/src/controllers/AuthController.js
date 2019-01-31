@@ -1,7 +1,13 @@
 import passport from 'passport';
+import { v4 as uuid } from 'uuid';
 import User from 'lib/models/user';
+import OAuthToken from 'lib/models/oAuthToken';
 import { sendResetPasswordToken } from 'lib/helpers/email';
 import { AUTH_JWT_SUCCESS } from 'lib/constants/routes';
+import {
+  ACCESS_TOKEN_VALIDITY_PERIOD_SEC,
+  DEFAULT_PASSPORT_OPTIONS
+} from 'lib/constants/auth';
 import { createOrgJWT, createUserJWT } from 'api/auth/jwt';
 import { AUTH_FAILURE } from 'api/auth/utils';
 
@@ -108,7 +114,7 @@ const jwt = (req, res, next) => {
       return next(err); // will generate a 500 error
     }
 
-    // return method for failed authenication
+    // return method for failed authentication
     const authFailure = (reason, statusCode = 401) => {
       res.removeHeader('WWW-Authenticate');
       let message;
@@ -214,6 +220,45 @@ const success = (req, res) => {
   res.send('Login success!');
 };
 
+const issueOAuth2AccessToken = (req, res) => {
+  passport.authenticate('OAuth2_Authorization', DEFAULT_PASSPORT_OPTIONS, (err, client) => {
+    if (err) {
+      if (err.isServerError) {
+        res.status(500);
+        res.send(err.error || '');
+        return;
+      }
+      res.status(400);
+      res.send(err);
+      return;
+    }
+
+    const accessToken = uuid();
+    const createdAt = new Date();
+    const expireAt = new Date(createdAt.getTime());
+    expireAt.setSeconds(createdAt.getSeconds() + ACCESS_TOKEN_VALIDITY_PERIOD_SEC);
+
+    OAuthToken.create({
+      clientId: client._id,
+      accessToken,
+      createdAt,
+      expireAt,
+    }, (err) => {
+      if (err) {
+        res.status(500);
+        res.send(err);
+        return;
+      }
+      res.status(200);
+      res.send({
+        access_token: accessToken,
+        token_type: 'bearer',
+        expires_in: ACCESS_TOKEN_VALIDITY_PERIOD_SEC,
+      });
+    });
+  })(req, res);
+};
+
 export default {
   clientInfo,
   resetPasswordRequest,
@@ -221,5 +266,6 @@ export default {
   jwt,
   jwtOrganisation,
   googleSuccess,
-  success
+  success,
+  issueOAuth2AccessToken,
 };

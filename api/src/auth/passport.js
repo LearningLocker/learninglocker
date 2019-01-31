@@ -224,4 +224,64 @@ if (
   );
 }
 
+/**
+ * Based on RFC 6749
+ */
+passport.use(
+  'OAuth2_Authorization',
+  new CustomStrategy((req, done) => {
+    const grantType = req.body.grant_type;
+    const clientId = req.body.client_id;
+    const clientSecret = req.body.client_secret;
+
+    if (grantType === undefined) {
+      done({ error: 'invalid_request' });
+      return;
+    }
+
+    if (grantType !== 'client_credentials') {
+      done({ error: 'unsupported_grant_type' });
+      return;
+    }
+
+    if (clientId === undefined || clientSecret === undefined) {
+      done({ error: 'invalid_request' });
+      return;
+    }
+
+    Client.findOne({ 'api.basic_key': clientId }, (err, client) => {
+      if (err) {
+        done({
+          isServerError: true,
+          error: err
+        });
+        return;
+      }
+
+      if (!client || client.api.basic_secret !== clientSecret) {
+        done({ error: 'invalid_client' });
+        return;
+      }
+
+      if (!client.isTrusted) {
+        done({
+          error: 'invalid_client',
+          error_description: 'The client is not trusted.'
+        });
+        return;
+      }
+
+      client.authInfo = {
+        client,
+        scopes: client.scopes,
+        token: {
+          tokenType: 'client'
+        }
+      };
+
+      done(null, client);
+    });
+  })
+);
+
 export default passport;
