@@ -1,4 +1,4 @@
-# THIS LOG HAS BEEN DEPRECATED AS OF v2.6.4. PLEASE REFER TO OUR RELEASES INSTEAD.
+# THIS LOG HAS BEEN DEPRECATED AS OF v2.6.4. [PLEASE REFER TO OUR RELEASES INSTEAD.](https://github.com/LearningLocker/learninglocker/releases)
 
 Format based on [Keep a Changelog](http://keepachangelog.com/)
 
