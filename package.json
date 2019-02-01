@@ -2,7 +2,7 @@
   "name": "learning_locker",
   "description": "An open source learning record store",
   "license": "GPL-3.0",
-  "version": "2.6.4",
+  "version": "2.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LearningLocker/learninglocker"
@@ -46,7 +46,8 @@
     "test-integration": "cypress open",
     "test-integration-run": "cypress run",
     "migrate": "node cli/dist/server migrateMongo --up",
-    "rollback": "node cli/dist/server migrateMongo --down last"
+    "rollback": "node cli/dist/server migrateMongo --down last",
+    "semantic-release": "ht2-release-private-travisci"
   },
   "dependencies": {
     "@google-cloud/pubsub": "^0.16.1",
@@ -241,6 +242,7 @@
     "winston-aws-cloudwatch": "^1.5.0"
   },
   "devDependencies": {
+    "@ht2-labs/semantic-release": "^1.1.59",
     "babel-jest": "^19.0.0",
     "babel-plugin-dynamic-import-node": "^1.0.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
@@ -289,5 +291,8 @@
     "timekeeper": "0.0.5",
     "webpack-hot-middleware": "^2.5.0",
     "webpack-notifier": "^1.2.1"
+  },
+  "publishConfig": {
+    "access": "restricted"
   }
 }
