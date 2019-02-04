@@ -26,7 +26,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependency-cache-{{ checksum "package-lock.json" }}
+            - v2-dependency-cache-{{ checksum "package.json" }}
             - v2-hardsource-cache-{{ .Branch }}
       - run:
           name: Installing Dependencies
@@ -38,7 +38,7 @@ jobs:
           name: Testing Compile
           command: npm run build-all
       - save_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+          key: v2-dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
       - save_cache:
