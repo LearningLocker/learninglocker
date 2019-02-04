@@ -76,15 +76,6 @@ workflows:
           filters:
             branches:
               only: circleci
-      - cypress/run:
-          requires:
-            - test
-          record: false
-          parallel: true
-          parallelism: 1
-          group: 'all tests'
-          start: 'npm install pm2 && npm run start-test'
-          wait-on: 'http://localhost:3000'
       - release:
           requires:
             - test
