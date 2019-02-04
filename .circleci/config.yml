@@ -2,8 +2,6 @@ version: 2
 dependencies:
   pre:
     - touch .env
-orbs:
-  cypress: cypress-io/cypress@1
 jobs:
   test:
     docker:
