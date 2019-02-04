@@ -9,7 +9,6 @@ jobs:
       - image: mongo:3.4-jessie
       - image: redis:4-alpine
     environment:
-      NODE_ENV: production
       MONGODB_PATH: mongodb://localhost:27017/ll_integration_test
       MONGODB_TEST_PATH: mongodb://localhost:27017/ll_tests
       QUEUE_PROVIDER: REDIS
