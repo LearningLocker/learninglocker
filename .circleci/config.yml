@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/node:8.12.0
-      - image: mongo:3.4.4-jessie
+      - image: mongo:3.4-jessie
     environment:
     steps:
       - checkout
@@ -26,7 +26,7 @@ jobs:
   test:
     docker:
       - image: circleci/node:8.12.0
-      - image: mongo:3.4.4-jessie
+      - image: mongo:3.4-jessie
     environment:
     steps:
       - checkout
