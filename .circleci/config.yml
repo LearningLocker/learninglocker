@@ -59,6 +59,8 @@ jobs:
           command:  |
             npm install -g pm2
             npm run start-test
+            yarn test-integration-run
+            yarn stop-test
 
   release:
     docker:
