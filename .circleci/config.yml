@@ -10,6 +10,7 @@ jobs:
       - restore_cache:
           keys:
             - dependency-cache-{{ checksum "package.json" }}
+
       - run:
           name: Installing Dependencies
           command: npm ci
@@ -29,6 +30,10 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
+            - api/src/node_modules/.cache
+            - ui/src/node_modules/.cache
+            - cli/src/node_modules/.cache
+            - worker/src/node_modules/.cache
 
   release:
     docker:
