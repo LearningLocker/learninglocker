@@ -1,14 +1,12 @@
 version: 2
 jobs:
-  build:
+  test:
     docker:
       - image: circleci/node:8.12.0
       - image: mongo:3.4-jessie
     environment:
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
       - restore_cache:
           keys:
             - dependency-cache-{{ checksum "package.json" }}
@@ -18,12 +16,21 @@ jobs:
       - run:
           name: Testing Compile
           command: npm run build-all
+      - run:
+          name: Run linter
+          command: npm run lint
+      - run:
+          name: Run tests
+          command: npm run test
+      - run:
+          name: Run integration tests
+          command: npm run ci-test-integrations
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
 
-  test:
+  release:
     docker:
       - image: circleci/node:8.12.0
       - image: mongo:3.4-jessie
@@ -31,24 +38,21 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Installing Dependencies
-          command: npm run lint
-      - run:
-          name: Installing Dependencies
-          command: npm run test
+          name: Run semantic release
+          command: npm run semantic-release
 
 
 workflows:
   version: 2
-  build_and_test:
+  test_and_release:
     jobs:
-      - build:
+      - test:
           filters:
             branches:
               only: circleci
-      - lint:
+      - release:
           requires:
             - build
           filters:
             branches:
-              only: circleci
+              only: master
