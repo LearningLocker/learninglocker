@@ -9,12 +9,19 @@ jobs:
       - image: mongo:3.4-jessie
       - image: redis:4-alpine
     environment:
-      MONGODB_TEST_PATH: mongodb://localhost:27017/llv2tests
-      TEST_API_PORT: 8080
-      TEST_LOG_MIN_LEVEL: info
-      APP_SECRET: 44E52D2227F93179525E252EC3AB5
+      NODE_ENV: production
+      MONGODB_PATH: mongodb://localhost:27017/ll_integration_test
+      MONGODB_TEST_PATH: mongodb://localhost:27017/ll_tests
       QUEUE_PROVIDER: REDIS
       REDIS_HOST: 127.0.0.1
+      API_HOST: 127.0.0.1
+      API_PORT: 8080
+      TEST_API_PORT: 8080
+      UI_HOST: 127.0.0.1
+      UI_PORT: 3000
+      APP_SECRET: 44E52D2227F93179525E252EC3AB5
+      SITE_URL: "http://127.0.0.1:3000"
+      TEST_LOG_MIN_LEVEL: info
     steps:
       - checkout
       - restore_cache:
@@ -49,7 +56,9 @@ jobs:
           command: npm run test
       - run:
           name: Run integration tests
-          command: npm run ci-test-integrations
+          command:  |
+            npm install -g pm2
+            npm run start-test
 
   release:
     docker:
