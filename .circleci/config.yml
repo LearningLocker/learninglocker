@@ -17,6 +17,7 @@ jobs:
       - restore_cache:
           keys:
             - dependency-cache-{{ checksum "package.json" }}
+            - hardsource-cache-{{ .Branch }}
       - run:
           name: Installing Dependencies
           command: npm install
@@ -30,6 +31,9 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
+      - save_cache:
+          key: hardsource-cache-{{ .Branch }}
+          paths:
             - api/src/node_modules/.cache
             - ui/src/node_modules/.cache
             - cli/src/node_modules/.cache
