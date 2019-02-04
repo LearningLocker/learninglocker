@@ -25,8 +25,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v2-dependency-cache-{{ checksum "package.json" }}
-            - v2-hardsource-cache-{{ .Branch }}
+            - v3-dependency-cache-{{ checksum "package.json" }}
+            - v3-hardsource-cache-{{ .Branch }}
       - run:
           name: Installing Dependencies
           command: npm install
@@ -37,16 +37,16 @@ jobs:
           name: Testing Compile
           command: npm run build-all
       - save_cache:
-          key: v2-dependency-cache-{{ checksum "package.json" }}
+          key: v3-dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
       - save_cache:
-          key: v2-hardsource-cache-{{ .Branch }}-{{ .Revision }}
+          key: v3-hardsource-cache-{{ .Branch }}-{{ .Revision }}
           paths:
-            - api/src/node_modules
-            - ui/src/node_modules
-            - cli/src/node_modules
-            - worker/src/node_modules
+            - api/src/node_modules/.cache
+            - ui/src/node_modules/.cache
+            - cli/src/node_modules/.cache
+            - worker/src/node_modules/.cache
       - run:
           name: Run linter
           command: npm run lint
