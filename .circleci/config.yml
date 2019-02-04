@@ -14,13 +14,13 @@ jobs:
       TEST_LOG_MIN_LEVEL: info
       APP_SECRET: 44E52D2227F93179525E252EC3AB5
       QUEUE_PROVIDER: REDIS
-      REDIS_HOST: localhost
+      REDIS_HOST: 127.0.0.1
     steps:
       - checkout
       - restore_cache:
           keys:
-            - dependency-cache-{{ checksum "package.json" }}
-            - hardsource-cache-{{ .Branch }}
+            - v1-dependency-cache-{{ checksum "package-lock.json" }}
+            - v1-hardsource-cache-{{ .Branch }}
       - run:
           name: Installing Dependencies
           command: npm install
@@ -31,11 +31,11 @@ jobs:
           name: Testing Compile
           command: npm run build-all
       - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
       - save_cache:
-          key: hardsource-cache-{{ .Branch }}
+          key: v1-hardsource-cache-{{ .Branch }}-{{ .Revision }}
           paths:
             - api/src/node_modules/.cache
             - ui/src/node_modules/.cache
