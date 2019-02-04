@@ -17,6 +17,14 @@ jobs:
       - run:
           name: Testing Compile
           command: npm run build-all
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+            - api/src/node_modules/.cache
+            - ui/src/node_modules/.cache
+            - cli/src/node_modules/.cache
+            - worker/src/node_modules/.cache
       - run:
           name: Run linter
           command: npm run lint
@@ -26,14 +34,6 @@ jobs:
       - run:
           name: Run integration tests
           command: npm run ci-test-integrations
-      - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-          paths:
-            - node_modules
-            - api/src/node_modules/.cache
-            - ui/src/node_modules/.cache
-            - cli/src/node_modules/.cache
-            - worker/src/node_modules/.cache
 
   release:
     docker:
