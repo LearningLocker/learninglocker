@@ -79,11 +79,11 @@ workflows:
       - cypress/run:
           requires:
             - test
-          record: false        # record results on Cypress Dashboard
-          parallel: true      # split all specs across machines
-          parallelism: 1      # use 4 CircleCI machines to finish quickly
-          group: 'all tests'  # name this group "all tests" on the dashboard
-          start: 'npm install pm2 && npm run start-test'  # start server before running tests
+          record: false
+          parallel: true
+          parallelism: 1
+          group: 'all tests'
+          start: 'npm install pm2 && npm run start-test'
           wait-on: 'http://localhost:3000'
       - release:
           requires:
