@@ -48,18 +48,18 @@ jobs:
             - cli/src/node_modules/.cache
             - worker/src/node_modules/.cache
       - run:
-          name: Run linter
-          command: npm run lint
-      - run:
-          name: Run tests
-          command: npm run test
-      - run:
           name: Run integration tests
           command:  |
             npm install pm2
             npm run start-test
             yarn test-integration-run
             yarn stop-test
+      - run:
+          name: Run linter
+          command: npm run lint
+      - run:
+          name: Run tests
+          command: npm run test
 
   release:
     docker:
