@@ -30,9 +30,9 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v3-dependency-cache-{{ checksum "package.json" }}
-            - v3-hardsource-cache-{{ .Branch }}
-            - v1-cache-{{ .Branch }}
+            - v3-cache-{{ .Branch }}-{{ .Revision }}
+            - v3-cache-{{ .Branch }}
+            - v3-cache
       - run:
           name: Installing Dependencies
           command: npm install
@@ -43,19 +43,13 @@ jobs:
           name: Testing Compile
           command: npm run build-all
       - save_cache:
-          key: v3-dependency-cache-{{ checksum "package.json" }}
+          key: v3-cache-{{ .Branch }}-{{ .Revision }}
           paths:
             - node_modules
-      - save_cache:
-          key: v3-hardsource-cache-{{ .Branch }}-{{ .Revision }}
-          paths:
             - api/src/node_modules/.cache
             - ui/src/node_modules/.cache
             - cli/src/node_modules/.cache
             - worker/src/node_modules/.cache
-      - save_cache:
-          key: v1-cache-{{ .Branch }}-{{ .Revision }}
-          paths:
             - .cache
       - run:
           name: Run integration tests
