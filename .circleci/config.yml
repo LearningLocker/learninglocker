@@ -27,7 +27,7 @@ jobs:
       - restore_cache:
           keys:
             - v1-dependency-cache-{{ checksum "package-lock.json" }}
-            - v1-hardsource-cache-{{ .Branch }}
+            - v2-hardsource-cache-{{ .Branch }}
       - run:
           name: Installing Dependencies
           command: npm install
@@ -42,12 +42,12 @@ jobs:
           paths:
             - node_modules
       - save_cache:
-          key: v1-hardsource-cache-{{ .Branch }}-{{ .Revision }}
+          key: v2-hardsource-cache-{{ .Branch }}-{{ .Revision }}
           paths:
-            - api/src/node_modules/.cache
-            - ui/src/node_modules/.cache
-            - cli/src/node_modules/.cache
-            - worker/src/node_modules/.cache
+            - api/src/node_modules
+            - ui/src/node_modules
+            - cli/src/node_modules
+            - worker/src/node_modules
       - run:
           name: Run linter
           command: npm run lint
