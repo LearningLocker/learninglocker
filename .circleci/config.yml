@@ -49,14 +49,6 @@ jobs:
             - ui/src/node_modules/.cache
             - cli/src/node_modules/.cache
             - worker/src/node_modules/.cache
-            - .cache
-      - run:
-          name: Run integration tests
-          command:  |
-            npm install pm2
-            npm run start-test
-            $(npm bin)/cypress run --config videoRecording=false
-            yarn stop-test
       - run:
           name: Run linter
           command: npm run lint
