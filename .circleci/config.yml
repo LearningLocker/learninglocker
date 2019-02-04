@@ -52,7 +52,7 @@ workflows:
               only: circleci
       - release:
           requires:
-            - build
+            - test
           filters:
             branches:
               only: master
