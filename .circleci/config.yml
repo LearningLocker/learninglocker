@@ -7,11 +7,14 @@ jobs:
     docker:
       - image: circleci/node:8.12.0
       - image: mongo:3.4-jessie
+      - image: 4-alpine
     environment:
       MONGODB_TEST_PATH: mongodb://localhost:27017/llv2tests
       TEST_API_PORT: 8080
       TEST_LOG_MIN_LEVEL: info
       APP_SECRET: 44E52D2227F93179525E252EC3AB5
+      QUEUE_PROVIDER: REDIS
+      REDIS_HOST: localhost
     steps:
       - checkout
       - restore_cache:
