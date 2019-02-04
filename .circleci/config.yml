@@ -10,7 +10,6 @@ jobs:
       - image: circleci/node:8.12.0
       - image: mongo:3.4-jessie
       - image: redis:4-alpine
-      - image: cypress/base:8
         environment:
           TERM: xterm
     environment:
@@ -85,6 +84,15 @@ workflows:
           filters:
             branches:
               only: circleci
+      - cypress/run:
+          requires:
+            - test
+          record: false        # record results on Cypress Dashboard
+          parallel: true      # split all specs across machines
+          parallelism: 1      # use 4 CircleCI machines to finish quickly
+          group: 'all tests'  # name this group "all tests" on the dashboard
+          start: 'npm install pm2 && npm run start-test'  # start server before running tests
+          wait-on: 'http://localhost:3000'
       - release:
           requires:
             - test
