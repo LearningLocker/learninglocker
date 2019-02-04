@@ -7,7 +7,7 @@ jobs:
     docker:
       - image: circleci/node:8.12.0
       - image: mongo:3.4-jessie
-      - image: 4-alpine
+      - image: redis:4-alpine
     environment:
       MONGODB_TEST_PATH: mongodb://localhost:27017/llv2tests
       TEST_API_PORT: 8080
