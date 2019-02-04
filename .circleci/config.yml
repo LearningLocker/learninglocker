@@ -1,7 +1,5 @@
 version: 2
-machine:
-  services:
-    - docker
+jobs:
   build:
     docker:
       - image: circleci/node:8.12.0
