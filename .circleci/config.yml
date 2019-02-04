@@ -1,19 +1,28 @@
 version: 2
+dependencies:
+  pre:
+    - touch .env
 jobs:
   test:
     docker:
       - image: circleci/node:8.12.0
       - image: mongo:3.4-jessie
     environment:
+      MONGODB_TEST_PATH: mongodb://localhost:27017/llv2tests
+      TEST_API_PORT: 8080
+      TEST_LOG_MIN_LEVEL: info
+      APP_SECRET: 44E52D2227F93179525E252EC3AB5
     steps:
       - checkout
       - restore_cache:
           keys:
             - dependency-cache-{{ checksum "package.json" }}
-
       - run:
           name: Installing Dependencies
           command: npm install
+      - run:
+          name: Create empty .env
+          command: touch .env
       - run:
           name: Testing Compile
           command: npm run build-all
