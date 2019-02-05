@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Map } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import moment from 'moment-timezone';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -333,6 +334,29 @@ class SubOrgForm extends Component {
     );
   };
 
+  renderTimezoneSetting = (model) => {
+    const formId = uuid.v4();
+    return (
+      <div className="form-group">
+        <label htmlFor={formId}>Timezone</label>
+        <select
+          id={formId}
+          className="form-control"
+          value={model.get('timezone', 'Europe/London')}
+          onChange={value => this.props.updateModel({
+            schema,
+            id: this.props.model.get('_id'),
+            path: 'timezone',
+            value
+          })}>
+          {moment.tz.names().map(v => (
+            <option value={v}>{`${v} (${moment().tz(v).format('Z')})`}</option>
+          ))}
+        </select>
+      </div>
+    );
+  };
+
   render = () => {
     const { model } = this.props;
     const settings = model.get('settings');
@@ -343,6 +367,8 @@ class SubOrgForm extends Component {
         <div className="col-md-12">
           <fieldset>
             {this.renderNameSetting(model)}
+
+            {this.renderTimezoneSetting(model)}
 
             <div className="form-group">
               <OrgLogo
