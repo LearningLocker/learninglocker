@@ -16,6 +16,7 @@ const SCHEMA = 'visualisation';
 class Editor extends Component {
   static propTypes = {
     model: PropTypes.instanceOf(Map),
+    queryBuilderCacheValueModels: PropTypes.instanceOf(Map),
     exportVisualisation: PropTypes.func
   }
 
@@ -62,7 +63,11 @@ class Editor extends Component {
     // The Tabs component requires its children to be Tab items
     // We cannot do inline conditionals, therefore we construct the children and pass them in via the props
     const tabs = [
-      <Tab key="axes" label="Axes"><AxesEditor model={this.props.model} /></Tab>,
+      <Tab key="axes" label="Axes">
+        <AxesEditor
+          model={this.props.model}
+          queryBuilderCacheValueModels={this.props.queryBuilderCacheValueModels} />
+      </Tab>,
       <Tab key="options" label="Options">{ this.renderOptionsEditor() }</Tab>
     ];
 

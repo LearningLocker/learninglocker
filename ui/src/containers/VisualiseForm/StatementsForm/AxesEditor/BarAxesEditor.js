@@ -1,8 +1,10 @@
 import React, { PropTypes } from 'react';
 import { Map } from 'immutable';
 import { connect } from 'react-redux';
+import { VISUALISE_AXES_PREFIX } from 'lib/constants/visualise';
 import { updateModel } from 'ui/redux/modules/models';
 import DebounceInput from 'react-debounce-input';
+import DefinitionTypeSelector from './DefinitionTypeSelector';
 import CountEditor from './CountEditor';
 import GroupEditor from './GroupEditor';
 import BaseAxesEditor from './BaseAxesEditor';
@@ -10,7 +12,17 @@ import BaseAxesEditor from './BaseAxesEditor';
 export class BarAxesEditor extends BaseAxesEditor {
   static propTypes = {
     model: PropTypes.instanceOf(Map),
+    queryBuilderCacheValueModels: PropTypes.instanceOf(Map),
     updateModel: PropTypes.func
+  };
+
+  shouldComponentUpdate = (nextProps) => {
+    const prevAxes = this.props.model.filter((item, key) => key.startsWith(VISUALISE_AXES_PREFIX));
+    const nextAxes = nextProps.model.filter((item, key) => key.startsWith(VISUALISE_AXES_PREFIX));
+
+    const isEqualsQueryBuilderCacheValue = this.props.queryBuilderCacheValueModels.equals(nextProps.queryBuilderCacheValueModels);
+
+    return !prevAxes.equals(nextAxes) || !isEqualsQueryBuilderCacheValue;
   };
 
   render = () => (
@@ -36,6 +48,7 @@ export class BarAxesEditor extends BaseAxesEditor {
             changeOperator={this.changeAxes.bind(this, 'operator')} />
         </div>
       </div>
+
       <div className="form-group">
         <label htmlFor="toggleInput" className="clearfix">Y Axis</label>
         <div className="form-group">
@@ -54,6 +67,12 @@ export class BarAxesEditor extends BaseAxesEditor {
             changeGroup={this.changeAxes.bind(this, 'group')} />
         </div>
       </div>
+
+      <DefinitionTypeSelector
+        visualisationModel={this.props.model}
+        queryBuilderCacheValueModels={this.props.queryBuilderCacheValueModels}
+        group={this.getAxesValue('group')}
+        onChangeGroup={g => this.changeAxes('group', g)} />
     </div>
   );
 }
