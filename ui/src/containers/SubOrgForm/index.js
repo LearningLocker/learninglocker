@@ -350,7 +350,7 @@ class SubOrgForm extends Component {
             value
           })}>
           {moment.tz.names().map(v => (
-            <option value={v}>{`${v} (${moment().tz(v).format('Z')})`}</option>
+            <option key={v} value={v}>{`${v} (${moment().tz(v).format('Z')})`}</option>
           ))}
         </select>
       </div>

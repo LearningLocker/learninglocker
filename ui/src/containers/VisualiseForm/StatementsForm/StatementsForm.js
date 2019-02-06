@@ -1,6 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import { Map } from 'immutable';
+import moment from 'moment-timezone';
+import { modelsSchemaIdSelector } from 'ui/redux/selectors';
 import { updateModel } from 'ui/redux/modules/models';
+import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import { connect } from 'react-redux';
 import VisualiseResults from 'ui/containers/VisualiseResults';
 import SourceResults from 'ui/containers/VisualiseResults/SourceResults';
@@ -31,7 +34,8 @@ export const toggleSourceSelector = ({ id }) => createSelector(
 
 class StatementsForm extends Component {
   static propTypes = {
-    model: PropTypes.instanceOf(Map),
+    model: PropTypes.instanceOf(Map), // visualisation
+    organisationModel: PropTypes.instanceOf(Map),
     isLoading: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
     filter: PropTypes.instanceOf(Map), // eslint-disable-line react/no-unused-prop-types
     hasMore: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
@@ -40,7 +44,8 @@ class StatementsForm extends Component {
   }
 
   static defaultProps = {
-    model: new Map()
+    model: new Map(),
+    organisationModel: new Map(),
   }
 
   shouldComponentUpdate = nextProps => !(
@@ -76,6 +81,26 @@ class StatementsForm extends Component {
     </select>
   )
 
+  renderTimezone = () => {
+    // The priority of timezone is
+    //   1. query's own tz
+    //   2. organization's tz
+    //   3. browser's tz
+    const userTimezone = moment.tz.guess(true);
+    const orgTimezone = this.props.organisationModel.get('timezone', userTimezone);
+    const queryTimezone = this.props.model.get('timezone', orgTimezone);
+    return (
+      <select
+        className="form-control"
+        value={queryTimezone}
+        onChange={this.onChangeAttr.bind(this, 'timezone')} >
+        {moment.tz.names().map(v => (
+          <option key={v} value={v}>{`${v} (${moment().tz(v).format('Z')})`}</option>
+        ))}
+      </select>
+    );
+  }
+
   renderFormWithResults = () => (
     <div className="row">
       <div className="col-md-6 left-border">
@@ -84,6 +109,7 @@ class StatementsForm extends Component {
       <div
         className="col-md-6">
         <div className="form-group form-inline" style={{ textAlign: 'right' }}>
+          { this.renderTimezone() }
           { this.renderTimePicker() }
         </div>
         <div style={{ height: '400px', paddingTop: 5 }}>
@@ -115,6 +141,7 @@ class StatementsForm extends Component {
 }
 
 export default connect((state, ownProps) => ({
+  organisationModel: modelsSchemaIdSelector('organisation', activeOrgIdSelector(state))(state),
   hasMore: ownProps.hasMore,
   isLoading: ownProps.isLoading,
   source: toggleSourceSelector({ id: ownProps.model.get('_id') })(state)
