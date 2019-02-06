@@ -223,13 +223,13 @@ const success = (req, res) => {
 const issueOAuth2AccessToken = (req, res) => {
   passport.authenticate('OAuth2_Authorization', DEFAULT_PASSPORT_OPTIONS, (err, client) => {
     if (err) {
-      if (err.isServerError) {
-        res.status(500);
-        res.send(err.error || '');
+      if (err.isClientError) {
+        res.status(400);
+        res.send({ error: err.error });
         return;
       }
-      res.status(400);
-      res.send(err);
+      res.status(500);
+      res.send(err.error);
       return;
     }
 

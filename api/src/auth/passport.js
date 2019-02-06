@@ -234,53 +234,48 @@ passport.use(
     const clientId = req.body.client_id;
     const clientSecret = req.body.client_secret;
 
-    if (grantType === undefined) {
-      done({ error: 'invalid_request' });
+    if (
+      grantType === undefined ||
+      clientId === undefined ||
+      clientSecret === undefined
+    ) {
+      done({ isClientError: true, error: 'invalid_request' });
       return;
     }
 
     if (grantType !== 'client_credentials') {
-      done({ error: 'unsupported_grant_type' });
+      done({ isClientError: true, error: 'unsupported_grant_type' });
       return;
     }
 
-    if (clientId === undefined || clientSecret === undefined) {
-      done({ error: 'invalid_request' });
-      return;
-    }
-
-    Client.findOne({ 'api.basic_key': clientId }, (err, client) => {
-      if (err) {
-        done({
-          isServerError: true,
-          error: err
-        });
-        return;
-      }
-
-      if (!client || client.api.basic_secret !== clientSecret) {
-        done({ error: 'invalid_client' });
-        return;
-      }
-
-      if (!client.isTrusted) {
-        done({
-          error: 'invalid_client',
-          error_description: 'The client is not trusted.'
-        });
-        return;
-      }
-
-      client.authInfo = {
-        client,
-        scopes: client.scopes,
-        token: {
-          tokenType: 'client'
+    Client.findOne(
+      {
+        'api.basic_key': clientId,
+        'api.basic_secret': clientSecret,
+        isTrusted: true,
+      },
+      (err, client) => {
+        if (err) {
+          done({ error: err });
+          return;
         }
-      };
 
-      done(null, client);
-    });
+        if (!client) {
+          done({ isClientError: true, error: 'invalid_client' });
+          return;
+        }
+
+        client.authInfo = {
+          client,
+          scopes: client.scopes,
+          token: {
+            tokenType: 'client'
+          }
+        };
+
+        done(null, client);
+      }
+    );
   })
 );
 
