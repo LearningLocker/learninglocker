@@ -86,10 +86,14 @@ const createSelectIfXVSY = (index, visualisation, type, axis) => {
 };
 
 const formatNumber = (selectedAxes) => {
-  if (selectedAxes.get('count') % 1 !== 0) {
-    return selectedAxes.get('count').toFixed(2);
+  const count = selectedAxes.get('count');
+  if (typeof count !== 'number') {
+    return '';
   }
-  return selectedAxes.get('count');
+  if (count % 1 !== 0) {
+    return count.toFixed(2);
+  }
+  return count;
 };
 
 export default compose(
@@ -138,7 +142,7 @@ export default compose(
                 {
                   tLabels.map(tLabel =>
                     [...Array(subColumnsCount).keys()].map((k) => {
-                      const v = row.getIn(['rowData', tLabel, k], 0);
+                      const v = row.getIn(['rowData', tLabel, k], new Map({ count: null }));
                       return <td key={`${tLabel}-${k}`}>{formatNumber(v)}</td>;
                     })
                   ).valueSeq()
