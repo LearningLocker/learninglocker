@@ -42,15 +42,36 @@ const resultsIconStyles = {
   width: '40px',
 };
 
-const renderCount = ({ color, count, tooltip, hasBenchmark }) => (
-  <TooltipLink
-    style={{ color, height: hasBenchmark ? null : '100%' }}
-    label={formatShortNumber(count)}
-    tooltip={tooltip}
-    tooltipPosition="top"
-    tooltipDelay={600}
-    active />
+const renderCount = ({ color, count, tooltip, hasBenchmark }) => { 
+  let hours = 0;
+  let minutes = 0;
+  let result = 0;
+  if(hasBenchmark){
+    if(count>3600){
+      hours = Math.floor(count/3600);
+      let min = Math.floor(count%60);
+      if(min>60){
+        minutes = Math.floor(min/60);
+      }
+    }else{
+      if(count>60){
+        minutes = Math.floor(count/60);
+      }
+    }
+    result = formatShortNumber(hours)+'h '+ formatShortNumber(minutes)+'m';
+  }else{
+    result = Math.floor(count);
+  }
+  return( 
+    <TooltipLink
+      style={{ color, height: hasBenchmark ? null : '100%' }}
+      label={formatShortNumber(count)}
+      tooltip={tooltip}
+      tooltipPosition="top"
+      tooltipDelay={600}
+      active />
   );
+};
 
 const renderBenchmark = ({ percentage, model }) => {
   if (percentage.result === 'N/A') {
@@ -115,7 +136,7 @@ const renderCounter = ({ color, results, model, height, width }) => {
           style={{
             fontSize,
             color: percentage.color,
-          }}>{ renderedBenchmark }</div>
+          }}>{  }</div>
       </div>
     </div>
   );
