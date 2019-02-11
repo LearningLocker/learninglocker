@@ -1,16 +1,13 @@
 version: 2
-dependencies:
-  pre:
-    - touch .env
+
 jobs:
-  test:
+  build:
     docker:
       - image: circleci/node:8.12.0
       - image: mongo:3.4-jessie
       - image: redis:4-alpine
-        environment:
-          TERM: xterm
     environment:
+      TERM: xterm
       MONGODB_PATH: mongodb://localhost:27017/ll_integration_test
       MONGODB_TEST_PATH: mongodb://localhost:27017/ll_tests
       QUEUE_PROVIDER: REDIS
@@ -53,30 +50,6 @@ jobs:
       - run:
           name: Run tests
           command: npm run test
-
-  release:
-    docker:
-      - image: circleci/node:8.12.0
-      - image: mongo:3.4-jessie
-    environment:
-    steps:
-      - checkout
-      - run:
-          name: Run semantic release
+      - deploy:
+          name: Semantic Release
           command: npm run semantic-release
-
-
-workflows:
-  version: 2
-  test_and_release:
-    jobs:
-      - test:
-          filters:
-            branches:
-              only: circleci
-      - release:
-          requires:
-            - test
-          filters:
-            branches:
-              only: master

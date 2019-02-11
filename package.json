@@ -47,7 +47,7 @@
     "test-integration-run": "cypress run",
     "migrate": "node cli/dist/server migrateMongo --up",
     "rollback": "node cli/dist/server migrateMongo --down last",
-    "semantic-release": "ht2-release-private-travisci"
+    "semantic-release": "ht2-release-private-circleci"
   },
   "dependencies": {
     "@google-cloud/pubsub": "^0.16.1",
