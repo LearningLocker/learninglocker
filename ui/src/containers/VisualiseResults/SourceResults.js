@@ -13,14 +13,7 @@ const moreThanOneSeries = tData => tData.first() !== undefined && tData.first().
 
 export const generateTableData = (results, labels) => {
   const seriesList = labels.zip(results);
-  const seriesList2 = seriesList.map(([key, item], i) => {
-    if (key === undefined) {
-      return [`Series ${i + 1}`, item];
-    }
-    return [key, item];
-  });
-
-  const seriesMap = new OrderedMap(seriesList2);
+  const seriesMap = new OrderedMap(seriesList);
   const result = seriesMap.reduce((reduction, series, seriesKey) =>
     series.reduce(
       (axesReduction, axes2, axesKey) => axes2.reduce(
@@ -36,6 +29,24 @@ export const generateTableData = (results, labels) => {
   , new OrderedMap());
   return result;
 };
+
+/**
+ * Count sub columns
+ *
+ * @param {List} labels - List of string. Don't include undefined
+ * @param {OrderedMap} tableData
+ * @returns {Number} the number of sub columns.
+ */
+const countSubColumns = (labels, tableData) =>
+  labels.reduce(
+    (acc1, label) =>
+      tableData.reduce(
+        (acc2, row) =>
+          Math.max(acc2, row.getIn(['rowData', label], new Map()).size),
+        acc1
+      ),
+    1
+  );
 
 const formatKeyToFriendlyString = (key) => {
   if (isString(key)) return key;
@@ -75,10 +86,14 @@ const createSelectIfXVSY = (index, visualisation, type, axis) => {
 };
 
 const formatNumber = (selectedAxes) => {
-  if (selectedAxes.get('count') % 1 !== 0) {
-    return selectedAxes.get('count').toFixed(2);
+  const count = selectedAxes.get('count');
+  if (typeof count !== 'number') {
+    return '';
   }
-  return selectedAxes.get('count');
+  if (count % 1 !== 0) {
+    return count.toFixed(2);
+  }
+  return count;
 };
 
 export default compose(
@@ -92,7 +107,10 @@ export default compose(
   visualisation
 }) => {
   const formattedResults = getFormattedResults(results);
-  const tableData = generateTableData(formattedResults, labels);
+  const tLabels = labels.map((label, i) => (label === undefined ? `Series ${i + 1}` : label));
+  const tableData = generateTableData(formattedResults, tLabels);
+  const subColumnsCount = countSubColumns(tLabels, tableData);
+
   if (tableData.first()) {
     return (
       <div className={styles.sourceResultsContainer}>
@@ -100,32 +118,35 @@ export default compose(
           <tbody>
             {moreThanOneSeries(tableData) && <tr>
               <th />
-              {tableData.first().get('rowData', new Map()).map((item, key) => (
-                <th key={key} colSpan={item.size}>{key}</th>
-              )).valueSeq()}
+              {
+                tLabels.map(tLabel => (
+                  <th key={tLabel} colSpan={subColumnsCount}>{tLabel}</th>
+                )).valueSeq()
+              }
             </tr>}
+
             <tr>
               <th>{getAxisLabel('x', visualisation, model.get('type'))}</th>
-              {tableData.first().get('rowData', new Map()).map((series, key) => {
-                const out = series.mapEntries(
-                  ([title], index) =>
-                    [
-                      index,
-                      (<th key={`${key}-${index}`}>{createSelectIfXVSY(index, visualisation, model.get('type'), 'y')}</th>)
-                    ]
-                  );
-                return out.valueSeq();
-              }).valueSeq()
+              {
+                tLabels.map(tLabel =>
+                  [...Array(subColumnsCount).keys()].map(k =>
+                    <th key={`${tLabel}-${k}`}>{createSelectIfXVSY(k, visualisation, model.get('type'), 'y')}</th>
+                  )
+                ).valueSeq()
               }
             </tr>
+
             {tableData.map((row, key) => (
               <tr key={key}>
                 <td title={key}>{formatKeyToFriendlyString(row.get('model', key))}</td>
-                {row.get('rowData', new Map()).map(series =>
-                  series.map(axes2 => (
-                    <td>{formatNumber(axes2)}</td>)
+                {
+                  tLabels.map(tLabel =>
+                    [...Array(subColumnsCount).keys()].map((k) => {
+                      const v = row.getIn(['rowData', tLabel, k], new Map({ count: null }));
+                      return <td key={`${tLabel}-${k}`}>{formatNumber(v)}</td>;
+                    })
                   ).valueSeq()
-                ).valueSeq()}
+                }
               </tr>
             )).valueSeq()}
           </tbody>
