@@ -1,3 +1,5 @@
+# THIS LOG HAS BEEN DEPRECATED AS OF v2.6.4. [PLEASE REFER TO OUR RELEASES INSTEAD.](https://github.com/LearningLocker/learninglocker/releases)
+
 Format based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [unreleased]
@@ -8,6 +10,12 @@ Format based on [Keep a Changelog](http://keepachangelog.com/)
 ### Fixed
 ### Security
 ### Migrations
+
+## [2.6.4]
+### Added
+  - Adds context activity types to query builder
+### Fixed
+  - Hide server version in headers by default
 
 ## [2.6.3]
 ### Fixed
