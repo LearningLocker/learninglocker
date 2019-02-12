@@ -2,8 +2,6 @@
 import { Map, fromJS } from 'immutable';
 import { handleActions } from 'redux-actions';
 import * as downloadExportDuck from 'ui/redux/modules/exports/downloadExport';
-// import { saveAs } from 'node-safe-filesaver';
-// import uuid from 'uuid';
 
 /*
  * Reducers
