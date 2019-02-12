@@ -53,7 +53,7 @@ export const postStatementMetadata = catchErrors(async (req, res) => {
   const metadata = mapDot(req.body, encodeDot);
 
   const update = { metadata };
-  await Statement.updateOne(filter, update, { new: true, fields: { _id: 1, organisation: 1, metadata: 1 } });
+  await Statement.updateOne(filter, update);
   const model = await Statement.findOne(filter).select({ _id: 1, organisation: 1, metadata: 1 }).lean();
   generateQueryBuilderCaches(update, model.organisation);
 

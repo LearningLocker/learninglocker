@@ -149,9 +149,6 @@ const statementForwardingRequestHandler = async (
           $addToSet: {
             failedForwardingLog: update
           }
-        },
-        {
-          new: true,
         }
       );
 
