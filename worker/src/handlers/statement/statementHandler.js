@@ -53,14 +53,10 @@ export const addStatementToPendingQueues = (statement, passedQueues, done) => {
     return !preReqsCompleted || queueCompleted || queueProcessing;
   });
 
-  return Statement.findByIdAndUpdate(
-    statement._id,
+  return Statement.updateOne(
+    { _id: statement._id },
     {
       $addToSet: { processingQueues: { $each: pendingQueueNames } }
-    },
-    {
-      lean: true,
-      select: { _id: 1 }
     },
     (err) => {
       if (err) return done(err);
@@ -92,18 +88,18 @@ export default ({ status, statementId }, jobDone) => {
   try {
     if (status) {
       logger.debug(`COMPLETED ${statementId} - ${status}`);
-      return Statement.findByIdAndUpdate(
-        statementId,
+      const idFilter = { _id: statementId };
+      return Statement.updateOne(
+        idFilter,
         {
           $addToSet: { completedQueues: status },
           $pull: { processingQueues: status }
         },
-        {
-          new: true,
-          lean: true,
-          select: { _id: 1, completedQueues: 1, processingQueues: 1 }
-        },
-        (err, statement) => {
+        async (err) => {
+          const statement = await Statement.findOne(idFilter)
+            .select({ _id: 1, completedQueues: 1, processingQueues: 1 })
+            .lean();
+
           if (err) logger.error('Statement.findByIdAndUpdate error', err);
           if (err) return jobDone(err);
           // get the statement so that we can find which queues it has already been through
