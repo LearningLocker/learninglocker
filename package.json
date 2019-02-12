@@ -2,7 +2,7 @@
   "name": "learning_locker",
   "description": "An open source learning record store",
   "license": "GPL-3.0",
-  "version": "2.6.4",
+  "version": "2.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LearningLocker/learninglocker"
@@ -41,12 +41,13 @@
     "test-lib": "mocha-webpack --exit --webpack-config \"api/testConfig.js\" \"lib/**/*-test.js\"",
     "test-cli": "mocha-webpack --exit --webpack-config \"cli/testConfig.js\" \"cli/**/*-test.js\"",
     "test-ui": "jest --config ui/jest.config.json --env node",
-    "ci-test-integrations": "npm install -g pm2 && yarn build-all && yarn start-test && yarn test-integration-run && yarn stop-test",
+    "ci-test-integrations": "npm install -g pm2 && yarn build-all && yarn start-test && yarn test-integration-run --config videoRecording=false && yarn stop-test",
     "test": "yarn test-api && yarn test-lib && yarn test-worker && yarn test-ui",
     "test-integration": "cypress open",
     "test-integration-run": "cypress run",
     "migrate": "node cli/dist/server migrateMongo --up",
-    "rollback": "node cli/dist/server migrateMongo --down last"
+    "rollback": "node cli/dist/server migrateMongo --down last",
+    "semantic-release": "ht2-release-private-circleci"
   },
   "dependencies": {
     "@google-cloud/pubsub": "^0.16.1",
@@ -208,6 +209,7 @@
     "winston-aws-cloudwatch": "^1.5.0"
   },
   "devDependencies": {
+    "@ht2-labs/semantic-release": "^1.1.59",
     "babel-jest": "^19.0.0",
     "babel-plugin-dynamic-import-node": "^1.0.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
@@ -239,5 +241,8 @@
     "redux-devtools-log-monitor": "^1.0.0-beta-3",
     "redux-mock-store": "^1.2.3",
     "style-loader": "^0.23.1"
+  },
+  "publishConfig": {
+    "access": "restricted"
   }
 }
