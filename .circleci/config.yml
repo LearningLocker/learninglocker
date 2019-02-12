@@ -29,13 +29,13 @@ jobs:
             - v3-cache
       - run:
           name: Installing Dependencies
-          command: npm install
+          command: yarn install
       - run:
           name: Create empty .env
           command: touch .env
       - run:
           name: Testing Compile
-          command: npm run build-all
+          command: yarn run build-all
       - save_cache:
           key: v3-cache-{{ .Branch }}-{{ .Revision }}
           paths:
@@ -44,12 +44,13 @@ jobs:
             - ui/src/node_modules/.cache
             - cli/src/node_modules/.cache
             - worker/src/node_modules/.cache
+            - ~/.cache/yarn
       - run:
           name: Run linter
-          command: npm run lint
+          command: yarn run lint
       - run:
           name: Run tests
-          command: npm run test
+          command: yarn run test
       - deploy:
           name: Semantic Release
-          command: npm run semantic-release
+          command: yarn run semantic-release
