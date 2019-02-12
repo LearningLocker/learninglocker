@@ -100,7 +100,7 @@ export default ({ status, statementId }, jobDone) => {
             .select({ _id: 1, completedQueues: 1, processingQueues: 1 })
             .lean();
 
-          if (err) logger.error('Statement.findByIdAndUpdate error', err);
+          if (err) logger.error('Statement update error', err);
           if (err) return jobDone(err);
           // get the statement so that we can find which queues it has already been through
           return addStatementToPendingQueues(statement, queueDependencies, (err) => {

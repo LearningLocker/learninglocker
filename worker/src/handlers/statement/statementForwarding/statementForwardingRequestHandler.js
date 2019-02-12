@@ -143,8 +143,8 @@ const statementForwardingRequestHandler = async (
     }
 
     try {
-      const updatedStatement = await Statement.findByIdAndUpdate(
-        statement._id,
+      await Statement.updateOne(
+        { _id: statement._id },
         {
           $addToSet: {
             failedForwardingLog: update
@@ -154,6 +154,8 @@ const statementForwardingRequestHandler = async (
           new: true,
         }
       );
+
+      const updatedStatement = await Statement.findOne({ _id: statement._id });
 
       if (
         updatedStatement.failedForwardingLog.length <=
