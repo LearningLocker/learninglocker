@@ -82,14 +82,14 @@ const sendRequest = async (statementToSend, statementForwarding, fullStatement) 
 };
 
 const setPendingStatements = (statement, statementForwardingId) =>
-  Statement.findByIdAndUpdate(statement._id, {
+  Statement.update({ _id: statement._id }, {
     $addToSet: {
       pendingForwardingQueue: statementForwardingId
     }
   });
 
 const setCompleteStatements = (statement, statementForwardingId) =>
-  Statement.findByIdAndUpdate(statement._id, {
+  Statement.update({ _id: statement._id }, {
     $addToSet: {
       completedForwardingQueue: statementForwardingId
     },
