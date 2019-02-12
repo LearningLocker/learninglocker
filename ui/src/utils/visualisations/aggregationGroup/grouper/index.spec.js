@@ -60,12 +60,20 @@ describe('aggregationGroup grouper', () => {
       .toEqual({
         from: 'personaAttributes',
         as: 'personaAttrs',
-        localField: 'person._id',
-        foreignField: 'personaId'
+        let: { personaId: '$person._id' },
+        pipeline: [
+          { $match:
+          { $expr:
+          { $and: [
+                { $eq: ['$personaId', '$$personaId'] },
+                { $eq: ['$key', 'abcde'] }
+          ] }
+          }
+          }]
       });
 
       expect(result.getIn([1, '$match']).toJS())
-        .toEqual({ 'personaAttrs': { $exists: true } });
+        .toEqual({ personaAttrs: { $exists: true } });
 
       expect(result.getIn([2, '$unwind']).toJS())
         .toEqual({ path: '$personaAttrs' });

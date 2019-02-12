@@ -79,15 +79,25 @@ const getExistsMatch = ({ valueType, groupType, valueOpCase }) => {
 };
 
 const createPersonaAttributeStages = ({ groupType }) => {
+  const personaAttrsKey = groupType.split('.')[2] || '';
+
   const lookupStage = createStagePipeline('$lookup', {
     from: 'personaAttributes',
     as: 'personaAttrs',
-    localField: 'person._id',
-    foreignField: 'personaId'
+    let: { personaId: '$person._id' },
+    pipeline: [
+      { $match:
+      { $expr:
+      { $and: [
+            { $eq: ['$personaId', '$$personaId'] },
+            { $eq: ['$key', personaAttrsKey] }
+      ] }
+      }
+      }]
   });
 
   const existsMatchStage = createStagePipeline('$match', {
-    'personaAttrs': { $exists: true }
+    personaAttrs: { $exists: true }
   });
 
   const unwindStage = createStagePipeline('$unwind', {
@@ -95,7 +105,7 @@ const createPersonaAttributeStages = ({ groupType }) => {
   });
 
   const matchAttrsKeyStage = createStagePipeline('$match', {
-    'personaAttrs.key': groupType.split('.')[2] || ''
+    'personaAttrs.key': personaAttrsKey
   });
 
   return lookupStage
