@@ -14,12 +14,12 @@ const promiseResolver = (cachePathsBatch, cacheValuesBatch, done) => Promise.all
   cachePathsBatch.execute({ w: 0 }), // write concern set to 0 to supress warnings of duplicate key errors
   cacheValuesBatch.execute({ w: 0 }) //  these are expected, letting mongo assert the uniqueness is the fastest way
 ])
-.then((result) => {
-  done(null, result);
-})
-.catch((err) => {
-  done(err);
-});
+  .then((result) => {
+    done(null, result);
+  })
+  .catch((err) => {
+    done(err);
+  });
 
 const handleStatement = (pathsBatch, valuesBatch, statement) => {
   const organisation = statement.organisation;
