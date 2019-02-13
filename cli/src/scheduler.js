@@ -4,28 +4,25 @@ import * as redis from 'lib/connections/redis';
 import logger from 'lib/logger';
 import cachePrefix from 'lib/helpers/cachePrefix';
 
+const redisClient = redis.createClient();
+
 /**
  * Run expirationNotificationEmails every 15 minutes
  */
 const EXPIRATION_TIMEOUT_MSEC = 15 * 60 * 1000;
 const EXPIRATION_LOCK_DURATION_SEC = 30;
+const EXPIRATION_CACHE_KEY = cachePrefix('EXPIRATION_SCHEDULER:RUNNING');
 
 const runExpiration = async () => {
   const startTime = Date.now();
-
-  const cacheKey = cachePrefix('EXPIRATION_SCHEDULER:RUNNING');
-  const redisClient = redis.createClient();
-  const res = await redisClient.set(cacheKey, 1, 'EX', EXPIRATION_LOCK_DURATION_SEC, 'NX');
+  const res = await redisClient.set(EXPIRATION_CACHE_KEY, 1, 'EX', EXPIRATION_LOCK_DURATION_SEC, 'NX');
 
   if (res === 'OK') {
     logger.info('processing expiration');
-    await expirationNotificationEmails({
-      dontExit: true
-    });
+    await expirationNotificationEmails({ dontExit: true });
   } else {
     logger.info('skip expiration');
   }
-
 
   setTimeout(runExpiration, EXPIRATION_TIMEOUT_MSEC - (Date.now() - startTime));
 };
@@ -38,19 +35,15 @@ runExpiration();
  */
 const ORG_USAGE_TIMEOUT_MSEC = 24 * 60 * 60 * 1000;
 const ORG_USAGE_LOCK_DURATION_SEC = 60 * 60;
+const ORG_USAGE_CACHE_KEY = cachePrefix('ORG_USAGE_SCHEDULER:RUNNING');
 
 const runOrgUsage = async () => {
   const startTime = Date.now();
-
-  const cacheKey = cachePrefix('ORG_USAGE_SCHEDULER:RUNNING');
-  const redisClient = redis.createClient();
-  const res = await redisClient.set(cacheKey, 1, 'EX', ORG_USAGE_LOCK_DURATION_SEC, 'NX');
+  const res = await redisClient.set(ORG_USAGE_CACHE_KEY, 1, 'EX', ORG_USAGE_LOCK_DURATION_SEC, 'NX');
 
   if (res === 'OK') {
     logger.info('processing org usage');
-    await orgUsageTracker({
-      dontExit: true
-    });
+    await orgUsageTracker({ dontExit: true });
   } else {
     logger.info('skip org usage');
   }
