@@ -11,8 +11,8 @@ const promiseRequestHandler = Promise.promisify(statementForwardingRequestHandle
 
 describe('Statement Forwarding Request', () => {
   afterEach(async () => {
-    await Statement.remove({});
-    await StatementForwarding.remove({});
+    await Statement.deleteMany({});
+    await StatementForwarding.deleteMany({});
   });
 
   it('Request returns 308', async () => {

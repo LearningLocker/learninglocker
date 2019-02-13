@@ -9,7 +9,7 @@ import expirationNotificationEmails from './expirationNotificationEmails';
 
 describe('expirationNotificationEmails', () => {
   beforeEach(async () => {
-    await Organisation.remove({});
+    await Organisation.deleteMany({});
   });
 
   it('should send weekBefore email', async () => {

@@ -41,7 +41,7 @@ export const establishLock = async ({
       let remainingLocks = false;
       const deletePromises = map(models, (model) => {
         if (moment(model.createdAt).add(lockTimeout, 'milliseconds').isBefore(moment())) {
-          return model.remove();
+          return model.deleteOne();
         }
         remainingLocks = true;
       });
@@ -66,7 +66,7 @@ export const establishLock = async ({
 const releaseLock = async ({
   lock
 }) => {
-  await lock.remove();
+  await lock.deleteOne();
 };
 
 export const finishedProcessing = async ({
