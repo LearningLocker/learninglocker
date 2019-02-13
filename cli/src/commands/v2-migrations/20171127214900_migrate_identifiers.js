@@ -62,7 +62,7 @@ const updateStatementsForFailedIdent = async (failedIdent) => {
         }
       }
     };
-    return statementsCollection.update(filter, update, { multi: true });
+    return statementsCollection.updateMany(filter, update, {});
   }
 };
 

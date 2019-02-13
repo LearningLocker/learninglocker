@@ -12,14 +12,14 @@ export default function () {
   const prevScope = 'all/read';
   const nextScope = 'xapi/read';
   const filter = { scopes: prevScope };
-  const options = { multi: true };
+  const options = {};
   const pushUpdate = { $push: { scopes: nextScope } };
   const pullUpdate = { $pull: { scopes: prevScope } };
 
-  Client.update(filter, pushUpdate, options)
+  Client.updateMany(filter, pushUpdate, options)
     .then((result) => {
       if (result.nModified === 0) return result;
-      return Client.update(filter, pullUpdate, options);
+      return Client.updateMany(filter, pullUpdate, options);
     })
     .then(logSuccess, logError)
     .then(() => process.exit());
