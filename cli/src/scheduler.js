@@ -1,21 +1,33 @@
 import expirationNotificationEmails from 'cli/commands/expirationNotificationEmails';
 import orgUsageTracker from 'cli/commands/orgUsageTracker';
+import * as redis from 'lib/connections/redis';
 import logger from 'lib/logger';
+import cachePrefix from 'lib/helpers/cachePrefix';
 
 /**
  * Run expirationNotificationEmails every 15 minutes
  */
-const expirationTimeout = 15 * 60 * 1000;
+const EXPIRATION_TIMEOUT_MSEC = 15 * 60 * 1000;
+const EXPIRATION_LOCK_DURATION_SEC = 30;
 
 const runExpiration = async () => {
-  logger.info('processing expiration');
   const startTime = Date.now();
 
-  await expirationNotificationEmails({
-    dontExit: true
-  });
+  const cacheKey = cachePrefix('EXPIRATION_SCHEDULER:RUNNING');
+  const redisClient = redis.createClient();
+  const res = await redisClient.set(cacheKey, 1, 'EX', EXPIRATION_LOCK_DURATION_SEC, 'NX');
 
-  setTimeout(runExpiration, expirationTimeout - (Date.now() - startTime));
+  if (res === 'OK') {
+    logger.info('processing expiration');
+    await expirationNotificationEmails({
+      dontExit: true
+    });
+  } else {
+    logger.info('skip expiration');
+  }
+
+
+  setTimeout(runExpiration, EXPIRATION_TIMEOUT_MSEC - (Date.now() - startTime));
 };
 
 runExpiration();
@@ -24,17 +36,26 @@ runExpiration();
 /**
  * Run orgUsageTracker at 3 am everyday
  */
-const orgUsageTimeout = 24 * 60 * 60 * 1000;
+const ORG_USAGE_TIMEOUT_MSEC = 24 * 60 * 60 * 1000;
+const ORG_USAGE_LOCK_DURATION_SEC = 60 * 60;
 
 const runOrgUsage = async () => {
-  logger.info('processing org usage');
   const startTime = Date.now();
 
-  await orgUsageTracker({
-    dontExit: true
-  });
+  const cacheKey = cachePrefix('ORG_USAGE_SCHEDULER:RUNNING');
+  const redisClient = redis.createClient();
+  const res = await redisClient.set(cacheKey, 1, 'EX', ORG_USAGE_LOCK_DURATION_SEC, 'NX');
 
-  setTimeout(runOrgUsage, orgUsageTimeout - (Date.now() - startTime));
+  if (res === 'OK') {
+    logger.info('processing org usage');
+    await orgUsageTracker({
+      dontExit: true
+    });
+  } else {
+    logger.info('skip org usage');
+  }
+
+  setTimeout(runOrgUsage, ORG_USAGE_TIMEOUT_MSEC - (Date.now() - startTime));
 };
 
 const today3am = new Date();
