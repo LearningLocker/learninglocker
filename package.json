@@ -121,7 +121,7 @@
     "mocha-webpack": "^0.7.0",
     "moment": "^2.11.2",
     "mongodb": "^2.1.4",
-    "mongoose": "^5.0.13",
+    "mongoose": "^5.4.0",
     "mongoose-findorcreate": "^0.1.2",
     "mongoose-timestamp": "^0.5.0",
     "morgan": "^1.7.0",
