@@ -278,8 +278,8 @@ const StatementForwardingForm = ({
             min="0"
             max={STATAMENT_FORWARDING_MAX_RETRIES}
             className="form-control"
-            value={model.getIn(['configuration', 'maxRetries'], 3)}
-            placeholder="3"
+            value={model.getIn(['configuration', 'maxRetries'], 0)}
+            placeholder="0"
             onChange={changeMaxRetries} />
           { model.getIn(['errors', 'messages', 'configuration.maxRetries'], false) &&
               (<span className="help-block">
