@@ -14,9 +14,15 @@ import {
   PIE
 } from 'ui/utils/constants';
 
+/**
+ * build pipeline from query
+ *
+ * @param {immutable.Map} args - optional (default is empty Map)
+ */
 export default memoize((args = new Map()) => {
   const query = args.getIn(['query', '$match'], new Map());
   const previewPeriod = args.get('previewPeriod');
+  const timezone = args.get('timezone');
   const today = args.get('today');
   const queryMatch = query.size === 0 ? [] : [{ $match: query }];
   const previousStartDate = periodToDate(previewPeriod, today, 2).toISOString();
@@ -40,11 +46,11 @@ export default memoize((args = new Map()) => {
     case PIE:
     case STATEMENTS:
     case FREQUENCY:
-      return aggregateChart(preReqs, axes);
+      return aggregateChart(preReqs, axes, timezone);
     case XVSY:
-      return aggregateXvsY(preReqs, axes);
+      return aggregateXvsY(preReqs, axes, timezone);
     case COUNTER:
-      return aggregateCounter(preReqs, axes);
+      return aggregateCounter(preReqs, axes, timezone);
     default:
       return query;
   }

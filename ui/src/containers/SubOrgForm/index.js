@@ -342,7 +342,7 @@ class SubOrgForm extends Component {
         <select
           id={formId}
           className="form-control"
-          value={model.get('timezone', 'Europe/London')}
+          value={model.get('timezone', 'UTC')}
           onChange={value => this.props.updateModel({
             schema,
             id: this.props.model.get('_id'),
