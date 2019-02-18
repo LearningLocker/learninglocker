@@ -2,7 +2,6 @@ import { List, Map, fromJS } from 'immutable';
 import { createSelector } from 'reselect';
 import { take, takeEvery, put, fork, select } from 'redux-saga/effects';
 import { identity, get } from 'lodash';
-import moment from 'moment';
 import {
   fetchAggregation,
   aggregationShouldFetchSelector,
@@ -35,7 +34,6 @@ import {
 } from 'ui/utils/constants';
 import { pipelinesFromQueries, getJourney } from 'ui/utils/visualisations';
 import { unflattenAxes } from 'lib/helpers/visualisation';
-import { periodToDate } from 'ui/utils/dates';
 import { OFF, ANY } from 'lib/constants/dashboard';
 
 export const FETCH_VISUALISATION = 'learninglocker/models/learninglocker/visualise/FETCH_VISUALISATION';
@@ -418,39 +416,6 @@ export function* watchFetchVisualisation() {
 }
 
 export const sagas = [watchUpdateVisualisation, watchFetchVisualisation];
-
-export const getEndDate = (dateStart, period) => {
-  const dateEnd = moment(dateStart); // Clones the date so it's not mutated.
-  return periodToDate(period, dateEnd);
-};
-
-export const getDates = (dateStart, dateEnd) => {
-  const values = [];
-  while (dateStart.isAfter(dateEnd, 'day')) {
-    values.push({ x: dateEnd.format('YYYY-MM-DD'), s1: 0, s2: 0, s3: 0 });
-    dateEnd.add(1, 'day');
-  }
-  values.push({ x: dateStart.format('YYYY-MM-DD'), s1: 0, s2: 0, s3: 0 });
-  return values;
-};
-
-export const getHours = (dateStart, dateEnd) => {
-  const values = [];
-  while (dateStart.isAfter(dateEnd, 'hours')) {
-    values.push({ x: dateEnd.format('HH'), y: 0 });
-    dateEnd.add(1, 'hours');
-  }
-  return values;
-};
-
-export const getDateRange = (period) => {
-  const dateStart = moment();
-  const dateEnd = getEndDate(dateStart, period);
-  switch (period) {
-    case 'LAST_24_HOURS': return getHours(dateStart, dateEnd);
-    default: return getDates(dateStart, dateEnd);
-  }
-};
 
 const MAX_NAME_LENGTH = 17;
 export const trimName = (name, length = MAX_NAME_LENGTH) => {
