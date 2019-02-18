@@ -83,11 +83,11 @@ const getCountFontsize = ({ height, width, hasBenchmark, maxSize }) => {
       fontSize = width > 200 ? 4.5 : 3.5;
     }
   } else if (width < 550) {
-    fontSize = width/60;
+    fontSize = width / 60;
   }
   if (fontSize > 12) fontSize = 12;
   return `${fontSize}em`;
-}
+};
 
 const renderCounter = ({ color, results, model, height, width }) => {
   const maxSize = Math.min(height, width);
