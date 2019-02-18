@@ -7,6 +7,20 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import Operator from '../Operator';
 import styles from '../styles.css';
 
+/**
+ * @param {string} symbol - "<", ">", "<=", or ">="
+ * @return {string} - mongodb's comparison query operator
+ */
+const symbolToMongoOp = (symbol) => {
+  switch (symbol) {
+    case '>': return '$gt';
+    case '>=': return '$gte';
+    case '<=': return '$lte';
+    case '<':
+    default: return '$lt';
+  }
+}
+
 class Criterion extends Component {
   static propTypes = {
     section: PropTypes.instanceOf(Map),
@@ -43,12 +57,8 @@ class Criterion extends Component {
   }
 
   getCriterionSubQuery = (operator, value) => {
-    switch (operator) {
-      case '>': return new Map({ $gt: this.getValueQuery(value) });
-      case '>=': return new Map({ $gte: this.getValueQuery(value) });
-      case '<=': return new Map({ $lte: this.getValueQuery(value) });
-      default: return new Map({ $lt: this.getValueQuery(value) });
-    }
+    const mongoOp = symbolToMongoOp(operator);
+    return new Map({ [mongoOp]: this.getValueQuery(value) });
   }
 
   getCriterionQuery = (operator, value) => {
@@ -70,13 +80,9 @@ class Criterion extends Component {
     if (!this.canDeleteCriterion()) return '';
     const operator = this.getOperator();
     const subQuery = this.getSubQuery();
-    let queryValue;
 
-    if (operator === '>') queryValue = subQuery.get('$gt');
-    else if (operator === '>=') queryValue = subQuery.get('$gte');
-    else if (operator === '<=') queryValue = subQuery.get('$lte');
-    else queryValue = subQuery.get('$lt');
-
+    const mongoOp = symbolToMongoOp(operator);
+    const queryValue = subQuery.get(mongoOp);
     return this.getQueryDisplay(queryValue);
   }
 
