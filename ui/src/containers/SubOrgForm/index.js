@@ -343,12 +343,7 @@ class SubOrgForm extends Component {
           id={formId}
           className="form-control"
           value={model.get('timezone', 'UTC')}
-          onChange={value => this.props.updateModel({
-            schema,
-            id: this.props.model.get('_id'),
-            path: 'timezone',
-            value
-          })}>
+          onChange={this.onChangeAttr.bind(null, 'timezone')} >
           {moment.tz.names().map(v => (
             <option key={v} value={v}>{`${v} (${moment().tz(v).format('Z')})`}</option>
           ))}
