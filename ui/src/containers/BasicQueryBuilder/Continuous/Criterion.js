@@ -68,14 +68,29 @@ class Criterion extends Component {
     });
   }
 
+  /**
+   * Get date object from query
+   *
+   * @returns {string|Date}
+   */
   getDateValue = () => {
     if (!this.getValue()) {
       return '';
     }
     return moment(this.getValue(), 'YYYY-MM-DD').toDate();
   }
+
+  /**
+   * Get time string from query
+   *
+   * @returns {string} "T{HH:mm}Z" is expected
+   */
   getTimeValue = () => (this.getValue() || '').slice(10) || 'T00:00Z';
 
+  /**
+   * Get date time value from query
+   * @returns {string} - "{YYYY-MM-DD}T{HH:mm}Z"
+   */
   getValue = () => {
     if (!this.canDeleteCriterion()) return '';
     const operator = this.getOperator();
@@ -86,6 +101,11 @@ class Criterion extends Component {
     return this.getQueryDisplay(queryValue);
   }
 
+  /**
+   * Get operator symbol from props or state
+   *
+   * @returns {string} "<", ">", "<=", or ">="
+   */
   getOperator = () => {
     if (!this.canDeleteCriterion()) return this.state.tempOperator;
     const subQuery = this.getSubQuery();
@@ -95,21 +115,19 @@ class Criterion extends Component {
     return '<';
   }
 
-  changeCriterion = (operator, value) => {
+  /**
+   * @param {string} operator
+   * @param {string} datetimeString - date time format "{YYYY-MM-DD}T{HH:mm}Z"
+   */
+  changeCriterion = (operator, datetimeString) => {
     this.props.onCriterionChange(new Map({
       $comment: this.props.criterion.get('$comment'),
-    }).merge(this.getCriterionQuery(operator, value)));
+    }).merge(this.getCriterionQuery(operator, datetimeString)));
   }
 
-  changeValue = (value) => {
-    const canDeleteCriterion = value === '' && this.canDeleteCriterion();
-    if (canDeleteCriterion) {
-      return this.props.onDeleteCriterion();
-    }
-
-    this.changeCriterion(this.getOperator(), `${value}${this.getTimeValue()}`);
-  }
-
+  /**
+   * @param {string} operator - "<", ">", "<=", or ">="
+   */
   changeOperator = (operator) => {
     if (!this.canDeleteCriterion()) {
       return this.setState({ tempOperator: operator });
@@ -117,10 +135,20 @@ class Criterion extends Component {
     this.changeCriterion(operator, this.getValue());
   }
 
-  handleValueChange = (value) => {
-    this.changeValue(
-      moment(value).format('YYYY-MM-DD')
-    );
+  /**
+   * called when date picker onChange
+   *
+   * @param {*} - argument of onChange in components/Material/DatePicker
+   */
+  onChangeDatePicker = (value) => {
+    const dateString = moment(value).format('YYYY-MM-DD');
+    const canDeleteCriterion = dateString === '' && this.canDeleteCriterion();
+    if (canDeleteCriterion) {
+      this.props.onDeleteCriterion();
+      return;
+    }
+
+    this.changeCriterion(this.getOperator(), `${dateString}${this.getTimeValue()}`);
   }
 
   render = () => {
@@ -144,7 +172,7 @@ class Criterion extends Component {
         <div className={criterionClasses}>
           <DatePicker
             value={this.getDateValue()}
-            onChange={this.handleValueChange} />
+            onChange={this.onChangeDatePicker} />
         </div>
         {(canDeleteCriterion &&
           <button
