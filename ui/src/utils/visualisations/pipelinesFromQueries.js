@@ -1,5 +1,5 @@
 import { Map, List } from 'immutable';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import pipelineFromQuery from './pipelineFromQuery';
 
 /**
@@ -12,7 +12,6 @@ import pipelineFromQuery from './pipelineFromQuery';
  * @param {*} id
  * @param {string} timezone
  * @param {boolean} benchmarkingEnabled - optional
- * @param {Moment} today - optional
  * @returns immutable.List
  */
 export default (
@@ -23,16 +22,18 @@ export default (
   id,
   timezone,
   benchmarkingEnabled = false,
-  today = moment().utc().startOf('day')
 ) => {
+  // seconds of current time is 00 to avoid over updating.
+  const currentMoment = moment().utc().startOf('minute');
+
   if (benchmarkingEnabled) {
     const out = queries.map(query =>
       new List([
         pipelineFromQuery(new Map({
-          query, axes, type, previewPeriod, id, timezone, today
+          query, axes, type, previewPeriod, id, timezone, currentMoment
         })),
         pipelineFromQuery(new Map({
-          query, axes, type, previewPeriod, id, timezone, today, benchmarkingEnabled
+          query, axes, type, previewPeriod, id, timezone, currentMoment, benchmarkingEnabled
         }))
       ])
     ).flatten(1);
@@ -40,7 +41,8 @@ export default (
     return out;
   }
 
+  // pipelineFromQuery is memoized
   return queries.map(query => pipelineFromQuery(new Map({
-    query, axes, type, previewPeriod, id, timezone, today
+    query, axes, type, previewPeriod, id, timezone, currentMoment
   })));
 };

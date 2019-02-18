@@ -23,22 +23,22 @@ export default memoize((args = new Map()) => {
   const query = args.getIn(['query', '$match'], new Map());
   const previewPeriod = args.get('previewPeriod');
   const timezone = args.get('timezone');
-  const today = args.get('today');
-  const queryMatch = query.size === 0 ? [] : [{ $match: query }];
-  const previousStartDate = periodToDate(previewPeriod, today, 2).toISOString();
+  const currentMoment = args.get('currentMoment');
 
   let previewPeriodMatch = [{ $match: {
-    timestamp: { $gte: { $dte: periodToDate(previewPeriod, today).toISOString() } }
+    timestamp: { $gte: { $dte: periodToDate(previewPeriod, timezone, currentMoment).toISOString() } }
   } }];
 
   if (args.get('benchmarkingEnabled')) {
+    const previousStartDate = periodToDate(previewPeriod, timezone, currentMoment, 2).toISOString();
     previewPeriodMatch = [{ $match: {
-      timestamp: { $gte: { $dte: previousStartDate }, $lte: { $dte: periodToDate(previewPeriod, today).toISOString() } }
+      timestamp: { $gte: { $dte: previousStartDate }, $lte: { $dte: periodToDate(previewPeriod, timezone, currentMoment).toISOString() } }
     } }];
   }
 
   const type = args.get('type');
   const axes = args.get('axes');
+  const queryMatch = query.size === 0 ? [] : [{ $match: query }];
   const preReqs = fromJS(previewPeriodMatch.concat(queryMatch));
   switch (type) {
     case POPULARACTIVITIES:
