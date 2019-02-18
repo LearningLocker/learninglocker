@@ -78,7 +78,7 @@ const createBodyWithAttachments = async (statementModel, statementToSend) => {
       },
     },
   });
-  const attachments = await getAttachments({ repo }, [statementModel], true, statementMode.lrs_id);
+  const attachments = await getAttachments({ repo }, [statementModel], true, statementModel.lrs_id);
   const stream = highland();
   await streamStatementsWithAttachments(statementToSend, attachments, stream);
   return stream;
@@ -109,6 +109,7 @@ const sendRequest = async (statementToSend, statementForwarding, fullStatement) 
     const message = err.response ? 'Status code was invalid' : err.message;
     const responseBody = err.response ? err.response.body : null;
     const responseStatus = err.response ? err.response.status : null;
+    const headers = err.request ? err.request.headers : null;
     throw new ForwardingRequestError(message, { headers, responseBody, responseStatus, url });
   }
 };
