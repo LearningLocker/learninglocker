@@ -70,7 +70,7 @@ export default class journeyDBHelpers {
     async.forEach(
       [Organisation, User, Lrs, Client, Statement, OAuthToken],
       (model, doneDeleting) => {
-        model.remove({}, doneDeleting);
+        model.deleteMany({}, doneDeleting);
       },
       done
     );

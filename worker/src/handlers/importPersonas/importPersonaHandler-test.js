@@ -8,7 +8,7 @@ import { establishLock } from './importPersonaHandler';
 
 describe('importPersonaHandler', () => {
   beforeEach(async () => {
-    await ImportPersonasLock.remove({});
+    await ImportPersonasLock.deleteMany({});
   });
 
   it('should establish a lock', async () => {
