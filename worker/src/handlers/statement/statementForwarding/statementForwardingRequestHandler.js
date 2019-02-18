@@ -15,6 +15,8 @@ import {
   STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE,
 } from 'lib/constants/statements';
 import * as Queue from 'lib/services/queue';
+import { getConnection } from 'lib/connections/mongoose';
+import { createClient } from 'lib/connections/redis';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -29,50 +31,50 @@ const generateHeaders = (statementForwarding, statement) => {
 const createBodyWithAttachments = async (statementModel, statementToSend) => {
   const repo = createStatementsRepo({
     auth: {
-      facade: appConfig.repo.factory.authRepoName,
-      fake: {},
+      facade: 'mongo',
       mongo: {
-        db: appConfig.repo.mongo.db,
+        db: getConnection(),
       },
     },
     events: {
-      facade: appConfig.repo.factory.eventsRepoName,
+      facade: process.env.EVENTS_REPO,
       redis: {
-        client: appConfig.repo.redis.client,
-        prefix: appConfig.repo.redis.prefix,
+        client: createClient(),
+        prefix: process.env.REDIS_PREFIX,
       },
       sentinel: {
-        client: appConfig.repo.sentinel.client,
-        prefix: appConfig.repo.sentinel.prefix,
+        client: createClient(),
+        prefix: process.env.REDIS_PREFIX,
       },
     },
     models: {
-      facade: appConfig.repo.factory.modelsRepoName,
-      memory: {
-        state: {
-          fullActivities: [],
-          statements: [],
-        },
-      },
+      facade: 'mongo',
       mongo: {
-        db: appConfig.repo.mongo.db,
+        db: getConnection(),
       },
     },
     storage: {
-      facade: appConfig.repo.factory.storageRepoName,
+      facade: process.env.FS_REPO === 'amazon' ? 's3' : process.env.FS_REPO,
       google: {
-        bucketName: appConfig.repo.google.bucketName,
-        keyFileName: appConfig.repo.google.keyFileName,
-        projectId: appConfig.repo.google.projectId,
-        subFolder: appConfig.repo.storageSubFolder,
+        bucketName: process.env.FS_GOOGLE_CLOUD_BUCKET,
+        keyFileName: process.env.FS_GOOGLE_CLOUD_KEY_FILENAME,
+        projectId: process.env.FS_GOOGLE_CLOUD_PROJECT_ID,
+        subFolder: process.env.FS_SUBFOLDER,
       },
       local: {
-        storageDir: `${appConfig.repo.local.storageDir}/${appConfig.repo.storageSubFolder}`,
+        storageDir: `${process.env.FS_LOCAL_ENDPOINT}/${process.env.FS_SUBFOLDER}`,
       },
       s3: {
-        awsConfig: appConfig.repo.s3.awsConfig,
-        bucketName: appConfig.repo.s3.bucketName,
-        subFolder: appConfig.repo.storageSubFolder,
+        awsConfig: {
+          accessKeyId: process.env.FS_AWS_S3_ACCESS_KEY_ID,
+          apiVersion: '2006-03-01',
+          region: process.env.FS_AWS_S3_REGION,
+          secretAccessKey: process.env.FS_AWS_S3_SECRET_ACCESS_KEY,
+          signatureVersion: 'v4',
+          sslEnabled: true,
+        },
+        bucketName: process.env.FS_AWS_S3_BUCKET,
+        subFolder: process.env.FS_SUBFOLDER,
       },
     },
   });
