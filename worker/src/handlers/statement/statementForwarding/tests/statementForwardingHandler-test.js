@@ -29,7 +29,7 @@ describe('Statement Forwarding handler', () => {
       async.forEach(
         [StatementForwarding, Statement],
         (model, doneDeleting) => {
-          model.remove({}, doneDeleting);
+          model.deleteMany({}, doneDeleting);
         },
         reslove
       )
@@ -162,8 +162,8 @@ describe('Statement Forwarding handler', () => {
     await unsubscribeAll();
 
     await Promise.all([
-      StatementForwarding.remove({}),
-      Statement.remove({})
+      StatementForwarding.deleteMany({}),
+      Statement.deleteMany({})
     ]);
   })
   .timeout(10000);

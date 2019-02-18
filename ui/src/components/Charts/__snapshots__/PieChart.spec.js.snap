@@ -4,39 +4,43 @@ exports[`PieChart should render 1`] = `
 <div
   class="chart"
 >
-  <div
-    style="overflow:visible;height:0;width:0;"
-  >
-    <div>
+  <div>
+    <div
+      style="font-size:0.9em;"
+    >
       <div
-        style="width:600px;position:absolute;"
-      >
-        <div
-          style="font-size:0.9em;"
-        >
-          <div
-            style="display:inline-block;width:12px;height:12px;background-color:#ffffff;margin-right:8px;margin-bottom:2px;vertical-align:middle;"
-          >
-            
-          </div>
-          Series 1
-        </div>
-        <div
-          style="font-size:0.9em;"
-        >
-          <div
-            style="display:inline-block;width:12px;height:12px;background-color:#123456;margin-right:8px;margin-bottom:2px;vertical-align:middle;"
-          >
-            
-          </div>
-          Series 2
-        </div>
-      </div>
-      <div
-        style="margin-left:20px;"
+        style="display:inline-block;width:12px;height:12px;background-color:#ffffff;margin-right:8px;margin-bottom:2px;vertical-align:middle;"
       >
         
       </div>
+      <span
+        title="Series 1"
+      >
+        Series 1
+      </span>
+    </div>
+    <div
+      style="font-size:0.9em;"
+    >
+      <div
+        style="display:inline-block;width:12px;height:12px;background-color:#123456;margin-right:8px;margin-bottom:2px;vertical-align:middle;"
+      >
+        
+      </div>
+      <span
+        title="Series 2"
+      >
+        Series 2
+      </span>
+    </div>
+  </div>
+  <div
+    style="height:100%;width:100%;"
+  >
+    <div
+      style="overflow:visible;height:0;width:0;"
+    >
+      
     </div>
   </div>
 </div>

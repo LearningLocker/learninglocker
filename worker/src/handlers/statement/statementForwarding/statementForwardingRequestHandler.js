@@ -114,14 +114,14 @@ const sendRequest = async (statementToSend, statementForwarding, fullStatement) 
 };
 
 const setPendingStatements = (statement, statementForwardingId) =>
-  Statement.findByIdAndUpdate(statement._id, {
+  Statement.updateOne({ _id: statement._id }, {
     $addToSet: {
       pendingForwardingQueue: statementForwardingId
     }
   });
 
 const setCompleteStatements = (statement, statementForwardingId) =>
-  Statement.findByIdAndUpdate(statement._id, {
+  Statement.updateOne({ _id: statement._id }, {
     $addToSet: {
       completedForwardingQueue: statementForwardingId
     },
@@ -175,17 +175,16 @@ const statementForwardingRequestHandler = async (
     }
 
     try {
-      const updatedStatement = await Statement.findByIdAndUpdate(
-        statement._id,
+      await Statement.updateOne(
+        { _id: statement._id },
         {
           $addToSet: {
             failedForwardingLog: update
           }
-        },
-        {
-          new: true,
         }
       );
+
+      const updatedStatement = await Statement.findOne({ _id: statement._id });
 
       if (
         updatedStatement.failedForwardingLog.length <=

@@ -11,7 +11,7 @@ describe('migrateMongo', () => {
   let migrationsRun;
   beforeEach(async () => {
     migrationsRun = [];
-    await migration.find({}).remove().exec();
+    await migration.deleteMany({}).exec();
   });
 
   const migrations = new OrderedMap()

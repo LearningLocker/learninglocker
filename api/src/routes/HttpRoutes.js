@@ -96,6 +96,11 @@ router.get(
   AuthController.clientInfo
 );
 
+router.post(
+  routes.OAUTH2_TOKEN,
+  AuthController.issueOAuth2AccessToken
+);
+
 /**
  * TWO FACTOR / GOOGLE
  */

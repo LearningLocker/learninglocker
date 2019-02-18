@@ -11,6 +11,7 @@ import DiscreteCriteria from './Discrete/Criteria';
 import ContinuousCriteria from './Continuous/Criteria';
 import RangeCriteria from './Range/Criteria';
 import BooleanCriteria from './Boolean/Criteria';
+import StringMatchesCriteria from './StringMatches/Criteria';
 import Sections from './Sections';
 import styles from './styles.css';
 
@@ -105,6 +106,14 @@ class ExpandedSection extends Component {
     onDeleteCriterion={this.props.onDeleteCriterion} />
     )
 
+  renderStringMatchesCriteria = () => (<StringMatchesCriteria
+    section={this.props.section}
+    criteria={this.props.sectionCriteria}
+    onCriteriaChange={this.props.onCriteriaChange}
+    onAddCriterion={this.props.onAddCriterion}
+    onDeleteCriterion={this.props.onDeleteCriterion} />
+    )
+
   renderDiscreteCriteria = () => {
     const out = (
       <DiscreteCriteria
@@ -130,6 +139,7 @@ class ExpandedSection extends Component {
           </div>
         );
       case operators.BOOLEAN: return this.renderBooleanCriteria();
+      case operators.STRING_MATCHES: return this.renderStringMatchesCriteria();
       default: return this.renderDiscreteCriteria();
     }
   };
