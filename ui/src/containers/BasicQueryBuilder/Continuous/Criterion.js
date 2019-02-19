@@ -118,7 +118,7 @@ class Criterion extends Component {
    * @param {*} - argument of onChange in components/Material/DatePicker
    */
   onChangeDate = (value) => {
-    const yyyymmdd = moment(value).format('YYYY-MM-DD');
+    const yyyymmdd = moment.parseZone(value).format('YYYY-MM-DD');
     const z = moment().tz(this.props.timezone).format('Z');
     this.onChangeCriterion(this.getOperator(), `${yyyymmdd}T00:00${z}`);
   };
