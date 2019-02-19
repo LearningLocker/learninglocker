@@ -1,5 +1,6 @@
 import { post } from 'axios';
 import { assign, isPlainObject } from 'lodash';
+import { PassThrough } from 'stream';
 import highland from 'highland';
 import getAttachments from '@learninglocker/xapi-statements/dist/service/utils/getAttachments';
 import streamStatementsWithAttachments, { boundary }
@@ -31,7 +32,9 @@ const createBodyWithAttachments = async (statementModel, statementToSend) => {
   const attachments = await getAttachments({ repo }, [statementModel], true, statementModel.lrs_id);
   const stream = highland();
   await streamStatementsWithAttachments(statementToSend, attachments, stream);
-  return stream;
+  const passthrough = new PassThrough();
+  stream.pipe(passthrough);
+  return passthrough;
 };
 
 const sendRequest = async (statementToSend, statementForwarding, fullStatement) => {
@@ -44,7 +47,7 @@ const sendRequest = async (statementToSend, statementForwarding, fullStatement) 
 
   try {
     if (statementForwarding.sendAttachments) {
-      const stream = createBodyWithAttachments(fullStatement, statement);
+      const stream = await createBodyWithAttachments(fullStatement, statement);
       const headers = {
         ...generateHeaders(statementForwarding, fullStatement),
         'Content-Type': `multipart/mixed; charset=UTF-8; boundary=${boundary}`,
