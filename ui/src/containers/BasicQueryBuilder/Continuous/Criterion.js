@@ -6,155 +6,124 @@ import moment from 'moment';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import Operator from '../Operator';
 import styles from '../styles.css';
+import { symbolOpToMongoOp } from './helpers';
 
 /**
- * @param {string} symbol - "<", ">", "<=", or ">="
- * @return {string} - mongodb's comparison query operator
+ * @param {immutable.Map} section - {
+ *                                    getQueryDisplay: (query: immutable.Map) => string,
+ *                                    getValueQuery: (value: string) => immutable.Map,
+ *                                    keyPath: immutable.List<string>,
+ *                                  }
+ * @param {immutable.Map} criterion - {
+ *                                      $comment: string,
+ *                                      [key:string]: immutable.Map,
+ *                                    }
+ * @param {(criterion: immutable.Map) => void} onCriterionChange
+ * @param {() => void} onDeleteCriterion
  */
-const symbolToMongoOp = (symbol) => {
-  switch (symbol) {
-    case '>': return '$gt';
-    case '>=': return '$gte';
-    case '<=': return '$lte';
-    case '<':
-    default: return '$lt';
-  }
-};
-
 class Criterion extends Component {
   static propTypes = {
-    section: PropTypes.instanceOf(Map),
-    criterion: PropTypes.instanceOf(Map),
-    onCriterionChange: PropTypes.func,
-    onDeleteCriterion: PropTypes.func,
-  }
+    section: PropTypes.instanceOf(Map).isRequired,
+    criterion: PropTypes.instanceOf(Map).isRequired,
+    onCriterionChange: PropTypes.func.isRequired,
+    onDeleteCriterion: PropTypes.func.isRequired,
+  };
 
-  state = {
-    tempOperator: '<'
-  }
-
-  shouldComponentUpdate = ({ section, criterion }, { tempOperator }) => !(
-    this.props.section.equals(section) &&
-    this.props.criterion.equals(criterion) &&
-    this.state.tempOperator === tempOperator
+  shouldComponentUpdate = nextProps => !(
+    this.props.section.equals(nextProps.section) &&
+    this.props.criterion.equals(nextProps.criterion)
   );
 
-  canDeleteCriterion = () =>
-    this.props.onDeleteCriterion !== undefined;
+  /**
+   * @param {immutable.Map} - query e.g. { $dte: '2019-02-03T09:00Z' }
+   * @returns {string} value e.g. '2019-02-03T09:00Z'
+   */
+  getQueryDisplay = query => this.props.section.get('getQueryDisplay')(query);
 
-  getQueryDisplay = query =>
-    this.props.section.get('getQueryDisplay')(query);
+  /**
+   * @param {string} - value e.g. '2019-02-03T09:00Z'
+   * @returns {string} query e.g. { $dte: '2019-02-03T09:00Z' }
+   */
+  getValueQuery = value => this.props.section.get('getValueQuery')(value);
 
-  getValueQuery = value =>
-    this.props.section.get('getValueQuery')(value);
-
+  /**
+   * @returns {string} key e.g. '$timestamp'
+   */
   getKey = () =>
     this.props.section.get('keyPath').join('.');
 
-  getSubQuery = () => {
-    const { criterion } = this.props;
-    return criterion.get(this.getKey(), this.getCriterionSubQuery('>', ''));
-  }
-
-  getCriterionSubQuery = (operator, value) => {
-    const mongoOp = symbolToMongoOp(operator);
-    return new Map({ [mongoOp]: this.getValueQuery(value) });
-  }
-
-  getCriterionQuery = (operator, value) => {
-    const key = this.getKey();
-    return new Map({
-      [key]: this.getCriterionSubQuery(operator, value)
-    });
-  }
+  /**
+   * @returns {immutable.Map} - query e.g. { $dte: '2019-02-03T09:00Z' }
+   */
+  getSubQuery = () =>
+    this.props.criterion.get(this.getKey());
 
   /**
    * Get date object from query
    *
-   * @returns {string|Date}
+   * @returns {Date}
    */
-  getDateValue = () => {
-    if (!this.getValue()) {
-      return '';
-    }
-    return moment(this.getValue(), 'YYYY-MM-DD').toDate();
-  }
-
-  /**
-   * Get time string from query
-   *
-   * @returns {string} "T{HH:mm}Z" is expected
-   */
-  getTimeValue = () => (this.getValue() || '').slice(10) || 'T00:00Z';
+  getDateValue = () =>
+    moment(this.getValue(), 'YYYY-MM-DD').toDate();
 
   /**
    * Get date time value from query
    * @returns {string} - "{YYYY-MM-DD}T{HH:mm}Z"
    */
   getValue = () => {
-    if (!this.canDeleteCriterion()) return '';
     const operator = this.getOperator();
     const subQuery = this.getSubQuery();
 
-    const mongoOp = symbolToMongoOp(operator);
+    const mongoOp = symbolOpToMongoOp(operator);
     const queryValue = subQuery.get(mongoOp);
     return this.getQueryDisplay(queryValue);
-  }
+  };
 
   /**
    * Get operator symbol from props or state
    *
-   * @returns {string} "<", ">", "<=", or ">="
+   * @returns {string} symbol operator: "<", ">", "<=", or ">="
    */
   getOperator = () => {
-    if (!this.canDeleteCriterion()) return this.state.tempOperator;
     const subQuery = this.getSubQuery();
     if (subQuery.has('$gt')) return '>';
     if (subQuery.has('$lte')) return '<=';
     if (subQuery.has('$gte')) return '>=';
     return '<';
-  }
+  };
 
   /**
    * @param {string} operator
    * @param {string} datetimeString - date time format "{YYYY-MM-DD}T{HH:mm}Z"
    */
-  changeCriterion = (operator, datetimeString) => {
+  onChangeCriterion = (operator, datetimeString) => {
+    const key = this.getKey();
+    const mongoOp = symbolOpToMongoOp(operator);
+
     this.props.onCriterionChange(new Map({
       $comment: this.props.criterion.get('$comment'),
-    }).merge(this.getCriterionQuery(operator, datetimeString)));
-  }
+      [key]: new Map({ [mongoOp]: this.getValueQuery(datetimeString) }),
+    }));
+  };
 
   /**
    * @param {string} operator - "<", ">", "<=", or ">="
    */
-  changeOperator = (operator) => {
-    if (!this.canDeleteCriterion()) {
-      return this.setState({ tempOperator: operator });
-    }
-    this.changeCriterion(operator, this.getValue());
-  }
+  onChangeOperator = operator =>
+    this.onChangeCriterion(operator, this.getValue());
 
   /**
-   * called when date picker onChange
-   *
    * @param {*} - argument of onChange in components/Material/DatePicker
    */
-  onChangeDatePicker = (value) => {
-    const dateString = moment(value).format('YYYY-MM-DD');
-    const canDeleteCriterion = dateString === '' && this.canDeleteCriterion();
-    if (canDeleteCriterion) {
-      this.props.onDeleteCriterion();
-      return;
-    }
-
-    this.changeCriterion(this.getOperator(), `${dateString}${this.getTimeValue()}`);
-  }
+  onChangeDate = value => {
+    const yyyymmdd = moment(value).format('YYYY-MM-DD');
+    const hhmm = '00:00';
+    this.onChangeCriterion(this.getOperator(), `${yyyymmdd}T${hhmm}Z`);
+  };
 
   render = () => {
-    const canDeleteCriterion = this.canDeleteCriterion();
     const criterionClasses = classNames(styles.criterionValue, {
-      [styles.noCriteria]: !canDeleteCriterion
+      [styles.noCriteria]: false
     });
     const deleteBtnClasses = classNames(
       styles.criterionButton,
@@ -167,23 +136,23 @@ class Criterion extends Component {
           <Operator
             operators={new Set(['>', '<', '>=', '<='])}
             operator={this.getOperator()}
-            onOperatorChange={this.changeOperator} />
+            onOperatorChange={this.onChangeOperator} />
         </div>
+
         <div className={criterionClasses}>
           <DatePicker
             value={this.getDateValue()}
-            onChange={this.onChangeDatePicker} />
+            onChange={this.onChangeDate} />
         </div>
-        {(canDeleteCriterion &&
-          <button
-            onClick={this.props.onDeleteCriterion}
-            className={deleteBtnClasses}>
-            <i className="ion-minus-round" />
-          </button>
-        )}
+
+        <button
+          onClick={this.props.onDeleteCriterion}
+          className={deleteBtnClasses}>
+          <i className="ion-minus-round" />
+        </button>
       </div>
     );
-  }
+  };
 }
 
 export default withStyles(styles)(Criterion);

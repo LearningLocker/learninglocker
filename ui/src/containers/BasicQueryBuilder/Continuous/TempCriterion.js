@@ -17,8 +17,8 @@ const DEFAULT_SYMBOL_OP = '<';
  */
 class TempCriterion extends Component {
   static propTypes = {
-    section: PropTypes.instanceOf(Map),
-    onCriterionChange: PropTypes.func,
+    section: PropTypes.instanceOf(Map).isRequired,
+    onCriterionChange: PropTypes.func.isRequired,
   }
 
   state = {
