@@ -69,8 +69,8 @@ describe('Statement Forwarding handler', () => {
         statementForwardingHandler({ statementId }, () => {
           resolve(params);
         }, {
-            queue: mockQueue(resolve)
-          })
+          queue: mockQueue(resolve)
+        })
       );
       return promise;
     })

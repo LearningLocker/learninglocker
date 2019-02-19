@@ -1,6 +1,4 @@
 import createSha from '@learninglocker/xapi-statements/dist/tests/utils/createSha';
-import { boundary }
-  from '@learninglocker/xapi-statements/dist/expressPresenter/utils/getStatements/streamStatementsWithAttachments'
 import stringToStream from 'string-to-stream';
 import StatementForwarding from 'lib/models/statementForwarding';
 import Statement from 'lib/models/statement';
@@ -11,7 +9,7 @@ import { expect } from 'chai';
 // import ForwardingRequestError from
 //   'worker/handlers/statement/statementForwarding/ForwardingRequestError';
 import statementForwardingRequestHandler from '../statementForwardingRequestHandler';
-import { getStatementsRepo } from '../xapiStatementsRepo';
+import getStatementsRepo from '../getStatementsRepo';
 
 const promiseRequestHandler = Promise.promisify(statementForwardingRequestHandler);
 
@@ -53,9 +51,7 @@ describe('Statement Forwarding Request', () => {
       success: true
     });
 
-    mock.onPost('http://redirectto/', { test: 'test' }).reply((config) => {
-      return axios.post('http://localhost:3101/', { test: 'test' }, config);
-    });
+    mock.onPost('http://redirectto/', { test: 'test' }).reply(config => axios.post('http://localhost:3101/', { test: 'test' }, config));
 
     await Statement.create(statement);
 

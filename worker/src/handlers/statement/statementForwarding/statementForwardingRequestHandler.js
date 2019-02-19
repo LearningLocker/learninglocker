@@ -3,7 +3,7 @@ import { assign, isPlainObject } from 'lodash';
 import highland from 'highland';
 import getAttachments from '@learninglocker/xapi-statements/dist/service/utils/getAttachments';
 import streamStatementsWithAttachments, { boundary }
-  from '@learninglocker/xapi-statements/dist/expressPresenter/utils/getStatements/streamStatementsWithAttachments'
+  from '@learninglocker/xapi-statements/dist/expressPresenter/utils/getStatements/streamStatementsWithAttachments';
 import logger from 'lib/logger';
 import Statement, { mapDot } from 'lib/models/statement';
 import mongoose from 'mongoose';
@@ -14,7 +14,7 @@ import {
   STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE,
 } from 'lib/constants/statements';
 import * as Queue from 'lib/services/queue';
-import { getStatementsRepo } from './xapiStatementsRepo';
+import getStatementsRepo from './getStatementsRepo';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -39,7 +39,7 @@ const sendRequest = async (statementToSend, statementForwarding, fullStatement) 
   const forwardingUrl = statementForwarding.configuration.url;
   const url = `${forwardingProtocol}://${forwardingUrl}`;
   const statement = mapDot(statementToSend);
-  const validateStatus = (statusCode) => 200 <= statusCode && statusCode < 400;
+  const validateStatus = statusCode => statusCode >= 200 && statusCode < 400;
   const timeout = 5000;
 
   try {
