@@ -176,7 +176,7 @@ const shareableDashboardFilterSelector = () => createSelector(
   }
 );
 
-export const visualisationPiplelinesSelector = (
+export const visualisationPipelinesSelector = (
   id,
   cb = pipelinesFromQueries // whilst waiting for https://github.com/facebook/jest/issues/3608
 ) => createSelector(
@@ -250,7 +250,7 @@ const shouldFetchJourney = (pipelines, state) =>
  */
 export const visualisationShouldFetchSelector = visualisationId => createSelector([
   identity,
-  visualisationPiplelinesSelector(visualisationId),
+  visualisationPipelinesSelector(visualisationId),
   modelsSchemaIdSelector('visualisation', visualisationId)
 ], (state, pipelines, visualisation) => {
   switch (visualisation.get('type')) {
@@ -284,7 +284,7 @@ const getPipelinesResults = state => pipelines => pipelines.map(pipeline => (
 ));
 
 const getSeriesResults = (visualisationId, state) => {
-  const series = visualisationPiplelinesSelector(visualisationId)(state);
+  const series = visualisationPipelinesSelector(visualisationId)(state);
   const out = series.map(getPipelinesResults(state));
   return out;
 };
@@ -326,7 +326,7 @@ const getSeriesFetchStates = (series, state) =>
 
 const getVisualisationFetchStates = (id, state) => {
   const visualisation = modelsSchemaIdSelector('visualisation', id)(state);
-  const pipelines = visualisationPiplelinesSelector(id)(state);
+  const pipelines = visualisationPipelinesSelector(id)(state);
   switch (visualisation.get('type')) {
     case JOURNEY_PROGRESS:
       return getWaypointFetchStates(visualisation, pipelines, state);
@@ -385,7 +385,7 @@ export function* fetchVisualisationSaga(state, id) {
   const visualisation = modelsSchemaIdSelector('visualisation', id)(state);
 
   if (visualisation.get('type') === JOURNEY_PROGRESS) {
-    const pipelines = visualisationPiplelinesSelector(id)(state);
+    const pipelines = visualisationPipelinesSelector(id)(state);
     for (let i = 0; i < pipelines.size; i += 1) {
       const journeyId = visualisation.get('journey');
       const filter = new Map({ journey: journeyId });
@@ -393,7 +393,7 @@ export function* fetchVisualisationSaga(state, id) {
       yield put(fetchModels('journey', new Map({ _id: journeyId })));
     }
   } else {
-    const series = visualisationPiplelinesSelector(id)(state);
+    const series = visualisationPipelinesSelector(id)(state);
     for (let s = 0; s < series.size; s += 1) {
       const pipelines = series.get(s);
       for (let p = 0; p < pipelines.size; p += 1) {
