@@ -211,6 +211,7 @@
   },
   "devDependencies": {
     "@ht2-labs/semantic-release": "^1.1.59",
+    "axios-mock-adapter": "^1.16.0",
     "babel-jest": "^19.0.0",
     "babel-plugin-dynamic-import-node": "^1.0.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",

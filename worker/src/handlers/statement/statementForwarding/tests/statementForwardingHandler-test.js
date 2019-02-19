@@ -1,7 +1,8 @@
 import StatementForwarding from 'lib/models/statementForwarding';
 import Statement from 'lib/models/statement';
 import async from 'async';
-import nock from 'nock';
+import axios from 'axios';
+import AxiosMockAdapter from 'axios-mock-adapter';
 import { expect } from 'chai';
 import { STATEMENT_FORWARDING_REQUEST_QUEUE } from 'lib/constants/statements';
 import statementWorker from 'worker/handlers/statement';
@@ -68,15 +69,15 @@ describe('Statement Forwarding handler', () => {
         statementForwardingHandler({ statementId }, () => {
           resolve(params);
         }, {
-          queue: mockQueue(resolve)
-        })
+            queue: mockQueue(resolve)
+          })
       );
       return promise;
     })
-    .then(() => cleanUp(), () => cleanUp())
-    .then(() => {
-      done();
-    });
+      .then(() => cleanUp(), () => cleanUp())
+      .then(() => {
+        done();
+      });
   }).timeout(5000);
 
   it('Statement end to end', async () => {
@@ -118,19 +119,12 @@ describe('Statement Forwarding handler', () => {
 
     await purgeQueues();
 
-    const request = nock('http://localhost:3101', {
-      reqheaders: {
-        authorization: 'Basic dGhlQmFzaWNVc2VybmFtZTp0aGVCYXNpY1Bhc3N3b3Jk'
-      }
-    })
-      .post('/', {
-        test: 'test'
-      })
-      .reply(200, {
-        _id: '1',
-        _rev: '1',
-        success: true
-      });
+    const mock = new AxiosMockAdapter(axios);
+    mock.onPost('http://localhost:3101').reply(200, {
+      _id: '1',
+      _rev: '1',
+      success: true
+    });
 
     const statementWorkerDonePromise = new Promise((resolve) => {
       const statementHandlerProccessed = (message) => {
@@ -166,5 +160,5 @@ describe('Statement Forwarding handler', () => {
       Statement.deleteMany({})
     ]);
   })
-  .timeout(10000);
+    .timeout(10000);
 });

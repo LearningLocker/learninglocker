@@ -89,6 +89,8 @@ const sendRequest = async (statementToSend, statementForwarding, fullStatement) 
   const forwardingUrl = statementForwarding.configuration.url;
   const url = `${forwardingProtocol}://${forwardingUrl}`;
   const statement = mapDot(statementToSend);
+  const validateStatus = (statusCode) => 200 <= statusCode && statusCode < 400;
+  const timeout = 5000;
 
   try {
     if (statementForwarding.sendAttachments) {
@@ -97,13 +99,13 @@ const sendRequest = async (statementToSend, statementForwarding, fullStatement) 
         ...generateHeaders(statementForwarding, fullStatement),
         'Content-Type': `multipart/mixed; charset=UTF-8; boundary=${boundary}`,
       };
-      await post(url, stream, { headers, timeout: 5000 });
+      await post(url, stream, { headers, timeout, validateStatus });
     } else {
       const headers = {
         ...generateHeaders(statementForwarding, fullStatement),
         'Content-Type': 'application/json',
       };
-      await post(url, statement, { headers, timeout: 5000 });
+      await post(url, statement, { headers, timeout, validateStatus });
     }
   } catch (err) {
     const message = err.response ? 'Status code was invalid' : err.message;
