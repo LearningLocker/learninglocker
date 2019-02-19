@@ -49,7 +49,7 @@ describe('Statement Forwarding Request', () => {
     });
 
     mock.onPost('http://redirectto/', { test: 'test' }).reply((config) => {
-      return axios.post('http://localhost:3101/', undefined, config);
+      return axios.post('http://localhost:3101/', { test: 'test' }, config);
     });
 
     await Statement.create(statement);
