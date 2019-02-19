@@ -151,7 +151,7 @@ describe('Statement Forwarding handler', () => {
     */
     await statementWorkerDonePromise;
 
-    expect(request.isDone()).to.equal(true);
+    expect(mock.history.post.length).to.equal(1);
 
     await unsubscribeAll();
 
