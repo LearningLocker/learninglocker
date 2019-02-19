@@ -19,7 +19,7 @@ const symbolToMongoOp = (symbol) => {
     case '<':
     default: return '$lt';
   }
-}
+};
 
 class Criterion extends Component {
   static propTypes = {
