@@ -42,13 +42,13 @@ describe('Statement Forwarding Request', () => {
     };
 
     const mock = new AxiosMockAdapter(axios);
-    mock.onPost('http://localhost:3101/').reply(200, {
+    mock.onPost('http://localhost:3101/', { test: 'test' }).reply(200, {
       _id: '1',
       _rev: '1',
       success: true
     });
 
-    mock.onPost('http://redirectto/').reply((config) => {
+    mock.onPost('http://redirectto/', { test: 'test' }).reply((config) => {
       return axios.post('http://localhost:3101/', undefined, config);
     });
 
@@ -91,7 +91,7 @@ describe('Statement Forwarding Request', () => {
     };
 
     const mock = new AxiosMockAdapter(axios);
-    mock.onPost('http://localhost:3101/').reply(200, {
+    mock.onPost('http://localhost:3101/', { test: 'test' }).reply(200, {
       _id: '1',
       _rev: '1',
       success: true
@@ -137,7 +137,7 @@ describe('Statement Forwarding Request', () => {
     await Statement.create(statement);
 
     const mock = new AxiosMockAdapter(axios);
-    mock.onPost('http://localhost:3101').reply(404, {
+    mock.onPost('http://localhost:3101', { test: 'test' }).reply(404, {
       _id: '1',
       _rev: '1',
       success: false

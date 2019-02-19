@@ -120,7 +120,9 @@ describe('Statement Forwarding handler', () => {
     await purgeQueues();
 
     const mock = new AxiosMockAdapter(axios);
-    mock.onPost('http://localhost:3101').reply(200, {
+    mock.onPost('http://localhost:3101', { test: 'test' }, {
+      authorization: 'Basic dGhlQmFzaWNVc2VybmFtZTp0aGVCYXNpY1Bhc3N3b3Jk'
+    }).reply(200, {
       _id: '1',
       _rev: '1',
       success: true
