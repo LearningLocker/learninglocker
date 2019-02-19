@@ -1,3 +1,7 @@
+import createSha from '@learninglocker/xapi-statements/dist/tests/utils/createSha';
+import { boundary }
+  from '@learninglocker/xapi-statements/dist/expressPresenter/utils/getStatements/streamStatementsWithAttachments'
+import stringToStream from 'string-to-stream';
 import StatementForwarding from 'lib/models/statementForwarding';
 import Statement from 'lib/models/statement';
 import Promise from 'bluebird';
@@ -7,6 +11,7 @@ import { expect } from 'chai';
 // import ForwardingRequestError from
 //   'worker/handlers/statement/statementForwarding/ForwardingRequestError';
 import statementForwardingRequestHandler from '../statementForwardingRequestHandler';
+import { getStatementsRepo } from '../xapiStatementsRepo';
 
 const promiseRequestHandler = Promise.promisify(statementForwardingRequestHandler);
 
@@ -206,5 +211,73 @@ describe('Statement Forwarding Request', () => {
     expect(doneStatement.failedForwardingLog[0].statementForwarding_id.toString()).to
       .equal(statementForwardingId);
     expect(doneStatement.failedForwardingLog[0].errorInfo.responseStatus).to.equal(null);
+  }).timeout(10000);
+
+  it('Request with attachments success', async () => {
+    const statementId = '59438cabedcedb70146337ec';
+    const statementForwardingId = '59438cabedcedb70146337eb';
+    const organisationId = '561a679c0c5d017e4004715a';
+    const lrsId = '560a679c0c5d017e4004714f';
+    const attachmentContent = 'test_content';
+    const attachmentHash = createSha(attachmentContent);
+
+    const statementForwarding = {
+      _id: statementForwardingId,
+      lrs_id: lrsId,
+      organisation: organisationId,
+      active: true,
+      configuration: {
+        protocol: 'http',
+        url: 'localhost:3101/',
+        method: 'POST',
+        headers: '{"testHeader1": "testHeaderValue1"}'
+      },
+      sendAttachments: true
+    };
+
+    const statement = {
+      _id: statementId,
+      organisation: organisationId,
+      lrs_id: lrsId,
+      statement: {
+        object: {
+          objectType: 'http://www.example.com'
+        },
+        attachments: [{
+          usageType: 'http://www.example.com',
+          display: {},
+          contentType: 'text/plain',
+          length: attachmentContent.length,
+          sha2: attachmentHash,
+        }]
+      }
+    };
+
+    const mock = new AxiosMockAdapter(axios);
+    mock.onPost('http://localhost:3101/').reply(200, {
+      _id: '1',
+      _rev: '1',
+      success: false
+    });
+
+    await Statement.create(statement);
+    const statementsRepo = getStatementsRepo();
+    await statementsRepo.createAttachments({
+      models: [{
+        stream: stringToStream(attachmentContent),
+        hash: attachmentHash,
+        contentLength: attachmentContent.length,
+        contentType: 'text/plain',
+      }],
+      lrs_id: lrsId,
+    });
+
+    await promiseRequestHandler({ statementForwarding, statement });
+    expect(mock.history.post.length).to.equal(1);
+
+    const doneStatement = await Statement.findById(statementId);
+    expect(doneStatement.pendingForwardingQueue.length).to.equal(0);
+    expect(doneStatement.completedForwardingQueue.length).to.equal(1);
+    expect(doneStatement.completedForwardingQueue[0].toString()).to.equal(statementForwardingId);
   }).timeout(10000);
 });
