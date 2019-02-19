@@ -23,6 +23,7 @@ import { symbolOpToMongoOp } from './helpers';
  */
 class Criterion extends Component {
   static propTypes = {
+    timezone: PropTypes.string.isRequired,
     section: PropTypes.instanceOf(Map).isRequired,
     criterion: PropTypes.instanceOf(Map).isRequired,
     onCriterionChange: PropTypes.func.isRequired,
@@ -30,6 +31,7 @@ class Criterion extends Component {
   };
 
   shouldComponentUpdate = nextProps => !(
+    this.props.timezone === nextProps.timezone &&
     this.props.section.equals(nextProps.section) &&
     this.props.criterion.equals(nextProps.criterion)
   );
@@ -115,10 +117,10 @@ class Criterion extends Component {
   /**
    * @param {*} - argument of onChange in components/Material/DatePicker
    */
-  onChangeDate = value => {
+  onChangeDate = (value) => {
     const yyyymmdd = moment(value).format('YYYY-MM-DD');
-    const hhmm = '00:00';
-    this.onChangeCriterion(this.getOperator(), `${yyyymmdd}T${hhmm}Z`);
+    const z = moment().tz(this.props.timezone).format('Z');
+    this.onChangeCriterion(this.getOperator(), `${yyyymmdd}T00:00${z}`);
   };
 
   render = () => {

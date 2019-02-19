@@ -5,6 +5,7 @@ import CollapsedSection from './CollapsedSection';
 
 export default class Sections extends Component {
   static propTypes = {
+    timezone: PropTypes.string.isRequired,
     sections: PropTypes.instanceOf(Map),
     criteria: PropTypes.instanceOf(Map),
     onCriteriaChange: PropTypes.func,
@@ -14,6 +15,7 @@ export default class Sections extends Component {
   }
 
   shouldComponentUpdate = nextProps => !(
+    this.props.timezone === nextProps.timezone &&
     this.props.sections.equals(nextProps.sections) &&
     this.props.criteria.equals(nextProps.criteria)
   );
@@ -80,6 +82,7 @@ export default class Sections extends Component {
 
   renderExpandedSection = (section, key) => (
     <ExpandedSection
+      timezone={this.props.timezone}
       section={section}
       sectionCriteria={this.getCriteriaForSection(section)}
       key={key}

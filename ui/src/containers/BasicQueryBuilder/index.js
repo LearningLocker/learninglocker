@@ -15,14 +15,16 @@ const enhance = compose(
     query: new Map(),
   }),
   shouldUpdate((prev, next) => !(
+    prev.timezone === next.timezone &&
     prev.query.equals(next.query)
   ))
 );
 
-const render = ({ componentPath, defaults, query, onQueryChange }) => {
+const BasicQueryBuilder = ({ componentPath, timezone, defaults, query, onQueryChange }) => {
   const criteria = getCriteria(query);
   return (
     <QueryBuilderSections
+      timezone={timezone}
       componentPath={componentPath}
       criteria={criteria}
       defaults={defaults}
@@ -36,4 +38,4 @@ const render = ({ componentPath, defaults, query, onQueryChange }) => {
   );
 };
 
-export default enhance(render);
+export default enhance(BasicQueryBuilder);

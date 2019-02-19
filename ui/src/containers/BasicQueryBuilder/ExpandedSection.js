@@ -57,6 +57,7 @@ const withQueryBuilderCacheProps = withProps(
 
 class ExpandedSection extends Component {
   static propTypes = {
+    timezone: PropTypes.string.isRequired,
     section: PropTypes.instanceOf(Map),
     sectionCriteria: PropTypes.instanceOf(Map),
     criteria: PropTypes.instanceOf(Map),
@@ -69,6 +70,7 @@ class ExpandedSection extends Component {
 
   shouldComponentUpdate = (nextProps) => {
     const out = !(
+      this.props.timezone === nextProps.timezone &&
       this.props.section.equals(nextProps.section) &&
       this.props.criteria.equals(nextProps.criteria) &&
       this.props.models.equals(nextProps.models)
@@ -84,6 +86,7 @@ class ExpandedSection extends Component {
 
   renderContinuousCriteria = () => (
     <ContinuousCriteria
+      timezone={this.props.timezone}
       section={this.props.section}
       criteria={this.props.sectionCriteria}
       onCriteriaChange={this.props.onCriteriaChange}
@@ -162,6 +165,7 @@ class ExpandedSection extends Component {
         </div>}
         {children.size > 0 &&
           <Sections
+            timezone={this.props.timezone}
             className={styles.expandedChildren}
             sections={children}
             criteria={this.props.criteria}

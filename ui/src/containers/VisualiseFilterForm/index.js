@@ -76,6 +76,7 @@ class VisualiseFilterForm extends Component {
 
   renderTabbedQueryBuilder = (labelled = true, defaults = {}, text = 'Build your query') => {
     const queries = this.props.model.get('filters', new List());
+    const timezone = this.props.model.get('timezone', 'UTC');
 
     return (
       <div>
@@ -83,6 +84,7 @@ class VisualiseFilterForm extends Component {
           {text}
         </label>
         <TabbedQueriesBuilder
+          timezone={timezone}
           queries={queries}
           labelled={labelled}
           componentBasePath={

@@ -17,6 +17,7 @@ const DEFAULT_SYMBOL_OP = '<';
  */
 class TempCriterion extends Component {
   static propTypes = {
+    timezone: PropTypes.string.isRequired,
     section: PropTypes.instanceOf(Map).isRequired,
     onCriterionChange: PropTypes.func.isRequired,
   }
@@ -26,6 +27,7 @@ class TempCriterion extends Component {
   }
 
   shouldComponentUpdate = (nextProps, nextState) => !(
+    this.props.timezone === nextProps.timezone &&
     this.props.section.equals(nextProps.section) &&
     this.state.operator === nextState.operator
   );
@@ -45,7 +47,10 @@ class TempCriterion extends Component {
    * @param {*} - argument of onChange in components/Material/DatePicker
    */
   onChangeDate = (value) => {
-    const datetimeString = moment(value).format('YYYY-MM-DDT00:00+00:00');
+    const yyyymmdd = moment(value).format('YYYY-MM-DD');
+    const z = moment().tz(this.props.timezone).format('Z');
+    const datetimeString = `${yyyymmdd}T00:00${z}`;
+
     const key = this.getKey();
     const mongoOp = symbolOpToMongoOp(this.state.operator);
 
