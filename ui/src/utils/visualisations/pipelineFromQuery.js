@@ -1,6 +1,7 @@
 import { Map, fromJS } from 'immutable';
 import { memoize } from 'lodash';
 import { periodToDate } from 'ui/utils/dates';
+import update$dteTimezone from 'ui/utils/queries/update$dteTimezone';
 import aggregateChart from 'ui/utils/visualisations/aggregateChart';
 import aggregateCounter from 'ui/utils/visualisations/aggregateCounter';
 import aggregateXvsY from 'ui/utils/visualisations/aggregateXvsY';
@@ -20,7 +21,6 @@ import {
  * @param {immutable.Map} args - optional (default is empty Map)
  */
 export default memoize((args = new Map()) => {
-  const query = args.getIn(['query', '$match'], new Map());
   const previewPeriod = args.get('previewPeriod');
   const timezone = args.get('timezone');
   const currentMoment = args.get('currentMoment');
@@ -36,10 +36,16 @@ export default memoize((args = new Map()) => {
     } }];
   }
 
+  const query = args.getIn(['query', '$match'], new Map());
+  // Update timezone of When filters (timestamp and stored) when user change query timezone
+  const offsetFixedQuery = update$dteTimezone(query, timezone);
+  const queryMatch = query.size === 0 ? [] : [{ $match: offsetFixedQuery }];
+
+  const preReqs = fromJS(previewPeriodMatch.concat(queryMatch));
+
   const type = args.get('type');
   const axes = args.get('axes');
-  const queryMatch = query.size === 0 ? [] : [{ $match: query }];
-  const preReqs = fromJS(previewPeriodMatch.concat(queryMatch));
+
   switch (type) {
     case POPULARACTIVITIES:
     case LEADERBOARD:
