@@ -9,6 +9,8 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { withModels, withModel } from 'ui/utils/hocs';
 import { addModel } from 'ui/redux/modules/models';
 import { loggedInUserId } from 'ui/redux/modules/auth';
+import { modelsSchemaIdSelector } from 'ui/redux/selectors';
+import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import SearchBox from 'ui/containers/SearchBox';
 import ModelList from 'ui/containers/ModelList';
 import VisualiseForm from 'ui/containers/VisualiseForm';
@@ -35,7 +37,12 @@ class Visualise extends Component {
     addModel: PropTypes.func,
     searchString: PropTypes.string,
     visualisationId: PropTypes.string, // optional
+    organisationModel: PropTypes.instanceOf(Map),
   };
+
+  static defaultProps = {
+    organisationModel: new Map(),
+  }
 
   state = {
     criteria: ''
@@ -47,7 +54,8 @@ class Visualise extends Component {
       schema,
       props: new Map({
         owner: this.props.userId,
-        isExpanded: true
+        isExpanded: true,
+        timezone: this.props.organisationModel.get('timezone', 'UTC'),
       })
     });
   }
@@ -107,6 +115,7 @@ export default compose(
       routeNodeSelector('organisation.data.visualise.visualisation')(state)
         .route
         .params
-        .visualisationId
+        .visualisationId,
+    organisationModel: modelsSchemaIdSelector('organisation', activeOrgIdSelector(state))(state),
   }), { addModel })
 )(Visualise);
