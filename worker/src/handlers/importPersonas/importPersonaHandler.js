@@ -116,8 +116,9 @@ export default personaService => async ({
         }
       });
       done();
-      return;
+      return false;
     }
+    return true;
   };
 
   // Do the magic
