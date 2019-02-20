@@ -1,6 +1,4 @@
 import createStatementsRepo from '@learninglocker/xapi-statements/dist/repo/facade';
-import { getConnection } from 'lib/connections/mongoose';
-import { createClient } from 'lib/connections/redis';
 import once from 'lodash/once';
 import defaultTo from 'lodash/defaultTo';
 import { join as joinPath } from 'path';
@@ -13,24 +11,24 @@ export default once(() => {
     auth: {
       facade: 'mongo',
       mongo: {
-        db: getConnection(),
+        db: null, // We don't need this right now.
       },
     },
     events: {
       facade: process.env.EVENTS_REPO,
       redis: {
-        client: createClient(),
+        client: null, // We don't need this right now.
         prefix: process.env.REDIS_PREFIX,
       },
       sentinel: {
-        client: createClient(),
+        client: null, // We don't need this right now.
         prefix: process.env.REDIS_PREFIX,
       },
     },
     models: {
       facade: 'mongo',
       mongo: {
-        db: getConnection(),
+        db: null, // We don't need this right now.
       },
     },
     storage: {
