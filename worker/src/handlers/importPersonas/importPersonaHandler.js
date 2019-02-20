@@ -66,6 +66,9 @@ export const establishLock = async ({
 const releaseLock = async ({
   lock
 }) => {
+  if (!lock) {
+    return;
+  }
   await lock.remove();
 };
 
@@ -98,28 +101,32 @@ export default personaService => async ({
   organisation
 }, done) => {
   // establish lock
-  const lock = await establishLock({ structure, data, organisation });
-  if (!lock) {
-    await promisify(publish)({
-      queueName: PERSONA_IMPORT_QUEUE,
-      payload: {
-        index,
-        data,
-        personaImportId,
-        structure,
-        organisation
-      }
-    });
-    done();
-    return;
-  }
+  let lock;
+  const afterValidationCb = async () => {
+    lock = await establishLock({ structure, data, organisation });
+    if (!lock) {
+      await promisify(publish)({
+        queueName: PERSONA_IMPORT_QUEUE,
+        payload: {
+          index,
+          data,
+          personaImportId,
+          structure,
+          organisation
+        }
+      });
+      done();
+      return;
+    }
+  };
 
   // Do the magic
   const { processedCount, totalCount } = await importPersona({
     personaImportId,
     structure,
     organisation,
-    personaService
+    personaService,
+    afterValidationCb
   })(data, index);
 
   // have we finished processing ???
