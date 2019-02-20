@@ -61,11 +61,15 @@
   width: 10%;
   margin-left: 2%;
   justify-content: flex-end;
-  height: 30px; 
+  height: 30px;
   margin-left: auto;
 }
 
 .radioLabel {
   width: 20%;
   min-width: 50px;
+}
+
+.criterionValueSupplement {
+  color: #687B88;
 }

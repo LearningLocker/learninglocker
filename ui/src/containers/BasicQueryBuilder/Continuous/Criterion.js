@@ -131,6 +131,7 @@ class Criterion extends Component {
       styles.criterionButton,
       'btn btn-default btn-xs'
     );
+    const z = moment().tz(this.props.timezone).format('Z');
 
     return (
       <div className={styles.criterion}>
@@ -145,6 +146,9 @@ class Criterion extends Component {
           <DatePicker
             value={this.getDateValue()}
             onChange={this.onChangeDate} />
+          <span className={classNames(styles.criterionValueSupplement)}>
+            {this.props.timezone} ({z})
+          </span>
         </div>
 
         <button
