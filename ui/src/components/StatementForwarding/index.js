@@ -8,6 +8,8 @@ import { addModel } from 'ui/redux/modules/models';
 import ModelList from 'ui/containers/ModelList';
 import { loggedInUserId } from 'ui/redux/modules/auth';
 import { queryStringToQuery, modelQueryStringSelector } from 'ui/redux/modules/search';
+import { modelsSchemaIdSelector } from 'ui/redux/selectors';
+import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import PrivacyToggleButton from 'ui/containers/PrivacyToggleButton';
 import DeleteButton from 'ui/containers/DeleteButton';
 import StatementForwardingForm from './StatementForwardingForm';
@@ -27,7 +29,12 @@ class StatementForwarding extends Component {
     userId: PropTypes.string,
     addModel: PropTypes.func,
     searchString: PropTypes.string,
+    organisationModel: PropTypes.instanceOf(Map),
   };
+
+  static defaultProps = {
+    organisationModel: new Map(),
+  }
 
   onClickAdd = () => {
     this.addButton.blur();
@@ -35,7 +42,8 @@ class StatementForwarding extends Component {
       schema,
       props: {
         owner: this.props.userId,
-        isExpanded: true
+        isExpanded: true,
+        timezone: this.props.organisationModel.get('timezone', 'UTC'),
       }
     });
   }
@@ -73,5 +81,6 @@ class StatementForwarding extends Component {
 
 export default connect(state => ({
   userId: loggedInUserId(state),
-  searchString: modelQueryStringSelector(schema)(state)
+  searchString: modelQueryStringSelector(schema)(state),
+  organisationModel: modelsSchemaIdSelector('organisation', activeOrgIdSelector(state))(state),
 }), { addModel })(StatementForwarding);

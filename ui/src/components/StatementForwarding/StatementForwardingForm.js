@@ -104,7 +104,7 @@ const withAuthTypes = withProps(() => ({
 }));
 
 const StatementForwardingForm = ({
-  model,
+  model, // statementForwarding
   changeDescription,
   changeProtocol,
   changeUrl,
@@ -317,6 +317,7 @@ const StatementForwardingForm = ({
 
         <div className="form-group">
           <QueryBuilder
+            timezone={model.get('timezone', 'UTC')}
             componentPath={new List(['statementForwarding', model.get('_id')])}
             query={model.get('query')}
             onChange={changeQuery} />
