@@ -3,6 +3,7 @@ import { Map } from 'immutable';
 import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { updateModel } from 'ui/redux/modules/models';
+import update$dteTimezone from 'ui/utils/queries/update$dteTimezone';
 import Tabs from 'ui/components/Material/Tabs';
 import { Tab } from 'react-toolbox/lib/tabs';
 import TypeEditor from './TypeEditor';
@@ -21,6 +22,26 @@ class Editor extends Component {
 
   state = {
     step: 0,
+  }
+
+  componentDidUpdate = (prevProps) => {
+    const prevTimezone = prevProps.model.get('timezone', 'UTC');
+    const currentTimezone = this.props.model.get('timezone', 'UTC');
+
+    if (prevTimezone !== currentTimezone) {
+      const filterQuery = this.props.model.get('filters', new Map());
+      const timezoneUpdated = update$dteTimezone(filterQuery, currentTimezone);
+
+      // Update visualisation.filters when timezone offset in the filter query is changed
+      if (!timezoneUpdated.equals(filterQuery)) {
+        this.props.updateModel({
+          schema: SCHEMA,
+          id: this.props.model.get('_id'),
+          path: 'filters',
+          value: timezoneUpdated,
+        });
+      }
+    }
   }
 
   changeAttr = attr => newValue =>
@@ -85,6 +106,7 @@ class Editor extends Component {
 
   renderSeriesEditor = () => (
     <SeriesEditor
+      timezone={this.props.model.get('timezone', 'UTC')}
       model={this.props.model}
       exportVisualisation={this.props.exportVisualisation} />
   )

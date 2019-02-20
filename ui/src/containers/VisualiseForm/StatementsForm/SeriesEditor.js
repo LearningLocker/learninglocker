@@ -10,6 +10,7 @@ import styles from '../visualiseform.css';
 
 class SeriesEditor extends Component {
   static propTypes = {
+    timezone: PropTypes.string,
     model: PropTypes.instanceOf(Map),
     updateModel: PropTypes.func
   }
@@ -85,7 +86,7 @@ class SeriesEditor extends Component {
   )
 
   render = () => {
-    const { model } = this.props;
+    const { model, timezone } = this.props;
 
     return (
       <div>
@@ -98,7 +99,7 @@ class SeriesEditor extends Component {
           this.canStack(model.get('type')) &&
           this.renderStackToggle()
         }
-        <VisualiseFilterForm model={model} />
+        <VisualiseFilterForm model={model} timezone={timezone} />
       </div>
     );
   }

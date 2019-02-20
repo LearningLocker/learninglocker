@@ -14,7 +14,7 @@ class TabbedQueriesBuilder extends Component {
     queries: PropTypes.instanceOf(List),
     componentBasePath: PropTypes.instanceOf(List),
     defaults: PropTypes.instanceOf(Map),
-    onQueryChange: PropTypes.func,
+    onChangeQuery: PropTypes.func,
     onDeleteQuery: PropTypes.func,
     onChangeLabel: PropTypes.func,
     onChangeColor: PropTypes.func,
@@ -48,7 +48,7 @@ class TabbedQueriesBuilder extends Component {
           timezone={this.props.timezone}
           componentPath={this.props.componentBasePath.push(index)}
           query={this.props.queries.getIn([index, '$match'], new Map())}
-          onChange={this.props.onQueryChange.bind(null, index)}
+          onChange={this.props.onChangeQuery.bind(null, index)}
           defaults={this.props.defaults} />
       </div>
       <div className="form-group">

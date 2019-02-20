@@ -15,6 +15,7 @@ import {
 
 class VisualiseFilterForm extends Component {
   static propTypes = {
+    timezone: PropTypes.string,
     model: PropTypes.instanceOf(Map),
     updateModel: PropTypes.func
   };
@@ -76,7 +77,6 @@ class VisualiseFilterForm extends Component {
 
   renderTabbedQueryBuilder = (labelled = true, defaults = {}, text = 'Build your query') => {
     const queries = this.props.model.get('filters', new List());
-    const timezone = this.props.model.get('timezone', 'UTC');
 
     return (
       <div>
@@ -84,13 +84,13 @@ class VisualiseFilterForm extends Component {
           {text}
         </label>
         <TabbedQueriesBuilder
-          timezone={timezone}
+          timezone={this.props.timezone}
           queries={queries}
           labelled={labelled}
           componentBasePath={
             new List(['visualise', this.props.model.get('_id')])
           }
-          onQueryChange={this.onChangeQuery}
+          onChangeQuery={this.onChangeQuery}
           onChangeLabel={this.onChangeLabel}
           onDeleteQuery={this.onDeleteQuery}
           onChangeColor={this.onChangeColor}
