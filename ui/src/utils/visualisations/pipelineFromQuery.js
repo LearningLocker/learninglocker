@@ -37,9 +37,9 @@ export default memoize((args = new Map()) => {
   }
 
   const query = args.getIn(['query', '$match'], new Map());
-  // Update timezone of When filters (timestamp and stored) when user change query timezone
+  // Set timezone of When filters (timestamp and stored)
   const offsetFixedQuery = update$dteTimezone(query, timezone);
-  const queryMatch = query.size === 0 ? [] : [{ $match: offsetFixedQuery }];
+  const queryMatch = offsetFixedQuery.size === 0 ? [] : [{ $match: offsetFixedQuery }];
 
   const preReqs = fromJS(previewPeriodMatch.concat(queryMatch));
 

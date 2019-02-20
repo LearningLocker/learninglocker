@@ -50,6 +50,7 @@ export class ScatterAxesEditor extends BaseAxesEditor {
       </div>
       <div className="form-group">
         <QueryEditor
+          timezone={this.props.model.get('timezone', 'UTC')}
           query={this.getAxesValue(`${axis}Query`)}
           changeQuery={this.changeAxes.bind(this, `${axis}Query`)}
           componentPath={

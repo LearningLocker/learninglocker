@@ -29,18 +29,23 @@ class Editor extends Component {
     const currentTimezone = this.props.model.get('timezone', 'UTC');
 
     if (prevTimezone !== currentTimezone) {
-      const filterQuery = this.props.model.get('filters', new Map());
-      const timezoneUpdated = update$dteTimezone(filterQuery, currentTimezone);
+      // Values of these paths may have `{ $dte: ... }` sub queries.
+      const paths = ['filters', 'axesxQuery', 'axesyQuery'];
 
-      // Update visualisation.filters when timezone offset in the filter query is changed
-      if (!timezoneUpdated.equals(filterQuery)) {
-        this.props.updateModel({
-          schema: SCHEMA,
-          id: this.props.model.get('_id'),
-          path: 'filters',
-          value: timezoneUpdated,
-        });
-      }
+      paths.forEach((path) => {
+        const query = this.props.model.get(path, new Map());
+        const timezoneUpdated = update$dteTimezone(query, currentTimezone);
+
+        // Update visualisation.{path} when timezone offset in the filter query is changed
+        if (!timezoneUpdated.equals(query)) {
+          this.props.updateModel({
+            schema: SCHEMA,
+            id: this.props.model.get('_id'),
+            path,
+            value: timezoneUpdated,
+          });
+        }
+      });
     }
   }
 

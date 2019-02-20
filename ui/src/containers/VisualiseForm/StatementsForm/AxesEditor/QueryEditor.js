@@ -5,6 +5,7 @@ import QueryBuilder from 'ui/containers/QueryBuilder';
 
 export default class QueryEditor extends Component {
   static propTypes = {
+    timezone: PropTypes.string,
     query: PropTypes.instanceOf(Map),
     componentPath: PropTypes.instanceOf(List),
     changeQuery: PropTypes.func,
@@ -41,6 +42,7 @@ export default class QueryEditor extends Component {
       {
           this.hasQuery() &&
             <QueryBuilder
+              timezone={this.props.timezone}
               componentPath={this.props.componentPath}
               query={this.props.query.get('$match', new Map())}
               onChange={this.changeQuery} />
