@@ -16,6 +16,8 @@ import ModelList from 'ui/containers/ModelList';
 import ModelListItemWithoutModel from 'ui/containers/ModelListItem/ModelListItemWithoutModel';
 import DeleteButtonComponent from 'ui/containers/DeleteButton';
 import { updateModel as reduxUpdateModel } from 'ui/redux/modules/models';
+import { modelsSchemaIdSelector } from 'ui/redux/selectors';
+import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import { getShareableUrl } from 'ui/utils/dashboard';
 import {
   NOWHERE,
@@ -303,6 +305,7 @@ const ModelFormComponent = ({
       <span className={classNames('help-block', styles.contextHelp)}>Configure a filter for this dashboard which will always be applied. The dashboard below will show a live preview of the result, updating as you construct your filter<br /><br />If a URL filter is also used, it will be applied on top of this filter</span>
       <QueryBuilder
         id={filterId}
+        timezone={model.get('timezone', 'UTC')}
         query={model.get('filter', new Map({}))}
         componentPath={new List([])}
         onChange={handleFilterChange} />
@@ -346,10 +349,11 @@ const openLinkButton = ({ parentModel }) => compose(
 // --------------------------
 
 const dashboardSharingHandlers = withHandlers({
-  addShareable: ({ updateModel, model }) => () => {
+  addShareable: ({ updateModel, model, organisationModel = new Map() }) => () => {
     const newShareable = model.get('shareable', new List()).push(new Map({
       title: 'Shareable',
       createdAt: new Date(),
+      timezone: organisationModel.get('timezone', 'UTC'),
     }));
     updateModel({
       path: 'shareable',
@@ -396,5 +400,8 @@ export default compose(
   })),
   withModel,
   withStyles(styles),
+  connect(state => ({
+    organisationModel: modelsSchemaIdSelector('organisation', activeOrgIdSelector(state))(state),
+  })),
   dashboardSharingHandlers
 )(DashboardSharingComponent);
