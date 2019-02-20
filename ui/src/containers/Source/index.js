@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 import { Map, fromJS, List } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { VelocityTransitionGroup } from 'velocity-react';
-import { statementQuerySelector } from 'ui/redux/selectors';
+import { statementQuerySelector, modelsSchemaIdSelector } from 'ui/redux/selectors';
 import { updateStatementQuery } from 'ui/redux/actions';
+import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import Statement from 'ui/components/Statement';
 import QueryBuilder from 'ui/containers/QueryBuilder';
 import StatementForm from 'ui/containers/StatementForm';
@@ -32,11 +33,13 @@ class Source extends Component {
   static propTypes = {
     updateStatementQuery: PropTypes.func,
     query: PropTypes.instanceOf(Map),
+    organisationModel: PropTypes.instanceOf(Map),
   };
 
   static defaultProps = {
     query: new Map(),
-    statements: new Map()
+    statements: new Map(),
+    organisationModel: new Map(),
   }
 
   constructor(props, context) {
@@ -107,6 +110,7 @@ class Source extends Component {
               </div>
               <div className="panel-body" style={{ paddingTop: '0px' }}>
                 <QueryBuilder
+                  timezone={this.props.organisationModel.get('timezone', 'UTC')}
                   componentPath={new List(['source'])}
                   query={this.props.query}
                   onChange={this.onChangeQuery} />
@@ -131,5 +135,6 @@ export default compose(
   withStyles(styles),
   connect(state => ({
     query: statementQuerySelector(state),
+    organisationModel: modelsSchemaIdSelector('organisation', activeOrgIdSelector(state))(state),
   }), { updateStatementQuery })
 )(Source);
