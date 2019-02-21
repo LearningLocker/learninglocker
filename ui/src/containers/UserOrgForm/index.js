@@ -1,12 +1,15 @@
 import React, { PropTypes } from 'react';
 import { Map, List, fromJS } from 'immutable';
 import uuid from 'uuid';
+import moment from 'moment-timezone';
 import { compose, setPropTypes, withProps, withHandlers } from 'recompose';
 import { withSchema, withModel } from 'ui/utils/hocs';
 import QueryBuilder from 'ui/containers/QueryBuilder';
 import UserForm from 'ui/containers/UserForm';
+import { modelsSchemaIdSelector } from 'ui/redux/selectors';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import Checkbox from 'ui/components/Material/Checkbox';
+import update$dteTimezone from 'ui/utils/queries/update$dteTimezone';
 import { connect } from 'react-redux';
 import { getAppDataSelector } from 'ui/redux/modules/app';
 import { currentScopesSelector } from 'ui/redux/modules/auth';
@@ -81,20 +84,32 @@ const SiteRolesList = compose(
   </div>);
 });
 
-const getDefaultOrgSettings = organisation =>
+/**
+ * @param {immutable.Map} organisationModel - organisation
+ * @returns {immutable.Map}
+ */
+const getDefaultOrgSettings = organisationModel =>
   fromJS({
-    organisation,
+    organisation: organisationModel.get('_id'),
     scopes: [],
     filter: {},
+    timezone: organisationModel.get('timezone', 'UTC'),
   });
 
-const getActiveOrgSettings = ({ model, organisationId }) => {
+/**
+ * @param {object} - {
+ *                     model: immutable.Map // user
+ *                     organisationModel: immutable.Map
+ *                   }
+ * @returns {immutable.Map}
+ */
+const getActiveOrgSettings = ({ model, organisationModel }) => {
   // @TODO: org isn't available and when it is, it doesnt retrigger this
-  const org = organisationId.toString();
+  const org = organisationModel.get('_id').toString();
   const settings = model.get(ORG_SETTINGS).find(val =>
     val.get('organisation').toString() === org
   );
-  return settings || getDefaultOrgSettings(organisationId);
+  return settings || getDefaultOrgSettings(organisationModel);
 };
 
 const enhance = compose(
@@ -102,7 +117,7 @@ const enhance = compose(
     id: PropTypes.string.isRequired,
   }),
   connect(state => ({
-    organisationId: activeOrgIdSelector(state),
+    organisationModel: modelsSchemaIdSelector('organisation', activeOrgIdSelector(state))(state),
     activeScopes: currentScopesSelector(state),
     RESTRICT_CREATE_ORGANISATION: getAppDataSelector('RESTRICT_CREATE_ORGANISATION')(state)
   })),
@@ -110,10 +125,13 @@ const enhance = compose(
     schema: 'user',
   }),
   withModel,
-  withProps(({ model, organisationId, updateModel }) =>
+  withProps(({ model, organisationModel, updateModel }) =>
     ({
-      updateOrgSettings: (attr, value) => {
-        const org = organisationId.toString();
+      /**
+       * @params {{ attr: string, value: any }[]} attrValueList
+       */
+      updateOrgSettings: (attrValueList) => {
+        const org = organisationModel.get('_id').toString();
         const hasExistingSetting = model.get(ORG_SETTINGS).find(orgSettings =>
           orgSettings.get('organisation').toString() === org
         );
@@ -122,14 +140,17 @@ const enhance = compose(
         if (hasExistingSetting) {
           allOrgSettings = model.get(ORG_SETTINGS).map((val) => {
             if (val.get('organisation').toString() === org) {
-              return val.set(attr, value);
+              return attrValueList.reduce((acc, {attr, value}) => acc.set(attr, value), val);
             }
             return val;
           });
         } else {
           allOrgSettings = model.get(ORG_SETTINGS) || new List();
           allOrgSettings = allOrgSettings.push(
-            getDefaultOrgSettings(organisationId).set(attr, value)
+            attrValueList.reduce(
+              (acc, {attr, value}) => acc.set(attr, value),
+              getDefaultOrgSettings(organisationModel)
+            )
           );
         }
 
@@ -138,41 +159,54 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    handleRolesChange: ({ model, organisationId, updateOrgSettings }) =>
+    handleRolesChange: ({ model, organisationModel, updateOrgSettings }) =>
       (role, checked) => {
-        const userOrgSettings = getActiveOrgSettings({ model, organisationId });
+        const userOrgSettings = getActiveOrgSettings({ model, organisationModel });
         const rolesSet = userOrgSettings.get('roles', new List()).toSet();
         const newRoles = (
           checked ?
           rolesSet.add(role) :
           rolesSet.delete(role)
         );
-        updateOrgSettings('roles', newRoles.toList());
+        updateOrgSettings([{ attr: 'roles', value: newRoles.toList() }]);
       },
-    handleSiteRolesChange: ({ model, updateModel }) => (role, checked) => {
-      const scopes = model.get('scopes', new List()).toSet();
-      const newScopes = checked ?
-        scopes.add(role) :
-        scopes.delete(role);
-      updateModel({ path: 'scopes', value: newScopes.toList() });
-    },
+    handleSiteRolesChange: ({ model, updateModel }) =>
+      (role, checked) => {
+        const scopes = model.get('scopes', new List()).toSet();
+        const newScopes = checked ?
+          scopes.add(role) :
+          scopes.delete(role);
+        updateModel({ path: 'scopes', value: newScopes.toList() });
+      },
     handleFilterChange: ({ updateOrgSettings }) =>
       (filter) => {
-        updateOrgSettings('filter', filter);
+        updateOrgSettings([{ attr: 'filter', value: filter }]);
+      },
+    handleTimezoneChange: ({ model, organisationModel, updateOrgSettings }) =>
+      (timezone) => {
+        const userOrgSettings = getActiveOrgSettings({ model, organisationModel });
+        const filter = userOrgSettings.get('filter', new Map({}));
+        const timezoneUpdatedFilter = update$dteTimezone(filter, timezone);
+
+        updateOrgSettings([
+          { attr: 'timezone', value: timezone },
+          { attr: 'filter', value: timezoneUpdatedFilter },
+        ]);
       }
   })
 );
 
-const render = (props) => {
+const UserOrgForm = (props) => {
   const {
-    model,
-    organisationId,
+    model, // user
+    organisationModel,
     handleRolesChange,
     handleFilterChange,
     handleSiteRolesChange,
+    handleTimezoneChange,
     RESTRICT_CREATE_ORGANISATION
   } = props;
-  const userOrgSettings = getActiveOrgSettings({ model, organisationId });
+  const userOrgSettings = getActiveOrgSettings({ model, organisationModel });
   const roles = userOrgSettings.get('roles', new List());
   const rolesId = uuid.v4();
   const siteRolesId = uuid.v4();
@@ -209,19 +243,41 @@ const render = (props) => {
         </div>
       </div>}
 
-      <div className="form-group">
-        <label htmlFor={filterId}>User Filter</label>
-        <QueryBuilder
-          id={filterId}
-          componentPath={new List([
-            'user',
-            model.get('_id'),
-          ])}
-          query={filter}
-          onChange={handleFilterChange} />
+      <div className="row">
+        <div className="col-md-12">
+          <div className="form-group">
+            <label htmlFor={filterId}>User Filter Timezone</label>
+            <select
+              className="form-control"
+              value={userOrgSettings.get('timezone', 'UTC')}
+              onChange={e => handleTimezoneChange(e.target.value)} >
+              {moment.tz.names().map(v => (
+                <option key={v} value={v}>{`${v} (${moment().tz(v).format('Z')})`}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col-md-12">
+          <div className="form-group">
+            <label htmlFor={filterId}>User Filter</label>
+            <QueryBuilder
+              id={filterId}
+              componentPath={new List([
+                'user',
+                model.get('_id'),
+              ])}
+              query={filter}
+              timezone={userOrgSettings.get('timezone', 'UTC')}
+              onChange={handleFilterChange} />
+          </div>
+        </div>
       </div>
     </div>
+
   );
 };
 
-export default enhance(render);
+export default enhance(UserOrgForm);
