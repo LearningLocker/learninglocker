@@ -9,6 +9,7 @@ import UserForm from 'ui/containers/UserForm';
 import { modelsSchemaIdSelector } from 'ui/redux/selectors';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import Checkbox from 'ui/components/Material/Checkbox';
+import TimezoneSelector from 'ui/components/TimezoneSelector';
 import update$dteTimezone from 'ui/utils/queries/update$dteTimezone';
 import { connect } from 'react-redux';
 import { getAppDataSelector } from 'ui/redux/modules/app';
@@ -247,14 +248,9 @@ const UserOrgForm = (props) => {
         <div className="col-md-12">
           <div className="form-group">
             <label htmlFor={filterId}>User Filter Timezone</label>
-            <select
-              className="form-control"
+            <TimezoneSelector
               value={userOrgSettings.get('timezone', 'UTC')}
-              onChange={e => handleTimezoneChange(e.target.value)} >
-              {moment.tz.names().map(v => (
-                <option key={v} value={v}>{`${v} (${moment().tz(v).format('Z')})`}</option>
-              ))}
-            </select>
+              onChange={handleTimezoneChange} />
           </div>
         </div>
       </div>

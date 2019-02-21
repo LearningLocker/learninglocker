@@ -1,12 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 import { Map } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import moment from 'moment-timezone';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { updateModel } from 'ui/redux/modules/models';
 import Checkbox from 'ui/components/Material/Checkbox';
+import TimezoneSelector from 'ui/components/TimezoneSelector';
 import {
   uploadLogo,
   IN_PROGRESS,
@@ -334,24 +334,6 @@ class SubOrgForm extends Component {
     );
   };
 
-  renderTimezoneSetting = (model) => {
-    const formId = uuid.v4();
-    return (
-      <div className="form-group">
-        <label htmlFor={formId}>Timezone</label>
-        <select
-          id={formId}
-          className="form-control"
-          value={model.get('timezone', 'UTC')}
-          onChange={this.onChangeAttr.bind(null, 'timezone')} >
-          {moment.tz.names().map(v => (
-            <option key={v} value={v}>{`${v} (${moment().tz(v).format('Z')})`}</option>
-          ))}
-        </select>
-      </div>
-    );
-  };
-
   render = () => {
     const { model } = this.props;
     const settings = model.get('settings');
@@ -363,7 +345,18 @@ class SubOrgForm extends Component {
           <fieldset>
             {this.renderNameSetting(model)}
 
-            {this.renderTimezoneSetting(model)}
+            <div className="form-group">
+              <label>Timezone</label>
+              <TimezoneSelector
+                value={model.get('timezone', 'UTC')}
+                onChange={value => this.props.updateModel({
+                  schema,
+                  id: this.props.model.get('_id'),
+                  path: 'timezone',
+                  value
+                })}
+                />
+            </div>
 
             <div className="form-group">
               <OrgLogo

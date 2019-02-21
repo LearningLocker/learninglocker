@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { Map } from 'immutable';
-import moment from 'moment-timezone';
 import { updateModel } from 'ui/redux/modules/models';
 import { connect } from 'react-redux';
+import TimezoneSelector from 'ui/components/TimezoneSelector';
 import VisualiseResults from 'ui/containers/VisualiseResults';
 import SourceResults from 'ui/containers/VisualiseResults/SourceResults';
 import {
@@ -77,20 +77,6 @@ class StatementsForm extends Component {
     </select>
   )
 
-  renderTimezone = () => {
-    const queryTimezone = this.props.model.get('timezone', 'UTC');
-    return (
-      <select
-        className="form-control"
-        value={queryTimezone}
-        onChange={this.onChangeAttr.bind(this, 'timezone')} >
-        {moment.tz.names().map(v => (
-          <option key={v} value={v}>{`${v} (${moment().tz(v).format('Z')})`}</option>
-        ))}
-      </select>
-    );
-  }
-
   renderFormWithResults = () => (
     <div className="row">
       <div className="col-md-6 left-border">
@@ -99,7 +85,15 @@ class StatementsForm extends Component {
       <div
         className="col-md-6">
         <div className="form-group form-inline" style={{ textAlign: 'right' }}>
-          { this.renderTimezone() }
+          <TimezoneSelector
+            value={this.props.model.get('timezone', 'UTC')}
+            onChange={value => this.props.updateModel({
+              schema: 'visualisation',
+              id: this.props.model.get('_id'),
+              path: 'timezone',
+              value,
+            })}
+            />
           { this.renderTimePicker() }
         </div>
         <div style={{ height: '400px', paddingTop: 5 }}>
