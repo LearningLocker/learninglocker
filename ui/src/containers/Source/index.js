@@ -3,15 +3,22 @@ import { connect } from 'react-redux';
 import { Map, fromJS, List } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { VelocityTransitionGroup } from 'velocity-react';
-import { statementQuerySelector, modelsSchemaIdSelector } from 'ui/redux/selectors';
-import { updateStatementQuery } from 'ui/redux/actions';
+import {
+  statementQuerySelector,
+  statementTimezoneSelector,
+  modelsSchemaIdSelector,
+} from 'ui/redux/selectors';
+import { updateStatementQuery, updateStatementTimezone } from 'ui/redux/actions';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import Statement from 'ui/components/Statement';
+import Spinner from 'ui/components/Spinner';
+import TimezoneSelector from 'ui/components/TimezoneSelector';
 import QueryBuilder from 'ui/containers/QueryBuilder';
 import StatementForm from 'ui/containers/StatementForm';
 import ModelList from 'ui/containers/ModelList';
 import ExportManager from 'ui/containers/ExportManager';
 import { addTokenToQuery } from 'ui/utils/queries';
+import update$dteTimezone from 'ui/utils/queries/update$dteTimezone';
 import { valueToCriteria } from 'ui/redux/modules/queryBuilder';
 import { withModels } from 'ui/utils/hocs';
 import tooltipFactory from 'react-toolbox/lib/tooltip';
@@ -32,7 +39,9 @@ const querySort = new Map({ timestamp: -1, _id: 1 });
 class Source extends Component {
   static propTypes = {
     updateStatementQuery: PropTypes.func,
+    updateStatementTimezone: PropTypes.func,
     query: PropTypes.instanceOf(Map),
+    timezone: PropTypes.string,
     organisationModel: PropTypes.instanceOf(Map),
   };
 
@@ -49,12 +58,32 @@ class Source extends Component {
     };
   }
 
+  componentDidMount = () => {
+    // Set organisation.timezone if statement.timezone is empty
+    if (!this.props.timezone) {
+      this.props.updateStatementTimezone(
+        this.props.organisationModel.get('timezone', 'UTC')
+      );
+    }
+  }
+
   toggleIsExporting = () => {
     this.setState({ isExporting: !this.state.isExporting });
   }
 
   onChangeQuery = (nextQuery) => {
     this.props.updateStatementQuery(nextQuery);
+  }
+
+  onChangeTimezone = (timezone) => {
+    this.props.updateStatementTimezone(timezone);
+
+    const query = this.props.query;
+    const timezoneUpdated = update$dteTimezone(query, timezone);
+
+    if (!timezoneUpdated.equals(query)) {
+      this.props.updateStatementQuery(timezoneUpdated);
+    }
   }
 
   setFilterAt = (keyPath, value) => {
@@ -72,6 +101,11 @@ class Source extends Component {
     const pipelines = fromJS([
       [{ $match: this.props.query }]
     ]);
+
+    if (!this.props.timezone) {
+      return <Spinner />;
+    }
+
     return (
       <div>
         <header id="topbar">
@@ -107,10 +141,14 @@ class Source extends Component {
                 <div className="panel-title">
                   Explore
                 </div>
+                <TimezoneSelector
+                  value={this.props.timezone}
+                  onChange={this.onChangeTimezone} />
               </div>
+
               <div className="panel-body" style={{ paddingTop: '0px' }}>
                 <QueryBuilder
-                  timezone={this.props.organisationModel.get('timezone', 'UTC')}
+                  timezone={this.props.timezone}
                   componentPath={new List(['source'])}
                   query={this.props.query}
                   onChange={this.onChangeQuery} />
@@ -135,6 +173,7 @@ export default compose(
   withStyles(styles),
   connect(state => ({
     query: statementQuerySelector(state),
+    timezone: statementTimezoneSelector(state),
     organisationModel: modelsSchemaIdSelector('organisation', activeOrgIdSelector(state))(state),
-  }), { updateStatementQuery })
+  }), { updateStatementQuery, updateStatementTimezone })
 )(Source);
