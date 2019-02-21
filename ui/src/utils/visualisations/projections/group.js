@@ -7,6 +7,7 @@ const map = {
   verb: '$statement.verb.id',
   type: '$statement.object.definition.type',
   raw: '$statement.result.score.raw',
+  response: '$statement.result.response',
   year: { $year: '$timestamp' },
   date: formatDate('%Y-%m-%d'),
   ...periodMap,

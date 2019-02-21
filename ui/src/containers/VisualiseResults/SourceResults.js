@@ -1,91 +1,158 @@
 import React from 'react';
 import { compose } from 'recompose';
-import { OrderedMap } from 'immutable';
+import NoData from 'ui/components/Graphs/NoData';
+import { Map, OrderedMap } from 'immutable';
+import isString from 'lodash/isString';
 import { withStatementsVisualisation } from 'ui/utils/hocs';
+import { getAxesString } from 'ui/utils/defaultTitles';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import styles from './styles.css';
+import { displayVerb, displayActivity } from '../../utils/xapi';
 
-const getAxes = (index, axes) => {
-  switch (index) {
-    case 0:
-      return axes.get('xLabel', 'X-Axes');
-    case 1:
-      return axes.get('yLabel', 'Y-Axes');
-    default:
-      return axes.get('xLabel', 'X-Axes');
-  }
+const moreThanOneSeries = tData => tData.first() !== undefined && tData.first().size > 1;
+
+export const generateTableData = (results, labels) => {
+  const seriesList = labels.zip(results);
+  const seriesMap = new OrderedMap(seriesList);
+  const result = seriesMap.reduce((reduction, series, seriesKey) =>
+    series.reduce(
+      (axesReduction, axes2, axesKey) => axes2.reduce(
+        (seriesReduction, item) => {
+          const dataKeyName = [item.get('_id'), 'rowData', seriesKey, axesKey];
+          const modelKeyName = [item.get('_id'), 'model'];
+          return seriesReduction
+            .setIn(dataKeyName, item)
+            .setIn(modelKeyName, item.get('model'));
+        },
+      axesReduction),
+    reduction)
+  , new OrderedMap());
+  return result;
 };
 
-export const generateTableData = (results, labels, axes) => {
-  const seriesList = labels.zip(results);
-  const seriesList2 = seriesList.map(([key, item], i) => {
-    if (key === undefined) {
-      return [`s${i}`, item];
+/**
+ * Count sub columns
+ *
+ * @param {List} labels - List of string. Don't include undefined
+ * @param {OrderedMap} tableData
+ * @returns {Number} the number of sub columns.
+ */
+const countSubColumns = (labels, tableData) =>
+  labels.reduce(
+    (acc1, label) =>
+      tableData.reduce(
+        (acc2, row) =>
+          Math.max(acc2, row.getIn(['rowData', label], new Map()).size),
+        acc1
+      ),
+    1
+  );
+
+const formatKeyToFriendlyString = (key) => {
+  if (isString(key)) return key;
+
+  if (Map.isMap(key)) {
+    if (key.get('objectType')) {
+      return displayActivity(key);
     }
-    return [key, item];
-  });
+    if (key.get('display')) {
+      return displayVerb(key);
+    }
+    if (key.has('id')) {
+      return key.get('id');
+    }
 
-  const seriesMap = new OrderedMap(seriesList2);
+    return JSON.stringify(key.toJS(), null, 2);
+  }
 
-  const result = seriesMap.reduce((reduction, series, seriesKey) =>
+  return JSON.stringify(key, null, 2);
+};
 
-    series.reduce((axesReduction, axes2, axesKey) =>
+const getAxisLabel = (axis, visualisation, type) => {
+  if (type !== 'XVSY') {
+    return getAxesString(axis, visualisation, type, false);
+  }
+  return visualisation.getIn(['axesgroup', 'searchString'], 'No value');
+};
 
-      axes2.reduce((seriesReduction, item) => seriesReduction.setIn(
-          [item.get('model'), seriesKey, getAxes(axesKey, axes)],
-          item
-        ), axesReduction)
-    , reduction)
-  , new OrderedMap());
+const createSelectIfXVSY = (index, visualisation, type, axis) => {
+  if (type !== 'XVSY') {
+    return getAxisLabel(axis, visualisation, type);
+  }
+  if (index === 0) {
+    return visualisation.get('axesxLabel', visualisation.getIn(['axesxValue', 'searchString'], 'No value'));
+  }
+  return visualisation.get('axesyLabel', visualisation.getIn(['axesyValue', 'searchString'], 'No value'));
+};
 
-  return result;
+const formatNumber = (selectedAxes) => {
+  const count = selectedAxes.get('count');
+  if (typeof count !== 'number') {
+    return '';
+  }
+  if (count % 1 !== 0) {
+    return count.toFixed(2);
+  }
+  return count;
 };
 
 export default compose(
   withStatementsVisualisation,
-  withStyles(styles)
+  withStyles(styles),
 )(({
   getFormattedResults,
   results,
   labels,
-  axes
+  model,
+  visualisation
 }) => {
   const formattedResults = getFormattedResults(results);
+  const tLabels = labels.map((label, i) => (label === undefined ? `Series ${i + 1}` : label));
+  const tableData = generateTableData(formattedResults, tLabels);
+  const subColumnsCount = countSubColumns(tLabels, tableData);
 
-  const tableData = generateTableData(formattedResults, labels, axes);
+  if (tableData.first()) {
+    return (
+      <div className={styles.sourceResultsContainer}>
+        <table className="table table-bordered table-striped">
+          <tbody>
+            {moreThanOneSeries(tableData) && <tr>
+              <th />
+              {
+                tLabels.map(tLabel => (
+                  <th key={tLabel} colSpan={subColumnsCount}>{tLabel}</th>
+                )).valueSeq()
+              }
+            </tr>}
 
-  return (
-    <div className={styles.sourceResultsContainer}>
-      <table className="table table-bordered table-striped">
-        <tbody>
-          <tr>
-            <th />
-            {tableData.first().map((item, key) => (
-              <th colSpan={item.size}>{key}</th>
-            ))}
-          </tr>
-          <tr>
-            <th>i</th>
-            {
-              tableData.first().map(series => (
-                series.map((axes2, axesKey) => (
-                  <th>{axesKey}</th>
-                ))
-              ))
-            }
-          </tr>
-          {tableData.map((item, key) => (
             <tr>
-              <td>{key}</td>
-              {item.map(series =>
-                series.map(axes2 =>
-                  (<td>{axes2.get('count')}</td>)
-                )
-              )}
+              <th>{getAxisLabel('x', visualisation, model.get('type'))}</th>
+              {
+                tLabels.map(tLabel =>
+                  [...Array(subColumnsCount).keys()].map(k =>
+                    <th key={`${tLabel}-${k}`}>{createSelectIfXVSY(k, visualisation, model.get('type'), 'y')}</th>
+                  )
+                ).valueSeq()
+              }
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+
+            {tableData.map((row, key) => (
+              <tr key={key}>
+                <td title={key}>{formatKeyToFriendlyString(row.get('model', key))}</td>
+                {
+                  tLabels.map(tLabel =>
+                    [...Array(subColumnsCount).keys()].map((k) => {
+                      const v = row.getIn(['rowData', tLabel, k], new Map({ count: null }));
+                      return <td key={`${tLabel}-${k}`}>{formatNumber(v)}</td>;
+                    })
+                  ).valueSeq()
+                }
+              </tr>
+            )).valueSeq()}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+  return (<NoData />);
 });

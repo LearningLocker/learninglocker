@@ -33,6 +33,7 @@
       "name": "Worker",
       "script": "worker/dist/server",
       "cwd": ".",
+      "node_args": "--max-old-space-size=256 --max-semi-space-size=2",
       "output": "./logs/stdout.log",
       "error": "./logs/stderr.log",
       "pid": "./pids/ui.pid",

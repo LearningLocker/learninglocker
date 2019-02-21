@@ -57,7 +57,7 @@ export default compose(
   valuesFilter
 }) =>
   (<AutoComplete2
-    renderInput={({ hasFocus }) => (
+    renderInput={({ hasFocus, onFocus }) => (
       <QueryBuilderInput
         filter={valuesFilter}
         values={values}
@@ -67,6 +67,7 @@ export default compose(
         schema={schema}
         deselectOption={deselectOption}
         hasFocus={hasFocus}
+        onFocus={onFocus}
         searchStringToFilter={searchStringToFilter}
         onChangeFilter={searchFilter => setSearchFilter(searchFilter)} />
     )}

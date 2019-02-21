@@ -1,8 +1,6 @@
 
 
 describe('dashboard visulaisation', () => {
-
-
   it('should go to the visulaisation from the dashboard', () => {
     cy.exec('node --version').then((result) => {
       cy.log('node version', result.stdout);
@@ -26,8 +24,14 @@ describe('dashboard visulaisation', () => {
       cy.contains('Add widget').click();
       cy.get('.ion-navicon-round').click();
       cy.get('.ion-gear-b').click();
+
       cy.get('input[placeholder="Choose an option"]').click();
+
+      cy.contains('test 1').should('be.visible');
+      cy.wait(1000); // Some reason it still may no be visible, dispite the above line :(.
+
       cy.contains('test 1').click();
+
       cy.get('button.close').click();
 
       // Go to visualisation from dashboard

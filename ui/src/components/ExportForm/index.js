@@ -27,18 +27,44 @@ class ExportForm extends Component {
   }
 
   state = {
-    activeIndex: 0
+    activeIndex: 0,
+    projectionString: '',
+    download: false
   }
 
-  selectIndex = (index) => {
-    this.setState({ activeIndex: index });
+  componentDidMount = () => {
+    this.state.projectionString = this.getActiveProjection();
+  }
+
+  componentDidUpdate = () => {
+    if (this.state.download === true) {
+      this.postDownloadExport();
+      this.state.download = false;
+    }
   };
 
   onChangeProjection = (projection) => {
     this.props.updateModel({ path: ['projections'], value: fromJS([projection]) });
   }
 
+  onUpdateProjection = (projection) => {
+    this.state.projectionString = projection;
+  }
+
   onDownloadExport = () => {
+    if (this.props.model.get('rawMode')) {
+      this.onChangeProjection(this.state.projectionString);
+      this.state.download = true;
+    } else {
+      this.postDownloadExport();
+    }
+  }
+
+  selectIndex = (index) => {
+    this.setState({ activeIndex: index });
+  };
+
+  postDownloadExport = () => {
     this.props.setDownloadRequestStates(downloadRequestStates.waiting);
     this.props.downloadExport({ exportId: this.props.id, pipelines: [this.getCompletePipeline()] })
     .then(() => {
@@ -71,7 +97,12 @@ class ExportForm extends Component {
   toggleRaw = () => {
     const { model, updateModel } = this.props;
     const rawMode = model.get('rawMode');
-    updateModel({ path: ['rawMode'], value: !rawMode });
+    const newRawMode = !rawMode;
+    if (newRawMode === false) {
+      this.onChangeProjection(this.state.projectionString);
+    }
+
+    updateModel({ path: ['rawMode'], value: newRawMode });
   }
 
   renderDownloadButton = () => {
@@ -99,7 +130,7 @@ class ExportForm extends Component {
             <div className="col-xs-12">
               <ProjectionInput
                 projection={activeProjection}
-                onChange={this.onChangeProjection}
+                onChange={this.onUpdateProjection}
                 rawMode />
             </div>
           ) : [

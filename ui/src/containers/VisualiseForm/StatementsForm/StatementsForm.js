@@ -11,9 +11,9 @@ import {
   LAST_6_MONTHS,
   LAST_24_HOURS,
   LAST_1_YEAR,
-  LAST_2_YEARS
+  LAST_2_YEARS,
+  TODAY
 } from 'ui/utils/constants';
-import Switch from 'ui/components/Material/Switch';
 import {
   getMetadataSelector,
   setInMetadata
@@ -55,22 +55,6 @@ class StatementsForm extends Component {
     value: e.target.value
   })
 
-  toggleSource = (value) => {
-    this.props.setInMetadata({
-      schema: SCHEMA,
-      id: this.props.model.get('_id'),
-      path: ['source'],
-      value
-    });
-  }
-
-  renderSourceToggle = () => (
-    <Switch
-      checked={this.props.source}
-      label="Source"
-      onChange={this.toggleSource} />
-  );
-
   renderEditor = () => (
     <Editor model={this.props.model} exportVisualisation={this.props.exportVisualisation} />
   );
@@ -81,6 +65,7 @@ class StatementsForm extends Component {
       className="form-control"
       value={this.props.model.get('previewPeriod')}
       onChange={this.onChangeAttr.bind(null, 'previewPeriod')}>
+      <option value={TODAY}>Today</option>
       <option value={LAST_24_HOURS}>Last 24 hours</option>
       <option value={LAST_7_DAYS}>Last 7 days</option>
       <option value={LAST_30_DAYS}>Last 30 days</option>
@@ -98,21 +83,18 @@ class StatementsForm extends Component {
       </div>
       <div
         className="col-md-6">
-        <div style={{ float: 'left' }}>
-          { this.renderSourceToggle() }
-        </div>
         <div className="form-group form-inline" style={{ textAlign: 'right' }}>
           { this.renderTimePicker() }
         </div>
         <div style={{ height: '400px', paddingTop: 5 }}>
-          {!this.props.source && <VisualiseResults id={this.props.model.get('_id')} />}
-          {this.props.source &&
+          {!this.props.model.get('sourceView') && <VisualiseResults id={this.props.model.get('_id')} />}
+          {this.props.model.get('sourceView') &&
             <SourceResults id={this.props.model.get('_id')} />
           }
         </div>
       </div>
     </div>
-  )
+  );
 
   renderEditorOnly = () => (
     <div className="row">

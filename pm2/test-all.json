@@ -12,7 +12,6 @@
       "wait_ready": true,
       "listen_timeout": 30000,
       "watch": [".env"],
-      "max_memory_restart" : "500M",
       "env": {
         "RUNTIME_NODE_ENV": "test"
       }
@@ -29,7 +28,6 @@
       "wait_ready": true,
       "listen_timeout": 30000,
       "watch": [".env"],
-      "max_memory_restart" : "500M",
       "env": {
         "RUNTIME_NODE_ENV": "test"
       }
@@ -46,7 +44,6 @@
       "wait_ready": true,
       "listen_timeout": 30000,
       "watch": [".env"],
-      "max_memory_restart" : "500M",
       "env": {
         "RUNTIME_NODE_ENV": "test"
       }

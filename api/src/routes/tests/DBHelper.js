@@ -3,6 +3,7 @@ import Lrs from 'lib/models/lrs';
 import Client from 'lib/models/client';
 import User from 'lib/models/user';
 import Statement from 'lib/models/statement';
+import OAuthToken from 'lib/models/oAuthToken';
 import async from 'async';
 import * as scopes from 'lib/constants/scopes';
 
@@ -18,8 +19,8 @@ export default class journeyDBHelpers {
             },
             insertDone
           ),
-        user: insertDone =>
-          User.create(
+        user: (insertDone) => {
+          const out = User.create(
             {
               _id: '561a679c0c5d017e4004714f',
               email: 'testy@mctestface.com',
@@ -34,7 +35,9 @@ export default class journeyDBHelpers {
               scopes: []
             },
             insertDone
-          ),
+          );
+          return out;
+        },
         lrs: insertDone =>
           Lrs.create(
             {
@@ -65,9 +68,9 @@ export default class journeyDBHelpers {
 
   cleanUp = (done) => {
     async.forEach(
-      [Organisation, User, Lrs, Client, Statement],
+      [Organisation, User, Lrs, Client, Statement, OAuthToken],
       (model, doneDeleting) => {
-        model.remove({}, doneDeleting);
+        model.deleteMany({}, doneDeleting);
       },
       done
     );

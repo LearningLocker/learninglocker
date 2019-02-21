@@ -36,7 +36,7 @@ const RolesList = compose(
         return (
           <Checkbox
             key={modelId}
-            label={model.get('title') || '~ Unnamed Role'}
+            label={model.get('title') || 'Unnamed Role'}
             checked={isChecked}
             onChange={handleRolesChange.bind(null, modelId)} />
         );
@@ -72,7 +72,7 @@ const SiteRolesList = compose(
         return (
           <Checkbox
             key={modelId}
-            label={model.get('title') || '~ Unnamed Role'}
+            label={model.get('title') || 'Unnamed Role'}
             checked={isChecked}
             onChange={handleRolesChange.bind(null, modelId)} />
         );

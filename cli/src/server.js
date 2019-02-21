@@ -23,6 +23,7 @@ import migrateQueryBuilderCachesPath from 'cli/commands/migrateQueryBuilderCache
 
 import testStatementForwarding from 'cli/commands/testStatementForwarding';
 import testQueryBuilderCache from 'cli/commands/testQueryBuilderCache';
+import disableRegister from 'cli/commands/disableRegister';
 
 import migrateMongo, { MIGRATIONS_PATH } from 'cli/migrateMongo';
 
@@ -46,7 +47,7 @@ program
     'Force the command to update the password (if valid)'
   )
   .action(createSiteAdmin);
-// node cli/dist/server createSiteAdmin andrew.hickey@ht2labs.com HT2 password
+// node cli/dist/server createSiteAdmin "example@email.com" "Your organisation name" "yourpassword"
 
 program.command('updateStatementCount').action(updateStatementCount);
 // node cli/dist/server updateStatementCount
@@ -56,7 +57,7 @@ program
   .option('-s, --since [since]', 'Requeue statements stored since this ISO date')
   .action(requeueStatements);
 // 1. Stop workers.
-// 2. db.personas.remove({}); db.queryBuilderCaches.remove({}); db.queryBuilderCacheValues.remove({}); db.personaIdentifiers.remove({}); db.statements.update({}, {$set: {processingQueues: [], completedQueues: []}}, {multi: true});
+// 2. db.personas.remove({}); db.queryBuilderCaches.remove({}); db.queryBuilderCacheValues.remove({}); db.personaIdentifiers.remove({}); db.statements.updateMany({}, {$set: {processingQueues: [], completedQueues: []}});
 // 3a. node cli/dist/server updateStatementCount #we skip running the lrs count workers using this instead
 // 3b. node cli/dist/server requeueStatements
 // 4. npm run start-dev-worker
@@ -125,6 +126,12 @@ program
   .option('-b, --batchSize [batchSize]', 'Batch size..')
   .action(batchJobs);
 // node cli/dist/server batchJobs
+
+program
+  .command('disableRegister')
+  .action(disableRegister);
+// node cli/dist/server disableRegister
+
 
 program
   .command('migrateMongo')

@@ -1,5 +1,5 @@
 import { publish } from 'lib/services/queue';
-import { promisify } from 'bluebird';
+import { promisify, map } from 'bluebird';
 import ImportPersonasLock from 'lib/models/importPersonasLock';
 import { getIfis } from 'lib/services/importPersonas/personasImportHelpers';
 import { PERSONA_IMPORT_QUEUE, STAGE_IMPORTED } from 'lib/constants/personasImport';
@@ -7,6 +7,8 @@ import importPersona from 'lib/services/importPersonas/importPersona';
 import moment from 'moment';
 import PersonasImport from 'lib/models/personasImport';
 import { addErrorsToCsv } from 'lib/services/importPersonas/importPersonas';
+
+const LOCK_TIMEOUT = 120; // seconds
 
 // exported for testing
 export const establishLock = async ({
@@ -16,22 +18,45 @@ export const establishLock = async ({
   ifis = getIfis({
     structure,
     row: data
-  }), // argument for testing only
+  }), // private
+  lockTimeout = LOCK_TIMEOUT * 1000 // testing
 }) => {
   try {
-    const result = await ImportPersonasLock.findOneAndUpdate({
+    const result = await ImportPersonasLock.create({
       organisation,
       ifis
-    }, {
-      organisation,
-      ifis
-    }, {
-      upsert: true,
-      new: true
     });
+
     return result;
   } catch (err) {
-    if (err.code && err.code === 11000) { // DuplicateKey
+    // DuplicateKey
+    if (err.code && err.code === 11000) {
+      const models = ImportPersonasLock.find({
+        organisation,
+        ifis: {
+          $in: ifis
+        }
+      });
+
+      let remainingLocks = false;
+      const deletePromises = map(models, (model) => {
+        if (moment(model.createdAt).add(lockTimeout, 'milliseconds').isBefore(moment())) {
+          return model.remove();
+        }
+        remainingLocks = true;
+      });
+
+      await deletePromises;
+      if (remainingLocks === false) {
+        return await establishLock({
+          structure,
+          data,
+          organisation,
+          ifis,
+          lockTimeout
+        });
+      }
+
       return false;
     }
     throw err;
@@ -47,18 +72,21 @@ const releaseLock = async ({
 export const finishedProcessing = async ({
   personaImportId
 }) => {
-  const personasImport = await PersonasImport.findOneAndUpdate({
+  await PersonasImport.updateOne({
     _id: personaImportId
   }, {
     importStage: STAGE_IMPORTED,
     importedAt: moment().toDate()
-  }, {
-    new: true
+  });
+
+  const personasImport = await PersonasImport.findOne({
+    _id: personaImportId
   });
 
   await addErrorsToCsv({
     personasImport,
-    csvHandle: personasImport.csvHandle
+    csvHandle: personasImport.csvHandle,
+    csvOutHandle: personasImport.csvErrorHandle
   });
 };
 
@@ -70,7 +98,6 @@ export default personaService => async ({
   organisation
 }, done) => {
   // establish lock
-
   const lock = await establishLock({ structure, data, organisation });
   if (!lock) {
     await promisify(publish)({
@@ -96,7 +123,6 @@ export default personaService => async ({
   })(data, index);
 
   // have we finished processing ???
-
   if (totalCount && processedCount >= totalCount) {
     await finishedProcessing({ personaImportId });
   }

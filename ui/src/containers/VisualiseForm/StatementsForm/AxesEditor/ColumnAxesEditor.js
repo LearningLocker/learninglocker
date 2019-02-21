@@ -22,10 +22,10 @@ class ColumnAxesEditor extends BaseAxesEditor {
           <DebounceInput
             id={'xAxisLabel'}
             className="form-control"
-            placeholder={`${'x'.toUpperCase()}-Axis`}
+            placeholder={this.props.model.getIn(['axesgroup', 'searchString'], 'X-Axis')}
             debounceTimeout={377}
             style={{ fontWeight: 'bold' }}
-            value={this.getAxesValue('xLabel')}
+            value={this.props.model.get('axesxLabel')}
             onChange={this.handleAxesChange.bind(this, 'xLabel')} />
         </div>
         <div className="form-group">
@@ -41,10 +41,10 @@ class ColumnAxesEditor extends BaseAxesEditor {
           <DebounceInput
             id={'yAxisLabel'}
             className="form-control"
-            placeholder={`${'y'.toUpperCase()}-Axis`}
+            placeholder={this.props.model.getIn(['axesvalue', 'searchString'], 'Y-Axis')}
             debounceTimeout={377}
             style={{ fontWeight: 'bold' }}
-            value={this.getAxesValue('yLabel')}
+            value={this.props.model.get('axesyLabel')}
             onChange={this.handleAxesChange.bind(this, 'yLabel')} />
         </div>
         <div className="form-group">
@@ -57,7 +57,7 @@ class ColumnAxesEditor extends BaseAxesEditor {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 export default connect(() => ({}), { updateModel })(ColumnAxesEditor);

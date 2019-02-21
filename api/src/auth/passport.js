@@ -97,9 +97,11 @@ export async function verifyToken(token, done = () => {}) {
     done(null, auth);
     return auth;
   } catch (err) {
+    if (err.name === 'TokenExpiredError' || err.name === 'JsonWebTokenError') {
+      return done(new Unauthorized('Token expired'));
+    }
     logger.error('Auth error:', err);
     done(err);
-    throw err;
   }
 }
 
@@ -148,8 +150,7 @@ passport.use(
       if (user.ownerOrganisationSettings.LOCKOUT_ENABLED) {
         // is there currently a lockout associated with the user?
         if (user.authLockoutExpiry) {
-          // const lockoutMs = user.ownerOrganisationSettings.LOCKOUT_SECONDS * 1000;
-          const lockoutMs = 30 * 1000;
+          const lockoutMs = (user.ownerOrganisationSettings.LOCKOUT_SECONDS || 30) * 1000;
           const acceptExpiresSince = new Date(Date.now() - lockoutMs);
 
           // is the current lockout still valid? (i.e. should we reject them?)
@@ -222,5 +223,60 @@ if (
     )
   );
 }
+
+/**
+ * Based on RFC 6749
+ */
+passport.use(
+  'OAuth2_Authorization',
+  new CustomStrategy((req, done) => {
+    const grantType = req.body.grant_type;
+    const clientId = req.body.client_id;
+    const clientSecret = req.body.client_secret;
+
+    if (
+      grantType === undefined ||
+      clientId === undefined ||
+      clientSecret === undefined
+    ) {
+      done({ isClientError: true, error: 'invalid_request' });
+      return;
+    }
+
+    if (grantType !== 'client_credentials') {
+      done({ isClientError: true, error: 'unsupported_grant_type' });
+      return;
+    }
+
+    Client.findOne(
+      {
+        'api.basic_key': clientId,
+        'api.basic_secret': clientSecret,
+        isTrusted: true,
+      },
+      (err, client) => {
+        if (err) {
+          done({ error: err });
+          return;
+        }
+
+        if (!client) {
+          done({ isClientError: true, error: 'invalid_client' });
+          return;
+        }
+
+        client.authInfo = {
+          client,
+          scopes: client.scopes,
+          token: {
+            tokenType: 'client'
+          }
+        };
+
+        done(null, client);
+      }
+    );
+  })
+);
 
 export default passport;

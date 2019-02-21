@@ -17,7 +17,7 @@ export default () => {
   });
 
   afterEach('Clear db collections', async () => {
-    await Promise.all(values(connection.models).map(model => model.remove({})));
+    await Promise.all(values(connection.models).map(model => model.deleteMany({})));
   });
 
   return apiApp;

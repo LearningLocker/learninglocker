@@ -18,7 +18,7 @@ const exportDBHelper = new ExportDBHelper();
 
 describe('Export helper tests', () => {
   beforeEach(async () => {
-    await Statement.remove({});
+    await Statement.deleteMany({});
   });
 
   before((done) => {

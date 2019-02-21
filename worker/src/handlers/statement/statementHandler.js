@@ -30,8 +30,12 @@ const queueDependencies = {
   },
 };
 
-const addStatementToPendingQueues = (statement, queues, done) => {
-  if (!statement) return done(new Error('Statement must be provided'));
+export const addStatementToPendingQueues = (statement, passedQueues, done) => {
+  const queues = passedQueues || queueDependencies;
+  if (!statement) {
+    logger.error('No statement provided');
+    return done();
+  }
 
   const queueNames = keys(queues);
   const pendingQueueNames = reject(queueNames, (queueName) => {
@@ -49,11 +53,11 @@ const addStatementToPendingQueues = (statement, queues, done) => {
     return !preReqsCompleted || queueCompleted || queueProcessing;
   });
 
-  return Statement.findByIdAndUpdate(
-    statement._id,
-    { $addToSet: { processingQueues: {
-      $each: pendingQueueNames
-    } } },
+  return Statement.updateOne(
+    { _id: statement._id },
+    {
+      $addToSet: { processingQueues: { $each: pendingQueueNames } }
+    },
     (err) => {
       if (err) return done(err);
       // adding to queue returns a promise
@@ -73,6 +77,7 @@ const addStatementToPendingQueues = (statement, queues, done) => {
         } else {
           logger.debug(`PROCESSED QUEUE FOR STATEMENT ${statement._id}`);
         }
+
         return done();
       });
     }
@@ -82,16 +87,20 @@ const addStatementToPendingQueues = (statement, queues, done) => {
 export default ({ status, statementId }, jobDone) => {
   try {
     if (status) {
-      logger.info(`COMPLETED ${statementId} - ${status}`);
-      return Statement.findByIdAndUpdate(
-        statementId,
+      logger.debug(`COMPLETED ${statementId} - ${status}`);
+      const idFilter = { _id: statementId };
+      return Statement.updateOne(
+        idFilter,
         {
           $addToSet: { completedQueues: status },
           $pull: { processingQueues: status }
         },
-        { new: true },
-        (err, statement) => {
-          if (err) logger.error('Statement.findByIdAndUpdate error', err);
+        async (err) => {
+          const statement = await Statement.findOne(idFilter)
+            .select({ _id: 1, completedQueues: 1, processingQueues: 1 })
+            .lean();
+
+          if (err) logger.error('Statement update error', err);
           if (err) return jobDone(err);
           // get the statement so that we can find which queues it has already been through
           return addStatementToPendingQueues(statement, queueDependencies, (err) => {
@@ -102,9 +111,10 @@ export default ({ status, statementId }, jobDone) => {
       );
     }
 
-    logger.debug('NO STATUS', statementId);
+    logger.debug(`NO STATUS, statementId: ${statementId}`);
     return Statement.findById(
       statementId,
+      { _id: 1, completedQueues: 1, processingQueues: 1 },
       (err, statement) => {
         addStatementToPendingQueues(statement, queueDependencies, (err) => {
           if (err) logger.error('addStatementToPendingQueues error', err);

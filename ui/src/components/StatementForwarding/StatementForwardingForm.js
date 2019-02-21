@@ -1,5 +1,5 @@
 import React from 'react';
-import { fromJS, List, Map } from 'immutable';
+import { List, Map } from 'immutable';
 import { withModel } from 'ui/utils/hocs';
 import { withProps, compose, withHandlers } from 'recompose';
 import Switch from 'ui/components/Material/Switch';
@@ -7,7 +7,7 @@ import QueryBuilder from 'ui/containers/QueryBuilder';
 import classNames from 'classnames';
 import ValidationList from 'ui/components/ValidationList';
 import TableInput from 'ui/components/TableInput';
-import { getAuthHeaders } from 'lib/helpers/statementForwarding';
+import { getAuthHeaders, getHeaders } from 'lib/helpers/statementForwarding';
 import { AUTH_TYPES, AUTH_TYPE_NO_AUTH, STATAMENT_FORWARDING_MAX_RETRIES } from 'lib/constants/statementForwarding';
 
 const schema = 'statementForwarding';
@@ -88,7 +88,11 @@ const updateHandlers = withHandlers({
         newHeadersString
       )
     });
-  }
+  },
+  changeFullDocument: ({ updateModel }) => value => updateModel({
+    path: ['fullDocument'],
+    value
+  })
 });
 
 const withProtocols = withProps(() => ({
@@ -113,7 +117,8 @@ const StatementForwardingForm = ({
   changeQuery,
   authTypes,
   changeMaxRetries,
-  changeHeaders
+  changeHeaders,
+  changeFullDocument
 }) => (
   <div>
     <div className="row">
@@ -126,6 +131,7 @@ const StatementForwardingForm = ({
             checked={model.get('active', false)} />
         </div>
 
+
         <div className="form-group">
           <label htmlFor={`${model.get('_id')}descriptionInput`}>Name</label>
           <input
@@ -135,6 +141,17 @@ const StatementForwardingForm = ({
             value={model.get('description', '')}
             onChange={changeDescription} />
         </div>
+
+        <div className="form-group">
+          <label htmlFor={`${model.get('_id')}fullDocumentToggle`}>Send full database record?</label>
+          <span className="help-block">Should the Statement Forward send the entire database record to the defined URL? If forwarding to an LRS, this option should be left disabled.</span>
+          <Switch
+            id={`${model.get('_id')}fullDocumentToggle`}
+            label="Enabled"
+            onChange={changeFullDocument}
+            checked={model.get('fullDocument', false)} />
+        </div>
+
         <div className="form-group">
           <label htmlFor={`${model.get('_id')}protocolInput`}>Protocol</label>
           <select
@@ -261,8 +278,8 @@ const StatementForwardingForm = ({
             min="0"
             max={STATAMENT_FORWARDING_MAX_RETRIES}
             className="form-control"
-            value={model.getIn(['configuration', 'maxRetries'], 3)}
-            placeholder="3"
+            value={model.getIn(['configuration', 'maxRetries'], 0)}
+            placeholder="0"
             onChange={changeMaxRetries} />
           { model.getIn(['errors', 'messages', 'configuration.maxRetries'], false) &&
               (<span className="help-block">
@@ -270,7 +287,6 @@ const StatementForwardingForm = ({
               </span>
               )}
         </div>
-
         <div
           className={classNames({
             'form-group': true,
@@ -284,9 +300,12 @@ const StatementForwardingForm = ({
               configuration: model.get('configuration').toJS()
             }).merge(new Map({
               'Content-Type': 'application/json',
-              'Content-Length': '${Content-Length}' // eslint-disable-line no-template-curly-in-string
+              'Content-Length': '${Content-Length}', // eslint-disable-line no-template-curly-in-string
+              'X-Experience-API-Version': '${statement.version}', // eslint-disable-line no-template-curly-in-string
             }))}
-            values={fromJS(JSON.parse(model.getIn(['configuration', 'headers'], '{}')))}
+            values={
+              getHeaders(model)
+            }
             onChange={changeHeaders} />
           {
               model.getIn(['errors', 'messages', 'configuration.headers'], false) &&
