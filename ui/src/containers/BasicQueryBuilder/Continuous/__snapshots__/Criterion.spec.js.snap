@@ -61,6 +61,14 @@ exports[`render criterion with value 1`] = `
         />
       </div>
     </div>
+    <span
+      className="criterionValueSupplement"
+    >
+      Asia/Hong_Kong
+       (
+      +08:00
+      )
+    </span>
   </div>
   <button
     className="criterionButton btn btn-default btn-xs"

@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Map, List, fromJS } from 'immutable';
 import uuid from 'uuid';
-import moment from 'moment-timezone';
 import { compose, setPropTypes, withProps, withHandlers } from 'recompose';
 import { withSchema, withModel } from 'ui/utils/hocs';
 import QueryBuilder from 'ui/containers/QueryBuilder';
@@ -141,7 +140,7 @@ const enhance = compose(
         if (hasExistingSetting) {
           allOrgSettings = model.get(ORG_SETTINGS).map((val) => {
             if (val.get('organisation').toString() === org) {
-              return attrValueList.reduce((acc, {attr, value}) => acc.set(attr, value), val);
+              return attrValueList.reduce((acc, { attr, value }) => acc.set(attr, value), val);
             }
             return val;
           });
@@ -149,7 +148,7 @@ const enhance = compose(
           allOrgSettings = model.get(ORG_SETTINGS) || new List();
           allOrgSettings = allOrgSettings.push(
             attrValueList.reduce(
-              (acc, {attr, value}) => acc.set(attr, value),
+              (acc, { attr, value }) => acc.set(attr, value),
               getDefaultOrgSettings(organisationModel)
             )
           );
@@ -249,6 +248,7 @@ const UserOrgForm = (props) => {
           <div className="form-group">
             <label htmlFor={filterId}>User Filter Timezone</label>
             <TimezoneSelector
+              id={filterId}
               value={userOrgSettings.get('timezone', 'UTC')}
               onChange={handleTimezoneChange} />
           </div>

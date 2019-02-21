@@ -346,16 +346,16 @@ class SubOrgForm extends Component {
             {this.renderNameSetting(model)}
 
             <div className="form-group">
-              <label>Timezone</label>
+              <label htmlFor="SubOrgForm_TimezoneSelector">Timezone</label>
               <TimezoneSelector
+                id="SubOrgForm_TimezoneSelector"
                 value={model.get('timezone', 'UTC')}
                 onChange={value => this.props.updateModel({
                   schema,
                   id: this.props.model.get('_id'),
                   path: 'timezone',
                   value
-                })}
-                />
+                })} />
             </div>
 
             <div className="form-group">

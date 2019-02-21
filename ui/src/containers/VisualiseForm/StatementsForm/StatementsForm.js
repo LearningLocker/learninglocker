@@ -92,8 +92,7 @@ class StatementsForm extends Component {
               id: this.props.model.get('_id'),
               path: 'timezone',
               value,
-            })}
-            />
+            })} />
           { this.renderTimePicker() }
         </div>
         <div style={{ height: '400px', paddingTop: 5 }}>
