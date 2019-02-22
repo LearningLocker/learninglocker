@@ -3,7 +3,6 @@ import { Map } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { isArray } from 'lodash';
 import classNames from 'classnames';
 import { updateModel } from 'ui/redux/modules/models';
 import Checkbox from 'ui/components/Material/Checkbox';
@@ -64,65 +63,37 @@ class SubOrgForm extends Component {
     }
   };
 
-  onChangeAttr = (attr, e) => {
+  /**
+   * @param {string} path - path to a attribute to be updated
+   * @return {(value: any) => void}
+   */
+  onChangeAttr = (path) => (value) =>
     this.props.updateModel({
       schema,
       id: this.props.model.get('_id'),
-      path: attr,
-      value: e.target.value
+      path,
+      value,
     });
-  };
 
-  changeSettingsAttr = (attr, value) => {
-    const { model } = this.props;
-    const modelId = model.get('_id');
-    const oldSettings = model.get('settings');
+  onChangeName = e => onChangeAttr('name')(e.target.value);
+  onExpirationChange = onChangeAttr('expiration');
+  onExpirationDismiss = () => onChangeAttr('expiration')(null);
 
-    if (!isArray(attr)) {
-      attr = [attr];
-    }
+  onChangeSettingsExpireExportsTTL = e => this.onChangeAttr(['settings', 'EXPIRE_EXPORTS', 'ttl'])(e.target.value);
+  onChangeSettingsLockoutAttempts = e => this.onChangeAttr(['settings', 'LOCKOUT_ATTEMPS'])(e.target.value);
+  onChangeSettingsLockoutSeconds = e => this.onChangeAttr(['settings', 'LOCKOUT_SECONDS'])(e.target.value);
+  onChangeSettingsPasswordCustomRegex = e => this.onChangeAttr(['settings', 'PASSWORD_CUSTOM_REGEX'])(e.target.value);
+  onChangeSettingsPasswordCustomMessage = e => this.onChangeAttr(['settings', 'PASSWORD_CUSTOM_MESSAGE'])(e.target.value);
+  onChangeSettingsPasswordHistoryTotal = e => this.onChangeAttr(['settings', 'PASSWORD_HISTORY_TOTAL'])(e.target.value);
+  onChangeSettingsPasswordMinLength = e => this.onChangeAttr(['settings', 'PASSWORD_MIN_LENGTH'])(e.target.value);
 
-    const newSettings = oldSettings.setIn(attr, value);
-
-    this.props.updateModel({
-      schema: 'organisation',
-      id: modelId,
-      path: ['settings'],
-      value: newSettings
-    });
-  };
-
-  onChangeSettingsAttr = (attr, e) => {
-    this.changeSettingsAttr(attr, e.target.value);
-  };
-
-  onChangeBooleanSetting = (attr, checked) => {
-    this.changeSettingsAttr(attr, checked);
-  };
-
-  onExpirationChange = (value) => {
-    const { model } = this.props;
-    const modelId = model.get('_id');
-
-    this.props.updateModel({
-      schema: 'organisation',
-      id: modelId,
-      path: ['expiration'],
-      value
-    });
-  };
-
-  onExpirationDismiss = () => {
-    const { model } = this.props;
-    const modelId = model.get('_id');
-
-    this.props.updateModel({
-      schema: 'organisation',
-      id: modelId,
-      path: ['expiration'],
-      value: null
-    });
-  }
+  onChangeSettingsPasswordHistoryCheck = this.onChangeAttr(['settings', 'PASSWORD_HISTORY_CHECK']);
+  onChangeSettingsPasswordRequireAlpha = this.onChangeAttr(['settings', 'PASSWORD_REQUIRE_ALPHA']);
+  onChangeSettingsPasswordRequireNumber = this.onChangeAttr(['settings', 'PASSWORD_REQUIRE_NUMBER']);
+  onChangeSettingsPasswordUseCustomRegex = this.onChangeAttr(['settings', 'PASSWORD_USE_CUSTOM_REGEX']);
+  onChangeSettingsLockoutEnabled = this.onChangeAttr(['settings', 'LOCKOUT_ENABLED']);
+  onChangeSettingsExpireExportsDontAllowExports = this.onChangeAttr(['settings', 'EXPIRE_EXPORTS', 'dontAllowExports']);
+  onChangeSettingsExpireExportsExpireExports = this.onChangeAttr(['settings', 'EXPIRE_EXPORTS', 'expireExports']);
 
   handleFile = (e) => {
     this.setState({ fileName: e.target.files[0].name });
@@ -170,7 +141,7 @@ class SubOrgForm extends Component {
           className="form-control"
           placeholder="Name for this organisation"
           value={model.get('name')}
-          onChange={this.onChangeAttr.bind(null, 'name')} />
+          onChange={this.onChangeName} />
       </div>
     );
   };
@@ -191,7 +162,7 @@ class SubOrgForm extends Component {
             className="form-control"
             placeholder="How many incorrect attempts to login does the user have before being locked out"
             value={settings.get('LOCKOUT_ATTEMPS')}
-            onChange={this.onChangeSettingsAttr.bind(null, 'LOCKOUT_ATTEMPS')} />
+            onChange={this.onChangeSettingsLockoutAttempts} />
 
           {errorMessages.has('settings.LOCKOUT_ATTEMPS') &&
             <span className="help-block">
@@ -210,7 +181,7 @@ class SubOrgForm extends Component {
             className="form-control"
             placeholder="How many seconds will the user be locked out for?"
             value={settings.get('LOCKOUT_SECONDS')}
-            onChange={this.onChangeSettingsAttr.bind(null, 'LOCKOUT_SECONDS')} />
+            onChange={this.onChangeSettingsLockoutSeconds} />
 
           {errorMessages.has('settings.LOCKOUT_SECONDS') &&
             <span className="help-block">
@@ -239,10 +210,7 @@ class SubOrgForm extends Component {
             className="form-control"
             placeholder="How many previous consecutive passwords are checked?"
             value={settings.get('PASSWORD_HISTORY_TOTAL')}
-            onChange={this.onChangeSettingsAttr.bind(
-              null,
-              'PASSWORD_HISTORY_TOTAL'
-            )} />
+            onChange={this.onChangeSettingsPasswordHistoryTotal} />
 
           {errorMessages.has('settings.PASSWORD_HISTORY_TOTAL') &&
             <span className="help-block">
@@ -289,7 +257,7 @@ class SubOrgForm extends Component {
           className="form-control"
           placeholder="Minimum characters allowed in a user's password"
           value={settings.get('PASSWORD_MIN_LENGTH')}
-          onChange={this.onChangeSettingsAttr.bind(null, 'PASSWORD_MIN_LENGTH')} />
+          onChange={this.onChangeSettingsPasswordMinLength} />
 
         {errorMessages.has('settings.PASSWORD_MIN_LENGTH') &&
           <span className="help-block">
@@ -314,10 +282,7 @@ class SubOrgForm extends Component {
           className="form-control"
           placeholder="Enter a valid RegEx to be used to check passwords with"
           value={settings.get('PASSWORD_CUSTOM_REGEX') || ''}
-          onChange={this.onChangeSettingsAttr.bind(
-            null,
-            'PASSWORD_CUSTOM_REGEX'
-          )} />
+          onChange={this.onChangeSettingsPasswordCustomRegex} />
 
         {errorMessages.has('settings.PASSWORD_CUSTOM_REGEX') &&
           <span className="help-block">
@@ -342,10 +307,7 @@ class SubOrgForm extends Component {
           className="form-control"
           placeholder="This message will be used to inform the user of the password requirements"
           value={settings.get('PASSWORD_CUSTOM_MESSAGE') || ''}
-          onChange={this.onChangeSettingsAttr.bind(
-            null,
-            'PASSWORD_CUSTOM_MESSAGE'
-          )} />
+          onChange={this.onChangeSettingsPasswordCustomMessage} />
 
         {errorMessages.has('settings.PASSWORD_CUSTOM_MESSAGE') &&
           <span className="help-block">
@@ -403,10 +365,7 @@ class SubOrgForm extends Component {
                   <Checkbox
                     label="Require at least one letter"
                     style={styles.checkbox}
-                    onChange={this.onChangeBooleanSetting.bind(
-                      null,
-                      'PASSWORD_REQUIRE_ALPHA'
-                    )}
+                    onChange={this.onChangeSettingsPasswordRequireAlpha}
                     checked={settings.get('PASSWORD_REQUIRE_ALPHA')} />
                 </div>
 
@@ -414,10 +373,7 @@ class SubOrgForm extends Component {
                   <Checkbox
                     label="Require at least one number"
                     style={styles.checkbox}
-                    onChange={this.onChangeBooleanSetting.bind(
-                      null,
-                      'PASSWORD_REQUIRE_NUMBER'
-                    )}
+                    onChange={this.onChangeSettingsPasswordRequireNumber}
                     checked={settings.get('PASSWORD_REQUIRE_NUMBER')} />
                 </div>
               </div>}
@@ -426,10 +382,7 @@ class SubOrgForm extends Component {
               <Checkbox
                 label="Use custom password requirements"
                 style={styles.checkbox}
-                onChange={this.onChangeBooleanSetting.bind(
-                  null,
-                  'PASSWORD_USE_CUSTOM_REGEX'
-                )}
+                onChange={this.onChangeSettingsPasswordUseCustomRegex}
                 checked={settings.get('PASSWORD_USE_CUSTOM_REGEX')} />
             </div>
 
@@ -449,10 +402,7 @@ class SubOrgForm extends Component {
               <Checkbox
                 label="Lock user accounts after wrong attempts"
                 style={styles.checkbox}
-                onChange={this.onChangeBooleanSetting.bind(
-                  null,
-                  'LOCKOUT_ENABLED'
-                )}
+                onChange={this.onChangeSettingsLockoutEnabled}
                 checked={settings.get('LOCKOUT_ENABLED')} />
             </div>
 
@@ -465,10 +415,7 @@ class SubOrgForm extends Component {
               <Checkbox
                 label="Check password history"
                 style={styles.checkbox}
-                onChange={this.onChangeBooleanSetting.bind(
-                  null,
-                  'PASSWORD_HISTORY_CHECK'
-                )}
+                onChange={this.onChangeSettingsExpireExportsExpireExports}
                 checked={settings.get('PASSWORD_HISTORY_CHECK')} />
             </div>
 
@@ -491,18 +438,12 @@ class SubOrgForm extends Component {
               <Checkbox
                 label="Don't Allow Exports"
                 style={styles.checkbox}
-                onChange={this.onChangeBooleanSetting.bind(
-                  null,
-                  ['EXPIRE_EXPORTS', 'dontAllowExports']
-                )}
+                onChange={this.onChangeSettingsExpireExportsDontAllowExports}
                 checked={settings.getIn(['EXPIRE_EXPORTS', 'dontAllowExports'])} />
               <Checkbox
                 label="Exports should expire"
                 style={styles.checkbox}
-                onChange={this.onChangeBooleanSetting.bind(
-                  null,
-                  ['EXPIRE_EXPORTS', 'expireExports']
-                )}
+                onChange={this.onChangeSettingsExpireExportsExpireExports}
                 checked={settings.getIn(['EXPIRE_EXPORTS', 'expireExports'])} />
             </div>
             <div
@@ -516,7 +457,7 @@ class SubOrgForm extends Component {
                 id={ttlId}
                 placeholder="How many seconds will the export remain available for?"
                 value={settings.getIn(['EXPIRE_EXPORTS', 'ttl'])}
-                onChange={this.onChangeSettingsAttr.bind(null, ['EXPIRE_EXPORTS', 'ttl']) } />
+                onChange={this.onChangeSettingsExpireExportsTTL} />
               {errorMessages.has('settings.EXPIRE_EXPORTS.ttl') &&
                 <span className="help-block">
                   <ValidationList
