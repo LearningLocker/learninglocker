@@ -50,16 +50,12 @@ const DownloadListItem = ({ download, deleteDownloadModel }) => {
 };
 
 export default compose(
-  withProps(({ model, deleteModel }) => ({
-    doWhile: download => !download.get('isReady'),
-    id: model.get('_id'),
+  withProps(({ download }) => ({
+    doWhile: d => !d.get('isReady'),
+    id: download.get('_id'),
     schema: 'download',
-    deleteDownloadModel: deleteModel
   })),
   withPolling,
-  withProps(({ model }) => ({
-    download: model,
-  })),
   connect(state => ({
     settings: activeOrganisationSettingsSelector(state)
   }))

@@ -24,9 +24,9 @@ class ExportDownloadManager extends Component {
         { models.map((model, id) =>
           (<DownloadListItem
             key={id}
-            model={model}
+            download={model}
             expirationExport={this.props.organisation.getIn(['settings', 'EXPIRE_EXPORTS'])}
-            deleteModel={this.props.deleteModel} />)
+            deleteDownloadModel={this.props.deleteModel} />)
       ).valueSeq() }
       </div>
     );
