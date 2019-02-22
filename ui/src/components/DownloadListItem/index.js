@@ -7,20 +7,29 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import createdAt from 'ui/containers/Owner/CreatedAt';
 
+/**
+ * @param {mongoose.Document} download
+ * @return {string}
+ */
+const getDownloadDisplayName = (download) => {
+  const expirationDate = download.get('expirationDate');
+  if (!expirationDate) {
+    return '';
+  }
+
+  const expirationDateMoment = moment(expirationDate);
+  const formatted = createdAt(expirationDateMoment, {
+    future: 'Expires',
+    past: 'Expired' // If we're waiting for the scheduler no run
+  });
+  return ` - (${formatted})`;
+}
+
+
 const DownloadListItem = ({ download, deleteDownloadModel }) => {
   // TODO: remove exporationExprots
 
-  let expireExportsString = '';
-
-  if (download.get('expirationDate')) {
-    const expireExports = moment(download.get('expirationDate'));
-    const formattedExpireExports = createdAt(expireExports, {
-      future: 'Expires',
-      past: 'Expired' // If we're waiting for the schedualer no run
-    });
-    expireExportsString = ` - (${formattedExpireExports})`;
-  }
-
+  const expireExportsString = getDownloadDisplayName(download);
 
   if (download.get('isReady')) {
     return (
