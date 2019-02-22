@@ -18,7 +18,7 @@ const expireExports = async (organisationIds) => {
   await Download.remove({
     organisation: { $in: organisationIds },
     upload: { $exists: true },
-    expireTTL: { $lt: todayDate } // DEBUG ONLY, uncomment
+    expirationDate: { $lt: todayDate } // DEBUG ONLY, uncomment
   });
 };
 

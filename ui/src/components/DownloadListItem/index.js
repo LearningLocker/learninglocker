@@ -12,8 +12,8 @@ const DownloadListItem = ({ download, deleteDownloadModel }) => {
 
   let expireExportsString = '';
 
-  if (download.get('expireTTL')) {
-    const expireExports = moment(download.get('expireTTL'));
+  if (download.get('expirationDate')) {
+    const expireExports = moment(download.get('expirationDate'));
     const formattedExpireExports = createdAt(expireExports, {
       future: 'Expires',
       past: 'Expired' // If we're waiting for the schedualer no run
