@@ -12,9 +12,7 @@ const run = async () => {
     dontExit: true
   });
 
-  await expirationExports({
-    dontExit: true
-  });
+  await expirationExports();
 
   setTimeout(run, (startTime - Date.now()) + timeout);
 };

@@ -32,6 +32,16 @@ import seed from 'cli/seed';
 import expirationNotificationEmails from 'cli/commands/expirationNotificationEmails';
 import expirationExport from 'cli/commands/expirationExports';
 
+/**
+ * Run an async function then exit process
+ *
+ * @param {(() => Promise)|((options: commander.Command) => Promise)} asyncFunc
+ */
+const runThenExit = asyncFunc => async (options) => {
+  await asyncFunc(options);
+  process.exit();
+};
+
 program.version('0.0.1');
 
 program
@@ -162,7 +172,7 @@ program
 
 program
   .command('expirationExport')
-  .action(expirationExport);
+  .action(runThenExit(expirationExport));
 // node cli/dist/server expirationExport
 
 program.parse(process.argv);

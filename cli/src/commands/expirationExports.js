@@ -22,16 +22,11 @@ const expireExports = async (organisationIds) => {
   });
 };
 
-export default async function ({
-  dontExit = false
-}) {
+export default async function () {
   const siteSettings = await SiteSettings.findOne({
     _id: SITE_SETTINGS_ID
   });
   if (get(siteSettings, 'expireExports', false) === false) {
-    if (!dontExit) {
-      process.exit();
-    }
     return;
   }
 
@@ -41,8 +36,4 @@ export default async function ({
   const organisationIds = organisations.map(o => o._id);
 
   await expireExports(organisationIds);
-
-  if (!dontExit) {
-    process.exit();
-  }
 }
