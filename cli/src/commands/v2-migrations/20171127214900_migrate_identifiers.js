@@ -62,7 +62,7 @@ const updateStatementsForFailedIdent = async (failedIdent) => {
         }
       }
     };
-    return statementsCollection.update(filter, update, { multi: true });
+    return statementsCollection.updateMany(filter, update, {});
   }
 };
 
@@ -137,8 +137,8 @@ const up = async () => {
 
 const down = async () => {
   logger.info('Dropping persona attributes and new idents');
-  await connection.collection(newIdentsCollectionName).remove({});
-  await connection.collection(attributesCollectionName).remove({});
+  await connection.collection(newIdentsCollectionName).deleteMany({});
+  await connection.collection(attributesCollectionName).deleteMany({});
 };
 
 export default { up, down };

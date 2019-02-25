@@ -89,7 +89,8 @@ export const operators = {
   DISCRETE: 'discrete',
   CONTINUOUS: 'continuous',
   RANGE: 'range',
-  BOOLEAN: 'boolean'
+  BOOLEAN: 'boolean',
+  STRING_MATCHES: 'stringMatches'
 };
 
 const isChildKey = needle => (haystack) => {
@@ -263,6 +264,16 @@ export const initialSections = fromJS({
         getModelIdent: model => objectIdentToString(model.get('value')),
         getModelDisplay: displayCacheValue(displayActivity),
         getValueQuery: value => value
+      },
+      response: {
+        title: 'Response',
+        keyPath: new List(['statement', 'result', 'response']),
+        operators: operators.STRING_MATCHES,
+        getValueQuery: value => value,
+        getModelQuery: model => new Map({
+          'statement.result.response': model
+        }),
+        getQueryModel: query => query.get('statement.result.response'),
       },
       complete: {
         title: 'Complete',

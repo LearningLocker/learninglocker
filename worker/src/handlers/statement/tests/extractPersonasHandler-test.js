@@ -20,7 +20,7 @@ const cleanUp = () => new Promise(reslove =>
   async.forEach(
     [Statement],
     (model, doneDeleting) => {
-      model.remove({}, doneDeleting);
+      model.deleteMany({}, doneDeleting);
     },
     reslove
   )

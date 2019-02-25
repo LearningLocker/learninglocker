@@ -9,7 +9,7 @@ export default function (next = null) {
       stores,
       (store, done) => {
         logger.info(`Adding organisation to clients for ${store.title}...`);
-        Client.update({ lrs_id: store._id }, { organisation: store.organisation, title: `${store.title} client` }, { multi: true }, done);
+        Client.updateMany({ lrs_id: store._id }, { organisation: store.organisation, title: `${store.title} client` }, { multi: true }, done);
       },
       (err) => {
         if (err) logger.error(err);

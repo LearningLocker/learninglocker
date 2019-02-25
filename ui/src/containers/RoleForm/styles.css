@@ -3,3 +3,8 @@
   color: black;
   font-weight: bold;
 }
+
+.checkbox {
+  margin-top: 0.8rem;
+  margin-bottom: 0.8rem;
+}
