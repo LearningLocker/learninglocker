@@ -14,6 +14,7 @@ import FileStreamRotator from 'file-stream-rotator';
 import config from 'ui/config';
 import renderApp from 'ui/controllers/renderApp';
 import renderDashboard from 'ui/controllers/renderDashboard';
+import urlToWsUri from 'lib/helpers/urlToWsUri';
 
 process.on('SIGINT', () => {
   process.exit(0);
@@ -67,7 +68,13 @@ app.use('/api', (req, res) => {
   proxy.web(req, res, { target: targetUrl });
 });
 
-const wsProxy = proxyMiddleware('/websocket', { target: 'ws://learninglocker:8080', ws: true, changeOrigin: true });
+const wsProxy = proxyMiddleware('/websocket',
+  {
+    target: `ws://${config.apiHost}:${config.apiPort}`, // 'ws://learninglocker:8080', // TODO: make configurable
+    ws: true,
+    changeOrigin: true
+  }
+);
 app.use(wsProxy);
 server.on('upgrade', wsProxy.upgrade);
 

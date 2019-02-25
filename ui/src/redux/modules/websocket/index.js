@@ -133,6 +133,11 @@ function* registerConnection() {
     } = yield take(REGISTER_ACTION);
     const state = yield select();
 
+    if (!state.websocket.websocket) {
+      console.warn('ui/src/redux/modules/websocket: No websocket open');
+      continue; // eslint-disable-line no-continue
+    }
+
     state.websocket.websocket.send(JSON.stringify({
       type: 'REGISTER',
       organisationId: state.router.route.params.organisationId,

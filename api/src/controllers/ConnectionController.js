@@ -3,8 +3,8 @@ import getFromQuery from 'api/utils/getFromQuery';
 import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
 import catchErrors from 'api/controllers/utils/catchErrors';
 
-export default model =>
-  catchErrors(async (req, res) => {
+export default (model) => {
+  const out = catchErrors(async (req, res) => {
     const { before, after } = req.query;
     const filter = getJSONFromQuery(req, 'filter', {});
     const sort = getJSONFromQuery(req, 'sort', { _id: 1 });
@@ -27,3 +27,5 @@ export default model =>
     });
     return res.status(200).send(connection);
   });
+  return out;
+};
