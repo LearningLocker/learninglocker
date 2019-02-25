@@ -10,8 +10,8 @@ class Token extends Component {
   static propTypes = {
     handleRemove: PropTypes.func,
     index: PropTypes.any, // eslint-disable-line react/forbid-prop-types
-    parse: PropTypes.func,
-    parseTooltip: PropTypes.func,
+    parse: PropTypes.func, // (value: any) => String
+    parseTooltip: PropTypes.func, // (value: any) => String
     fullWidth: PropTypes.bool,
     value: PropTypes.any // eslint-disable-line react/forbid-prop-types
   }
@@ -49,8 +49,7 @@ class Token extends Component {
       [styles.wrapperFullWidth]: fullWidth
     });
     const parsedValue = parse(value);
-    const parsedIdent = parseTooltip(value);
-    const title = parsedIdent;
+    const title = parseTooltip(value);
     return (
       <div title={title} className={wrapperClasses}>
         <div className={styles.value}>

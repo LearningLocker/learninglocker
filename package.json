@@ -52,7 +52,7 @@
   "dependencies": {
     "@google-cloud/pubsub": "^0.16.1",
     "@google-cloud/storage": "^1.5.2",
-    "@learninglocker/persona-service": "^1.6.11",
+    "@learninglocker/persona-service": "^1.7.1",
     "@learninglocker/xapi-statements": "^5.0.9",
     "@learninglocker/xapi-validation": "^2.1.5",
     "Base64": "^0.3.0",
@@ -121,7 +121,7 @@
     "mocha-webpack": "^0.7.0",
     "moment": "^2.11.2",
     "mongodb": "^2.1.4",
-    "mongoose": "^5.0.13",
+    "mongoose": "^5.4.0",
     "mongoose-findorcreate": "^0.1.2",
     "mongoose-timestamp": "^0.5.0",
     "morgan": "^1.7.0",

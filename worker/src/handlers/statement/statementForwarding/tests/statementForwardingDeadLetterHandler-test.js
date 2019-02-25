@@ -47,7 +47,7 @@ describe('statementForwardingDeadLetterHandler', () => {
     });
 
     await new Promise(resolve =>
-      Statement.remove({}, () => resolve())
+      Statement.deleteMany({}, () => resolve())
     );
   });
 });

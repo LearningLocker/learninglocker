@@ -72,13 +72,15 @@ const releaseLock = async ({
 export const finishedProcessing = async ({
   personaImportId
 }) => {
-  const personasImport = await PersonasImport.findOneAndUpdate({
+  await PersonasImport.updateOne({
     _id: personaImportId
   }, {
     importStage: STAGE_IMPORTED,
     importedAt: moment().toDate()
-  }, {
-    new: true
+  });
+
+  const personasImport = await PersonasImport.findOne({
+    _id: personaImportId
   });
 
   await addErrorsToCsv({

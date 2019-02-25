@@ -4,7 +4,7 @@ const statementForwardingDeadLetterHandler = ({
   statement,
   statementForwarding
 }, done) => {
-  Statement.findByIdAndUpdate(statement._id, {
+  Statement.updateOne({ _id: statement._id }, {
     $addToSet: {
       deadForwardingQueue: statementForwarding._id
     },
