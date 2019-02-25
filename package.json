@@ -219,7 +219,6 @@
     "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
     "chai": "^3.3.0",
     "chai-as-promised": "^7.1.1",
-    "circular-dependency-plugin": "^5.0.2",
     "cookie-parser": "^1.4.1",
     "css-loader": "^0.23.1",
     "cypress": "^1.0.2",
