@@ -1,11 +1,10 @@
 import React from 'react';
-import { withPolling } from 'ui/utils/hocs';
+import { connect } from 'react-redux';
 import { compose, withProps } from 'recompose';
+import moment from 'moment-timezone';
+import { withPolling } from 'ui/utils/hocs';
 import OptionListItem from 'ui/components/OptionListItem';
 import { activeOrganisationSettingsSelector } from 'ui/redux/modules/auth';
-import { connect } from 'react-redux';
-import moment from 'moment';
-import createdAt from 'ui/containers/Owner/CreatedAt';
 
 /**
  * @param {mongoose.Document} download
@@ -17,12 +16,14 @@ const getDownloadDisplayName = (download) => {
     return '';
   }
 
-  const expirationDateMoment = moment(expirationDate);
-  const formatted = createdAt(expirationDateMoment, {
-    future: 'Expires',
-    past: 'Expired' // If we're waiting for the scheduler no run
-  });
-  return ` - (${formatted})`;
+  const expirationMoment = moment(expirationDate);
+
+  if (!expirationMoment) {
+    return '';
+  }
+
+  const prefix = expirationMoment.isBefore(moment()) ? 'Expired' : 'Expires';
+  return ` - (${prefix} ${expirationMoment.fromNow()} - ${expirationMoment.format('YYYY-MM-DD HH:mm:ss')})`;
 };
 
 
