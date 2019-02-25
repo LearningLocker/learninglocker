@@ -67,7 +67,7 @@ class SubOrgForm extends Component {
    * @param {string} path - path to a attribute to be updated
    * @return {(value: any) => void}
    */
-  onChangeAttr = (path) => (value) =>
+  onChangeAttr = path => value =>
     this.props.updateModel({
       schema,
       id: this.props.model.get('_id'),
@@ -75,9 +75,9 @@ class SubOrgForm extends Component {
       value,
     });
 
-  onChangeName = e => onChangeAttr('name')(e.target.value);
-  onExpirationChange = onChangeAttr('expiration');
-  onExpirationDismiss = () => onChangeAttr('expiration')(null);
+  onChangeName = e => this.onChangeAttr('name')(e.target.value);
+  onExpirationChange = this.onChangeAttr('expiration');
+  onExpirationDismiss = () => this.onChangeAttr('expiration')(null);
 
   onChangeSettingsExpireExportsTTL = e => this.onChangeAttr(['settings', 'EXPIRE_EXPORTS', 'ttl'])(e.target.value);
   onChangeSettingsLockoutAttempts = e => this.onChangeAttr(['settings', 'LOCKOUT_ATTEMPS'])(e.target.value);

@@ -23,7 +23,7 @@ const getDownloadDisplayName = (download) => {
     past: 'Expired' // If we're waiting for the scheduler no run
   });
   return ` - (${formatted})`;
-}
+};
 
 
 const DownloadListItem = ({ download, deleteDownloadModel }) => {
