@@ -116,7 +116,7 @@ export default class exportsDBHelpers {
     async.forEach([
       Statement
     ], (model, doneDeleting) => {
-      model.remove({}, doneDeleting);
+      model.deleteMany({}, doneDeleting);
     }, done);
   }
 

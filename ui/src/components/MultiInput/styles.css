@@ -1,0 +1,17 @@
+.inputWrapper {
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  overflow: hidden;
+  flex-wrap: wrap;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+.inputWrapper.noBorder {
+  border: 1px solid transparent;
+}
+
+.input {
+  width: 100%;
+}

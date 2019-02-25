@@ -58,7 +58,7 @@ program
   .option('-s, --since [since]', 'Requeue statements stored since this ISO date')
   .action(requeueStatements);
 // 1. Stop workers.
-// 2. db.personas.remove({}); db.queryBuilderCaches.remove({}); db.queryBuilderCacheValues.remove({}); db.personaIdentifiers.remove({}); db.statements.update({}, {$set: {processingQueues: [], completedQueues: []}}, {multi: true});
+// 2. db.personas.remove({}); db.queryBuilderCaches.remove({}); db.queryBuilderCacheValues.remove({}); db.personaIdentifiers.remove({}); db.statements.updateMany({}, {$set: {processingQueues: [], completedQueues: []}});
 // 3a. node cli/dist/server updateStatementCount #we skip running the lrs count workers using this instead
 // 3b. node cli/dist/server requeueStatements
 // 4. npm run start-dev-worker
