@@ -9,15 +9,16 @@ import { connect } from 'react-redux';
 
 class ExportDownloadManager extends Component {
   static propTypes = {
-    isLoading: PropTypes.bool,
-    models: PropTypes.instanceOf(Map),
-    deleteModel: PropTypes.func,
+    isLoading: PropTypes.bool, // is loading Download
+    models: PropTypes.instanceOf(Map), // Download models
+    deleteModel: PropTypes.func, // delete Download
+    organisation: PropTypes.instanceOf(Map), // Organisation model
   }
 
   static defaultProps = {}
 
   render = () => {
-    const { models, isLoading } = this.props;
+    const { models, isLoading, deleteModel, organisation } = this.props;
     if (isLoading) return (<Spinner />);
     return (
       <div>
@@ -25,9 +26,9 @@ class ExportDownloadManager extends Component {
           (<DownloadListItem
             key={id}
             download={model}
-            expirationExport={this.props.organisation.getIn(['settings', 'EXPIRE_EXPORTS'])}
-            deleteDownloadModel={this.props.deleteModel} />)
-      ).valueSeq() }
+            expirationExport={organisation.getIn(['settings', 'EXPIRE_EXPORTS'])}
+            deleteDownloadModel={deleteModel} />)
+          ).valueSeq() }
       </div>
     );
   }
@@ -35,16 +36,15 @@ class ExportDownloadManager extends Component {
 
 export default compose(
   withProps({
-    sort: new Map({ time: -1, _id: 1 }),
-    schema: 'organisation'
+    schema: 'organisation',
   }),
   connect(state => ({
     id: activeOrgIdSelector(state)
   })),
   withModel,
   withProps(({ model }) => ({
-    organisation: model
+    organisation: model,
+    sort: new Map({ time: -1, _id: 1 }),
   })),
-
   withSchema('download'),
 )(ExportDownloadManager);
