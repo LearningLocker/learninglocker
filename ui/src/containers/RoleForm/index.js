@@ -120,6 +120,7 @@ const renderScopeTableRow = ({
     {map(scopes, scope =>
       (<td key={`${scope}_td`} colSpan={(scopes.length === 1 ? 2 : 1)}>
         <Checkbox
+          className={styles.checkbox}
           key={scope}
           label={getLabel(scope)}
           checked={isChecked(scope, model)}

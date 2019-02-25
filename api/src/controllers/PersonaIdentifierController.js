@@ -9,10 +9,11 @@ import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import { CursorDirection } from '@learninglocker/persona-service/dist/service/constants';
 import Locked from '@learninglocker/persona-service/dist/errors/Locked';
-import { MAX_TIME_MS, MAX_SCAN } from 'lib/models/plugins/addCRUDFunctions';
+import { MAX_TIME_MS, MAX_SCAN } from 'lib/models/plugins/addCRUDFunctions/index';
 import parseQuery from 'lib/helpers/parseQuery';
 import asignIdentifierToStatements from 'lib/services/persona/asignIdentifierToStatements';
 import identifierHasStatements from 'lib/services/persona/identifierHasStatements';
+
 import getPersonaService from 'lib/connections/personaService';
 import {
   isUndefined,
