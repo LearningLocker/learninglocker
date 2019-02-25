@@ -93,7 +93,7 @@ class SubOrgForm extends Component {
   onChangeSettingsPasswordUseCustomRegex = this.onChangeAttr(['settings', 'PASSWORD_USE_CUSTOM_REGEX']);
   onChangeSettingsLockoutEnabled = this.onChangeAttr(['settings', 'LOCKOUT_ENABLED']);
   onChangeSettingsExpireExportsDontAllowExports = this.onChangeAttr(['settings', 'EXPIRE_EXPORTS', 'dontAllowExports']);
-  onChangeSettingsExpireExportsExpireExports = this.onChangeAttr(['settings', 'EXPIRE_EXPORTS', 'expireExports']);
+  onChangeSettingsExpireExportsAllowExportExpirations = this.onChangeAttr(['settings', 'EXPIRE_EXPORTS', 'allowExportExpirations']);
 
   handleFile = (e) => {
     this.setState({ fileName: e.target.files[0].name });
@@ -415,7 +415,7 @@ class SubOrgForm extends Component {
               <Checkbox
                 label="Check password history"
                 style={styles.checkbox}
-                onChange={this.onChangeSettingsExpireExportsExpireExports}
+                onChange={this.onChangeSettingsPasswordHistoryCheck}
                 checked={settings.get('PASSWORD_HISTORY_CHECK')} />
             </div>
 
@@ -443,8 +443,8 @@ class SubOrgForm extends Component {
               <Checkbox
                 label="Exports should expire"
                 style={styles.checkbox}
-                onChange={this.onChangeSettingsExpireExportsExpireExports}
-                checked={settings.getIn(['EXPIRE_EXPORTS', 'expireExports'])} />
+                onChange={this.onChangeSettingsExpireExportsAllowExportExpirations}
+                checked={settings.getIn(['EXPIRE_EXPORTS', 'allowExportExpirations'])} />
             </div>
             <div
               className={classNames({

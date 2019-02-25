@@ -26,12 +26,12 @@ export default async function () {
   const siteSettings = await SiteSettings.findOne({
     _id: SITE_SETTINGS_ID
   });
-  if (get(siteSettings, 'expireExports', false) === false) {
+  if (get(siteSettings, 'allowExportExpirations', false) === false) {
     return;
   }
 
   const organisations = await Organisation.find({
-    'settings.EXPIRE_EXPORTS.expireExports': true,
+    'settings.EXPIRE_EXPORTS.allowExportExpirations': true,
   });
   const organisationIds = organisations.map(o => o._id);
 
