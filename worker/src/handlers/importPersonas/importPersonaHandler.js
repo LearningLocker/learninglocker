@@ -31,12 +31,10 @@ export const establishLock = async ({
   } catch (err) {
     // DuplicateKey
     if (err.code && err.code === 11000) {
-      const op = err.getOperation();
-
       const models = ImportPersonasLock.find({
-        organisation: op.organisation,
+        organisation,
         ifis: {
-          $in: op.ifis
+          $in: ifis
         }
       });
 
@@ -74,13 +72,15 @@ const releaseLock = async ({
 export const finishedProcessing = async ({
   personaImportId
 }) => {
-  const personasImport = await PersonasImport.findOneAndUpdate({
+  await PersonasImport.updateOne({
     _id: personaImportId
   }, {
     importStage: STAGE_IMPORTED,
     importedAt: moment().toDate()
-  }, {
-    new: true
+  });
+
+  const personasImport = await PersonasImport.findOne({
+    _id: personaImportId
   });
 
   await addErrorsToCsv({

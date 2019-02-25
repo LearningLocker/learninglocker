@@ -11,6 +11,7 @@ import DiscreteCriteria from './Discrete/Criteria';
 import ContinuousCriteria from './Continuous/Criteria';
 import RangeCriteria from './Range/Criteria';
 import BooleanCriteria from './Boolean/Criteria';
+import StringMatchesCriteria from './StringMatches/Criteria';
 import Sections from './Sections';
 import styles from './styles.css';
 
@@ -105,6 +106,14 @@ class ExpandedSection extends Component {
     onDeleteCriterion={this.props.onDeleteCriterion} />
     )
 
+  renderStringMatchesCriteria = () => (<StringMatchesCriteria
+    section={this.props.section}
+    criteria={this.props.sectionCriteria}
+    onCriteriaChange={this.props.onCriteriaChange}
+    onAddCriterion={this.props.onAddCriterion}
+    onDeleteCriterion={this.props.onDeleteCriterion} />
+    )
+
   renderDiscreteCriteria = () => {
     const out = (
       <DiscreteCriteria
@@ -119,11 +128,18 @@ class ExpandedSection extends Component {
 
   renderCriteria = () => {
     const ops = this.props.section.get('operators');
-
     switch (ops) {
       case operators.CONTINUOUS: return this.renderContinuousCriteria();
-      case operators.RANGE: return this.renderRangeCriteria();
+      case operators.RANGE:
+      // Shows both the range (number) picker and the dropdown picker
+        return (
+          <div>
+            { this.renderRangeCriteria() }
+            { this.renderDiscreteCriteria() }
+          </div>
+        );
       case operators.BOOLEAN: return this.renderBooleanCriteria();
+      case operators.STRING_MATCHES: return this.renderStringMatchesCriteria();
       default: return this.renderDiscreteCriteria();
     }
   };

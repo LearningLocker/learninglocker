@@ -24,7 +24,7 @@ export const SUCCESS = 'success';
 const handler = handleActions({
   [ALERT_START]: (state, action) => state.push(action),
   [DELETE_ALERT]: (state, { key }) => state.delete(key),
-  [DELETE_ALERT_BY_UUID]: (state, { uuid }) => state.filter(item => item.uuid !== uuid),
+  [DELETE_ALERT_BY_UUID]: (state, { uuid }) => state.filter && state.filter(item => item.uuid !== uuid) || state,
 });
 
 /*

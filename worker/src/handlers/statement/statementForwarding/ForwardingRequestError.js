@@ -1,5 +1,6 @@
+import { BaseError } from 'make-error';
 
-export default class ForwardingRequestError extends Error {
+export default class ForwardingRequestError extends BaseError {
 
   constructor(errorMessage, messageBody) {
     super(errorMessage);

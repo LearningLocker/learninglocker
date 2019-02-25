@@ -18,13 +18,22 @@ export class ScatterAxesEditor extends BaseAxesEditor {
     this.changeAxes(key, event.target.value);
   };
 
+  getAxisDefault = (axis, model) => {
+    const labelString = axis === 'x' ? model.axesxLabel : model.axesyLabel;
+    const defaultLabel = axis === 'x' ? model.getIn(['axesxValue', 'searchString'], 'X-Axis') : model.getIn(['axesyValue', 'searchString'], 'Y-Axis');
+    if (labelString && labelString.length) {
+      return labelString;
+    }
+    return defaultLabel;
+  };
+
   renderAxis = axis => (
     <div>
       <div className="form-group">
         <DebounceInput
           id={`${axis}AxisLabel`}
           className="form-control"
-          placeholder={`${axis.toUpperCase()}-Axis`}
+          placeholder={this.getAxisDefault(axis, this.props.model)}
           debounceTimeout={377}
           style={{ fontWeight: 'bold' }}
           value={this.getAxesValue(`${axis}Label`, '')}

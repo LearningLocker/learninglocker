@@ -31,12 +31,14 @@ const DownloadListItem = ({ download, deleteDownloadModel }) => {
   // TODO: remove exporationExprots
 
   const expireExportsString = getDownloadDisplayName(download);
+  const isOverADayOld = moment(download.get('time')).isBefore(moment().subtract(1, 'days'));
 
-  if (download.get('isReady')) {
+  if (download.get('isReady') || isOverADayOld) {
     return (
       <OptionListItem
         label={`${download.get('name')}${expireExportsString}`}
         href={download.get('url')}
+        icon={(!download.get('isReady') ? (<i className="ion ion-clock" title="This download is pending or has failed" />) : undefined)}
         target="_blank"
         rel="noreferrer noopener"
         onDelete={() => deleteDownloadModel({ id: download.get('_id') })} />

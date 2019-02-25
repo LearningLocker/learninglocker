@@ -19,6 +19,7 @@ exports[`HeaderItem should render 1`] = `
       value=""
     >
       <option
+        key=""
         value=""
       >
         Nothing
@@ -89,6 +90,7 @@ exports[`HeaderItem should render with orderable and related column 1`] = `
       value=""
     >
       <option
+        key=""
         value=""
       >
         Nothing
@@ -160,6 +162,7 @@ exports[`HeaderItem should render with orderable when disabled 1`] = `
       value=""
     >
       <option
+        key=""
         value=""
       >
         Nothing

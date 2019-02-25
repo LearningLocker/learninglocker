@@ -1,4 +1,5 @@
 import moment from 'moment';
+import React from 'react';
 
 /**
  * Format created datetime
@@ -8,5 +9,7 @@ import moment from 'moment';
  */
 export default (createdAt) => {
   if (!createdAt) return '';
-  return `Created ${moment(createdAt).fromNow()} - ${moment(createdAt).format('YYYY-MM-DD HH:mm:ss')}`;
+  return (<span>{'Created '}
+    <span title={moment(createdAt).format('YYYY-MM-DD HH:mm:ss')}>{moment(createdAt).fromNow()}</span>
+  </span>);
 };

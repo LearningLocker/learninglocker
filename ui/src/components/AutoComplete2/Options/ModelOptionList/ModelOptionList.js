@@ -35,7 +35,9 @@ const renderOption = ({
         isEditing={isEditing.get(index)}
         setIsEditing={(value) => {
           setIsEditing(index, value);
-          resetRow(index, !value);
+          if (resetRow) {
+            resetRow(index, !value);
+          }
         }}
         onClick={onSelectOption}
         parseOption={parseOption}
@@ -51,6 +53,7 @@ const renderOption = ({
         }} />
     );
   }
+
   return (
     <OptionListItem
       data={option}

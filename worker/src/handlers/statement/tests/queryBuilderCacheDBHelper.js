@@ -93,7 +93,7 @@ export default class queryBuilderCacheDBHelper {
       Lrs,
       QueryBuilderCache
     ], (model, doneDeleting) => {
-      model.remove({}, doneDeleting);
+      model.deleteMany({}, doneDeleting);
     }, done);
   }
 }
