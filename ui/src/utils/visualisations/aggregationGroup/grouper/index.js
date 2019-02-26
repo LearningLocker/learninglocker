@@ -78,38 +78,84 @@ const getExistsMatch = ({ valueType, groupType, valueOpCase }) => {
   }
 };
 
-const getUnwind = ({ groupType }) => {
-  if (groupType.startsWith('statement.context.contextActivities.')) {
-    return { path: `$${groupType}` };
-  }
-  return null;
+const createPersonaAttributeStages = ({ groupType }) => {
+  const personaAttrsKey = groupType.split('.')[2] || '';
+
+  const lookupStage = createStagePipeline('$lookup', {
+    from: 'personaAttributes',
+    as: 'personaAttrs',
+    let: { personaId: '$person._id' },
+    pipeline: [
+      { $match:
+      { $expr:
+      { $and: [
+            { $eq: ['$personaId', '$$personaId'] },
+            { $eq: ['$key', personaAttrsKey] }
+      ] }
+      }
+      }]
+  });
+
+  const existsMatchStage = createStagePipeline('$match', {
+    personaAttrs: { $exists: true }
+  });
+
+  const unwindStage = createStagePipeline('$unwind', {
+    path: '$personaAttrs'
+  });
+
+  const matchAttrsKeyStage = createStagePipeline('$match', {
+    'personaAttrs.key': personaAttrsKey
+  });
+
+  return lookupStage
+    .concat(existsMatchStage)
+    .concat(unwindStage)
+    .concat(matchAttrsKeyStage);
+};
+
+const getPostReqs = () => {
+  const sort = { $sort: { count: -1 } };
+  const limit = { $limit: 10000 };
+  const finalProject = { $project: { _id: 1, count: 1, model: 1 } };
+  return [sort, limit, finalProject];
 };
 
 export default ({ valueType, groupType, operatorType }) => {
   const valueOpCase = getValueOpCase({ valueType, operatorType });
-  const existsMatch = getExistsMatch({ valueType, groupType, valueOpCase });
 
-  const unwind = getUnwind({ valueType, groupType, operatorType });
+  const isPersonaImportGroup = groupType.startsWith('persona.import.');
+  const isContextActivities = groupType.startsWith('statement.context.contextActivities.');
 
-  const projections = getProjections({ valueType, groupType, valueOpCase });
-  const matchStage = createStagePipeline('$match', existsMatch);
-
-  const projectStage = createStagePipeline('$project', projections);
-
+  // 1st stages
   let preReqs;
-  if (unwind) {
-    const unwindStage = createStagePipeline('$unwind', unwind);
-    preReqs = matchStage.concat(unwindStage).concat(projectStage);
+  if (isPersonaImportGroup) {
+    preReqs = createPersonaAttributeStages({ valueType, groupType, valueOpCase });
   } else {
-    preReqs = matchStage.concat(projectStage);
+    const existsMatch = getExistsMatch({ valueType, groupType, valueOpCase });
+    const existsMatchStage = createStagePipeline('$match', existsMatch);
+    if (isContextActivities) {
+      const unwindStage = createStagePipeline('$unwind', { path: `$${groupType}` });
+      preReqs = existsMatchStage.concat(unwindStage);
+    } else {
+      preReqs = existsMatchStage;
+    }
   }
 
+  // 2nd stages
+  const projections = getProjections({
+    valueType,
+    groupType: isPersonaImportGroup ? 'personaAttrs.value' : groupType,
+    valueOpCase,
+  });
+  const projectStage = createStagePipeline('$project', projections);
+
+  // 3rd stages
   const countPipeline = fromJS(getGroupPipeline({ operatorType, groupType, valueOpCase, projections }));
-  const sort = { $sort: { count: -1 } };
-  const limit = { $limit: 10000 };
-  const finalProject = { $project: { _id: 1, count: 1, model: 1 } };
 
-  const postReqs = fromJS([sort, limit, finalProject]);
+  // 4th stages
+  const postReqs = fromJS(getPostReqs());
 
-  return preReqs.concat(countPipeline).concat(postReqs);
+  // Concat all stages
+  return preReqs.concat(projectStage).concat(countPipeline).concat(postReqs);
 };
