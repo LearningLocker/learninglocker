@@ -28,8 +28,6 @@ const getDownloadDisplayName = (download) => {
 
 
 const DownloadListItem = ({ download, deleteDownloadModel }) => {
-  // TODO: remove exporationExprots
-
   const expireExportsString = getDownloadDisplayName(download);
   const isOverADayOld = moment(download.get('time')).isBefore(moment().subtract(1, 'days'));
 
