@@ -31,7 +31,7 @@ export default async function () {
   }
 
   const organisations = await Organisation.find({
-    'settings.EXPIRE_EXPORTS.allowExportExpirations': true,
+    'settings.EXPORT_EXPIRATION_ALLOW': true,
   });
   const organisationIds = organisations.map(o => o._id);
 

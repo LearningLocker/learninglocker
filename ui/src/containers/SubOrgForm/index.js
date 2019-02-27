@@ -79,7 +79,7 @@ class SubOrgForm extends Component {
   onExpirationChange = this.onChangeAttr('expiration');
   onExpirationDismiss = () => this.onChangeAttr('expiration')(null);
 
-  onChangeSettingsExpireExportsTTL = e => this.onChangeAttr(['settings', 'EXPIRE_EXPORTS', 'ttl'])(e.target.value);
+  onChangeSettingsExportExpirationTTL = e => this.onChangeAttr(['settings', 'EXPORT_EXPIRATION_TTL'])(e.target.value);
   onChangeSettingsLockoutAttempts = e => this.onChangeAttr(['settings', 'LOCKOUT_ATTEMPS'])(e.target.value);
   onChangeSettingsLockoutSeconds = e => this.onChangeAttr(['settings', 'LOCKOUT_SECONDS'])(e.target.value);
   onChangeSettingsPasswordCustomRegex = e => this.onChangeAttr(['settings', 'PASSWORD_CUSTOM_REGEX'])(e.target.value);
@@ -92,8 +92,8 @@ class SubOrgForm extends Component {
   onChangeSettingsPasswordRequireNumber = this.onChangeAttr(['settings', 'PASSWORD_REQUIRE_NUMBER']);
   onChangeSettingsPasswordUseCustomRegex = this.onChangeAttr(['settings', 'PASSWORD_USE_CUSTOM_REGEX']);
   onChangeSettingsLockoutEnabled = this.onChangeAttr(['settings', 'LOCKOUT_ENABLED']);
-  onChangeSettingsExpireExportsAllowExports = this.onChangeAttr(['settings', 'EXPIRE_EXPORTS', 'allowExports']);
-  onChangeSettingsExpireExportsAllowExportExpirations = this.onChangeAttr(['settings', 'EXPIRE_EXPORTS', 'allowExportExpirations']);
+  onChangeSettingsExportAllow = this.onChangeAttr(['settings', 'EXPORT_ALLOW']);
+  onChangeSettingsExportExpirationAllow = this.onChangeAttr(['settings', 'EXPORT_EXPIRATION_ALLOW']);
 
   handleFile = (e) => {
     this.setState({ fileName: e.target.files[0].name });
@@ -438,30 +438,30 @@ class SubOrgForm extends Component {
               <Checkbox
                 label="Allow Exports"
                 style={styles.checkbox}
-                onChange={this.onChangeSettingsExpireExportsAllowExports}
-                checked={settings.getIn(['EXPIRE_EXPORTS', 'allowExports'])} />
+                onChange={this.onChangeSettingsExportAllow}
+                checked={settings.get('EXPORT_ALLOW')} />
               <Checkbox
                 label="Exports should expire"
                 style={styles.checkbox}
-                onChange={this.onChangeSettingsExpireExportsAllowExportExpirations}
-                checked={settings.getIn(['EXPIRE_EXPORTS', 'allowExportExpirations'])} />
+                onChange={this.onChangeSettingsExportExpirationAllow}
+                checked={settings.get('EXPORT_EXPIRATION_ALLOW')} />
             </div>
             <div
               className={classNames({
                 'form-group': true,
-                'has-error': errorMessages.has('settings.EXPIRE_EXPORTS.ttl')
+                'has-error': errorMessages.has('settings.EXPORT_EXPIRATION_TTL')
               })}>
               <label htmlFor={ttlId}>Time to expiry (seconds)</label>
               <input
                 className="form-control"
                 id={ttlId}
                 placeholder="How many seconds will the export remain available for?"
-                value={settings.getIn(['EXPIRE_EXPORTS', 'ttl'])}
-                onChange={this.onChangeSettingsExpireExportsTTL} />
-              {errorMessages.has('settings.EXPIRE_EXPORTS.ttl') &&
+                value={settings.get('EXPORT_EXPIRATION_TTL')}
+                onChange={this.onChangeSettingsExportExpirationTTL} />
+              {errorMessages.has('settings.EXPORT_EXPIRATION_TTL') &&
                 <span className="help-block">
                   <ValidationList
-                    errors={errorMessages.get('settings.EXPIRE_EXPORTS.ttl')} />
+                    errors={errorMessages.get('settings.EXPORT_EXPIRATION_TTL')} />
                 </span>}
             </div>
           </fieldset>
