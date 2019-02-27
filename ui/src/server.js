@@ -14,7 +14,6 @@ import FileStreamRotator from 'file-stream-rotator';
 import config from 'ui/config';
 import renderApp from 'ui/controllers/renderApp';
 import renderDashboard from 'ui/controllers/renderDashboard';
-import urlToWsUri from 'lib/helpers/urlToWsUri';
 
 process.on('SIGINT', () => {
   process.exit(0);
