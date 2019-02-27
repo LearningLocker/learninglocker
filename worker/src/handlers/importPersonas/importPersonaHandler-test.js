@@ -4,7 +4,7 @@ import {
 import ImportPersonasLock from 'lib/models/importPersonasLock';
 import { expect } from 'chai';
 import { delay } from 'bluebird';
-import { establishLock } from 'lib/services/importPersonas/establishLock';
+import establishLock from 'lib/services/importPersonas/establishLock';
 
 describe('importPersonaHandler', () => {
   beforeEach(async () => {
