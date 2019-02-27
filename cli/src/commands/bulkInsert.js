@@ -6,7 +6,7 @@ import moment from 'moment';
 import hash from 'object-hash';
 import uuid from 'uuid';
 
-TinCan.DEBUG = true;
+TinCan.DEBUG = false;
 
 let lrs;
 let _batchSize;

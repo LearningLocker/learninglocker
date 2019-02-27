@@ -92,6 +92,10 @@ const updateHandlers = withHandlers({
   changeFullDocument: ({ updateModel }) => value => updateModel({
     path: ['fullDocument'],
     value
+  }),
+  changeSendAttachments: ({ updateModel }) => value => updateModel({
+    path: ['sendAttachments'],
+    value
   })
 });
 
@@ -118,7 +122,8 @@ const StatementForwardingForm = ({
   authTypes,
   changeMaxRetries,
   changeHeaders,
-  changeFullDocument
+  changeFullDocument,
+  changeSendAttachments,
 }) => (
   <div>
     <div className="row">
@@ -153,6 +158,16 @@ const StatementForwardingForm = ({
         </div>
 
         <div className="form-group">
+          <label htmlFor={`${model.get('_id')}sendAttachments`}>Send attachments?</label>
+          <span className="help-block">Should the Statement Forward send the statement&#39;s attachments?</span>
+          <Switch
+            id={`${model.get('_id')}sendAttachments`}
+            label="Enabled"
+            onChange={changeSendAttachments}
+            checked={model.get('sendAttachments', false)} />
+        </div>
+
+        <div className="form-group">
           <label htmlFor={`${model.get('_id')}protocolInput`}>Protocol</label>
           <select
             className="form-control"
@@ -175,7 +190,7 @@ const StatementForwardingForm = ({
             value={model.getIn(['configuration', 'url'], '')}
             placeholder="URL"
             onChange={changeUrl} />
-          { model.getIn(['errors', 'messages', 'configuration.url'], false) &&
+          {model.getIn(['errors', 'messages', 'configuration.url'], false) &&
               (<span className="help-block">
                 <ValidationList errors={model.getIn(['errors', 'messages', 'configuration.url'])} />
               </span>)
@@ -196,7 +211,7 @@ const StatementForwardingForm = ({
               <option key={authType} value={authType}>{authType}</option>
               ))}
           </select>
-          { model.getIn(['errors', 'messages', 'configuration.authType'], false) &&
+          {model.getIn(['errors', 'messages', 'configuration.authType'], false) &&
               (<span className="help-block">
                 <ValidationList errors={model.getIn(['errors', 'messages', 'configuration.authType'])} />
               </span>)
@@ -216,7 +231,7 @@ const StatementForwardingForm = ({
             value={model.getIn(['configuration', 'secret'], '')}
             placeholder="Secret Key"
             onChange={changeSecret} />
-          { model.getIn(['errors', 'messages', 'configuration.secret'], false) &&
+          {model.getIn(['errors', 'messages', 'configuration.secret'], false) &&
                 (<span className="help-block">
                   <ValidationList errors={model.getIn(['errors', 'messages', 'configuration.secret'])} />
                 </span>)
@@ -238,7 +253,7 @@ const StatementForwardingForm = ({
                   value={model.getIn(['configuration', 'basicUsername'], '')}
                   placeholder="Basic Username"
                   onChange={changeBasicUsername} />
-                { model.getIn(['errors', 'messages', 'configuration.basicUsername'], false) &&
+                {model.getIn(['errors', 'messages', 'configuration.basicUsername'], false) &&
                   (<span className="help-block">
                     <ValidationList errors={model.getIn(['errors', 'messages', 'configuration.basicUsername'])} />
                   </span>)
@@ -256,7 +271,7 @@ const StatementForwardingForm = ({
                   value={model.getIn(['configuration', 'basicPassword'], '')}
                   placeholder="Basic Password"
                   onChange={changeBasicPassword} />
-                { model.getIn(['errors', 'messages', 'configuration.basicPassword'], false) &&
+                {model.getIn(['errors', 'messages', 'configuration.basicPassword'], false) &&
                   (<span className="help-block">
                     <ValidationList errors={model.getIn(['errors', 'messages', 'configuration.basicPassword'])} />
                   </span>)
@@ -281,7 +296,7 @@ const StatementForwardingForm = ({
             value={model.getIn(['configuration', 'maxRetries'], 0)}
             placeholder="0"
             onChange={changeMaxRetries} />
-          { model.getIn(['errors', 'messages', 'configuration.maxRetries'], false) &&
+          {model.getIn(['errors', 'messages', 'configuration.maxRetries'], false) &&
               (<span className="help-block">
                 <ValidationList errors={model.getIn(['errors', 'messages', 'configuration.maxRetries'])} />
               </span>
@@ -299,13 +314,13 @@ const StatementForwardingForm = ({
             staticValues={getAuthHeaders({
               configuration: model.get('configuration').toJS()
             }).merge(new Map({
-              'Content-Type': 'application/json',
+              'Content-Type': model.get('sendAttachments') ? 'multipart/mixed' : 'application/json',
               'Content-Length': '${Content-Length}', // eslint-disable-line no-template-curly-in-string
               'X-Experience-API-Version': '${statement.version}', // eslint-disable-line no-template-curly-in-string
             }))}
             values={
-              getHeaders(model)
-            }
+                getHeaders(model)
+              }
             onChange={changeHeaders} />
           {
               model.getIn(['errors', 'messages', 'configuration.headers'], false) &&
