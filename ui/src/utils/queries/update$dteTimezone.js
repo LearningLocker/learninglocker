@@ -5,8 +5,8 @@ import { List, Map, OrderedMap, Set } from 'immutable';
  * Change $dte timezone offset
  *
  * e.g.
- * const query1 = immutable.fromJS({ $and: { $dte: '2019-12-31T23:45-11:00' } });
- * const query2 = immutable.fromJS({ $and: { $dte: '2019-12-31T23:45+09:00' } });
+ * const query1 = immutable.fromJS({ $and: { $dte: '2019-12-31T00:00-11:00' } });
+ * const query2 = immutable.fromJS({ $and: { $dte: '2019-12-31T00:00+09:00' } });
  * const timezone = 'Asia/Tokyo'; // +09:00
  * const updated = update$dteTimezone(query1, timezone);
  * updated.equals(query2); // true
@@ -20,9 +20,10 @@ const update$dteTimezone = (query, timezone) => {
   if (Map.isMap(query) || OrderedMap.isOrderedMap(query)) {
     return query.mapEntries(([k, v]) => {
       if (k === '$dte' && typeof v === 'string') {
+        // Ignore offset in $dte sub query
         const yyyymmddhhmm = moment.parseZone(v).format('YYYY-MM-DDTHH:mm');
+        const z = moment(yyyymmddhhmm).tz(timezone).format('Z');
         // Apply timezone offset
-        const z = moment().tz(timezone).format('Z');
         return [k, `${yyyymmddhhmm}${z}`];
       }
       return [k, update$dteTimezone(v, timezone)];
