@@ -14,6 +14,7 @@ const MultiInput = ({
   searchString,
   renderOption,
   hasFocus,
+  onFocus,
   onChangeSearchString = () => {},
 }) => {
   const wrapperClasses = classNames({
@@ -28,7 +29,8 @@ const MultiInput = ({
       <DebounceInput
         debounceTimeout={377}
         value={searchString}
-        onChange={onChangeSearchString} />
+        onChange={onChangeSearchString}
+        onFocus={onFocus} />
     </div>
   );
 };

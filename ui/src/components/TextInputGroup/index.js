@@ -13,7 +13,9 @@ class TextInputGroup extends Component {
     onCancel: PropTypes.func,
     fields: PropTypes.arrayOf(PropTypes.string),
     defaultValues: PropTypes.arrayOf(PropTypes.string),
-    className: PropTypes.string
+    className: PropTypes.string,
+    submitIcon: PropTypes.string,
+    cancelIcon: PropTypes.string
   }
 
   static defaultProps = {
@@ -21,7 +23,9 @@ class TextInputGroup extends Component {
     onCancel: () => {},
     onFocus: () => {},
     placeholder: '',
-    defaultValues: []
+    defaultValues: [],
+    submitIcon: 'ion-checkmark',
+    cancelIcon: 'ion-close-round'
   }
 
   handleClickOutside = () => {
@@ -50,7 +54,7 @@ class TextInputGroup extends Component {
   }
 
   render = () => {
-    const { className, fields, defaultValues } = this.props;
+    const { className, fields, defaultValues, submitIcon, cancelIcon } = this.props;
     return (
       <form
         onSubmit={this.onSubmit}
@@ -60,18 +64,22 @@ class TextInputGroup extends Component {
             key={key}
             autoFocus={key === 0}
             defaultValue={defaultValues[key]}
-            label={field}
+            name={field}
             onChange={this.onChangeField} />
         )}
         <div className={`${styles.buttons} clearfix`}>
           <IconButton
             onClick={this.onSubmit} >
-            <i className="ion-checkmark" />
+            <i className={submitIcon} />
           </IconButton>
-          <IconButton
-            onClick={this.onCancel} >
-            <i className="ion-close-round" />
-          </IconButton>
+
+          {(typeof cancelIcon === 'string') &&
+            <IconButton
+              onClick={this.onCancel} >
+              <i className={cancelIcon} />
+            </IconButton>
+          }
+
         </div>
       </form>
     );

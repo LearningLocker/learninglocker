@@ -58,7 +58,6 @@ class OptionListItem extends Component {
 
   renderText = () => {
     if (this.state.confirmDelete) return <MaterialLink label="Are you sure?" />;
-
     const { label, tooltip, target, rel, href, icon } = this.props;
     const linkProps = {
       label,

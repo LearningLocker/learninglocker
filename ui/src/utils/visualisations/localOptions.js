@@ -19,17 +19,17 @@ export const UNIQUENESS_OPS = [
 
 
 const LINE_OPERATOR_OPTS = new OrderedMap({
-  uniqueCount: 'Total unique number of...',
-  count: 'Sum of...',
-  average: 'Average of...',
-  max: 'Max from...',
-  min: 'Min from...',
+  uniqueCount: 'Total unique number of',
+  count: 'Sum of',
+  average: 'Average of',
+  max: 'Max from',
+  min: 'Min from',
 });
 
-const OPERATOR_OPTS = LINE_OPERATOR_OPTS.concat(new OrderedMap({
-  uniqueAverage: 'Average unique number of...',
-  uniqueMax: 'Max unique number of...',
-  uniqueMin: 'Min unique number of...',
+export const OPERATOR_OPTS = LINE_OPERATOR_OPTS.concat(new OrderedMap({
+  uniqueAverage: 'Average unique number of',
+  uniqueMax: 'Max unique number of',
+  uniqueMin: 'Min unique number of',
 }));
 
 export const VALUE_OPTS = createOptionModels({
@@ -57,6 +57,7 @@ export const GROUP_OPTS = createOptionModels({
   verb: 'Verb',
   type: 'Activity Type',
   raw: 'Raw Result',
+  response: 'Result Response',
 });
 
 export const getTypeOpts = (type) => {

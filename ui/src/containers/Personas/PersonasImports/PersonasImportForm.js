@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { compose, withHandlers, withProps } from 'recompose';
 import {
   withModel,
@@ -9,6 +10,7 @@ import ConfigureUpload from 'ui/containers/Personas/PersonasImports/stages/Confi
 import { List } from 'immutable';
 import { formatUrl } from 'ui/utils/LLApiClient';
 import moment from 'moment';
+import { activeOrgIdSelector } from 'ui/redux/modules/router';
 
 import {
   STAGE_UPLOAD,
@@ -32,7 +34,8 @@ const handlers = withHandlers({
 
 export const PersonasImportFormComponent = ({
   model,
-  changeTitle
+  changeTitle,
+  organisationId
 }) => {
   const errorSize = model.get('importErrors', new List()).size;
 
@@ -70,7 +73,7 @@ export const PersonasImportFormComponent = ({
             {errorSize > 0 && <b style={{ color: 'red' }}>
               Errored: {errorSize} {errorSize === 1 && <span>row</span>} {errorSize > 1 && <span>rows</span>}&nbsp;
               <a
-                href={formatUrl(`/importpersonaserror/${model.get('_id')}.csv`)}
+                href={formatUrl(`/organisation/${organisationId}/importpersonaserror/${model.get('_id')}.csv`)}
                 target="_blank"
                 rel="noreferrer noopener"
                 className="btn btn-primary">Download csv with errors</a>
@@ -87,11 +90,14 @@ const PersonasImportForm = compose(
   withProps(({ model }) => ({
     schema,
     id: model.get('_id'),
-    doWhile: m => m.get('importStage') === STAGE_PROCESSING
+    doWhile: m => m.get('importStage') === STAGE_PROCESSING,
   })),
   withModel,
   withPolling,
   handlers,
+  connect(state => ({
+    organisationId: activeOrgIdSelector(state)
+  }))
 )(PersonasImportFormComponent);
 
 export default PersonasImportForm;

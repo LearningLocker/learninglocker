@@ -12,7 +12,8 @@ const EditableOption = ({
   parseOption,
   parseOptionTooltip,
   fields = ['name'],
-  defaultValues = fields.map(field => option.get(field))
+  defaultValues = fields.map(field => option.get(field)),
+  canEdit = () => true
 }) => {
   if (isEditing) {
     return (
@@ -28,16 +29,19 @@ const EditableOption = ({
         defaultValues={defaultValues} />
     );
   }
+
+  const canEditOption = canEdit(option);
+  const canEditHandler = canEditOption ? () => { setIsEditing(true); } : () => {};
+  const canDeleteHandler = canEditOption ? onDelete : () => {};
+
   return (
     <OptionListItem
       label={parseOption(option)}
       tooltip={parseOptionTooltip(option)}
       data={option}
       onClick={onClick}
-      onEdit={() => {
-        setIsEditing(true);
-      }}
-      onDelete={onDelete} />
+      onEdit={canEditHandler}
+      onDelete={canDeleteHandler} />
   );
 };
 

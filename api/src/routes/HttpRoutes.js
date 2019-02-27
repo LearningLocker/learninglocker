@@ -5,7 +5,8 @@ import git from 'git-rev';
 import Promise from 'bluebird';
 import { omit, findIndex } from 'lodash';
 import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
-import getScopesFromRequest from 'lib/services/auth/authInfoSelectors/getScopesFromAuthInfo';
+import getTokenTypeFromAuthInfo from 'lib/services/auth/authInfoSelectors/getTokenTypeFromAuthInfo';
+import getScopesFromAuthInfo from 'lib/services/auth/authInfoSelectors/getScopesFromAuthInfo';
 import getUserIdFromAuthInfo from 'lib/services/auth/authInfoSelectors/getUserIdFromAuthInfo';
 import { SITE_ADMIN } from 'lib/constants/scopes';
 import { jsonSuccess, serverError } from 'api/utils/responses';
@@ -26,6 +27,7 @@ import StatementController from 'api/controllers/StatementController';
 import generateConnectionController from 'api/controllers/ConnectionController';
 import generateIndexesController from 'api/controllers/IndexesController';
 import ImportPersonasController from 'api/controllers/ImportPersonasController';
+import StatementMetadataController from 'api/controllers/StatementMetadataController';
 
 // REST
 import LRS from 'lib/models/lrs';
@@ -46,6 +48,7 @@ import QueryBuilderCacheValue from 'lib/models/querybuildercachevalue';
 import Role from 'lib/models/role';
 import PersonasImport from 'lib/models/personasImport';
 import PersonasImportTemplate from 'lib/models/personasImportTemplate';
+import SiteSettings from 'lib/models/siteSettings';
 import personaRESTHandler from 'api/routes/personas/personaRESTHandler';
 import personaIdentifierRESTHandler from 'api/routes/personas/personaIdentifierRESTHandler';
 import personaAttributeRESTHandler from 'api/routes/personas/personaAttributeRESTHandler';
@@ -91,6 +94,11 @@ router.get(
   routes.AUTH_CLIENT_INFO,
   passport.authenticate('clientBasic', DEFAULT_PASSPORT_OPTIONS),
   AuthController.clientInfo
+);
+
+router.post(
+  routes.OAUTH2_TOKEN,
+  AuthController.issueOAuth2AccessToken
 );
 
 /**
@@ -185,6 +193,18 @@ router.get(
   StatementController.count
 );
 
+router.patch(
+  routes.STATEMENT_METADATA,
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  StatementMetadataController.patchStatementMetadata
+);
+router.post(
+  routes.STATEMENT_METADATA,
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  StatementMetadataController.postStatementMetadata
+);
+
+
 /**
  * V1 compatability
  */
@@ -201,7 +221,7 @@ restify.defaults(RESTIFY_DEFAULTS);
 restify.serve(router, Organisation, {
   preUpdate: (req, res, next) => {
     const authInfo = getAuthFromRequest(req);
-    const scopes = getScopesFromRequest(authInfo);
+    const scopes = getScopesFromAuthInfo(authInfo);
     if (
       findIndex(scopes, item => item === SITE_ADMIN) < 0
     ) {
@@ -218,13 +238,20 @@ restify.serve(router, ImportCsv);
 restify.serve(router, User, {
   preUpdate: (req, res, next) => {
     const authInfo = getAuthFromRequest(req);
-    const scopes = getScopesFromRequest(authInfo);
+    const scopes = getScopesFromAuthInfo(authInfo);
+    const tokenType = getTokenTypeFromAuthInfo(authInfo);
 
+    // if site admin, skip over this section
     if (findIndex(scopes, item => item === SITE_ADMIN) < 0) {
       // remove scope changes
       req.body = omit(req.body, 'scopes');
-      if (req.body._id !== getUserIdFromAuthInfo(authInfo).toString()) {
-        // Don't allow changing of passwords
+      if (tokenType === 'user' || tokenType === 'organisation') {
+        if (req.body._id !== getUserIdFromAuthInfo(authInfo).toString()) {
+          // Don't allow changing of passwords
+          req.body = omit(req.body, 'password');
+        }
+      } else {
+        // always strip the password from other token types
         req.body = omit(req.body, 'password');
       }
     }
@@ -236,13 +263,18 @@ restify.serve(router, Client);
 restify.serve(router, Visualisation);
 restify.serve(router, Dashboard);
 restify.serve(router, LRS);
-restify.serve(router, Statement);
+restify.serve(router, Statement, {
+  preCreate: (req, res) => res.sendStatus(405),
+  preDelete: (req, res) => res.sendStatus(405),
+  preUpdate: (req, res) => res.sendStatus(405),
+});
 restify.serve(router, StatementForwarding);
 restify.serve(router, QueryBuilderCache);
 restify.serve(router, QueryBuilderCacheValue);
 restify.serve(router, Role);
 restify.serve(router, PersonasImport);
 restify.serve(router, PersonasImportTemplate);
+restify.serve(router, SiteSettings);
 
 /**
  * CONNECTIONS and INDEXES

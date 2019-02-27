@@ -14,7 +14,7 @@ const migrateDoc = (doc) => {
   const filter = { _id: objectId(doc._id) };
   const update = { $set: { authority: JSON.stringify(doc.authority) } };
   logger.debug(`Migrating ${doc.title} ${doc._id}`);
-  return Client.update(filter, update).then(res =>
+  return Client.updateOne(filter, update).then(res =>
     logger.debug(`Migrated ${doc.title} ${JSON.stringify(res)}`)
   );
 };

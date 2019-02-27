@@ -121,8 +121,8 @@ const down = async () => {
       rev: '',
     },
   };
-  const options = { multi: true };
-  await Statement.update(filter, update, options);
+  const options = {};
+  await Statement.updateMany(filter, update, options);
 };
 
 export default { up, down };

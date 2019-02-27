@@ -20,6 +20,7 @@ app.use(corsMiddleware);
 app.options('*', corsMiddleware);
 
 app.use(bodyParser.json({ limit: '5mb' }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(passport.initialize());
 app.use(HttpRoutes);

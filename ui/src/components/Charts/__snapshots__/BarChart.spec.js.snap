@@ -8,31 +8,30 @@ exports[`BarChartResult should render axes 1`] = `
     className="buttons"
   />
   <div
-    className="xAxisLabel withPrevNext clearfix"
-  >
-    <span
-      className="xAxis"
-    >
-      THE-X
-    </span>
-  </div>
+    className="withPrevNext clearfix"
+  />
   <div
     className="barContainer"
   >
-    <div
-      className="yAxisLabel"
+    <span
+      className="yAxis"
     >
-      <span
-        className="yAxis"
-      >
-        THE-Y
-      </span>
-    </div>
+      Y-Axis
+    </span>
     <div
       className="chartWrapper"
     >
       <div />
     </div>
+  </div>
+  <div
+    className="xAxisLabel"
+  >
+    <span
+      className="xAxis"
+    >
+      X-Axis
+    </span>
   </div>
 </div>
 `;
@@ -43,6 +42,7 @@ exports[`BarChartResults should render 1`] = `
     Object {
       "marginTop": 20,
       "textAlign": "center",
+      "width": "100%",
     }
   }
 >

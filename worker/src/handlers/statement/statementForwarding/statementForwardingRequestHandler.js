@@ -1,6 +1,10 @@
-import * as popsicle from 'popsicle';
-import { assign } from 'lodash';
-import { Map } from 'immutable';
+import { post } from 'axios';
+import { assign, isPlainObject } from 'lodash';
+import { PassThrough } from 'stream';
+import highland from 'highland';
+import getAttachments from '@learninglocker/xapi-statements/dist/service/utils/getAttachments';
+import streamStatementsWithAttachments, { boundary }
+  from '@learninglocker/xapi-statements/dist/expressPresenter/utils/getStatements/streamStatementsWithAttachments';
 import logger from 'lib/logger';
 import Statement, { mapDot } from 'lib/models/statement';
 import mongoose from 'mongoose';
@@ -11,72 +15,69 @@ import {
   STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE,
 } from 'lib/constants/statements';
 import * as Queue from 'lib/services/queue';
+import getStatementsRepo from './getStatementsRepo';
 
 const objectId = mongoose.Types.ObjectId;
 
-const generateHeaders = (statementContent, statementForwarding) => {
-  const headersWithLength = new Map({
-    'Content-Type': 'application/json',
-    'Content-Length': Buffer.byteLength(statementContent)
-  });
+const generateHeaders = (statementForwarding, statement) => {
   const statementForwardingModel = new StatementForwarding(statementForwarding);
-  const headersWithAuthAndLength =
-    headersWithLength.merge(statementForwardingModel.getAuthHeaders());
-
-  const headersWithAuthAndLengthAndHeaders =
-    headersWithAuthAndLength.merge(statementForwardingModel.getHeaders());
-
-  return headersWithAuthAndLengthAndHeaders.toJS();
+  const authHeaders = statementForwardingModel.getAuthHeaders();
+  const nonAuthHeaders = statementForwardingModel.getHeaders(statement);
+  const allHeaders = authHeaders.merge(nonAuthHeaders);
+  return allHeaders.toJS();
 };
 
-const sendRequest = async (statement, statementForwarding) => {
-  const urlString = `${statementForwarding.configuration
-    .protocol}://${statementForwarding.configuration.url}`;
+const createBodyWithAttachments = async (statementModel, statementToSend) => {
+  const repo = getStatementsRepo();
+  const attachments = await getAttachments({ repo }, [statementModel], true, statementModel.lrs_id);
+  const stream = highland();
+  await streamStatementsWithAttachments(statementToSend, attachments, stream);
+  const passthrough = new PassThrough();
+  stream.pipe(passthrough);
+  return passthrough;
+};
 
-  const statementContent = JSON.stringify(mapDot(
-    statement
-  ));
-
-  const headers = generateHeaders(statementContent, statementForwarding);
-
-  const requestOptions = {
-    method: 'POST',
-    body: mapDot(statement),
-    url: urlString,
-    headers,
-    timeout: 16000,
-    options: {
-      followRedirects: (() => true)
-    }
-  };
-  const request = popsicle.request(requestOptions);
+const sendRequest = async (statementToSend, statementForwarding, fullStatement) => {
+  const forwardingProtocol = statementForwarding.configuration.protocol;
+  const forwardingUrl = statementForwarding.configuration.url;
+  const url = `${forwardingProtocol}://${forwardingUrl}`;
+  const statement = mapDot(statementToSend);
+  const validateStatus = statusCode => statusCode >= 200 && statusCode < 400;
+  const timeout = 5000;
 
   try {
-    const response = await request;
-    if (!(response.status >= 200 && response.status < 400)) {
-      throw new ForwardingRequestError(
-        `Status code was invalid: (${response.status})`,
-        response.body,
-      );
+    if (statementForwarding.sendAttachments) {
+      const stream = await createBodyWithAttachments(fullStatement, statement);
+      const headers = {
+        ...generateHeaders(statementForwarding, fullStatement),
+        'Content-Type': `multipart/mixed; charset=UTF-8; boundary=${boundary}`,
+      };
+      await post(url, stream, { headers, timeout, validateStatus });
+    } else {
+      const headers = {
+        ...generateHeaders(statementForwarding, fullStatement),
+        'Content-Type': 'application/json',
+      };
+      await post(url, statement, { headers, timeout, validateStatus });
     }
   } catch (err) {
-    throw new ForwardingRequestError(
-      `Error with popsicle request/response: ${JSON.stringify(requestOptions)}`,
-    );
+    const message = err.response ? 'Status code was invalid' : err.message;
+    const responseBody = err.response ? err.response.body : null;
+    const responseStatus = err.response ? err.response.status : null;
+    const headers = err.request ? err.request.headers : null;
+    throw new ForwardingRequestError(message, { headers, responseBody, responseStatus, url });
   }
-
-  return request;
 };
 
 const setPendingStatements = (statement, statementForwardingId) =>
-  Statement.findByIdAndUpdate(statement._id, {
+  Statement.updateOne({ _id: statement._id }, {
     $addToSet: {
       pendingForwardingQueue: statementForwardingId
     }
   });
 
 const setCompleteStatements = (statement, statementForwardingId) =>
-  Statement.findByIdAndUpdate(statement._id, {
+  Statement.updateOne({ _id: statement._id }, {
     $addToSet: {
       completedForwardingQueue: statementForwardingId
     },
@@ -99,8 +100,9 @@ const statementForwardingRequestHandler = async (
     );
 
     await sendRequest(
-      statement.statement,
-      statementForwarding
+      statementForwarding.fullDocument ? statement : statement.statement,
+      statementForwarding,
+      statement
     );
 
     await setCompleteStatements(statement, statementForwarding._id);
@@ -123,27 +125,26 @@ const statementForwardingRequestHandler = async (
     };
 
     if (err.messageBody) {
-      update = assign({}, update, {
-        messageBody: err.messageBody
-      });
+      if (isPlainObject(err.messageBody)) {
+        update = assign({}, update, { errorInfo: err.messageBody });
+      }
     }
 
     try {
-      const updatedStatement = await Statement.findByIdAndUpdate(
-        statement._id,
+      await Statement.updateOne(
+        { _id: statement._id },
         {
           $addToSet: {
             failedForwardingLog: update
           }
-        },
-        {
-          new: true,
         }
       );
 
+      const updatedStatement = await Statement.findOne({ _id: statement._id });
+
       if (
         updatedStatement.failedForwardingLog.length <=
-          statementForwarding.configuration.maxRetries
+        statementForwarding.configuration.maxRetries
       ) {
         logger.info(`SENDING statement ${updatedStatement._id} to ${STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE}`);
         queue.publish({
