@@ -92,7 +92,7 @@ class SubOrgForm extends Component {
   onChangeSettingsPasswordRequireNumber = this.onChangeAttr(['settings', 'PASSWORD_REQUIRE_NUMBER']);
   onChangeSettingsPasswordUseCustomRegex = this.onChangeAttr(['settings', 'PASSWORD_USE_CUSTOM_REGEX']);
   onChangeSettingsLockoutEnabled = this.onChangeAttr(['settings', 'LOCKOUT_ENABLED']);
-  onChangeSettingsExpireExportsDontAllowExports = this.onChangeAttr(['settings', 'EXPIRE_EXPORTS', 'dontAllowExports']);
+  onChangeSettingsExpireExportsAllowExports = this.onChangeAttr(['settings', 'EXPIRE_EXPORTS', 'allowExports']);
   onChangeSettingsExpireExportsAllowExportExpirations = this.onChangeAttr(['settings', 'EXPIRE_EXPORTS', 'allowExportExpirations']);
 
   handleFile = (e) => {
@@ -436,10 +436,10 @@ class SubOrgForm extends Component {
             <legend className="pageHeader">Export Expiry</legend>
             <div className="from-group">
               <Checkbox
-                label="Don't Allow Exports"
+                label="Allow Exports"
                 style={styles.checkbox}
-                onChange={this.onChangeSettingsExpireExportsDontAllowExports}
-                checked={settings.getIn(['EXPIRE_EXPORTS', 'dontAllowExports'])} />
+                onChange={this.onChangeSettingsExpireExportsAllowExports}
+                checked={settings.getIn(['EXPIRE_EXPORTS', 'allowExports'])} />
               <Checkbox
                 label="Exports should expire"
                 style={styles.checkbox}
