@@ -1,6 +1,6 @@
 import { Map, fromJS, OrderedSet, Iterable, OrderedMap } from 'immutable';
 import { createSelector } from 'reselect';
-import { map } from 'lodash';
+import { map, includes } from 'lodash';
 import moment from 'moment';
 import { put, call, select } from 'redux-saga/effects';
 import { handleActions } from 'redux-actions';
@@ -12,8 +12,6 @@ import * as mergeEntitiesDuck from 'ui/redux/modules/models/mergeEntities';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 import HttpError from 'ui/utils/errors/HttpError';
 import Unauthorised from 'lib/errors/Unauthorised';
-import { registerAction } from 'ui/redux/modules/websocket';
-import { includes } from 'lodash';
 import { SUPPORTED_SCHEMAS } from 'lib/constants/websocket';
 import diffEdges from './fetchModelsDiff';
 
@@ -21,6 +19,7 @@ export const FORWARD = 'FORWARD'; // forward pagination direction
 export const BACKWARD = 'BACKWARD'; // backward pagination direction
 
 export const FETCH_MODELS = 'learninglocker/pagination/FETCH_MODELS';
+export const RESET_REQUEST_STATE = 'learninglocker/pagination/RESET_REQUEST_STATE';
 
 /**
  * REDUCERS
@@ -232,8 +231,7 @@ const fetchModels = createAsyncDuck({
     cursor
   }),
 
-  checkShouldFire: ({ schema, filter, sort, cursor }, state) =>
-    (shouldFetchSelector({ schema, filter, sort, cursor })(state)),
+  checkShouldFire: ({ schema, filter, sort, cursor }, state) => (shouldFetchSelector({ schema, filter, sort, cursor })(state)),
 
   doAction: function* fetchModelSaga({
     schema,
@@ -259,7 +257,6 @@ const fetchModels = createAsyncDuck({
     ) {
       // Do nothing, as we'll do it in websocket/fetchModels saga
 
-      // console.log('002');
       // yield put(registerAction({
       //   schema,
       //   filter: plainFilter,
@@ -268,7 +265,6 @@ const fetchModels = createAsyncDuck({
       //   first,
       //   last
       // }));
-      // console.log('003');
       return;
     }
     const { status, body } = yield call(llClient.getConnection, {
@@ -389,8 +385,7 @@ const fetchMore = ({
       },
       getState()
     )
-  )
-);
+  ));
 
 export const selectors = {
   paginationSelector,
@@ -406,7 +401,20 @@ export const selectors = {
 };
 
 export const reducer = handleActions({
-  ...fetchModels.reducers
+  ...fetchModels.reducers,
+  [RESET_REQUEST_STATE]: (pagination, { schema }) => {
+    const outt = pagination.set(schema, pagination.get(schema).map((filter) => {
+      const out = filter.map((sort) => {
+        const ou = sort.map((cursor) => {
+          const o = cursor.delete('requestState');
+          return o;
+        });
+        return ou;
+      });
+      return out;
+    }));
+    return outt;
+  }
 });
 
 export const actions = { fetchMore, fetchAllOutstandingModels, ...fetchModels.actions };

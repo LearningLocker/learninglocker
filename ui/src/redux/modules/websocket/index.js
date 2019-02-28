@@ -2,10 +2,14 @@ import { put, take, select } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import { handleActions } from 'redux-actions';
 import Cookies from 'js-cookie';
-import { pickBy, lowerCase } from 'lodash';
-import { OrderedMap, Map } from 'immutable';
+import { pickBy, lowerCase, map, first as loFirst, last as loLast } from 'lodash';
+import { OrderedMap, Map, fromJS } from 'immutable';
 import { testCookieName } from 'ui/utils/auth';
-import { BACKWARD } from 'ui/redux/modules/pagination/fetchModels';
+import {
+  BACKWARD,
+  FORWARD,
+  RESET_REQUEST_STATE
+} from 'ui/redux/modules/pagination/fetchModels';
 import * as schemas from 'ui/utils/schemas';
 import { normalize, arrayOf } from 'normalizr';
 import entityReviver from 'ui/redux/modules/models/entityReviver';
@@ -82,33 +86,33 @@ function* handleWebsocketMessage() {
     const data = JSON.parse(message.data);
 
     // normalzr reviver
+    const models = map(data.edges, item => item.node);
     const schemaClass = schemas[lowerCase(data.schema)];
-    const normalizedModels = normalize([data.node], arrayOf(schemaClass));
+    const normalizedModels = normalize(models, arrayOf(schemaClass));
     const entities = entityReviver(normalizedModels);
     // eo romalzr reviver
 
     yield put(mergeEntitiesDuck.actions.mergeEntitiesAction(entities));
 
     yield put({
+      type: RESET_REQUEST_STATE,
+      schema: lowerCase(data.schema)
+    });
+    yield put({
       type: 'learninglocker/pagination/FETCH_MODELS_SUCCESS',
-      cursor: new Map({
-        before: data.before
-      }),
-      direction: BACKWARD,
-      edges: [new OrderedMap({
-        id: data.node._id,
-        cursor: data.cursor
-      })],
+      cursor: fromJS(data.cursor),
+      direction: FORWARD,
+      edges: map(data.edges, item => (new OrderedMap({ id: item.node._id, cursor: item.cursor }))),
       filter: new Map(),
-      ids: [data.node.id],
+      ids: map(models, '_id'),
       pageInfo: new Map({
-        startCursor: data.cursor,
-        endCursor: data.cursor,
-        hasNextPage: false,
-        hasPreviousPage: true,
+        startCursor: loFirst(data.edges).cursor,
+        endCursor: loLast(data.edges).cursor,
+        hasNextPage: true,
+        hasPreviousPage: false,
       }),
-      schema: 'statement',
-      sort: new Map({
+      schema: lowerCase(data.schema),
+      sort: new Map({ // TODO
         _id: 1,
         timestamp: -1
       })
@@ -124,7 +128,6 @@ const getAuth = () => {
 
 function* registerConnection() {
   // wait for the websocket to be ready
-  yield take(WEBSOCKET_READY);
 
   while (true) {
     const {

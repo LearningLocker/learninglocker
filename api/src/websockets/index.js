@@ -38,20 +38,25 @@ const messageManager = ws => async (message) => {
 
       const changeStream = await model.getConnectionWs({
         filter: jsonMessage.filter,
-        cursor: jsonMessage.cursor,
+        ...jsonMessage.cursor,
         authInfo,
         sort: jsonMessage.sort,
         ws
       });
 
       ws.on('error', (err) => {
-        changeStream.driverChangeStream.close();
         logger.error('websocket error', err);
-        changeStream.removeAllListeners();
+
+        if (changeStream) {
+          changeStream.driverChangeStream.close();
+          changeStream.removeAllListeners();
+        }
       });
       ws.on('close', () => {
-        changeStream.driverChangeStream.close();
-        changeStream.removeAllListeners();
+        if (changeStream) {
+          changeStream.driverChangeStream.close();
+          changeStream.removeAllListeners();
+        }
       });
 
       break;

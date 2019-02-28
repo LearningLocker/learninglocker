@@ -246,7 +246,11 @@
     "style-loader": "^0.23.1",
     "webpack": "^3.10",
     "webpack-dev-middleware": "^1.10.1",
-    "webpack-node-externals": "^1.5.4"
+    "webpack-node-externals": "^1.5.4",
+    "webpack-hot-middleware": "^2.5.0",
+    "webpack-notifier": "^1.2.1",
+    "timekeeper": "0.0.5",
+    "sinon": "7.2.5"
   },
   "publishConfig": {
     "access": "restricted"
