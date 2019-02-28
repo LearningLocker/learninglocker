@@ -12,10 +12,10 @@ const has$dte = (query) => {
   }
 
   if (List.isList(query) || Set.isSet(query)) {
-    return query.some(subQuery => has$dte(subQuery))
+    return query.some(subQuery => has$dte(subQuery));
   }
 
   return false;
-}
+};
 
 export default has$dte;
