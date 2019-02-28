@@ -82,11 +82,15 @@ class StatementsForm extends Component {
   renderTimezoneSelector = () => {
     const axes = unflattenAxes(this.props.model);
     const groupAxes = axes.getIn(['group', 'optionKey'], 'date');
-
     const groupingHasTimezone = periodKeys.includes(groupAxes);
+
+    const axesxQueryHas$dte = has$dte(this.props.model.get('axesxQuery'));
+    const axesyQueryHas$dte = has$dte(this.props.model.get('axesyQuery'));
     const filterHas$dte = has$dte(this.props.model.get('filters'));
+
     const periodHasOffset = this.props.model.get('previewPeriod') === 'TODAY';
-    const shouldDisplay = groupingHasTimezone || filterHas$dte || periodHasOffset;
+
+    const shouldDisplay = groupingHasTimezone || axesxQueryHas$dte || axesyQueryHas$dte || filterHas$dte || periodHasOffset;
 
     return shouldDisplay && (
       <TimezoneSelector
