@@ -1,10 +1,16 @@
 import React, { Component, PropTypes } from 'react';
 import { Map } from 'immutable';
-import { updateModel } from 'ui/redux/modules/models';
 import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
+import { unflattenAxes } from 'lib/helpers/visualisation';
 import TimezoneSelector from 'ui/components/TimezoneSelector';
 import VisualiseResults from 'ui/containers/VisualiseResults';
 import SourceResults from 'ui/containers/VisualiseResults/SourceResults';
+import { updateModel } from 'ui/redux/modules/models';
+import {
+  getMetadataSelector,
+  setInMetadata
+} from 'ui/redux/modules/metadata';
 import {
   LAST_30_DAYS,
   LAST_7_DAYS,
@@ -15,11 +21,8 @@ import {
   LAST_2_YEARS,
   TODAY
 } from 'ui/utils/constants';
-import {
-  getMetadataSelector,
-  setInMetadata
-} from 'ui/redux/modules/metadata';
-import { createSelector } from 'reselect';
+import has$dte from 'ui/utils/queries/has$dte';
+import { periodKeys } from 'ui/utils/visualisations/projections/period';
 import Editor from './Editor';
 
 const SCHEMA = 'visualisation';
@@ -34,7 +37,6 @@ class StatementsForm extends Component {
   static propTypes = {
     model: PropTypes.instanceOf(Map), // visualisation
     isLoading: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
-    filter: PropTypes.instanceOf(Map), // eslint-disable-line react/no-unused-prop-types
     hasMore: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
     updateModel: PropTypes.func,
     exportVisualisation: PropTypes.func
@@ -77,6 +79,27 @@ class StatementsForm extends Component {
     </select>
   )
 
+  renderTimezoneSelector = () => {
+    const axes = unflattenAxes(this.props.model);
+    const groupAxes = axes.getIn(['group', 'optionKey'], 'date');
+
+    const groupingHasTimezone = periodKeys.includes(groupAxes);
+    const filterHas$dte = has$dte(this.props.model.get('filters'));
+    const periodHasOffset = this.props.model.get('previewPeriod') === 'TODAY';
+    const shouldDisplay = groupingHasTimezone || filterHas$dte || periodHasOffset;
+
+    return shouldDisplay && (
+      <TimezoneSelector
+        value={this.props.model.get('timezone', 'UTC')}
+        onChange={value => this.props.updateModel({
+          schema: 'visualisation',
+          id: this.props.model.get('_id'),
+          path: 'timezone',
+          value,
+        })} />
+    );
+  }
+
   renderFormWithResults = () => (
     <div className="row">
       <div className="col-md-6 left-border">
@@ -85,14 +108,7 @@ class StatementsForm extends Component {
       <div
         className="col-md-6">
         <div className="form-group form-inline" style={{ textAlign: 'right' }}>
-          <TimezoneSelector
-            value={this.props.model.get('timezone', 'UTC')}
-            onChange={value => this.props.updateModel({
-              schema: 'visualisation',
-              id: this.props.model.get('_id'),
-              path: 'timezone',
-              value,
-            })} />
+          { this.renderTimezoneSelector() }
           { this.renderTimePicker() }
         </div>
         <div style={{ height: '400px', paddingTop: 5 }}>

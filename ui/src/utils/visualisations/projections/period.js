@@ -1,5 +1,14 @@
 import formatDate from 'ui/utils/visualisations/helpers/formatDate';
 
+export const periodKeys = [
+  'date',
+  'minute',
+  'hour',
+  'weekday',
+  'month',
+  'year',
+];
+
 /**
  * returns period expression or undefined
  *
