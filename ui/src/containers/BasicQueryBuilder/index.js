@@ -7,24 +7,29 @@ import QueryBuilderSections from './QueryBuilderSections';
 const enhance = compose(
   setPropTypes({
     componentPath: PropTypes.instanceOf(List),
+    timezone: PropTypes.string,
+    orgTimezone: PropTypes.string.isRequired,
     query: PropTypes.instanceOf(Map),
     defaults: PropTypes.instanceOf(Map),
     onQueryChange: PropTypes.func,
+    onChangeTimezone: PropTypes.func,
   }),
   defaultProps({
     query: new Map(),
   }),
   shouldUpdate((prev, next) => !(
     prev.timezone === next.timezone &&
+    prev.orgTimezone === next.orgTimezone &&
     prev.query.equals(next.query)
   ))
 );
 
-const BasicQueryBuilder = ({ componentPath, timezone, defaults, query, onQueryChange }) => {
+const BasicQueryBuilder = ({ componentPath, timezone, orgTimezone, defaults, query, onQueryChange, onChangeTimezone }) => {
   const criteria = getCriteria(query);
   return (
     <QueryBuilderSections
       timezone={timezone}
+      orgTimezone={orgTimezone}
       componentPath={componentPath}
       criteria={criteria}
       defaults={defaults}
@@ -34,7 +39,8 @@ const BasicQueryBuilder = ({ componentPath, timezone, defaults, query, onQueryCh
       onAddCriterion={(criterion, section) =>
         onQueryChange(addCriterionFromSection(query, criterion, section))
       }
-      onDeleteCriterion={key => onQueryChange(deleteCriterion(criteria, key))} />
+      onDeleteCriterion={key => onQueryChange(deleteCriterion(criteria, key))}
+      onChangeTimezone={onChangeTimezone} />
   );
 };
 

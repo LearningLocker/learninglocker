@@ -14,13 +14,15 @@ const BLANK_QUERY = new Map();
 
 class QueryBuilder extends Component {
   static propTypes = {
-    timezone: PropTypes.string.isRequired,
+    timezone: PropTypes.string,
+    orgTimezone: PropTypes.string.isRequired,
     componentPath: PropTypes.instanceOf(List),
     query: PropTypes.instanceOf(Map),
     onChange: PropTypes.func,
     isRawMode: PropTypes.bool,
     setIsRawMode: PropTypes.func,
     clearModelsCache: PropTypes.func,
+    onChangeTimezone: PropTypes.func,
   }
 
   static defaultProps = {
@@ -58,10 +60,12 @@ class QueryBuilder extends Component {
     ) : (
       <BasicQueryBuilder
         timezone={this.props.timezone}
+        orgTimezone={this.props.orgTimezone}
         componentPath={this.props.componentPath}
         onQueryChange={this.onQueryChange}
         query={this.props.query}
-        defaults={this.props.defaults} />
+        defaults={this.props.defaults}
+        onChangeTimezone={this.props.onChangeTimezone} />
     ));
   }
 

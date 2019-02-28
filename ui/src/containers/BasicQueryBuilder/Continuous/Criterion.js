@@ -1,9 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import { Map, Set } from 'immutable';
-import DatePicker from 'ui/components/Material/DatePicker';
 import classNames from 'classnames';
 import moment from 'moment';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import DatePicker from 'ui/components/Material/DatePicker';
+import { TimezoneSelector, buildDefaultOptionLabel } from 'ui/components/TimezoneSelector';
 import Operator from '../Operator';
 import styles from '../styles.css';
 import { symbolOpToMongoOp } from './helpers';
@@ -23,15 +24,18 @@ import { symbolOpToMongoOp } from './helpers';
  */
 class Criterion extends Component {
   static propTypes = {
-    timezone: PropTypes.string.isRequired,
+    timezone: PropTypes.string,
+    orgTimezone: PropTypes.string.isRequired,
     section: PropTypes.instanceOf(Map).isRequired,
     criterion: PropTypes.instanceOf(Map).isRequired,
     onCriterionChange: PropTypes.func.isRequired,
     onDeleteCriterion: PropTypes.func.isRequired,
+    onChangeTimezone: PropTypes.func.isRequired,
   };
 
   shouldComponentUpdate = nextProps => !(
     this.props.timezone === nextProps.timezone &&
+    this.props.orgTimezone === nextProps.orgTimezone &&
     this.props.section.equals(nextProps.section) &&
     this.props.criterion.equals(nextProps.criterion)
   );
@@ -119,7 +123,8 @@ class Criterion extends Component {
    */
   onChangeDate = (value) => {
     const yyyymmdd = moment.parseZone(value).format('YYYY-MM-DD');
-    const z = moment().tz(this.props.timezone).format('Z');
+    const timezone = this.props.timezone || this.props.orgTimezone;
+    const z = moment(yyyymmdd).tz(timezone).format('Z');
     this.onChangeCriterion(this.getOperator(), `${yyyymmdd}T00:00${z}`);
   };
 
@@ -131,7 +136,6 @@ class Criterion extends Component {
       styles.criterionButton,
       'btn btn-default btn-xs'
     );
-    const z = moment().tz(this.props.timezone).format('Z');
 
     return (
       <div className={styles.criterion}>
@@ -146,9 +150,16 @@ class Criterion extends Component {
           <DatePicker
             value={this.getDateValue()}
             onChange={this.onChangeDate} />
-          <span className={classNames(styles.criterionValueSupplement)}>
-            {this.props.timezone} ({z})
-          </span>
+
+          <div className={classNames(styles.criterionValueSupplement)}>
+            <TimezoneSelector
+              value={this.props.timezone}
+              onChange={this.props.onChangeTimezone}
+              defaultOption={{
+                label: buildDefaultOptionLabel(this.props.orgTimezone),
+                value: null
+              }} />
+          </div>
         </div>
 
         <button

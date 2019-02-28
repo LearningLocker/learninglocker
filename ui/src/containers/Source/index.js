@@ -1,5 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import tooltipFactory from 'react-toolbox/lib/tooltip';
+import { IconButton } from 'react-toolbox/lib/button';
+import { withProps, compose } from 'recompose';
 import { Map, fromJS, List } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { VelocityTransitionGroup } from 'velocity-react';
@@ -10,8 +13,6 @@ import {
 import { updateStatementQuery, updateStatementTimezone } from 'ui/redux/actions';
 import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
 import Statement from 'ui/components/Statement';
-import Spinner from 'ui/components/Spinner';
-import TimezoneSelector from 'ui/components/TimezoneSelector';
 import QueryBuilder from 'ui/containers/QueryBuilder';
 import StatementForm from 'ui/containers/StatementForm';
 import ModelList from 'ui/containers/ModelList';
@@ -20,9 +21,7 @@ import { addTokenToQuery } from 'ui/utils/queries';
 import update$dteTimezone from 'ui/utils/queries/update$dteTimezone';
 import { valueToCriteria } from 'ui/redux/modules/queryBuilder';
 import { withModels } from 'ui/utils/hocs';
-import tooltipFactory from 'react-toolbox/lib/tooltip';
-import { IconButton } from 'react-toolbox/lib/button';
-import { withProps, compose } from 'recompose';
+
 import styles from './styles.css';
 
 const withStatements = compose(
@@ -46,7 +45,7 @@ class Source extends Component {
 
   static defaultProps = {
     query: new Map(),
-    statements: new Map(),
+    timezone: null,
     organisationModel: new Map(),
   }
 
@@ -55,15 +54,6 @@ class Source extends Component {
     this.state = {
       isExporting: false
     };
-  }
-
-  componentDidMount = () => {
-    // Set organisation.timezone if statement.timezone is empty
-    if (!this.props.timezone) {
-      this.props.updateStatementTimezone(
-        this.props.organisationModel.get('timezone', 'UTC')
-      );
-    }
   }
 
   toggleIsExporting = () => {
@@ -101,10 +91,6 @@ class Source extends Component {
       [{ $match: this.props.query }]
     ]);
 
-    if (!this.props.timezone) {
-      return <Spinner />;
-    }
-
     return (
       <div>
         <header id="topbar">
@@ -140,17 +126,16 @@ class Source extends Component {
                 <div className="panel-title">
                   Explore
                 </div>
-                <TimezoneSelector
-                  value={this.props.timezone}
-                  onChange={this.onChangeTimezone} />
               </div>
 
               <div className="panel-body" style={{ paddingTop: '0px' }}>
                 <QueryBuilder
                   timezone={this.props.timezone}
+                  orgTimezone={this.props.organisationModel.get('timezone', 'UTC')}
                   componentPath={new List(['source'])}
                   query={this.props.query}
-                  onChange={this.onChangeQuery} />
+                  onChange={this.onChangeQuery}
+                  onChangeTimezone={this.onChangeTimezone} />
               </div>
             </div>
           </div>

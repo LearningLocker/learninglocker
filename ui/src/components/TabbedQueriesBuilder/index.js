@@ -46,9 +46,11 @@ class TabbedQueriesBuilder extends Component {
       <div className="form-group">
         <QueryBuilder
           timezone={this.props.timezone}
+          orgTimezone={'TODO/TabbedQueriesBuilder'}
           componentPath={this.props.componentBasePath.push(index)}
           query={this.props.queries.getIn([index, '$match'], new Map())}
           onChange={this.props.onChangeQuery.bind(null, index)}
+          onChangeTimezone={() => console.log('TODO/TabbedQueriesBuilder')}
           defaults={this.props.defaults} />
       </div>
       <div className="form-group">

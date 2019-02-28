@@ -184,7 +184,7 @@ export const visualisationPipelinesSelector = (
   [
     modelsSchemaIdSelector('visualisation', id),
     shareableDashboardFilterSelector(),
-    activeOrgSelector(),
+    activeOrgSelector,
   ],
   (visualisation, filter, organisationModel) => {
     if (!visualisation) return new List();

@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import { modelsSchemaIdSelector } from 'ui/redux/selectors';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
 
-const activeOrgSelector = () => createSelector(
+const activeOrgSelector = createSelector(
   [state => state, activeOrgIdSelector],
   (state, activeOrgId) =>
     modelsSchemaIdSelector('organisation', activeOrgId)(state),

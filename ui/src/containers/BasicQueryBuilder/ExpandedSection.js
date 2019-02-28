@@ -57,7 +57,8 @@ const withQueryBuilderCacheProps = withProps(
 
 class ExpandedSection extends Component {
   static propTypes = {
-    timezone: PropTypes.string.isRequired,
+    timezone: PropTypes.string,
+    orgTimezone: PropTypes.string.isRequired,
     section: PropTypes.instanceOf(Map),
     sectionCriteria: PropTypes.instanceOf(Map),
     criteria: PropTypes.instanceOf(Map),
@@ -65,12 +66,14 @@ class ExpandedSection extends Component {
     onDeleteCriterion: PropTypes.func,
     onCollapse: PropTypes.func,
     onChildrenChange: PropTypes.func,
-    onAddCriterion: PropTypes.func
+    onAddCriterion: PropTypes.func,
+    onChangeTimezone: PropTypes.func,
   }
 
   shouldComponentUpdate = (nextProps) => {
     const out = !(
       this.props.timezone === nextProps.timezone &&
+      this.props.orgTimezone === nextProps.orgTimezone &&
       this.props.section.equals(nextProps.section) &&
       this.props.criteria.equals(nextProps.criteria) &&
       this.props.models.equals(nextProps.models)
@@ -87,11 +90,13 @@ class ExpandedSection extends Component {
   renderContinuousCriteria = () => (
     <ContinuousCriteria
       timezone={this.props.timezone}
+      orgTimezone={this.props.orgTimezone}
       section={this.props.section}
       criteria={this.props.sectionCriteria}
       onCriteriaChange={this.props.onCriteriaChange}
       onAddCriterion={this.props.onAddCriterion}
-      onDeleteCriterion={this.props.onDeleteCriterion} />
+      onDeleteCriterion={this.props.onDeleteCriterion}
+      onChangeTimezone={this.props.onChangeTimezone} />
   );
 
   renderRangeCriteria = () => (<RangeCriteria
@@ -166,13 +171,15 @@ class ExpandedSection extends Component {
         {children.size > 0 &&
           <Sections
             timezone={this.props.timezone}
+            orgTimezone={this.props.orgTimezone}
             className={styles.expandedChildren}
             sections={children}
             criteria={this.props.criteria}
             onCriteriaChange={this.props.onCriteriaChange}
             onSectionsChange={this.props.onChildrenChange}
             onAddCriterion={this.props.onAddCriterion}
-            onDeleteCriterion={this.props.onDeleteCriterion} />
+            onDeleteCriterion={this.props.onDeleteCriterion}
+            onChangeTimezone={this.props.onChangeTimezone} />
         }
       </div>
     );

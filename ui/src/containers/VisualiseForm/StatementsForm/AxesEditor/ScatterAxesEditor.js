@@ -11,7 +11,7 @@ import BaseAxesEditor from './BaseAxesEditor';
 export class ScatterAxesEditor extends BaseAxesEditor {
   static propTypes = {
     model: PropTypes.instanceOf(Map), // visualisation
-    orgTimezone: PropTypes.string,
+    orgTimezone: PropTypes.string.isRequired,
     updateModel: PropTypes.func
   };
 

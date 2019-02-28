@@ -1,11 +1,14 @@
 import React from 'react';
 import moment from 'moment-timezone';
 
-const NULL = 'null';
+const DEFAULT = 'DEFAULT_VALUE';
 
 const options = moment.tz.names().map(v => (
   <option key={v} value={v}>{`${v} (${moment().tz(v).format('Z')})`}</option>
 ));
+
+export const buildDefaultOptionLabel = orgTimezone =>
+  `Organisation Default: ${orgTimezone}`;
 
 /**
  * Timezone Selector
@@ -14,24 +17,29 @@ const options = moment.tz.names().map(v => (
  *   id: PropTypes.string,
  *   value: PropTypes.string.isRequired,
  *   onChange: PropTypes.func.isRequired,
- *   showNullOption: PropTypes.boolean,
+ *   defaultOption: {
+ *     label: PropTypes.string,
+ *     value: PropTypes.any,
+ *   },
  * }
  */
-const TimezoneSelector = ({ id, value, onChange, showNullOption }) => (
+export const TimezoneSelector = ({ id, value, onChange, defaultOption }) => (
   <select
     id={id || 'timezone-selector'}
     className="form-control"
-    value={value === null ? NULL : value}
+    value={value === null ? DEFAULT : value}
     onChange={(e) => {
-      console.log(e.target.value);
-      const tz = e.target.value === NULL ? null : e.target.value;
+      const tz = e.target.value === DEFAULT ? defaultOption.value : e.target.value;
       onChange(tz);
     }} >
-    {showNullOption && (
-      <option value={NULL}>Organisation Timezone</option>
+    {defaultOption && (
+      // Why not <option value={defaultOption.value}> ?
+      // To pass null props.onChange.
+      // When defaultOption.value is null, e.target.value becomes defaultOption.label in this.onChange,
+      <option value={DEFAULT}>
+        {defaultOption.label}
+      </option>
     )}
     {options}
   </select>
 );
-
-export default TimezoneSelector;

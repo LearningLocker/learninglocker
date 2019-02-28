@@ -5,16 +5,19 @@ import TempCriterion from './TempCriterion';
 
 export default class Criteria extends Component {
   static propTypes = {
-    timezone: PropTypes.string.isRequired,
+    timezone: PropTypes.string,
+    orgTimezone: PropTypes.string.isRequired,
     section: PropTypes.instanceOf(Map),
     criteria: PropTypes.instanceOf(Map),
     onCriteriaChange: PropTypes.func,
     onDeleteCriterion: PropTypes.func,
     onAddCriterion: PropTypes.func,
+    onChangeTimezone: PropTypes.func,
   }
 
   shouldComponentUpdate = nextProps => !(
     this.props.timezone === nextProps.timezone &&
+    this.props.orgTimezone === nextProps.orgTimezone &&
     this.props.section.equals(nextProps.section) &&
     this.props.criteria.equals(nextProps.criteria)
   );
@@ -34,10 +37,12 @@ export default class Criteria extends Component {
   renderCriterion = (criterion, key) => (
     <Criterion
       timezone={this.props.timezone}
+      orgTimezone={this.props.orgTimezone}
       section={this.props.section}
       criterion={criterion}
       onCriterionChange={this.changeCriteria.bind(this, key)}
       onDeleteCriterion={this.deleteCriterion.bind(this, key)}
+      onChangeTimezone={this.props.onChangeTimezone}
       key={key} />
   );
 
@@ -50,6 +55,7 @@ export default class Criteria extends Component {
   renderEmptyCriteria = () => (
     <TempCriterion
       timezone={this.props.timezone}
+      orgTimezone={this.props.orgTimezone}
       section={this.props.section}
       onCriterionChange={this.createCriterion} />
   );

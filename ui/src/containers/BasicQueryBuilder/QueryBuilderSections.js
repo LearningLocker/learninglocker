@@ -18,7 +18,8 @@ import styles from './styles.css';
  */
 class QueryBuilderSections extends Component {
   static propTypes = {
-    timezone: PropTypes.string.isRequired,
+    timezone: PropTypes.string,
+    orgTimezone: PropTypes.string.isRequired,
     componentPath: PropTypes.instanceOf(List),
     sections: PropTypes.instanceOf(Map),
     criteria: PropTypes.instanceOf(Map),
@@ -26,10 +27,12 @@ class QueryBuilderSections extends Component {
     onAddCriterion: PropTypes.func,
     onDeleteCriterion: PropTypes.func,
     queryChangeSections: PropTypes.func,
+    onChangeTimezone: PropTypes.func,
   }
 
   shouldComponentUpdate = nextProps => !(
     this.props.timezone === nextProps.timezone &&
+    this.props.orgTimezone === nextProps.orgTimezone &&
     this.props.sections.equals(nextProps.sections) &&
     this.props.criteria.equals(nextProps.criteria)
   );
@@ -43,13 +46,15 @@ class QueryBuilderSections extends Component {
   render = () => (
     <Sections
       timezone={this.props.timezone}
+      orgTimezone={this.props.orgTimezone}
       className={styles.topLevel}
       sections={this.getSections()}
       criteria={this.props.criteria}
       onCriteriaChange={this.props.onCriteriaChange}
       onSectionsChange={this.changeSections}
       onAddCriterion={this.props.onAddCriterion}
-      onDeleteCriterion={this.props.onDeleteCriterion} />
+      onDeleteCriterion={this.props.onDeleteCriterion}
+      onChangeTimezone={this.props.onChangeTimezone} />
   );
 }
 

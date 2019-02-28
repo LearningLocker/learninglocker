@@ -17,7 +17,8 @@ const DEFAULT_SYMBOL_OP = '<';
  */
 class TempCriterion extends Component {
   static propTypes = {
-    timezone: PropTypes.string.isRequired,
+    timezone: PropTypes.string,
+    orgTimezone: PropTypes.string.isRequired,
     section: PropTypes.instanceOf(Map).isRequired,
     onCriterionChange: PropTypes.func.isRequired,
   }
@@ -28,6 +29,7 @@ class TempCriterion extends Component {
 
   shouldComponentUpdate = (nextProps, nextState) => !(
     this.props.timezone === nextProps.timezone &&
+    this.props.orgTimezone === nextProps.orgTimezone &&
     this.props.section.equals(nextProps.section) &&
     this.state.operator === nextState.operator
   );
@@ -48,7 +50,8 @@ class TempCriterion extends Component {
    */
   onChangeDate = (value) => {
     const yyyymmdd = moment(value).format('YYYY-MM-DD');
-    const z = moment().tz(this.props.timezone).format('Z');
+    const timezone = this.props.timezone || this.props.orgTimezone;
+    const z = moment(yyyymmdd).tz(timezone).format('Z');
     const datetimeString = `${yyyymmdd}T00:00${z}`;
 
     const key = this.getKey();

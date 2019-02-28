@@ -3,7 +3,7 @@ import { Map } from 'immutable';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { unflattenAxes } from 'lib/helpers/visualisation';
-import TimezoneSelector from 'ui/components/TimezoneSelector';
+import { TimezoneSelector, buildDefaultOptionLabel } from 'ui/components/TimezoneSelector';
 import VisualiseResults from 'ui/containers/VisualiseResults';
 import SourceResults from 'ui/containers/VisualiseResults/SourceResults';
 import { updateModel } from 'ui/redux/modules/models';
@@ -49,6 +49,7 @@ class StatementsForm extends Component {
 
   shouldComponentUpdate = nextProps => !(
     this.props.model.equals(nextProps.model) &&
+      this.props.orgTimezone === nextProps.orgTimezone &&
       this.props.source === nextProps.source
   )
 
@@ -105,7 +106,10 @@ class StatementsForm extends Component {
           path: 'timezone',
           value,
         })}
-        showNullOption />
+        defaultOption={{
+          label: buildDefaultOptionLabel(this.props.orgTimezone),
+          value: this.props.orgTimezone,
+        }} />
     );
   }
 
