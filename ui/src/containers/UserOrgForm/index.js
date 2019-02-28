@@ -7,7 +7,7 @@ import QueryBuilder from 'ui/containers/QueryBuilder';
 import UserForm from 'ui/containers/UserForm';
 import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
 import Checkbox from 'ui/components/Material/Checkbox';
-import TimezoneSelector from 'ui/components/TimezoneSelector';
+import { TimezoneSelector } from 'ui/components/TimezoneSelector';
 import update$dteTimezone from 'ui/utils/queries/update$dteTimezone';
 import { connect } from 'react-redux';
 import { getAppDataSelector } from 'ui/redux/modules/app';

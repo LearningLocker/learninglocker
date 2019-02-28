@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { updateModel } from 'ui/redux/modules/models';
 import Checkbox from 'ui/components/Material/Checkbox';
-import TimezoneSelector from 'ui/components/TimezoneSelector';
+import { TimezoneSelector } from 'ui/components/TimezoneSelector';
 import {
   uploadLogo,
   IN_PROGRESS,
