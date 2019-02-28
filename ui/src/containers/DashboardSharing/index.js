@@ -16,8 +16,7 @@ import ModelList from 'ui/containers/ModelList';
 import ModelListItemWithoutModel from 'ui/containers/ModelListItem/ModelListItemWithoutModel';
 import DeleteButtonComponent from 'ui/containers/DeleteButton';
 import { updateModel as reduxUpdateModel } from 'ui/redux/modules/models';
-import { modelsSchemaIdSelector } from 'ui/redux/selectors';
-import { activeOrgIdSelector } from 'ui/redux/modules/router';
+import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
 import { getShareableUrl } from 'ui/utils/dashboard';
 import {
   NOWHERE,
@@ -401,7 +400,7 @@ export default compose(
   withModel,
   withStyles(styles),
   connect(state => ({
-    organisationModel: modelsSchemaIdSelector('organisation', activeOrgIdSelector(state))(state),
+    organisationModel: activeOrgSelector(state),
   })),
   dashboardSharingHandlers
 )(DashboardSharingComponent);

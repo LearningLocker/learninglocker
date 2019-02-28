@@ -5,8 +5,7 @@ import { compose, setPropTypes, withProps, withHandlers } from 'recompose';
 import { withSchema, withModel } from 'ui/utils/hocs';
 import QueryBuilder from 'ui/containers/QueryBuilder';
 import UserForm from 'ui/containers/UserForm';
-import { modelsSchemaIdSelector } from 'ui/redux/selectors';
-import { activeOrgIdSelector } from 'ui/redux/modules/router';
+import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
 import Checkbox from 'ui/components/Material/Checkbox';
 import TimezoneSelector from 'ui/components/TimezoneSelector';
 import update$dteTimezone from 'ui/utils/queries/update$dteTimezone';
@@ -117,7 +116,7 @@ const enhance = compose(
     id: PropTypes.string.isRequired,
   }),
   connect(state => ({
-    organisationModel: modelsSchemaIdSelector('organisation', activeOrgIdSelector(state))(state),
+    organisationModel: activeOrgSelector(state),
     activeScopes: currentScopesSelector(state),
     RESTRICT_CREATE_ORGANISATION: getAppDataSelector('RESTRICT_CREATE_ORGANISATION')(state)
   })),

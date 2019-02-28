@@ -6,10 +6,9 @@ import { VelocityTransitionGroup } from 'velocity-react';
 import {
   statementQuerySelector,
   statementTimezoneSelector,
-  modelsSchemaIdSelector,
 } from 'ui/redux/selectors';
 import { updateStatementQuery, updateStatementTimezone } from 'ui/redux/actions';
-import { activeOrgIdSelector } from 'ui/redux/modules/router';
+import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
 import Statement from 'ui/components/Statement';
 import Spinner from 'ui/components/Spinner';
 import TimezoneSelector from 'ui/components/TimezoneSelector';
@@ -174,6 +173,6 @@ export default compose(
   connect(state => ({
     query: statementQuerySelector(state),
     timezone: statementTimezoneSelector(state),
-    organisationModel: modelsSchemaIdSelector('organisation', activeOrgIdSelector(state))(state),
+    organisationModel: activeOrgSelector(state),
   }), { updateStatementQuery, updateStatementTimezone })
 )(Source);

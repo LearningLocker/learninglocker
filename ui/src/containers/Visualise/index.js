@@ -9,8 +9,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { withModels, withModel } from 'ui/utils/hocs';
 import { addModel } from 'ui/redux/modules/models';
 import { loggedInUserId } from 'ui/redux/modules/auth';
-import { modelsSchemaIdSelector } from 'ui/redux/selectors';
-import { activeOrgIdSelector } from 'ui/redux/modules/router';
+import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
 import SearchBox from 'ui/containers/SearchBox';
 import ModelList from 'ui/containers/ModelList';
 import VisualiseForm from 'ui/containers/VisualiseForm';
@@ -124,6 +123,6 @@ export default compose(
         .route
         .params
         .visualisationId,
-    organisationModel: modelsSchemaIdSelector('organisation', activeOrgIdSelector(state))(state),
+    organisationModel: activeOrgSelector(state),
   }), { addModel })
 )(Visualise);

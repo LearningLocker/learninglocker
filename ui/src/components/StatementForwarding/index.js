@@ -8,8 +8,7 @@ import { addModel } from 'ui/redux/modules/models';
 import ModelList from 'ui/containers/ModelList';
 import { loggedInUserId } from 'ui/redux/modules/auth';
 import { queryStringToQuery, modelQueryStringSelector } from 'ui/redux/modules/search';
-import { modelsSchemaIdSelector } from 'ui/redux/selectors';
-import { activeOrgIdSelector } from 'ui/redux/modules/router';
+import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
 import PrivacyToggleButton from 'ui/containers/PrivacyToggleButton';
 import DeleteButton from 'ui/containers/DeleteButton';
 import StatementForwardingForm from './StatementForwardingForm';
@@ -82,5 +81,5 @@ class StatementForwarding extends Component {
 export default connect(state => ({
   userId: loggedInUserId(state),
   searchString: modelQueryStringSelector(schema)(state),
-  organisationModel: modelsSchemaIdSelector('organisation', activeOrgIdSelector(state))(state),
+  organisationModel: activeOrgSelector(state),
 }), { addModel })(StatementForwarding);
