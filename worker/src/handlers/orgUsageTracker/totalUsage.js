@@ -20,7 +20,12 @@ const toTree = (orgStatsList) => {
   const list = Object.values(dict);
   list.forEach((orgStat) => {
     if (orgStat.parentOrganisation) {
-      dict[orgStat.parentOrganisation].children.push(orgStat);
+      if (dict[orgStat.parentOrganisation]) {
+        dict[orgStat.parentOrganisation].children.push(orgStat);
+      } else {
+        orgStat.parentOrganisation = null;
+      }
+
     }
   });
 
