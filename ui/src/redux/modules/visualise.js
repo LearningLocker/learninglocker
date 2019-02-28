@@ -23,6 +23,7 @@ import {
   modelsByFilterSelector,
   updateModel
 } from 'ui/redux/modules/models';
+import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
 import { metadataSelector } from 'ui/redux/modules/metadata';
 import { modelsSelector } from 'ui/redux/modules/models/selectors';
 import { UPDATE_MODEL } from 'ui/redux/modules/models/updateModel';
@@ -180,14 +181,18 @@ export const visualisationPipelinesSelector = (
   id,
   cb = pipelinesFromQueries // whilst waiting for https://github.com/facebook/jest/issues/3608
 ) => createSelector(
-  [modelsSchemaIdSelector('visualisation', id), shareableDashboardFilterSelector()],
-  (visualisation, filter) => {
+  [
+    modelsSchemaIdSelector('visualisation', id),
+    shareableDashboardFilterSelector(),
+    activeOrgSelector(),
+  ],
+  (visualisation, filter, organisationModel) => {
     if (!visualisation) return new List();
     const type = visualisation.get('type');
     const journey = visualisation.get('journey');
     const previewPeriod = visualisation.get('previewPeriod');
     const benchmarkingEnabled = visualisation.get('benchmarkingEnabled', false);
-    const timezone = visualisation.get('timezone', 'UTC');
+    const timezone = visualisation.get('timezone') || organisationModel.get('timezone', 'UTC');
     const queries = visualisation.get('filters', new List()).map((vFilter) => {
       if (!filter) {
         return vFilter;

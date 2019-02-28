@@ -16,7 +16,8 @@ const SCHEMA = 'visualisation';
 
 class Editor extends Component {
   static propTypes = {
-    model: PropTypes.instanceOf(Map),
+    model: PropTypes.instanceOf(Map), // visualisation model
+    orgTimezone: PropTypes.string.isRequired,
     exportVisualisation: PropTypes.func
   }
 
@@ -25,8 +26,8 @@ class Editor extends Component {
   }
 
   componentDidUpdate = (prevProps) => {
-    const prevTimezone = prevProps.model.get('timezone', 'UTC');
-    const currentTimezone = this.props.model.get('timezone', 'UTC');
+    const prevTimezone = prevProps.model.get('timezone') || prevProps.orgTimezone;
+    const currentTimezone = this.props.model.get('timezone') || this.props.orgTimezone;
 
     if (prevTimezone !== currentTimezone) {
       // Values of these paths may have `{ $dte: ... }` sub queries.
@@ -88,8 +89,14 @@ class Editor extends Component {
     // The Tabs component requires its children to be Tab items
     // We cannot do inline conditionals, therefore we construct the children and pass them in via the props
     const tabs = [
-      <Tab key="axes" label="Axes"><AxesEditor model={this.props.model} /></Tab>,
-      <Tab key="options" label="Options">{ this.renderOptionsEditor() }</Tab>
+      <Tab key="axes" label="Axes">
+        <AxesEditor
+          model={this.props.model}
+          orgTimezone={this.props.orgTimezone} />
+      </Tab>,
+      <Tab key="options" label="Options">
+        { this.renderOptionsEditor() }
+      </Tab>
     ];
 
 
@@ -111,7 +118,7 @@ class Editor extends Component {
 
   renderSeriesEditor = () => (
     <SeriesEditor
-      timezone={this.props.model.get('timezone', 'UTC')}
+      timezone={this.props.model.get('timezone') || this.props.orgTimezone}
       model={this.props.model}
       exportVisualisation={this.props.exportVisualisation} />
   )

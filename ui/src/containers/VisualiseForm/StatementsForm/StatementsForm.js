@@ -36,6 +36,7 @@ export const toggleSourceSelector = ({ id }) => createSelector(
 class StatementsForm extends Component {
   static propTypes = {
     model: PropTypes.instanceOf(Map), // visualisation
+    orgTimezone: PropTypes.string.isRequired,
     isLoading: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
     hasMore: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
     updateModel: PropTypes.func,
@@ -59,7 +60,10 @@ class StatementsForm extends Component {
   })
 
   renderEditor = () => (
-    <Editor model={this.props.model} exportVisualisation={this.props.exportVisualisation} />
+    <Editor
+      model={this.props.model}
+      orgTimezone={this.props.orgTimezone}
+      exportVisualisation={this.props.exportVisualisation} />
   );
 
   renderTimePicker = () => (
@@ -94,13 +98,14 @@ class StatementsForm extends Component {
 
     return shouldDisplay && (
       <TimezoneSelector
-        value={this.props.model.get('timezone', 'UTC')}
+        value={this.props.model.get('timezone', null)}
         onChange={value => this.props.updateModel({
           schema: 'visualisation',
           id: this.props.model.get('_id'),
           path: 'timezone',
           value,
-        })} />
+        })}
+        showNullOption />
     );
   }
 

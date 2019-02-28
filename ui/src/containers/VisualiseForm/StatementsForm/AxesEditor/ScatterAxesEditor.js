@@ -10,7 +10,8 @@ import BaseAxesEditor from './BaseAxesEditor';
 
 export class ScatterAxesEditor extends BaseAxesEditor {
   static propTypes = {
-    model: PropTypes.instanceOf(Map),
+    model: PropTypes.instanceOf(Map), // visualisation
+    orgTimezone: PropTypes.string,
     updateModel: PropTypes.func
   };
 
@@ -50,7 +51,7 @@ export class ScatterAxesEditor extends BaseAxesEditor {
       </div>
       <div className="form-group">
         <QueryEditor
-          timezone={this.props.model.get('timezone', 'UTC')}
+          timezone={this.props.model.get('timezone') || this.props.orgTimezone}
           query={this.getAxesValue(`${axis}Query`)}
           changeQuery={this.changeAxes.bind(this, `${axis}Query`)}
           componentPath={

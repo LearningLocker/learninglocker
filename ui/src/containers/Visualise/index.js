@@ -22,13 +22,17 @@ import styles from './visualise.css';
 
 const schema = 'visualisation';
 
-const VisualisationList = compose(
+/**
+ * @param {string} orgTimezone
+ */
+const buildVisualisationList = orgTimezone => compose(
   withProps({
     schema,
-    sort: fromJS({ createdAt: -1, _id: -1 })
+    sort: fromJS({ createdAt: -1, _id: -1 }),
+    orgTimezone,
   }),
   withModels,
-  withModel
+  withModel,
 )(ModelList);
 
 class Visualise extends Component {
@@ -55,7 +59,7 @@ class Visualise extends Component {
       props: new Map({
         owner: this.props.userId,
         isExpanded: true,
-        timezone: this.props.organisationModel.get('timezone', 'UTC'),
+        timezone: null,
       })
     });
   }
@@ -67,43 +71,47 @@ class Visualise extends Component {
     return createVisualisationName(model);
   }
 
-  render = () => (
-    <div>
-      <header id="topbar">
-        <div className="heading heading-light">
-          <span className="pull-right open_panel_btn" >
-            <button
-              className="btn btn-primary btn-sm"
-              ref={(ref) => { this.addButton = ref; }}
-              onClick={this.onClickAdd}>
-              <i className="ion ion-plus" /> Add new
-            </button>
-          </span>
-          <span className="pull-right open_panel_btn">
-            <SearchBox schema={schema} />
-          </span>
-          Visualise
-        </div>
-      </header>
-      <div className="row">
-        <div className="col-md-12">
-          <VisualisationList
-            id={this.props.visualisationId}
-            filter={queryStringToQuery(this.props.searchString, schema)}
-            ModelForm={VisualiseForm}
-            buttons={[PrivacyToggleButton, DeleteButton]}
-            getDescription={model => (
-              <span>
-                <span style={{ paddingRight: 10 }}>
-                  <VisualisationTypeIcon id={model.get('_id')} tableIcon={false} />
+  render = () => {
+    const orgTimezone = this.props.organisationModel.get('timezone', 'UTC');
+    const VisualisationList = buildVisualisationList(orgTimezone);
+    return (
+      <div>
+        <header id="topbar">
+          <div className="heading heading-light">
+            <span className="pull-right open_panel_btn" >
+              <button
+                className="btn btn-primary btn-sm"
+                ref={(ref) => { this.addButton = ref; }}
+                onClick={this.onClickAdd}>
+                <i className="ion ion-plus" /> Add new
+              </button>
+            </span>
+            <span className="pull-right open_panel_btn">
+              <SearchBox schema={schema} />
+            </span>
+            Visualise
+          </div>
+        </header>
+        <div className="row">
+          <div className="col-md-12">
+            <VisualisationList
+              id={this.props.visualisationId}
+              filter={queryStringToQuery(this.props.searchString, schema)}
+              ModelForm={VisualiseForm}
+              buttons={[PrivacyToggleButton, DeleteButton]}
+              getDescription={model => (
+                <span>
+                  <span style={{ paddingRight: 10 }}>
+                    <VisualisationTypeIcon id={model.get('_id')} tableIcon={false} />
+                  </span>
+                  {this.populateTitle(model)}
                 </span>
-                {this.populateTitle(model)}
-              </span>
-            )} />
+              )} />
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 }
 
 export default compose(
