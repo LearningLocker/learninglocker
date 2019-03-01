@@ -31,6 +31,7 @@ import migrateMongo, { MIGRATIONS_PATH } from 'cli/migrateMongo';
 import seed from 'cli/seed';
 import expirationNotificationEmails from 'cli/commands/expirationNotificationEmails';
 import expirationExport from 'cli/commands/expirationExports';
+import orgUsageTracker from 'cli/commands/orgUsageTracker';
 
 /**
  * Run an async function then exit process
@@ -174,5 +175,10 @@ program
   .command('expirationExport')
   .action(runThenExit(expirationExport));
 // node cli/dist/server expirationExport
+
+program
+  .command('orgUsageTracker')
+  .action(orgUsageTracker);
+// node cli/dist/server orgUsageTracker
 
 program.parse(process.argv);

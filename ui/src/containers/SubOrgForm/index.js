@@ -323,6 +323,7 @@ class SubOrgForm extends Component {
     const settings = model.get('settings');
     const errorMessages = model.getIn(['errors', 'messages'], new Map());
     const ttlId = uuid.v4();
+    const usageStats = model.get('usageStats');
 
     return (
       <div className="row">
@@ -465,6 +466,22 @@ class SubOrgForm extends Component {
                 </span>}
             </div>
           </fieldset>
+
+          {this.props.isSiteAdmin && usageStats &&
+            <div className="form-group">
+              <p>
+                Usage: {usageStats.get('OWN_COUNT').toLocaleString('en')} statements
+                and approximately {Math.round(usageStats.get('OWN_ESTIMATED_BYTES') / 1000000 * 100) / 100} MB
+              </p>
+
+              {usageStats.get('HAS_CHILDREN') &&
+                <p>
+                  Total Usage: {usageStats.get('TOTAL_COUNT').toLocaleString('en')} statements
+                  and approximately {Math.round(usageStats.get('TOTAL_ESTIMATED_BYTES') / 1000000 * 100) / 100} MB
+                </p>
+              }
+            </div>
+          }
         </div>
       </div>
     );

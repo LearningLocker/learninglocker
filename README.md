@@ -8,8 +8,3 @@
 *Learning Locker is copyright [HT2](https://ht2labs.com)*
 
 Please see our [documentation](http://docs.learninglocker.net) for installation, configuration, and usage instructions.
-
-## Requirements
-- Redis ^2.8.11
-- MongoDB ^3.2
-- Node.js ^6.11.3
