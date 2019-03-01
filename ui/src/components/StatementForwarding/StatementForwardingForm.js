@@ -1,14 +1,16 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { List, Map } from 'immutable';
-import { withModel } from 'ui/utils/hocs';
-import { withProps, compose, withHandlers } from 'recompose';
-import Switch from 'ui/components/Material/Switch';
-import QueryBuilder from 'ui/containers/QueryBuilder';
 import classNames from 'classnames';
-import ValidationList from 'ui/components/ValidationList';
-import TableInput from 'ui/components/TableInput';
+import { withProps, compose, withHandlers } from 'recompose';
 import { getAuthHeaders, getHeaders } from 'lib/helpers/statementForwarding';
 import { AUTH_TYPES, AUTH_TYPE_NO_AUTH, STATAMENT_FORWARDING_MAX_RETRIES } from 'lib/constants/statementForwarding';
+import Switch from 'ui/components/Material/Switch';
+import ValidationList from 'ui/components/ValidationList';
+import TableInput from 'ui/components/TableInput';
+import QueryBuilder from 'ui/containers/QueryBuilder';
+import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
+import { withModel } from 'ui/utils/hocs';
 
 const schema = 'statementForwarding';
 
@@ -96,7 +98,11 @@ const updateHandlers = withHandlers({
   changeSendAttachments: ({ updateModel }) => value => updateModel({
     path: ['sendAttachments'],
     value
-  })
+  }),
+  changeTimezone: ({ updateModel }) => value => updateModel({
+    path: ['timezone'],
+    value
+  }),
 });
 
 const withProtocols = withProps(() => ({
@@ -109,6 +115,7 @@ const withAuthTypes = withProps(() => ({
 
 const StatementForwardingForm = ({
   model, // statementForwarding
+  organisationModel,
   changeDescription,
   changeProtocol,
   changeUrl,
@@ -124,6 +131,7 @@ const StatementForwardingForm = ({
   changeHeaders,
   changeFullDocument,
   changeSendAttachments,
+  changeTimezone,
 }) => (
   <div>
     <div className="row">
@@ -332,10 +340,12 @@ const StatementForwardingForm = ({
 
         <div className="form-group">
           <QueryBuilder
-            timezone={model.get('timezone', 'UTC')}
+            timezone={model.get('timezone', null)}
+            orgTimezone={organisationModel.get('timezone', 'UTC')}
             componentPath={new List(['statementForwarding', model.get('_id')])}
             query={model.get('query')}
-            onChange={changeQuery} />
+            onChange={changeQuery}
+            onChangeTimezone={changeTimezone} />
         </div>
       </div>
     </div>
@@ -350,5 +360,8 @@ export default compose(
   withModel,
   withProtocols,
   withAuthTypes,
-  updateHandlers
+  updateHandlers,
+  connect(state => ({
+    organisationModel: activeOrgSelector(state),
+  }))
 )(StatementForwardingForm);
