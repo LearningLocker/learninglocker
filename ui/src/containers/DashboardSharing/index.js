@@ -113,6 +113,13 @@ const handlers = withHandlers({
   copyToClipBoard: () => urlId => () => {
     window.document.getElementById(urlId).select();
     window.document.execCommand('copy');
+  },
+
+  handleTimezoneChange: ({ updateSelectedSharable }) => (value) => {
+    updateSelectedSharable({
+      path: 'timezone',
+      value,
+    });
   }
 });
 
@@ -148,10 +155,12 @@ const ModelFormComponent = ({
   handleFilterModeChange,
   handleFilterJwtSecretChange,
   handleFilterRequiredChange,
+  handleTimezoneChange,
 
   model,
+  organisationModel,
   parentModel,
-  copyToClipBoard
+  copyToClipBoard,
 }) => {
   const titleId = uuid.v4();
   const filterId = uuid.v4();
@@ -304,10 +313,12 @@ const ModelFormComponent = ({
       <span className={classNames('help-block', styles.contextHelp)}>Configure a filter for this dashboard which will always be applied. The dashboard below will show a live preview of the result, updating as you construct your filter<br /><br />If a URL filter is also used, it will be applied on top of this filter</span>
       <QueryBuilder
         id={filterId}
-        timezone={model.get('timezone', 'UTC')}
+        timezone={model.get('timezone', null)}
+        orgTimezone={organisationModel.get('timezone', null)}
         query={model.get('filter', new Map({}))}
         componentPath={new List([])}
-        onChange={handleFilterChange} />
+        onChange={handleFilterChange}
+        onChangeTimezone={handleTimezoneChange} />
     </div>
   </div>);
 };
@@ -318,6 +329,9 @@ const ModelForm = compose(
   withStyles(styles),
   utilHandlers,
   handlers,
+  connect(state => (
+    { organisationModel: activeOrgSelector(state) }
+  )),
 )(ModelFormComponent);
 
 const deleteButton = ({ parentModel }) => compose(
@@ -348,11 +362,11 @@ const openLinkButton = ({ parentModel }) => compose(
 // --------------------------
 
 const dashboardSharingHandlers = withHandlers({
-  addShareable: ({ updateModel, model, organisationModel = new Map() }) => () => {
+  addShareable: ({ updateModel, model }) => () => {
     const newShareable = model.get('shareable', new List()).push(new Map({
       title: 'Shareable',
       createdAt: new Date(),
-      timezone: organisationModel.get('timezone', 'UTC'),
+      timezone: null,
     }));
     updateModel({
       path: 'shareable',
@@ -399,8 +413,5 @@ export default compose(
   })),
   withModel,
   withStyles(styles),
-  connect(state => ({
-    organisationModel: activeOrgSelector(state),
-  })),
   dashboardSharingHandlers
 )(DashboardSharingComponent);
