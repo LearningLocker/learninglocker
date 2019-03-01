@@ -141,7 +141,8 @@ export const reduceSuccess = (
     sort,
     edges,
     pageInfo,
-    cursor, // {before: after:}
+    cursor, // {before: , after: , }
+    insertCursor, // {before: , after: , }
     direction
   }
 ) => {
@@ -151,7 +152,15 @@ export const reduceSuccess = (
     .map(item => item.set('cachedAt', cachedAt));
 
   const oldEdges = state.getIn([schema, filter, sort, 'edges'], new OrderedSet());
-  const cursorKey = cursor !== undefined ? (cursor.get('after') || cursor.get('before')) : undefined;
+  insertCursor = insertCursor || cursor;
+  const cursorKey = insertCursor !== undefined ? (insertCursor.get('after') || insertCursor.get('before')) : undefined;
+  if (cursorKey) {
+    if (insertCursor.get('after')) {
+      direction = FORWARD;
+    } else if (insertCursor.get('before')) {
+      direction = BACKWARD;
+    }
+  }
 
   const newEdges2 = new OrderedSet(
     diffEdges(

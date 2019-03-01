@@ -488,6 +488,27 @@ test('reduceSuccess delete from end', () => {
     .toEqual([1, 2, 3, 4]);
 });
 
+test('reduceSuccess should add to front', () => {
+  const mockState = setupMockState(new OrderedSet([2, 3]));
+  const result = reduceSuccess(mockState.pagination, {
+    schema: 'user',
+    filter: 'filter',
+    sort: 'sort',
+    direction: 'BACKWARD',
+    edges: setupEdges([1]),
+    cursor: new Map({ before: 'c2' }),
+    insertCursor: new Map({ before: 'c2' }),
+    pageInfo: new OrderedMap({
+      page: 1,
+      hasNextPage: false,
+      // hasPreviousPage: false // commented, will truncate the old edges, maybe should be dependent on direction?
+    })
+  });
+
+  expect(result.getIn(['user', 'filter', 'sort', 'edges']).map(item => item.get('id')).toJS())
+    .toEqual([1, 2, 3]);
+});
+
 test('reduceSuccess delete from end BACKWARD', () => {
   const mockState = setupMockState(new OrderedSet([1, 2, 3, 4, 5]));
 

@@ -2,7 +2,14 @@ import { put, take, select } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import { handleActions } from 'redux-actions';
 import Cookies from 'js-cookie';
-import { pickBy, lowerCase, map, first as loFirst, last as loLast } from 'lodash';
+import {
+  pickBy,
+  lowerCase,
+  map,
+  first as loFirst,
+  last as loLast,
+  get
+} from 'lodash';
 import { OrderedMap, Map, fromJS } from 'immutable';
 import { testCookieName } from 'ui/utils/auth';
 import {
@@ -78,7 +85,6 @@ function* initWebsocket() {
     yield put(action);
   }
 }
-
 function* handleWebsocketMessage() {
   while (true) {
     const { message } = yield take(WEBSOCKET_MESSAGE);
@@ -97,9 +103,13 @@ function* handleWebsocketMessage() {
       type: RESET_REQUEST_STATE,
       schema: lowerCase(data.schema)
     });
+
     yield put({
       type: 'learninglocker/pagination/FETCH_MODELS_SUCCESS',
-      cursor: fromJS(data.cursor),
+      // Can't do this, as this will set the 'cursor' in the state, which is
+      // different to the cursor this component was called with
+      cursor: fromJS(get(data, ['pageInfo', 'cursor'])),
+      insertCursor: fromJS(get(data, ['pageInfo', 'insertCursor'])),
       direction: FORWARD,
       edges: map(data.edges, item => (new OrderedMap({ id: item.node._id, cursor: item.cursor }))),
       filter: new Map(),
@@ -107,8 +117,9 @@ function* handleWebsocketMessage() {
       pageInfo: new Map({
         startCursor: loFirst(data.edges).cursor,
         endCursor: loLast(data.edges).cursor,
-        hasNextPage: true,
-        hasPreviousPage: false,
+        // TODO, We don't know this
+        hasNextPage: get(data, ['pageInfo', 'hasNextPage'], true),
+        hasPreviousPage: get(data, ['pageInfo', 'hasPreviousPage'], undefined)
       }),
       schema: lowerCase(data.schema),
       sort: new Map({ // TODO
@@ -137,7 +148,6 @@ function* registerConnection() {
       cursor // The start cursor that we are going before
     } = yield take(REGISTER_ACTION);
     const state = yield select();
-    console.log('603 REGISTER_ACTION');
 
     state.websocket.websocket.send(JSON.stringify({
       type: 'REGISTER',
