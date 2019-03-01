@@ -19,8 +19,9 @@ export default (WrappedComponent) => {
   class WithModels extends Component {
     componentWillMount = () => this.fetchModels(this.props)
 
-    componentWillReceiveProps = nextProps =>
+    componentWillReceiveProps = (nextProps) => {
       this.fetchModels(nextProps);
+    }
 
     fetchModels = ({ schema, filter, sort, first }) => {
       if (filter) {

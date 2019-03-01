@@ -82,7 +82,6 @@ function* initWebsocket() {
 function* handleWebsocketMessage() {
   while (true) {
     const { message } = yield take(WEBSOCKET_MESSAGE);
-
     const data = JSON.parse(message.data);
 
     // normalzr reviver
@@ -138,6 +137,7 @@ function* registerConnection() {
       cursor // The start cursor that we are going before
     } = yield take(REGISTER_ACTION);
     const state = yield select();
+    console.log('603 REGISTER_ACTION');
 
     state.websocket.websocket.send(JSON.stringify({
       type: 'REGISTER',

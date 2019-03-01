@@ -196,15 +196,18 @@ const fetchModels = createAsyncDuck({
       last,
       cursor
     }
-  ) => ({
-    schema,
-    filter,
-    sort,
-    direction,
-    first,
-    last,
-    cursor
-  }),
+  ) => {
+    const out = ({
+      schema,
+      filter,
+      sort,
+      direction,
+      first,
+      last,
+      cursor
+    });
+    return out;
+  },
 
   successAction: ({
     schema,
@@ -231,7 +234,10 @@ const fetchModels = createAsyncDuck({
     cursor
   }),
 
-  checkShouldFire: ({ schema, filter, sort, cursor }, state) => (shouldFetchSelector({ schema, filter, sort, cursor })(state)),
+  checkShouldFire: ({ schema, filter, sort, cursor }, state) => {
+    const out = (shouldFetchSelector({ schema, filter, sort, cursor })(state));
+    return out;
+  },
 
   doAction: function* fetchModelSaga({
     schema,
@@ -250,7 +256,6 @@ const fetchModels = createAsyncDuck({
     const schemaClass = schemas[schema];
 
     const state = yield select();
-
     if (
       state.auth.get('liveWebsockets', false) &&
       includes(SUPPORTED_SCHEMAS, schema) // TODO: only support statements currently
@@ -319,7 +324,6 @@ const fetchAllOutstandingModels = ({
   fetchModelsStart = fetchModels.actions.start // whilst waiting for https://github.com/facebook/jest/issues/3608 to be fixed
 }) => ((dispatch, getState) => {
   const oldState = getState();
-
   const fetchStateRecurse = (cursor2) => {
     const result = dispatch(
         fetchModelsStart(
