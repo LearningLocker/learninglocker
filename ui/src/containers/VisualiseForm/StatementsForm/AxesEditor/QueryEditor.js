@@ -13,18 +13,22 @@ export default class QueryEditor extends Component {
     onChangeTimezone: PropTypes.func,
   }
 
-  shouldComponentUpdate = nextProps => !((
-    this.props.query === undefined &&
-    nextProps.query !== undefined
-  ) && (
-    this.props.query == null &&
-    nextProps.query !== null
-  ) && (
-    (this.props.query !== undefined && this.props.query !== null) &&
-    this.props.query.equals(nextProps.query)
-  ))
-  || this.props.orgTimezone !== nextProps.orgTimezone
-  || this.props.timezone !== nextProps.orgTimezone;
+  shouldComponentUpdate = nextProps => {
+    const x = !((
+      this.props.query === undefined &&
+      nextProps.query !== undefined
+    ) && (
+      this.props.query == null &&
+      nextProps.query !== null
+    ) && (
+      (this.props.query !== undefined && this.props.query !== null) &&
+      this.props.query.equals(nextProps.query)
+    ))
+    || this.props.orgTimezone !== nextProps.orgTimezone
+    || this.props.timezone !== nextProps.orgTimezone;
+  console.log(x);
+  return x;
+  }
 
   toggleQuery = (enabled) => {
     const query = enabled === true ? fromJS({ $match: {} }) : undefined;

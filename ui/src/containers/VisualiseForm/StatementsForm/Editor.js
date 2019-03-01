@@ -118,7 +118,7 @@ class Editor extends Component {
 
   renderSeriesEditor = () => (
     <SeriesEditor
-      timezone={this.props.model.get('timezone') || this.props.orgTimezone}
+      orgTimezone={this.props.orgTimezone}
       model={this.props.model}
       exportVisualisation={this.props.exportVisualisation} />
   )

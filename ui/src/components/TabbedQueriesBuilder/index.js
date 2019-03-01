@@ -10,6 +10,7 @@ import { VISUALISATION_COLORS } from 'ui/utils/constants';
 class TabbedQueriesBuilder extends Component {
   static propTypes = {
     timezone: PropTypes.string,
+    orgTimezone: PropTypes.string.isRequired,
     labelled: PropTypes.bool,
     queries: PropTypes.instanceOf(List),
     componentBasePath: PropTypes.instanceOf(List),
@@ -18,6 +19,7 @@ class TabbedQueriesBuilder extends Component {
     onDeleteQuery: PropTypes.func,
     onChangeLabel: PropTypes.func,
     onChangeColor: PropTypes.func,
+    onChangeTimezone: PropTypes.func,
   }
 
   state = {
@@ -27,6 +29,7 @@ class TabbedQueriesBuilder extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     return !(
       this.props.timezone === nextProps.timezone &&
+      this.props.orgTimezone === nextProps.orgTimezone &&
       this.props.queries.equals(nextProps.queries) &&
       this.state.tabIndex === nextState.tabIndex
     );
@@ -46,11 +49,11 @@ class TabbedQueriesBuilder extends Component {
       <div className="form-group">
         <QueryBuilder
           timezone={this.props.timezone}
-          orgTimezone={'TODO/TabbedQueriesBuilder'}
+          orgTimezone={this.props.orgTimezone}
           componentPath={this.props.componentBasePath.push(index)}
           query={this.props.queries.getIn([index, '$match'], new Map())}
           onChange={this.props.onChangeQuery.bind(null, index)}
-          onChangeTimezone={() => console.log('TODO/TabbedQueriesBuilder')}
+          onChangeTimezone={this.props.onChangeTimezone}
           defaults={this.props.defaults} />
       </div>
       <div className="form-group">

@@ -15,8 +15,8 @@ import {
 
 class VisualiseFilterForm extends Component {
   static propTypes = {
-    timezone: PropTypes.string,
-    model: PropTypes.instanceOf(Map),
+    model: PropTypes.instanceOf(Map), // visualisation
+    orgTimezone: PropTypes.string.isRequired,
     updateModel: PropTypes.func
   };
 
@@ -75,6 +75,15 @@ class VisualiseFilterForm extends Component {
     });
   }
 
+  onChangeTimezone = (value) => {
+    this.props.updateModel({
+      schema: 'visualisation',
+      id: this.props.model.get('_id'),
+      path: ['timezone'],
+      value
+    });
+  }
+
   renderTabbedQueryBuilder = (labelled = true, defaults = {}, text = 'Build your query') => {
     const queries = this.props.model.get('filters', new List());
 
@@ -84,7 +93,8 @@ class VisualiseFilterForm extends Component {
           {text}
         </label>
         <TabbedQueriesBuilder
-          timezone={this.props.timezone}
+          timezone={this.props.model.get('timezone', null)}
+          orgTimezone={this.props.orgTimezone}
           queries={queries}
           labelled={labelled}
           componentBasePath={
@@ -94,6 +104,7 @@ class VisualiseFilterForm extends Component {
           onChangeLabel={this.onChangeLabel}
           onDeleteQuery={this.onDeleteQuery}
           onChangeColor={this.onChangeColor}
+          onChangeTimezone={this.onChangeTimezone}
           defaults={fromJS(defaults)} />
       </div>
     );
