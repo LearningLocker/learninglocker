@@ -13,7 +13,6 @@ import BaseAxesEditor from './BaseAxesEditor';
 export class ScatterAxesEditor extends BaseAxesEditor {
   static propTypes = {
     model: PropTypes.instanceOf(Map),
-    queryBuilderCacheValueModels: PropTypes.instanceOf(Map),
     updateModel: PropTypes.func
   };
 
@@ -21,9 +20,7 @@ export class ScatterAxesEditor extends BaseAxesEditor {
     const prevAxes = this.props.model.filter((item, key) => key.startsWith(VISUALISE_AXES_PREFIX));
     const nextAxes = nextProps.model.filter((item, key) => key.startsWith(VISUALISE_AXES_PREFIX));
 
-    const isEqualsQueryBuilderCacheValue = this.props.queryBuilderCacheValueModels.equals(nextProps.queryBuilderCacheValueModels);
-
-    return !prevAxes.equals(nextAxes) || !isEqualsQueryBuilderCacheValue;
+    return !prevAxes.equals(nextAxes);
   };
 
   handleAxesChange = (key, event) => {
@@ -82,7 +79,6 @@ export class ScatterAxesEditor extends BaseAxesEditor {
 
       <DefinitionTypeSelector
         visualisationModel={this.props.model}
-        queryBuilderCacheValueModels={this.props.queryBuilderCacheValueModels}
         group={this.getAxesValue('group')}
         onChangeGroup={g => this.changeAxes('group', g)} />
 

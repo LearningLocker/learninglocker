@@ -1,4 +1,7 @@
 import React from 'react';
+import { withProps, compose } from 'recompose';
+import { Map, fromJS } from 'immutable';
+import { withModels } from 'ui/utils/hocs';
 import { isContextActivity } from 'ui/utils/visualisations';
 import Dropdown from 'ui/components/Material/Dropdown';
 
@@ -46,4 +49,19 @@ const DefinitionTypeSelector = ({
   );
 };
 
-export default DefinitionTypeSelector;
+
+export default compose(
+  withProps(({ group }) => ({
+    schema: 'querybuildercachevalue',
+    sort: fromJS({ createdAt: -1, _id: -1 }),
+    filter: new Map({
+      path: {
+        $eq: `${group.get('searchString', '')}.definition.type`
+      }
+    })
+  })),
+  withModels,
+  withProps(({ models }) => ({
+    queryBuilderCacheValueModels: models,
+  }))
+)(DefinitionTypeSelector);
