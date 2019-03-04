@@ -126,7 +126,7 @@ function* handleWebsocketMessage() {
       insertCursor: fromJS(get(data, ['pageInfo', 'insertCursor'])),
       direction: FORWARD,
       edges: map(data.edges, item => (new OrderedMap({ id: item.node._id, cursor: item.cursor }))),
-      filter: new Map(),
+      filter: new Map(get(data, 'filter', {})),
       ids: map(models, '_id'),
       pageInfo: new Map({
         startCursor: loFirst(data.edges).cursor,
@@ -146,10 +146,10 @@ function* handleWebsocketMessage() {
         }, ['hasNextPage', 'hasPreviousPage'])
       }),
       schema: lowerCase(data.schema),
-      sort: new Map({ // TODO
+      sort: new Map(get(data, 'sort', {
         _id: 1,
         timestamp: -1
-      })
+      }))
     });
   }
 }
