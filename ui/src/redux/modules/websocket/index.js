@@ -8,7 +8,10 @@ import {
   map,
   first as loFirst,
   last as loLast,
-  get
+  get,
+  isUndefined,
+  omit,
+  reduce
 } from 'lodash';
 import { OrderedMap, Map, fromJS } from 'immutable';
 import { testCookieName } from 'ui/utils/auth';
@@ -85,6 +88,17 @@ function* initWebsocket() {
     yield put(action);
   }
 }
+
+const filterUndefined = (prop, keys) => {
+  const out = reduce(keys, (acc, key) => {
+    if (isUndefined(get(acc, key))) {
+      return omit(acc, key);
+    }
+    return acc;
+  }, prop);
+  return out;
+};
+
 function* handleWebsocketMessage() {
   while (true) {
     const { message } = yield take(WEBSOCKET_MESSAGE);
@@ -117,9 +131,19 @@ function* handleWebsocketMessage() {
       pageInfo: new Map({
         startCursor: loFirst(data.edges).cursor,
         endCursor: loLast(data.edges).cursor,
-        // TODO, We don't know this
-        hasNextPage: get(data, ['pageInfo', 'hasNextPage'], true),
-        hasPreviousPage: get(data, ['pageInfo', 'hasPreviousPage'], undefined)
+        // Only set hasNextPage & hasPreviousPage if we know that.
+        // Otherwise diff algorithem will truncate,
+        // and the load more button will incorectly disapear
+        ...filterUndefined({
+          hasNextPage: get(
+            data, ['pageInfo', 'hasNextPage'],
+            undefined
+          ),
+          hasPreviousPage: get(
+            data, ['pageInfo', 'hasPreviousPage'],
+            undefined
+          )
+        }, ['hasNextPage', 'hasPreviousPage'])
       }),
       schema: lowerCase(data.schema),
       sort: new Map({ // TODO
