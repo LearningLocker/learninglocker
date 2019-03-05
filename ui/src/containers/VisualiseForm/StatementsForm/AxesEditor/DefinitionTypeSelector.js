@@ -22,6 +22,15 @@ const DefinitionTypeSelector = ({
     label: 'All Definition Types'
   };
 
+  const options = queryBuilderCacheValueModels
+    .filter(c => c.get('path', '') === `${searchPath}.definition.type`)
+    .map(c => ({
+      value: c.get('value'),
+      label: c.get('value'),
+    }))
+    .toList()
+    .toJS();
+
   return (
     <div className="form-group">
       <label htmlFor="toggleInput" className="clearfix">
@@ -34,16 +43,7 @@ const DefinitionTypeSelector = ({
           const updatedGroup = group.set('contextActivityDefinitionType', value);
           onChangeGroup(updatedGroup);
         }}
-        source={[defaultOption].concat(
-          queryBuilderCacheValueModels
-          .filter(c => c.get('path', '') === `${searchPath}.definition.type`)
-          .map(c => ({
-            value: c.get('value'),
-            label: c.get('value'),
-          }))
-          .toList()
-          .toJS()
-        )}
+        source={[defaultOption].concat(options)}
         value={group.get('contextActivityDefinitionType', null)} />
     </div>
   );
@@ -51,12 +51,13 @@ const DefinitionTypeSelector = ({
 
 
 export default compose(
-  withProps(({ group }) => ({
+  withProps(({ visualisationModel }) => ({
     schema: 'querybuildercachevalue',
     sort: fromJS({ createdAt: -1, _id: -1 }),
+    first: 1000,
     filter: new Map({
       path: {
-        $eq: `${group.get('searchString', '')}.definition.type`
+        $eq: `${visualisationModel.getIn(['axesgroup', 'searchString'], '')}.definition.type`
       }
     })
   })),
