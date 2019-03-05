@@ -22,6 +22,8 @@ const runSaga = saga => fork(saga);
 
 export default function* rootSaga() {
   yield [
+    ...map(websocketSagas, runSaga),
+    ...map(websocketFetchSagas, runSaga),
     ...map(authSagas, runSaga),
     ...map(paginationSagas, runSaga),
     ...map(aggregationSagas, runSaga),
@@ -34,7 +36,5 @@ export default function* rootSaga() {
     ...map(appSagas, runSaga),
     ...map(alertsSagas, runSaga),
     ...map(personasSagas, runSaga),
-    ...map(websocketSagas, runSaga),
-    ...map(websocketFetchSagas, runSaga)
   ];
 }

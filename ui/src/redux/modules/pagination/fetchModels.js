@@ -71,7 +71,12 @@ const cachedAtSelector = ({ schema, filter, sort, cursor }) =>
     pagination.getIn([cursor, 'cachedAt'], moment(0))
   );
 
-const shouldFetchSelector = ({ schema, filter, sort, cursor }) => (createSelector(
+const shouldFetchSelector = ({
+  schema,
+  filter,
+  sort,
+  cursor,
+}) => (createSelector(
   [
     requestStateSelector({ schema, filter, sort, cursor }),
     cachedAtSelector({ schema, filter, sort, cursor })
@@ -85,6 +90,7 @@ const shouldFetchSelector = ({ schema, filter, sort, cursor }) => (createSelecto
     if (cachedFor < cacheDuration.asMilliseconds()) {
       return false;
     }
+
     return true;
   })
 );
@@ -127,11 +133,14 @@ const hasMoreSelector = (schema, filter, sort, direction = FORWARD) =>
     }
   });
 
-export const reduceStart = (state, { schema, filter, sort, cursor }) => (
+export const reduceStart = (state, { schema, filter, sort, cursor }) => {
+  const out = (
     state
       .setIn([schema, filter, sort, cursor, 'requestState'], IN_PROGRESS)
       .setIn([schema, filter, sort, 'pageInfo', 'currentCursor'], cursor)
   );
+  return out;
+};
 
 export const reduceSuccess = (
   state,

@@ -114,11 +114,6 @@ function* handleWebsocketMessage() {
     yield put(mergeEntitiesDuck.actions.mergeEntitiesAction(entities));
 
     yield put({
-      type: RESET_REQUEST_STATE,
-      schema: lowerCase(data.schema)
-    });
-
-    yield put({
       type: 'learninglocker/pagination/FETCH_MODELS_SUCCESS',
       // Can't do this, as this will set the 'cursor' in the state, which is
       // different to the cursor this component was called with
