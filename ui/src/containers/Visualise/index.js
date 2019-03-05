@@ -24,11 +24,10 @@ const schema = 'visualisation';
 /**
  * @param {string} orgTimezone
  */
-const buildVisualisationList = orgTimezone => compose(
+const VisualisationList = compose(
   withProps({
     schema,
     sort: fromJS({ createdAt: -1, _id: -1 }),
-    orgTimezone,
   }),
   withModels,
   withModel,
@@ -72,7 +71,6 @@ class Visualise extends Component {
 
   render = () => {
     const orgTimezone = this.props.organisationModel.get('timezone', 'UTC');
-    const VisualisationList = buildVisualisationList(orgTimezone);
     return (
       <div>
         <header id="topbar">
@@ -98,6 +96,7 @@ class Visualise extends Component {
               filter={queryStringToQuery(this.props.searchString, schema)}
               ModelForm={VisualiseForm}
               buttons={[PrivacyToggleButton, DeleteButton]}
+              orgTimezone={orgTimezone}
               getDescription={model => (
                 <span>
                   <span style={{ paddingRight: 10 }}>

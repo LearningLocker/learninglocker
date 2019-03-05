@@ -33,9 +33,6 @@ export const TimezoneSelector = ({ id, value, onChange, defaultOption }) => (
       onChange(tz);
     }} >
     {defaultOption && (
-      // Why not <option value={defaultOption.value}> ?
-      // To pass null props.onChange.
-      // When defaultOption.value is null, e.target.value becomes defaultOption.label in this.onChange,
       <option value={DEFAULT}>
         {defaultOption.label}
       </option>
