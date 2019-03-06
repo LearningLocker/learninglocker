@@ -115,10 +115,7 @@ function* handleWebsocketMessage() {
 
     yield put({
       type: 'learninglocker/pagination/FETCH_MODELS_SUCCESS',
-      // Can't do this, as this will set the 'cursor' in the state, which is
-      // different to the cursor this component was called with
-      cursor: fromJS(get(data, ['pageInfo', 'cursor'])),
-      insertCursor: fromJS(get(data, ['pageInfo', 'insertCursor'])),
+      cursor: fromJS(get(data, ['cursor'])),
       direction: FORWARD,
       edges: map(data.edges, item => (new OrderedMap({ id: item.node._id, cursor: item.cursor }))),
       filter: new Map(get(data, 'filter', {})),
