@@ -124,7 +124,6 @@
 "@learninglocker/persona-service@^1.7.1":
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/@learninglocker/persona-service/-/persona-service-1.7.1.tgz#8a1136e0817b8e7089683a1efaaf7b8d83c351ce"
-  integrity sha512-bqSYfecag8PVXbmz0MROxx96bh862boB4/PBjUd72aY7Qpb7yJCRo1o6OFMSHjF0JeclxNoRqG5CQlqlVrVT9g==
   dependencies:
     aws-sdk "^2.0.1"
     bluebird "^3.5.0"
@@ -145,9 +144,9 @@
     string-to-stream "^1.1.0"
     uuid "^3.0.1"
 
-"@learninglocker/xapi-statements@^5.0.9":
-  version "5.1.4"
-  resolved "https://registry.yarnpkg.com/@learninglocker/xapi-statements/-/xapi-statements-5.1.4.tgz#4f89e89611d1ea7a017fdf7309837fa05594911c"
+"@learninglocker/xapi-statements@^7.5.0":
+  version "7.5.0"
+  resolved "https://registry.yarnpkg.com/@learninglocker/xapi-statements/-/xapi-statements-7.5.0.tgz#dca948c07330c4ef0274d2d125712af9ba539c22"
   dependencies:
     "@google-cloud/storage" "^1.5.2"
     "@learninglocker/xapi-validation" "^2.1.10"
@@ -159,23 +158,24 @@
     boolean "^0.1.2"
     btoa "^1.1.2"
     cors "^2.8.1"
-    dotenv "^4.0.0"
+    dotenv "^5.0.0"
     express "^4.14.1"
-    file-stream-rotator "^0.2.0"
+    file-stream-rotator "^0.4.0"
     fs-extra "^5.0.0"
     helmet "^3.5.0"
-    jscommons "^2.1.5"
+    http-status-codes "^1.3.0"
+    ioredis "^3.2.2"
+    jscommons "^2.3.0"
     jsonwebtoken "^8.0.1"
     lodash "^4.17.4"
     mime-types "^2.1.17"
     moment "^2.18.0"
-    mongodb "^2.2.26"
+    mongodb "^3.0.1"
     morgan "^1.8.1"
-    node-fetch "^1.6.3"
-    object-hash "1.2.0"
+    node-fetch "^2.0.0"
+    object-hash "1.3.1"
     promise-retry "^1.1.1"
     query-string "^5.0.1"
-    redis "^2.8.0"
     rulr "^4.0.0"
     source-map-support "^0.5.0"
     stream-to-string "^1.1.0"
@@ -970,9 +970,15 @@ aws4@^1.2.1, aws4@^1.6.0, aws4@^1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.8.0.tgz#f0e003d9ca9e7f59c7a508945d7b2ef9a04a542f"
 
+axios-mock-adapter@^1.16.0:
+  version "1.16.0"
+  resolved "https://registry.yarnpkg.com/axios-mock-adapter/-/axios-mock-adapter-1.16.0.tgz#cdd55bb60d8cb3fcd77fdb9cbb269e47b8b95180"
+  dependencies:
+    deep-equal "^1.0.1"
+
 axios@^0.18.0:
   version "0.18.0"
-  resolved "http://registry.npmjs.org/axios/-/axios-0.18.0.tgz#32d53e4851efdc0a11993b6cd000789d70c05102"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.18.0.tgz#32d53e4851efdc0a11993b6cd000789d70c05102"
   dependencies:
     follow-redirects "^1.3.0"
     is-buffer "^1.1.5"
@@ -3617,7 +3623,7 @@ deep-equal-ident@^1.1.1:
   dependencies:
     lodash.isequal "^3.0"
 
-deep-equal@1.0.1, deep-equal@^1.0.0:
+deep-equal@1.0.1, deep-equal@^1.0.0, deep-equal@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/deep-equal/-/deep-equal-1.0.1.tgz#f5d260292b660e084eff4cdbc9f08ad3247448b5"
 
@@ -3923,7 +3929,7 @@ dotenv@^4.0.0:
   version "4.0.0"
   resolved "http://registry.npmjs.org/dotenv/-/dotenv-4.0.0.tgz#864ef1379aced55ce6f95debecdce179f7a0cd1d"
 
-dotenv@^5.0.1:
+dotenv@^5.0.0, dotenv@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-5.0.1.tgz#a5317459bd3d79ab88cff6e44057a6a3fbb1fcef"
 
@@ -4833,18 +4839,6 @@ file-stream-rotator@^0.0.6:
   resolved "https://registry.yarnpkg.com/file-stream-rotator/-/file-stream-rotator-0.0.6.tgz#3493a61663e5ac95886e67884bb4f000c1e566ff"
   dependencies:
     moment "2.3.1"
-
-file-stream-rotator@^0.2.0:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/file-stream-rotator/-/file-stream-rotator-0.2.1.tgz#0d6fea1a9a7aba25a87cfd31b6e269e44e8f0af2"
-  dependencies:
-    moment "^2.11.2"
-
-file-stream-rotator@^0.3.0:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/file-stream-rotator/-/file-stream-rotator-0.3.1.tgz#605ffb1195814eab84cb57040e0ae401a77791f8"
-  dependencies:
-    moment "^2.11.2"
 
 file-stream-rotator@^0.4.0:
   version "0.4.1"
@@ -6117,6 +6111,10 @@ http-signature@~1.2.0:
     jsprim "^1.2.2"
     sshpk "^1.7.0"
 
+http-status-codes@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/http-status-codes/-/http-status-codes-1.3.0.tgz#9cd0e71391773d0671b489d41cbc5094aa4163b6"
+
 httpntlm@1.6.1:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/httpntlm/-/httpntlm-1.6.1.tgz#ad01527143a2e8773cfae6a96f58656bb52a34b2"
@@ -7159,30 +7157,6 @@ js-yaml@~3.7.0:
 jsbn@~0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
-
-jscommons@^2.1.5:
-  version "2.4.4"
-  resolved "https://registry.yarnpkg.com/jscommons/-/jscommons-2.4.4.tgz#1004b55957bd322db57b20aef642e4650c953426"
-  dependencies:
-    aws-sdk "^2.249.1"
-    bluebird "^3.5.1"
-    body-parser "^1.18.3"
-    boolean "^0.1.3"
-    cors "^2.8.4"
-    express "^4.16.3"
-    file-stream-rotator "^0.3.0"
-    fs-extra "^5.0.0"
-    helmet "^3.12.1"
-    knex "^0.15.0"
-    lodash "^4.17.10"
-    moment "^2.22.1"
-    mongodb "^3.0.8"
-    morgan "^1.9.0"
-    newrelic "^4.0.0"
-    rulr "^4.0.2"
-    uuid "^3.2.1"
-    winston "^2.4.2"
-    winston-aws-cloudwatch "^2.0.0"
 
 jscommons@^2.3.0:
   version "2.4.5"
@@ -8620,7 +8594,6 @@ mongodb-core@2.1.20:
 mongodb-core@3.1.11:
   version "3.1.11"
   resolved "https://registry.yarnpkg.com/mongodb-core/-/mongodb-core-3.1.11.tgz#b253038dbb4d7329f3d1c2ee5400bb0c9221fde5"
-  integrity sha512-rD2US2s5qk/ckbiiGFHeu+yKYDXdJ1G87F6CG3YdaZpzdOm5zpoAZd/EKbPmFO6cQZ+XVXBXBJ660sSI0gc6qg==
   dependencies:
     bson "^1.1.0"
     require_optional "^1.0.1"
@@ -8638,10 +8611,9 @@ mongodb-core@3.1.8:
   optionalDependencies:
     saslprep "^1.0.0"
 
-mongodb@3.1.13:
+mongodb@3.1.13, mongodb@^3.0.1:
   version "3.1.13"
   resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-3.1.13.tgz#f8cdcbb36ad7a08b570bd1271c8525753f75f9f4"
-  integrity sha512-sz2dhvBZQWf3LRNDhbd30KHVzdjZx9IKC0L+kSZ/gzYquCF5zPOgGqRz6sSCqYZtKP2ekB4nfLxhGtzGHnIKxA==
   dependencies:
     mongodb-core "3.1.11"
     safe-buffer "^5.1.2"
@@ -8680,7 +8652,6 @@ mongoose-timestamp@^0.5.0:
 mongoose@^5.4.0:
   version "5.4.11"
   resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.4.11.tgz#db1cbbabbd6287cbdecdf52c2ea8d43194bc517a"
-  integrity sha512-Ah/JaZj4vhYP2CEjIy1ictJguzGJczHMtUQmLrBUpnQ4WhhQl5jOo6JHzKiRJ/PdLV25y22kt8WOdsc0DIojww==
   dependencies:
     async "2.6.1"
     bson "~1.1.0"
@@ -8937,7 +8908,7 @@ node-fetch@^1.0.1, node-fetch@^1.6.3:
     encoding "^0.1.11"
     is-stream "^1.0.1"
 
-node-fetch@^2.3.0:
+node-fetch@^2.0.0, node-fetch@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.3.0.tgz#1a1d940bbfb916a1d3e0219f037e89e71f8c5fa5"
 
@@ -9516,9 +9487,9 @@ object-extended@0.0.7:
     extended "~0.0.3"
     is-extended "~0.0.3"
 
-object-hash@1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-1.2.0.tgz#e96af0e96981996a1d47f88ead8f74f1ebc4422b"
+object-hash@1.3.1:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-1.3.1.tgz#fde452098a951cb145f039bb7d455449ddc126df"
 
 object-hash@^1.1.2, object-hash@^1.1.4:
   version "1.3.0"
@@ -11574,7 +11545,7 @@ redis-parser@^2.4.0, redis-parser@^2.6.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/redis-parser/-/redis-parser-2.6.0.tgz#52ed09dacac108f1a631c07e9b69941e7a19504b"
 
-redis@^2.5.3, redis@^2.8.0:
+redis@^2.5.3:
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/redis/-/redis-2.8.0.tgz#202288e3f58c49f6079d97af7a10e1303ae14b02"
   dependencies:
