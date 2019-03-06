@@ -16,9 +16,7 @@ import {
 import { OrderedMap, Map, fromJS } from 'immutable';
 import { testCookieName } from 'ui/utils/auth';
 import {
-  BACKWARD,
   FORWARD,
-  RESET_REQUEST_STATE
 } from 'ui/redux/modules/pagination/fetchModels';
 import * as schemas from 'ui/utils/schemas';
 import { normalize, arrayOf } from 'normalizr';
