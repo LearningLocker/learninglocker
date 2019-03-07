@@ -10,10 +10,8 @@ import styles from '../styles.css';
 class Criterion extends Component {
   static propTypes = {
     section: PropTypes.instanceOf(Map),
-    criterion: PropTypes.instanceOf(Map),
     filter: PropTypes.instanceOf(Map),
     onCriterionChange: PropTypes.func,
-    onDeleteCriterion: PropTypes.func,
   }
 
   static defaultProps = {
@@ -24,9 +22,8 @@ class Criterion extends Component {
     tempOperator: 'In'
   }
 
-  shouldComponentUpdate = ({ section, criterion, filter }, { tempOperator }) => !(
+  shouldComponentUpdate = ({ section, filter }, { tempOperator }) => !(
     this.props.section.equals(section) &&
-    this.props.criterion.equals(criterion) &&
     this.props.filter.equals(filter) &&
     this.state.tempOperator === tempOperator
   );
@@ -53,28 +50,17 @@ class Criterion extends Component {
     }
   }
 
-  getValues = () => {
-    const operator = this.getOperator();
-    if (operator === 'Out') return this.props.criterion.get('$nor', new List());
-    return this.props.criterion.get('$or', new List());
-  }
+  getValues = () => new List();
 
-  getOperator = () => {
-    if (this.props.criterion.has('$nor')) return 'Out';
-    return 'In';
-  }
+  getOperator = () => this.state.tempOperator;
 
   changeCriterion = (operator, values) =>
     this.props.onCriterionChange(new Map({
-      $comment: this.props.criterion.get('$comment'),
+      $comment: undefined,
     }).merge(this.getCriterionQuery(operator, values)))
 
-  changeValues = (values) => {
-    if (values.size === 0) {
-      return this.props.onDeleteCriterion();
-    }
-    return this.changeCriterion(this.getOperator(), values);
-  }
+  changeValues = values =>
+    this.changeCriterion(this.getOperator(), values);
 
   onAddOption = (model) => {
     if (!model.isEmpty()) {
@@ -94,7 +80,7 @@ class Criterion extends Component {
   }
 
   changeOperator = operator =>
-    this.changeCriterion(operator, this.getValues());
+    this.setState({ tempOperator: operator });
 
   render = () => {
     const criterionClasses = classNames(
