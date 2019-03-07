@@ -86,6 +86,7 @@ export const displayAuto = (value) => {
 export const getDateQuery = date => fromJS({ $dte: date });
 
 export const operators = {
+  ACTOR_DISCRETE: 'actorDiscrete',
   DISCRETE: 'discrete',
   CONTINUOUS: 'continuous',
   RANGE: 'range',
@@ -184,7 +185,7 @@ export const initialSections = fromJS({
           }
           return new Map({ _id: null });
         },
-        operators: operators.DISCRETE,
+        operators: operators.ACTOR_DISCRETE,
       },
     },
   },
