@@ -1,5 +1,5 @@
 import { fromJS, Map } from 'immutable';
-import _ from 'lodash';
+import lodash from 'lodash';
 import logger from 'lib/logger';
 import Visualisation from 'lib/models/visualisation';
 import { Exception } from 'handlebars';
@@ -93,7 +93,7 @@ export default async () => {
         return acc.concat(newFilter);
       }, []);
 
-      if (_.isEqual(oldFilters, newFilters)) {
+      if (lodash.isEqual(oldFilters, newFilters)) {
         return;
       }
 
