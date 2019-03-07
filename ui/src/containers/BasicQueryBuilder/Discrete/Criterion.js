@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import QueryBuilderAutoComplete from
   'ui/components/AutoComplete2/QueryBuilderAutoComplete';
 import Operator from '../Operator';
+import styles from '../styles.css';
 
 class Criterion extends Component {
   static propTypes = {
@@ -106,15 +107,10 @@ class Criterion extends Component {
   }
 
   render = () => {
-    const styles = require('../styles.css');
-
-    const canDeleteCriterion = false && !!this.props.onDeleteCriterion;
-
     const criterionClasses = classNames(
       styles.criterionValue,
-      { [styles.noCriteria]: !canDeleteCriterion }
+      { [styles.noCriteria]: true }
     );
-    const deleteBtnClasses = classNames(styles.criterionButton, 'btn btn-default btn-xs');
 
     return (
       <div className={styles.criterion}>
@@ -135,19 +131,12 @@ class Criterion extends Component {
             searchStringToFilter={this.getSearchStringToFilter()}
             parseOptionTooltip={this.getOptionIdentifier} />
         </div>
-        {(canDeleteCriterion &&
-          <button
-            onClick={this.props.onDeleteCriterion}
-            className={deleteBtnClasses}>
-            <i className="ion-minus-round" />
-          </button>
-        )}
       </div>
     );
   }
 }
 
-export default connect((state, ownProps) => {
+export default connect((_, ownProps) => {
   if (ownProps.section.has('sourceSchema')) {
     const schema = ownProps.section.get('sourceSchema');
     return { schema };
