@@ -20,15 +20,10 @@ class Criterion extends Component {
     filter: new Map(),
   }
 
-  state = {
-    tempOperator: 'In'
-  }
-
-  shouldComponentUpdate = ({ section, criterion, filter }, { tempOperator }) => !(
+  shouldComponentUpdate = ({ section, criterion, filter }) => !(
     this.props.section.equals(section) &&
     this.props.criterion.equals(criterion) &&
-    this.props.filter.equals(filter) &&
-    this.state.tempOperator === tempOperator
+    this.props.filter.equals(filter)
   );
 
   getSearchStringToFilter = () =>
