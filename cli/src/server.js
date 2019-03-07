@@ -20,6 +20,7 @@ import migrateDownloadPaths from 'cli/commands/migrateDownloadPaths';
 import clearAggregationCache from 'cli/commands/clearAggregationCache';
 import migrateVisualiseAxes from 'cli/commands/migrateVisualiseAxes';
 import migrateQueryBuilderCachesPath from 'cli/commands/migrateQueryBuilderCachesPath';
+import migrateToInQueries from 'cli/commands/migrateToInQueries';
 
 import testStatementForwarding from 'cli/commands/testStatementForwarding';
 import testQueryBuilderCache from 'cli/commands/testQueryBuilderCache';
@@ -102,6 +103,8 @@ program.command('migrateVisualiseAxes').action(migrateVisualiseAxes.bind(null, n
 
 program.command('migrateQueryBuilderCachesPath').action(migrateQueryBuilderCachesPath);
 // node cli/dist/server migrateQueryBuilderCachesPath
+
+program.command('migrateToInQueries').action(migrateToInQueries);
 
 program
   .command('testStatementForwarding [statementId]')
