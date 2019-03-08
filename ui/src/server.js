@@ -67,7 +67,12 @@ app.use('/api', (req, res) => {
   proxy.web(req, res, { target: targetUrl });
 });
 
-const wsProxy = proxyMiddleware('/websocket', { target: 'ws://learninglocker:8080', ws: true, changeOrigin: true });
+// TODO
+const wsProxy = proxyMiddleware('/websocket', {
+  target: `ws://${config.apiHost}:${config.apiPort}`,
+  ws: true,
+  changeOrigin: true
+});
 app.use(wsProxy);
 server.on('upgrade', wsProxy.upgrade);
 

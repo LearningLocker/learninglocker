@@ -13,6 +13,7 @@ import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 import HttpError from 'ui/utils/errors/HttpError';
 import Unauthorised from 'lib/errors/Unauthorised';
 import { SUPPORTED_SCHEMAS } from 'lib/constants/websocket';
+import { loggedInUserSelector } from 'ui/redux/modules/auth';
 import diffEdges from './fetchModelsDiff';
 
 export const FORWARD = 'FORWARD'; // forward pagination direction
@@ -275,19 +276,10 @@ const fetchModels = createAsyncDuck({
 
     const state = yield select();
     if (
-      state.auth.get('liveWebsockets', false) &&
+      loggedInUserSelector(state).get('liveWebsockets', false) &&
       includes(SUPPORTED_SCHEMAS, schema) // TODO: only support statements currently
     ) {
       // Do nothing, as we'll do it in websocket/fetchModels saga
-
-      // yield put(registerAction({
-      //   schema,
-      //   filter: plainFilter,
-      //   sort: plainSort,
-      //   cursor: plainCursor,
-      //   first,
-      //   last
-      // }));
       return;
     }
     const { status, body } = yield call(llClient.getConnection, {

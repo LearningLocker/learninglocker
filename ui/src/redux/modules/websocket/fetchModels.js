@@ -6,6 +6,7 @@ import { includes } from 'lodash';
 import { SUPPORTED_SCHEMAS } from 'lib/constants/websocket';
 import { Iterable } from 'immutable';
 import { registerAction } from 'ui/redux/modules/websocket';
+import { loggedInUserSelector } from 'ui/redux/modules/auth';
 
 function* fetchModelsSaga({
   schema,
@@ -19,7 +20,7 @@ function* fetchModelsSaga({
   // do the websocket stuff
   const state = yield select();
   if (
-    state.auth.get('liveWebsockets', false) === false ||
+    loggedInUserSelector(state).get('liveWebsockets', false) === false ||
     !(includes(SUPPORTED_SCHEMAS, schema))
   ) {
     return;

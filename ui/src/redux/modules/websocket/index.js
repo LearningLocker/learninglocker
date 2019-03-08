@@ -11,7 +11,8 @@ import {
   get,
   isUndefined,
   omit,
-  reduce
+  reduce,
+  isString
 } from 'lodash';
 import { OrderedMap, Map, fromJS } from 'immutable';
 import { testCookieName } from 'ui/utils/auth';
@@ -22,7 +23,7 @@ import * as schemas from 'ui/utils/schemas';
 import { normalize, arrayOf } from 'normalizr';
 import entityReviver from 'ui/redux/modules/models/entityReviver';
 import * as mergeEntitiesDuck from 'ui/redux/modules/models/mergeEntities';
-
+import { getAppDataSelector } from 'ui/redux/modules/app';
 
 /* Actions */
 
@@ -51,7 +52,13 @@ export const websocketMessage = ({ ...args }) => ({
 });
 
 function* initWebsocket() {
-  const websocket = new WebSocket('ws://learninglocker:3000/websocket');
+  const state = yield select();
+  const wsUrl = getAppDataSelector('WS_URL')(state);
+  if (!isString(wsUrl)) {
+    throw new Error('Invalid websacket url');
+  }
+
+  const websocket = new WebSocket(`${wsUrl}/websocket`);
 
   // yield promisify(websocket.addEventListener, 'open');
   yield new Promise((resolve) => {

@@ -15,7 +15,10 @@ import { valueToCriteria } from 'ui/redux/modules/queryBuilder';
 import { withModels } from 'ui/utils/hocs';
 import tooltipFactory from 'react-toolbox/lib/tooltip';
 import { IconButton } from 'react-toolbox/lib/button';
-import { withProps, compose } from 'recompose';
+import { withProps, compose, withHandlers } from 'recompose';
+import Switch from 'ui/components/Material/Switch';
+import { loggedInUserSelector, loggedInUserId } from 'ui/redux/modules/auth';
+import { updateModel } from 'ui/redux/modules/models';
 import styles from './styles.css';
 
 const withStatements = compose(
@@ -75,6 +78,11 @@ class Source extends Component {
           <div className={styles.heading}>
             Statements
             <div className={styles.buttons}>
+              {this.props.liveWebsockets && <Switch
+                className={styles.liveWebsocketSwitch}
+                label="Live"
+                onChange={this.props.toggleLiveUpdate}
+                checked={this.props.liveUpdate} />}
               <TooltipIconButton
                 tooltip="Open export panel"
                 tooltipPosition="left"
@@ -131,5 +139,28 @@ export default compose(
   withStyles(styles),
   connect(state => ({
     query: statementQuerySelector(state),
-  }), { updateStatementQuery })
+    userId: loggedInUserId(state),
+    liveWebsockets: loggedInUserSelector(state).get('liveWebsockets', false),
+    liveUpdateOverrides: loggedInUserSelector(state)
+      .get('liveUpdatesOverrides', new Map({
+        statement: loggedInUserSelector(state).get('liveUpdates', false)
+      }))
+  }), { updateStatementQuery, updateModel }),
+  connect((state, { liveUpdateOverrides }) => ({
+    liveUpdate: liveUpdateOverrides.get('statement')
+  }), {}),
+  withHandlers({
+    toggleLiveUpdate: ({
+      liveUpdateOverrides,
+      updateModel: updateModelAction,
+      userId
+    }) => (value) => {
+      updateModelAction({
+        schema: 'user',
+        path: 'liveUpdatesOverrides',
+        id: userId,
+        value: liveUpdateOverrides.set('statement', value)
+      });
+    }
+  })
 )(Source);

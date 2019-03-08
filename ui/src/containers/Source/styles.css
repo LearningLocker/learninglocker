@@ -7,4 +7,8 @@
     font-size: 24px;
     color: #929292; }
 
-
+.liveWebsocketSwitch{
+  display: inline-block;
+  margin-bottom: 3px;
+  margin-right: 16px
+}

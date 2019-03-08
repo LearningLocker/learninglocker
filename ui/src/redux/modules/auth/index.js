@@ -24,10 +24,6 @@ export const initialState = fromJS({
   passwordResetState: false,
   passwordRequestResetState: false,
   tokens: {},
-  // To use websockes over rest, where available
-  liveWebsockets: true,
-  // Whether to recieve live updates
-  liveUpdates: true
 });
 
 /*
