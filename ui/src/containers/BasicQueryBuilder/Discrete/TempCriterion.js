@@ -6,8 +6,9 @@ import QueryBuilderAutoComplete from
   'ui/components/AutoComplete2/QueryBuilderAutoComplete';
 import Operator from '../Operator';
 import styles from '../styles.css';
+import { opToString,  stringToOp, Operators } from './helpers';
 
-class Criterion extends Component {
+class TempCriterion extends Component {
   static propTypes = {
     section: PropTypes.instanceOf(Map),
     filter: PropTypes.instanceOf(Map),
@@ -19,7 +20,7 @@ class Criterion extends Component {
   }
 
   state = {
-    operator: 'In'
+    operator: Operators.IN
   }
 
   shouldComponentUpdate = ({ section, filter }, { operator }) => !(
@@ -27,6 +28,12 @@ class Criterion extends Component {
     this.props.filter.equals(filter) &&
     this.state.operator === operator
   );
+
+  /**
+   * @returns {string}
+   */
+  getQueryKey = () =>
+    this.props.section.get('getQueryKey', '')
 
   getSearchStringToFilter = () =>
     this.props.section.get('searchStringToFilter')
@@ -40,17 +47,28 @@ class Criterion extends Component {
   getOptionIdentifier = option =>
     this.props.section.get('getModelIdent')(option)
 
+  /**
+   * @param {Operators} operator
+   * @param {immutable.Set<string>} values
+   * @returns {void}
+   */
+  onChangeCriterion = (operator, values) => {
+    const key = this.getQueryKey();
+    this.props.onCriterionChange(new Map({
+      $comment: undefined,
+      [key]: new Map({
+        [operator]: values.toList()
+      })
+    }));
+  }
+
   onAddOption = (model) => {
     if (model.isEmpty()) {
       return;
     }
     const newValue = this.getOptionQuery(model);
-    const mongoOp = this.state.operator === 'Out' ? '$nor' : '$or';
-    const subQuery = new Map({ [mongoOp]: new List([newValue]) });
-
-    const commentQuery = new Map({ $comment: undefined });
-
-    this.props.onCriterionChange(commentQuery.merge(subQuery));
+    const newValues = new Set([newValue]);
+    this.onChangeCriterion(this.state.operator, newValues);
   }
 
   onChangeOperator = operator => this.setState({ operator });
@@ -66,8 +84,8 @@ class Criterion extends Component {
         <div className={styles.criterionOperator}>
           <Operator
             operators={new Set(['In', 'Out'])}
-            operator={this.state.operator}
-            onOperatorChange={op => this.onChangeOperator(op)} />
+            operator={opToString(this.state.operator)}
+            onOperatorChange={str => this.onChangeOperator(stringToOp(str))} />
         </div>
         <div className={criterionClasses} >
           <QueryBuilderAutoComplete
@@ -92,4 +110,4 @@ export default connect((_, ownProps) => {
   const path = ownProps.section.get('keyPath');
   const filter = new Map({ path: new Map({ $eq: path.join('.') }) });
   return { schema: 'querybuildercachevalue', filter };
-}, {})(Criterion);
+}, {})(TempCriterion);

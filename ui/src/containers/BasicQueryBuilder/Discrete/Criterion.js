@@ -6,6 +6,8 @@ import QueryBuilderAutoComplete from
   'ui/components/AutoComplete2/QueryBuilderAutoComplete';
 import Operator from '../Operator';
 import styles from '../styles.css';
+import { opToString,  stringToOp, Operators } from './helpers';
+
 
 class Criterion extends Component {
   static propTypes = {
@@ -26,6 +28,12 @@ class Criterion extends Component {
     this.props.filter.equals(filter)
   );
 
+  /**
+   * @returns {string}
+   */
+  getQueryKey = () =>
+    this.props.section.get('getQueryKey', '')
+
   getSearchStringToFilter = () =>
     this.props.section.get('searchStringToFilter')
 
@@ -41,23 +49,39 @@ class Criterion extends Component {
   getQueryOption = query =>
     this.props.section.get('getQueryModel')(query)
 
+  /**
+   * @returns {Operators}
+   */
+  getOperator = () => {
+    const key = this.getQueryKey();
+    const subQuery = this.props.criterion.get(key, new Map());
+    return subQuery.has(Operators.IN) ? Operators.IN : Operators.NIN;
+  }
+
+  /**
+   * @returns {immutable.Set}
+   */
   getValues = () => {
+    const key = this.getQueryKey();
+    const subQuery = this.props.criterion.get(key, new Map());
     const operator = this.getOperator();
-    const mongoOp = operator === 'Out' ? '$nor' : '$or';
-    return this.props.criterion.get(mongoOp, new List());
+    return subQuery.get(operator, new List()).toSet();
   }
 
-  getOperator = () => this.props.criterion.has('$nor') ? 'Out' : 'In';
-
+  /**
+   * @param {Operators} operator
+   * @param {immutable.Set<string>} values
+   * @returns {void}
+   */
   onChangeCriterion = (operator, values) => {
-    const mongoOp = operator === 'Out' ? '$nor' : '$or';
-    const subQuery = new Map({ [mongoOp]: values });
-
-    const commentQuery = new Map({ $comment: this.props.criterion.get('$comment') });
-
-    this.props.onCriterionChange(commentQuery.merge(subQuery));
+    const key = this.getQueryKey();
+    this.props.onCriterionChange(new Map({
+      $comment: this.props.criterion.get('$comment'),
+      [key]: new Map({
+        [operator]: values.toList()
+      })
+    }));
   }
-
 
   onAddOption = (model) => {
     if (model.isEmpty()) {
@@ -65,21 +89,21 @@ class Criterion extends Component {
     }
     const newValue = this.getOptionQuery(model);
     const values = this.getValues();
-    const added = values.push(newValue)
+    const added = values.add(newValue)
     this.onChangeCriterion(this.getOperator(), added);
   }
 
   onRemoveOption = (model) => {
     const values = this.getValues();
-    const newValue = this.getOptionQuery(model);
-    const filtered = values.filter(value => !value.equals(newValue));
+    const removingValue = this.getOptionQuery(model);
+    const removed = values.remove(removingValue);
 
-    if (filtered.size === 0) {
+    if (removed.size === 0) {
       this.props.onDeleteCriterion();
       return;
     }
 
-    this.onChangeCriterion(this.getOperator(), filtered);
+    this.onChangeCriterion(this.getOperator(), removed);
   }
 
   onChangeOperator = operator =>
@@ -88,7 +112,7 @@ class Criterion extends Component {
   render = () => {
     const criterionClasses = classNames(
       styles.criterionValue,
-      { [styles.noCriteria]: true }
+      styles.noCriteria
     );
 
     return (
@@ -96,12 +120,12 @@ class Criterion extends Component {
         <div className={styles.criterionOperator}>
           <Operator
             operators={new Set(['In', 'Out'])}
-            operator={this.getOperator()}
-            onOperatorChange={this.onChangeOperator} />
+            operator={opToString(this.getOperator())}
+            onOperatorChange={str => this.onChangeOperator(stringToOp(str))} />
         </div>
         <div className={criterionClasses} >
           <QueryBuilderAutoComplete
-            values={this.getValues().map(this.getQueryOption)}
+            values={this.getValues().toList().map(this.getQueryOption)}
             filter={this.props.filter}
             schema={this.props.schema}
             selectOption={this.onAddOption}
