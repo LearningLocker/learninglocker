@@ -41,11 +41,6 @@ class Criterion extends Component {
   getQueryOption = query =>
     this.props.section.get('getQueryModel')(query)
 
-  getCriterionQuery = (operator, criterion) => {
-    const mongoOp = operator === 'Out' ? '$nor' : '$or';
-    return new Map({ [mongoOp]: criterion });
-  }
-
   getValues = () => {
     const operator = this.getOperator();
     const mongoOp = operator === 'Out' ? '$nor' : '$or';
@@ -54,17 +49,22 @@ class Criterion extends Component {
 
   getOperator = () => this.props.criterion.has('$nor') ? 'Out' : 'In';
 
-  onChangeCriterion = (operator, values) =>
-    this.props.onCriterionChange(new Map({
-      $comment: this.props.criterion.get('$comment'),
-    }).merge(this.getCriterionQuery(operator, values)))
+  onChangeCriterion = (operator, values) => {
+    const mongoOp = operator === 'Out' ? '$nor' : '$or';
+    const subQuery = new Map({ [mongoOp]: values });
+
+    const commentQuery = new Map({ $comment: this.props.criterion.get('$comment') });
+
+    this.props.onCriterionChange(commentQuery.merge(subQuery));
+  }
+
 
   onAddOption = (model) => {
     if (model.isEmpty()) {
       return;
     }
-    const values = this.getValues();
     const newValue = this.getOptionQuery(model);
+    const values = this.getValues();
     const added = values.push(newValue)
     this.onChangeCriterion(this.getOperator(), added);
   }
