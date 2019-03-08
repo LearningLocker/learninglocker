@@ -70,7 +70,7 @@ class Criterion extends Component {
 
   /**
    * @param {Operators} operator
-   * @param {immutable.Set<string>} values
+   * @param {immutable.Set} values
    * @returns {void}
    */
   onChangeCriterion = (operator, values) => {

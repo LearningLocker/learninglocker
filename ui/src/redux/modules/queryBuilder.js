@@ -111,11 +111,11 @@ export const initialSections = fromJS({
   who: {
     title: 'Who',
     keyPath: new List(['person']),
+    getQueryKey: 'person._id',
     sourceSchema: 'persona',
     searchStringToFilter: searchStringToPersonaFilter,
     getModelIdent: model => model.get('_id'),
     getModelDisplay: model => model.get('name', model.get('_id')),
-    getQueryKey: 'person._id',
     getModelQuery: model => new Map({ $oid: model.get('_id') }),
     getQueryModel: query => new Map({
       _id: new Map({ $oid: query.get('$oid') }),
@@ -191,41 +191,32 @@ export const initialSections = fromJS({
   verbs: {
     title: 'Did',
     keyPath: new List(['statement', 'verb']),
+    getQueryKey: 'statement.verb.id',
     getModelIdent: model => identToString(model.get('value')),
     getModelDisplay: displayCacheValue(displayVerb),
     searchStringToFilter: searchStringToVerbFilter,
-    getModelQuery: model => new Map({
-      'statement.verb.id': model.getIn(['value', 'id'])
-    }),
-    getQueryModel: query => new Map({
-      'value.id': query.get('statement.verb.id')
-    }),
+    getModelQuery: model => model.getIn(['value', 'id']),
+    getQueryModel: query => new Map({ 'value.id': query }),
     operators: operators.DISCRETE,
   },
   objects: {
     title: 'What',
     keyPath: new List(['statement', 'object']),
+    getQueryKey: 'statement.object.id',
     getModelIdent: model => objectIdentToString(model.get('value')),
     getModelDisplay: displayCacheValue(displayActivity),
-    getModelQuery: model => new Map({
-      'statement.object.id': model.getIn(['value', 'id'])
-    }),
-    getQueryModel: query => new Map({
-      'value.id': query.get('statement.object.id')
-    }),
+    getModelQuery: model => model.getIn(['value', 'id']),
+    getQueryModel: query => new Map({ 'value.id': query }),
     operators: operators.DISCRETE,
     children: {
       type: {
         title: 'Type',
         keyPath: new List(['statement', 'object', 'definition', 'type']),
+        getQueryKey: 'statement.object.definition.type',
         getModelIdent: model => model.get('value'),
         getModelDisplay: displayCacheValue(identity),
-        getModelQuery: model => new Map({
-          'statement.object.definition.type': model.get('value')
-        }),
-        getQueryModel: query => new Map({
-          value: query.get('statement.object.definition.type')
-        }),
+        getModelQuery: model => model.get('value'),
+        getQueryModel: query => new Map({ value: query }),
         operators: operators.DISCRETE,
       },
       extensions: {
@@ -400,7 +391,9 @@ export const defaultParser = (value) => {
 // }
 export const valueToCriteria = (basePath, value) => {
   const idents = defaultParser(value.get('value'));
+  console.log(idents);
   const flatIdents = flattenDeep(idents);
+  console.log(flatIdents.toJS());
   const result = flatIdents.mapKeys(
     flatKey => ((flatKey === '') ? basePath : `${basePath}.${flatKey}`)
   ).map(v => fromJS(v));
@@ -453,6 +446,7 @@ const buildInputChild = generator => (keyPath, valueType) => {
   const childOverides = getChildOveridesFromValueType(valueType, generator);
   return new Map({
     keyPath,
+    getQueryKey: joinedPath,
     getModelDisplay: generator.get('getChildDisplay', displayCacheValue(displayAuto)),
     getModelIdent: generator.get('getChildIdent', model => identToString(model.get('value'))),
     getModelQuery: getQuery.bind(null, joinedPath),
