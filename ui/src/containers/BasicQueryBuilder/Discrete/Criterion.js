@@ -42,54 +42,48 @@ class Criterion extends Component {
     this.props.section.get('getQueryModel')(query)
 
   getCriterionQuery = (operator, criterion) => {
-    switch (operator) {
-      case 'Out': return new Map({ $nor: criterion });
-      default: return new Map({ $or: criterion });
-    }
+    const mongoOp = operator === 'Out' ? '$nor' : '$or';
+    return new Map({ [mongoOp]: criterion });
   }
 
   getValues = () => {
     const operator = this.getOperator();
-    if (operator === 'Out') return this.props.criterion.get('$nor', new List());
-    return this.props.criterion.get('$or', new List());
+    const mongoOp = operator === 'Out' ? '$nor' : '$or';
+    return this.props.criterion.get(mongoOp, new List());
   }
 
-  getOperator = () => {
-    if (this.props.criterion.has('$nor')) return 'Out';
-    return 'In';
-  }
+  getOperator = () => this.props.criterion.has('$nor') ? 'Out' : 'In';
 
-  changeCriterion = (operator, values) =>
+  onChangeCriterion = (operator, values) =>
     this.props.onCriterionChange(new Map({
       $comment: this.props.criterion.get('$comment'),
     }).merge(this.getCriterionQuery(operator, values)))
 
-  changeValues = (values) => {
-    if (values.size === 0) {
-      return this.props.onDeleteCriterion();
-    }
-    return this.changeCriterion(this.getOperator(), values);
-  }
-
   onAddOption = (model) => {
-    if (!model.isEmpty()) {
-      const values = this.getValues();
-      const newValue = this.getOptionQuery(model);
-      this.changeValues(values.push(newValue));
+    if (model.isEmpty()) {
+      return;
     }
+    const values = this.getValues();
+    const newValue = this.getOptionQuery(model);
+    const added = values.push(newValue)
+    this.onChangeCriterion(this.getOperator(), added);
   }
 
   onRemoveOption = (model) => {
     const values = this.getValues();
     const newValue = this.getOptionQuery(model);
+    const filtered = values.filter(value => !value.equals(newValue));
 
-    this.changeValues(
-      values.filter(value => !value.equals(newValue))
-    );
+    if (filtered.size === 0) {
+      this.props.onDeleteCriterion();
+      return;
+    }
+
+    this.onChangeCriterion(this.getOperator(), filtered);
   }
 
-  changeOperator = operator =>
-    this.changeCriterion(operator, this.getValues());
+  onChangeOperator = operator =>
+    this.onChangeCriterion(operator, this.getValues());
 
   render = () => {
     const criterionClasses = classNames(
@@ -103,7 +97,7 @@ class Criterion extends Component {
           <Operator
             operators={new Set(['In', 'Out'])}
             operator={this.getOperator()}
-            onOperatorChange={this.changeOperator} />
+            onOperatorChange={this.onChangeOperator} />
         </div>
         <div className={criterionClasses} >
           <QueryBuilderAutoComplete
