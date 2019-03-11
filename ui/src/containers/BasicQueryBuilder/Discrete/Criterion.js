@@ -6,7 +6,7 @@ import QueryBuilderAutoComplete from
   'ui/components/AutoComplete2/QueryBuilderAutoComplete';
 import Operator from '../Operator';
 import styles from '../styles.css';
-import { opToString,  stringToOp, Operators } from './helpers';
+import { opToString, stringToOp, Operators } from './helpers';
 
 
 class Criterion extends Component {
@@ -89,7 +89,7 @@ class Criterion extends Component {
     }
     const newValue = this.getOptionQuery(model);
     const values = this.getValues();
-    const added = values.add(newValue)
+    const added = values.add(newValue);
     this.onChangeCriterion(this.getOperator(), added);
   }
 

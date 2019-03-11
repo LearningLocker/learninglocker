@@ -6,7 +6,7 @@ import QueryBuilderAutoComplete from
   'ui/components/AutoComplete2/QueryBuilderAutoComplete';
 import Operator from '../Operator';
 import styles from '../styles.css';
-import { opToString,  stringToOp, Operators } from './helpers';
+import { opToString, stringToOp, Operators } from './helpers';
 
 class TempCriterion extends Component {
   static propTypes = {
