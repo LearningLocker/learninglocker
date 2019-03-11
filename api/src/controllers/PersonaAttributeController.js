@@ -177,7 +177,7 @@ const updatePersonaAttribute = catchErrors(async (req, res) => {
   });
 
   if (personaId && personaId !== attribute.personaId) {
-    throw new ClientError('Cannot change personaƒId on an attribute; create a new attribute for the persona and delete the old one');
+    throw new ClientError('Cannot change personaId on an attribute; create a new attribute for the persona and delete the old one');
   }
 
   const { attribute: updatedAttribute } = await personaService.overwritePersonaAttribute({
