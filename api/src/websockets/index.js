@@ -63,12 +63,12 @@ const messageManager = (ws, state) => async (message) => {
         ws,
         first: get(jsonMessage, 'first'),
         last: get(jsonMessage, 'last'),
-        history: get(state, 'history', [])
+        history: get(state, ['history', jsonMessage.schema], [])
       });
 
       const { changeStream, history: cursorHistory } = result;
 
-      set(state, 'history', cursorHistory);
+      set(state, ['history', jsonMessage.schema], cursorHistory);
 
       ws.on('error', (err) => {
         logger.error('websocket error', err);
@@ -94,7 +94,7 @@ const messageManager = (ws, state) => async (message) => {
 
 const add = (ws) => {
   const state = {
-    history: []
+    history: {}
   };
   ws.on('message', messageManager(ws, state));
 };

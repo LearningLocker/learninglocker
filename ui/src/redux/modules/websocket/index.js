@@ -126,8 +126,8 @@ function* handleWebsocketMessage() {
       filter: new Map(get(data, 'filter', {})),
       ids: map(models, '_id'),
       pageInfo: new Map({
-        startCursor: loFirst(data.edges).cursor,
-        endCursor: loLast(data.edges).cursor,
+        startCursor: get(loFirst(data.edges), 'cursor'),
+        endCursor: get(loLast(data.edges), 'cursor'),
         // Only set hasNextPage & hasPreviousPage if we know that.
         // Otherwise diff algorithem will truncate,
         // and the load more button will incorectly disapear
