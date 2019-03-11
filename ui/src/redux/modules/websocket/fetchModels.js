@@ -1,12 +1,24 @@
 import {
   FETCH_MODELS,
 } from 'ui/redux/modules/pagination/fetchModels';
-import { put, takeEvery, select } from 'redux-saga/effects';
+import {
+  put,
+  takeEvery,
+  select,
+  take
+} from 'redux-saga/effects';
 import { includes } from 'lodash';
 import { SUPPORTED_SCHEMAS } from 'lib/constants/websocket';
 import { Iterable } from 'immutable';
 import { registerAction } from 'ui/redux/modules/websocket';
 import { loggedInUserSelector } from 'ui/redux/modules/auth';
+
+const shouldLiveUpdateSelector = ({ schema }) => (state) => {
+  const out = loggedInUserSelector(state).getIn(
+    ['liveUpdatesOverrides', schema],
+    loggedInUserSelector(state).get('liveUpdates', true));
+  return out;
+};
 
 function* fetchModelsSaga({
   schema,
@@ -15,10 +27,16 @@ function* fetchModelsSaga({
   cursor,
   first,
   last,
-  sort
+  sort,
 }) {
   // do the websocket stuff
   const state = yield select();
+
+  // user needs to be loaded
+  while (loggedInUserSelector(state).size === 0) {
+    yield take(`${FETCH_MODELS}_SUCCESS`);
+  }
+
   if (
     loggedInUserSelector(state).get('liveWebsockets', false) === false ||
     !(includes(SUPPORTED_SCHEMAS, schema))
@@ -37,7 +55,7 @@ function* fetchModelsSaga({
     cursor: plainCursor,
     direction,
     first,
-    last
+    last: last || (!shouldLiveUpdateSelector({ schema })(state) && -1)
   }));
 }
 

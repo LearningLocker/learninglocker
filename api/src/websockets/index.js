@@ -5,7 +5,11 @@ import {
 import { verifyToken } from 'api/auth/passport';
 import Statement from 'lib/models/statement';
 import User from 'lib/models/user';
-import { isUndefined } from 'lodash';
+import {
+  isUndefined,
+  get,
+  set
+} from 'lodash';
 import logger from 'lib/logger';
 
 const getModel = (schema) => {
@@ -20,7 +24,7 @@ const getModel = (schema) => {
   }
 };
 
-const messageManager = ws => async (message) => {
+const messageManager = (ws, state) => async (message) => {
   const jsonMessage = JSON.parse(message);
   switch (jsonMessage.type) {
     case 'REGISTER': {
@@ -51,13 +55,20 @@ const messageManager = ws => async (message) => {
         break;
       }
 
-      const changeStream = await model.getConnectionWs({
+      const result = await model.getConnectionWs({
         filter: jsonMessage.filter,
         ...jsonMessage.cursor,
         authInfo,
         sort: jsonMessage.sort,
-        ws
+        ws,
+        first: get(jsonMessage, 'first'),
+        last: get(jsonMessage, 'last'),
+        history: get(state, 'history', [])
       });
+
+      const { changeStream, history: cursorHistory } = result;
+
+      set(state, 'history', cursorHistory);
 
       ws.on('error', (err) => {
         logger.error('websocket error', err);
@@ -82,7 +93,10 @@ const messageManager = ws => async (message) => {
 };
 
 const add = (ws) => {
-  ws.on('message', messageManager(ws));
+  const state = {
+    history: []
+  };
+  ws.on('message', messageManager(ws, state));
 };
 
 export default {

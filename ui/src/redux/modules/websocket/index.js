@@ -146,7 +146,7 @@ function* handleWebsocketMessage() {
       sort: new Map(get(data, 'sort', {
         _id: 1,
         timestamp: -1
-      }))
+      })),
     });
   }
 }
@@ -166,7 +166,9 @@ function* registerConnection() {
       filter,
       sort,
       direction,
-      cursor // The start cursor that we are going before
+      cursor, // The start cursor that we are going before
+      first,
+      last
     } = yield take(REGISTER_ACTION);
     const state = yield select();
 
@@ -178,7 +180,9 @@ function* registerConnection() {
       filter,
       sort,
       direction,
-      cursor
+      cursor,
+      first,
+      last
     }));
   }
 }
