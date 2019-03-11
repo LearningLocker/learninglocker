@@ -28,6 +28,11 @@ export const displayActor = (actor = new Map()) => {
 };
 
 const actorIdents = new Set(['mbox', 'mbox_sha1sum', 'openid', 'account']);
+
+/**
+ * @param {immutable.Map} actor
+ * @returns immutable.Map
+ */
 export const getActorIdentifiers = (actor = new Map()) =>
   actor.filter((value, key) => actorIdents.has(key));
 

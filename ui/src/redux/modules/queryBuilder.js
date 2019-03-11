@@ -172,13 +172,13 @@ export const initialSections = fromJS({
                 path.get(1) === 'statement.actor.account.homePage'
               )
             ),
-            getQuery: (basePath, value) => {
+            getQuery: (basePath) => (value) => {
               const query = new Map({ key: basePath, value: value.get('value') });
               return new Map({
                 'person._id': new Map({ $personaIdent: query })
               });
             },
-            getModel: (basePath, query) => new Map({
+            getModel: (_) => (query) => new Map({
               value: query
                 .get('person._id', new Map())
                 .get('$personaIdent', new Map())
@@ -449,16 +449,18 @@ export const defaultParser = (value) => {
  * valueToCriteria
  *
  * @param {string} basePath
- * @param {immutable.Map} value
- * @returns {immutable.Map}
+ * @returns {(value: immutable.Map) => immutable.Map}
  */
-export const valueToCriteria = (basePath, value) => {
+export const valueToCriteria = (basePath) => (value) => {
+  // idents: immutable.Map
   const idents = defaultParser(value.get('value'));
+
+  // flatIdents: immutable.Map
   const flatIdents = flattenDeep(idents);
-  const result = flatIdents.mapKeys(
+
+  return flatIdents.mapKeys(
     flatKey => ((flatKey === '') ? basePath : `${basePath}.${flatKey}`)
   ).map(v => fromJS(v));
-  return result;
 };
 
 export const matchArrays = (needle = new List(), hay = new List()) => {
@@ -484,10 +486,9 @@ export const matchArrays = (needle = new List(), hay = new List()) => {
 
 /**
  * @param {string} basePath
- * @param {*} criteria
- * @returns {*}
+ * @returns {(criteria: immutable.Map|any) => immutable.Map|any}
  */
-const criteriaToValue = (basePath, criteria) => {
+const criteriaToValue = (basePath) => (criteria) => {
   if (!Iterable.isIterable(criteria)) return criteria;
   return criteria.mapKeys(key => key.replace(basePath, 'value'));
 };
@@ -514,7 +515,10 @@ const getChildOveridesFromValueType = (valueType, generator) => {
  * @returns {(keyPath: string[], valueType: ) => immutable.Map}
  */
 const buildInputChild = generator => (keyPath, valueType) => {
+  // (basePath: string) => (value: immutable.Map) => immutable.Map
   const getQuery = generator.get('getQuery', valueToCriteria);
+
+  // (basePath: string) => (criteria: immutable.Map) => immutable.Map
   const getModel = generator.get('getModel', criteriaToValue);
   const joinedPath = keyPath.join('.');
   const childGenerator = generator.set('path', generator.get('path').push(keyPath.last()));
@@ -524,8 +528,8 @@ const buildInputChild = generator => (keyPath, valueType) => {
     getQueryKey: joinedPath,
     getModelDisplay: generator.get('getChildDisplay', displayCacheValue(displayAuto)),
     getModelIdent: generator.get('getChildIdent', model => identToString(model.get('value'))),
-    getModelQuery: getQuery.bind(null, joinedPath),
-    getQueryModel: getModel.bind(null, joinedPath),
+    getModelQuery: getQuery(joinedPath),
+    getQueryModel: getModel(joinedPath),
     childGenerators: new List([childGenerator]),
     ...childOverides,
   });
