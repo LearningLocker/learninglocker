@@ -288,6 +288,7 @@ export const initialSections = fromJS({
       scaled: {
         title: 'Scaled',
         keyPath: new List(['statement', 'result', 'score', 'scaled']),
+        getQueryKey: 'statement.result.score.scaled',
         operators: operators.RANGE,
         getModelIdent: model => objectIdentToString(model.get('value')),
         getModelDisplay: displayCacheValue(displayActivity),
@@ -298,9 +299,7 @@ export const initialSections = fromJS({
         keyPath: new List(['statement', 'result', 'response']),
         operators: operators.STRING_MATCHES,
         getValueQuery: value => value,
-        getModelQuery: model => new Map({
-          'statement.result.response': model
-        }),
+        getModelQuery: model => new Map({ 'statement.result.response': model }),
         getQueryModel: query => query.get('statement.result.response'),
       },
       complete: {
@@ -320,6 +319,7 @@ export const initialSections = fromJS({
       raw: {
         title: 'Raw result',
         keyPath: new List(['statement', 'result', 'score', 'raw']),
+        getQueryKey: 'statement.result.score.raw',
         operators: operators.RANGE,
         getModelIdent: model => objectIdentToString(model.get('value')),
         getModelDisplay: displayCacheValue(displayActivity),
@@ -330,6 +330,7 @@ export const initialSections = fromJS({
       max: {
         title: 'Max result',
         keyPath: new List(['statement', 'result', 'score', 'max']),
+        getQueryKey: 'statement.result.score.max',
         operators: operators.RANGE,
         getModelIdent: model => objectIdentToString(model.get('value')),
         getModelDisplay: displayCacheValue(displayActivity),
@@ -340,6 +341,7 @@ export const initialSections = fromJS({
       min: {
         title: 'Min result',
         keyPath: new List(['statement', 'result', 'score', 'min']),
+        getQueryKey: 'statement.result.score.min',
         operators: operators.RANGE,
         getModelIdent: model => objectIdentToString(model.get('value')),
         getModelDisplay: displayCacheValue(displayActivity),

@@ -84,6 +84,10 @@ export const identToString = (obj = new Map()) => {
   return obj;
 };
 
+/**
+ * @param {immutable.Map|string} obj
+ * @returns {string}
+ */
 export const objectIdentToString = (obj = new Map()) => {
   if (Iterable.isIterable(obj)) {
     const objectType = obj.get('objectType', 'Activity');
