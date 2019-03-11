@@ -1,6 +1,10 @@
 import { Map, Set, Iterable } from 'immutable';
 import { has, isString } from 'lodash';
 
+/**
+ * @param {any} value
+ * @returns {string}
+ */
 export const strDisplay = (value) => {
   if (isString(value)) {
     return value;

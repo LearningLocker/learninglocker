@@ -15,29 +15,54 @@ import {
   strDisplay,
 } from 'ui/utils/xapi';
 
+/**
+ * @param {*} searchString
+ * @returns {immutable.Map}
+ */
 const searchStringToVerbFilter = searchString =>
   fromJS({ $or: [
     { 'value.id': { $regex: `${searchString}`, $options: 'i' } },
     { 'value.display.en-GB': { $regex: `${searchString}`, $options: 'i' } },
   ] });
+
 // const searchStringToDefaultFilter = searchString =>
 //   fromJS({ value: { $regex: `${searchString}`, $options: 'i' } });
 
+/**
+ * @param {*} searchString
+ * @returns {immutable.Map}
+ */
 const searchStringToPersonaFilter = searchString =>
   fromJS({
     name: { $regex: `${searchString}`, $options: 'i' }
   });
 
+/**
+ * @param {string} mapPath
+ * @param {immutable.Map} mapQuery
+ * @param {immutable.Map} map
+ * @returns {immutable.Map}
+ */
 export const reduceMap = (mapPath, mapQuery, map) => {
-  const reducer = path => (query, value, key) => {
+  // (path: string) => (
+  //   accQuery: immutable.Map,
+  //   value: immutable.Map|any,
+  //   key: string
+  // ) => immutable.Map
+  const reducer = path => (accQuery, value, key) => {
     if (value instanceof Map) {
-      return reduceMap(`${path}.${key}`, query, value);
+      return reduceMap(`${path}.${key}`, accQuery, value);
     }
-    return query.set(`${path}.${key}`, value);
+    return accQuery.set(`${path}.${key}`, value);
   };
+
   return map.reduce(reducer(mapPath), mapQuery);
 };
 
+/**
+ * @param {immutable.Map} actor
+ * @returns {immutable.Map}
+ */
 export const getActorQuery = (actor) => {
   const result = reduceMap('statement.actor', new Map(), actor);
   return result
@@ -45,6 +70,10 @@ export const getActorQuery = (actor) => {
     .delete('statement.actor.objectType');
 };
 
+/**
+ * @param {any} value
+ * @returns {string}
+ */
 export const displayAuto = (value) => {
   if (Iterable.isIterable(value)) {
     if (value.has('objectType')) {
@@ -83,6 +112,10 @@ export const displayAuto = (value) => {
   return strDisplay(value);
 };
 
+/**
+ * @param {*} date
+ * @returns {immutable.Map}
+ */
 export const getDateQuery = date => fromJS({ $dte: date });
 
 export const operators = {
@@ -94,6 +127,10 @@ export const operators = {
   STRING_MATCHES: 'stringMatches'
 };
 
+/**
+ * @param {immutable.List} needle
+ * @returns {(haystack: immutable.List) => boolean}
+ */
 const isChildKey = needle => (haystack) => {
   if (needle.size + 1 > haystack.size) return false;
   return needle.equals(haystack.take(needle.size));
@@ -356,6 +393,11 @@ export const initialSections = fromJS({
   },
 });
 
+/**
+ * @param {Iterable|immutable.Map} object
+ * @param {immutable.List} path
+ * @returns {immutable.Map}
+ */
 const flattenDeep = (object, path = new List()) => {
   if (Iterable.isIterable(object)) {
     return object.map((child, key) =>
@@ -365,9 +407,22 @@ const flattenDeep = (object, path = new List()) => {
   return new Map({ [path.join('.')]: object });
 };
 
+/**
+ * @param {immutable.Map} value
+ * @returns {immutable.Map}
+ */
 export const getId = value => new Map({ id: value.get('id') });
+
+/**
+ * @param {immutable.Map} value
+ * @returns {immutable.Map}
+ */
 export const getMongoId = value => new Map({ _id: { $oid: value.get('_id') } });
 
+/**
+ * @param {immutable.Map|Iterable} value
+ * @returns {immutable.Map}
+ */
 export const defaultParser = (value) => {
   if (Iterable.isIterable(value)) {
     if (value.has('objectType')) {
@@ -389,11 +444,17 @@ export const defaultParser = (value) => {
 //  "statement.actor.account.name": "bradlycorkery",
 //  "statement.actor.account.homePage": "www.example.com"
 // }
+
+/**
+ * valueToCriteria
+ *
+ * @param {string} basePath
+ * @param {immutable.Map} value
+ * @returns {immutable.Map}
+ */
 export const valueToCriteria = (basePath, value) => {
   const idents = defaultParser(value.get('value'));
-  console.log(idents);
   const flatIdents = flattenDeep(idents);
-  console.log(flatIdents.toJS());
   const result = flatIdents.mapKeys(
     flatKey => ((flatKey === '') ? basePath : `${basePath}.${flatKey}`)
   ).map(v => fromJS(v));
@@ -421,11 +482,21 @@ export const matchArrays = (needle = new List(), hay = new List()) => {
   return hasMatch;
 };
 
+/**
+ * @param {string} basePath
+ * @param {*} criteria
+ * @returns {*}
+ */
 const criteriaToValue = (basePath, criteria) => {
   if (!Iterable.isIterable(criteria)) return criteria;
   return criteria.mapKeys(key => key.replace(basePath, 'value'));
 };
 
+/**
+ * @param {string} valueType
+ * @param {immutable.Map} generator
+ * @returns {{ operators: string, getValueQuery?: (value: any) => any }}
+ */
 const getChildOveridesFromValueType = (valueType, generator) => {
   if (valueType === 'Number') {
     return {
@@ -438,6 +509,10 @@ const getChildOveridesFromValueType = (valueType, generator) => {
   };
 };
 
+/**
+ * @param {immutable.Map} generator
+ * @returns {(keyPath: string[], valueType: ) => immutable.Map}
+ */
 const buildInputChild = generator => (keyPath, valueType) => {
   const getQuery = generator.get('getQuery', valueToCriteria);
   const getModel = generator.get('getModel', criteriaToValue);
@@ -456,6 +531,10 @@ const buildInputChild = generator => (keyPath, valueType) => {
   });
 };
 
+/**
+ * @param {immutable.List<immutable.Map>} caches
+ * @returns {(generator: immutable.Map) => immutable.Map}
+ */
 const getChildPaths = caches => (generator) => {
   const generatorPath = generator.get('path');
   const defaultPathMatcher = isChildKey(generatorPath);
@@ -465,6 +544,10 @@ const getChildPaths = caches => (generator) => {
   return matchedCaches.groupBy(cache => cache.get('path').take(depth));
 };
 
+/**
+ * @param {immutable.List<immutable.Map>} caches
+ * @returns {(generator: immutable.Map) => immutable.Map}
+ */
 export const buildChildrenFromCaches = caches => (generator) => {
   const groupedCaches = getChildPaths(caches)(generator);
   return groupedCaches.map((groupedCache, keyPath) => {
@@ -484,15 +567,22 @@ export const buildChildrenFromCaches = caches => (generator) => {
   }).mapKeys(key => key.join('.'));
 };
 
+/**
+ * @param {immutable.List<immutable.Map>} caches
+ * @returns {(generators: immutable.List<immutable.Map>) => immutable.Map}
+ */
 const buildChildrenFromGenerators = caches => (generators) => {
   const results = generators.map(buildChildrenFromCaches(caches));
-  const out = results.reduce((res, result) => res
-    .merge(result)
-    , new Map()
+  return results.reduce(
+    (res, result) => res.merge(result),
+    new Map()
   );
-  return out;
 };
 
+/**
+ * @param {immutable.Map} section
+ * @returns {(caches: immutable.List<immutable.Map>) => (generators: immutable.List<immutable.Map>) => immutable.Map}
+ */
 const buildSectionFromGenerators = section => caches => (generators) => {
   const generatedChildren = buildChildrenFromGenerators(caches)(generators);
   return section.update('children', new Map(), children => children.merge(
