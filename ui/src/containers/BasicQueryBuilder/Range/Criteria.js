@@ -12,7 +12,7 @@ export default class Criteria extends Component {
     onAddCriterion: PropTypes.func,
   }
 
-  shouldComponentUpdate = (nextProps) => !(
+  shouldComponentUpdate = nextProps => !(
     this.props.section.equals(nextProps.section) &&
     this.props.criteria.equals(nextProps.criteria)
   )

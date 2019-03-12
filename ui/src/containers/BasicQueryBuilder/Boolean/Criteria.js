@@ -11,7 +11,7 @@ export default class Criteria extends Component {
     onDeleteCriterion: PropTypes.func,
   }
 
-  shouldComponentUpdate = (nextProps) => !(
+  shouldComponentUpdate = nextProps => !(
     this.props.section.equals(nextProps.section) &&
     this.props.criteria.equals(nextProps.criteria)
   );
