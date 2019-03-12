@@ -18,6 +18,19 @@ const isActorCondition = (condition) => {
 };
 
 /**
+ * @param {immutable.Map} condition
+ * @returns {boolean}
+ */
+const isPersonaIdCondition = (condition) => {
+  const comment = condition.get('$comment');
+  const criteriaPath = JSON.parse(comment).criteriaPath || [];
+
+  return criteriaPath.length > 2
+    && criteriaPath[0] === 'persona'
+    && criteriaPath[1] === 'import';
+};
+
+/**
  * Convert queries on immutable object layer
  *
  * @param {immutable.Map} oldFilter
@@ -31,7 +44,7 @@ const _buildNewFilter = (oldFilter) => {
   }
 
   const newConditions = oldConditions.map((condition) => {
-    if (isActorCondition(condition)) {
+    if (isActorCondition(condition) || isPersonaIdCondition(condition)) {
       return condition;
     }
 

@@ -119,8 +119,8 @@ export const displayAuto = (value) => {
 export const getDateQuery = date => fromJS({ $dte: date });
 
 export const operators = {
-  ACTOR_DISCRETE: 'actorDiscrete',
-  DISCRETE: 'discrete',
+  OR_DISCRETE: 'orDiscrete', // Query uses `$or` and `$nor` for multiple values
+  DISCRETE: 'discrete',      // Query uses `$in` and `$nin` for multiple values
   CONTINUOUS: 'continuous',
   RANGE: 'range',
   BOOLEAN: 'boolean',
@@ -163,6 +163,7 @@ export const initialSections = fromJS({
         title: 'Additional Data',
         childGenerators: new List([
           new Map({
+            childOperators: operators.OR_DISCRETE,
             path: new List(['persona', 'import']),
             pathMatcher: path => (
               path.size > 1 &&
@@ -221,7 +222,7 @@ export const initialSections = fromJS({
           }
           return new Map({ _id: null });
         },
-        operators: operators.ACTOR_DISCRETE,
+        operators: operators.OR_DISCRETE,
       },
     },
   },

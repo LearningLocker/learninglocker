@@ -45,8 +45,8 @@ describe('migrateToInQueries', () => {
             {
               $comment: comment2,
               $nor: [
-                { 'key.b': 'value5' },
-                { 'key.b': 'value6' }
+                { 'key.b': { k: 'value5' } },
+                { 'key.b': { k: 'value6' } }
               ]
             },
             {
@@ -77,7 +77,7 @@ describe('migrateToInQueries', () => {
             {
               $comment: comment2,
               'key.b': {
-                $nin: ['value5', 'value6']
+                $nin: [{ k: 'value5' }, { k: 'value6' }]
               }
             },
             {
@@ -100,15 +100,20 @@ describe('migrateToInQueries', () => {
       expect(actual).to.equal(expected);
     });
 
-    it('should not convert queries matching actors', async () => {
+    it('should not convert queries matching actors or persona import', async () => {
       const actorComment = JSON.stringify({
         criterionLabel: 'A',
         criteriaPath: ['statement', 'actor']
       });
 
-      const nonActorComment = JSON.stringify({
+      const normalComment = JSON.stringify({
         criterionLabel: 'B',
         criteriaPath: ['statement', 'object', 'definition', 'type']
+      });
+
+      const personaImportComment = JSON.stringify({
+        criterionLabel: 'C',
+        criteriaPath: ['persona', 'import', 'z']
       });
 
       const input = JSON.stringify({
@@ -123,12 +128,19 @@ describe('migrateToInQueries', () => {
               ]
             },
             {
-              $comment: nonActorComment,
+              $comment: normalComment,
               $nor: [
                 { 'key.b': 'value5' },
                 { 'key.b': 'value6' }
               ]
-            }
+            },
+            {
+              $comment: personaImportComment,
+              $nor: [
+                { 'key.c': 'value7' },
+                { 'key.c': 'value8' }
+              ]
+            },
           ]
         }
       });
@@ -145,11 +157,18 @@ describe('migrateToInQueries', () => {
               ]
             },
             {
-              $comment: nonActorComment,
+              $comment: normalComment,
               'key.b': {
                 $nin: ['value5', 'value6']
               }
-            }
+            },
+            {
+              $comment: personaImportComment,
+              $nor: [
+                { 'key.c': 'value7' },
+                { 'key.c': 'value8' }
+              ]
+            },
           ]
         }
       });

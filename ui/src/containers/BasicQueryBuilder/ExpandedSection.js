@@ -145,7 +145,7 @@ class ExpandedSection extends Component {
         );
       case operators.BOOLEAN: return this.renderBooleanCriteria();
       case operators.STRING_MATCHES: return this.renderStringMatchesCriteria();
-      case operators.ACTOR_DISCRETE: return this.renderActorDiscreteCriteria();
+      case operators.OR_DISCRETE: return this.renderActorDiscreteCriteria();
       default: return this.renderDiscreteCriteria();
     }
   };
