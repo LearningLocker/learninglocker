@@ -1,12 +1,12 @@
-import logger from 'lib/logger';
 import migrateToInQueries from '../migrateToInQueries';
+import migrateFromInQueries from '../migrateFromInQueries';
 
 const up = async () => {
   migrateToInQueries();
 };
 
 const down = async () => {
-  logger.info('backward migration is not implemented');
+  migrateFromInQueries();
 };
 
 export default { up, down };

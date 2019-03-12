@@ -1,8 +1,8 @@
 import { fromJS, Map } from 'immutable';
 import lodash from 'lodash';
 import logger from 'lib/logger';
+import Dashboard from 'lib/models/dashboard';
 import Visualisation from 'lib/models/visualisation';
-import { Exception } from 'handlebars';
 
 /**
  * @param {immutable.Map} condition
@@ -37,11 +37,16 @@ const isPersonaIdCondition = (condition) => {
  * @returns {immutable.Map}
  */
 const _buildNewQuery = (oldQuery) => {
-  const oldConditions = oldQuery.getIn(['$match', '$and']);
 
-  if (oldConditions === undefined) {
+  // some queries start with ['$match', '$and'] others do ['$and']
+  const startsWithMatchAnd = oldQuery.hasIn(['$match', '$and']);
+  const startsWithAnd = oldQuery.has('$and');
+
+  if (!startsWithMatchAnd && !startsWithAnd) {
     return oldQuery;
   }
+
+  const oldConditions = oldQuery.getIn(['$match', '$and'], oldQuery.get('$and'));
 
   const newConditions = oldConditions.map((condition) => {
     if (isActorCondition(condition) || isPersonaIdCondition(condition)) {
@@ -67,7 +72,8 @@ const _buildNewQuery = (oldQuery) => {
       .set(key, new Map({ [comparisonOp]: values }));
   });
 
-  return oldQuery.setIn(['$match', '$and'], newConditions);
+  const path = startsWithMatchAnd ? ['$match', '$and'] : ['$and'];
+  return oldQuery.setIn(path, newConditions);
 };
 
 /**
@@ -87,7 +93,7 @@ export const buildNewQuery = (oldQuery) => {
     const immutableNewQuery = _buildNewQuery(immutableOldQuery);
     return JSON.stringify(immutableNewQuery.toJS());
   } catch (error) {
-    throw new Exception(`${error.message}: ${oldQuery}`);
+    throw new Error(`${error.message}: ${oldQuery}`);
   }
 };
 
@@ -95,68 +101,91 @@ const convertVisualisations = async () => {
   const visualisations = await Visualisation.find({});
 
   visualisations.forEach((visualisation) => {
-      // filters
-    const oldQueries = visualisation.filters;
-    const newQueries = visualisation.filters.reduce((acc, filter) => {
-      const newQuery = buildNewQuery(filter);
-      return acc.concat(newQuery);
+    if (visualisation.hasBeenMigrated) {
+      logger.error('visualisation may have been migrated');
+      throw new Error('visualisation may have been migrated');
+    }
+
+    // filters
+    const oldFilters = visualisation.filters;
+    const newFilters = oldFilters.reduce((acc, oldFilter) => {
+      const newFilter = buildNewQuery(oldFilter);
+      return acc.concat(newFilter);
     }, []);
 
-      // axesxQuery
+    // axesxQuery
     const oldAxesxQuery = visualisation.axesxQuery;
     const newAxesxQuery = buildNewQuery(oldAxesxQuery);
 
-      // axesyQuery
+    // axesyQuery
     const oldAxesyQuery = visualisation.axesyQuery;
     const newAxesyQuery = buildNewQuery(oldAxesyQuery);
 
-      // Check whether queries are changed
-    const isFiltersChanged = !lodash.isEqual(oldQueries, newQueries);
-    const isAxesxQueryChanged = oldAxesxQuery !== newAxesxQuery;
-    const isAxesyQueryChanged = oldAxesyQuery !== newAxesyQuery;
-
-    const isVisualisationChanged = isFiltersChanged || isAxesxQueryChanged || isAxesyQueryChanged;
-
-      // Do nothing if queries are not changed
-    if (!isVisualisationChanged) {
-      return;
-    }
-
-      // Save updated queries and log
+    // Save updated queries and log
     logger.info(`Update Visualisation (${visualisation._id})`);
 
-    if (isFiltersChanged) {
-      visualisation.filters = newQueries;
-      logger.info('convert filters');
-      logger.info(oldQueries);
-      logger.info(newQueries);
-    }
+    // mutate visualisation
+    visualisation.oldFilters = visualisation.filters;
+    visualisation.filters = newFilters;
+    logger.info('convert filters');
+    logger.info(oldFilters);
+    logger.info(newFilters);
 
-    if (isAxesxQueryChanged) {
-      visualisation.axesxQuery = newAxesxQuery;
-      logger.info('convert axesxQuery');
-      logger.info(oldAxesxQuery);
-      logger.info(newAxesxQuery);
-    }
+    visualisation.oldAxesxQuery = visualisation.axesxQuery;
+    visualisation.axesxQuery = newAxesxQuery;
+    logger.info('convert axesxQuery');
+    logger.info(oldAxesxQuery);
+    logger.info(newAxesxQuery);
 
-    if (isAxesyQueryChanged) {
-      visualisation.axesyQuery = newAxesyQuery;
-      logger.info('convert axesyQuery');
-      logger.info(oldAxesyQuery);
-      logger.info(newAxesyQuery);
-    }
+    visualisation.oldAxesyQuery = visualisation.axesyQuery;
+    visualisation.axesyQuery = newAxesyQuery;
+    logger.info('convert axesyQuery');
+    logger.info(oldAxesyQuery);
+    logger.info(newAxesyQuery);
+
+    visualisation.hasBeenMigrated = true;
 
     visualisation.save();
   });
 };
 
-/**
- * Convert filters in all visualisations
- */
+const convertDashboards = async () => {
+  const dashboards = await Dashboard.find({});
+
+  dashboards.forEach((dashboard) => {
+    const oldShareableList = lodash.cloneDeep(dashboard.shareable);
+
+    // mutate shareable
+    dashboard.shareable.forEach((shareable) => {
+      const newFilter = buildNewQuery(shareable.filter);
+      shareable.oldFilter = shareable.filter;
+      shareable.filter = newFilter;
+    });
+
+    const newShareableList = lodash.cloneDeep(dashboard.shareable);
+
+    // Save updated queries and log
+    logger.info(`Update Dashboard (${dashboard._id})`);
+    lodash.zip(oldShareableList, newShareableList)
+      .forEach(([oldShareable, newShareable]) => {
+        if (oldShareable.filter !== newShareable.filter) {
+          logger.info('convert shareable filter');
+          logger.info(oldShareable.filter);
+          logger.info(newShareable.filter);
+        }
+      });
+
+    dashboard.hasBeenMigrated = true;
+
+    dashboard.save();
+  });
+};
+
 export default async () => {
   logger.info('Convert $or/$nor to $in/$nin in queries');
   try {
     await convertVisualisations();
+    await convertDashboards();
     logger.info('Finish converting $or/$nor to $in/$nin in queries');
   } catch (error) {
     logger.error(error);
