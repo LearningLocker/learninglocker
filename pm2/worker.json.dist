@@ -19,7 +19,7 @@
       "script": "cli/dist/scheduler",
       "cwd": "{INSTALL_DIR}",
       "output": "{LOG_DIR}/scheduler_stdout.log",
-      "error": ".{LOG_DIR}/scheduler_stderr.log",
+      "error": "{LOG_DIR}/scheduler_stderr.log",
       "pid": "{PID_DIR}/scheduler.pid",
       "instances": 1,
       "exec_mode": "cluster",
