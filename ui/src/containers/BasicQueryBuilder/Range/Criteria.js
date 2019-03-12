@@ -30,16 +30,6 @@ export default class Criteria extends Component {
     this.props.onDeleteCriterion(key);
   }
 
-  renderCriterion = (criterion, key) => (
-    <Criterion
-      section={this.props.section}
-      criterion={criterion}
-      onCriterionChange={this.changeCriteria.bind(this, key)}
-      onDeleteCriterion={this.deleteCriterion.bind(this, key)}
-      key={key} />
-  );
-
-
   getCriteria = () => {
     if (this.props.criteria.size > 0) {
       return this.props.criteria;
@@ -64,6 +54,15 @@ export default class Criteria extends Component {
       })
     });
   }
+
+  renderCriterion = (criterion, key) => (
+    <Criterion
+      section={this.props.section}
+      criterion={criterion}
+      onCriterionChange={this.changeCriteria.bind(this, key)}
+      onDeleteCriterion={this.deleteCriterion.bind(this, key)}
+      key={key} />
+  );
 
   render = () => (
     <div>
