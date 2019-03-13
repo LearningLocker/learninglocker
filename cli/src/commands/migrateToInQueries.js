@@ -4,6 +4,7 @@ import logger from 'lib/logger';
 import Dashboard from 'lib/models/dashboard';
 import StatementForwarding from 'lib/models/statementForwarding';
 import Visualisation from 'lib/models/visualisation';
+import User from 'lib/models/user';
 
 /**
  * @param {immutable.Map} condition
@@ -101,10 +102,10 @@ export const buildNewQuery = (oldQuery) => {
 const convertVisualisations = async () => {
   const visualisations = await Visualisation.find({});
 
-  visualisations.forEach((visualisation) => {
+  for (const visualisation of visualisations) {
     if (visualisation.hasBeenMigrated) {
-      logger.error('visualisation has been migrated');
-      throw new Error('visualisation has been migrated');
+      logger.warn(`visualisation (${visualisation._id}) has been migrated`);
+      return;
     }
 
     // filters
@@ -145,18 +146,17 @@ const convertVisualisations = async () => {
     logger.info(newAxesyQuery);
 
     visualisation.hasBeenMigrated = true;
-
-    visualisation.save();
-  });
+    await visualisation.save();
+  }
 };
 
 const convertDashboards = async () => {
   const dashboards = await Dashboard.find({});
 
-  dashboards.forEach((dashboard) => {
+  for (const dashboard of dashboards) {
     if (dashboard.hasBeenMigrated) {
-      logger.error('dashboard has been migrated');
-      throw new Error('dashboard has been migrated');
+      logger.warn(`dashboard (${dashboard._id}) has been migrated`);
+      return;
     }
 
     const oldShareableList = lodash.cloneDeep(dashboard.shareable);
@@ -182,18 +182,17 @@ const convertDashboards = async () => {
       });
 
     dashboard.hasBeenMigrated = true;
-
-    dashboard.save();
-  });
+    await dashboard.save();
+  }
 };
 
 const convertStatementForwarding = async () => {
   const statementForwardings = await StatementForwarding.find();
 
-  statementForwardings.forEach(statementForwarding => {
+  for (const statementForwarding of statementForwardings) {
     if (statementForwarding.hasBeenMigrated) {
-      logger.error('statementForwarding has been migrated');
-      throw new Error('statementForwarding has been migrated');
+      logger.warn(`statementForwarding (${statementForwarding._id}) has been migrated`);
+      return;
     }
 
     const oldQuery = statementForwarding.query;
@@ -201,14 +200,43 @@ const convertStatementForwarding = async () => {
 
     statementForwarding.oldQuery = statementForwarding.query;
     statementForwarding.query = newQuery;
+
+    logger.info(`Update StatementForwarding (${statementForwarding._id})`);
     logger.info('convert query');
     logger.info(oldQuery);
     logger.info(newQuery);
 
     statementForwarding.hasBeenMigrated = true;
+    await statementForwarding.save();
+  }
+};
 
-    statementForwarding.save();
-  })
+const convertUsers = async () => {
+  const users = await User.find();
+
+  for (const user of users) {
+    if (user.hasBeenMigrated) {
+      logger.warn(`user (${user._id}) has been migrated`);
+      return;
+    }
+
+    logger.info(`Update User (${user._id})`);
+
+    user.organisationSettings.forEach(organisationSetting => {
+      const oldFilter = organisationSetting.filter;
+      const newFilter = buildNewQuery(oldFilter);
+
+      organisationSetting.oldFilter = organisationSetting.filter;
+      organisationSetting.filter = newFilter;
+
+      logger.info('convert organisationSettings filter');
+      logger.info(oldFilter);
+      logger.info(newFilter);
+    });
+
+    user.hasBeenMigrated = true;
+    await user.save();
+  }
 }
 
 export default async () => {
@@ -217,9 +245,9 @@ export default async () => {
     await convertVisualisations();
     await convertDashboards();
     await convertStatementForwarding();
+    await convertUsers();
     logger.info('Finish converting $or/$nor to $in/$nin in queries');
   } catch (error) {
     logger.error(error);
-    process.exit();
   }
 };

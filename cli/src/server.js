@@ -33,6 +33,16 @@ import seed from 'cli/seed';
 import expirationNotificationEmails from 'cli/commands/expirationNotificationEmails';
 import orgUsageTracker from 'cli/commands/orgUsageTracker';
 
+/**
+ * Run an async function then exit process
+ *
+ * @param {(() => Promise)|((options: commander.Command) => Promise)} asyncFunc
+ */
+const runThenExit = asyncFunc => async (options) => {
+  await asyncFunc(options);
+  process.exit();
+};
+
 program.version('0.0.1');
 
 program
@@ -105,10 +115,10 @@ program.command('migrateVisualiseAxes').action(migrateVisualiseAxes.bind(null, n
 program.command('migrateQueryBuilderCachesPath').action(migrateQueryBuilderCachesPath);
 // node cli/dist/server migrateQueryBuilderCachesPath
 
-program.command('migrateToInQueries').action(migrateToInQueries);
+program.command('migrateToInQueries').action(runThenExit(migrateToInQueries));
 // node cli/dist/server migrateToInQueries
 
-program.command('migrateFromInQueries').action(migrateFromInQueries);
+program.command('migrateFromInQueries').action(runThenExit(migrateFromInQueries));
 // node cli/dist/server migrateFromInQueries
 
 program

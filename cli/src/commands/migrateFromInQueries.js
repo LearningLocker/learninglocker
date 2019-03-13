@@ -2,14 +2,15 @@ import logger from 'lib/logger';
 import Dashboard from 'lib/models/dashboard';
 import StatementForwarding from 'lib/models/statementForwarding';
 import Visualisation from 'lib/models/visualisation';
+import User from 'lib/models/user';
 
 const convertVisualisations = async () => {
   const visualisations = await Visualisation.find({});
 
-  visualisations.forEach((visualisation) => {
+  for (const visualisation of visualisations) {
     if (!visualisation.hasBeenMigrated) {
-      logger.error('visualisation has not been migrated');
-      throw new Error('visualisation has not been migrated');
+      logger.warn(`visualisation (${visualisation._id}) has not been migrated`);
+      return;
     }
 
     visualisation.filters = visualisation.oldFilters;
@@ -22,18 +23,17 @@ const convertVisualisations = async () => {
     visualisation.oldAxesyQuery = undefined;
 
     visualisation.hasBeenMigrated = false;
-
-    visualisation.save();
-  });
+    await visualisation.save();
+  }
 };
 
 const convertDashboards = async () => {
   const dashboards = await Dashboard.find({});
 
-  dashboards.forEach((dashboard) => {
+  for (const dashboard of dashboards) {
     if (!dashboard.hasBeenMigrated) {
-      logger.error('dashboard has not been migrated');
-      throw new Error('dashboard has not been migrated');
+      logger.warn(`dashboard (${dashboard._id}) has not been migrated`);
+      return;
     }
 
     dashboard.shareable.forEach((shareable) => {
@@ -42,24 +42,44 @@ const convertDashboards = async () => {
     });
 
     dashboard.hasBeenMigrated = false;
-    dashboard.save();
-  });
-}
+    await dashboard.save();
+  };
+};
 
 const convertStatementForwarding = async () => {
   const statementForwardings = await StatementForwarding.find();
-  statementForwardings.forEach(statementForwarding => {
+
+  for (const statementForwarding of statementForwardings) {
     if (!statementForwarding.hasBeenMigrated) {
-      logger.error('statementForwarding has not been migrated');
-      throw new Error('statementForwarding has not been migrated');
+      logger.warn(`statementForwarding (${statementForwarding._id}) has not been migrated`);
+      return;
     }
 
     statementForwarding.query = statementForwarding.oldQuery;
     statementForwarding.oldQuery = undefined;
 
     statementForwarding.hasBeenMigrated = false;
-    statementForwarding.save();
-  });
+    await statementForwarding.save();
+  };
+};
+
+const convertUsers = async () => {
+  const users = await User.find();
+
+  for (const user of users) {
+    if (!user.hasBeenMigrated) {
+      logger.warn(`user (${user._id}) has not been migrated`);
+      return;
+    }
+
+    user.organisationSettings.forEach(organisationSetting => {
+      organisationSetting.filter = organisationSetting.oldFilter;
+      organisationSetting.oldFilter = undefined;
+    });
+
+    user.hasBeenMigrated = false;
+    await user.save();
+  };
 }
 
 export default async () => {
@@ -68,9 +88,9 @@ export default async () => {
     await convertVisualisations();
     await convertDashboards();
     await convertStatementForwarding();
+    await convertUsers();
     logger.info('Finish converting $in/$nin to $or/$nor in queries');
   } catch (error) {
     logger.error(error);
-    process.exit();
   }
 };
