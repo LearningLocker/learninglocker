@@ -2,6 +2,7 @@ import { fromJS, Map } from 'immutable';
 import lodash from 'lodash';
 import logger from 'lib/logger';
 import Dashboard from 'lib/models/dashboard';
+import StatementForwarding from 'lib/models/statementForwarding';
 import Visualisation from 'lib/models/visualisation';
 
 /**
@@ -102,8 +103,8 @@ const convertVisualisations = async () => {
 
   visualisations.forEach((visualisation) => {
     if (visualisation.hasBeenMigrated) {
-      logger.error('visualisation may have been migrated');
-      throw new Error('visualisation may have been migrated');
+      logger.error('visualisation has been migrated');
+      throw new Error('visualisation has been migrated');
     }
 
     // filters
@@ -153,6 +154,11 @@ const convertDashboards = async () => {
   const dashboards = await Dashboard.find({});
 
   dashboards.forEach((dashboard) => {
+    if (dashboard.hasBeenMigrated) {
+      logger.error('dashboard has been migrated');
+      throw new Error('dashboard has been migrated');
+    }
+
     const oldShareableList = lodash.cloneDeep(dashboard.shareable);
 
     // mutate shareable
@@ -181,11 +187,36 @@ const convertDashboards = async () => {
   });
 };
 
+const convertStatementForwarding = async () => {
+  const statementForwardings = await StatementForwarding.find();
+
+  statementForwardings.forEach(statementForwarding => {
+    if (statementForwarding.hasBeenMigrated) {
+      logger.error('statementForwarding has been migrated');
+      throw new Error('statementForwarding has been migrated');
+    }
+
+    const oldQuery = statementForwarding.query;
+    const newQuery = buildNewQuery(oldQuery);
+
+    statementForwarding.oldQuery = statementForwarding.query;
+    statementForwarding.query = newQuery;
+    logger.info('convert query');
+    logger.info(oldQuery);
+    logger.info(newQuery);
+
+    statementForwarding.hasBeenMigrated = true;
+
+    statementForwarding.save();
+  })
+}
+
 export default async () => {
   logger.info('Convert $or/$nor to $in/$nin in queries');
   try {
     await convertVisualisations();
     await convertDashboards();
+    await convertStatementForwarding();
     logger.info('Finish converting $or/$nor to $in/$nin in queries');
   } catch (error) {
     logger.error(error);
