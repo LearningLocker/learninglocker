@@ -12,9 +12,9 @@ export const finishedProcessing = async ({
   await PersonasImport.updateOne({
     _id: personaImportId
   }, {
-      importStage: STAGE_IMPORTED,
-      importedAt: moment().toDate()
-    });
+    importStage: STAGE_IMPORTED,
+    importedAt: moment().toDate()
+  });
 
   const personasImport = await PersonasImport.findOne({
     _id: personaImportId
