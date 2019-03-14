@@ -35,8 +35,8 @@ const renderStoreDropdown = compose(
     onChange={onSelect}
     source={
       models.size > 0 ?
-      [renderDefaultStore(), ...renderStoreItems(models)] :
-      renderNoStore()
+        [renderDefaultStore(), ...renderStoreItems(models)] :
+        renderNoStore()
     } />
 );
 
@@ -135,8 +135,12 @@ export const render = ({ model, handleAttrChange, handleTargetValueChange, onCha
           <p className="help-block">{basicSecret}</p>
         </div>
         <div className="form-group">
-          <label htmlFor="basicAuth">Basic auth</label>
-          <p className={`help-block ${styles.strongwrap}`}>{btoa(`${basicKey}:${basicSecret}`)}</p>
+          <label htmlFor="basicAuth">
+            Use this Basic Auth value in your <code>Authorization</code> header for requests
+          </label>
+          <p className={`help-block ${styles.strongwrap}`}>
+            Basic {btoa(`${basicKey}:${basicSecret}`)}
+          </p>
         </div>
 
         <div className="form-group">
