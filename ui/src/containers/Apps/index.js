@@ -14,7 +14,7 @@ const apps = [
   },
   {
     link: 'https://ht2ltd.zendesk.com/hc/en-us/articles/208166165-xAPI-in-Curatr',
-    title: 'Curatr',
+    title: 'Curatr LXP',
     description: 'Cutting edge Learning experience platform that is designed to work hand-in-hand with Learning Locker.',
     icon: icons.curatr,
     icon2x: icons.curatr2x,
