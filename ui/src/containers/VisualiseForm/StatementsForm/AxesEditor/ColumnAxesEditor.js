@@ -1,8 +1,10 @@
 import React, { PropTypes } from 'react';
 import { Map } from 'immutable';
 import { connect } from 'react-redux';
+import { VISUALISE_AXES_PREFIX } from 'lib/constants/visualise';
 import { updateModel } from 'ui/redux/modules/models';
 import DebounceInput from 'react-debounce-input';
+import DefinitionTypeSelector from './DefinitionTypeSelector';
 import CountEditor from './CountEditor';
 import GroupEditor from './GroupEditor';
 import BaseAxesEditor from './BaseAxesEditor';
@@ -12,6 +14,13 @@ class ColumnAxesEditor extends BaseAxesEditor {
     model: PropTypes.instanceOf(Map),
     updateModel: PropTypes.func,
     groupOptions: PropTypes.instanceOf(Map)
+  };
+
+  shouldComponentUpdate = (nextProps) => {
+    const prevAxes = this.props.model.filter((item, key) => key.startsWith(VISUALISE_AXES_PREFIX));
+    const nextAxes = nextProps.model.filter((item, key) => key.startsWith(VISUALISE_AXES_PREFIX));
+
+    return !prevAxes.equals(nextAxes);
   };
 
   render = () => (
@@ -34,7 +43,13 @@ class ColumnAxesEditor extends BaseAxesEditor {
             changeGroup={this.changeAxes.bind(this, 'group')}
             groupOptions={this.props.groupOptions} />
         </div>
+
+        <DefinitionTypeSelector
+          visualisationModel={this.props.model}
+          group={this.getAxesValue('group')}
+          onChangeGroup={g => this.changeAxes('group', g)} />
       </div>
+
       <div className="form-group">
         <label htmlFor="toggleInput" className="clearfix">Y Axis</label>
         <div className="form-group">

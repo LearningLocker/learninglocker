@@ -5,9 +5,10 @@ const aggregateScatterAxis = (axis, preReqs, axes) => {
   const valueType = axes.getIn([`${axis}Value`, 'optionKey']);
   const groupType = axes.getIn(['group', 'optionKey']);
   const operatorType = axes.get(`${axis}Operator`);
+  const contextActivityDefinitionType = axes.getIn(['group', 'contextActivityDefinitionType'], null);
   const match = axes.getIn([`${axis}Query`, '$match'], new Map());
   const matchStage = match.size === 0 ? [] : [{ $match: match }];
-  const aggregationGroup = grouper({ valueType, groupType, operatorType });
+  const aggregationGroup = grouper({ valueType, groupType, operatorType, contextActivityDefinitionType });
   const pipeline = preReqs.concat(fromJS(matchStage)).concat(fromJS(aggregationGroup));
   return pipeline;
 };
