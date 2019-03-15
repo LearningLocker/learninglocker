@@ -475,7 +475,7 @@ export const matchArrays = (needle = new List(), hay = new List()) => {
  * @param {immutable.List} childPath
  * @returns {{ operators: string, getValueQuery?: (value: any) => any }}
  */
-const getChildOveridesFromValueType = (valueType, generator, childPath) => {
+const getChildOverridesFromValueType = (valueType, generator, childPath) => {
   if (valueType === 'Number') {
     return {
       operators: operators.RANGE,
@@ -511,7 +511,7 @@ const buildInputChild = generator => (keyPath, valueType) => {
 
   const childPath = generator.get('path').push(keyPath.last());
   const childGenerator = generator.set('path', childPath);
-  const childOverides = getChildOveridesFromValueType(valueType, generator, childPath);
+  const childOverrides = getChildOverridesFromValueType(valueType, generator, childPath);
   return new Map({
     keyPath,
     getQueryKey: joinedPath,
@@ -520,7 +520,7 @@ const buildInputChild = generator => (keyPath, valueType) => {
     getModelQuery,
     getQueryModel,
     childGenerators: new List([childGenerator]),
-    ...childOverides,
+    ...childOverrides,
   });
 };
 
