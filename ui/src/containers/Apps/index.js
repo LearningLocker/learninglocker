@@ -15,22 +15,29 @@ const apps = [
   {
     link: 'https://ht2ltd.zendesk.com/hc/en-us/articles/208166165-xAPI-in-Curatr',
     title: 'Curatr',
-    description: 'Curatr description of some sort.',
+    description: 'Cutting edge Learning experience platform that is designed to work hand-in-hand with Learning Locker.',
     icon: icons.curatr,
     icon2x: icons.curatr2x,
   },
   {
     link: 'https://github.com/xAPI-vle/moodle-logstore_xapi',
     title: 'Moodle',
-    description: 'Moodle description of some sort.',
+    description: 'Widely supported open source learning platform supported by a custom xAPI plugin.',
     icon: icons.moodle,
     icon2x: icons.moodle2x,
   },
 ];
 
 const Apps = () => (
-  <div className={styles.cardList}>
-    {apps.map(app => <AppCard key={app.title} {...app} />)}
+  <div>
+    <header id="topbar">
+      <div className="heading heading-light">
+        Apps
+      </div>
+    </header>
+    <div className={styles.cardList}>
+      {apps.map(app => <AppCard key={app.title} {...app} />)}
+    </div>
   </div>
 );
 
