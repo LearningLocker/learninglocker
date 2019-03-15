@@ -43,7 +43,7 @@ const convertDashboards = async () => {
 
     dashboard.hasBeenMigrated = false;
     await dashboard.save();
-  };
+  }
 };
 
 const convertStatementForwarding = async () => {
@@ -60,7 +60,7 @@ const convertStatementForwarding = async () => {
 
     statementForwarding.hasBeenMigrated = false;
     await statementForwarding.save();
-  };
+  }
 };
 
 const convertUsers = async () => {
@@ -72,15 +72,15 @@ const convertUsers = async () => {
       return;
     }
 
-    user.organisationSettings.forEach(organisationSetting => {
+    user.organisationSettings.forEach((organisationSetting) => {
       organisationSetting.filter = organisationSetting.oldFilter;
       organisationSetting.oldFilter = undefined;
     });
 
     user.hasBeenMigrated = false;
     await user.save();
-  };
-}
+  }
+};
 
 export default async () => {
   logger.info('Convert $in/$nin to $or/$nor in queries');

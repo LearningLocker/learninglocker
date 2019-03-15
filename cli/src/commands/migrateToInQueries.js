@@ -7,29 +7,46 @@ import Visualisation from 'lib/models/visualisation';
 import User from 'lib/models/user';
 
 /**
- * @param {immutable.Map} condition
+ * @param {immutable.List} criteriaPath
  * @returns {boolean}
  */
-const isActorCondition = (condition) => {
-  const comment = condition.get('$comment');
-  const criteriaPath = JSON.parse(comment).criteriaPath || [];
-
-  return criteriaPath.length === 2
+const isActor = criteriaPath =>
+  criteriaPath.length === 2
     && criteriaPath[0] === 'statement'
     && criteriaPath[1] === 'actor';
-};
+
+/**
+ * @param {immutable.List} criteriaPath
+ * @returns {boolean}
+ */
+const isPersonaId = criteriaPath =>
+  criteriaPath.length > 2
+    && criteriaPath[0] === 'persona'
+    && criteriaPath[1] === 'import';
+
+/**
+ * @param {immutable.List} criteriaPath
+ * @returns {boolean}
+ */
+const isContextInstructor = criteriaPath =>
+  criteriaPath.length === 3
+    && criteriaPath[0] === 'statement'
+    && criteriaPath[1] === 'context'
+    && criteriaPath[2] === 'instructor';
 
 /**
  * @param {immutable.Map} condition
  * @returns {boolean}
  */
-const isPersonaIdCondition = (condition) => {
+const shouldConvert = (condition) => {
   const comment = condition.get('$comment');
   const criteriaPath = JSON.parse(comment).criteriaPath || [];
 
-  return criteriaPath.length > 2
-    && criteriaPath[0] === 'persona'
-    && criteriaPath[1] === 'import';
+  if (isActor(criteriaPath) || isPersonaId(criteriaPath) || isContextInstructor(criteriaPath)) {
+    return false;
+  }
+
+  return true;
 };
 
 /**
@@ -39,7 +56,6 @@ const isPersonaIdCondition = (condition) => {
  * @returns {immutable.Map}
  */
 const _buildNewQuery = (oldQuery) => {
-
   // some queries start with ['$match', '$and'] others do ['$and']
   const startsWithMatchAnd = oldQuery.hasIn(['$match', '$and']);
   const startsWithAnd = oldQuery.has('$and');
@@ -51,7 +67,7 @@ const _buildNewQuery = (oldQuery) => {
   const oldConditions = oldQuery.getIn(['$match', '$and'], oldQuery.get('$and'));
 
   const newConditions = oldConditions.map((condition) => {
-    if (isActorCondition(condition) || isPersonaIdCondition(condition)) {
+    if (!shouldConvert(condition)) {
       return condition;
     }
 
@@ -222,7 +238,7 @@ const convertUsers = async () => {
 
     logger.info(`Update User (${user._id})`);
 
-    user.organisationSettings.forEach(organisationSetting => {
+    user.organisationSettings.forEach((organisationSetting) => {
       const oldFilter = organisationSetting.filter;
       const newFilter = buildNewQuery(oldFilter);
 
@@ -237,7 +253,7 @@ const convertUsers = async () => {
     user.hasBeenMigrated = true;
     await user.save();
   }
-}
+};
 
 export default async () => {
   logger.info('Convert $or/$nor to $in/$nin in queries');
