@@ -1,7 +1,7 @@
 import { fromJS } from 'immutable';
-import { visualisationPiplelinesSelector } from './visualise';
+import { visualisationPipelinesSelector } from './visualise';
 
-test('visualisationPiplelinesSelector should unflattern axis', () => {
+test('visualisationPipelinesSelector should unflattern axis', () => {
   const mockVisualisation = fromJS({
     axesxValue: 6245
   });
@@ -17,7 +17,7 @@ test('visualisationPiplelinesSelector should unflattern axis', () => {
 
   const mockCb = jest.fn().mockReturnValue(3624);
 
-  const result = visualisationPiplelinesSelector('56', mockCb)(mockState);
+  const result = visualisationPipelinesSelector('56', mockCb)(mockState);
 
   expect(mockCb.mock.calls[0][1].get('xValue')).toEqual(6245);
   expect(result).toEqual(3624);
