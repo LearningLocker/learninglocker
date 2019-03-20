@@ -151,7 +151,7 @@ describe('API HTTP Route tests', function describeTest() {
       });
     });
 
-    describe('Call on statements/asyncAggregate', () => {
+    describe('Call on statements/aggregateAsync', () => {
       beforeEach('create organisation and jwt token', async () => {
         orgJwtToken = await createOrgToken(['ALL'], [], '561a679c0c5d017e4004714e');
 
@@ -174,18 +174,19 @@ describe('API HTTP Route tests', function describeTest() {
       });
 
       it('should return empty results and status when no cache', async () => {
+        const datetime1 = moment();
+
         const { body } = await apiApp
-          .get(`${routes.STATEMENTS_ASYNC_AGGREGATE}?pipeline=[]`)
+          .get(`${routes.STATEMENTS_AGGREGATE_ASYNC}?pipeline=[]`)
           .set('Authorization', `Bearer ${orgJwtToken}`)
           .expect(200);
 
-        expect(body).to.deep.equal({
-          results: null,
-          status: {
-            startedAt: null,
-            completedAt: null,
-          },
-        });
+        const datetime2 = moment();
+
+        expect(body.results).to.equal(null);
+        expect(body.status.completedAt).to.equal(null);
+        expect(moment(body.status.startedAt).isSameOrAfter(datetime1)).to.equal(true);
+        expect(moment(body.status.startedAt).isSameOrBefore(datetime2)).to.equal(true);
       });
 
       it('should return status with startedAt and status on second request', async () => {
@@ -193,7 +194,7 @@ describe('API HTTP Route tests', function describeTest() {
 
         // 1st request
         await apiApp
-          .get(`${routes.STATEMENTS_ASYNC_AGGREGATE}?pipeline=[]`)
+          .get(`${routes.STATEMENTS_AGGREGATE_ASYNC}?pipeline=[]`)
           .set('Authorization', `Bearer ${orgJwtToken}`)
           .expect(200);
 
@@ -201,7 +202,7 @@ describe('API HTTP Route tests', function describeTest() {
 
         // 2nd request
         const { body } = await apiApp
-          .get(`${routes.STATEMENTS_ASYNC_AGGREGATE}?pipeline=[]`)
+          .get(`${routes.STATEMENTS_AGGREGATE_ASYNC}?pipeline=[]`)
           .set('Authorization', `Bearer ${orgJwtToken}`)
           .expect(200);
 
@@ -214,21 +215,21 @@ describe('API HTTP Route tests', function describeTest() {
 
         // 1st request
         await apiApp
-          .get(`${routes.STATEMENTS_ASYNC_AGGREGATE}?pipeline=[]`)
+          .get(`${routes.STATEMENTS_AGGREGATE_ASYNC}?pipeline=[]`)
           .set('Authorization', `Bearer ${orgJwtToken}`)
           .expect(200);
 
         const datetime2 = moment();
 
         // This 1000 msec is irresponsible,
-        // but based on 1 sec is expected to be enough that aggregation is done.
+        // but 1000 msec is expected to be enough that aggregation is done.
         await delay(1000);
 
         const datetime3 = moment();
 
         // 2nd request
         const { body } = await apiApp
-          .get(`${routes.STATEMENTS_ASYNC_AGGREGATE}?pipeline=[]`)
+          .get(`${routes.STATEMENTS_AGGREGATE_ASYNC}?pipeline=[]`)
           .set('Authorization', `Bearer ${orgJwtToken}`)
           .expect(200);
 
@@ -243,23 +244,24 @@ describe('API HTTP Route tests', function describeTest() {
       it('should return empty results and status on second request with different query', async () => {
         // 1st request
         await apiApp
-          .get(`${routes.STATEMENTS_ASYNC_AGGREGATE}?pipeline=[]`)
+          .get(`${routes.STATEMENTS_AGGREGATE_ASYNC}?pipeline=[]`)
           .set('Authorization', `Bearer ${orgJwtToken}`)
           .expect(200);
+
+        const datetime1 = moment();
 
         // 2nd request with another query
         const { body } = await apiApp
-          .get(`${routes.STATEMENTS_ASYNC_AGGREGATE}?pipeline=[]&skip=1`)
+          .get(`${routes.STATEMENTS_AGGREGATE_ASYNC}?pipeline=[]&skip=1`)
           .set('Authorization', `Bearer ${orgJwtToken}`)
           .expect(200);
 
-        expect(body).to.deep.equal({
-          results: null,
-          status: {
-            startedAt: null,
-            completedAt: null,
-          },
-        });
+        const datetime2 = moment();
+
+        expect(body.results).to.equal(null);
+        expect(body.status.completedAt).to.equal(null);
+        expect(moment(body.status.startedAt).isSameOrAfter(datetime1)).to.equal(true);
+        expect(moment(body.status.startedAt).isSameOrBefore(datetime2)).to.equal(true);
       });
     });
   });

@@ -188,9 +188,9 @@ router.get(
   StatementController.aggregate
 );
 router.get(
-  routes.STATEMENTS_ASYNC_AGGREGATE,
+  routes.STATEMENTS_AGGREGATE_ASYNC,
   passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
-  StatementController.asyncAggregate
+  StatementController.aggregateAsync
 );
 router.get(
   routes.STATEMENTS_COUNT,
