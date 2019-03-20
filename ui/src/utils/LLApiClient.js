@@ -140,6 +140,17 @@ class _LLApiClient {
     }
   })
 
+  aggregateAsync = (pipeline, limit) => get({
+    url: formatUrl(routes.STATEMENTS_AGGREGATE_ASYNC),
+    headers: {
+      Authorization: `Bearer ${this.getToken()}`,
+    },
+    query: {
+      pipeline: JSON.stringify(pipeline),
+      skip: limit,
+    },
+  })
+
   uploadLogo = (file, id) => {
     const logoForm = form({
       logo: file

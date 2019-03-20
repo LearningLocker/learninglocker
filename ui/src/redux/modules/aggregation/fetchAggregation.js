@@ -1,17 +1,15 @@
-import { OrderedMap, fromJS } from 'immutable';
-import map from 'lodash/map';
+import { OrderedMap, Map, fromJS } from 'immutable';
 import { createSelector } from 'reselect';
 import { call } from 'redux-saga/effects';
 import createAsyncDuck from 'ui/utils/createAsyncDuck';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
-import { setReviver } from 'ui/utils/immutable';
 
-export function defaultMapping(set) {
-  return new OrderedMap(fromJS(map(set, value => ([value._id, value]))));
-}
-
-export function suggestionMapping(set) {
-  return fromJS(map(set, 'result'), setReviver);
+export function defaultMapping(body) {
+  return new Map({
+    results: body.results && new OrderedMap(body.results.map(v => fromJS([v._id, v]))),
+    startedAt: body.status.startedAt,
+    completedAt: body.status.completedAt,
+  });
 }
 
 const aggregationSelector = state => state.aggregation;
@@ -39,7 +37,9 @@ const fetchAggregation = createAsyncDuck({
 
   reduceSuccess: (state, { pipeline, result }) => state
     .setIn([pipeline, 'requestState'], COMPLETED)
-    .setIn([pipeline, 'result'], result),
+    .setIn([pipeline, 'result'], result.get('results'))
+    .setIn([pipeline, 'startedAt'], result.get('startedAt'))
+    .setIn([pipeline, 'completedAt'], result.get('completedAt')),
 
   reduceFailure: (state, { pipeline, err }) => state
     .setIn([pipeline, 'requestState'], FAILED)
@@ -62,10 +62,9 @@ const fetchAggregation = createAsyncDuck({
   },
 
   doAction: function* fetchAggregationSaga({ pipeline, mapping, llClient }) {
-    const { body, status } = yield call(llClient.getAggregation, pipeline);
-    if (status > 300) throw new Error(body.error);
+    const { body } = yield call(llClient.aggregateAsync, pipeline);
     const result = mapping(body);
-    // map the ids against the filter in the pagination store
+
     return yield { pipeline, result };
   }
 });
