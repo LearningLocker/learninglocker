@@ -30,7 +30,7 @@ const aggregationShouldFetchSelector = pipeline => createSelector(
     )
 );
 
-const fetchAggregaation = createAsyncDuck({
+const fetchAggregation = createAsyncDuck({
   actionName: 'learninglocker/aggregation/FETCH_AGGREGATION',
   failureDelay: 2000,
 
@@ -75,6 +75,6 @@ export const selectors = {
   aggregationShouldFetchSelector
 };
 
-export const reducers = fetchAggregaation.reducers;
-export const actions = fetchAggregaation.actions;
-export const sagas = fetchAggregaation.sagas;
+export const reducers = fetchAggregation.reducers;
+export const actions = fetchAggregation.actions;
+export const sagas = fetchAggregation.sagas;
