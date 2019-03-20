@@ -7,6 +7,7 @@ import date from 'ui/utils/visualisations/projections/date';
 import value from 'ui/utils/visualisations/projections/value';
 import model from 'ui/utils/visualisations/projections/model';
 import getOperator from 'ui/utils/visualisations/helpers/getOperator';
+import { isContextActivity } from 'ui/utils/visualisations';
 import uniqueModifierGrouper from './uniqueModifierGrouper';
 import uniqueStatementModifierGrouper from './uniqueStatementModifierGrouper';
 import uniqueTotalGrouper from './uniqueTotalGrouper';
@@ -121,7 +122,22 @@ const getPostReqs = () => {
   return [sort, limit, finalProject];
 };
 
-export default ({ valueType, groupType, operatorType }) => {
+/**
+ * @param {string} groupType
+ * @param {any} pattern
+ *
+ * @returns object|null
+ */
+const getContextActivityTypeMatch = (groupType, pattern) => {
+  if (isContextActivity(groupType) && typeof pattern === 'string') {
+    return {
+      [`${groupType}.definition.type`]: pattern
+    };
+  }
+  return null;
+};
+
+export default ({ valueType, groupType, operatorType, contextActivityDefinitionType }) => {
   const valueOpCase = getValueOpCase({ valueType, operatorType });
 
   const isPersonaImportGroup = groupType.startsWith('persona.import.');
@@ -129,6 +145,7 @@ export default ({ valueType, groupType, operatorType }) => {
 
   // 1st stages
   let preReqs;
+
   if (isPersonaImportGroup) {
     preReqs = createPersonaAttributeStages({ valueType, groupType, valueOpCase });
   } else {
@@ -143,6 +160,10 @@ export default ({ valueType, groupType, operatorType }) => {
   }
 
   // 2nd stages
+  const contextActivityTypeMatch = getContextActivityTypeMatch(groupType, contextActivityDefinitionType);
+  const contextActivityTypeMatchStage = contextActivityTypeMatch ? createStagePipeline('$match', contextActivityTypeMatch) : [];
+
+  // 3rd stages
   const projections = getProjections({
     valueType,
     groupType: isPersonaImportGroup ? 'personaAttrs.value' : groupType,
@@ -150,12 +171,16 @@ export default ({ valueType, groupType, operatorType }) => {
   });
   const projectStage = createStagePipeline('$project', projections);
 
-  // 3rd stages
+  // 4th stages
   const countPipeline = fromJS(getGroupPipeline({ operatorType, groupType, valueOpCase, projections }));
 
-  // 4th stages
+  // 5th stages
   const postReqs = fromJS(getPostReqs());
 
   // Concat all stages
-  return preReqs.concat(projectStage).concat(countPipeline).concat(postReqs);
+  return preReqs
+    .concat(contextActivityTypeMatchStage)
+    .concat(projectStage)
+    .concat(countPipeline)
+    .concat(postReqs);
 };
