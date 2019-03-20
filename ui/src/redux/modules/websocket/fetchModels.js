@@ -30,11 +30,12 @@ function* fetchModelsSaga({
   sort,
 }) {
   // do the websocket stuff
-  const state = yield select();
+  let state = yield select();
 
   // user needs to be loaded
   while (loggedInUserSelector(state).size === 0) {
     yield take(`${FETCH_MODELS}_SUCCESS`);
+    state = yield select();
   }
 
   if (

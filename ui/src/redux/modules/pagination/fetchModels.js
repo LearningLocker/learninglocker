@@ -2,7 +2,7 @@ import { Map, fromJS, OrderedSet, Iterable, OrderedMap } from 'immutable';
 import { createSelector } from 'reselect';
 import { map, includes } from 'lodash';
 import moment from 'moment';
-import { put, call, select } from 'redux-saga/effects';
+import { put, call, select, take } from 'redux-saga/effects';
 import { handleActions } from 'redux-actions';
 import createAsyncDuck from 'ui/utils/createAsyncDuck';
 import * as schemas from 'ui/utils/schemas';
@@ -274,14 +274,24 @@ const fetchModels = createAsyncDuck({
 
     const schemaClass = schemas[schema];
 
-    const state = yield select();
+    let state = yield select();
+
+    while (
+      loggedInUserSelector(state).size === 0 &&
+      schema !== 'user' // Don't stop us fetching users, as this could be trying to get the logged in user.
+    ) {
+      yield take(`${FETCH_MODELS}_SUCCESS`);
+      state = yield select();
+    }
+
     if (
       loggedInUserSelector(state).get('liveWebsockets', false) &&
-      includes(SUPPORTED_SCHEMAS, schema) // TODO: only support statements currently
+      includes(SUPPORTED_SCHEMAS, schema)
     ) {
       // Do nothing, as we'll do it in websocket/fetchModels saga
       return;
     }
+
     const { status, body } = yield call(llClient.getConnection, {
       schema,
       filter: plainFilter,

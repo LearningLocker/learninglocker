@@ -107,6 +107,7 @@ const filterUndefined = (prop, keys) => {
 function* handleWebsocketMessage() {
   while (true) {
     const { message } = yield take(WEBSOCKET_MESSAGE);
+
     const data = JSON.parse(message.data);
 
     // normalzr reviver

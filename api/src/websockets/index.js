@@ -3,24 +3,20 @@ import {
   getCookieNameStartsWith
 } from 'ui/utils/auth';
 import { verifyToken } from 'api/auth/passport';
-import Statement from 'lib/models/statement';
-import User from 'lib/models/user';
+import { getConnection } from 'lib/connections/mongoose';
+import { SUPPORTED_SCHEMAS } from 'lib/constants/websocket';
 import {
   isUndefined,
   get,
-  set
+  set,
+  includes,
+  capitalize
 } from 'lodash';
 import logger from 'lib/logger';
 
 const getModel = (schema) => {
-  switch (schema) {
-    // only support statements currently
-    case 'statement':
-      return Statement;
-    case 'user':
-      return User;
-    default:
-      return;
+  if ((includes(SUPPORTED_SCHEMAS, schema))) {
+    return getConnection().model(capitalize(schema));
   }
 };
 
