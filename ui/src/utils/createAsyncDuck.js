@@ -6,8 +6,7 @@ import { actions as logoutActions } from 'ui/redux/modules/auth/logout';
 import { alert } from 'ui/redux/modules/alerts';
 import Unauthorised from 'lib/errors/Unauthorised';
 import HttpError from 'ui/utils/errors/HttpError';
-
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+import delay from 'lib/helpers/delay';
 
 export default function createAsyncDuck({
   actionName,
