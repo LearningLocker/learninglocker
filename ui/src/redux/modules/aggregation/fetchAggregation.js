@@ -1,6 +1,7 @@
 import { OrderedMap, Map, fromJS } from 'immutable';
 import { createSelector } from 'reselect';
-import { call } from 'redux-saga/effects';
+import { call, put, takeEvery } from 'redux-saga/effects';
+import delay from 'lib/helpers/delay';
 import createAsyncDuck from 'ui/utils/createAsyncDuck';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 
@@ -26,6 +27,15 @@ const aggregationShouldFetchSelector = pipeline => createSelector(
       requestState !== COMPLETED &&
       requestState !== FAILED
     )
+);
+
+const aggregationShouldRecallSelector = pipeline => createSelector(
+  aggregationSelector,
+  (aggregations) => {
+    const requestState = aggregations.getIn([pipeline, 'requestState']);
+    const completedAt = aggregations.getIn([pipeline, 'completedAt']);
+    return requestState !== IN_PROGRESS && completedAt === null;
+  }
 );
 
 const fetchAggregation = createAsyncDuck({
@@ -57,8 +67,9 @@ const fetchAggregation = createAsyncDuck({
   completeAction: ({ pipeline }) => ({ pipeline }),
 
   checkShouldFire: ({ pipeline }, state) => {
-    const checkShouldFire = aggregationShouldFetchSelector(pipeline)(state);
-    return checkShouldFire;
+    const shouldFetch = aggregationShouldFetchSelector(pipeline)(state);
+    const shouldRecall = aggregationShouldRecallSelector(pipeline)(state);
+    return shouldFetch || shouldRecall;
   },
 
   doAction: function* fetchAggregationSaga({ pipeline, mapping, llClient }) {
@@ -69,6 +80,19 @@ const fetchAggregation = createAsyncDuck({
   }
 });
 
+function* recallAggregationIfRequired(args) {
+  const pipeline = args.pipeline;
+  const completedAt = args.result.get('completedAt');
+  if (completedAt === null) {
+    yield call(delay, 1000);
+    yield put(fetchAggregation.actions.start({ pipeline }));
+  }
+}
+
+function* watchAggregationSuccess() {
+  if (__CLIENT__) yield takeEvery(fetchAggregation.constants.success, recallAggregationIfRequired);
+}
+
 export const selectors = {
   aggregationRequestStateSelector,
   aggregationShouldFetchSelector
@@ -76,4 +100,4 @@ export const selectors = {
 
 export const reducers = fetchAggregation.reducers;
 export const actions = fetchAggregation.actions;
-export const sagas = fetchAggregation.sagas;
+export const sagas = [...fetchAggregation.sagas, watchAggregationSuccess];

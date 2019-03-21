@@ -8,6 +8,7 @@ import {
   aggregationShouldFetchSelector,
   aggregationResultsSelector,
   aggregationRequestStateSelector,
+  aggregationIsAggregatingSelector,
   IN_PROGRESS,
   SUCCESS,
   FAILED,
@@ -178,6 +179,11 @@ const shareableDashboardFilterSelector = () => createSelector(
   }
 );
 
+/**
+ * @param {string} id - visualisation._id
+ * @param {(queries: immutable.List) => immutableList} cb - queries to pipelines
+ * @return {(state: any) => immutable.List} - selector. Select pipelines from state
+ */
 export const visualisationPipelinesSelector = (
   id,
   cb = pipelinesFromQueries // whilst waiting for https://github.com/facebook/jest/issues/3608
@@ -280,14 +286,23 @@ const getJourneyResults = (visualisation, filter, state) => {
   return journeyProgressResultsSelector(journey, filter)(state);
 };
 
+/**
+ * @param {*} state
+ * @returns {(pipelines: immutable.List) => immutable.List}
+ */
 const getPipelinesResults = state => pipelines => pipelines.map(pipeline => (
   aggregationResultsSelector(pipeline)(state) || new Map()
 ));
 
+/**
+ *
+ * @param {string} visualisationId
+ * @param {*} state
+ * @return {immutable.List}
+ */
 const getSeriesResults = (visualisationId, state) => {
   const series = visualisationPipelinesSelector(visualisationId)(state);
-  const out = series.map(getPipelinesResults(state));
-  return out;
+  return series.map(getPipelinesResults(state));
 };
 
 /**
@@ -305,6 +320,20 @@ export const visualisationResultsSelector = (visualisationId, filter) => createS
     default:
       return getSeriesResults(visualisationId, state);
   }
+});
+
+export const visualisationIsAggregatingSelector = visualisationId => createSelector([
+  identity,
+], (state) => {
+  const series = visualisationPipelinesSelector(visualisationId)(state);
+  return series.reduce(
+    (acc1, pipelines) =>
+      acc1 || pipelines.reduce(
+        (acc2, pipeline) => acc2 || aggregationIsAggregatingSelector(pipeline)(state),
+        false
+      ),
+    false
+  );
 });
 
 const getWaypointFetchStates = (visualisation, pipelines, state) => {

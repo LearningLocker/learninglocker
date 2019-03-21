@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { compose, withProps } from 'recompose';
 import {
   visualisationResultsSelector,
+  visualisationIsAggregatingSelector,
   visualisationShouldFetchSelector,
   visualisationFetchStateSelector,
   fetchVisualisation
@@ -21,6 +22,7 @@ const withStatementsVisualisation = (WrappedComponent) => {
       schema: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
       model: PropTypes.instanceOf(Map),
       results: PropTypes.instanceOf(List),
+      isAggregating: PropTypes.bool,
       shouldFetch: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
       fetchState: PropTypes.string,
       fetchVisualisation: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
@@ -41,8 +43,9 @@ const withStatementsVisualisation = (WrappedComponent) => {
       this.fetchIfRequired(nextProps);
     }
 
-    shouldComponentUpdate = ({ results, model, fetchState }) => !(
+    shouldComponentUpdate = ({ results, isAggregating, model, fetchState }) => !(
       this.props.results.equals(results) &&
+      this.props.isAggregating === isAggregating &&
       this.getAxes().equals(unflattenAxes(model)) &&
       this.props.model.get('stacked') === model.get('stacked') &&
       this.props.model.get('isDonut') === model.get('isDonut') &&
@@ -58,8 +61,10 @@ const withStatementsVisualisation = (WrappedComponent) => {
       }
     }
 
-    isLoading = () => this.props.fetchState === IN_PROGRESS ||
-      !this.props.fetchState;
+    isLoading = () =>
+      this.props.fetchState === IN_PROGRESS ||
+      !this.props.fetchState ||
+      this.props.isAggregating;
 
     getFormattedResults = results =>
       getFormattedResults(this.getAxes().getIn(['group', 'optionKey'], 'date'), results);
@@ -101,6 +106,7 @@ const withStatementsVisualisation = (WrappedComponent) => {
   }
   return connect((state, { id }) => ({
     results: visualisationResultsSelector(id)(state),
+    isAggregating: visualisationIsAggregatingSelector(id)(state),
     shouldFetch: visualisationShouldFetchSelector(id)(state),
     fetchState: visualisationFetchStateSelector(id)(state)
   })

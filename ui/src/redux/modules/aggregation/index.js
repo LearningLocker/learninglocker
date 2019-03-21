@@ -43,6 +43,13 @@ export const aggregationResultsSelector = pipeline => createSelector(
   aggregationSelector,
   aggregations => aggregations.getIn([pipeline, 'result'])
 );
+export const aggregationIsAggregatingSelector = pipeline => createSelector(
+  aggregationSelector,
+  aggregations => (
+    aggregations.getIn([pipeline, 'startedAt']) &&
+    aggregations.getIn([pipeline, 'completedAt']) === null
+  )
+);
 
 /*
  * Sagas
