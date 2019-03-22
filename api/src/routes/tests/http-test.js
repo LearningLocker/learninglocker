@@ -173,7 +173,7 @@ describe('API HTTP Route tests', function describeTest() {
         }
       });
 
-      it('should return empty results and status when no cache', async () => {
+      it('should return empty result and status when no cache', async () => {
         const datetime1 = moment();
 
         const { body } = await apiApp
@@ -183,7 +183,7 @@ describe('API HTTP Route tests', function describeTest() {
 
         const datetime2 = moment();
 
-        expect(body.results).to.equal(null);
+        expect(body.result).to.equal(null);
         expect(body.status.completedAt).to.equal(null);
         expect(moment(body.status.startedAt).isSameOrAfter(datetime1)).to.equal(true);
         expect(moment(body.status.startedAt).isSameOrBefore(datetime2)).to.equal(true);
@@ -219,13 +219,11 @@ describe('API HTTP Route tests', function describeTest() {
           .set('Authorization', `Bearer ${orgJwtToken}`)
           .expect(200);
 
-        const datetime2 = moment();
-
         // This 1000 msec is irresponsible,
         // but 1000 msec is expected to be enough that aggregation is done.
         await delay(1000);
 
-        const datetime3 = moment();
+        const datetime2 = moment();
 
         // 2nd request
         const { body } = await apiApp
@@ -234,14 +232,13 @@ describe('API HTTP Route tests', function describeTest() {
           .expect(200);
 
         expect(moment(body.status.completedAt).isSameOrAfter(datetime1)).to.equal(true);
-        expect(moment(body.status.completedAt).isSameOrAfter(datetime2)).to.equal(true);
-        expect(moment(body.status.completedAt).isSameOrBefore(datetime3)).to.equal(true);
+        expect(moment(body.status.completedAt).isSameOrBefore(datetime2)).to.equal(true);
 
-        expect(body.results).to.be.an('array');
-        expect(body.results.length).to.be.above(0);
+        expect(body.result).to.be.an('array');
+        expect(body.result.length).to.be.above(0);
       });
 
-      it('should return empty results and status on second request with different query', async () => {
+      it('should return empty result and status on second request with different query', async () => {
         // 1st request
         await apiApp
           .get(`${routes.STATEMENTS_AGGREGATE_ASYNC}?pipeline=[]`)
@@ -258,7 +255,7 @@ describe('API HTTP Route tests', function describeTest() {
 
         const datetime2 = moment();
 
-        expect(body.results).to.equal(null);
+        expect(body.result).to.equal(null);
         expect(body.status.completedAt).to.equal(null);
         expect(moment(body.status.startedAt).isSameOrAfter(datetime1)).to.equal(true);
         expect(moment(body.status.startedAt).isSameOrBefore(datetime2)).to.equal(true);
