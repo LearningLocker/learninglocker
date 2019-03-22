@@ -140,7 +140,7 @@ class _LLApiClient {
     }
   })
 
-  aggregateAsync = (pipeline, limit) => get({
+  aggregateAsync = (pipeline, limit, sinceAt) => get({
     url: formatUrl(routes.STATEMENTS_AGGREGATE_ASYNC),
     headers: {
       Authorization: `Bearer ${this.getToken()}`,
@@ -148,6 +148,7 @@ class _LLApiClient {
     query: {
       pipeline: JSON.stringify(pipeline),
       skip: limit,
+      sinceAt,
     },
   })
 

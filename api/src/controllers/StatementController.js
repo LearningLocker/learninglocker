@@ -42,15 +42,16 @@ const aggregateStatements = catchErrors(async (req, res) => {
  * @param {*} req
  * @returns {object}
  */
-const extractParamsForaggregateAsync = req => ({
+const extractParamsForAggregateAsync = req => ({
   authInfo: req.user.authInfo || {},
   pipeline: JSON.parse(req.query.pipeline),
   skip: Number(req.query.skip) || 0,
   limit: Number(req.query.limit) || -1,
+  sinceAt: req.query.sinceAt || null,
 });
 
 const aggregateAsyncStatements = catchErrors(async (req, res) => {
-  const params = extractParamsForaggregateAsync(req);
+  const params = extractParamsForAggregateAsync(req);
   const resultsAndStatus = await statementsService.aggregateAsync(params);
   res.set('Content-Type', 'application/json');
   res.write(JSON.stringify({

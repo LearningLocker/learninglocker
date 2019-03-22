@@ -1,5 +1,6 @@
 import { OrderedMap, Map, fromJS } from 'immutable';
 import { createSelector } from 'reselect';
+import moment from 'moment';
 import { call, put, takeEvery } from 'redux-saga/effects';
 import delay from 'lib/helpers/delay';
 import createAsyncDuck from 'ui/utils/createAsyncDuck';
@@ -33,8 +34,26 @@ const aggregationShouldRecallSelector = pipeline => createSelector(
   aggregationSelector,
   (aggregations) => {
     const requestState = aggregations.getIn([pipeline, 'requestState']);
+    if (requestState === IN_PROGRESS) {
+      return false;
+    }
+
+    const result = aggregations.getIn([pipeline, 'result']);
+    const startedAt = aggregations.getIn([pipeline, 'startedAt']);
     const completedAt = aggregations.getIn([pipeline, 'completedAt']);
-    return requestState !== IN_PROGRESS && completedAt === null;
+
+    // No cache
+    if (result === null) {
+      return true;
+    }
+
+    if (completedAt === null) {
+      throw new Error('completedAt must be null when result is null');
+    }
+
+    // Cached and is running
+    const isRunning = moment(completedAt).isBefore(moment(startedAt));
+    return isRunning;
   }
 );
 
@@ -45,11 +64,18 @@ const fetchAggregation = createAsyncDuck({
   reduceStart: (state, { pipeline }) => state
     .setIn([pipeline, 'requestState'], IN_PROGRESS),
 
-  reduceSuccess: (state, { pipeline, result }) => state
-    .setIn([pipeline, 'requestState'], COMPLETED)
-    .setIn([pipeline, 'result'], result.get('result'))
-    .setIn([pipeline, 'startedAt'], result.get('startedAt'))
-    .setIn([pipeline, 'completedAt'], result.get('completedAt')),
+  reduceSuccess: (state, { pipeline, result, sinceAt }) => {
+    const x = state
+      .setIn([pipeline, 'requestState'], COMPLETED)
+      .setIn([pipeline, 'startedAt'], result.get('startedAt'))
+      .setIn([pipeline, 'completedAt'], result.get('completedAt'));
+
+    if (sinceAt && result.get('result') === null) {
+      return x;
+    }
+
+    return x.setIn([pipeline, 'result'], result.get('result'));
+  },
 
   reduceFailure: (state, { pipeline, err }) => state
     .setIn([pipeline, 'requestState'], FAILED)
@@ -58,7 +84,7 @@ const fetchAggregation = createAsyncDuck({
   reduceComplete: (state, { pipeline }) => state
     .setIn([pipeline, 'requestState'], COMPLETED),
 
-  startAction: ({ pipeline, mapping = defaultMapping }) => ({ pipeline, mapping }),
+  startAction: ({ pipeline, mapping = defaultMapping, sinceAt }) => ({ pipeline, mapping, sinceAt }),
 
   successAction: ({ pipeline, result }) => ({ pipeline, result }),
 
@@ -72,8 +98,8 @@ const fetchAggregation = createAsyncDuck({
     return shouldFetch || shouldRecall;
   },
 
-  doAction: function* fetchAggregationSaga({ pipeline, mapping, llClient }) {
-    const { body } = yield call(llClient.aggregateAsync, pipeline);
+  doAction: function* fetchAggregationSaga({ pipeline, mapping, llClient, sinceAt }) {
+    const { body } = yield call(llClient.aggregateAsync, pipeline, undefined, sinceAt);
     const result = mapping(body);
 
     return yield { pipeline, result };
@@ -82,10 +108,26 @@ const fetchAggregation = createAsyncDuck({
 
 function* recallAggregationIfRequired(args) {
   const pipeline = args.pipeline;
+  const result = args.result.get('result');
+  const startedAt = args.result.get('startedAt');
   const completedAt = args.result.get('completedAt');
-  if (completedAt === null) {
+
+  // No cache
+  if (result === null) {
     yield call(delay, 1000);
     yield put(fetchAggregation.actions.start({ pipeline }));
+    return;
+  }
+
+  if (completedAt === null) {
+    throw new Error('completedAt must be null when result is null');
+  }
+
+  // Cached and is running
+  const isRunning = moment(completedAt).isBefore(moment(startedAt));
+  if (isRunning) {
+    yield call(delay, 1000);
+    yield put(fetchAggregation.actions.start({ pipeline, sinceAt: completedAt }));
   }
 }
 
