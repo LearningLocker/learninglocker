@@ -53,7 +53,13 @@ const aggregateAsyncStatements = catchErrors(async (req, res) => {
   const params = extractParamsForaggregateAsync(req);
   const resultsAndStatus = await statementsService.aggregateAsync(params);
   res.set('Content-Type', 'application/json');
-  res.write(JSON.stringify(resultsAndStatus));
+  res.write(JSON.stringify({
+    result: resultsAndStatus.result,
+    status: {
+      startedAt: resultsAndStatus.startedAt,
+      completedAt: resultsAndStatus.completedAt,
+    },
+  }));
   return res.end();
 });
 

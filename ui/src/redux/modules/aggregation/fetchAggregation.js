@@ -7,7 +7,7 @@ import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 
 export function defaultMapping(body) {
   return new Map({
-    results: body.results && new OrderedMap(body.results.map(v => fromJS([v._id, v]))),
+    result: body.result && new OrderedMap(body.result.map(v => fromJS([v._id, v]))),
     startedAt: body.status.startedAt,
     completedAt: body.status.completedAt,
   });
@@ -47,7 +47,7 @@ const fetchAggregation = createAsyncDuck({
 
   reduceSuccess: (state, { pipeline, result }) => state
     .setIn([pipeline, 'requestState'], COMPLETED)
-    .setIn([pipeline, 'result'], result.get('results'))
+    .setIn([pipeline, 'result'], result.get('result'))
     .setIn([pipeline, 'startedAt'], result.get('startedAt'))
     .setIn([pipeline, 'completedAt'], result.get('completedAt')),
 
