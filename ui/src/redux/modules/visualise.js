@@ -8,7 +8,7 @@ import {
   aggregationShouldFetchSelector,
   aggregationResultsSelector,
   aggregationRequestStateSelector,
-  aggregationIsAggregatingSelector,
+  aggregationHasResultSelector,
   IN_PROGRESS,
   SUCCESS,
   FAILED,
@@ -322,17 +322,17 @@ export const visualisationResultsSelector = (visualisationId, filter) => createS
   }
 });
 
-export const visualisationIsAggregatingSelector = visualisationId => createSelector([
+export const visualisationAllAggregationsHaveResultSelector = visualisationId => createSelector([
   identity,
 ], (state) => {
   const series = visualisationPipelinesSelector(visualisationId)(state);
   return series.reduce(
     (acc1, pipelines) =>
-      acc1 || pipelines.reduce(
-        (acc2, pipeline) => acc2 || aggregationIsAggregatingSelector(pipeline)(state),
-        false
+      acc1 && pipelines.reduce(
+        (acc2, pipeline) => acc2 && aggregationHasResultSelector(pipeline)(state),
+        true
       ),
-    false
+    true
   );
 });
 

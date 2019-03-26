@@ -42,18 +42,18 @@ const aggregationShouldRecallSelector = pipeline => createSelector(
     const startedAt = aggregations.getIn([pipeline, 'startedAt']);
     const completedAt = aggregations.getIn([pipeline, 'completedAt']);
 
-    // No cache
-    if (result === null) {
+    // Cached and is running
+    const cachedAndIsRunning = startedAt && completedAt && moment(completedAt).isBefore(moment(startedAt));
+    if (cachedAndIsRunning) {
       return true;
     }
 
-    if (completedAt === null) {
-      throw new Error('completedAt must be null when result is null');
+    // No cache
+    if (!OrderedMap.isOrderedMap(result)) {
+      return true;
     }
 
-    // Cached and is running
-    const isRunning = moment(completedAt).isBefore(moment(startedAt));
-    return isRunning;
+    return false;
   }
 );
 
@@ -64,13 +64,13 @@ const fetchAggregation = createAsyncDuck({
   reduceStart: (state, { pipeline }) => state
     .setIn([pipeline, 'requestState'], IN_PROGRESS),
 
-  reduceSuccess: (state, { pipeline, result, sinceAt }) => {
+  reduceSuccess: (state, { pipeline, result }) => {
     const x = state
       .setIn([pipeline, 'requestState'], COMPLETED)
       .setIn([pipeline, 'startedAt'], result.get('startedAt'))
       .setIn([pipeline, 'completedAt'], result.get('completedAt'));
 
-    if (sinceAt && result.get('result') === null) {
+    if (result.get('result') === null) {
       return x;
     }
 
@@ -112,22 +112,19 @@ function* recallAggregationIfRequired(args) {
   const startedAt = args.result.get('startedAt');
   const completedAt = args.result.get('completedAt');
 
+  // Cached and is running
+  const cachedAndIsRunning = startedAt && completedAt && moment(completedAt).isBefore(moment(startedAt));
+  if (cachedAndIsRunning) {
+    yield call(delay, 1000);
+    yield put(fetchAggregation.actions.start({ pipeline, sinceAt: completedAt }));
+    return;
+  }
+
   // No cache
   if (result === null) {
     yield call(delay, 1000);
     yield put(fetchAggregation.actions.start({ pipeline }));
     return;
-  }
-
-  if (completedAt === null) {
-    throw new Error('completedAt must be null when result is null');
-  }
-
-  // Cached and is running
-  const isRunning = moment(completedAt).isBefore(moment(startedAt));
-  if (isRunning) {
-    yield call(delay, 1000);
-    yield put(fetchAggregation.actions.start({ pipeline, sinceAt: completedAt }));
   }
 }
 

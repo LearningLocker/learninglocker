@@ -1,4 +1,4 @@
-import { Map, fromJS } from 'immutable';
+import { Map, OrderedMap, fromJS } from 'immutable';
 import { createSelector } from 'reselect';
 import { handleActions } from 'redux-actions';
 import * as fetchAggregationDuck from 'ui/redux/modules/aggregation/fetchAggregation';
@@ -43,12 +43,10 @@ export const aggregationResultsSelector = pipeline => createSelector(
   aggregationSelector,
   aggregations => aggregations.getIn([pipeline, 'result'])
 );
-export const aggregationIsAggregatingSelector = pipeline => createSelector(
+
+export const aggregationHasResultSelector = pipeline => createSelector(
   aggregationSelector,
-  aggregations => (
-    aggregations.getIn([pipeline, 'startedAt']) &&
-    aggregations.getIn([pipeline, 'completedAt']) === null
-  )
+  aggregations => OrderedMap.isOrderedMap(aggregations.getIn([pipeline, 'result']))
 );
 
 /*

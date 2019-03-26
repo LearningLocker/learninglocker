@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { compose, withProps } from 'recompose';
 import {
   visualisationResultsSelector,
-  visualisationIsAggregatingSelector,
+  visualisationAllAggregationsHaveResultSelector,
   visualisationShouldFetchSelector,
   visualisationFetchStateSelector,
   fetchVisualisation
@@ -22,9 +22,8 @@ const withStatementsVisualisation = (WrappedComponent) => {
       schema: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
       model: PropTypes.instanceOf(Map),
       results: PropTypes.instanceOf(List),
-      isAggregating: PropTypes.bool,
+      hasAllResult: PropTypes.bool,
       shouldFetch: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
-      fetchState: PropTypes.string,
       fetchVisualisation: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
     }
 
@@ -32,7 +31,6 @@ const withStatementsVisualisation = (WrappedComponent) => {
       model: new Map(),
       results: new List(),
       shouldFetch: false,
-      fetchState: IN_PROGRESS,
     }
 
     componentDidMount = () => {
@@ -43,15 +41,14 @@ const withStatementsVisualisation = (WrappedComponent) => {
       this.fetchIfRequired(nextProps);
     }
 
-    shouldComponentUpdate = ({ results, isAggregating, model, fetchState }) => !(
+    shouldComponentUpdate = ({ results, hasAllResult, model }) => !(
       this.props.results.equals(results) &&
-      this.props.isAggregating === isAggregating &&
+      this.props.hasAllResult === hasAllResult &&
       this.getAxes().equals(unflattenAxes(model)) &&
       this.props.model.get('stacked') === model.get('stacked') &&
       this.props.model.get('isDonut') === model.get('isDonut') &&
       this.props.model.get('barChartGroupingLimit') === model.get('barChartGroupingLimit') &&
       this.props.model.get('filters').equals(model.get('filters')) &&
-      this.props.fetchState === fetchState &&
       this.props.model.get('trendLines') === model.get('trendLines')
     );
 
@@ -61,10 +58,7 @@ const withStatementsVisualisation = (WrappedComponent) => {
       }
     }
 
-    isLoading = () =>
-      this.props.fetchState === IN_PROGRESS ||
-      !this.props.fetchState ||
-      this.props.isAggregating;
+    isLoading = () => !this.props.hasAllResult;
 
     getFormattedResults = results =>
       getFormattedResults(this.getAxes().getIn(['group', 'optionKey'], 'date'), results);
@@ -106,9 +100,8 @@ const withStatementsVisualisation = (WrappedComponent) => {
   }
   return connect((state, { id }) => ({
     results: visualisationResultsSelector(id)(state),
-    isAggregating: visualisationIsAggregatingSelector(id)(state),
+    hasAllResult: visualisationAllAggregationsHaveResultSelector(id)(state),
     shouldFetch: visualisationShouldFetchSelector(id)(state),
-    fetchState: visualisationFetchStateSelector(id)(state)
   })
   ,
   { fetchVisualisation })(WithStatementsVisualisation);
