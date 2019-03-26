@@ -6,11 +6,10 @@ import {
   visualisationResultsSelector,
   visualisationAllAggregationsHaveResultSelector,
   visualisationShouldFetchSelector,
-  visualisationFetchStateSelector,
   fetchVisualisation
 } from 'ui/redux/modules/visualise';
 import { unflattenAxes } from 'lib/helpers/visualisation';
-import { IN_PROGRESS, VISUALISATION_COLORS } from 'ui/utils/constants';
+import { VISUALISATION_COLORS } from 'ui/utils/constants';
 import { getFormattedResults } from 'ui/utils/visualisationResults';
 import withModel from 'ui/utils/hocs/withModel';
 import Spinner from 'ui/components/Spinner';
