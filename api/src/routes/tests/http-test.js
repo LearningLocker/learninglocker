@@ -237,30 +237,6 @@ describe('API HTTP Route tests', function describeTest() {
         expect(body.result).to.be.an('array');
         expect(body.result.length).to.be.above(0);
       });
-
-      it('should return empty result and status on second request with different query', async () => {
-        // 1st request
-        await apiApp
-          .get(`${routes.STATEMENTS_AGGREGATE_ASYNC}?pipeline=[]`)
-          .set('Authorization', `Bearer ${orgJwtToken}`)
-          .expect(200);
-
-        const datetime1 = moment();
-
-        // 2nd request with another query
-        const { body } = await apiApp
-          .get(`${routes.STATEMENTS_AGGREGATE_ASYNC}?pipeline=[]&skip=1`)
-          .set('Authorization', `Bearer ${orgJwtToken}`)
-          .expect(200);
-
-        const datetime2 = moment();
-
-        expect(body.result).to.equal(null);
-        expect(body.status.completedAt).to.equal(null);
-        expect(moment(body.status.startedAt).isSameOrAfter(datetime1)).to.equal(true);
-        expect(moment(body.status.startedAt).isSameOrBefore(datetime2)).to.equal(true);
-      });
-    });
   });
 
   describe('GET organisations', () => {
