@@ -2,11 +2,11 @@ import migrateToInQueries from '../migrateToInQueries';
 import migrateFromInQueries from '../migrateFromInQueries';
 
 const up = async () => {
-  migrateToInQueries();
+  await migrateToInQueries();
 };
 
 const down = async () => {
-  migrateFromInQueries();
+  await migrateFromInQueries();
 };
 
 export default { up, down };
