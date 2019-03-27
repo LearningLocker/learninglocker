@@ -48,8 +48,13 @@ const aggregationShouldRecallSelector = pipeline => createSelector(
       return true;
     }
 
-    // No cache
+    // No cache in redux
     if (!OrderedMap.isOrderedMap(result)) {
+      return true;
+    }
+
+    // Redux has result, but completedAt is null
+    if (completedAt === null) {
       return true;
     }
 
@@ -86,7 +91,7 @@ const fetchAggregation = createAsyncDuck({
 
   startAction: ({ pipeline, mapping = defaultMapping, sinceAt }) => ({ pipeline, mapping, sinceAt }),
 
-  successAction: ({ pipeline, result }) => ({ pipeline, result }),
+  successAction: ({ pipeline, result, sinceAt }) => ({ pipeline, result, sinceAt }),
 
   failureAction: ({ pipeline, err }) => ({ pipeline, err }),
 
@@ -102,12 +107,13 @@ const fetchAggregation = createAsyncDuck({
     const { body } = yield call(llClient.aggregateAsync, pipeline, undefined, sinceAt);
     const result = mapping(body);
 
-    return yield { pipeline, result };
+    return yield { pipeline, result, sinceAt };
   }
 });
 
 function* recallAggregationIfRequired(args) {
   const pipeline = args.pipeline;
+  const sinceAt = args.sinceAt;
   const result = args.result.get('result');
   const startedAt = args.result.get('startedAt');
   const completedAt = args.result.get('completedAt');
@@ -123,7 +129,7 @@ function* recallAggregationIfRequired(args) {
   // No cache
   if (result === null) {
     yield call(delay, 1000);
-    yield put(fetchAggregation.actions.start({ pipeline }));
+    yield put(fetchAggregation.actions.start({ pipeline, sinceAt }));
     return;
   }
 }
