@@ -1,11 +1,8 @@
 import { expect } from 'chai';
-import moment from 'moment';
 import * as routes from 'lib/constants/routes';
 import supertestApi from 'lib/connections/supertestApi';
 import { getConnection } from 'lib/connections/mongoose';
-import * as redis from 'lib/connections/redis';
 import Statement from 'lib/models/statement';
-import delay from 'lib/helpers/delay';
 import { createUserJWT } from 'api/auth/jwt';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 import testId from 'api/routes/tests/utils/testId';
@@ -14,7 +11,6 @@ import DBHelper from './DBHelper';
 
 const connection = getConnection();
 const apiApp = supertestApi();
-const redisClient = redis.createClient();
 
 const db = new DBHelper();
 
@@ -150,93 +146,6 @@ describe('API HTTP Route tests', function describeTest() {
           .expect(200, done);
       });
     });
-
-    describe('Call on statements/aggregateAsync', () => {
-      beforeEach('create organisation and jwt token', async () => {
-        orgJwtToken = await createOrgToken(['ALL'], [], '561a679c0c5d017e4004714e');
-
-        await Statement.create({
-          organisation: testId,
-          statement: {
-            context: {
-              extensions: {
-                'http://example&46;org': 'testing'
-              }
-            }
-          }
-        });
-
-        // Clear async aggregation cache
-        const keys = await redisClient.keys('*-AGGREGATION-ASYNC-*');
-        for (const k of keys) {
-          await redisClient.del(k);
-        }
-      });
-
-      it('should return empty result and status when no cache', async () => {
-        const datetime1 = moment();
-
-        const { body } = await apiApp
-          .get(`${routes.STATEMENTS_AGGREGATE_ASYNC}?pipeline=[]`)
-          .set('Authorization', `Bearer ${orgJwtToken}`)
-          .expect(200);
-
-        const datetime2 = moment();
-
-        expect(body.result).to.equal(null);
-        expect(body.status.completedAt).to.equal(null);
-        expect(moment(body.status.startedAt).isSameOrAfter(datetime1)).to.equal(true);
-        expect(moment(body.status.startedAt).isSameOrBefore(datetime2)).to.equal(true);
-      });
-
-      it('should return status with startedAt and status on second request', async () => {
-        const datetime1 = moment();
-
-        // 1st request
-        await apiApp
-          .get(`${routes.STATEMENTS_AGGREGATE_ASYNC}?pipeline=[]`)
-          .set('Authorization', `Bearer ${orgJwtToken}`)
-          .expect(200);
-
-        const datetime2 = moment();
-
-        // 2nd request
-        const { body } = await apiApp
-          .get(`${routes.STATEMENTS_AGGREGATE_ASYNC}?pipeline=[]`)
-          .set('Authorization', `Bearer ${orgJwtToken}`)
-          .expect(200);
-
-        expect(moment(body.status.startedAt).isSameOrAfter(datetime1)).to.equal(true);
-        expect(moment(body.status.startedAt).isSameOrBefore(datetime2)).to.equal(true);
-      });
-
-      it('should return status with startedAt and status on second request', async () => {
-        const datetime1 = moment();
-
-        // 1st request
-        await apiApp
-          .get(`${routes.STATEMENTS_AGGREGATE_ASYNC}?pipeline=[]`)
-          .set('Authorization', `Bearer ${orgJwtToken}`)
-          .expect(200);
-
-        // This 1000 msec is irresponsible,
-        // but 1000 msec is expected to be enough that aggregation is done.
-        await delay(1000);
-
-        const datetime2 = moment();
-
-        // 2nd request
-        const { body } = await apiApp
-          .get(`${routes.STATEMENTS_AGGREGATE_ASYNC}?pipeline=[]`)
-          .set('Authorization', `Bearer ${orgJwtToken}`)
-          .expect(200);
-
-        expect(moment(body.status.completedAt).isSameOrAfter(datetime1)).to.equal(true);
-        expect(moment(body.status.completedAt).isSameOrBefore(datetime2)).to.equal(true);
-
-        expect(body.result).to.be.an('array');
-        expect(body.result.length).to.be.above(0);
-      });
   });
 
   describe('GET organisations', () => {
