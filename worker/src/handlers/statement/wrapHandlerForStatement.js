@@ -9,7 +9,6 @@ export default (queueName, statementHandler) => ({ statementId }, jobDone, optio
     statementHandler(statement, (err) => {
       logger.debug('COMPLETED STATEMENT HANDLER FOR', queueName, statementId);
       if (err) {
-        logger.error('ERROR', queueName, err);
         return jobDone(err);
       }
       try {
@@ -19,7 +18,7 @@ export default (queueName, statementHandler) => ({ statementId }, jobDone, optio
           opts: { lifo: true }
         }, jobDone);
       } catch (err) {
-        logger.error('Queue.publish error', err);
+        logger.error(`Error publishing back to ${STATEMENT_QUEUE}`, payload, err);
         return jobDone(err);
       }
     }, options);
