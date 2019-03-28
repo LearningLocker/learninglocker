@@ -272,7 +272,7 @@ restify.serve(router, Statement, {
   preCreate: (req, res) => res.sendStatus(405),
   preDelete: (req, res, next) => {
     const authInfo = getAuthFromRequest(req);
-    if (!get(process.env, 'ENABLE_SINGLE_STATEMENT_DELETION', true)) {
+    if (!boolean(get(process.env, 'ENABLE_SINGLE_STATEMENT_DELETION', true))) {
       res.send(405);
       return;
     }
