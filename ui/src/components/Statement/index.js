@@ -18,9 +18,9 @@ class Statement extends Component {
   hasInStatement = path =>
     this.props.statement.hasIn(path);
 
-  renderPart = (path, part, displayer, filterPath = path) => {
+  renderPart = (path, part, displayer, filterPath) => {
+    const filterValue = this.getInStatement(filterPath);
     const value = this.getInStatement(path);
-    const filterValue = path === filterPath ? value : this.getInStatement(filterPath);
     const display = displayer(value);
     const title = JSON.stringify(value.toJS(), null, 2);
 
@@ -42,10 +42,10 @@ class Statement extends Component {
     this.renderPart(path, 'actor', displayActor, filterPath);
 
   renderVerb = path =>
-    this.renderPart(path, 'verb', displayVerb);
+    this.renderPart(path, 'verb', displayVerb, path);
 
   renderActivity = path =>
-    this.renderPart(path, 'object', displayActivity);
+    this.renderPart(path, 'object', displayActivity, path);
 
   renderSubStatement = basePath =>
     <span>({this.renderStatement(basePath)})</span>;
@@ -63,7 +63,7 @@ class Statement extends Component {
     }
   }
 
-  renderStatement = basePath => {
+  renderStatement = (basePath) => {
     const actorPath = basePath.size === 1 && this.hasInStatement(new List(['person'])) ?
       new List(['person']) :
       basePath.concat(['actor']);

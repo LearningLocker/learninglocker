@@ -423,7 +423,7 @@ export const getId = value => new Map({ id: value.get('id') });
 export const getMongoId = value => new Map({ _id: { $oid: value.get('_id') } });
 
 /**
- * @param {immutable.Map|Iterable} value
+ * @param {immutable.Iterable} value
  * @returns {immutable.Map}
  */
 export const defaultParser = (value) => {
@@ -490,6 +490,20 @@ const getChildOverridesFromValueType = (valueType, generator, childPath) => {
   return {
     operators: generator.get('childOperators', operators.DISCRETE)
   };
+};
+
+/**
+ * @param {string} basePath
+ * @param {immutable.Iterable} value
+ * @return {immutable.Map}
+ */
+export const valueToCriteria = (basePath, value) => {
+  const idents = defaultParser(value);
+  const flatIdents = flattenDeep(idents);
+  const result = flatIdents.mapKeys(
+    flatKey => ((flatKey === '') ? basePath : `${basePath}.${flatKey}`)
+  ).map(v => fromJS(v));
+  return result;
 };
 
 /**
