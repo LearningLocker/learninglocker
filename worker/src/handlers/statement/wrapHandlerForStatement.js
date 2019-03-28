@@ -11,8 +11,8 @@ export default (queueName, statementHandler) => ({ statementId }, jobDone, optio
       if (err) {
         return jobDone(err);
       }
+      const payload = { status: queueName, statementId };
       try {
-        const payload = { status: queueName, statementId };
         return Queue.publish({
           queueName: STATEMENT_QUEUE,
           payload,
