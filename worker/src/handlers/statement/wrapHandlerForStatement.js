@@ -12,13 +12,14 @@ export default (queueName, statementHandler) => ({ statementId }, jobDone, optio
         return jobDone(err);
       }
       try {
+        const payload = { status: queueName, statementId };
         return Queue.publish({
           queueName: STATEMENT_QUEUE,
-          payload: { status: queueName, statementId },
+          payload,
           opts: { lifo: true }
         }, jobDone);
       } catch (err) {
-        logger.error(`Error publishing back to ${STATEMENT_QUEUE}`, payload, err);
+        logger.error(`Error publishing status back to ${STATEMENT_QUEUE}`, payload, err);
         return jobDone(err);
       }
     }, options);
