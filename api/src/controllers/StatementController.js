@@ -50,17 +50,22 @@ const extractParamsForAggregateAsync = req => ({
   sinceAt: req.query.sinceAt || null,
 });
 
-const aggregateAsyncStatements = catchErrors(async (req, res) => {
+const aggregateAsync = async (req) => {
   const params = extractParamsForAggregateAsync(req);
   const resultsAndStatus = await statementsService.aggregateAsync(params);
-  res.set('Content-Type', 'application/json');
-  res.write(JSON.stringify({
+  return JSON.stringify({
     result: resultsAndStatus.result,
     status: {
       startedAt: resultsAndStatus.startedAt,
       completedAt: resultsAndStatus.completedAt,
     },
-  }));
+  });
+};
+
+const aggregateAsyncStatements = catchErrors(async (req, res) => {
+  const result = await aggregateAsync(req);
+  res.set('Content-Type', 'application/json');
+  res.write(result);
   return res.end();
 });
 
