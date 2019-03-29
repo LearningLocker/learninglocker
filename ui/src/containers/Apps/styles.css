@@ -8,11 +8,14 @@
 .cardA {
   color: #333;
   text-decoration: none;
+  outline: none;
 }
 .cardA:active,
-.cardA:hover {
+.cardA:hover,
+.cardA:focus {
   color: #333;
   text-decoration: none;
+  outline: none;
 }
 
 .card {
