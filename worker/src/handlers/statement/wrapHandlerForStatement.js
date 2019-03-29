@@ -9,17 +9,17 @@ export default (queueName, statementHandler) => ({ statementId }, jobDone, optio
     statementHandler(statement, (err) => {
       logger.debug('COMPLETED STATEMENT HANDLER FOR', queueName, statementId);
       if (err) {
-        logger.error('ERROR', queueName, err);
         return jobDone(err);
       }
+      const payload = { status: queueName, statementId };
       try {
         return Queue.publish({
           queueName: STATEMENT_QUEUE,
-          payload: { status: queueName, statementId },
+          payload,
           opts: { lifo: true }
         }, jobDone);
       } catch (err) {
-        logger.error('Queue.publish error', err);
+        logger.error(`Error publishing status back to ${STATEMENT_QUEUE}`, payload, err);
         return jobDone(err);
       }
     }, options);
