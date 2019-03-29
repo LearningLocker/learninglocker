@@ -2,7 +2,7 @@ import { OrderedMap, Map, fromJS } from 'immutable';
 import { createSelector } from 'reselect';
 import moment from 'moment';
 import { call, put, takeEvery } from 'redux-saga/effects';
-import delay from 'lib/helpers/delay';
+import { delay } from 'bluebird';
 import createAsyncDuck from 'ui/utils/createAsyncDuck';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 
