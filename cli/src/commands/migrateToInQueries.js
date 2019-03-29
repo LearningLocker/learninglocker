@@ -5,6 +5,7 @@ import Dashboard from 'lib/models/dashboard';
 import StatementForwarding from 'lib/models/statementForwarding';
 import Visualisation from 'lib/models/visualisation';
 import User from 'lib/models/user';
+import Query from 'lib/models/query';
 
 /**
  * @param {immutable.List} criteriaPath
@@ -255,6 +256,32 @@ const convertUsers = async () => {
   }
 };
 
+const convertQueries = async () => {
+  const queries = await Query.find();
+
+  for (const query of queries) {
+    if (query.hasBeenMigrated) {
+      logger.warn(`query (${query._id}) has been migrated`);
+      return;
+    }
+
+    // query.conditions is not string, but has been JSON-parsed.
+    const oldConditions = fromJS(query.conditions);
+    const newConditions = _buildNewQuery(oldConditions).toJS();
+
+    query.oldConditions = JSON.stringify(query.conditions);
+    query.conditions = JSON.stringify(newConditions);
+
+    logger.info(`Update Query (${query._id})`);
+    logger.info('convert conditions');
+    logger.info(JSON.stringify(oldConditions));
+    logger.info(JSON.stringify(newConditions));
+
+    query.hasBeenMigrated = true;
+    await query.save();
+  }
+};
+
 export default async () => {
   logger.info('Convert $or/$nor to $in/$nin in queries');
   try {
@@ -262,6 +289,7 @@ export default async () => {
     await convertDashboards();
     await convertStatementForwarding();
     await convertUsers();
+    await convertQueries();
     logger.info('Finish converting $or/$nor to $in/$nin in queries');
   } catch (error) {
     logger.error(error);
