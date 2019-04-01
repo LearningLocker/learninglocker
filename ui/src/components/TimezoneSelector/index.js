@@ -29,7 +29,7 @@ export const TimezoneSelector = ({ id, value, onChange, defaultOption }) => (
     className="form-control"
     value={value === null ? DEFAULT : value}
     onChange={(e) => {
-      const tz = e.target.value === DEFAULT ? defaultOption.value : e.target.value;
+      const tz = e.target.value === DEFAULT ? null : e.target.value;
       onChange(tz);
     }} >
     {defaultOption && (
