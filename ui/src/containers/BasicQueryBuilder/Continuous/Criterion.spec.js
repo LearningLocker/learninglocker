@@ -27,8 +27,8 @@ test('render criterion with value', () => {
 
   const criterionOut = ReactTestRenderer.create(
     <WrappedCriterion
-      timezone="Asia/Hong_Kong"
-      orgTimezone="Europe/London"
+      timezone="Etc/GMT-2"
+      orgTimezone="Etc/GMT+3"
       criterion={criterion}
       section={section}
       onCriterionChange={noop}

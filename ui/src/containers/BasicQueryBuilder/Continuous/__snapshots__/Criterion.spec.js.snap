@@ -68,12 +68,12 @@ exports[`render criterion with value 1`] = `
         className="form-control"
         id="timezone-selector"
         onChange={[Function]}
-        value="Asia/Hong_Kong"
+        value="Etc/GMT-2"
       >
         <option
           value="DEFAULT_VALUE"
         >
-          Organisation Default: Europe/London
+          Organisation Default: Etc/GMT+3
         </option>
         <option
           value="Africa/Abidjan"
@@ -148,12 +148,12 @@ exports[`render criterion with value 1`] = `
         <option
           value="Africa/Casablanca"
         >
-          Africa/Casablanca (+00:00)
+          Africa/Casablanca (+01:00)
         </option>
         <option
           value="Africa/Ceuta"
         >
-          Africa/Ceuta (+01:00)
+          Africa/Ceuta (+02:00)
         </option>
         <option
           value="Africa/Conakry"
@@ -183,7 +183,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="Africa/El_Aaiun"
         >
-          Africa/El_Aaiun (+00:00)
+          Africa/El_Aaiun (+01:00)
         </option>
         <option
           value="Africa/Freetown"
@@ -348,12 +348,12 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Adak"
         >
-          America/Adak (-10:00)
+          America/Adak (-09:00)
         </option>
         <option
           value="America/Anchorage"
         >
-          America/Anchorage (-09:00)
+          America/Anchorage (-08:00)
         </option>
         <option
           value="America/Anguilla"
@@ -443,7 +443,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Asuncion"
         >
-          America/Asuncion (-03:00)
+          America/Asuncion (-04:00)
         </option>
         <option
           value="America/Atikokan"
@@ -453,7 +453,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Atka"
         >
-          America/Atka (-10:00)
+          America/Atka (-09:00)
         </option>
         <option
           value="America/Bahia"
@@ -498,7 +498,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Boise"
         >
-          America/Boise (-07:00)
+          America/Boise (-06:00)
         </option>
         <option
           value="America/Buenos_Aires"
@@ -508,7 +508,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Cambridge_Bay"
         >
-          America/Cambridge_Bay (-07:00)
+          America/Cambridge_Bay (-06:00)
         </option>
         <option
           value="America/Campo_Grande"
@@ -543,7 +543,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Chicago"
         >
-          America/Chicago (-06:00)
+          America/Chicago (-05:00)
         </option>
         <option
           value="America/Chihuahua"
@@ -588,7 +588,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Dawson"
         >
-          America/Dawson (-08:00)
+          America/Dawson (-07:00)
         </option>
         <option
           value="America/Dawson_Creek"
@@ -598,12 +598,12 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Denver"
         >
-          America/Denver (-07:00)
+          America/Denver (-06:00)
         </option>
         <option
           value="America/Detroit"
         >
-          America/Detroit (-05:00)
+          America/Detroit (-04:00)
         </option>
         <option
           value="America/Dominica"
@@ -613,7 +613,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Edmonton"
         >
-          America/Edmonton (-07:00)
+          America/Edmonton (-06:00)
         </option>
         <option
           value="America/Eirunepe"
@@ -628,7 +628,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Ensenada"
         >
-          America/Ensenada (-08:00)
+          America/Ensenada (-07:00)
         </option>
         <option
           value="America/Fort_Nelson"
@@ -638,7 +638,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Fort_Wayne"
         >
-          America/Fort_Wayne (-05:00)
+          America/Fort_Wayne (-04:00)
         </option>
         <option
           value="America/Fortaleza"
@@ -648,22 +648,22 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Glace_Bay"
         >
-          America/Glace_Bay (-04:00)
+          America/Glace_Bay (-03:00)
         </option>
         <option
           value="America/Godthab"
         >
-          America/Godthab (-03:00)
+          America/Godthab (-02:00)
         </option>
         <option
           value="America/Goose_Bay"
         >
-          America/Goose_Bay (-04:00)
+          America/Goose_Bay (-03:00)
         </option>
         <option
           value="America/Grand_Turk"
         >
-          America/Grand_Turk (-05:00)
+          America/Grand_Turk (-04:00)
         </option>
         <option
           value="America/Grenada"
@@ -693,12 +693,12 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Halifax"
         >
-          America/Halifax (-04:00)
+          America/Halifax (-03:00)
         </option>
         <option
           value="America/Havana"
         >
-          America/Havana (-05:00)
+          America/Havana (-04:00)
         </option>
         <option
           value="America/Hermosillo"
@@ -708,57 +708,57 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Indiana/Indianapolis"
         >
-          America/Indiana/Indianapolis (-05:00)
+          America/Indiana/Indianapolis (-04:00)
         </option>
         <option
           value="America/Indiana/Knox"
         >
-          America/Indiana/Knox (-06:00)
+          America/Indiana/Knox (-05:00)
         </option>
         <option
           value="America/Indiana/Marengo"
         >
-          America/Indiana/Marengo (-05:00)
+          America/Indiana/Marengo (-04:00)
         </option>
         <option
           value="America/Indiana/Petersburg"
         >
-          America/Indiana/Petersburg (-05:00)
+          America/Indiana/Petersburg (-04:00)
         </option>
         <option
           value="America/Indiana/Tell_City"
         >
-          America/Indiana/Tell_City (-06:00)
+          America/Indiana/Tell_City (-05:00)
         </option>
         <option
           value="America/Indiana/Vevay"
         >
-          America/Indiana/Vevay (-05:00)
+          America/Indiana/Vevay (-04:00)
         </option>
         <option
           value="America/Indiana/Vincennes"
         >
-          America/Indiana/Vincennes (-05:00)
+          America/Indiana/Vincennes (-04:00)
         </option>
         <option
           value="America/Indiana/Winamac"
         >
-          America/Indiana/Winamac (-05:00)
+          America/Indiana/Winamac (-04:00)
         </option>
         <option
           value="America/Indianapolis"
         >
-          America/Indianapolis (-05:00)
+          America/Indianapolis (-04:00)
         </option>
         <option
           value="America/Inuvik"
         >
-          America/Inuvik (-07:00)
+          America/Inuvik (-06:00)
         </option>
         <option
           value="America/Iqaluit"
         >
-          America/Iqaluit (-05:00)
+          America/Iqaluit (-04:00)
         </option>
         <option
           value="America/Jamaica"
@@ -773,22 +773,22 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Juneau"
         >
-          America/Juneau (-09:00)
+          America/Juneau (-08:00)
         </option>
         <option
           value="America/Kentucky/Louisville"
         >
-          America/Kentucky/Louisville (-05:00)
+          America/Kentucky/Louisville (-04:00)
         </option>
         <option
           value="America/Kentucky/Monticello"
         >
-          America/Kentucky/Monticello (-05:00)
+          America/Kentucky/Monticello (-04:00)
         </option>
         <option
           value="America/Knox_IN"
         >
-          America/Knox_IN (-06:00)
+          America/Knox_IN (-05:00)
         </option>
         <option
           value="America/Kralendijk"
@@ -808,12 +808,12 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Los_Angeles"
         >
-          America/Los_Angeles (-08:00)
+          America/Los_Angeles (-07:00)
         </option>
         <option
           value="America/Louisville"
         >
-          America/Louisville (-05:00)
+          America/Louisville (-04:00)
         </option>
         <option
           value="America/Lower_Princes"
@@ -848,7 +848,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Matamoros"
         >
-          America/Matamoros (-06:00)
+          America/Matamoros (-05:00)
         </option>
         <option
           value="America/Mazatlan"
@@ -863,7 +863,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Menominee"
         >
-          America/Menominee (-06:00)
+          America/Menominee (-05:00)
         </option>
         <option
           value="America/Merida"
@@ -873,7 +873,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Metlakatla"
         >
-          America/Metlakatla (-09:00)
+          America/Metlakatla (-08:00)
         </option>
         <option
           value="America/Mexico_City"
@@ -883,12 +883,12 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Miquelon"
         >
-          America/Miquelon (-03:00)
+          America/Miquelon (-02:00)
         </option>
         <option
           value="America/Moncton"
         >
-          America/Moncton (-04:00)
+          America/Moncton (-03:00)
         </option>
         <option
           value="America/Monterrey"
@@ -903,7 +903,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Montreal"
         >
-          America/Montreal (-05:00)
+          America/Montreal (-04:00)
         </option>
         <option
           value="America/Montserrat"
@@ -913,22 +913,22 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Nassau"
         >
-          America/Nassau (-05:00)
+          America/Nassau (-04:00)
         </option>
         <option
           value="America/New_York"
         >
-          America/New_York (-05:00)
+          America/New_York (-04:00)
         </option>
         <option
           value="America/Nipigon"
         >
-          America/Nipigon (-05:00)
+          America/Nipigon (-04:00)
         </option>
         <option
           value="America/Nome"
         >
-          America/Nome (-09:00)
+          America/Nome (-08:00)
         </option>
         <option
           value="America/Noronha"
@@ -938,22 +938,22 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/North_Dakota/Beulah"
         >
-          America/North_Dakota/Beulah (-06:00)
+          America/North_Dakota/Beulah (-05:00)
         </option>
         <option
           value="America/North_Dakota/Center"
         >
-          America/North_Dakota/Center (-06:00)
+          America/North_Dakota/Center (-05:00)
         </option>
         <option
           value="America/North_Dakota/New_Salem"
         >
-          America/North_Dakota/New_Salem (-06:00)
+          America/North_Dakota/New_Salem (-05:00)
         </option>
         <option
           value="America/Ojinaga"
         >
-          America/Ojinaga (-07:00)
+          America/Ojinaga (-06:00)
         </option>
         <option
           value="America/Panama"
@@ -963,7 +963,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Pangnirtung"
         >
-          America/Pangnirtung (-05:00)
+          America/Pangnirtung (-04:00)
         </option>
         <option
           value="America/Paramaribo"
@@ -978,7 +978,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Port-au-Prince"
         >
-          America/Port-au-Prince (-05:00)
+          America/Port-au-Prince (-04:00)
         </option>
         <option
           value="America/Port_of_Spain"
@@ -1008,12 +1008,12 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Rainy_River"
         >
-          America/Rainy_River (-06:00)
+          America/Rainy_River (-05:00)
         </option>
         <option
           value="America/Rankin_Inlet"
         >
-          America/Rankin_Inlet (-06:00)
+          America/Rankin_Inlet (-05:00)
         </option>
         <option
           value="America/Recife"
@@ -1028,7 +1028,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Resolute"
         >
-          America/Resolute (-06:00)
+          America/Resolute (-05:00)
         </option>
         <option
           value="America/Rio_Branco"
@@ -1043,7 +1043,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Santa_Isabel"
         >
-          America/Santa_Isabel (-08:00)
+          America/Santa_Isabel (-07:00)
         </option>
         <option
           value="America/Santarem"
@@ -1068,17 +1068,17 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Scoresbysund"
         >
-          America/Scoresbysund (-01:00)
+          America/Scoresbysund (+00:00)
         </option>
         <option
           value="America/Shiprock"
         >
-          America/Shiprock (-07:00)
+          America/Shiprock (-06:00)
         </option>
         <option
           value="America/Sitka"
         >
-          America/Sitka (-09:00)
+          America/Sitka (-08:00)
         </option>
         <option
           value="America/St_Barthelemy"
@@ -1088,7 +1088,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/St_Johns"
         >
-          America/St_Johns (-03:30)
+          America/St_Johns (-02:30)
         </option>
         <option
           value="America/St_Kitts"
@@ -1123,22 +1123,22 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Thule"
         >
-          America/Thule (-04:00)
+          America/Thule (-03:00)
         </option>
         <option
           value="America/Thunder_Bay"
         >
-          America/Thunder_Bay (-05:00)
+          America/Thunder_Bay (-04:00)
         </option>
         <option
           value="America/Tijuana"
         >
-          America/Tijuana (-08:00)
+          America/Tijuana (-07:00)
         </option>
         <option
           value="America/Toronto"
         >
-          America/Toronto (-05:00)
+          America/Toronto (-04:00)
         </option>
         <option
           value="America/Tortola"
@@ -1148,7 +1148,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Vancouver"
         >
-          America/Vancouver (-08:00)
+          America/Vancouver (-07:00)
         </option>
         <option
           value="America/Virgin"
@@ -1158,22 +1158,22 @@ exports[`render criterion with value 1`] = `
         <option
           value="America/Whitehorse"
         >
-          America/Whitehorse (-08:00)
+          America/Whitehorse (-07:00)
         </option>
         <option
           value="America/Winnipeg"
         >
-          America/Winnipeg (-06:00)
+          America/Winnipeg (-05:00)
         </option>
         <option
           value="America/Yakutat"
         >
-          America/Yakutat (-09:00)
+          America/Yakutat (-08:00)
         </option>
         <option
           value="America/Yellowknife"
         >
-          America/Yellowknife (-07:00)
+          America/Yellowknife (-06:00)
         </option>
         <option
           value="Antarctica/Casey"
@@ -1228,7 +1228,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="Antarctica/Troll"
         >
-          Antarctica/Troll (+00:00)
+          Antarctica/Troll (+02:00)
         </option>
         <option
           value="Antarctica/Vostok"
@@ -1238,7 +1238,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="Arctic/Longyearbyen"
         >
-          Arctic/Longyearbyen (+01:00)
+          Arctic/Longyearbyen (+02:00)
         </option>
         <option
           value="Asia/Aden"
@@ -1253,7 +1253,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="Asia/Amman"
         >
-          Asia/Amman (+02:00)
+          Asia/Amman (+03:00)
         </option>
         <option
           value="Asia/Anadyr"
@@ -1313,7 +1313,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="Asia/Beirut"
         >
-          Asia/Beirut (+02:00)
+          Asia/Beirut (+03:00)
         </option>
         <option
           value="Asia/Bishkek"
@@ -1363,7 +1363,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="Asia/Damascus"
         >
-          Asia/Damascus (+02:00)
+          Asia/Damascus (+03:00)
         </option>
         <option
           value="Asia/Dhaka"
@@ -1388,12 +1388,12 @@ exports[`render criterion with value 1`] = `
         <option
           value="Asia/Famagusta"
         >
-          Asia/Famagusta (+02:00)
+          Asia/Famagusta (+03:00)
         </option>
         <option
           value="Asia/Gaza"
         >
-          Asia/Gaza (+02:00)
+          Asia/Gaza (+03:00)
         </option>
         <option
           value="Asia/Harbin"
@@ -1403,7 +1403,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="Asia/Hebron"
         >
-          Asia/Hebron (+02:00)
+          Asia/Hebron (+03:00)
         </option>
         <option
           value="Asia/Ho_Chi_Minh"
@@ -1443,7 +1443,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="Asia/Jerusalem"
         >
-          Asia/Jerusalem (+02:00)
+          Asia/Jerusalem (+03:00)
         </option>
         <option
           value="Asia/Kabul"
@@ -1538,7 +1538,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="Asia/Nicosia"
         >
-          Asia/Nicosia (+02:00)
+          Asia/Nicosia (+03:00)
         </option>
         <option
           value="Asia/Novokuznetsk"
@@ -1648,12 +1648,12 @@ exports[`render criterion with value 1`] = `
         <option
           value="Asia/Tehran"
         >
-          Asia/Tehran (+03:30)
+          Asia/Tehran (+04:30)
         </option>
         <option
           value="Asia/Tel_Aviv"
         >
-          Asia/Tel_Aviv (+02:00)
+          Asia/Tel_Aviv (+03:00)
         </option>
         <option
           value="Asia/Thimbu"
@@ -1733,17 +1733,17 @@ exports[`render criterion with value 1`] = `
         <option
           value="Atlantic/Azores"
         >
-          Atlantic/Azores (-01:00)
+          Atlantic/Azores (+00:00)
         </option>
         <option
           value="Atlantic/Bermuda"
         >
-          Atlantic/Bermuda (-04:00)
+          Atlantic/Bermuda (-03:00)
         </option>
         <option
           value="Atlantic/Canary"
         >
-          Atlantic/Canary (+00:00)
+          Atlantic/Canary (+01:00)
         </option>
         <option
           value="Atlantic/Cape_Verde"
@@ -1753,22 +1753,22 @@ exports[`render criterion with value 1`] = `
         <option
           value="Atlantic/Faeroe"
         >
-          Atlantic/Faeroe (+00:00)
+          Atlantic/Faeroe (+01:00)
         </option>
         <option
           value="Atlantic/Faroe"
         >
-          Atlantic/Faroe (+00:00)
+          Atlantic/Faroe (+01:00)
         </option>
         <option
           value="Atlantic/Jan_Mayen"
         >
-          Atlantic/Jan_Mayen (+01:00)
+          Atlantic/Jan_Mayen (+02:00)
         </option>
         <option
           value="Atlantic/Madeira"
         >
-          Atlantic/Madeira (+00:00)
+          Atlantic/Madeira (+01:00)
         </option>
         <option
           value="Atlantic/Reykjavik"
@@ -1928,42 +1928,42 @@ exports[`render criterion with value 1`] = `
         <option
           value="CET"
         >
-          CET (+01:00)
+          CET (+02:00)
         </option>
         <option
           value="CST6CDT"
         >
-          CST6CDT (-06:00)
+          CST6CDT (-05:00)
         </option>
         <option
           value="Canada/Atlantic"
         >
-          Canada/Atlantic (-04:00)
+          Canada/Atlantic (-03:00)
         </option>
         <option
           value="Canada/Central"
         >
-          Canada/Central (-06:00)
+          Canada/Central (-05:00)
         </option>
         <option
           value="Canada/Eastern"
         >
-          Canada/Eastern (-05:00)
+          Canada/Eastern (-04:00)
         </option>
         <option
           value="Canada/Mountain"
         >
-          Canada/Mountain (-07:00)
+          Canada/Mountain (-06:00)
         </option>
         <option
           value="Canada/Newfoundland"
         >
-          Canada/Newfoundland (-03:30)
+          Canada/Newfoundland (-02:30)
         </option>
         <option
           value="Canada/Pacific"
         >
-          Canada/Pacific (-08:00)
+          Canada/Pacific (-07:00)
         </option>
         <option
           value="Canada/Saskatchewan"
@@ -1973,7 +1973,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="Canada/Yukon"
         >
-          Canada/Yukon (-08:00)
+          Canada/Yukon (-07:00)
         </option>
         <option
           value="Chile/Continental"
@@ -1988,12 +1988,12 @@ exports[`render criterion with value 1`] = `
         <option
           value="Cuba"
         >
-          Cuba (-05:00)
+          Cuba (-04:00)
         </option>
         <option
           value="EET"
         >
-          EET (+02:00)
+          EET (+03:00)
         </option>
         <option
           value="EST"
@@ -2003,7 +2003,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="EST5EDT"
         >
-          EST5EDT (-05:00)
+          EST5EDT (-04:00)
         </option>
         <option
           value="Egypt"
@@ -2013,7 +2013,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="Eire"
         >
-          Eire (+00:00)
+          Eire (+01:00)
         </option>
         <option
           value="Etc/GMT"
@@ -2193,12 +2193,12 @@ exports[`render criterion with value 1`] = `
         <option
           value="Europe/Amsterdam"
         >
-          Europe/Amsterdam (+01:00)
+          Europe/Amsterdam (+02:00)
         </option>
         <option
           value="Europe/Andorra"
         >
-          Europe/Andorra (+01:00)
+          Europe/Andorra (+02:00)
         </option>
         <option
           value="Europe/Astrakhan"
@@ -2208,82 +2208,82 @@ exports[`render criterion with value 1`] = `
         <option
           value="Europe/Athens"
         >
-          Europe/Athens (+02:00)
+          Europe/Athens (+03:00)
         </option>
         <option
           value="Europe/Belfast"
         >
-          Europe/Belfast (+00:00)
+          Europe/Belfast (+01:00)
         </option>
         <option
           value="Europe/Belgrade"
         >
-          Europe/Belgrade (+01:00)
+          Europe/Belgrade (+02:00)
         </option>
         <option
           value="Europe/Berlin"
         >
-          Europe/Berlin (+01:00)
+          Europe/Berlin (+02:00)
         </option>
         <option
           value="Europe/Bratislava"
         >
-          Europe/Bratislava (+01:00)
+          Europe/Bratislava (+02:00)
         </option>
         <option
           value="Europe/Brussels"
         >
-          Europe/Brussels (+01:00)
+          Europe/Brussels (+02:00)
         </option>
         <option
           value="Europe/Bucharest"
         >
-          Europe/Bucharest (+02:00)
+          Europe/Bucharest (+03:00)
         </option>
         <option
           value="Europe/Budapest"
         >
-          Europe/Budapest (+01:00)
+          Europe/Budapest (+02:00)
         </option>
         <option
           value="Europe/Busingen"
         >
-          Europe/Busingen (+01:00)
+          Europe/Busingen (+02:00)
         </option>
         <option
           value="Europe/Chisinau"
         >
-          Europe/Chisinau (+02:00)
+          Europe/Chisinau (+03:00)
         </option>
         <option
           value="Europe/Copenhagen"
         >
-          Europe/Copenhagen (+01:00)
+          Europe/Copenhagen (+02:00)
         </option>
         <option
           value="Europe/Dublin"
         >
-          Europe/Dublin (+00:00)
+          Europe/Dublin (+01:00)
         </option>
         <option
           value="Europe/Gibraltar"
         >
-          Europe/Gibraltar (+01:00)
+          Europe/Gibraltar (+02:00)
         </option>
         <option
           value="Europe/Guernsey"
         >
-          Europe/Guernsey (+00:00)
+          Europe/Guernsey (+01:00)
         </option>
         <option
           value="Europe/Helsinki"
         >
-          Europe/Helsinki (+02:00)
+          Europe/Helsinki (+03:00)
         </option>
         <option
           value="Europe/Isle_of_Man"
         >
-          Europe/Isle_of_Man (+00:00)
+          Europe/Isle_of_Man (+01:00)
         </option>
         <option
           value="Europe/Istanbul"
@@ -2293,7 +2293,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="Europe/Jersey"
         >
-          Europe/Jersey (+00:00)
+          Europe/Jersey (+01:00)
         </option>
         <option
           value="Europe/Kaliningrad"
@@ -2303,7 +2303,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="Europe/Kiev"
         >
-          Europe/Kiev (+02:00)
+          Europe/Kiev (+03:00)
         </option>
         <option
           value="Europe/Kirov"
@@ -2313,37 +2313,37 @@ exports[`render criterion with value 1`] = `
         <option
           value="Europe/Lisbon"
         >
-          Europe/Lisbon (+00:00)
+          Europe/Lisbon (+01:00)
         </option>
         <option
           value="Europe/Ljubljana"
         >
-          Europe/Ljubljana (+01:00)
+          Europe/Ljubljana (+02:00)
         </option>
         <option
           value="Europe/London"
         >
-          Europe/London (+00:00)
+          Europe/London (+01:00)
         </option>
         <option
           value="Europe/Luxembourg"
         >
-          Europe/Luxembourg (+01:00)
+          Europe/Luxembourg (+02:00)
         </option>
         <option
           value="Europe/Madrid"
         >
-          Europe/Madrid (+01:00)
+          Europe/Madrid (+02:00)
         </option>
         <option
           value="Europe/Malta"
         >
-          Europe/Malta (+01:00)
+          Europe/Malta (+02:00)
         </option>
         <option
           value="Europe/Mariehamn"
         >
-          Europe/Mariehamn (+02:00)
+          Europe/Mariehamn (+03:00)
         </option>
         <option
           value="Europe/Minsk"
@@ -2353,7 +2353,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="Europe/Monaco"
         >
-          Europe/Monaco (+01:00)
+          Europe/Monaco (+02:00)
         </option>
         <option
           value="Europe/Moscow"
@@ -2363,37 +2363,37 @@ exports[`render criterion with value 1`] = `
         <option
           value="Europe/Nicosia"
         >
-          Europe/Nicosia (+02:00)
+          Europe/Nicosia (+03:00)
         </option>
         <option
           value="Europe/Oslo"
         >
-          Europe/Oslo (+01:00)
+          Europe/Oslo (+02:00)
         </option>
         <option
           value="Europe/Paris"
         >
-          Europe/Paris (+01:00)
+          Europe/Paris (+02:00)
         </option>
         <option
           value="Europe/Podgorica"
         >
-          Europe/Podgorica (+01:00)
+          Europe/Podgorica (+02:00)
         </option>
         <option
           value="Europe/Prague"
         >
-          Europe/Prague (+01:00)
+          Europe/Prague (+02:00)
         </option>
         <option
           value="Europe/Riga"
         >
-          Europe/Riga (+02:00)
+          Europe/Riga (+03:00)
         </option>
         <option
           value="Europe/Rome"
         >
-          Europe/Rome (+01:00)
+          Europe/Rome (+02:00)
         </option>
         <option
           value="Europe/Samara"
@@ -2403,12 +2403,12 @@ exports[`render criterion with value 1`] = `
         <option
           value="Europe/San_Marino"
         >
-          Europe/San_Marino (+01:00)
+          Europe/San_Marino (+02:00)
         </option>
         <option
           value="Europe/Sarajevo"
         >
-          Europe/Sarajevo (+01:00)
+          Europe/Sarajevo (+02:00)
         </option>
         <option
           value="Europe/Saratov"
@@ -2423,32 +2423,32 @@ exports[`render criterion with value 1`] = `
         <option
           value="Europe/Skopje"
         >
-          Europe/Skopje (+01:00)
+          Europe/Skopje (+02:00)
         </option>
         <option
           value="Europe/Sofia"
         >
-          Europe/Sofia (+02:00)
+          Europe/Sofia (+03:00)
         </option>
         <option
           value="Europe/Stockholm"
         >
-          Europe/Stockholm (+01:00)
+          Europe/Stockholm (+02:00)
         </option>
         <option
           value="Europe/Tallinn"
         >
-          Europe/Tallinn (+02:00)
+          Europe/Tallinn (+03:00)
         </option>
         <option
           value="Europe/Tirane"
         >
-          Europe/Tirane (+01:00)
+          Europe/Tirane (+02:00)
         </option>
         <option
           value="Europe/Tiraspol"
         >
-          Europe/Tiraspol (+02:00)
+          Europe/Tiraspol (+03:00)
         </option>
         <option
           value="Europe/Ulyanovsk"
@@ -2458,27 +2458,27 @@ exports[`render criterion with value 1`] = `
         <option
           value="Europe/Uzhgorod"
         >
-          Europe/Uzhgorod (+02:00)
+          Europe/Uzhgorod (+03:00)
         </option>
         <option
           value="Europe/Vaduz"
         >
-          Europe/Vaduz (+01:00)
+          Europe/Vaduz (+02:00)
         </option>
         <option
           value="Europe/Vatican"
         >
-          Europe/Vatican (+01:00)
+          Europe/Vatican (+02:00)
         </option>
         <option
           value="Europe/Vienna"
         >
-          Europe/Vienna (+01:00)
+          Europe/Vienna (+02:00)
         </option>
         <option
           value="Europe/Vilnius"
         >
-          Europe/Vilnius (+02:00)
+          Europe/Vilnius (+03:00)
         </option>
         <option
           value="Europe/Volgograd"
@@ -2488,32 +2488,32 @@ exports[`render criterion with value 1`] = `
         <option
           value="Europe/Warsaw"
         >
-          Europe/Warsaw (+01:00)
+          Europe/Warsaw (+02:00)
         </option>
         <option
           value="Europe/Zagreb"
         >
-          Europe/Zagreb (+01:00)
+          Europe/Zagreb (+02:00)
         </option>
         <option
           value="Europe/Zaporozhye"
         >
-          Europe/Zaporozhye (+02:00)
+          Europe/Zaporozhye (+03:00)
         </option>
         <option
           value="Europe/Zurich"
         >
-          Europe/Zurich (+01:00)
+          Europe/Zurich (+02:00)
         </option>
         <option
           value="GB"
         >
-          GB (+00:00)
+          GB (+01:00)
         </option>
         <option
           value="GB-Eire"
         >
-          GB-Eire (+00:00)
+          GB-Eire (+01:00)
         </option>
         <option
           value="GMT"
@@ -2613,12 +2613,12 @@ exports[`render criterion with value 1`] = `
         <option
           value="Iran"
         >
-          Iran (+03:30)
+          Iran (+04:30)
         </option>
         <option
           value="Israel"
         >
-          Israel (+02:00)
+          Israel (+03:00)
         </option>
         <option
           value="Jamaica"
@@ -2643,7 +2643,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="MET"
         >
-          MET (+01:00)
+          MET (+02:00)
         </option>
         <option
           value="MST"
@@ -2653,12 +2653,12 @@ exports[`render criterion with value 1`] = `
         <option
           value="MST7MDT"
         >
-          MST7MDT (-07:00)
+          MST7MDT (-06:00)
         </option>
         <option
           value="Mexico/BajaNorte"
         >
-          Mexico/BajaNorte (-08:00)
+          Mexico/BajaNorte (-07:00)
         </option>
         <option
           value="Mexico/BajaSur"
@@ -2683,7 +2683,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="Navajo"
         >
-          Navajo (-07:00)
+          Navajo (-06:00)
         </option>
         <option
           value="PRC"
@@ -2693,7 +2693,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="PST8PDT"
         >
-          PST8PDT (-08:00)
+          PST8PDT (-07:00)
         </option>
         <option
           value="Pacific/Apia"
@@ -2913,12 +2913,12 @@ exports[`render criterion with value 1`] = `
         <option
           value="Poland"
         >
-          Poland (+01:00)
+          Poland (+02:00)
         </option>
         <option
           value="Portugal"
         >
-          Portugal (+00:00)
+          Portugal (+01:00)
         </option>
         <option
           value="ROC"
@@ -2948,12 +2948,12 @@ exports[`render criterion with value 1`] = `
         <option
           value="US/Alaska"
         >
-          US/Alaska (-09:00)
+          US/Alaska (-08:00)
         </option>
         <option
           value="US/Aleutian"
         >
-          US/Aleutian (-10:00)
+          US/Aleutian (-09:00)
         </option>
         <option
           value="US/Arizona"
@@ -2963,17 +2963,17 @@ exports[`render criterion with value 1`] = `
         <option
           value="US/Central"
         >
-          US/Central (-06:00)
+          US/Central (-05:00)
         </option>
         <option
           value="US/East-Indiana"
         >
-          US/East-Indiana (-05:00)
+          US/East-Indiana (-04:00)
         </option>
         <option
           value="US/Eastern"
         >
-          US/Eastern (-05:00)
+          US/Eastern (-04:00)
         </option>
         <option
           value="US/Hawaii"
@@ -2983,27 +2983,27 @@ exports[`render criterion with value 1`] = `
         <option
           value="US/Indiana-Starke"
         >
-          US/Indiana-Starke (-06:00)
+          US/Indiana-Starke (-05:00)
         </option>
         <option
           value="US/Michigan"
         >
-          US/Michigan (-05:00)
+          US/Michigan (-04:00)
         </option>
         <option
           value="US/Mountain"
         >
-          US/Mountain (-07:00)
+          US/Mountain (-06:00)
         </option>
         <option
           value="US/Pacific"
         >
-          US/Pacific (-08:00)
+          US/Pacific (-07:00)
         </option>
         <option
           value="US/Pacific-New"
         >
-          US/Pacific-New (-08:00)
+          US/Pacific-New (-07:00)
         </option>
         <option
           value="US/Samoa"
@@ -3028,7 +3028,7 @@ exports[`render criterion with value 1`] = `
         <option
           value="WET"
         >
-          WET (+00:00)
+          WET (+01:00)
         </option>
         <option
           value="Zulu"
