@@ -266,8 +266,7 @@ const UserOrgForm = (props) => {
               ])}
               query={filter}
               timezone={userOrgSettings.get('timezone', 'UTC')}
-              onChange={handleFilterChange}
-              onChangeTimezone={handleTimezoneChange} />
+              onChange={handleFilterChange} />
           </div>
         </div>
       </div>

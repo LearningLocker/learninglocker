@@ -22,7 +22,6 @@ class QueryBuilder extends Component {
     isRawMode: PropTypes.bool,
     setIsRawMode: PropTypes.func,
     clearModelsCache: PropTypes.func,
-    onChangeTimezone: PropTypes.func,
   }
 
   static defaultProps = {
@@ -64,8 +63,7 @@ class QueryBuilder extends Component {
         componentPath={this.props.componentPath}
         onQueryChange={this.onQueryChange}
         query={this.props.query}
-        defaults={this.props.defaults}
-        onChangeTimezone={this.props.onChangeTimezone} />
+        defaults={this.props.defaults} />
     ));
   }
 

@@ -113,13 +113,6 @@ const handlers = withHandlers({
   copyToClipBoard: () => urlId => () => {
     window.document.getElementById(urlId).select();
     window.document.execCommand('copy');
-  },
-
-  handleTimezoneChange: ({ updateSelectedSharable }) => (value) => {
-    updateSelectedSharable({
-      path: 'timezone',
-      value,
-    });
   }
 });
 
@@ -155,7 +148,6 @@ const ModelFormComponent = ({
   handleFilterModeChange,
   handleFilterJwtSecretChange,
   handleFilterRequiredChange,
-  handleTimezoneChange,
 
   model,
   organisationModel,
@@ -317,8 +309,7 @@ const ModelFormComponent = ({
         orgTimezone={organisationModel.get('timezone', null)}
         query={model.get('filter', new Map({}))}
         componentPath={new List([])}
-        onChange={handleFilterChange}
-        onChangeTimezone={handleTimezoneChange} />
+        onChange={handleFilterChange} />
     </div>
   </div>);
 };

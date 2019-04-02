@@ -67,7 +67,6 @@ class ExpandedSection extends Component {
     onCollapse: PropTypes.func,
     onChildrenChange: PropTypes.func,
     onAddCriterion: PropTypes.func,
-    onChangeTimezone: PropTypes.func,
   }
 
   shouldComponentUpdate = (nextProps) => {
@@ -95,8 +94,7 @@ class ExpandedSection extends Component {
       criteria={this.props.sectionCriteria}
       onCriteriaChange={this.props.onCriteriaChange}
       onAddCriterion={this.props.onAddCriterion}
-      onDeleteCriterion={this.props.onDeleteCriterion}
-      onChangeTimezone={this.props.onChangeTimezone} />
+      onDeleteCriterion={this.props.onDeleteCriterion} />
   );
 
   renderRangeCriteria = () => (<RangeCriteria
@@ -178,8 +176,7 @@ class ExpandedSection extends Component {
             onCriteriaChange={this.props.onCriteriaChange}
             onSectionsChange={this.props.onChildrenChange}
             onAddCriterion={this.props.onAddCriterion}
-            onDeleteCriterion={this.props.onDeleteCriterion}
-            onChangeTimezone={this.props.onChangeTimezone} />
+            onDeleteCriterion={this.props.onDeleteCriterion} />
         }
       </div>
     );

@@ -37,15 +37,6 @@ export class ScatterAxesEditor extends BaseAxesEditor {
     return defaultLabel;
   };
 
-  handleTimezoneChange = (value) => {
-    this.props.updateModel({
-      schema: 'visualisation',
-      id: this.props.model.get('_id'),
-      path: 'timezone',
-      value
-    });
-  };
-
   renderAxis = axis => (
     <div>
       <div className="form-group">
@@ -73,8 +64,7 @@ export class ScatterAxesEditor extends BaseAxesEditor {
           orgTimezone={this.props.orgTimezone}
           query={this.getAxesValue(`${axis}Query`)}
           changeQuery={this.changeAxes.bind(this, `${axis}Query`)}
-          componentPath={new List(['visualise', this.props.model.get('_id'), axis])}
-          onChangeTimezone={this.handleTimezoneChange} />
+          componentPath={new List(['visualise', this.props.model.get('_id'), axis])} />
       </div>
     </div>
   );

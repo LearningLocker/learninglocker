@@ -10,7 +10,6 @@ export default class QueryEditor extends Component {
     query: PropTypes.instanceOf(Map),
     componentPath: PropTypes.instanceOf(List),
     changeQuery: PropTypes.func,
-    onChangeTimezone: PropTypes.func,
   }
 
   shouldComponentUpdate = nextProps => !((
@@ -50,8 +49,7 @@ export default class QueryEditor extends Component {
               orgTimezone={this.props.orgTimezone}
               componentPath={this.props.componentPath}
               query={this.props.query.get('$match', new Map())}
-              onChange={this.changeQuery}
-              onChangeTimezone={this.props.onChangeTimezone} />
+              onChange={this.changeQuery} />
         }
     </div>
     )

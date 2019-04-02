@@ -12,7 +12,6 @@ export default class Criteria extends Component {
     onCriteriaChange: PropTypes.func,
     onDeleteCriterion: PropTypes.func,
     onAddCriterion: PropTypes.func,
-    onChangeTimezone: PropTypes.func,
   }
 
   shouldComponentUpdate = nextProps => !(
@@ -42,7 +41,6 @@ export default class Criteria extends Component {
       criterion={criterion}
       onCriterionChange={this.changeCriteria.bind(this, key)}
       onDeleteCriterion={this.deleteCriterion.bind(this, key)}
-      onChangeTimezone={this.props.onChangeTimezone}
       key={key} />
   );
 

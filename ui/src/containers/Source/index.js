@@ -10,7 +10,7 @@ import {
   statementQuerySelector,
   statementTimezoneSelector,
 } from 'ui/redux/selectors';
-import { updateStatementQuery, updateStatementTimezone } from 'ui/redux/actions';
+import { updateStatementQuery } from 'ui/redux/actions';
 import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
 import Statement from 'ui/components/Statement';
 import QueryBuilder from 'ui/containers/QueryBuilder';
@@ -18,7 +18,6 @@ import StatementForm from 'ui/containers/StatementForm';
 import ModelList from 'ui/containers/ModelList';
 import ExportManager from 'ui/containers/ExportManager';
 import { addTokenToQuery } from 'ui/utils/queries';
-import update$dteTimezone from 'ui/utils/queries/update$dteTimezone';
 import { valueToCriteria } from 'ui/redux/modules/queryBuilder';
 import { withModels } from 'ui/utils/hocs';
 
@@ -37,7 +36,6 @@ const querySort = new Map({ timestamp: -1, _id: 1 });
 class Source extends Component {
   static propTypes = {
     updateStatementQuery: PropTypes.func,
-    updateStatementTimezone: PropTypes.func,
     query: PropTypes.instanceOf(Map),
     timezone: PropTypes.string,
     organisationModel: PropTypes.instanceOf(Map),
@@ -62,17 +60,6 @@ class Source extends Component {
 
   onChangeQuery = (nextQuery) => {
     this.props.updateStatementQuery(nextQuery);
-  }
-
-  onChangeTimezone = (timezone) => {
-    this.props.updateStatementTimezone(timezone);
-
-    const query = this.props.query;
-    const timezoneUpdated = update$dteTimezone(query, timezone);
-
-    if (!timezoneUpdated.equals(query)) {
-      this.props.updateStatementQuery(timezoneUpdated);
-    }
   }
 
   setFilterAt = (keyPath, value) => {
@@ -134,8 +121,7 @@ class Source extends Component {
                   orgTimezone={this.props.organisationModel.get('timezone', 'UTC')}
                   componentPath={new List(['source'])}
                   query={this.props.query}
-                  onChange={this.onChangeQuery}
-                  onChangeTimezone={this.onChangeTimezone} />
+                  onChange={this.onChangeQuery} />
               </div>
             </div>
           </div>
@@ -159,5 +145,5 @@ export default compose(
     query: statementQuerySelector(state),
     timezone: statementTimezoneSelector(state),
     organisationModel: activeOrgSelector(state),
-  }), { updateStatementQuery, updateStatementTimezone })
+  }), { updateStatementQuery })
 )(Source);

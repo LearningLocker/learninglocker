@@ -12,7 +12,6 @@ const enhance = compose(
     query: PropTypes.instanceOf(Map),
     defaults: PropTypes.instanceOf(Map),
     onQueryChange: PropTypes.func,
-    onChangeTimezone: PropTypes.func,
   }),
   defaultProps({
     query: new Map(),
@@ -24,7 +23,7 @@ const enhance = compose(
   ))
 );
 
-const BasicQueryBuilder = ({ componentPath, timezone, orgTimezone, defaults, query, onQueryChange, onChangeTimezone }) => {
+const BasicQueryBuilder = ({ componentPath, timezone, orgTimezone, defaults, query, onQueryChange }) => {
   const criteria = getCriteria(query);
   return (
     <QueryBuilderSections
@@ -39,8 +38,7 @@ const BasicQueryBuilder = ({ componentPath, timezone, orgTimezone, defaults, que
       onAddCriterion={(criterion, section) =>
         onQueryChange(addCriterionFromSection(query, criterion, section))
       }
-      onDeleteCriterion={key => onQueryChange(deleteCriterion(criteria, key))}
-      onChangeTimezone={onChangeTimezone} />
+      onDeleteCriterion={key => onQueryChange(deleteCriterion(criteria, key))} />
   );
 };
 

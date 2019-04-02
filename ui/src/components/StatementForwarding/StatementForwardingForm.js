@@ -99,10 +99,6 @@ const updateHandlers = withHandlers({
     path: ['sendAttachments'],
     value
   }),
-  changeTimezone: ({ updateModel }) => value => updateModel({
-    path: ['timezone'],
-    value
-  }),
 });
 
 const withProtocols = withProps(() => ({
@@ -131,7 +127,6 @@ const StatementForwardingForm = ({
   changeHeaders,
   changeFullDocument,
   changeSendAttachments,
-  changeTimezone,
 }) => (
   <div>
     <div className="row">
@@ -344,8 +339,7 @@ const StatementForwardingForm = ({
             orgTimezone={organisationModel.get('timezone', 'UTC')}
             componentPath={new List(['statementForwarding', model.get('_id')])}
             query={model.get('query')}
-            onChange={changeQuery}
-            onChangeTimezone={changeTimezone} />
+            onChange={changeQuery} />
         </div>
       </div>
     </div>

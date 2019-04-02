@@ -27,7 +27,6 @@ class QueryBuilderSections extends Component {
     onAddCriterion: PropTypes.func,
     onDeleteCriterion: PropTypes.func,
     queryChangeSections: PropTypes.func,
-    onChangeTimezone: PropTypes.func,
   }
 
   shouldComponentUpdate = nextProps => !(
@@ -53,8 +52,7 @@ class QueryBuilderSections extends Component {
       onCriteriaChange={this.props.onCriteriaChange}
       onSectionsChange={this.changeSections}
       onAddCriterion={this.props.onAddCriterion}
-      onDeleteCriterion={this.props.onDeleteCriterion}
-      onChangeTimezone={this.props.onChangeTimezone} />
+      onDeleteCriterion={this.props.onDeleteCriterion} />
   );
 }
 

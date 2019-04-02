@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import moment from 'moment';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import DatePicker from 'ui/components/Material/DatePicker';
-import { TimezoneSelector, buildDefaultOptionLabel } from 'ui/components/TimezoneSelector';
 import Operator from '../Operator';
 import styles from '../styles.css';
 import { symbolOpToMongoOp } from './helpers';
@@ -30,7 +29,6 @@ class Criterion extends Component {
     criterion: PropTypes.instanceOf(Map).isRequired,
     onCriterionChange: PropTypes.func.isRequired,
     onDeleteCriterion: PropTypes.func.isRequired,
-    onChangeTimezone: PropTypes.func.isRequired,
   };
 
   shouldComponentUpdate = nextProps => !(
@@ -150,16 +148,6 @@ class Criterion extends Component {
           <DatePicker
             value={this.getDateValue()}
             onChange={this.onChangeDate} />
-
-          <div className={classNames(styles.criterionValueSupplement)}>
-            <TimezoneSelector
-              value={this.props.timezone}
-              onChange={this.props.onChangeTimezone}
-              defaultOption={{
-                label: buildDefaultOptionLabel(this.props.orgTimezone),
-                value: null
-              }} />
-          </div>
         </div>
 
         <button
