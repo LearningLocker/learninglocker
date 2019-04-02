@@ -7,6 +7,7 @@ import date from 'ui/utils/visualisations/projections/date';
 import value from 'ui/utils/visualisations/projections/value';
 import model from 'ui/utils/visualisations/projections/model';
 import getOperator from 'ui/utils/visualisations/helpers/getOperator';
+import { isContextActivity } from 'ui/utils/visualisations';
 import uniqueModifierGrouper from './uniqueModifierGrouper';
 import uniqueStatementModifierGrouper from './uniqueStatementModifierGrouper';
 import uniqueTotalGrouper from './uniqueTotalGrouper';
@@ -122,14 +123,29 @@ const getPostReqs = () => {
 };
 
 /**
+ * @param {string} groupType
+ * @param {any} pattern
  *
+ * @returns object|null
+ */
+const getContextActivityTypeMatch = (groupType, pattern) => {
+  if (isContextActivity(groupType) && typeof pattern === 'string') {
+    return {
+      [`${groupType}.definition.type`]: pattern
+    };
+  }
+  return null;
+};
+
+/**
  * @param {object} - valueType {*}
  *                   groupType {*}
  *                   operatorType {*}
  *                   timezone {string}
+ *                   contextActivityDefinitionType {any}
  * @returns {immutable.List} grouping pipeline
  */
-export default ({ valueType, groupType, operatorType, timezone }) => {
+export default ({ valueType, groupType, operatorType, timezone, contextActivityDefinitionType }) => {
   const valueOpCase = getValueOpCase({ valueType, operatorType });
 
   const isPersonaImportGroup = groupType.startsWith('persona.import.');
@@ -137,6 +153,7 @@ export default ({ valueType, groupType, operatorType, timezone }) => {
 
   // 1st stages
   let preReqs;
+
   if (isPersonaImportGroup) {
     preReqs = createPersonaAttributeStages({ valueType, groupType, valueOpCase });
   } else {
@@ -151,6 +168,10 @@ export default ({ valueType, groupType, operatorType, timezone }) => {
   }
 
   // 2nd stages
+  const contextActivityTypeMatch = getContextActivityTypeMatch(groupType, contextActivityDefinitionType);
+  const contextActivityTypeMatchStage = contextActivityTypeMatch ? createStagePipeline('$match', contextActivityTypeMatch) : [];
+
+  // 3rd stages
   const projections = getProjections({
     valueType,
     groupType: isPersonaImportGroup ? 'personaAttrs.value' : groupType,
@@ -159,12 +180,16 @@ export default ({ valueType, groupType, operatorType, timezone }) => {
   });
   const projectStage = createStagePipeline('$project', projections);
 
-  // 3rd stages
+  // 4th stages
   const countPipeline = fromJS(getGroupPipeline({ operatorType, groupType, valueOpCase, projections, timezone }));
 
-  // 4th stages
+  // 5th stages
   const postReqs = fromJS(getPostReqs());
 
   // Concat all stages
-  return preReqs.concat(projectStage).concat(countPipeline).concat(postReqs);
+  return preReqs
+    .concat(contextActivityTypeMatchStage)
+    .concat(projectStage)
+    .concat(countPipeline)
+    .concat(postReqs);
 };

@@ -11,7 +11,8 @@ export default (preReqs, axes, timezone) => {
   const valueType = axes.getIn(['value', 'optionKey'], 'statements');
   const groupType = axes.getIn(['group', 'optionKey'], 'date');
   const operatorType = axes.get('operator', 'uniqueCount');
-  const aggregationGroup = grouper({ valueType, groupType, operatorType, timezone });
+  const contextActivityDefinitionType = axes.getIn(['group', 'contextActivityDefinitionType'], null);
+  const aggregationGroup = grouper({ valueType, groupType, operatorType, timezone, contextActivityDefinitionType });
   const pipeline = preReqs.concat(fromJS(aggregationGroup));
   return new List([pipeline]);
 };

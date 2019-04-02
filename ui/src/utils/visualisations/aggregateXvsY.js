@@ -6,13 +6,14 @@ const aggregateScatterAxis = (axis, preReqs, axes, timezone) => {
   const valueType = axes.getIn([`${axis}Value`, 'optionKey']);
   const groupType = axes.getIn(['group', 'optionKey']);
   const operatorType = axes.get(`${axis}Operator`);
+  const contextActivityDefinitionType = axes.getIn(['group', 'contextActivityDefinitionType'], null);
 
   const match = axes.getIn([`${axis}Query`, '$match'], new Map());
   // Set timezone of When filters (timestamp and stored)
   const offsetFixedMatch = update$dteTimezone(match, timezone);
   const matchStage = offsetFixedMatch.size === 0 ? [] : [{ $match: offsetFixedMatch }];
 
-  const aggregationGroup = grouper({ valueType, groupType, operatorType, timezone });
+  const aggregationGroup = grouper({ valueType, groupType, operatorType, timezone, contextActivityDefinitionType });
   const pipeline = preReqs.concat(fromJS(matchStage)).concat(fromJS(aggregationGroup));
   return pipeline;
 };

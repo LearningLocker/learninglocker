@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Map } from 'immutable';
+import { compose, withProps } from 'recompose';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { unflattenAxes } from 'lib/helpers/visualisation';
@@ -23,6 +24,9 @@ import {
 } from 'ui/utils/constants';
 import has$dte from 'ui/utils/queries/has$dte';
 import { periodKeys } from 'ui/utils/visualisations/projections/period';
+import { withSchema } from 'ui/utils/hocs';
+import { isContextActivity } from 'ui/utils/visualisations';
+
 import Editor from './Editor';
 
 const SCHEMA = 'visualisation';
@@ -37,6 +41,7 @@ class StatementsForm extends Component {
   static propTypes = {
     model: PropTypes.instanceOf(Map), // visualisation
     orgTimezone: PropTypes.string.isRequired,
+    queryBuilderCacheValueModels: PropTypes.instanceOf(Map),
     isLoading: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
     hasMore: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
     updateModel: PropTypes.func,
@@ -45,12 +50,14 @@ class StatementsForm extends Component {
 
   static defaultProps = {
     model: new Map(),
+    queryBuilderCacheValueModels: new Map(),
   }
 
   shouldComponentUpdate = nextProps => !(
     this.props.model.equals(nextProps.model) &&
-      this.props.orgTimezone === nextProps.orgTimezone &&
-      this.props.source === nextProps.source
+      (this.props.orgTimezone === nextProps.orgTimezone) &&
+      (this.props.source === nextProps.source) &&
+      (this.props.queryBuilderCacheValueModels.equals(nextProps.queryBuilderCacheValueModels))
   )
 
   onChangeAttr = (attr, e) => this.props.updateModel({
@@ -64,6 +71,7 @@ class StatementsForm extends Component {
     <Editor
       model={this.props.model}
       orgTimezone={this.props.orgTimezone}
+      queryBuilderCacheValueModels={this.props.queryBuilderCacheValueModels}
       exportVisualisation={this.props.exportVisualisation} />
   );
 
@@ -152,8 +160,28 @@ class StatementsForm extends Component {
   }
 }
 
-export default connect((state, ownProps) => ({
-  hasMore: ownProps.hasMore,
-  isLoading: ownProps.isLoading,
-  source: toggleSourceSelector({ id: ownProps.model.get('_id') })(state)
-}), { updateModel, setInMetadata })(StatementsForm);
+const withQueryBuilderCacheValueModels = compose(
+  withSchema('querybuildercachevalue'),
+  withProps(({ models }) => ({
+    queryBuilderCacheValueModels: models,
+  }))
+);
+
+export default withQueryBuilderCacheValueModels(
+  connect(
+    (state, ownProps) => {
+      const searchString = ownProps.model.getIn(['axesgroup', 'searchString'], '');
+      const filter = isContextActivity(searchString) ?
+        new Map({ path: new Map({ $eq: `${searchString}.definition.type` }) }) :
+        new Map({});
+
+      return {
+        hasMore: ownProps.hasMore,
+        isLoading: ownProps.isLoading,
+        source: toggleSourceSelector({ id: ownProps.model.get('_id') })(state),
+        filter,
+      };
+    },
+    { updateModel, setInMetadata }
+  )(StatementsForm)
+);

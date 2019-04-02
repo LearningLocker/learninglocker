@@ -412,11 +412,16 @@ exports[`ClientForm renders correctly 1`] = `
       <label
         htmlFor="basicAuth"
       >
-        Basic auth
+        Use this Basic Auth value in your 
+        <code>
+          Authorization
+        </code>
+         header for requests
       </label>
       <p
         className="help-block strongwrap"
       >
+        Basic 
         Og==
       </p>
     </div>

@@ -1,8 +1,10 @@
 import React, { PropTypes } from 'react';
 import { Map, List } from 'immutable';
 import { connect } from 'react-redux';
+import { VISUALISE_AXES_PREFIX } from 'lib/constants/visualise';
 import { updateModel } from 'ui/redux/modules/models';
 import DebounceInput from 'react-debounce-input';
+import DefinitionTypeSelector from './DefinitionTypeSelector';
 import GroupEditor from './GroupEditor';
 import CountEditor from './CountEditor';
 import QueryEditor from './QueryEditor';
@@ -13,6 +15,13 @@ export class ScatterAxesEditor extends BaseAxesEditor {
     model: PropTypes.instanceOf(Map), // visualisation
     orgTimezone: PropTypes.string.isRequired,
     updateModel: PropTypes.func
+  };
+
+  shouldComponentUpdate = (nextProps) => {
+    const prevAxes = this.props.model.filter((item, key) => key.startsWith(VISUALISE_AXES_PREFIX));
+    const nextAxes = nextProps.model.filter((item, key) => key.startsWith(VISUALISE_AXES_PREFIX));
+
+    return !prevAxes.equals(nextAxes);
   };
 
   handleAxesChange = (key, event) => {
@@ -78,6 +87,12 @@ export class ScatterAxesEditor extends BaseAxesEditor {
           group={this.getAxesValue('group')}
           changeGroup={this.changeAxes.bind(this, 'group')} />
       </div>
+
+      <DefinitionTypeSelector
+        visualisationModel={this.props.model}
+        group={this.getAxesValue('group')}
+        onChangeGroup={g => this.changeAxes('group', g)} />
+
       <hr />
       {this.renderAxis('x')}
       <hr />
