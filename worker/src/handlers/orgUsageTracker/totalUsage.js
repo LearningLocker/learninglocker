@@ -25,7 +25,6 @@ const toTree = (orgStatsList) => {
       } else {
         orgStat.parentOrganisation = null;
       }
-
     }
   });
 

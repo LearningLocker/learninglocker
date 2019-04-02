@@ -2021,11 +2021,6 @@ exports[`render criterion with value 1`] = `
           Etc/GMT (+00:00)
         </option>
         <option
-          value="Etc/GMT+0"
-        >
-          Etc/GMT+0 (+00:00)
-        </option>
-        <option
           value="Etc/GMT+1"
         >
           Etc/GMT+1 (-01:00)
@@ -2084,11 +2079,6 @@ exports[`render criterion with value 1`] = `
           value="Etc/GMT+9"
         >
           Etc/GMT+9 (-09:00)
-        </option>
-        <option
-          value="Etc/GMT-0"
-        >
-          Etc/GMT-0 (+00:00)
         </option>
         <option
           value="Etc/GMT-1"
@@ -2159,11 +2149,6 @@ exports[`render criterion with value 1`] = `
           value="Etc/GMT-9"
         >
           Etc/GMT-9 (+09:00)
-        </option>
-        <option
-          value="Etc/GMT0"
-        >
-          Etc/GMT0 (+00:00)
         </option>
         <option
           value="Etc/Greenwich"
@@ -2519,21 +2504,6 @@ exports[`render criterion with value 1`] = `
           value="GMT"
         >
           GMT (+00:00)
-        </option>
-        <option
-          value="GMT+0"
-        >
-          GMT+0 (+00:00)
-        </option>
-        <option
-          value="GMT-0"
-        >
-          GMT-0 (+00:00)
-        </option>
-        <option
-          value="GMT0"
-        >
-          GMT0 (+00:00)
         </option>
         <option
           value="Greenwich"
@@ -2939,11 +2909,6 @@ exports[`render criterion with value 1`] = `
           value="Turkey"
         >
           Turkey (+03:00)
-        </option>
-        <option
-          value="UCT"
-        >
-          UCT (+00:00)
         </option>
         <option
           value="US/Alaska"

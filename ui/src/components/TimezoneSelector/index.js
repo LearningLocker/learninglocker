@@ -1,9 +1,10 @@
 import React from 'react';
 import moment from 'moment-timezone';
+import { timezones } from 'lib/constants/timezones';
 
 const DEFAULT = 'DEFAULT_VALUE';
 
-const options = moment.tz.names().map(v => (
+const options = timezones.map(v => (
   <option key={v} value={v}>{`${v} (${moment().tz(v).format('Z')})`}</option>
 ));
 
