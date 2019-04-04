@@ -3,8 +3,6 @@ import { Map } from 'immutable';
 import { compose, withProps } from 'recompose';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { unflattenAxes } from 'lib/helpers/visualisation';
-import { TimezoneSelector, buildDefaultOptionLabel } from 'ui/components/TimezoneSelector';
 import VisualiseResults from 'ui/containers/VisualiseResults';
 import SourceResults from 'ui/containers/VisualiseResults/SourceResults';
 import { updateModel } from 'ui/redux/modules/models';
@@ -22,8 +20,6 @@ import {
   LAST_2_YEARS,
   TODAY
 } from 'ui/utils/constants';
-import has$dte from 'ui/utils/queries/has$dte';
-import { periodKeys } from 'ui/utils/visualisations/projections/period';
 import { withSchema } from 'ui/utils/hocs';
 import { isContextActivity } from 'ui/utils/visualisations';
 
@@ -92,35 +88,6 @@ class StatementsForm extends Component {
     </select>
   )
 
-  renderTimezoneSelector = () => {
-    const axes = unflattenAxes(this.props.model);
-    const groupAxes = axes.getIn(['group', 'optionKey'], 'date');
-    const groupingHasTimezone = periodKeys.includes(groupAxes);
-
-    const axesxQueryHas$dte = has$dte(this.props.model.get('axesxQuery'));
-    const axesyQueryHas$dte = has$dte(this.props.model.get('axesyQuery'));
-    const filterHas$dte = has$dte(this.props.model.get('filters'));
-
-    const periodHasOffset = this.props.model.get('previewPeriod') === 'TODAY';
-
-    const shouldDisplay = groupingHasTimezone || axesxQueryHas$dte || axesyQueryHas$dte || filterHas$dte || periodHasOffset;
-
-    return shouldDisplay && (
-      <TimezoneSelector
-        value={this.props.model.get('timezone', null)}
-        onChange={value => this.props.updateModel({
-          schema: 'visualisation',
-          id: this.props.model.get('_id'),
-          path: 'timezone',
-          value,
-        })}
-        defaultOption={{
-          label: buildDefaultOptionLabel(this.props.orgTimezone),
-          value: this.props.orgTimezone,
-        }} />
-    );
-  }
-
   renderFormWithResults = () => (
     <div className="row">
       <div className="col-md-6 left-border">
@@ -129,7 +96,6 @@ class StatementsForm extends Component {
       <div
         className="col-md-6">
         <div className="form-group form-inline" style={{ textAlign: 'right' }}>
-          { this.renderTimezoneSelector() }
           { this.renderTimePicker() }
         </div>
         <div style={{ height: '400px', paddingTop: 5 }}>

@@ -18,7 +18,8 @@ class Editor extends Component {
   static propTypes = {
     model: PropTypes.instanceOf(Map), // visualisation model
     orgTimezone: PropTypes.string.isRequired,
-    exportVisualisation: PropTypes.func
+    exportVisualisation: PropTypes.func,
+    updateModel: PropTypes.func,
   }
 
   state = {
@@ -125,7 +126,9 @@ class Editor extends Component {
 
   renderOptionsEditor = () => (
     <OptionsEditor
-      model={this.props.model} />
+      model={this.props.model}
+      orgTimezone={this.props.orgTimezone}
+      updateModel={this.props.updateModel} />
   )
 
   renderSteps = () => (
