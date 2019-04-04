@@ -7,7 +7,7 @@ import QueryBuilder from 'ui/containers/QueryBuilder';
 import UserForm from 'ui/containers/UserForm';
 import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
 import Checkbox from 'ui/components/Material/Checkbox';
-import { TimezoneSelector } from 'ui/components/TimezoneSelector';
+import { TimezoneSelector, buildDefaultOptionLabel } from 'ui/components/TimezoneSelector';
 import update$dteTimezone from 'ui/utils/queries/update$dteTimezone';
 import { connect } from 'react-redux';
 import { getAppDataSelector } from 'ui/redux/modules/app';
@@ -216,6 +216,8 @@ const UserOrgForm = (props) => {
   const canEditSiteRoles = RESTRICT_CREATE_ORGANISATION &&
     props.activeScopes.includes(SITE_ADMIN);
 
+  const orgTimezone = organisationModel.get('timezone', 'UTC');
+
   return (
     <div>
       <UserForm {...props} />
@@ -248,8 +250,12 @@ const UserOrgForm = (props) => {
             <label htmlFor={filterId}>User Filter Timezone</label>
             <TimezoneSelector
               id={filterId}
-              value={userOrgSettings.get('timezone', 'UTC')}
-              onChange={handleTimezoneChange} />
+              value={userOrgSettings.get('timezone', null)}
+              onChange={handleTimezoneChange}
+              defaultOption={{
+                label: buildDefaultOptionLabel(orgTimezone),
+                value: orgTimezone,
+              }} />
           </div>
         </div>
       </div>
