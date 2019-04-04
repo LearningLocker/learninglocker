@@ -24,6 +24,7 @@ import {
   updateModel
 } from 'ui/redux/modules/models';
 import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
+import { orgTimezoneFromTokenSelector } from 'ui/redux/modules/auth';
 import { metadataSelector } from 'ui/redux/modules/metadata';
 import { modelsSelector } from 'ui/redux/modules/models/selectors';
 import { UPDATE_MODEL } from 'ui/redux/modules/models/updateModel';
@@ -185,14 +186,15 @@ export const visualisationPipelinesSelector = (
     modelsSchemaIdSelector('visualisation', id),
     shareableDashboardFilterSelector(),
     activeOrgSelector,
+    orgTimezoneFromTokenSelector,
   ],
-  (visualisation, filter, organisationModel) => {
+  (visualisation, filter, organisationModel, orgTimezoneFromToken) => {
     if (!visualisation) return new List();
     const type = visualisation.get('type');
     const journey = visualisation.get('journey');
     const previewPeriod = visualisation.get('previewPeriod');
     const benchmarkingEnabled = visualisation.get('benchmarkingEnabled', false);
-    const timezone = visualisation.get('timezone') || organisationModel.get('timezone', 'UTC');
+    const timezone = visualisation.get('timezone') || orgTimezoneFromToken || organisationModel.get('timezone', 'UTC');
     const queries = visualisation.get('filters', new List()).map((vFilter) => {
       if (!filter) {
         return vFilter;
