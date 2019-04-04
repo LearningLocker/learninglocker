@@ -1,15 +1,14 @@
 import React from 'react';
-import moment from 'moment-timezone';
-import { timezones } from 'lib/constants/timezones';
+import { timezones, timezoneLabels } from 'lib/constants/timezones';
 
 const DEFAULT = 'DEFAULT_VALUE';
 
-const options = timezones.map(v => (
-  <option key={v} value={v}>{`${v} (${moment().tz(v).format('Z')})`}</option>
+const options = timezones.map(tz => (
+  <option key={tz[0]} value={tz[0]}>{tz[1]}</option>
 ));
 
 export const buildDefaultOptionLabel = orgTimezone =>
-  `Organisation Default: ${orgTimezone}`;
+  `Organisation Default: ${timezoneLabels.get(orgTimezone)}`;
 
 /**
  * Timezone Selector
