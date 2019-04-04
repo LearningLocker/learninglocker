@@ -28,6 +28,7 @@ import generateConnectionController from 'api/controllers/ConnectionController';
 import generateIndexesController from 'api/controllers/IndexesController';
 import ImportPersonasController from 'api/controllers/ImportPersonasController';
 import StatementMetadataController from 'api/controllers/StatementMetadataController';
+import BatchDeleteController from 'api/controllers/BatchDeleteController';
 
 // REST
 import LRS from 'lib/models/lrs';
@@ -52,6 +53,7 @@ import SiteSettings from 'lib/models/siteSettings';
 import personaRESTHandler from 'api/routes/personas/personaRESTHandler';
 import personaIdentifierRESTHandler from 'api/routes/personas/personaIdentifierRESTHandler';
 import personaAttributeRESTHandler from 'api/routes/personas/personaAttributeRESTHandler';
+import BatchDelete from 'lib/models/batchDelete';
 import * as routes from 'lib/constants/routes';
 
 const router = new express.Router();
@@ -203,6 +205,11 @@ router.post(
   passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   StatementMetadataController.postStatementMetadata
 );
+router.delete(
+  routes.STATEMENT_BATCH_DELETE_INITIALISE,
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  BatchDeleteController.initialiseBatchDelete
+);
 
 
 /**
@@ -275,6 +282,11 @@ restify.serve(router, Role);
 restify.serve(router, PersonasImport);
 restify.serve(router, PersonasImportTemplate);
 restify.serve(router, SiteSettings);
+restify.serve(router, BatchDelete, {
+  preCreate: (req, res) => res.sendStatus(405),
+  preDelete: (req, res) => res.sendStatus(405),
+  preUpdate: (req, res) => res.sendStatus(405)
+});
 
 /**
  * CONNECTIONS and INDEXES
@@ -296,7 +308,8 @@ const generatedRouteModels = [
   ImportCsv,
   Role,
   PersonasImport,
-  PersonasImportTemplate
+  PersonasImportTemplate,
+  BatchDelete
 ];
 
 const generateConnectionsRoute = (model, routeSuffix, authentication) => {
