@@ -3,7 +3,7 @@
 import { expect } from 'chai';
 import * as models from 'lib/models';
 import { getConnection } from 'lib/connections/mongoose';
-import { getAtPath } from 'lib/services/querybuildercache/getCachesFromStatement';
+import getCachesFromStatement, { getAtPath } from 'lib/services/querybuildercache/getCachesFromStatement';
 import QueryBuilderCacheDBHelper from 'worker/handlers/statement/tests/queryBuilderCacheDBHelper';
 import awaitReadyConnection from 'api/routes/tests/utils/awaitReadyConnection';
 import { promisify } from 'bluebird';
@@ -86,6 +86,39 @@ describe('Query builder cache handler test', () => {
         fullValue: 'testCategory',
         path: ['statement', 'context', 'extensions', extensionKey, 'test'],
         value: 'testCategory'
+      }]);
+      done();
+    });
+
+    it('should get context parent type', (done) => {
+      const definitionType = 'http://example.org/parent-definition-type';
+      const statement = {
+        id: '561a679c0c5d017e4004714f',
+        actor: { mbox: 'mailto:test@example.org' },
+        verb: { id: 'http://example.org/verb' },
+        object: { id: 'http://example.org/object' },
+        context: {
+          contextActivities: {
+            parent: [{
+              objectType: 'Activity',
+              id: 'http://example.org/parent',
+              definition: {
+                type: definitionType,
+                extensions: {
+                  foo: 10
+                }
+              }
+            }]
+          }
+        }
+      };
+      const opts = { searchPath: ['statement', 'context', 'contextActivities', 'parent', '[]', 'definition', 'type'] };
+      const value = getAtPath({ statement }, opts);
+      expect(value).to.deep.equal([{
+        display: null,
+        fullValue: definitionType,
+        path: ['statement', 'context', 'contextActivities', 'parent', 'definition', 'type'],
+        value: definitionType
       }]);
       done();
     });

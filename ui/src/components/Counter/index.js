@@ -18,10 +18,17 @@ const formatLongNumber = (val) => {
   if (isNumber(val)) return val.toLocaleString();
   return 'N/A';
 };
-const formatTooltip = (count, benchmarkResult) => {
-  if (isNumber(count)) return `Current: ${formatLongNumber(count)}   Previous: ${benchmarkResult}`;
+
+const formatTooltip = (count) => {
+  if (isNumber(count)) return `${formatLongNumber(count)}`;
   return 'No data';
 };
+
+const formatBenchmarkTooltip = ({ count, benchmarkCount }) => {
+  const benchmarkText = isNumber(benchmarkCount) ? benchmarkCount : 'No data';
+  return `Current: ${formatTooltip(count)} - Previous: ${benchmarkText}`;
+};
+
 const getResultCount = rs => rs.getIn([0, 0, null, 'count'], 0);
 const getBenchmarkResultCount = rs => rs.getIn([1, 0, null, 'count'], 0);
 const makeHumanReadable = (previewPeriod) => {
@@ -34,51 +41,86 @@ const resultsIconStyles = {
   height: '40px',
   width: '40px',
 };
-const renderCount = color => count => benchmarkResult => (
+
+const renderCount = ({ color, count, tooltip, hasBenchmark }) => (
   <TooltipLink
-    style={{ color }}
+    style={{ color, height: hasBenchmark ? null : '100%' }}
     label={formatShortNumber(count)}
-    tooltip={formatTooltip(count, benchmarkResult)}
+    tooltip={tooltip}
     tooltipPosition="top"
     tooltipDelay={600}
     active />
   );
-const renderBenchmark = (percentage, model) => {
+
+const renderBenchmark = ({ percentage, model }) => {
   if (percentage.result === 'N/A') {
     return percentage.result;
   }
 
-  return (<div
-    style={{
-      backgroundColor: '#F4F4F4',
-      borderRadius: '40px',
-      width: 'fit-content',
-      padding: '1.3% 7% 0.8% 3%',
-      color: '#595959',
-    }}>
-    <img
-      className="counterResIcon"
-      role="presentation"
-      style={{ marginBottom: percentage.marginBottom, ...resultsIconStyles }}
-      src={percentage.icon} />{`${percentage.result} (${makeHumanReadable(model.get('previewPeriod', ''))})`}</div>);
+  return (
+    <div
+      style={{
+        backgroundColor: '#F4F4F4',
+        borderRadius: '40px',
+        width: 'fit-content',
+        padding: '1.3% 7% 0.8% 3%',
+        color: '#595959',
+      }}>
+      <img
+        className="counterResIcon"
+        role="presentation"
+        style={{ marginBottom: percentage.marginBottom, ...resultsIconStyles }}
+        src={percentage.icon} />{`${percentage.result} (${makeHumanReadable(model.get('previewPeriod', ''))})`}
+    </div>
+  );
 };
 
-const renderCounter = color => rs => model => (maxSize, width) => {
+const getCountFontsize = ({ height, width, hasBenchmark, maxSize }) => {
+  let fontSize = hasBenchmark ? `${maxSize / 40}` : `${maxSize / 20}`;
+  const tripHeight = hasBenchmark ? 220 : 150;
+  if (height < tripHeight) {
+    if (!hasBenchmark) {
+      fontSize = width > 200 ? 4.5 : 3.5;
+    }
+  } else if (width < 550) {
+    fontSize = width / 60;
+  }
+  if (fontSize > 12) fontSize = 12;
+  return `${fontSize}em`;
+};
+
+const renderCounter = ({ color, results, model, height, width }) => {
+  const maxSize = Math.min(height, width);
   const fontSize = (width < 332) || (maxSize < 245) ? '13px' : '0.2em';
-  const percentage = getPercentage(getResultCount(rs), getBenchmarkResultCount(rs));
+  const hasBenchmark = results.size > 1;
+  const benchmarkCount = hasBenchmark ? getBenchmarkResultCount(results) : null;
+  const count = getResultCount(results);
+  const percentage = getPercentage(count, benchmarkCount);
+
+  const tooltip = hasBenchmark ? formatBenchmarkTooltip({ count, benchmarkCount }) : formatTooltip(count);
+  const countFontsize = getCountFontsize({ height, width, hasBenchmark, maxSize });
+  const renderedCount = renderCount({ color, count, tooltip, hasBenchmark });
+  const renderedBenchmark = hasBenchmark ? renderBenchmark({ percentage, model }) : null;
+
+
   return (
-    <div className="outerCounter" >
-      <div style={{ textAlign: 'center', width: `${width}px`, marginLeft: `${width / 5}px!important`, fontSize: `${maxSize / 40}em` }}>
-        {renderCount(color)(getResultCount(rs))(getBenchmarkResultCount(rs))}
-        {rs.size > 1 &&
-          <div key={'count-1'} style={{ textAlign: 'center', justifyContent: 'center', display: 'flex', fontSize, color: percentage.color, fontWeight: '300' }}>
-            {renderBenchmark(percentage, model)}
-          </div>
-        }
+    <div className={styles.outerCounter}>
+      <div
+        className={styles.counter}
+        style={{ width, fontSize: countFontsize }}>
+        { renderedCount }
+        <div
+          key="benchmark"
+          className={styles.benchmark}
+          style={{
+            fontSize,
+            color: percentage.color,
+          }}>{ renderedBenchmark }</div>
       </div>
     </div>
   );
 };
-const renderResults = rs => color => model => (maxSize, width) => renderCounter(color)(rs)(model)(maxSize, width);
-const counter = ({ results, color, model, maxSize, width }) => (results ? renderResults(results)(color)(model)(maxSize, width) : <NoData />);
+const counter = ({ results, color, model, height, width }) =>
+  (results ? renderCounter({ results, color, model, height, width }) : <NoData />);
+
 export default withStyles(styles)(counter);

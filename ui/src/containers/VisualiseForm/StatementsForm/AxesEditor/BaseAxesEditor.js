@@ -39,6 +39,4 @@ export default class BaseAxesEditor extends Component {
   handleAxesChange = (key, event) => {
     this.changeAxes(key, event.target.value);
   };
-
-
 }

@@ -10,7 +10,7 @@ export default function (next = null) {
     logger.info(`Found ${stores.length} stores to update organisation on.`);
     async.each(stores,
       (store, asyncdone) => {
-        Statement.update({ lrs_id: store._id }, { organisation: store.organisation }, { multi: true }, asyncdone);
+        Statement.updateMany({ lrs_id: store._id }, { organisation: store.organisation }, {}, asyncdone);
         logger.info(`Adding organisation to statements in ${store.title}`);
       },
       (err) => {

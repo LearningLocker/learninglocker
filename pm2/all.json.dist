@@ -41,6 +41,20 @@
       "listen_timeout": 30000,
       "node_args": "--max-old-space-size=256 --max-semi-space-size=2",
       "watch": [".env"]
+    },
+    {
+      "name": "Scheduler",
+      "script": "cli/dist/scheduler",
+      "cwd": "{INSTALL_DIR}",
+      "output": "{LOG_DIR}/scheduler_stdout.log",
+      "error": "{LOG_DIR}/scheduler_stderr.log",
+      "pid": "{PID_DIR}/scheduler.pid",
+      "instances": 1,
+      "exec_mode": "cluster",
+      "detached": true,
+      "listen_timeout": 30000,
+      "node_args": "--max-old-space-size=256 --max-semi-space-size=2",
+      "watch": [".env"]
     }
   ]
 }

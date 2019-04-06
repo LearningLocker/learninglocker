@@ -4,11 +4,11 @@ import {
 import ImportPersonasLock from 'lib/models/importPersonasLock';
 import { expect } from 'chai';
 import { delay } from 'bluebird';
-import { establishLock } from './importPersonaHandler';
+import establishLock from 'lib/services/importPersonas/establishLock';
 
 describe('importPersonaHandler', () => {
   beforeEach(async () => {
-    await ImportPersonasLock.remove({});
+    await ImportPersonasLock.deleteMany({});
   });
 
   it('should establish a lock', async () => {
@@ -32,12 +32,15 @@ describe('importPersonaHandler', () => {
 
     expect(result1).to.be.ok; // eslint-disable-line no-unused-expressions
 
-    const result2 = await establishLock({
-      organisation: TEST_ORG_ID,
-      ifis: ifis2
-    });
-
-    expect(result2).to.equal(false);
+    try {
+      await establishLock({
+        organisation: TEST_ORG_ID,
+        ifis: ifis2
+      });
+      expect.fail('expected acquisition of second lock to fail');
+    } catch (err) {
+      expect(err.code).to.equal(11000);
+    }
   });
 
   it('should establish a lock on timeout fial', async () => {

@@ -3,8 +3,10 @@ import {
   AutoSizer,
   List as InfiniteList,
   InfiniteLoader,
-  CellMeasurer
+  CellMeasurer,
+  CellMeasurerCache
 } from 'react-virtualized';
+import { v4 } from 'uuid';
 
 const isRowLoaded = ({ options }) => ({ index }) => options.has(index);
 
@@ -31,29 +33,44 @@ class VirtualList extends Component {
     this.infiniteList.recomputeRowHeights(index);
   }
 
-  render = () => (
-    <CellMeasurer
+  cache = new CellMeasurerCache({
+    fixedHight: true,
+    defaultHeight: 36,
+  });
+
+  renderCellMeasurer = (cellProps) => {
+    const { parent, index, style, key, columnIndex } = cellProps;
+
+    const out = (<CellMeasurer
+      key={`cellMeasurer-${v4()}`}
+      cache={this.cache}
+      parent={parent}
+      rowIndex={index}
+      columnIndex={columnIndex}>
+      {(props) => {
+        const { measure } = props;
+
+        const ou = renderRow({
+          ...this.props.renderRowOptions,
+          resetRow: this.resetRow({ resetMeasurementForRow: measure })
+        })({ index, style, key });
+        return ou;
+      }}
+    </CellMeasurer>);
+
+    return out;
+  }
+
+  render = () => {
+    const out = (<InfiniteList
+      ref={(ref) => { this.infiniteList = ref; }}
       {...this.props}
-      columnCount={1}
-      cellRenderer={({ rowIndex, ...rest }) =>
-        this.props.cellRenderer({ index: rowIndex, ...rest })
-      }>
-      {({ getRowHeight, resetMeasurementForRow }) => (
-        <InfiniteList
-          ref={(ref) => { this.infiniteList = ref; }}
-          {...this.props}
-          height={this.props.listHeight}
-          rowRenderer={renderRow({
-            ...this.props.renderRowOptions,
-            resetRow: this.resetRow({ resetMeasurementForRow })
-          })}
-          rowHeight={(args) => {
-            const rowHeight = getRowHeight(args);
-            return rowHeight;
-          }} />
-      )}
-    </CellMeasurer>
-  )
+      height={this.props.listHeight}
+      rowRenderer={this.renderCellMeasurer}
+      rowHeight={this.cache.rowHeight} />);
+
+    return out;
+  }
 }
 
 const InfiniteOptionList = ({

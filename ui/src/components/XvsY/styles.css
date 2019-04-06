@@ -60,11 +60,11 @@
 
 .yAxis {
   display: inline-block;
-  writing-mode: vertical-lr;
+  writing-mode: vertical-rl;
   transform: rotate(-180deg);
   margin: auto 0;
   margin-left:15px;
-  }
+}
 
 
 .value {
