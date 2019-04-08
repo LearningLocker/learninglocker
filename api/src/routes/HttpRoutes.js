@@ -6,14 +6,13 @@ import Promise from 'bluebird';
 import {
   omit,
   findIndex,
-  includes,
   get
 } from 'lodash';
 import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
 import getTokenTypeFromAuthInfo from 'lib/services/auth/authInfoSelectors/getTokenTypeFromAuthInfo';
 import getScopesFromAuthInfo from 'lib/services/auth/authInfoSelectors/getScopesFromAuthInfo';
 import getUserIdFromAuthInfo from 'lib/services/auth/authInfoSelectors/getUserIdFromAuthInfo';
-import { SITE_ADMIN, XAPI_STATEMENTS_DELETE } from 'lib/constants/scopes';
+import { SITE_ADMIN } from 'lib/constants/scopes';
 import { jsonSuccess, serverError } from 'api/utils/responses';
 import passport from 'api/auth/passport';
 import {
@@ -271,7 +270,6 @@ restify.serve(router, LRS);
 restify.serve(router, Statement, {
   preCreate: (req, res) => res.sendStatus(405),
   preDelete: (req, res, next) => {
-    const authInfo = getAuthFromRequest(req);
     if (!boolean(get(process.env, 'ENABLE_SINGLE_STATEMENT_DELETION', true))) {
       res.sendStatus(405);
       return;
@@ -280,13 +278,8 @@ restify.serve(router, Statement, {
       res.sendStatus(400);
       return;
     }
-    if (
-      includes(get(authInfo, ['client', 'scopes']), XAPI_STATEMENTS_DELETE)
-    ) {
-      next();
-      return;
-    }
-    res.sendStatus(401);
+    next();
+    return;
   },
   preUpdate: (req, res) => res.sendStatus(405),
 });
