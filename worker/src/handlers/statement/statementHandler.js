@@ -31,6 +31,7 @@ const queueDependencies = {
 };
 
 export const addStatementToPendingQueues = (statement, passedQueues, done) => {
+  console.log('got statement: ', statement);
   const queues = passedQueues || queueDependencies;
   if (!statement) {
     logger.error('No statement provided');
