@@ -216,9 +216,9 @@ class Widget extends Component {
             </div>
           }
           {
-            isModalOpen &&
+            (isModalOpen) &&
               <WidgetVisualisePicker
-                isOpened={isModalOpen}
+                isOpened={isModalOpen || this.props.widgetModalOpen}
                 model={model}
                 onClickClose={this.closeModal}
                 onChangeTitle={this.props.onChangeTitle}

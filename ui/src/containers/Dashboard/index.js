@@ -1,5 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import WidgetVisualiseCreator from 'ui/containers/WidgetVisualiseCreator';
 import { Map, List, is } from 'immutable';
 import Input from 'ui/components/Material/Input';
 import { withProps, compose } from 'recompose';
@@ -24,6 +25,14 @@ class Dashboard extends Component {
     model: new Map()
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      widgetModalOpen: false,
+      widgetTitle: '',
+    };
+  }
+
   onChangeWidgets = (newWidgets) => {
     if (is(this.props.model.get('widgets'), newWidgets)) {
       return;
@@ -31,11 +40,13 @@ class Dashboard extends Component {
     this.props.updateModel({ path: ['widgets'], value: newWidgets });
   };
 
+  toggleWidgetModal = () => {
+    this.setState({ widgetModalOpen: !this.state.widgetModalOpen });
+  }
+
+
   onClickAddWidget = () => {
-    const newWidgetsAttr = this.props.model
-      .get('widgets', new List())
-      .push(new Map());
-    this.props.saveModel({ attrs: new Map({ widgets: newWidgetsAttr }) });
+    this.toggleWidgetModal();
   };
 
   onTitleChange = (value) => {
@@ -68,6 +79,25 @@ class Dashboard extends Component {
       path: ['widgets'],
       value: widgetsUpdate
     });
+  };
+
+  createPopulatedWidget = (widgetIndex) => {
+    const model = this.props.model;
+    const lastWidget = model.get('widgets').last();
+    const newModel = model
+      .get('widgets', new List())
+      .push(new Map({
+        visualisation: widgetIndex,
+        title: this.state.widgetTitle,
+        w: 5,
+        h: 8,
+        y: lastWidget.get('y') + lastWidget.get('h')
+      }));
+    this.props.saveModel({ attrs: new Map({ widgets: newModel }) });
+    // After saving the new widget we need to wait for the page to rerender in order to scroll to the bottom
+    setTimeout(() => {
+      window.scrollTo(0, document.body.scrollHeight);
+    }, 1000);
   };
 
   onChangeVisibility = (value) => {
@@ -140,6 +170,11 @@ class Dashboard extends Component {
           }
         </div>
         <div className="clearfix" />
+        <WidgetVisualiseCreator
+          isOpened={this.state.widgetModalOpen}
+          model={model}
+          onClickClose={() => this.toggleWidgetModal()}
+          onChangeVisualisation={this.createPopulatedWidget} />
         <DashboardGrid
           organisationId={organisationId}
           widgets={model.get('widgets')}

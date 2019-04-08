@@ -7,6 +7,7 @@ import ModelAutoComplete from 'ui/containers/ModelAutoComplete';
 import uuid from 'uuid';
 import { withModels } from 'ui/utils/hocs';
 
+
 const schema = 'visualisation';
 
 class WidgetVisualisePicker extends Component {
@@ -33,10 +34,12 @@ class WidgetVisualisePicker extends Component {
         (this.props.model.get('title') || 'No visualisation')
       );
     }
+
     const out = this.props.onChangeVisualisation(
       visualisation.get('_id'),
-      (visualisation.get('description'))
+      (this.props.model.get('title') || visualisation.get('description') || createDefaultTitle(visualisation))
     );
+
     return out;
   }
 
@@ -75,7 +78,7 @@ class WidgetVisualisePicker extends Component {
     const htmlFor = uuid.v4();
     return (
       <div className="form-group" style={{ width: '100%' }}>
-        <label htmlFor={htmlFor} className="clearfix">Visualisation</label>
+        {/* <label htmlFor={htmlFor} className="clearfix">Add Visualisations to the Dashboard</label> */}
         <div id={htmlFor}>
           <ModelAutoComplete
             schema={schema}
@@ -101,6 +104,7 @@ class WidgetVisualisePicker extends Component {
           <div className="modal animated fast fadeIn">
             <div className="modal-dialog">
               <div className="modal-content">
+
                 <div className="modal-header modal-header-bg">
                   <button
                     type="button"
@@ -109,8 +113,9 @@ class WidgetVisualisePicker extends Component {
                     onClick={this.onClickClose}>
                     <span aria-hidden="true">×</span>
                   </button>
-                  <h4 className="modal-title">Edit Widget</h4>
+                  <h4 className="modal-title">Add Visualisation Widget/s</h4>
                 </div>
+
                 <div
                   className="modal-body clearfix"
                   style={{
@@ -119,7 +124,6 @@ class WidgetVisualisePicker extends Component {
                     padding: '20px',
                     minWidth: '350px'
                   }}>
-                  {this.renderTitle()}
                   {this.renderVisualisations()}
                 </div>
               </div>
