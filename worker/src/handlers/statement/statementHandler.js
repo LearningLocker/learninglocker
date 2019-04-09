@@ -106,7 +106,10 @@ export default ({ status, statementId }, jobDone) => {
           // get the statement so that we can find which queues it has already been through
           return addStatementToPendingQueues(statement, queueDependencies, (err) => {
             if (err) logger.error('addStatementToPendingQueues error', err);
-            if (jobDone) return jobDone(err);
+            if (jobDone) {
+              console.log('JOB DONE!');
+              return jobDone(err);
+            }
           });
         }
       );
