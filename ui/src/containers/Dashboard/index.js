@@ -192,7 +192,7 @@ export default compose(
   lifecycle({
     componentDidUpdate(previousProps) {
       if (this.props.model.get('widgets').size > previousProps.model.get('widgets').size) {
-        if (window !== 'undefined') {
+        if (typeof window !== 'undefined') {
           window.scrollTo(0, document.body.scrollHeight);
         }
       }
