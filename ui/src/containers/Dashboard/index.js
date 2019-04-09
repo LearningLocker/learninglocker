@@ -192,7 +192,7 @@ export default compose(
   withModel,
   lifecycle({
     componentDidUpdate(previousProps) {
-      if (this.props.model.get('widgets').size > previousProps.model.get('widgets').size) {
+      if (this.props.model.get('widgets').size > previousProps.model.get('widgets').size && window) {
         const scroll = Scroll.animateScroll;
         scroll.scrollToBottom({ smooth: true });
       }
