@@ -192,9 +192,8 @@ export default compose(
   lifecycle({
     componentDidUpdate(previousProps) {
       if (this.props.model.get('widgets').size > previousProps.model.get('widgets').size) {
-        if (typeof window !== 'undefined') {
-          window.scrollTo(0, document.body.scrollHeight);
-        }
+        // eslint-disable-next-line no-unused-expressions
+        typeof window !== 'undefined' && window.scrollTo(0, document.body.scrollHeight);
       }
     }
   }),
