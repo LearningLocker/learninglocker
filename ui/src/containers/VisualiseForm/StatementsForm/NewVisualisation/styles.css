@@ -1,0 +1,25 @@
+.cardList {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+}
+
+.card {
+  width: 180px;
+  height: 200px;
+  padding: 8px;
+  margin: 16px 12px;
+}
+
+.card:hover {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.card:active {
+  text-decoration: none;
+}
+
+.cardImg {
+  text-align: center;
+}

@@ -114,7 +114,7 @@ class StatementsForm extends Component {
   );
 
   render = () => {
-    if (this.props.model.has('type')) {
+    if (this.props.model.has('type') && this.props.model.get('templateId', null) === null) {
       // include the results if type is selected
       return this.renderFormWithResults();
     }

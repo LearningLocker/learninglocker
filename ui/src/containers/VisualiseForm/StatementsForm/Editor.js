@@ -5,11 +5,11 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { updateModel } from 'ui/redux/modules/models';
 import Tabs from 'ui/components/Material/Tabs';
 import { Tab } from 'react-toolbox/lib/tabs';
-import TypeEditor from './TypeEditor';
 import SeriesEditor from './SeriesEditor';
 import AxesEditor from './AxesEditor/AxesEditor';
 import styles from '../visualiseform.css';
 import OptionsEditor from './OptionsEditor';
+import NewVisualisation from './NewVisualisation';
 
 const SCHEMA = 'visualisation';
 
@@ -40,11 +40,9 @@ class Editor extends Component {
   hasType = () =>
     this.props.model.has('type')
 
+  hasTemplateId = () => this.props.model.get('templateId', null) !== null
+
   isSeriesType = () => false;
-
-  renderTypeEditor = () =>
-    <TypeEditor model={this.props.model} />
-
 
   renderDescription = description => (
     <div className="form-group">
@@ -101,9 +99,12 @@ class Editor extends Component {
     this.isSeriesType() ? this.renderSeriesEditor() : this.renderTabs()
   )
 
-  render = () => (
-    this.hasType() ? this.renderSteps() : this.renderTypeEditor()
-  )
+  render = () => {
+    if (this.hasType() && !this.hasTemplateId()) {
+      return this.renderSteps();
+    }
+    return <NewVisualisation visualisationModel={this.props.model} />;
+  }
 }
 
 export default (
