@@ -1,4 +1,5 @@
 import React, { PropTypes, Component } from 'react';
+import Scroll from 'react-scroll';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import WidgetVisualiseCreator from 'ui/containers/WidgetVisualiseCreator';
 import { Map, List, is } from 'immutable';
@@ -192,8 +193,8 @@ export default compose(
   lifecycle({
     componentDidUpdate(previousProps) {
       if (this.props.model.get('widgets').size > previousProps.model.get('widgets').size) {
-        // eslint-disable-next-line no-unused-expressions
-        typeof window !== 'undefined' && window.scrollTo(0, document.body.scrollHeight);
+        const scroll = Scroll.animateScroll;
+        scroll.scrollToBottom({ smooth: true });
       }
     }
   }),
