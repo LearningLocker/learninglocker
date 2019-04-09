@@ -35,7 +35,7 @@ class WidgetVisualisePicker extends Component {
     }
     const out = this.props.onChangeVisualisation(
       visualisation.get('_id'),
-      (visualisation.get('description'))
+      (visualisation.get('description', ''))
     );
     return out;
   }

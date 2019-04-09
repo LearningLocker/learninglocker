@@ -3,7 +3,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import WidgetVisualiseCreator from 'ui/containers/WidgetVisualiseCreator';
 import { Map, List, is } from 'immutable';
 import Input from 'ui/components/Material/Input';
-import { withProps, compose } from 'recompose';
+import { withProps, compose, lifecycle } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import DashboardGrid from 'ui/containers/DashboardGrid';
 import DeleteButton from 'ui/containers/DeleteButton';
@@ -29,7 +29,6 @@ class Dashboard extends Component {
     super(props);
     this.state = {
       widgetModalOpen: false,
-      widgetTitle: '',
     };
   }
 
@@ -83,21 +82,16 @@ class Dashboard extends Component {
 
   createPopulatedWidget = (widgetIndex) => {
     const model = this.props.model;
-    const lastWidget = model.get('widgets').last();
+    const lastWidget = model.get('widgets').last() || new Map();
     const newModel = model
       .get('widgets', new List())
       .push(new Map({
         visualisation: widgetIndex,
-        title: this.state.widgetTitle,
         w: 5,
         h: 8,
-        y: lastWidget.get('y') + lastWidget.get('h')
+        y: lastWidget.get('y', 0) + lastWidget.get('h', 0)
       }));
     this.props.saveModel({ attrs: new Map({ widgets: newModel }) });
-    // After saving the new widget we need to wait for the page to rerender in order to scroll to the bottom
-    setTimeout(() => {
-      window.scrollTo(0, document.body.scrollHeight);
-    }, 1000);
   };
 
   onChangeVisibility = (value) => {
@@ -143,7 +137,7 @@ class Dashboard extends Component {
             <a
               onClick={this.onClickAddWidget}
               className="btn btn-default btn-sm flat-btn flat-white">
-              <i className="ion ion-stats-bars" /> Add widget
+              <i className="ion ion-stats-bars" />Add widget
             </a>
             <PrivacyToggleButton id={model.get('_id')} schema={schema} white />
             <DeleteButton white id={model.get('_id')} schema={schema} />
@@ -194,5 +188,14 @@ export default compose(
       id: id || params.dashboardId
     })
   ),
-  withModel
+  withModel,
+  lifecycle({
+    componentDidUpdate(previousProps) {
+      if (this.props.model.get('widgets').size > previousProps.model.get('widgets').size) {
+        if (window) {
+          window.scrollTo(0, document.body.scrollHeight);
+        }
+      }
+    }
+  }),
 )(Dashboard);

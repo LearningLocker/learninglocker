@@ -166,9 +166,9 @@ class Widget extends Component {
             Go to visualisation
           </Link>
         }
-        <a onClick={this.openModal.bind(null, VISUALISATION)} title="Widget settings">
+        <a onClick={this.openModal.bind(null, VISUALISATION)} title="Edit widget visualisation or title">
           <i className={`ion ${styles.marginRight} ion-gear-b grey`} />
-          Settings
+          Edit Widget
         </a>
         { this.props.editable &&
           <a

@@ -78,7 +78,6 @@ class WidgetVisualisePicker extends Component {
     const htmlFor = uuid.v4();
     return (
       <div className="form-group" style={{ width: '100%' }}>
-        {/* <label htmlFor={htmlFor} className="clearfix">Add Visualisations to the Dashboard</label> */}
         <div id={htmlFor}>
           <ModelAutoComplete
             schema={schema}
@@ -113,7 +112,7 @@ class WidgetVisualisePicker extends Component {
                     onClick={this.onClickClose}>
                     <span aria-hidden="true">×</span>
                   </button>
-                  <h4 className="modal-title">Add Visualisation Widget/s</h4>
+                  <h4 className="modal-title">Add Visualisation Widgets</h4>
                 </div>
 
                 <div
