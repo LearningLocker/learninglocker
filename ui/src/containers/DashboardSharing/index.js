@@ -2,6 +2,8 @@ import React from 'react';
 import boolean from 'boolean';
 import { Map, List, fromJS } from 'immutable';
 import { connect } from 'react-redux';
+import { toPath, slice } from 'lodash';
+import classNames from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import {
   compose,
@@ -9,9 +11,9 @@ import {
   withHandlers
 } from 'recompose';
 import DebounceInput from 'react-debounce-input';
+import uuid from 'uuid';
 import QueryBuilder from 'ui/containers/QueryBuilder';
 import { withModel } from 'ui/utils/hocs';
-import uuid from 'uuid';
 import ModelList from 'ui/containers/ModelList';
 import ModelListItemWithoutModel from 'ui/containers/ModelListItem/ModelListItemWithoutModel';
 import DeleteButtonComponent from 'ui/containers/DeleteButton';
@@ -26,9 +28,9 @@ import {
 import RadioGroup from 'ui/components/Material/RadioGroup';
 import RadioButton from 'ui/components/Material/RadioButton';
 import { OFF, ANY, JWT_SECURED } from 'lib/constants/dashboard';
-import { toPath, slice } from 'lodash';
-import classNames from 'classnames';
 import ValidationList from 'ui/components/ValidationList';
+import { TimezoneSelector, buildDefaultOptionLabel } from 'ui/components/TimezoneSelector';
+import update$dteTimezone from 'ui/utils/queries/update$dteTimezone';
 import OpenLinkButtonComponent from './OpenLinkButton';
 import styles from './styles.css';
 
@@ -39,11 +41,8 @@ const utilHandlers = withHandlers({
     parentModel,
     model,
     updateModel,
-  }) => ({
-    path,
-    value,
-  }) => {
-    const newModel = model.set(path, value);
+  }) => (pathValues) => {
+    const newModel = pathValues.reduce((acc, { path, value }) => acc.set(path, value), model);
     const selectedIndex = parentModel.get('shareable').findIndex(item =>
       item.get('_id') === model.get('_id')
     );
@@ -61,53 +60,70 @@ const handlers = withHandlers({
     updateSelectedSharable
   }) => (event) => {
     const value = event.target.value;
-    updateSelectedSharable({
+    updateSelectedSharable([{
       path: 'title',
       value,
-    });
+    }]);
   },
   handleFilterChange: ({
     updateSelectedSharable
   }) => (filter) => {
-    updateSelectedSharable({
+    updateSelectedSharable([{
       path: 'filter',
       value: filter
-    });
+    }]);
   },
   handleVisibilityChange: ({
     updateSelectedSharable
   }) => (value) => {
-    updateSelectedSharable({
+    updateSelectedSharable([{
       path: 'visibility',
       value
-    });
+    }]);
   },
   handleDomainsChange: ({
     updateSelectedSharable
   }) => (event) => {
-    updateSelectedSharable({
+    updateSelectedSharable([{
       path: 'validDomains',
       value: event.target.value
-    });
+    }]);
   },
 
   handleFilterModeChange: ({ updateSelectedSharable }) => (value) => {
-    updateSelectedSharable({
+    updateSelectedSharable([{
       path: 'filterMode',
       value
-    });
+    }]);
   },
   handleFilterJwtSecretChange: ({ updateSelectedSharable }) => (event) => {
-    updateSelectedSharable({
+    updateSelectedSharable([{
       path: 'filterJwtSecret',
       value: event.target.value
-    });
+    }]);
   },
   handleFilterRequiredChange: ({ updateSelectedSharable }) => (value) => {
-    updateSelectedSharable({
+    updateSelectedSharable([{
       path: 'filterRequired',
       value: boolean(value)
-    });
+    }]);
+  },
+  onChangeTimezone: ({ model, organisationModel, updateSelectedSharable }) => (value) => {
+    const timezone = value || organisationModel.get('timezone');
+
+    const filter = model.get('filter', new Map({}));
+    const timezoneUpdated = update$dteTimezone(filter, timezone);
+
+    updateSelectedSharable([
+      {
+        path: 'filter',
+        value: timezoneUpdated,
+      },
+      {
+        path: 'timezone',
+        value
+      }
+    ]);
   },
 
   copyToClipBoard: () => urlId => () => {
@@ -148,6 +164,7 @@ const ModelFormComponent = ({
   handleFilterModeChange,
   handleFilterJwtSecretChange,
   handleFilterRequiredChange,
+  onChangeTimezone,
 
   model,
   organisationModel,
@@ -162,10 +179,13 @@ const ModelFormComponent = ({
   const filterModeId = uuid.v4();
   const filterRequiredId = uuid.v4();
   const filterJwtSecretId = uuid.v4();
+  const filterTzId = uuid.v4();
   const filterMode = model.get('filterMode', OFF);
   const filterRequired = model.get('filterRequired', false);
 
   const errors = getErrors(parentModel, model);
+
+  const orgTimezone = organisationModel.get('timezone', 'UTC');
 
   return (<div>
     <div className="form-group">
@@ -303,10 +323,21 @@ const ModelFormComponent = ({
     <div className="form-group">
       <h4>Base filter</h4>
       <span className={classNames('help-block', styles.contextHelp)}>Configure a filter for this dashboard which will always be applied. The dashboard below will show a live preview of the result, updating as you construct your filter<br /><br />If a URL filter is also used, it will be applied on top of this filter</span>
+
+      <label htmlFor={filterTzId}>Timezone</label>
+      <TimezoneSelector
+        id={filterTzId}
+        value={model.get('timezone', null)}
+        onChange={onChangeTimezone}
+        defaultOption={{
+          label: buildDefaultOptionLabel(orgTimezone),
+          value: orgTimezone,
+        }} />
+
       <QueryBuilder
         id={filterId}
         timezone={model.get('timezone', null)}
-        orgTimezone={organisationModel.get('timezone', null)}
+        orgTimezone={orgTimezone}
         query={model.get('filter', new Map({}))}
         componentPath={new List([])}
         onChange={handleFilterChange} />
