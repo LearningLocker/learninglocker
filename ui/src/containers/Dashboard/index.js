@@ -93,6 +93,7 @@ class Dashboard extends Component {
         y: lastWidget.get('y', 0) + lastWidget.get('h', 0)
       }));
     this.props.saveModel({ attrs: new Map({ widgets: newModel }) });
+    this.toggleWidgetModal();
   };
 
   onChangeVisibility = (value) => {
