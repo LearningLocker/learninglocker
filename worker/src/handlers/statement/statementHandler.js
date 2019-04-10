@@ -2,6 +2,8 @@
 import Statement from 'lib/models/statement';
 import highland from 'highland';
 import logger from 'lib/logger';
+import mongoose from 'mongoose';
+
 import {
   keys,
   reject,
@@ -30,8 +32,15 @@ const queueDependencies = {
   },
 };
 
-export const addStatementToPendingQueues = (statement, passedQueues, done) => {
-  console.log('got statement: ', statement);
+const objectId = mongoose.Types.ObjectId;
+
+
+export const addStatementToPendingQueues = async (statement, passedQueues, done) => {
+  console.log('got statement2: ', statement);
+  const fullStatement = await Statement.findOne({
+    _id: objectId(statement._id)
+  });
+  console.log(fullStatement._doc.statement.object);
   const queues = passedQueues || queueDependencies;
   if (!statement) {
     logger.error('No statement provided');
