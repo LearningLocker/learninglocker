@@ -181,104 +181,122 @@ const enhance = compose(
       (filter) => {
         updateOrgSettings([{ attr: 'filter', value: filter }]);
       },
-    handleTimezoneChange: ({ model, organisationModel, updateOrgSettings }) =>
+    handleTimezoneChange: ({ updateOrgSettings }) =>
       (timezone) => {
-        const userOrgSettings = getActiveOrgSettings({ model, organisationModel });
-        const filter = userOrgSettings.get('filter', new Map({}));
-        const timezoneUpdatedFilter = update$dteTimezone(filter, timezone);
-
-        updateOrgSettings([
-          { attr: 'timezone', value: timezone },
-          { attr: 'filter', value: timezoneUpdatedFilter },
-        ]);
-      }
+        updateOrgSettings([{ attr: 'timezone', value: timezone }]);
+      },
   })
 );
 
-const UserOrgForm = (props) => {
-  const {
-    model, // user
-    organisationModel,
-    handleRolesChange,
-    handleFilterChange,
-    handleSiteRolesChange,
-    handleTimezoneChange,
-    RESTRICT_CREATE_ORGANISATION
-  } = props;
-  const userOrgSettings = getActiveOrgSettings({ model, organisationModel });
-  const roles = userOrgSettings.get('roles', new List());
-  const rolesId = uuid.v4();
-  const siteRolesId = uuid.v4();
-  const filterId = uuid.v4();
-  const filter = fromJS(userOrgSettings.get('filter', new Map({})));
+class UserOrgForm extends React.Component {
+  componentDidMount = () => {
+    this.updateFilterIfUpdated();
+  }
 
-  const siteRoles = model.get('scopes', new List());
-  const canEditSiteRoles = RESTRICT_CREATE_ORGANISATION &&
-    props.activeScopes.includes(SITE_ADMIN);
+  componentDidUpdate = () => {
+    this.updateFilterIfUpdated();
+  }
 
-  const orgTimezone = organisationModel.get('timezone', 'UTC');
+  updateFilterIfUpdated = () => {
+    const { model, organisationModel, updateOrgSettings } = this.props;
+    const userOrgSettings = getActiveOrgSettings({ model, organisationModel });
+    const timezone = userOrgSettings.get('timezone') || organisationModel.get('timezone');
 
-  return (
-    <div>
-      <UserForm {...props} />
-      <div className="row">
-        <div className="col-md-12" >
-          <div className="form-group">
-            <label htmlFor={rolesId}>Organisation Roles</label>
-            <div id={rolesId}>
-              <RolesList selectedRoles={roles} handleRolesChange={handleRolesChange} />
+    const filter = userOrgSettings.get('filter', new Map({}));
+    const timezoneUpdated = update$dteTimezone(filter, timezone);
+
+    // Update filter when timezone offset in the filter query is changed
+    if (!timezoneUpdated.equals(filter)) {
+      updateOrgSettings([{ attr: 'filter', value: timezoneUpdated }]);
+    }
+  }
+
+  render = () => {
+    const {
+      model, // user
+      organisationModel,
+      activeScopes,
+      handleRolesChange,
+      handleFilterChange,
+      handleSiteRolesChange,
+      handleTimezoneChange,
+      RESTRICT_CREATE_ORGANISATION
+    } = this.props;
+    const userOrgSettings = getActiveOrgSettings({ model, organisationModel });
+    const roles = userOrgSettings.get('roles', new List());
+    const rolesId = uuid.v4();
+    const siteRolesId = uuid.v4();
+    const filterId = uuid.v4();
+    const filter = fromJS(userOrgSettings.get('filter', new Map({})));
+
+    const siteRoles = model.get('scopes', new List());
+    const canEditSiteRoles = RESTRICT_CREATE_ORGANISATION &&
+      activeScopes.includes(SITE_ADMIN);
+
+    const orgTimezone = organisationModel.get('timezone', 'UTC');
+
+    return (
+      <div>
+        <UserForm {...this.props} />
+        <div className="row">
+          <div className="col-md-12" >
+            <div className="form-group">
+              <label htmlFor={rolesId}>Organisation Roles</label>
+              <div id={rolesId}>
+                <RolesList selectedRoles={roles} handleRolesChange={handleRolesChange} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        {canEditSiteRoles && <div className="row">
+          <div className="col-md-12">
+            <div className="form-group">
+              <label htmlFor={siteRolesId}>Site Roles</label>
+              <div id={siteRolesId}>
+                <SiteRolesList selectedRoles={siteRoles} handleRolesChange={handleSiteRolesChange} />
+              </div>
+            </div>
+          </div>
+        </div>}
+
+        <div className="row">
+          <div className="col-md-12">
+            <div className="form-group">
+              <label htmlFor={filterId}>User Filter Timezone</label>
+              <TimezoneSelector
+                id={filterId}
+                value={userOrgSettings.get('timezone', null)}
+                onChange={handleTimezoneChange}
+                defaultOption={{
+                  label: buildDefaultOptionLabel(orgTimezone),
+                  value: orgTimezone,
+                }} />
+            </div>
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-md-12">
+            <div className="form-group">
+              <label htmlFor={filterId}>User Filter</label>
+              <QueryBuilder
+                id={filterId}
+                componentPath={new List([
+                  'user',
+                  model.get('_id'),
+                ])}
+                query={filter}
+                timezone={userOrgSettings.get('timezone', null)}
+                orgTimezone={orgTimezone}
+                onChange={handleFilterChange} />
             </div>
           </div>
         </div>
       </div>
-
-
-      {canEditSiteRoles && <div className="row">
-        <div className="col-md-12">
-          <div className="form-group">
-            <label htmlFor={siteRolesId}>Site Roles</label>
-            <div id={siteRolesId}>
-              <SiteRolesList selectedRoles={siteRoles} handleRolesChange={handleSiteRolesChange} />
-            </div>
-          </div>
-        </div>
-      </div>}
-
-      <div className="row">
-        <div className="col-md-12">
-          <div className="form-group">
-            <label htmlFor={filterId}>User Filter Timezone</label>
-            <TimezoneSelector
-              id={filterId}
-              value={userOrgSettings.get('timezone', null)}
-              onChange={handleTimezoneChange}
-              defaultOption={{
-                label: buildDefaultOptionLabel(orgTimezone),
-                value: orgTimezone,
-              }} />
-          </div>
-        </div>
-      </div>
-
-      <div className="row">
-        <div className="col-md-12">
-          <div className="form-group">
-            <label htmlFor={filterId}>User Filter</label>
-            <QueryBuilder
-              id={filterId}
-              componentPath={new List([
-                'user',
-                model.get('_id'),
-              ])}
-              query={filter}
-              timezone={userOrgSettings.get('timezone', 'UTC')}
-              onChange={handleFilterChange} />
-          </div>
-        </div>
-      </div>
-    </div>
-
-  );
-};
+    );
+  }
+}
 
 export default enhance(UserOrgForm);
