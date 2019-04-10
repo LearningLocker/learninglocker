@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { PureComponent, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import tooltipFactory from 'react-toolbox/lib/tooltip';
 import { IconButton } from 'react-toolbox/lib/button';
@@ -17,6 +17,7 @@ import QueryBuilder from 'ui/containers/QueryBuilder';
 import StatementForm from 'ui/containers/StatementForm';
 import ModelList from 'ui/containers/ModelList';
 import ExportManager from 'ui/containers/ExportManager';
+import update$dteTimezone from 'ui/utils/queries/update$dteTimezone';
 import { addTokenToQuery } from 'ui/utils/queries';
 import { valueToCriteria } from 'ui/redux/modules/queryBuilder';
 import { withModels } from 'ui/utils/hocs';
@@ -33,7 +34,7 @@ const StatementList = withStatements(ModelList);
 const TooltipIconButton = tooltipFactory(IconButton);
 const querySort = new Map({ timestamp: -1, _id: 1 });
 
-class Source extends Component {
+class Source extends PureComponent {
   static propTypes = {
     updateStatementQuery: PropTypes.func,
     query: PropTypes.instanceOf(Map),
@@ -52,6 +53,20 @@ class Source extends Component {
     this.state = {
       isExporting: false
     };
+  }
+
+  componentDidMount = () => this.updateQueryTimezone();
+
+  componentDidUpdate = () => this.updateQueryTimezone();
+
+  updateQueryTimezone = () => {
+    const { updateStatementQuery, query, organisationModel } = this.props;
+    const timezone = this.props.timezone || organisationModel.get('timezone', 'UTC');
+    const timezoneUpdated = update$dteTimezone(query, timezone);
+
+    if (!timezoneUpdated.equals(query)) {
+      updateStatementQuery(timezoneUpdated);
+    }
   }
 
   toggleIsExporting = () => {
