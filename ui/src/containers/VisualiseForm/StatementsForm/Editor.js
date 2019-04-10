@@ -26,29 +26,41 @@ class Editor extends Component {
     step: 0,
   }
 
+  componentDidMount = () => {
+    const timezone = this.props.model.get('timezone') || this.props.orgTimezone;
+    this.updateQueriesIfUpdated(timezone);
+  }
+
   componentDidUpdate = (prevProps) => {
     const prevTimezone = prevProps.model.get('timezone') || prevProps.orgTimezone;
     const currentTimezone = this.props.model.get('timezone') || this.props.orgTimezone;
 
     if (prevTimezone !== currentTimezone) {
-      // Values of these paths may have `{ $dte: ... }` sub queries.
-      const paths = ['filters', 'axesxQuery', 'axesyQuery'];
-
-      paths.forEach((path) => {
-        const query = this.props.model.get(path, new Map());
-        const timezoneUpdated = update$dteTimezone(query, currentTimezone);
-
-        // Update visualisation.{path} when timezone offset in the filter query is changed
-        if (!timezoneUpdated.equals(query)) {
-          this.props.updateModel({
-            schema: SCHEMA,
-            id: this.props.model.get('_id'),
-            path,
-            value: timezoneUpdated,
-          });
-        }
-      });
+      this.updateQueriesIfUpdated(currentTimezone);
     }
+  }
+
+  /**
+   * Update a model if its query is updated
+   */
+  updateQueriesIfUpdated = (timezone) => {
+    // Values of these paths may have `{ $dte: ... }` sub queries.
+    const paths = ['filters', 'axesxQuery', 'axesyQuery'];
+
+    paths.forEach((path) => {
+      const query = this.props.model.get(path, new Map());
+      const timezoneUpdated = update$dteTimezone(query, timezone);
+
+      // Update visualisation.{path} when timezone offset in the filter query is changed
+      if (!timezoneUpdated.equals(query)) {
+        this.props.updateModel({
+          schema: SCHEMA,
+          id: this.props.model.get('_id'),
+          path,
+          value: timezoneUpdated,
+        });
+      }
+    });
   }
 
   changeAttr = attr => newValue =>
