@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import boolean from 'boolean';
 import { get, map } from 'lodash';
 import BatchDelete, { asTime } from 'lib/models/batchDelete';
@@ -11,8 +10,6 @@ import SiteSettings from 'lib/models/siteSettings';
 import Client from 'lib/models/client';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import moment from 'moment';
-
-const objectId = mongoose.Types.ObjectId;
 
 export default async ({
   batchDeleteId,
