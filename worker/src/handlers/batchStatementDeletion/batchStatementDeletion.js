@@ -8,6 +8,8 @@ import { publish as pubishToQueue } from 'lib/services/queue';
 import { BATCH_STATEMENT_DELETION_QUEUE } from 'lib/constants/batchDelete';
 import { SITE_SETTINGS_ID } from 'lib/constants/siteSettings';
 import SiteSettings from 'lib/models/siteSettings';
+import Client from 'lib/models/client';
+import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import moment from 'moment';
 
 const objectId = mongoose.Types.ObjectId;
@@ -53,9 +55,34 @@ export default async ({
     return;
   }
 
+  let scopeFilter;
+  try {
+    scopeFilter = await getScopeFilter({
+      modelName: 'statement',
+      actionName: 'delete',
+      authInfo: {
+        client: await Client.findOne({ _id: batchDelete.client })
+      }
+    });
+  } catch (err) {
+    if (err.message === 'Priviliges not sufficient for this operation') {
+      // Do nothing
+      await BatchDelete.findOneAndUpdate({
+        _id: batchDeleteId
+      }, {
+        processing: false,
+        done: true
+      });
+
+      jobDone();
+      return;
+    }
+    throw err;
+  }
+
   const filter = {
     ...(await parseQuery(batchDelete.filter)),
-    organisation: objectId(batchDelete.organisation)
+    ...scopeFilter
   };
 
   const docs = await Statement.aggregate()

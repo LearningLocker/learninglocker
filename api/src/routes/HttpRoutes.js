@@ -3,7 +3,11 @@ import express from 'express';
 import restify from 'express-restify-mongoose';
 import git from 'git-rev';
 import Promise from 'bluebird';
-import { omit, findIndex } from 'lodash';
+import {
+  omit,
+  findIndex,
+  get
+} from 'lodash';
 import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
 import getTokenTypeFromAuthInfo from 'lib/services/auth/authInfoSelectors/getTokenTypeFromAuthInfo';
 import getScopesFromAuthInfo from 'lib/services/auth/authInfoSelectors/getScopesFromAuthInfo';
@@ -272,7 +276,18 @@ restify.serve(router, Dashboard);
 restify.serve(router, LRS);
 restify.serve(router, Statement, {
   preCreate: (req, res) => res.sendStatus(405),
-  preDelete: (req, res) => res.sendStatus(405),
+  preDelete: (req, res, next) => {
+    if (!boolean(get(process.env, 'ENABLE_SINGLE_STATEMENT_DELETION', true))) {
+      res.sendStatus(405);
+      return;
+    }
+    if (!req.params.id) {
+      res.sendStatus(400);
+      return;
+    }
+    next();
+    return;
+  },
   preUpdate: (req, res) => res.sendStatus(405),
 });
 restify.serve(router, StatementForwarding);

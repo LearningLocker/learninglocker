@@ -7,6 +7,7 @@ import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAu
 import parseQuery from 'lib/helpers/parseQuery';
 import { BATCH_STATEMENT_DELETION_QUEUE } from 'lib/constants/batchDelete';
 import { publish } from 'lib/services/queue';
+import { get } from 'lodash';
 
 
 const initialiseBatchDelete = catchErrors(async (req, res) => {
@@ -14,8 +15,8 @@ const initialiseBatchDelete = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   const scopeFilter = await getScopeFilter({
-    modelName: 'batchDelete',
-    actionName: 'edit',
+    modelName: 'statement',
+    actionName: 'delete',
     authInfo
   });
 
@@ -28,10 +29,12 @@ const initialiseBatchDelete = catchErrors(async (req, res) => {
     .find(filter)
     .count();
 
+  console.log('authInfo', JSON.stringify(authInfo, null, 2));
   const batchDelete = new BatchDelete({
     organisation: getOrgFromAuthInfo(authInfo),
     total,
-    filter: req.query.filter
+    filter: req.query.filter,
+    client: get(authInfo, 'client.id')
   });
   await batchDelete.save();
 
@@ -39,7 +42,7 @@ const initialiseBatchDelete = catchErrors(async (req, res) => {
     queueName: BATCH_STATEMENT_DELETION_QUEUE,
     payload: {
       batchDeleteId: batchDelete._id.toString(),
-    }
+    },
   });
 
   res.sendStatus(200);
