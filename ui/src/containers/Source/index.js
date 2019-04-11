@@ -6,6 +6,7 @@ import { withProps, compose } from 'recompose';
 import { Map, fromJS, List } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { VelocityTransitionGroup } from 'velocity-react';
+import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
 import {
   statementQuerySelector,
   statementTimezoneSelector,
@@ -17,7 +18,6 @@ import QueryBuilder from 'ui/containers/QueryBuilder';
 import StatementForm from 'ui/containers/StatementForm';
 import ModelList from 'ui/containers/ModelList';
 import ExportManager from 'ui/containers/ExportManager';
-import update$dteTimezone from 'ui/utils/queries/update$dteTimezone';
 import { addTokenToQuery } from 'ui/utils/queries';
 import { valueToCriteria } from 'ui/redux/modules/queryBuilder';
 import { withModels } from 'ui/utils/hocs';
@@ -60,12 +60,12 @@ class Source extends PureComponent {
   componentDidUpdate = () => this.updateQueryTimezone();
 
   updateQueryTimezone = () => {
-    const { updateStatementQuery, query, organisationModel } = this.props;
+    const { query, organisationModel } = this.props;
     const timezone = this.props.timezone || organisationModel.get('timezone', 'UTC');
     const timezoneUpdated = update$dteTimezone(query, timezone);
 
     if (!timezoneUpdated.equals(query)) {
-      updateStatementQuery(timezoneUpdated);
+      this.props.updateStatementQuery(timezoneUpdated);
     }
   }
 

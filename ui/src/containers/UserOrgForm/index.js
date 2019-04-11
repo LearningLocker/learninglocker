@@ -1,18 +1,18 @@
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { Map, List, fromJS } from 'immutable';
 import uuid from 'uuid';
 import { compose, setPropTypes, withProps, withHandlers } from 'recompose';
+import { SITE_ADMIN, SITE_CAN_CREATE_ORG, SITE_SCOPES } from 'lib/constants/scopes';
+import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
 import { withSchema, withModel } from 'ui/utils/hocs';
 import QueryBuilder from 'ui/containers/QueryBuilder';
 import UserForm from 'ui/containers/UserForm';
 import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
 import Checkbox from 'ui/components/Material/Checkbox';
 import { TimezoneSelector, buildDefaultOptionLabel } from 'ui/components/TimezoneSelector';
-import update$dteTimezone from 'ui/utils/queries/update$dteTimezone';
-import { connect } from 'react-redux';
 import { getAppDataSelector } from 'ui/redux/modules/app';
 import { currentScopesSelector } from 'ui/redux/modules/auth';
-import { SITE_ADMIN, SITE_CAN_CREATE_ORG, SITE_SCOPES } from 'lib/constants/scopes';
 
 const ORG_SETTINGS = 'organisationSettings';
 

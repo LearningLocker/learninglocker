@@ -12,6 +12,12 @@ import {
 } from 'recompose';
 import DebounceInput from 'react-debounce-input';
 import uuid from 'uuid';
+import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
+import {
+  NOWHERE,
+  ANYWHERE,
+  VALID_DOMAINS
+} from 'lib/constants/sharingScopes';
 import QueryBuilder from 'ui/containers/QueryBuilder';
 import { withModel } from 'ui/utils/hocs';
 import ModelList from 'ui/containers/ModelList';
@@ -20,17 +26,11 @@ import DeleteButtonComponent from 'ui/containers/DeleteButton';
 import { updateModel as reduxUpdateModel } from 'ui/redux/modules/models';
 import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
 import { getShareableUrl } from 'ui/utils/dashboard';
-import {
-  NOWHERE,
-  ANYWHERE,
-  VALID_DOMAINS
-} from 'lib/constants/sharingScopes';
 import RadioGroup from 'ui/components/Material/RadioGroup';
 import RadioButton from 'ui/components/Material/RadioButton';
 import { OFF, ANY, JWT_SECURED } from 'lib/constants/dashboard';
 import ValidationList from 'ui/components/ValidationList';
 import { TimezoneSelector, buildDefaultOptionLabel } from 'ui/components/TimezoneSelector';
-import update$dteTimezone from 'ui/utils/queries/update$dteTimezone';
 import OpenLinkButtonComponent from './OpenLinkButton';
 import styles from './styles.css';
 

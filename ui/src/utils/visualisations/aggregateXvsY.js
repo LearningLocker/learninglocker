@@ -1,5 +1,5 @@
 import { Map, List, fromJS } from 'immutable';
-import update$dteTimezone from 'ui/utils/queries/update$dteTimezone';
+import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
 import grouper from 'ui/utils/visualisations/aggregationGroup/grouper';
 
 const aggregateScatterAxis = (axis, preReqs, axes, timezone) => {

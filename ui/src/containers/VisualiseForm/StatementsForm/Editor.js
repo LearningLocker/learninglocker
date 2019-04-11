@@ -1,11 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 import { Map } from 'immutable';
 import { connect } from 'react-redux';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { updateModel } from 'ui/redux/modules/models';
-import update$dteTimezone from 'ui/utils/queries/update$dteTimezone';
-import Tabs from 'ui/components/Material/Tabs';
 import { Tab } from 'react-toolbox/lib/tabs';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
+import { updateModel } from 'ui/redux/modules/models';
+import Tabs from 'ui/components/Material/Tabs';
 import TypeEditor from './TypeEditor';
 import SeriesEditor from './SeriesEditor';
 import AxesEditor from './AxesEditor/AxesEditor';

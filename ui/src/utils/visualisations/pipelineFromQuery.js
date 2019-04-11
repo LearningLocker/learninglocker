@@ -1,7 +1,7 @@
 import { Map, fromJS } from 'immutable';
 import { memoize } from 'lodash';
+import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
 import { periodToDate } from 'ui/utils/dates';
-import update$dteTimezone from 'ui/utils/queries/update$dteTimezone';
 import aggregateChart from 'ui/utils/visualisations/aggregateChart';
 import aggregateCounter from 'ui/utils/visualisations/aggregateCounter';
 import aggregateXvsY from 'ui/utils/visualisations/aggregateXvsY';
