@@ -233,7 +233,7 @@ describe('batchStatementDeletion', () => {
     expect(result.length).to.equal(1);
 
     const batchDelete = await BatchDelete.findById(batchDeleteId);
-    expect(batchDelete.done).to.equal(true);
+    expect(batchDelete.done).to.equal(false);
     expect(batchDelete.processing).to.equal(false);
   });
 
