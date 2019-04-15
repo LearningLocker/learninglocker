@@ -8,10 +8,10 @@ const Card = ({ title, type, onSelect }) => (
     className={styles.card}
     onClick={() => onSelect()}>
     <div className={styles.cardImg} >
-      <VisualiseIcon type={type} />
+      <VisualiseIcon type={type} isSmall />
     </div>
 
-    <p>{title}</p>
+    <p className={styles.cardTitle} >{title}</p>
   </div>
 );
 
