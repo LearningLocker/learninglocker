@@ -101,6 +101,12 @@ class SubOrgForm extends Component {
     });
   }
 
+  // convertDays = (time, secondsToDays = true) => {
+  //   console.log('time ', time, 'secToDay ', secondsToDays, 'div ', Math.round(time / (24 * 60 * 1000)), 'mult', time * 24 * 60 * 1000)
+  //   if (secondsToDays) return Math.round(time / (24 * 60 * 1000));
+  //   return time * 24 * 60 * 1000;
+  // }
+
   handleFile = (e) => {
     this.setState({ fileName: e.target.files[0].name });
     this.setState({ fileHandle: e.target.files[0] });
@@ -336,6 +342,7 @@ class SubOrgForm extends Component {
   render = () => {
     const { model } = this.props;
     const settings = model.get('settings');
+    const recommendationsId = uuid.v4();
     const errorMessages = model.getIn(['errors', 'messages'], new Map());
     const usageStats = model.get('usageStats');
 
@@ -421,7 +428,6 @@ class SubOrgForm extends Component {
               </div>}
 
             <hr />
-
             <div className="form-group">
               <Checkbox
                 label="Lock user accounts after wrong attempts"
@@ -435,8 +441,6 @@ class SubOrgForm extends Component {
 
             {settings.get('LOCKOUT_ENABLED') &&
               this.renderLockoutSetting(errorMessages, settings)}
-
-            <hr />
 
             <div className="form-group">
               <Checkbox
@@ -461,7 +465,6 @@ class SubOrgForm extends Component {
               onDismiss={this.onExpirationDismiss}
               readonly={!this.props.isSiteAdmin} />
           </div>
-
           {this.props.isSiteAdmin && usageStats &&
             <div className="form-group">
               <p>
@@ -477,6 +480,48 @@ class SubOrgForm extends Component {
               }
             </div>
           }
+          <br />
+          <br />
+          <fieldset>
+            <legend className="pageHeader">Recommender Settings</legend>
+            <div
+              className={classNames({
+                'form-group': true,
+                'has-error': errorMessages.has('settings.RECOMMENDATION_WINDOW_SIZE')
+              })}>
+              <label htmlFor={recommendationsId}>Recommendation Window Size (seconds)</label>
+              <input
+                id={recommendationsId}
+                className="form-control"
+                title="How many seconds since activity do we consider recommended items to be active"
+                value={settings.get('RECOMMENDATION_WINDOW_SIZE')}
+                onChange={this.onChangeSettingsAttr.bind(null, 'RECOMMENDATION_WINDOW_SIZE')} />
+              {errorMessages.has('settings.RECOMMENDATION_WINDOW_SIZE') &&
+                <span className="help-block">
+                  <ValidationList
+                    errors={errorMessages.get('settings.RECOMMENDATION_WINDOW_SIZE')} />
+                </span>}
+            </div>
+            <div
+              className={classNames({
+                'form-group': true,
+                'has-error': errorMessages.has('settings.RECOMMENDATION_NEW_PERIOD')
+              })}>
+              <label htmlFor={recommendationsId}>New Recommendation Period (seconds)</label>
+              <input
+                id={recommendationsId}
+                className="form-control"
+                title="How many seconds since activity do we consider recommendations to be new"
+                value={settings.get('RECOMMENDATION_NEW_PERIOD')}
+                onChange={this.onChangeSettingsAttr.bind(null, 'RECOMMENDATION_NEW_PERIOD')} />
+              {errorMessages.has('settings.RECOMMENDATION_NEW_PERIOD') &&
+                <span className="help-block">
+                  <ValidationList
+                    errors={errorMessages.get('settings.RECOMMENDATION_NEW_PERIOD')} />
+                </span>}
+            </div>
+            <hr />
+          </fieldset>
         </div>
       </div>
     );

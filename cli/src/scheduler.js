@@ -3,6 +3,9 @@ import orgUsageTracker from 'cli/commands/orgUsageTracker';
 import * as redis from 'lib/connections/redis';
 import logger from 'lib/logger';
 import cachePrefix from 'lib/helpers/cachePrefix';
+import runRecommendationReset from './recommendationReset.js';
+import moment from 'moment';
+import runRecommendationReset from './scheduler/recommendationReset';
 
 const redisClient = redis.createClient();
 
@@ -62,3 +65,9 @@ const firstRunDatetime = Date.now() < today3am ? today3am : tomorrow3am;
 
 logger.info(`The first org usage tracking is at ${firstRunDatetime}`);
 setTimeout(runOrgUsage, firstRunDatetime - Date.now());
+
+/**
+ * Recommendation
+ */
+
+runRecommendationReset();
