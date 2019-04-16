@@ -1,14 +1,13 @@
-import mongoose from 'mongoose';
 import QueryBuilderCacheValue from 'lib/models/querybuildercachevalue';
+import Organisation from 'lib/models/organisation';
+import moment from 'moment';
+import { get } from 'lodash';
 import { SHOW } from 'lib/constants/recommendation';
 
-const objectId = mongoose.Types.ObjectId;
-
-export const recommendationReset = async ({ organisationId }) => {
-  const organisations = await Organisation.findById(organisationId);
-  
-  const windowSize /* seconds */ = get(organisation, ['settings', 'recommendationWindowSize']);
-  await QueryBuliderCacheValue.update({
+const recommendationReset = async ({ organisationId }) => {
+  const organisation = await Organisation.findById(organisationId);
+  const windowSize /* seconds */ = get(organisation, ['settings', 'RECOMMENDATION_WINDOW_SIZE']);
+  await QueryBuilderCacheValue.update({
     updatedAt: {
       $lt: moment().subtract(windowSize, 'seconds').toDate()
     }
@@ -19,4 +18,6 @@ export const recommendationReset = async ({ organisationId }) => {
   }, {
     upsert: false
   });
-}
+};
+
+export default recommendationReset;
