@@ -20,7 +20,10 @@ export default wrapHandlerForStatement(STATEMENT_FORWARDING_QUEUE, (statement, d
 } = {}) =>
   StatementForwarding.find({
     organisation: objectId(statement.organisation),
-    active: true
+    active: true,
+    _id: {
+      $nin: statement.completedForwardingQueue
+    }
   }).then((statementForwardings) => {
     const promises = map(statementForwardings, async (statementForwarding) => {
       const queueName = STATEMENT_FORWARDING_REQUEST_QUEUE;

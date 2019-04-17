@@ -4,7 +4,7 @@ import { EMAIL_NOOP } from 'lib/models/organisation';
 const up = async () => {
   const connection = getConnection();
 
-  await connection.collection('organisations').update({
+  await connection.collection('organisations').updateMany({
     expirationNotifications: { $exists: false }
   }, {
     $set: {
@@ -14,21 +14,19 @@ const up = async () => {
       }
     }
   }, {
-    upsert: false,
-    multi: true
+    upsert: false
   });
 };
 
 const down = async () => {
   const connection = getConnection();
 
-  await connection.collection('organisation').update({}, {
+  await connection.collection('organisation').updateMany({}, {
     $unset: {
       expirationNotifications: ''
     }
   }, {
-    upsert: false,
-    multi: true
+    upsert: false
   });
 };
 

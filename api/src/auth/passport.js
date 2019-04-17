@@ -224,4 +224,59 @@ if (
   );
 }
 
+/**
+ * Based on RFC 6749
+ */
+passport.use(
+  'OAuth2_Authorization',
+  new CustomStrategy((req, done) => {
+    const grantType = req.body.grant_type;
+    const clientId = req.body.client_id;
+    const clientSecret = req.body.client_secret;
+
+    if (
+      grantType === undefined ||
+      clientId === undefined ||
+      clientSecret === undefined
+    ) {
+      done({ isClientError: true, error: 'invalid_request' });
+      return;
+    }
+
+    if (grantType !== 'client_credentials') {
+      done({ isClientError: true, error: 'unsupported_grant_type' });
+      return;
+    }
+
+    Client.findOne(
+      {
+        'api.basic_key': clientId,
+        'api.basic_secret': clientSecret,
+        isTrusted: true,
+      },
+      (err, client) => {
+        if (err) {
+          done({ error: err });
+          return;
+        }
+
+        if (!client) {
+          done({ isClientError: true, error: 'invalid_client' });
+          return;
+        }
+
+        client.authInfo = {
+          client,
+          scopes: client.scopes,
+          token: {
+            tokenType: 'client'
+          }
+        };
+
+        done(null, client);
+      }
+    );
+  })
+);
+
 export default passport;

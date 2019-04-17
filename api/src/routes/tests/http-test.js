@@ -156,4 +156,48 @@ describe('API HTTP Route tests', function describeTest() {
         .expect(200, done);
     });
   });
+
+  describe('oauth/token', () => {
+    it('should return 404 when request method is GET', (done) => {
+      apiApp
+        .get(routes.OAUTH2_TOKEN)
+        .expect(404, done);
+    });
+
+    it('should return 200 when all parameters are valid', (done) => {
+      apiApp
+        .post(routes.OAUTH2_TOKEN)
+        .set('Content-Type', 'application/x-www-form-urlencoded')
+        .send({
+          grant_type: 'client_credentials',
+          client_id: db.client.api.basic_key,
+          client_secret: db.client.api.basic_secret
+        })
+        .expect(200, done);
+    });
+
+    it('should return 400 when client_id is invalid', (done) => {
+      apiApp
+        .post(routes.OAUTH2_TOKEN)
+        .set('Content-Type', 'application/x-www-form-urlencoded')
+        .send({
+          grant_type: 'client_credentials',
+          client_id: `${db.client.api.basic_key}_`,
+          client_secret: db.client.api.basic_secret
+        })
+        .expect(400, done);
+    });
+
+    it('should return 400 when client_secret is invalid', (done) => {
+      apiApp
+        .post(routes.OAUTH2_TOKEN)
+        .set('Content-Type', 'application/x-www-form-urlencoded')
+        .send({
+          grant_type: 'client_credentials',
+          client_id: db.client.api.basic_key,
+          client_secret: `${db.client.api.basic_secret}_`
+        })
+        .expect(400, done);
+    });
+  });
 });

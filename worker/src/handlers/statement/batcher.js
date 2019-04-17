@@ -58,13 +58,12 @@ export default function (query, jobType, batchSize = 1000) {
       .then(() => {
         totalHandled += statements.length;
         logger.info(`Finished batch of ${statements.length} (${totalHandled})`);
-        return Statement.update(
+        return Statement.updateMany(
           { _id: { $in: updateIDs } },
           {
             $addToSet: { completedQueues: jobType },
             $pull: { processingQueues: jobType }
-          },
-          { multi: true })
+          })
           .exec();
       })
       .catch((err) => {

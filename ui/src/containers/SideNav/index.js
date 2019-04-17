@@ -97,6 +97,7 @@ class SideNav extends Component {
           {canViewOrganisations && this.renderSettingsLink('suborgs', 'Organisations')}
           {canViewClients && this.renderSettingsLink('clients', 'Clients')}
           {canViewRoles && this.renderSettingsLink('roles', 'Roles')}
+          {this.renderSettingsLink('apps', 'Apps')}
         </CollapsibleNav>
       )
     );

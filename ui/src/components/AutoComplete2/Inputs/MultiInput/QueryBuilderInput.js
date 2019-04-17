@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { compose, withProps, defaultProps } from 'recompose';
 import { withModels } from 'ui/utils/hocs';
 import MultiInput from 'ui/components/AutoComplete2/Inputs/MultiInput/MultiInput';
-import Token from 'ui/components/AutoComplete2/Inputs/MultiInput/Token/Token';
+import Token from 'ui/components/Token';
 import { modelsByFilterSelector } from 'ui/redux/modules/models';
 
 const convertPathToKeys = path =>

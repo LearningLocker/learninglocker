@@ -12,6 +12,7 @@ const map = {
   },
   verb: '$statement.verb',
   raw: '$statement.result.score.raw',
+  response: '$statement.result.response',
   type: '$statement.object.definition.type',
   year: { $year: '$timestamp' },
   date: formatDate('%Y-%m-%d'),

@@ -57,6 +57,7 @@ export const GROUP_OPTS = createOptionModels({
   verb: 'Verb',
   type: 'Activity Type',
   raw: 'Raw Result',
+  response: 'Result Response',
 });
 
 export const getTypeOpts = (type) => {
