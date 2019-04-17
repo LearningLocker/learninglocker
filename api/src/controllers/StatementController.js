@@ -16,7 +16,7 @@ const aggregate = (req) => {
   const maxTimeMS = Number(req.query.maxTimeMS) || MAX_TIME_MS;
   const maxScan = Number(req.query.maxScan) || MAX_SCAN;
   const pipeline = JSON.parse(req.query.pipeline);
-  const sampleSize = Number(req.query.sampleSize) || -1;
+  const sampleSize = Number(req.query.sampleSize) || undefined;
   const out = statementsService.aggregate({
     authInfo,
     limit,
