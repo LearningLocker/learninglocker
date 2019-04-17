@@ -11,13 +11,13 @@ import {
  * @type {immutable.Map}
  *
  * {
- *   title: string
- *   id: string
- *   type: LEADERBOARD|STATEMENTS|FREQUENCY|COUNTER|XVSY|PIE
+ *   title: string,
+ *   id: string,
+ *   type: LEADERBOARD|STATEMENTS|FREQUENCY|COUNTER|XVSY|PIE,
  *   onCreate?: (updateModel: ({
  *     path: string[],
 *      value: any,
- *   }) => void) => void
+ *   }) => void) => void,
  * }
  */
 const templateData = fromJS({
@@ -25,11 +25,13 @@ const templateData = fromJS({
     title: 'How many statements have been stored in the last 7 days?',
     id: '1',
     type: COUNTER,
+    hasIntermediate: false,
   },
   2: {
     title: 'How has activity changed over time?',
     id: '2',
     type: FREQUENCY,
+    hasIntermediate: false,
     onCreate: (updateModel) => {
       updateModel({ path: ['previewPeriod'], value: LAST_30_DAYS });
     },
@@ -38,6 +40,7 @@ const templateData = fromJS({
     title: 'What are the most popular verbs?',
     id: '3',
     type: LEADERBOARD,
+    hasIntermediate: false,
     onCreate: (updateModel) => {
       updateModel({ path: ['previewPeriod'], value: LAST_30_DAYS });
       updateModel({
@@ -50,6 +53,7 @@ const templateData = fromJS({
     title: 'What are the most popular activities?',
     id: '4',
     type: LEADERBOARD,
+    hasIntermediate: true,
     onCreate: (updateModel) => {
       updateModel({ path: ['previewPeriod'], value: LAST_30_DAYS });
       updateModel({
@@ -62,6 +66,7 @@ const templateData = fromJS({
     title: 'Who are the most active people?',
     id: '5',
     type: LEADERBOARD,
+    hasIntermediate: true,
     onCreate: (updateModel) => {
       updateModel({ path: ['previewPeriod'], value: LAST_30_DAYS });
       updateModel({
@@ -74,6 +79,7 @@ const templateData = fromJS({
     title: 'How does activity change in a week?',
     id: '6',
     type: STATEMENTS,
+    hasIntermediate: false,
     onCreate: (updateModel) => {
       updateModel({
         path: ['axesgroup'],

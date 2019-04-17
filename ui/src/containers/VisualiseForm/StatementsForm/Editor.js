@@ -16,7 +16,8 @@ const SCHEMA = 'visualisation';
 class Editor extends Component {
   static propTypes = {
     model: PropTypes.instanceOf(Map),
-    exportVisualisation: PropTypes.func
+    exportVisualisation: PropTypes.func,
+    shouldShowNewVisualisation: PropTypes.bool,
   }
 
   state = {
@@ -36,11 +37,6 @@ class Editor extends Component {
 
   changeStep = step =>
     this.setState({ step })
-
-  hasType = () =>
-    this.props.model.has('type')
-
-  hasTemplateId = () => this.props.model.get('templateId', null) !== null
 
   isSeriesType = () => false;
 
@@ -100,10 +96,10 @@ class Editor extends Component {
   )
 
   render = () => {
-    if (this.hasType() && !this.hasTemplateId()) {
-      return this.renderSteps();
+    if (this.props.shouldShowNewVisualisation) {
+      return <NewVisualisation visualisationModel={this.props.model} />;
     }
-    return <NewVisualisation visualisationModel={this.props.model} />;
+    return this.renderSteps();
   }
 }
 

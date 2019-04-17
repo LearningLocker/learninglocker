@@ -2,10 +2,11 @@ import React, { PropTypes } from 'react';
 import { Map } from 'immutable';
 import { withProps, compose } from 'recompose';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { TEMPLATE_STAGE_INTERMEDIATE, TEMPLATE_STAGE_COMPLETED } from 'lib/constants/visualise';
 import { withModel } from 'ui/utils/hocs';
 import templateData from './templateData';
 import TemplateCard from './TemplateCard';
-import TemplatePreSetter from './TemplatePreSetter';
+import TemplateIntermediateStage from './TemplateIntermediateStage';
 import TypeEditor from './TypeEditor';
 import styles from './styles.css';
 
@@ -18,12 +19,20 @@ class NewVisualisation extends React.PureComponent {
   onSelectTemplate = (selectedTemplateId, type) => {
     const updateModel = this.props.updateModel;
     updateModel({
+      path: ['type'],
+      value: type
+    });
+    updateModel({
       path: ['templateId'],
       value: selectedTemplateId
     });
+
+    const nextStage = templateData.getIn([selectedTemplateId, 'hasIntermediate'], false)
+      ? TEMPLATE_STAGE_INTERMEDIATE
+      : TEMPLATE_STAGE_COMPLETED;
     updateModel({
-      path: ['type'],
-      value: type
+      path: ['templateStage'],
+      value: nextStage
     });
 
     const onCreate = templateData.getIn([selectedTemplateId, 'onCreate'], () => null);
@@ -40,7 +49,7 @@ class NewVisualisation extends React.PureComponent {
         throw new Error(`templateData does not have template id ${templateId}`);
       }
       return (
-        <TemplatePreSetter
+        <TemplateIntermediateStage
           settings={settings}
           model={model}
           updateModel={updateModel} />

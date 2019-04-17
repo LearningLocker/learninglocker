@@ -1,8 +1,9 @@
 import React, { PropTypes } from 'react';
 import { Map } from 'immutable';
+import { TEMPLATE_STAGE_COMPLETED } from 'lib/constants/visualise';
 import VisualiseResults from 'ui/containers/VisualiseResults';
 
-class TemplatePreSetter extends React.PureComponent {
+class TemplateIntermediateStage extends React.PureComponent {
   static propTypes = {
     settings: PropTypes.instanceOf(Map).isRequired,
     model: PropTypes.instanceOf(Map),
@@ -13,8 +14,8 @@ class TemplatePreSetter extends React.PureComponent {
     const { settings, model, updateModel } = this.props;
 
     updateModel({
-      path: ['templateId'],
-      value: null,
+      path: ['templateStage'],
+      value: TEMPLATE_STAGE_COMPLETED,
     });
 
     if (!model.has('description')) {
@@ -66,4 +67,4 @@ class TemplatePreSetter extends React.PureComponent {
   }
 }
 
-export default TemplatePreSetter;
+export default TemplateIntermediateStage;
