@@ -15,7 +15,9 @@ import {
   GOOGLE_AUTH_OPTIONS,
   DEFAULT_PASSPORT_OPTIONS,
   RESTIFY_DEFAULTS,
-  setNoCacheHeaders
+  setNoCacheHeaders,
+  checkOrg,
+  checkWriteScopes
 } from 'lib/constants/auth';
 
 // CONTROLLERS
@@ -236,7 +238,7 @@ restify.serve(router, Download);
 restify.serve(router, Query);
 restify.serve(router, ImportCsv);
 restify.serve(router, User, {
-  preUpdate: (req, res, next) => {
+  preUpdate: [(req, res, next) => {
     const authInfo = getAuthFromRequest(req);
     const scopes = getScopesFromAuthInfo(authInfo);
     const tokenType = getTokenTypeFromAuthInfo(authInfo);
@@ -257,7 +259,7 @@ restify.serve(router, User, {
     }
 
     next();
-  }
+  }, checkOrg, checkWriteScopes]
 });
 restify.serve(router, Client);
 restify.serve(router, Visualisation);
