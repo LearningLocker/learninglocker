@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import logoImg from 'ui/static/logo.png';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { setPropTypes, compose, lifecycle } from 'recompose';

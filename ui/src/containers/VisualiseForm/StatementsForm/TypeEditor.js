@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { withModel } from 'ui/utils/hocs';
 import { withProps, compose } from 'recompose';
 import VisualiseIcon from 'ui/components/VisualiseIcon';

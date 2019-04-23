@@ -1,5 +1,6 @@
 import { Map, List } from 'immutable';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Portal from 'react-portal';
 import { compose, renameProp } from 'recompose';
 import { withSchema } from 'ui/utils/hocs';

@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Map, fromJS } from 'immutable';
 import Textarea from 'react-textarea-autosize';
 import classNames from 'classnames';
