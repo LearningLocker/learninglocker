@@ -4,7 +4,7 @@ import {
   STATEMENTS,
   FREQUENCY,
   COUNTER,
-  LAST_30_DAYS,
+  LAST_2_MONTHS,
 } from 'ui/utils/constants';
 
 /**
@@ -33,7 +33,7 @@ const templateData = fromJS({
     type: FREQUENCY,
     hasIntermediate: false,
     onCreate: (updateModel) => {
-      updateModel({ path: ['previewPeriod'], value: LAST_30_DAYS });
+      updateModel({ path: ['previewPeriod'], value: LAST_2_MONTHS });
     },
   },
   3: {
@@ -42,7 +42,7 @@ const templateData = fromJS({
     type: LEADERBOARD,
     hasIntermediate: false,
     onCreate: (updateModel) => {
-      updateModel({ path: ['previewPeriod'], value: LAST_30_DAYS });
+      updateModel({ path: ['previewPeriod'], value: LAST_2_MONTHS });
       updateModel({
         path: ['axesgroup'],
         value: new Map({ optionKey: 'verb', searchString: 'Verb' }),
@@ -53,9 +53,9 @@ const templateData = fromJS({
     title: 'What are the most popular activities?',
     id: '4',
     type: LEADERBOARD,
-    hasIntermediate: true,
+    hasIntermediate: false,
     onCreate: (updateModel) => {
-      updateModel({ path: ['previewPeriod'], value: LAST_30_DAYS });
+      updateModel({ path: ['previewPeriod'], value: LAST_2_MONTHS });
       updateModel({
         path: ['axesgroup'],
         value: new Map({ optionKey: 'activity', searchString: 'Activity' }),
@@ -66,9 +66,9 @@ const templateData = fromJS({
     title: 'Who are the most active people?',
     id: '5',
     type: LEADERBOARD,
-    hasIntermediate: true,
+    hasIntermediate: false,
     onCreate: (updateModel) => {
-      updateModel({ path: ['previewPeriod'], value: LAST_30_DAYS });
+      updateModel({ path: ['previewPeriod'], value: LAST_2_MONTHS });
       updateModel({
         path: ['axesgroup'],
         value: new Map({ optionKey: 'people', searchString: 'Person' }),
