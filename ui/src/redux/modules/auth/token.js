@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode';
 import { fromJS, Map } from 'immutable';
 import { takeEvery } from 'redux-saga/effects';
-import { getCookieName, getCookieNameStartsWith } from 'ui/utils/auth';
+import { getCookieName, getCookieNameStartsWith, getCookieOptions } from 'ui/utils/auth';
 
 /**
  * takes tokens received from the auth process
@@ -112,7 +112,7 @@ function storeTokenSaga({ token, tokenType, tokenId }) {
   try {
     if (token) {
       const cookieName = getCookieName({ tokenType, tokenId });
-      Cookies.set(cookieName, token);
+      Cookies.set(cookieName, token, getCookieOptions());
     }
   } catch (err) {
     console.error(err);
