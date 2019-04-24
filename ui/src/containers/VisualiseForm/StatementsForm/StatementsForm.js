@@ -138,11 +138,16 @@ export default withQueryBuilderCacheValueModels(
         new Map({ path: new Map({ $eq: `${searchString}.definition.type` }) }) :
         new Map({});
 
+      const sort = new Map({
+        count: -1
+      });
+
       return {
         hasMore: ownProps.hasMore,
         isLoading: ownProps.isLoading,
         source: toggleSourceSelector({ id: ownProps.model.get('_id') })(state),
         filter,
+        sort
       };
     },
     { updateModel, setInMetadata }

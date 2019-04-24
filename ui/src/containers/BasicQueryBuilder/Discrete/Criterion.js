@@ -128,6 +128,7 @@ class Criterion extends Component {
           <QueryBuilderAutoComplete
             values={this.getValues().map(this.getQueryOption)}
             filter={this.props.filter}
+            sort={this.props.sort}
             schema={this.props.schema}
             selectOption={this.onAddOption}
             deselectOption={this.onRemoveOption}
@@ -154,5 +155,14 @@ export default connect((state, ownProps) => {
   }
   const path = ownProps.section.get('keyPath');
   const filter = new Map({ path: new Map({ $eq: path.join('.') }) });
-  return { schema: 'querybuildercachevalue', filter };
+
+  const sort = new Map({
+    count: -1
+  });
+
+  return {
+    schema: 'querybuildercachevalue',
+    filter,
+    sort
+  };
 }, {})(Criterion);
