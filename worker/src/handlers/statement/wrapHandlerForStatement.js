@@ -6,6 +6,10 @@ import { STATEMENT_QUEUE } from 'lib/constants/statements';
 export default (queueName, statementHandler) => ({ statementId }, jobDone, options) => {
   logger.debug('START', queueName, statementId);
   return Statement.findById(statementId, (err, statement) => {
+    if (!statement) {
+      logger.info(`Purged job for ${queueName} as statement ${statementId} does not exist`);
+      return jobDone();
+    }
     statementHandler(statement, (err) => {
       logger.debug('COMPLETED STATEMENT HANDLER FOR', queueName, statementId);
       if (err) {
