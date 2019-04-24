@@ -22,7 +22,7 @@ const enhance = compose(
   withStyles(styles)
 );
 
-const render = ({ models }) => {
+const IdentifiersViewer = ({ models }) => {
   if (models.count() === 0) {
     return (
       <div>
@@ -40,11 +40,13 @@ const render = ({ models }) => {
           </tr>
         </thead>
         <tbody>
-          {models.map(model => <SavedRow id={model.get('_id')} />).valueSeq()}
+          {models.map(model => (
+            <SavedRow key={model.get('_id')} id={model.get('_id')} />
+          )).valueSeq()}
         </tbody>
       </table>
     </div>
   );
 };
 
-export default enhance(render);
+export default enhance(IdentifiersViewer);
