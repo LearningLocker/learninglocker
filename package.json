@@ -119,8 +119,6 @@
     "popsicle": "^3.0.3",
     "popsicle-basic-auth": "^0.1.0",
     "postcss": "^7.0.14",
-    "postcss-modules-values": "^2.0.0",
-    "postcss-preset-env": "^6.6.0",
     "pretty-error": "^1.2.0",
     "prop-types": "^15.7.2",
     "raw-loader": "^0.5.1",
