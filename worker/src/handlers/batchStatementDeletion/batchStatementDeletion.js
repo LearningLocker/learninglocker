@@ -15,7 +15,7 @@ export default async ({
   batchDeleteId,
   publish = pubishToQueue
 }, jobDone) => {
-  if (boolean(get(process.env, 'ENABLE_BATCH_STATEMENT_DELETION', false)) === false) {
+  if (boolean(get(process.env, 'ENABLE_STATEMENT_DELETION', true)) === false) {
     // Clear the job and don't do anything
     jobDone();
     return;
@@ -82,10 +82,9 @@ export default async ({
     ...scopeFilter
   };
 
-  const docs = await Statement.aggregate()
-    .match(filter)
-    .limit(batchDelete.pageSize)
-    .project('_id');
+  const docs = await Statement.find(filter, '_id')
+    .limit(batchDelete.pageSize);
+
   const idsToDelete = map(docs, ({ _id }) => _id);
 
   const result = await Statement.deleteMany({

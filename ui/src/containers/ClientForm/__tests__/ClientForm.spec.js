@@ -12,7 +12,7 @@ global.__DEVELOPMENT__ = true;
 global.__CLIENT__ = false;
 const createMockStore = configureMockStore([thunkMiddleware]);
 const store = createMockStore({
-  app: new Map({ ENABLE_SINGLE_STATEMENT_DELETION: false }),
+  app: new Map({ ENABLE_STATEMENT_DELETION: false }),
   models: new Map(),
   metadata: new Map(),
   pagination: new Map()

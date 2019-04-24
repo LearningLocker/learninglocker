@@ -277,7 +277,7 @@ restify.serve(router, LRS);
 restify.serve(router, Statement, {
   preCreate: (req, res) => res.sendStatus(405),
   preDelete: (req, res, next) => {
-    if (!boolean(get(process.env, 'ENABLE_SINGLE_STATEMENT_DELETION', true))) {
+    if (!boolean(get(process.env, 'ENABLE_STATEMENT_DELETION', true))) {
       res.sendStatus(405);
       return;
     }

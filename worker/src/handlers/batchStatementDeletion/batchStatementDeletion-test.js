@@ -19,7 +19,7 @@ describe('batchStatementDeletion', () => {
   const testStoreId = '561a679c0c5d017e4004716f';
 
   beforeEach(async (done) => {
-    process.env.ENABLE_BATCH_STATEMENT_DELETION = true;
+    process.env.ENABLE_STATEMENT_DELETION = true;
 
     await Statement.create({
       organisation: testId,

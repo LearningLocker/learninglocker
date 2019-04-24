@@ -22,7 +22,7 @@ const runBatchDelete = async ({
   publish = publishQueue,
   batchStatementDeletionLockTimoutSec = BATCH_STATEMENT_DELETION_LOCK_TIMEOUT_SEC
 }) => {
-  if (boolean(get(process.env, 'ENABLE_BATCH_STATEMENT_DELETION', false)) === false) {
+  if (boolean(get(process.env, 'ENABLE_STATEMENT_DELETION', true)) === false) {
     return;
   }
 
