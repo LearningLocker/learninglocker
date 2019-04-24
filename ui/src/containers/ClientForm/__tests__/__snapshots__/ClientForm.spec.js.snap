@@ -478,7 +478,7 @@ exports[`ClientForm renders correctly 1`] = `
           data-react-toolbox="dropdown"
           onBlur={[Function]}
           onFocus={[Function]}
-          tabIndex="0"
+          tabIndex="-1"
         >
           <div
             className=""
@@ -486,6 +486,7 @@ exports[`ClientForm renders correctly 1`] = `
           >
             <input
               className=""
+              defaultValue={undefined}
               disabled={false}
               id="lrsInput"
               maxLength={undefined}
@@ -496,7 +497,7 @@ exports[`ClientForm renders correctly 1`] = `
               readOnly={true}
               required={false}
               role="input"
-              tabIndex="-1"
+              tabIndex="0"
               type={null}
               value=""
             />
@@ -514,7 +515,7 @@ exports[`ClientForm renders correctly 1`] = `
           >
             <li
               className="undefined"
-              onClick={null}
+              onMouseDown={false}
             >
               No LRSs available
             </li>

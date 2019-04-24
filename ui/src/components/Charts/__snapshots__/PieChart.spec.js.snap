@@ -6,10 +6,10 @@ exports[`PieChart should render 1`] = `
 >
   <div>
     <div
-      style="font-size:0.9em;"
+      style="font-size:0.9em"
     >
       <div
-        style="display:inline-block;width:12px;height:12px;background-color:#ffffff;margin-right:8px;margin-bottom:2px;vertical-align:middle;"
+        style="display:inline-block;width:12px;height:12px;background-color:#ffffff;margin-right:8px;margin-bottom:2px;vertical-align:middle"
       >
         
       </div>
@@ -20,10 +20,10 @@ exports[`PieChart should render 1`] = `
       </span>
     </div>
     <div
-      style="font-size:0.9em;"
+      style="font-size:0.9em"
     >
       <div
-        style="display:inline-block;width:12px;height:12px;background-color:#123456;margin-right:8px;margin-bottom:2px;vertical-align:middle;"
+        style="display:inline-block;width:12px;height:12px;background-color:#123456;margin-right:8px;margin-bottom:2px;vertical-align:middle"
       >
         
       </div>
@@ -35,10 +35,10 @@ exports[`PieChart should render 1`] = `
     </div>
   </div>
   <div
-    style="height:100%;width:100%;"
+    style="height:100%;width:100%"
   >
     <div
-      style="overflow:visible;height:0;width:0;"
+      style="overflow:visible;height:0;width:0"
     >
       
     </div>

@@ -6,6 +6,7 @@ exports[`ColumnHeaderEditorComponent should render 1`] = `
     className="card"
     composeTheme="deeply"
     key="test1"
+    mapThemrProps={[Function]}
   >
     <Connect(withHandlers(HeaderItemComponent))
       columnName="test1"
@@ -30,6 +31,7 @@ exports[`ColumnHeaderEditorComponent should render 1`] = `
     className="card"
     composeTheme="deeply"
     key="test2"
+    mapThemrProps={[Function]}
   >
     <Connect(withHandlers(HeaderItemComponent))
       columnName="test2"
