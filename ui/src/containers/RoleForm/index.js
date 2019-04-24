@@ -130,7 +130,7 @@ const renderScopeTableRow = ({
     )}
   </tr>);
 
-const render = ({ model, handleAttrChange, handleScopeChange }) => {
+const RoleForm = ({ model, handleAttrChange, handleScopeChange }) => {
   const groupedOrgScopes = groupScopes(orgScopes);
 
   return (
@@ -141,7 +141,7 @@ const render = ({ model, handleAttrChange, handleScopeChange }) => {
           id={`${model.get('_id')}nameInput`}
           className="form-control"
           placeholder="A name for this Role"
-          value={model.get('title')}
+          value={model.get('title', '')}
           onChange={handleAttrChange.bind(null, 'title')} />
       </div>
       <div className="form-group">
@@ -150,7 +150,7 @@ const render = ({ model, handleAttrChange, handleScopeChange }) => {
           id={`${model.get('_id')}descriptionInput`}
           className="form-control"
           placeholder="A short description for this Role"
-          value={model.get('description')}
+          value={model.get('description', '')}
           onChange={handleAttrChange.bind(null, 'description')} />
       </div>
       <div className="form-group">
@@ -173,4 +173,4 @@ const render = ({ model, handleAttrChange, handleScopeChange }) => {
   );
 };
 
-export default enhance(render);
+export default enhance(RoleForm);

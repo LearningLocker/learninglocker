@@ -36,7 +36,7 @@ class LRSForm extends Component {
               id={`${model.get('_id')}nameInput`}
               className="form-control"
               placeholder="A name for this LRS"
-              value={model.get('title')}
+              value={model.get('title', '')}
               onChange={this.onChangeAttr.bind(null, 'title')} />
           </div>
           <div className="form-group">
@@ -45,7 +45,7 @@ class LRSForm extends Component {
               id={`${model.get('_id')}descriptionInput`}
               className="form-control"
               placeholder="A short description of this LRS' purpose"
-              value={model.get('description')}
+              value={model.get('description', '')}
               onChange={this.onChangeAttr.bind(null, 'description')} />
           </div>
         </div>

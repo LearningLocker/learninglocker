@@ -171,7 +171,7 @@ const ModelFormComponent = ({
       <input
         className="form-control"
         id={titleId}
-        value={model.get('title')}
+        value={model.get('title', '')}
         onChange={handleTitleChange} />
     </div>
     <div className="form-group">
@@ -225,7 +225,7 @@ const ModelFormComponent = ({
             id={validDomainsId}
             className="form-control"
             debounceTimeout={377}
-            value={model.get('validDomains')}
+            value={model.get('validDomains', '')}
             onChange={handleDomainsChange} />
         </div>
         <span className={classNames('help-block', styles.contextHelp)}>A <a href="https://regexr.com/" target="_blank" rel="noopener noreferrer">regex pattern</a> matching any hostname this dashboard will be embedded into</span>

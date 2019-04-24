@@ -147,7 +147,7 @@ class SubOrgForm extends Component {
           id={nameId}
           className="form-control"
           placeholder="Name for this organisation"
-          value={model.get('name')}
+          value={model.get('name', '')}
           onChange={this.onChangeAttr.bind(null, 'name')} />
       </div>
     );
