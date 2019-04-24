@@ -182,7 +182,8 @@ const ModelFormComponent = ({
         value={getShareableUrl({
           model,
           parentModel
-        })} />
+        })}
+        onChange={() => null} />
     </div>
     <div className="form-group">
       <button
