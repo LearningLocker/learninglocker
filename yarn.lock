@@ -2660,7 +2660,7 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@^2.2.3, classnames@^2.2.5, classnames@~2.2.5:
+classnames@2.x, classnames@^2.2.3, classnames@^2.2.5, classnames@~2.2.5:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
 
@@ -10815,13 +10815,6 @@ prop-types-exact@^1.2.0:
     object.assign "^4.1.0"
     reflect.ownkeys "^0.2.0"
 
-prop-types@15.5.10:
-  version "15.5.10"
-  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.5.10.tgz#2797dfc3126182e3a95e3dfbb2e893ddd7456154"
-  dependencies:
-    fbjs "^0.8.9"
-    loose-envify "^1.3.1"
-
 prop-types@15.x, prop-types@^15.0.0, prop-types@^15.5.10, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.2, prop-types@~15.6.0:
   version "15.6.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.2.tgz#05d5ca77b4453e985d60fc7ff8c859094a497102"
@@ -11179,11 +11172,12 @@ react-dom@^16.8.6:
     prop-types "^15.6.2"
     scheduler "^0.13.6"
 
-react-draggable@^2.2.6:
-  version "2.2.6"
-  resolved "https://registry.yarnpkg.com/react-draggable/-/react-draggable-2.2.6.tgz#3a806e10f2da6babfea4136be6510e89b0d76901"
+react-draggable@3.x:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/react-draggable/-/react-draggable-3.3.0.tgz#2ed7ea3f92e7d742d747f9e6324860606cd4d997"
   dependencies:
     classnames "^2.2.5"
+    prop-types "^15.6.0"
 
 "react-draggable@^2.2.6 || ^3.0.3":
   version "3.0.5"
@@ -11200,15 +11194,15 @@ react-functional-lifecycle@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/react-functional-lifecycle/-/react-functional-lifecycle-2.0.2.tgz#84ce6f78b405c3f64b5aa5ad869790ef2d0684f6"
 
-react-grid-layout@^0.14.4:
-  version "0.14.7"
-  resolved "https://registry.yarnpkg.com/react-grid-layout/-/react-grid-layout-0.14.7.tgz#aaa0d090007a4d482d39a95bd63c8ef12901eab4"
+react-grid-layout@^0.16.6:
+  version "0.16.6"
+  resolved "https://registry.yarnpkg.com/react-grid-layout/-/react-grid-layout-0.16.6.tgz#9b2407a2b946c2260ebaf66f13b556e1da4efeb2"
   dependencies:
-    classnames "^2.2.5"
+    classnames "2.x"
     lodash.isequal "^4.0.0"
-    prop-types "^15.5.8"
-    react-draggable "^2.2.6"
-    react-resizable "^1.4.0"
+    prop-types "15.x"
+    react-draggable "3.x"
+    react-resizable "1.x"
 
 react-helmet@^5.0.0:
   version "5.2.0"
@@ -11218,12 +11212,6 @@ react-helmet@^5.0.0:
     object-assign "^4.1.1"
     prop-types "^15.5.4"
     react-side-effect "^1.1.0"
-
-react-inline-css@^2.0.0:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/react-inline-css/-/react-inline-css-2.3.1.tgz#84a36305c991f642b7f25c75fcaccd4ffcb0de07"
-  dependencies:
-    prop-types "15.5.10"
 
 react-is@^16.8.1, react-is@^16.8.6:
   version "16.8.6"
@@ -11275,7 +11263,7 @@ react-redux@^5.0.3:
     loose-envify "^1.1.0"
     prop-types "^15.6.0"
 
-react-resizable@^1.4.0:
+react-resizable@1.x:
   version "1.7.5"
   resolved "https://registry.yarnpkg.com/react-resizable/-/react-resizable-1.7.5.tgz#83eb75bb3684da6989bbbf4f826e1470f0af902e"
   dependencies:
@@ -11322,11 +11310,12 @@ react-test-renderer@^16.0.0-0, react-test-renderer@^16.8.6:
     react-is "^16.8.6"
     scheduler "^0.13.6"
 
-react-textarea-autosize@^4.0.5:
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/react-textarea-autosize/-/react-textarea-autosize-4.3.2.tgz#962a52c68caceae408c18acecec29049b81e42fa"
+react-textarea-autosize@^7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/react-textarea-autosize/-/react-textarea-autosize-7.1.0.tgz#3132cb77e65d94417558d37c0bfe415a5afd3445"
   dependencies:
-    prop-types "^15.5.8"
+    "@babel/runtime" "^7.1.2"
+    prop-types "^15.6.0"
 
 react-toolbox@2.0.0-beta.13:
   version "2.0.0-beta.13"
