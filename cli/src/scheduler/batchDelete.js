@@ -52,7 +52,7 @@ const runBatchDelete = async ({
   }
 
   // push to the queue
-  const nextStartTime = get(siteSettings, 'batchDeleteWindowStartTime');
+  const nextStartTime = get(siteSettings, 'batchDeleteWindowStartTime', 3600000);
   let nextRun = 1000 * 60 * 15;
   if (nextStartTime) {
     nextRun = -asTime(moment()).diff(
@@ -62,7 +62,7 @@ const runBatchDelete = async ({
       nextRun = moment(nextRun).add(1, 'days').valueOf();
     }
   }
-  timeout(runBatchDelete, nextRun);
+  timeout(runBatchDelete, nextRun, {});
 };
 
 export default runBatchDelete;

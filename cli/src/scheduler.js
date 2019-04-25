@@ -22,7 +22,7 @@ const runExpiration = async () => {
     logger.info('processing expiration');
     await expirationNotificationEmails({ dontExit: true });
   } else {
-    logger.info('skip expiration');
+    logger.debug('skip expiration');
   }
 
   setTimeout(runExpiration, EXPIRATION_TIMEOUT_MSEC - (Date.now() - startTime));
@@ -46,7 +46,7 @@ const runOrgUsage = async () => {
     logger.info('processing org usage');
     await orgUsageTracker({ dontExit: true });
   } else {
-    logger.info('skip org usage');
+    logger.debug('skip org usage');
   }
 
   setTimeout(runOrgUsage, ORG_USAGE_TIMEOUT_MSEC - (Date.now() - startTime));
@@ -67,4 +67,4 @@ setTimeout(runOrgUsage, firstRunDatetime - Date.now());
 /**
  * Run delete jobs
  */
-runBatchDelete();
+runBatchDelete({});
