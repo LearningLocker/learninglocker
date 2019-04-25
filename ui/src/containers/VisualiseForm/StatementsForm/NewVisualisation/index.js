@@ -34,6 +34,12 @@ class NewVisualisation extends React.PureComponent {
       path: ['templateStage'],
       value: nextStage
     });
+    if (templateData.getIn([selectedTemplateId, 'hasCourseDropdown'])) {
+      updateModel({
+        path: ['hasCourseDropdown'],
+        value: true
+      });
+    }
 
     const onCreate = templateData.getIn([selectedTemplateId, 'onCreate'], () => null);
     onCreate(updateModel);

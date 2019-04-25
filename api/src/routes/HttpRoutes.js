@@ -44,6 +44,7 @@ import StatementForwarding from 'lib/models/statementForwarding';
 import Visualisation from 'lib/models/visualisation';
 import Dashboard from 'lib/models/dashboard';
 import QueryBuilderCache from 'lib/models/querybuildercache';
+import FullActivities from 'lib/models/fullActivities';
 import QueryBuilderCacheValue from 'lib/models/querybuildercachevalue';
 import Role from 'lib/models/role';
 import PersonasImport from 'lib/models/personasImport';
@@ -270,6 +271,7 @@ restify.serve(router, Statement, {
 });
 restify.serve(router, StatementForwarding);
 restify.serve(router, QueryBuilderCache);
+restify.serve(router, FullActivities);
 restify.serve(router, QueryBuilderCacheValue);
 restify.serve(router, Role);
 restify.serve(router, PersonasImport);
@@ -285,6 +287,7 @@ const generatedRouteModels = [
   Statement,
   StatementForwarding,
   LRS,
+  FullActivities,
   QueryBuilderCache,
   QueryBuilderCacheValue,
   Client,

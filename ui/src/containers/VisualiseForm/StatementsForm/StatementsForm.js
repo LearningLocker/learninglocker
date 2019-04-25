@@ -99,25 +99,32 @@ class StatementsForm extends Component {
     </select>
   )
 
-  renderFormWithResults = () => (
-    <div className="row">
-      <div className="col-md-6 left-border">
-        { this.renderEditor() }
-      </div>
-      <div
-        className="col-md-6">
-        <div className="form-group form-inline" style={{ textAlign: 'right' }}>
-          { this.renderTimePicker() }
+
+  renderFormWithResults = () => { 
+    console.log('props', this.props.model.get('hasCourseDropdown', false));
+    return (
+      <div className="row">
+        {/* <div className="col-md-6 left-border">
+          {this.props.model.get('hasCourseDropdown', false) && <CourseEditorDropdown model={this.props.model} {...this.props} />}
+        </div> */}
+        <div className="col-md-6 left-border">
+          { this.renderEditor() }
         </div>
-        <div style={{ height: '400px', paddingTop: 5 }}>
-          {!this.props.model.get('sourceView') && <VisualiseResults id={this.props.model.get('_id')} />}
-          {this.props.model.get('sourceView') &&
-            <SourceResults id={this.props.model.get('_id')} />
-          }
+        <div
+          className="col-md-6">
+          <div className="form-group form-inline" style={{ textAlign: 'right' }}>
+            { this.renderTimePicker() }
+          </div>
+          <div style={{ height: '400px', paddingTop: 5 }}>
+            {!this.props.model.get('sourceView') && <VisualiseResults id={this.props.model.get('_id')} />}
+            {this.props.model.get('sourceView') &&
+              <SourceResults id={this.props.model.get('_id')} />
+            }
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   renderEditorOnly = () => (
     <div className="row">

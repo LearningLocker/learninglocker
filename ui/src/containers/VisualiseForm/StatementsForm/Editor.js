@@ -10,6 +10,7 @@ import AxesEditor from './AxesEditor/AxesEditor';
 import styles from '../visualiseform.css';
 import OptionsEditor from './OptionsEditor';
 import NewVisualisation from './NewVisualisation';
+import CourseEditor from './AxesEditor/CourseEditor';
 
 const SCHEMA = 'visualisation';
 
@@ -52,6 +53,20 @@ class Editor extends Component {
     </div>
   )
 
+  renderCourseDropdown = description => (
+    <div className="form-group">
+      <label htmlFor="toggleInput" className="clearfix">Course</label>
+      <div className="form-group">
+        <CourseEditor
+          {...this.props}
+          changeValue={'12'}
+          changeOperator={'14'} 
+          />
+      </div>
+    </div>
+  )
+
+
   renderTabs = () => {
     // The Tabs component requires its children to be Tab items
     // We cannot do inline conditionals, therefore we construct the children and pass them in via the props
@@ -75,6 +90,7 @@ class Editor extends Component {
     return (
       <div className={styles.tab}>
         { this.renderDescription(this.props.model.get('description')) }
+        { this.props.model.get('hasCourseDropdown', false) && this.renderCourseDropdown(this.props)}
         <Tabs index={this.state.step} onChange={this.changeStep}> children={tabs}</Tabs>
       </div>
     );

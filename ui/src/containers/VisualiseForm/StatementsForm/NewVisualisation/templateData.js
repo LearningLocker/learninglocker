@@ -87,6 +87,19 @@ const templateData = fromJS({
       });
     },
   },
+  7: {
+    title: 'Which day of the week do people comment on my course?',
+    id: '7',
+    type: STATEMENTS,
+    hasIntermediate: false,
+    hasCourseDropdown: true,
+    onCreate: (updateModel) => {
+      updateModel({
+        path: ['axesgroup'],
+        value: new Map({ optionKey: 'weekday', searchString: 'Day' }),
+      });
+    },
+  },
 });
 
 export default templateData;

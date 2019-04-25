@@ -268,6 +268,8 @@ const querybuildercache = new LLSchema('querybuildercache', { idAttribute: '_id'
 
 const querybuildercachevalue = new LLSchema('querybuildercachevalue', { idAttribute: '_id' }, { editableFields: ['value'] });
 
+const fullActivities = new LLSchema('fullActivities', { idAttribute: '_id' });
+
 const aggregation = new LLSchema('aggregation', {
   idAttribute: model => (
     isString(model._id) ? model._id : JSON.stringify(model._id)
@@ -306,6 +308,8 @@ importcsv.define({
 });
 
 statement.define({});
+
+fullActivities.define({});
 
 querybuildercache.define({});
 
@@ -380,6 +384,7 @@ export {
   aggregation,
   globalError,
   role,
+  fullActivities,
   statementForwarding,
   personasImport,
   siteSettings
