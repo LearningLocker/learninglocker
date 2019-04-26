@@ -39,7 +39,6 @@
     "test-api": "mocha-webpack --exit --webpack-config \"api/testConfig.js\" \"api/src/**/*-test.js\"",
     "test-worker": "mocha-webpack --exit --webpack-config \"worker/testConfig.js\" \"worker/src/**/*-test.js\"",
     "test-lib": "mocha-webpack --exit --webpack-config \"api/testConfig.js\" \"lib/**/*-test.js\"",
-    "test-statement-lib": "mocha-webpack --exit --webpack-config \"api/testConfig.js\" \"lib/services/auth/tests/modelFilters/statement-test.js\"",
     "test-cli": "mocha-webpack --exit --webpack-config \"cli/testConfig.js\" \"cli/**/*-test.js\"",
     "test-ui": "jest --config ui/jest.config.json --env node",
     "ci-test-integrations": "npm install -g pm2 && yarn build-all && yarn start-test && yarn test-integration-run --config videoRecording=false && yarn stop-test",
