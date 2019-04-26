@@ -38,10 +38,6 @@ const withStatementsVisualisation = (WrappedComponent) => {
       this.fetchIfRequired(this.props);
     }
 
-    componentWillReceiveProps = (nextProps) => {
-      this.fetchIfRequired(nextProps);
-    }
-
     shouldComponentUpdate = ({ results, model, fetchState }) => !(
       this.props.results.equals(results) &&
       this.getAxes().equals(unflattenAxes(model)) &&
@@ -52,6 +48,10 @@ const withStatementsVisualisation = (WrappedComponent) => {
       this.props.fetchState === fetchState &&
       this.props.model.get('trendLines') === model.get('trendLines')
     );
+
+    componentDidUpdate = () => {
+      this.fetchIfRequired(this.props);
+    }
 
     fetchIfRequired = (props) => {
       if (props.shouldFetch) {

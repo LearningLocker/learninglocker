@@ -19,13 +19,12 @@ class TypeEditor extends Component {
     this.state = this.getStateFromProps(props);
   }
 
-  componentWillReceiveProps = nextProps => (
-    this.setState(this.getStateFromProps(nextProps))
-  )
+  shouldComponentUpdate = (_, nextState) =>
+    this.state.type !== nextState.type
 
-  shouldComponentUpdate = (nextProps, nextState) => !(
-    this.state.type === nextState.type
-  )
+  componentDidUpdate = () => {
+    this.setState(this.getStateFromProps(this.props));
+  }
 
   onClickType = type => this.setState({ type })
 

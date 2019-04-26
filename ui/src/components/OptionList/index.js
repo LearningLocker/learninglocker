@@ -39,12 +39,12 @@ class OptionList extends Component {
     }
   }
 
-  componentWillReceiveProps = (newProps) => {
-    if (newProps.options.size <= this.state.highlighted) {
-      this.setState({ highlighted: newProps.options.size - 1 });
+  componentDidUpdate = () => {
+    if (this.props.options.size <= this.state.highlighted) {
+      this.setState({ highlighted: this.props.options.size - 1 });
     }
 
-    if (!newProps.options.size) {
+    if (!this.props.options.size) {
       this.setState({ highlighted: 0 });
     }
   }

@@ -81,7 +81,9 @@ class AutoComplete extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) { this.setState(this.stateFromProps(nextProps)); }
+  componentDidUpdate = () => {
+    this.setState(this.stateFromProps(this.props));
+  }
 
   componentWillUnmount() {
     if (window) {
@@ -152,7 +154,7 @@ class AutoComplete extends Component {
   deleteValue = (key) => {
     const newValues = this.state.values.delete(key);
     // the new values will be picked up from props after going through global state
-    // upodate them in local state immediately for a faster feel
+    // update them in local state immediately for a faster feel
     this.setState({
       values: newValues,
       inputValue: null

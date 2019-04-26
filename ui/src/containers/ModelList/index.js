@@ -84,12 +84,14 @@ const enhance = compose(
   ),
   withState('isExpandedOnce', 'setExpandedOnce', false),
   lifecycle({
-    componentWillReceiveProps: ({
-      setMetadata,
-      isExpandedOnce,
-      setExpandedOnce,
-      model
-    }) => {
+    componentDidUpdate() {
+      const {
+        setMetadata,
+        isExpandedOnce,
+        setExpandedOnce,
+        model
+      } = this.props;
+
       // If this component also has a withModel hoc on it,
       // then we want that to be expanded by default.
       if (model && model.get('_id') && isExpandedOnce === false) {

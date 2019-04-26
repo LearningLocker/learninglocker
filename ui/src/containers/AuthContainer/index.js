@@ -21,8 +21,8 @@ class AuthContainer extends Component {
     this._getAuthUser(this.props);
   }
 
-  componentWillReceiveProps = (nextProps) => {
-    this._getAuthUser(nextProps);
+  componentDidUpdate = () => {
+    this._getAuthUser(this.props);
   }
 
   _getAuthUser = (props) => {
