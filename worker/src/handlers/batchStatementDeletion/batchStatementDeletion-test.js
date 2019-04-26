@@ -9,7 +9,7 @@ import { SITE_SETTINGS_ID } from 'lib/constants/siteSettings';
 import BatchDelete from 'lib/models/batchDelete';
 import Client from 'lib/models/client';
 import uuid from 'uuid';
-import { XAPI_STATEMENTS_DELETE, ALL } from 'lib/constants/scopes';
+import { XAPI_STATEMENTS_DELETE } from 'lib/constants/scopes';
 import batchStatementDeletion from './batchStatementDeletion';
 
 const objectId = mongoose.Types.ObjectId;
