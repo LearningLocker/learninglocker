@@ -19,12 +19,13 @@ import {
 
 export default (WrappedComponent) => {
   class WithModel extends Component {
-    componentWillMount = () => {
+    componentDidMount = () => {
       const { schema, id, doWhile } = this.props;
       this.fetchModel({ schema, id });
       this.pollWhile({ schema, id, doWhile });
     }
-    componentWillReceiveProps = ({ schema, id, doWhile }) => {
+    componentDidUpdate = () => {
+      const { schema, id, doWhile } = this.props;
       this.fetchModel({ schema, id });
       this.pollWhile({ schema, id, doWhile });
     }

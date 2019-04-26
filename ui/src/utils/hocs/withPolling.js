@@ -6,11 +6,12 @@ import {
 
 export default (WrappedComponent) => {
   class WithPolling extends Component {
-    componentWillMount = () => {
+    componentDidMount = () => {
       this.pollWhile(this.props);
     };
-    componentWillReceiveProps = ({ schema, id, doWhile }) => {
-      this.pollWhile({ schema, id, doWhile });
+
+    componentDidUpdate = () => {
+      this.pollWhile(this.props);
     };
 
     pollWhile = ({ schema, id, doWhile }) => {
@@ -18,6 +19,7 @@ export default (WrappedComponent) => {
         this.props.pollWhile({ schema, id, doWhile });
       }
     };
+
     render = () => (
       <WrappedComponent {...this.props} />
     )

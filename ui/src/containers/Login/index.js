@@ -32,7 +32,7 @@ const enhance = compose(
     fetchAppData
   }),
   lifecycle({
-    componentWillMount() {
+    componentDidMount() {
       this.props.fetchAppData({ key: 'googleAuth' });
     },
   })

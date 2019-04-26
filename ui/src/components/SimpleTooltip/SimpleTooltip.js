@@ -18,7 +18,7 @@ export default class SimpleTooltip extends React.Component {
     mouseY: null
   };
 
-  componentWillMount() {
+  componentDidMount() {
     // attach mousemove event so tooltip always follows cursor.
     const { mouseThrottle } = this.props;
     // throttle handler so it only runs every n milliseconds.

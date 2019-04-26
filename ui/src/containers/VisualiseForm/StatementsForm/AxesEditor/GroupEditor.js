@@ -14,7 +14,7 @@ export default class GroupEditor extends Component {
     group: GROUP_OPTS.get('hour'),
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     this.props.changeGroup(this.props.group);
   }
 

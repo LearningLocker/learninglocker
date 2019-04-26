@@ -28,7 +28,7 @@ export default class CountEditor extends Component {
     operatorInput: '',
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     this.props.changeOperator(this.props.operator);
     this.props.changeValue(this.props.value);
   }

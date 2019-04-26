@@ -15,7 +15,7 @@ const enhance = compose(
     version: getAppDataSelector('version')(state),
   }), { fetchAppData }),
   lifecycle({
-    componentWillMount() {
+    componentDidMount() {
       this.props.fetchAppData({ key: 'version' });
     },
   }),
