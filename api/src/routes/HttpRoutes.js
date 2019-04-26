@@ -278,12 +278,10 @@ restify.serve(router, Statement, {
   preCreate: (req, res) => res.sendStatus(405),
   preDelete: (req, res, next) => {
     if (!boolean(get(process.env, 'ENABLE_STATEMENT_DELETION', true))) {
-      res.sendStatus(405);
-      return;
+      return res.send('Statement deletions not enabled for this instance', 405);
     }
     if (!req.params.id) {
-      res.sendStatus(400);
-      return;
+      return res.send('No ID sent', 400);
     }
     next();
     return;
