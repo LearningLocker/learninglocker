@@ -1,6 +1,7 @@
 import boolean from 'boolean';
 import { get, map } from 'lodash';
 import BatchDelete, { asTime } from 'lib/models/batchDelete';
+import NoAccessError from 'lib/errors/NoAccessError';
 import parseQuery from 'lib/helpers/parseQuery';
 import Statement from 'lib/models/statement';
 import { publish as pubishToQueue } from 'lib/services/queue';
@@ -58,11 +59,12 @@ export default async ({
       modelName: 'statement',
       actionName: 'delete',
       authInfo: {
-        client: await Client.findOne({ _id: batchDelete.client })
+        client: await Client.findOne({ _id: batchDelete.client }),
+        token: { tokenType: 'client' }
       }
     });
   } catch (err) {
-    if (err.message === 'Priviliges not sufficient for this operation') {
+    if (err instanceof NoAccessError) {
       // Do nothing
       await BatchDelete.findOneAndUpdate({
         _id: batchDeleteId

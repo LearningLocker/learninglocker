@@ -213,7 +213,7 @@ describe('batchStatementDeletion', () => {
       organisation: testId,
       statement: {},
       hash: uuid.v4(),
-      lrs_id: '561a679c0c5d017e4004717f'
+      lrs_id: '561a679c0c5d017e4004717f' // different lrs to the clients
     });
 
     const { _id: batchDeleteId } = await BatchDelete.create({
@@ -230,7 +230,7 @@ describe('batchStatementDeletion', () => {
       publish: () => {}
     }, () => {});
 
-    // all statemenst should be there;
+    // all statements should be there;
     const result = await Statement.find({});
     expect(result.length).to.equal(1);
 
