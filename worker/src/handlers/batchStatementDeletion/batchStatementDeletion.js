@@ -1,16 +1,16 @@
 import boolean from 'boolean';
 import { get, map } from 'lodash';
-import BatchDelete, { asTime } from 'lib/models/batchDelete';
+import BatchDelete, { inWindow } from 'lib/models/batchDelete';
 import NoAccessError from 'lib/errors/NoAccessError';
 import parseQuery from 'lib/helpers/parseQuery';
 import Statement from 'lib/models/statement';
+import logger from 'lib/logger';
 import { publish as pubishToQueue } from 'lib/services/queue';
 import { BATCH_STATEMENT_DELETION_QUEUE } from 'lib/constants/batchDelete';
 import { SITE_SETTINGS_ID } from 'lib/constants/siteSettings';
 import SiteSettings from 'lib/models/siteSettings';
 import Client from 'lib/models/client';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
-import moment from 'moment';
 
 export default async ({
   batchDeleteId,
@@ -25,16 +25,13 @@ export default async ({
   const siteSettings = await SiteSettings.findOne({
     _id: SITE_SETTINGS_ID
   });
-  if (
-    get(siteSettings, 'batchDeleteWindowStartTime') &&
-    get(siteSettings, 'batchDeleteWindowDuration') &&
-    !asTime(moment()).isBetween(
-      asTime(get(siteSettings, 'batchDeleteWindowStartTime')),
-      asTime(get(siteSettings, 'batchDeleteWindowStartTime'))
-        .add(get(siteSettings, 'batchDeleteWindowDuration'), 'milliseconds')
-    )
-  ) {
-    // We're not in the window
+
+  // Check if "windowing" is enabled AND if we are out of the window
+  const inDeletionWindow = inWindow(siteSettings);
+  if (inDeletionWindow) {
+    logger.debug('In window - processing batch deletion');
+  } else {
+    logger.debug('Out of window - not processing batch deletion');
     jobDone();
     return;
   }

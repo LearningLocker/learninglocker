@@ -317,7 +317,7 @@ describe('batchStatementDeletion', () => {
     }, () => {});
 
     // all statemenst should be there;
-    const result = await Statement.count({organisation: testId});
+    const result = await Statement.count({ organisation: testId });
     expect(result).to.equal(3);
 
     const batchDelete = await BatchDelete.findById(batchDeleteId);
@@ -325,7 +325,4 @@ describe('batchStatementDeletion', () => {
     expect(batchDelete.processing).to.equal(false);
   });
 });
-
-
-
 

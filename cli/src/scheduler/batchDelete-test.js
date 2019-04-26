@@ -7,7 +7,7 @@ import async from 'async';
 import moment from 'moment';
 import batchDelete from './batchDelete';
 
-describe('batchDelete', () => {
+describe.only('batchDelete', () => {
   let batchDeleteId;
   beforeEach(async (done) => {
     const batchDeleteModel = await BatchDelete.create({
