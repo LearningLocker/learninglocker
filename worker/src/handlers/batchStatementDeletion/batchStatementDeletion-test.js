@@ -16,6 +16,7 @@ const objectId = mongoose.Types.ObjectId;
 
 describe('batchStatementDeletion', () => {
   const testClientId = '561a679c0c5d017e4004715f';
+  const testClientIdNoLRS = '561a679c0c5d017e4004718f';
   const testStoreId = '561a679c0c5d017e4004716f';
 
   beforeEach(async (done) => {
@@ -39,6 +40,12 @@ describe('batchStatementDeletion', () => {
       _id: objectId(testClientId),
       organisation: testId,
       lrs_id: objectId(testStoreId),
+      scopes: [XAPI_STATEMENTS_DELETE]
+    });
+
+    await Client.create({
+      _id: objectId(testClientIdNoLRS),
+      organisation: testId,
       scopes: [XAPI_STATEMENTS_DELETE]
     });
 
@@ -254,16 +261,12 @@ describe('batchStatementDeletion', () => {
       lrs_id: '561a679c0c5d017e4004717f'
     });
 
-    await Client.findByIdAndUpdate(testClientId, {
-      scopes: [XAPI_STATEMENTS_DELETE, ALL]
-    });
-
     const { _id: batchDeleteId } = await BatchDelete.create({
       filter: '{}',
       total: 3,
       pageSize: 4,
       organisation: testId,
-      client: testClientId
+      client: testClientIdNoLRS
     });
 
     // Test
@@ -277,7 +280,52 @@ describe('batchStatementDeletion', () => {
     expect(result.length).to.equal(1);
 
     const batchDelete = await BatchDelete.findById(batchDeleteId);
-    expect(batchDelete.done).to.equal(false);
+    expect(batchDelete.processing).to.equal(false);
+  });
+
+  it('should delete no statements (in the org)', async () => {
+    await Statement.create({
+      organisation: testId,
+      statement: {},
+      hash: uuid.v4(),
+      lrs_id: '561a679c0c5d017e4004717f'
+    });
+
+    await Statement.create({
+      organisation: '561a679c0c5d017e4004718f',
+      statement: {},
+      hash: uuid.v4(),
+      lrs_id: '561a679c0c5d017e4004717f'
+    });
+
+    await Client.findByIdAndUpdate(testClientIdNoLRS, {
+      scopes: []
+    });
+
+    const { _id: batchDeleteId } = await BatchDelete.create({
+      filter: '{}',
+      total: 3,
+      pageSize: 4,
+      organisation: testId,
+      client: testClientIdNoLRS
+    });
+
+    // Test
+    await batchStatementDeletion({
+      batchDeleteId,
+      publish: () => {}
+    }, () => {});
+
+    // all statemenst should be there;
+    const result = await Statement.count({organisation: testId});
+    expect(result).to.equal(3);
+
+    const batchDelete = await BatchDelete.findById(batchDeleteId);
+    expect(batchDelete.done).to.equal(true);
     expect(batchDelete.processing).to.equal(false);
   });
 });
+
+
+
+
