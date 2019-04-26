@@ -163,7 +163,7 @@ export const render = ({
           <h4>xAPI</h4>
         </div>
         <div className="form-group">
-          <div> 
+          <div>
             {renderStoreDropdown({
               filter: new Map(),
               elemId: `lrsInput${_id}`,

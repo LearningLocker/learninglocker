@@ -29,15 +29,15 @@ const initialiseBatchDelete = catchErrors(async (req, res) => {
   });
 
   if (!get(req, 'query.filter', false)) {
-    throw new ClientError('No filter defined'); 
+    throw new ClientError('No filter defined');
   }
-  
+
   let parsedFilter;
   try {
     parsedFilter = JSON.parse(req.query.filter);
   } catch (err) {
     logger.debug('Error parsing batch deletion filter', err);
-    throw new ClientError('Error parsing filter'); 
+    throw new ClientError('Error parsing filter');
   }
   if (isEmpty(parsedFilter)) {
     throw new ClientError('Filter cannot be blank');
