@@ -62,7 +62,7 @@ describe('batchDelete', () => {
     const nextRunTime = moment().add(nextRunTimeout, 'milliseconds');
 
     expect(publishCount).to.equal(1);
-    expect(nextRunTime.isSame(expectedNextRunTime, 'minute')).to.be.true;
+    expect(nextRunTime.isSame(expectedNextRunTime, 'minute')).to.equal(true);
   });
 
   it('should schedule the next for the future and not publish any jobs', async () => {
@@ -97,6 +97,6 @@ describe('batchDelete', () => {
     const nextRunTime = moment().add(nextRunTimeout, 'milliseconds');
 
     expect(publishCount).to.equal(0);
-    expect(nextRunTime.isSame(expectedNextRunTime, 'minute')).to.be.true;
+    expect(nextRunTime.isSame(expectedNextRunTime, 'minute')).to.equal(true);
   });
 });
