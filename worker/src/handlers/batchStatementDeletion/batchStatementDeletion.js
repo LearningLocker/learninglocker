@@ -1,5 +1,5 @@
 import boolean from 'boolean';
-import { get, map } from 'lodash';
+import { get, map, isEmpty } from 'lodash';
 import BatchDelete, { inWindow } from 'lib/models/batchDelete';
 import NoAccessError from 'lib/errors/NoAccessError';
 import parseQuery from 'lib/helpers/parseQuery';
@@ -11,6 +11,20 @@ import { SITE_SETTINGS_ID } from 'lib/constants/siteSettings';
 import SiteSettings from 'lib/models/siteSettings';
 import Client from 'lib/models/client';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
+
+const markDone = async (batchDeleteId, jobDone) => {
+  logger.debug(`Removing job for BatchDelete ${batchDeleteId} and marking as done`);
+  // Do nothing
+  await BatchDelete.findOneAndUpdate({
+    _id: batchDeleteId
+  }, {
+    processing: false,
+    done: true
+  });
+
+  jobDone();
+  return;
+};
 
 export default async ({
   batchDeleteId,
@@ -62,24 +76,29 @@ export default async ({
     });
   } catch (err) {
     if (err instanceof NoAccessError) {
-      // Do nothing
-      await BatchDelete.findOneAndUpdate({
-        _id: batchDeleteId
-      }, {
-        processing: false,
-        done: true
-      });
-
-      jobDone();
-      return;
+      // Do nothing and delete job
+      return await markDone(batchDeleteId, jobDone);
     }
     throw err;
   }
 
+  let parsedFilter;
+  try {
+    parsedFilter = JSON.parse(batchDelete.filter);
+  } catch (err) {
+    logger.debug('Error parsing batch deletion filter', err);
+    return await markDone(batchDeleteId, jobDone);
+  }
+  if (isEmpty(parsedFilter)) {
+    logger.debug('Filter cannot be blank');
+    return await markDone(batchDeleteId, jobDone);
+  }
+
   const filter = {
-    ...(await parseQuery(batchDelete.filter)),
+    ...(await parseQuery(parsedFilter)),
     ...scopeFilter
   };
+
 
   const docs = await Statement.find(filter, '_id')
     .limit(batchDelete.pageSize);
@@ -93,6 +112,7 @@ export default async ({
   }, {});
 
   let doneUpdate = {};
+  console.log(result, filter);
   const done = get(result, 'deletedCount') === 0;
   if (done) {
     doneUpdate = {

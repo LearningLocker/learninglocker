@@ -18,20 +18,22 @@ describe('batchStatementDeletion', () => {
   const testClientId = '561a679c0c5d017e4004715f';
   const testClientIdNoLRS = '561a679c0c5d017e4004718f';
   const testStoreId = '561a679c0c5d017e4004716f';
+  const statementData = { field: 'exists' };
+  const validFilter = '{"statement.field": "exists"}';
 
   beforeEach(async (done) => {
     process.env.ENABLE_STATEMENT_DELETION = true;
 
     await Statement.create({
       organisation: testId,
-      statement: {},
+      statement: statementData,
       hash: uuid.v4(),
       lrs_id: testStoreId
     });
 
     await Statement.create({
       organisation: testId,
-      statement: {},
+      statement: statementData,
       lrs_id: testStoreId,
       hash: uuid.v4()
     });
@@ -77,7 +79,7 @@ describe('batchStatementDeletion', () => {
     );
 
     const { _id: batchDeleteId } = await BatchDelete.create({
-      filter: '{}',
+      filter: validFilter,
       total: 2,
       pageSize: 1,
       organisation: testId,
@@ -124,7 +126,7 @@ describe('batchStatementDeletion', () => {
     );
 
     const { _id: batchDeleteId } = await BatchDelete.create({
-      filter: '{}',
+      filter: validFilter,
       total: 2,
       pageSize: 1,
       organisation: testId
@@ -151,8 +153,8 @@ describe('batchStatementDeletion', () => {
     expect(count).to.equal(2);
   });
 
-  it('Should delete all documents', async () => {
-    const thirtyMinsAgoDate = moment().add(30, 'minutes').toDate();
+  it('Should delete all documents when in window', async () => {
+    const thirtyMinsAgoDate = moment().subtract(30, 'minutes').toDate();
     await SiteSettings.findByIdAndUpdate(
       SITE_SETTINGS_ID,
       {
@@ -166,9 +168,97 @@ describe('batchStatementDeletion', () => {
     );
 
     const { _id: batchDeleteId } = await BatchDelete.create({
-      filter: '{"dosent": "exist" }',
+      filter: validFilter,
       total: 2,
       pageSize: 2,
+      organisation: testId,
+      client: testClientId
+    });
+
+    let publishCallCount = 0;
+    let doneCallCount = 0;
+
+    // TEST
+    await batchStatementDeletion({
+      batchDeleteId,
+      publish: () => {
+        publishCallCount += 1;
+      }
+    }, () => {
+      doneCallCount += 1;
+    });
+
+    // EXPECT
+    expect(publishCallCount).to.equal(1);
+    expect(doneCallCount).to.equal(1);
+
+    const batchDelete = await BatchDelete.findById(batchDeleteId);
+    expect(batchDelete.done).to.equal(false);
+    expect(batchDelete.processing).to.equal(false);
+
+    const count = await Statement.find({ organisation: testId, filter: '{"dosent": "exist" }' }).count().exec();
+    expect(count).to.equal(0);
+  });
+
+  it('Should delete all documents when no window', async () => {
+    await SiteSettings.findByIdAndUpdate(
+      SITE_SETTINGS_ID,
+      {
+        batchDeleteWindowUTCHour: null
+      }, {
+        upsert: true,
+        new: true
+      }
+    );
+
+    const { _id: batchDeleteId } = await BatchDelete.create({
+      filter: validFilter,
+      total: 2,
+      pageSize: 2,
+      organisation: testId,
+      client: testClientId
+    });
+
+    let publishCallCount = 0;
+    let doneCallCount = 0;
+
+    // TEST
+    await batchStatementDeletion({
+      batchDeleteId,
+      publish: () => {
+        publishCallCount += 1;
+      }
+    }, () => {
+      doneCallCount += 1;
+    });
+
+    // EXPECT
+    expect(publishCallCount).to.equal(1);
+    expect(doneCallCount).to.equal(1);
+
+    const batchDelete = await BatchDelete.findById(batchDeleteId);
+    expect(batchDelete.done).to.equal(false);
+    expect(batchDelete.processing).to.equal(false);
+
+    const count = await Statement.find({ organisation: testId, filter: '{"dosent": "exist" }' }).count().exec();
+    expect(count).to.equal(0);
+  });
+
+  it('Should mark as done when no matching data', async () => {
+    await SiteSettings.findByIdAndUpdate(
+      SITE_SETTINGS_ID,
+      {
+        batchDeleteWindowUTCHour: null
+      }, {
+        upsert: true,
+        new: true
+      }
+    );
+
+    const { _id: batchDeleteId } = await BatchDelete.create({
+      filter: '{"foo": "bar does not exist"}',
+      total: 0,
+      pageSize: 0,
       organisation: testId,
       client: testClientId
     });
@@ -195,11 +285,94 @@ describe('batchStatementDeletion', () => {
     expect(batchDelete.processing).to.equal(false);
   });
 
+  it('Should mark as done on invalid filter', async () => {
+    await SiteSettings.findByIdAndUpdate(
+      SITE_SETTINGS_ID,
+      {
+        batchDeleteWindowUTCHour: null
+      }, {
+        upsert: true,
+        new: true
+      }
+    );
+
+    const { _id: batchDeleteId } = await BatchDelete.create({
+      filter: '{"""invalidfilter""""}',
+      total: 0,
+      pageSize: 0,
+      organisation: testId,
+      client: testClientId
+    });
+
+    let publishCallCount = 0;
+    let doneCallCount = 0;
+
+    // TEST
+    await batchStatementDeletion({
+      batchDeleteId,
+      publish: () => {
+        publishCallCount += 1;
+      }
+    }, () => {
+      doneCallCount += 1;
+    });
+
+    // EXPECT
+    expect(publishCallCount).to.equal(0);
+    expect(doneCallCount).to.equal(1);
+
+    const batchDelete = await BatchDelete.findById(batchDeleteId);
+    expect(batchDelete.done).to.equal(true);
+    expect(batchDelete.processing).to.equal(false);
+  });
+
+  it('Should mark as done on empty filter', async () => {
+    await SiteSettings.findByIdAndUpdate(
+      SITE_SETTINGS_ID,
+      {
+        batchDeleteWindowUTCHour: null
+      }, {
+        upsert: true,
+        new: true
+      }
+    );
+
+    const { _id: batchDeleteId } = await BatchDelete.create({
+      filter: '{}',
+      total: 0,
+      pageSize: 0,
+      organisation: testId,
+      client: testClientId
+    });
+
+    let publishCallCount = 0;
+    let doneCallCount = 0;
+
+    // TEST
+    await batchStatementDeletion({
+      batchDeleteId,
+      publish: () => {
+        publishCallCount += 1;
+      }
+    }, () => {
+      doneCallCount += 1;
+    });
+
+    // EXPECT
+    expect(publishCallCount).to.equal(0);
+    expect(doneCallCount).to.equal(1);
+
+    const batchDelete = await BatchDelete.findById(batchDeleteId);
+    expect(batchDelete.done).to.equal(true);
+    expect(batchDelete.processing).to.equal(false);
+  });
+
+
   it('should do nothing if client does not exist', async () => {
     await Client.deleteOne({ _id: testClientId });
 
     const { _id: batchDeleteId } = await BatchDelete.create({
-      filter: '{}',
+      filter: validFilter,
       total: 0,
       pageSize: 3,
       organisation: testId,
@@ -230,7 +403,7 @@ describe('batchStatementDeletion', () => {
     });
 
     const { _id: batchDeleteId } = await BatchDelete.create({
-      filter: '{}',
+      filter: validFilter,
       total: 2,
       pageSize: 3,
       organisation: testId,
@@ -255,7 +428,7 @@ describe('batchStatementDeletion', () => {
   it('should delete all statements (in the org)', async () => {
     await Statement.create({
       organisation: testId,
-      statement: {},
+      statement: statementData,
       hash: uuid.v4(),
       lrs_id: '561a679c0c5d017e4004717f'
     });
@@ -268,7 +441,7 @@ describe('batchStatementDeletion', () => {
     });
 
     const { _id: batchDeleteId } = await BatchDelete.create({
-      filter: '{}',
+      filter: validFilter,
       total: 3,
       pageSize: 4,
       organisation: testId,
