@@ -63,6 +63,7 @@ const runBatchDelete = async ({
   logger.debug(`Running again at ${nextDateTime} (${nextDateTime.fromNow()})`);
 
   setTimeout(runBatchDelete, msUntilNextRun, {});
+  return msUntilNextRun;
 };
 
 export default runBatchDelete;

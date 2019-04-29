@@ -63,11 +63,13 @@ describe('batchStatementDeletion', () => {
   });
 
   it('should delete statements if in the window', async () => {
+    const now = new Date();
     await SiteSettings.findByIdAndUpdate(
       SITE_SETTINGS_ID,
       {
-        batchDeleteWindowStartTime: (moment().subtract(30, 'minutes')).toDate(),
-        batchDeleteWindowDuration: 1000 * 60 * 60 // An hour
+        batchDeleteWindowUTCHour: now.getUTCHours(),
+        batchDeleteWindowUTCMinutes: now.getUTCMinutes(),
+        batchDeleteWindowDurationSeconds: 60 * 60 // An hour
       }, {
         upsert: true,
         new: true
@@ -108,11 +110,13 @@ describe('batchStatementDeletion', () => {
   });
 
   it('should not delete if outside the window', async () => {
+    const thirtyMinsInFutureDate = moment().add(30, 'minutes').toDate();
     await SiteSettings.findByIdAndUpdate(
       SITE_SETTINGS_ID,
       {
-        batchDeleteWindowStartTime: (moment().add(30, 'minutes')).toDate(),
-        batchDeleteWindowDuration: 1000 * 60 * 60 // An hour
+        batchDeleteWindowUTCHour: thirtyMinsInFutureDate.getUTCHours(),
+        batchDeleteWindowUTCMinutes: thirtyMinsInFutureDate.getUTCMinutes(),
+        batchDeleteWindowDurationSeconds: 60 * 60 // An hour
       }, {
         upsert: true,
         new: true
@@ -148,11 +152,13 @@ describe('batchStatementDeletion', () => {
   });
 
   it('Should delete all documents', async () => {
+    const thirtyMinsAgoDate = moment().add(30, 'minutes').toDate();
     await SiteSettings.findByIdAndUpdate(
       SITE_SETTINGS_ID,
       {
-        batchDeleteWindowStartTime: (moment().subtract(30, 'minutes')).toDate(),
-        batchDeleteWindowDuration: 1000 * 60 * 60 // An hour
+        batchDeleteWindowUTCHour: thirtyMinsAgoDate.getUTCHours(),
+        batchDeleteWindowUTCMinutes: thirtyMinsAgoDate.getUTCMinutes(),
+        batchDeleteWindowDurationSeconds: 60 * 60 // An hour
       }, {
         upsert: true,
         new: true
