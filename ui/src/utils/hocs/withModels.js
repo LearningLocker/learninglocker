@@ -55,12 +55,16 @@ export default (WrappedComponent) => {
         updateModel={this.updateModel} />
       )
   }
-  return connect((state, { schema, filter, sort, cursor }) => (
-    {
-      models: modelsByFilterSelector(schema, filter, sort)(state),
-      isLoading: isLoadingSelector({ schema, filter, sort, cursor })(state),
-      shouldFetch: shouldFetchSelector({ schema, filter, sort, cursor })(state),
-      hasMore: hasMoreSelector(schema, filter, sort)(state)
-    }
-  ), { fetchModels, fetchMore, addModel, deleteModel, updateModel, fetchAllOutstandingModels })(WithModels);
+  return connect((state, { schema, filter, sort, cursor }) => {
+    const out = (
+      {
+        models: modelsByFilterSelector(schema, filter, sort)(state),
+        isLoading: isLoadingSelector({ schema, filter, sort, cursor })(state),
+        shouldFetch: shouldFetchSelector({ schema, filter, sort, cursor })(state),
+        hasMore: hasMoreSelector(schema, filter, sort)(state)
+      }
+    );
+    return out;
+  },
+  { fetchModels, fetchMore, addModel, deleteModel, updateModel, fetchAllOutstandingModels })(WithModels);
 };

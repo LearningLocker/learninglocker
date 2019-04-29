@@ -157,7 +157,9 @@ export default connect((state, ownProps) => {
   const filter = new Map({ path: new Map({ $eq: path.join('.') }) });
 
   const sort = new Map({
-    count: -1
+    count: -1,
+    createdAt: -1,
+    _id: 1
   });
 
   return {

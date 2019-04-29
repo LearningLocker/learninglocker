@@ -47,6 +47,7 @@ export default compose(
 )(({
   schema,
   filter,
+  sort,
   values,
   setSearchFilter,
   selectOption,
@@ -55,8 +56,8 @@ export default compose(
   parseOptionTooltip,
   searchStringToFilter,
   valuesFilter
-}) =>
-  (<AutoComplete2
+}) => {
+  const out = (<AutoComplete2
     renderInput={({ hasFocus, onFocus }) => (
       <QueryBuilderInput
         filter={valuesFilter}
@@ -77,9 +78,11 @@ export default compose(
         parseOption={option => (option ? parseOption(option) : '')}
         parseOptionTooltip={option => (option ? parseOptionTooltip(option) : '')}
         filter={filter}
+        sort={sort}
         first={1000}
         canEdit={() => false}
         schema={schema} />
     )} />
-  )
-);
+  );
+  return out;
+});

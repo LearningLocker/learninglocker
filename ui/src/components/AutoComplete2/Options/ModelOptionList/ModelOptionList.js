@@ -23,7 +23,7 @@ const renderOption = ({
   resetRow,
   index,
   fields,
-  defaultValues
+  defaultValues,
 }) => {
   const isEditable = canEdit(option);
   if (isEditable) {
