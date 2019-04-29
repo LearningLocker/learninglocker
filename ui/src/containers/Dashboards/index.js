@@ -22,7 +22,7 @@ const renderSpinner = () => (
 );
 
 const renderDashboard = params => (model, index) => (
-  <Tab key={index} label={model.get('title', `Dashboard ${index + 1}`) || ''}>
+  <Tab key={index} label={model.get('title', `Dashboard ${index + 1}`, '')}>
     <Dashboard id={model.get('_id')} params={params} />
   </Tab>
 );
