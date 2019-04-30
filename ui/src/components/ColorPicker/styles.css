@@ -1,4 +1,0 @@
-/* Overwrite swatches in color picker */
-.blockPickerWrapper div div div span div {
-  border-radius: 11px !important;
-}
