@@ -28,23 +28,15 @@ const initialiseBatchDelete = catchErrors(async (req, res) => {
     authInfo
   });
 
-  if (!get(req, 'query.filter', false)) {
-    throw new ClientError('No filter defined');
-  }
+  const body = req.body;
+  const bodyFilter = get(body, 'filter', false);
 
-  let parsedFilter;
-  try {
-    parsedFilter = JSON.parse(req.query.filter);
-  } catch (err) {
-    logger.debug('Error parsing batch deletion filter', err);
-    throw new ClientError('Error parsing filter');
-  }
-  if (isEmpty(parsedFilter)) {
-    throw new ClientError('Filter cannot be blank');
+  if (isEmpty(bodyFilter)) {
+    throw new ClientError('Filter cannot be empty');
   }
 
   const filter = {
-    ...(await parseQuery(req.query.filter)),
+    ...(await parseQuery(bodyFilter)),
     ...scopeFilter
   };
 
@@ -53,7 +45,7 @@ const initialiseBatchDelete = catchErrors(async (req, res) => {
   const batchDelete = new BatchDelete({
     organisation: getOrgFromAuthInfo(authInfo),
     total,
-    filter: req.query.filter,
+    filter: JSON.stringify(bodyFilter),
     client: get(authInfo, 'client.id')
   });
   await batchDelete.save();
@@ -65,9 +57,14 @@ const initialiseBatchDelete = catchErrors(async (req, res) => {
     },
   });
 
-  res.sendStatus(200);
+  res.status(200).send(batchDelete);
+});
+
+const terminateBatchDelete = catchErrors(async (req, res) => {
+  res.sendStatus(204);
 });
 
 export default {
-  initialiseBatchDelete
+  initialiseBatchDelete,
+  terminateBatchDelete
 };
