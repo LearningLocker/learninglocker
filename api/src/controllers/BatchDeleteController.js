@@ -7,26 +7,36 @@ import Statement from 'lib/models/statement';
 import ClientError from 'lib/errors/ClientError';
 import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
 import parseQuery from 'lib/helpers/parseQuery';
-import logger from 'lib/logger';
 import { BATCH_STATEMENT_DELETION_QUEUE } from 'lib/constants/batchDelete';
 import { publish } from 'lib/services/queue';
 import { get, isEmpty } from 'lodash';
+import mongoose from 'mongoose';
 
+const objectId = mongoose.Types.ObjectId;
 
-const initialiseBatchDelete = catchErrors(async (req, res) => {
+const checkDeletionsEnabled = () => {
   if (boolean(get(process.env, 'ENABLE_STATEMENT_DELETION', true)) === false) {
     // Clear the job and don't do anything
     throw new ClientError('Statement deletions not enabled for this instance');
   }
+};
 
-  // Authenticate
+const authenticate = async (req, modelName) => {
   const authInfo = getAuthFromRequest(req);
 
   const scopeFilter = await getScopeFilter({
-    modelName: 'statement',
+    modelName,
     actionName: 'delete',
     authInfo
   });
+  return { authInfo, scopeFilter };
+};
+
+const initialiseBatchDelete = catchErrors(async (req, res) => {
+  checkDeletionsEnabled();
+
+  // Authenticate
+  const { authInfo, scopeFilter } = await authenticate(req, 'statement');
 
   const body = req.body;
   const bodyFilter = get(body, 'filter', false);
@@ -57,14 +67,43 @@ const initialiseBatchDelete = catchErrors(async (req, res) => {
     },
   });
 
-  res.status(200).send(batchDelete);
+  return res.status(200).send(batchDelete);
 });
 
 const terminateBatchDelete = catchErrors(async (req, res) => {
-  res.sendStatus(204);
+  checkDeletionsEnabled();
+
+  // Authenticate
+  const { scopeFilter } = await authenticate(req, 'batchdelete');
+  const filter = {
+    ...scopeFilter,
+    _id: objectId(req.params.id)
+  };
+
+  const batchDelete = await BatchDelete.findOne(filter);
+  if (!batchDelete) {
+    return res.status(404).send();
+  }
+
+  batchDelete.done = true;
+  await batchDelete.save();
+  return res.status(204).send();
+});
+
+const terminateAllBatchDeletes = catchErrors(async (req, res) => {
+  checkDeletionsEnabled();
+
+  // Authenticate
+  const { scopeFilter } = await authenticate(req, 'batchdelete');
+  await BatchDelete.updateMany(scopeFilter, {
+    done: true
+  });
+
+  return res.status(204).send();
 });
 
 export default {
   initialiseBatchDelete,
-  terminateBatchDelete
+  terminateBatchDelete,
+  terminateAllBatchDeletes
 };

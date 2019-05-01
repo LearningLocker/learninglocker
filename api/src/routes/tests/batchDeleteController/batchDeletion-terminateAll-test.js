@@ -5,13 +5,13 @@ import { expect } from 'chai';
 import setup from 'api/routes/tests/utils/setup';
 import testId from 'api/routes/tests/utils/testId';
 import BatchDelete from 'lib/models/batchDelete';
-import { STATEMENT_BATCH_DELETE_TERMINATE_ROOT } from 'lib/constants/routes';
+import { STATEMENT_BATCH_DELETE_TERMINATE_ALL } from 'lib/constants/routes';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 import createClient from 'api/routes/tests/utils/models/createClient';
 
 const otherTestId = '561a679c0c5d017e4004714e';
 
-describe('BatchDeleteController terminate', () => {
+describe('BatchDeleteController all terminate', () => {
   const apiApp = setup();
 
   beforeEach('Create batchDelete', async () => {
@@ -29,7 +29,7 @@ describe('BatchDeleteController terminate', () => {
 
   it('should reject a token without the deletion scope', async () => {
     const orgToken = await createOrgToken();
-    await apiApp.post(`${STATEMENT_BATCH_DELETE_TERMINATE_ROOT}/${testId}`)
+    await apiApp.post(STATEMENT_BATCH_DELETE_TERMINATE_ALL)
       .set('Authorization', `Bearer ${orgToken}`)
       .send({
         filter: {
@@ -39,20 +39,18 @@ describe('BatchDeleteController terminate', () => {
       .expect(403);
   });
 
-  it('should reject a termination that doesnt exist', async () => {
-    const basicClient = await createClient([XAPI_STATEMENTS_DELETE]);
-    await apiApp.post(`${STATEMENT_BATCH_DELETE_TERMINATE_ROOT}/${otherTestId}`)
-    .auth(basicClient.api.basic_key, basicClient.api.basic_secret)
-      .send()
-      .expect(404);
+  it('should terminate all batch deletions in the clients org', async () => {
+    const secondBatchDelete = new BatchDelete({
+      organisation: testId,
+      client: testId,
+      filter: '{"foo":"bar"}',
+      done: false,
+      processing: false,
+      pageSize: 1000
+    });
+    await secondBatchDelete.save();
 
-    const batchDelete = await BatchDelete.findById(testId);
-    expect(batchDelete.done).to.equal(false);
-  });
-
-  it('should reject a termination that doesnt exist in my org', async () => {
     const otherOrgBatchDelete = new BatchDelete({
-      _id: otherTestId,
       organisation: otherTestId,
       client: otherTestId,
       filter: '{"foo":"bar"}',
@@ -61,24 +59,19 @@ describe('BatchDeleteController terminate', () => {
       pageSize: 1000
     });
     await otherOrgBatchDelete.save();
-    const basicClient = await createClient([XAPI_STATEMENTS_DELETE]);
-    await apiApp.post(`${STATEMENT_BATCH_DELETE_TERMINATE_ROOT}/${otherTestId}`)
-    .auth(basicClient.api.basic_key, basicClient.api.basic_secret)
-      .send()
-      .expect(404);
 
-    const batchDelete = await BatchDelete.findById(testId);
-    expect(batchDelete.done).to.equal(false);
-  });
-
-  it('should terminate a batch deletion', async () => {
     const basicClient = await createClient([XAPI_STATEMENTS_DELETE]);
-    await apiApp.post(`${STATEMENT_BATCH_DELETE_TERMINATE_ROOT}/${testId}`)
+    await apiApp.post(STATEMENT_BATCH_DELETE_TERMINATE_ALL)
       .auth(basicClient.api.basic_key, basicClient.api.basic_secret)
       .send()
       .expect(204);
 
-    const batchDelete = await BatchDelete.findById(testId);
-    expect(batchDelete.done).to.equal(true);
+    const batchDeleteOne = await BatchDelete.findById(testId);
+    const batchDeleteTwo = await BatchDelete.findById(secondBatchDelete._id);
+    const batchDeleteOtherOrg = await BatchDelete.findById(otherOrgBatchDelete._id);
+
+    expect(batchDeleteOne.done).to.equal(true);
+    expect(batchDeleteTwo.done).to.equal(true);
+    expect(batchDeleteOtherOrg.done).to.equal(false);
   });
 });

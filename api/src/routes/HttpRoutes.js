@@ -217,6 +217,12 @@ router.post(
 );
 
 router.post(
+  routes.STATEMENT_BATCH_DELETE_TERMINATE_ALL,
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  BatchDeleteController.terminateAllBatchDeletes
+);
+
+router.post(
   routes.STATEMENT_BATCH_DELETE_TERMINATE,
   passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   BatchDeleteController.terminateBatchDelete
