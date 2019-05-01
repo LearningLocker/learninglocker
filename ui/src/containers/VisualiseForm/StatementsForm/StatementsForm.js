@@ -100,13 +100,9 @@ class StatementsForm extends Component {
   )
 
 
-  renderFormWithResults = () => { 
-    console.log('props', this.props.model.get('hasCourseDropdown', false));
-    return (
+  renderFormWithResults = () => {
+    const out = (
       <div className="row">
-        {/* <div className="col-md-6 left-border">
-          {this.props.model.get('hasCourseDropdown', false) && <CourseEditorDropdown model={this.props.model} {...this.props} />}
-        </div> */}
         <div className="col-md-6 left-border">
           { this.renderEditor() }
         </div>
@@ -124,6 +120,7 @@ class StatementsForm extends Component {
         </div>
       </div>
     );
+    return out;
   };
 
   renderEditorOnly = () => (

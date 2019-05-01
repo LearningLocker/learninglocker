@@ -86,6 +86,7 @@ const addProps = compose(
     isEditing,
     setIsEditing,
     canEdit = () => true,
+    canAdd = () => true,
     fields,
     defaultValues,
     defaultNewValues,
@@ -104,13 +105,14 @@ const addProps = compose(
       fields,
       defaultValues
     }),
-    children: (
-      <AddNewOption
-        fields={fields}
-        defaultNewValues={defaultNewValues}
-        onAddNew={onSelectOption}
-        addModel={addModel} />
-    )
+    ...(canAdd() ? {
+      children: (
+        <AddNewOption
+          fields={fields}
+          defaultNewValues={defaultNewValues}
+          onAddNew={onSelectOption}
+          addModel={addModel} />)
+    } : {})
   }))
 );
 

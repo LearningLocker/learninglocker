@@ -50,7 +50,6 @@ export default class CourseEditor extends Component {
 
   render = () => {
     const { operator, value } = this.props;
-    const operatorOptions = this.getOperatorOptions();
     const hasUniquenessOp = this.isUniquenessOp(operator);
 
     return (

@@ -91,7 +91,7 @@ const templateData = fromJS({
     title: 'Which day of the week do people comment on my course?',
     id: '7',
     type: STATEMENTS,
-    hasIntermediate: false,
+    hasIntermediate: true,
     hasCourseDropdown: true,
     onCreate: (updateModel) => {
       updateModel({
