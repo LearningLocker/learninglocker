@@ -3,6 +3,7 @@ import { Map } from 'immutable';
 import { compose, withProps } from 'recompose';
 import { updateModel } from 'ui/redux/modules/models';
 import { connect } from 'react-redux';
+import { TEMPLATE_STAGE_INTERMEDIATE } from 'lib/constants/visualise';
 import VisualiseResults from 'ui/containers/VisualiseResults';
 import SourceResults from 'ui/containers/VisualiseResults/SourceResults';
 import {
@@ -61,11 +62,24 @@ class StatementsForm extends Component {
     value: e.target.value
   })
 
+  hasType = () => this.props.model.has('type')
+  hasTemplateId = () => this.props.model.get('templateId', null) !== null
+  isOnTemplateIntermediateStage = () => this.props.model.get('templateStage') === TEMPLATE_STAGE_INTERMEDIATE;
+
+  /**
+   * @returns {boolean}
+   */
+  shouldShowNewVisualisation = () =>
+    !this.hasType() || (
+      this.hasTemplateId() && this.isOnTemplateIntermediateStage()
+    )
+
   renderEditor = () => (
     <Editor
       model={this.props.model}
       queryBuilderCacheValueModels={this.props.queryBuilderCacheValueModels}
-      exportVisualisation={this.props.exportVisualisation} />
+      exportVisualisation={this.props.exportVisualisation}
+      shouldShowNewVisualisation={this.shouldShowNewVisualisation()} />
   );
 
   renderTimePicker = () => (
@@ -114,12 +128,10 @@ class StatementsForm extends Component {
   );
 
   render = () => {
-    if (this.props.model.has('type')) {
-      // include the results if type is selected
-      return this.renderFormWithResults();
+    if (this.shouldShowNewVisualisation()) {
+      return this.renderEditorOnly();
     }
-    // if not type is selected, only show the editor
-    return this.renderEditorOnly();
+    return this.renderFormWithResults();
   }
 }
 
