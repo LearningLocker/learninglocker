@@ -146,19 +146,19 @@ router.post(
 
 router.post(
   routes.UPLOADPERSONAS,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   ImportPersonasController.uploadPersonas
 );
 
 router.post(
   routes.IMPORTPERSONAS,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   ImportPersonasController.importPersonas
 );
 
 router.get(
   routes.IMPORTPERSONASERROR,
-  passport.authenticate(['jwt', 'jwt-cookie'], DEFAULT_PASSPORT_OPTIONS),
+  passport.authenticate(['jwt', 'jwt-cookie', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   ImportPersonasController.importPersonasError
 );
 
@@ -192,6 +192,11 @@ router.get(
   routes.STATEMENTS_AGGREGATE,
   passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   StatementController.aggregate
+);
+router.get(
+  routes.STATEMENTS_AGGREGATE_ASYNC,
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  StatementController.aggregateAsync
 );
 router.get(
   routes.STATEMENTS_COUNT,

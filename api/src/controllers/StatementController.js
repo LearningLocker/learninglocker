@@ -37,6 +37,40 @@ const aggregateStatements = catchErrors(async (req, res) => {
   return res.end();
 });
 
+/**
+ * extract parameters for aggregateAsync from request parameters.
+ * Some of parameters have default value.
+ *
+ * @param {*} req
+ * @returns {object}
+ */
+const extractParamsForAggregateAsync = req => ({
+  authInfo: req.user.authInfo || {},
+  pipeline: JSON.parse(req.query.pipeline),
+  skip: Number(req.query.skip) || 0,
+  limit: Number(req.query.limit) || -1,
+  sinceAt: req.query.sinceAt || null,
+});
+
+const aggregateAsync = async (req) => {
+  const params = extractParamsForAggregateAsync(req);
+  const resultsAndStatus = await statementsService.aggregateAsync(params);
+  return JSON.stringify({
+    result: resultsAndStatus.result,
+    status: {
+      startedAt: resultsAndStatus.startedAt,
+      completedAt: resultsAndStatus.completedAt,
+    },
+  });
+};
+
+const aggregateAsyncStatements = catchErrors(async (req, res) => {
+  const result = await aggregateAsync(req);
+  res.set('Content-Type', 'application/json');
+  res.write(result);
+  return res.end();
+});
+
 const aggregateStatementsV1 = catchErrors(async (req, res) => {
   const results = await aggregate(req);
   const strRes = `{ "waitedMS": 0, "result": ${results}, "ok": 1 }`;
@@ -69,6 +103,7 @@ const countStatements = catchErrors(async (req, res) => {
 
 export default {
   aggregate: aggregateStatements,
+  aggregateAsync: aggregateAsyncStatements,
   v1aggregate: aggregateStatementsV1,
   count: countStatements
 };

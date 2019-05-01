@@ -1,13 +1,11 @@
 import { put, call, takeEvery } from 'redux-saga/effects';
-import Promise from 'bluebird';
+import Promise, { delay } from 'bluebird';
 import identity from 'lodash/identity';
 import DispatchNotReadyError from 'ui/utils/errors/DispatchNotReadyError';
 import { actions as logoutActions } from 'ui/redux/modules/auth/logout';
 import { alert } from 'ui/redux/modules/alerts';
 import Unauthorised from 'lib/errors/Unauthorised';
 import HttpError from 'ui/utils/errors/HttpError';
-
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 export default function createAsyncDuck({
   actionName,
