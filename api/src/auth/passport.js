@@ -135,6 +135,7 @@ passport.use(
       reason: null,
       success: false
     };
+    console.log(`--- passport.js ${password}`);
     if (password === '' || !password) return done(null, info);
 
     User.findOne({ email: username }, (err, user) => {
