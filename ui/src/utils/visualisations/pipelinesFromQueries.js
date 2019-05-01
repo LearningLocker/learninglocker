@@ -2,7 +2,17 @@ import { Map, List } from 'immutable';
 import moment from 'moment';
 import pipelineFromQuery from './pipelineFromQuery';
 
-export default (
+/**
+ * @param {immutable.List} queries
+ * @param {*} axes
+ * @param {*} type
+ * @param {*} previewPeriod
+ * @param {string} id
+ * @param {boolean} benchmarkingEnabled
+ * @param {Moment} today
+ * @returns {immutable.List} - pipelines
+ */
+const pipelinesFromQueries = (
   queries,
   axes,
   type,
@@ -30,3 +40,5 @@ export default (
     query, axes, type, previewPeriod, id, today
   })));
 };
+
+export default pipelinesFromQueries;
