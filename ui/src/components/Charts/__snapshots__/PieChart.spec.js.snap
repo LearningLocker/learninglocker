@@ -46,4 +46,4 @@ exports[`PieChart should render 1`] = `
 </div>
 `;
 
-exports[`PieChart should render no data 1`] = `<Component />`;
+exports[`PieChart should render no data 1`] = `<NoData />`;
