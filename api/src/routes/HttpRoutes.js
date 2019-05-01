@@ -188,6 +188,11 @@ router.get(
   StatementController.aggregate
 );
 router.get(
+  routes.STATEMENTS_AGGREGATE_ASYNC,
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  StatementController.aggregateAsync
+);
+router.get(
   routes.STATEMENTS_COUNT,
   passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   StatementController.count
