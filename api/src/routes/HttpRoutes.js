@@ -209,10 +209,23 @@ router.post(
   passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   StatementMetadataController.postStatementMetadata
 );
-router.delete(
+
+router.post(
   routes.STATEMENT_BATCH_DELETE_INITIALISE,
   passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   BatchDeleteController.initialiseBatchDelete
+);
+
+router.post(
+  routes.STATEMENT_BATCH_DELETE_TERMINATE_ALL,
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  BatchDeleteController.terminateAllBatchDeletes
+);
+
+router.post(
+  routes.STATEMENT_BATCH_DELETE_TERMINATE,
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  BatchDeleteController.terminateBatchDelete
 );
 
 

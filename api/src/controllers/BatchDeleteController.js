@@ -7,44 +7,46 @@ import Statement from 'lib/models/statement';
 import ClientError from 'lib/errors/ClientError';
 import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
 import parseQuery from 'lib/helpers/parseQuery';
-import logger from 'lib/logger';
 import { BATCH_STATEMENT_DELETION_QUEUE } from 'lib/constants/batchDelete';
 import { publish } from 'lib/services/queue';
 import { get, isEmpty } from 'lodash';
+import mongoose from 'mongoose';
 
+const objectId = mongoose.Types.ObjectId;
 
-const initialiseBatchDelete = catchErrors(async (req, res) => {
+const checkDeletionsEnabled = () => {
   if (boolean(get(process.env, 'ENABLE_STATEMENT_DELETION', true)) === false) {
     // Clear the job and don't do anything
     throw new ClientError('Statement deletions not enabled for this instance');
   }
+};
 
-  // Authenticate
+const authenticate = async (req, modelName) => {
   const authInfo = getAuthFromRequest(req);
 
   const scopeFilter = await getScopeFilter({
-    modelName: 'statement',
+    modelName,
     actionName: 'delete',
     authInfo
   });
+  return { authInfo, scopeFilter };
+};
 
-  if (!get(req, 'query.filter', false)) {
-    throw new ClientError('No filter defined');
-  }
+const initialiseBatchDelete = catchErrors(async (req, res) => {
+  checkDeletionsEnabled();
 
-  let parsedFilter;
-  try {
-    parsedFilter = JSON.parse(req.query.filter);
-  } catch (err) {
-    logger.debug('Error parsing batch deletion filter', err);
-    throw new ClientError('Error parsing filter');
-  }
-  if (isEmpty(parsedFilter)) {
-    throw new ClientError('Filter cannot be blank');
+  // Authenticate
+  const { authInfo, scopeFilter } = await authenticate(req, 'statement');
+
+  const body = req.body;
+  const bodyFilter = get(body, 'filter', false);
+
+  if (isEmpty(bodyFilter)) {
+    throw new ClientError('Filter cannot be empty');
   }
 
   const filter = {
-    ...(await parseQuery(req.query.filter)),
+    ...(await parseQuery(bodyFilter)),
     ...scopeFilter
   };
 
@@ -53,7 +55,7 @@ const initialiseBatchDelete = catchErrors(async (req, res) => {
   const batchDelete = new BatchDelete({
     organisation: getOrgFromAuthInfo(authInfo),
     total,
-    filter: req.query.filter,
+    filter: JSON.stringify(bodyFilter),
     client: get(authInfo, 'client.id')
   });
   await batchDelete.save();
@@ -65,9 +67,43 @@ const initialiseBatchDelete = catchErrors(async (req, res) => {
     },
   });
 
-  res.sendStatus(200);
+  return res.status(200).send(batchDelete);
+});
+
+const terminateBatchDelete = catchErrors(async (req, res) => {
+  checkDeletionsEnabled();
+
+  // Authenticate
+  const { scopeFilter } = await authenticate(req, 'batchdelete');
+  const filter = {
+    ...scopeFilter,
+    _id: objectId(req.params.id)
+  };
+
+  const batchDelete = await BatchDelete.findOne(filter);
+  if (!batchDelete) {
+    return res.status(404).send();
+  }
+
+  batchDelete.done = true;
+  await batchDelete.save();
+  return res.status(204).send();
+});
+
+const terminateAllBatchDeletes = catchErrors(async (req, res) => {
+  checkDeletionsEnabled();
+
+  // Authenticate
+  const { scopeFilter } = await authenticate(req, 'batchdelete');
+  await BatchDelete.updateMany(scopeFilter, {
+    done: true
+  });
+
+  return res.status(204).send();
 });
 
 export default {
-  initialiseBatchDelete
+  initialiseBatchDelete,
+  terminateBatchDelete,
+  terminateAllBatchDeletes
 };
