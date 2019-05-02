@@ -16,7 +16,6 @@ const objectId = mongoose.Types.ObjectId;
 
 const checkDeletionsEnabled = () => {
   if (boolean(get(process.env, 'ENABLE_STATEMENT_DELETION', true)) === false) {
-    // Clear the job and don't do anything
     throw new ClientError('Statement deletions not enabled for this instance');
   }
 };

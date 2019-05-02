@@ -112,7 +112,6 @@ export default async ({
   }, {});
 
   let doneUpdate = {};
-  console.log(result, filter);
   const done = get(result, 'deletedCount') === 0;
   if (done) {
     doneUpdate = {
