@@ -4,6 +4,7 @@ import colorHelper from 'react-color/lib/helpers/color';
 import { ColorWrap, EditableInput, Hue, Saturation, Swatch } from 'react-color/lib/components/common';
 import { ChromePointer } from 'react-color/lib/components/chrome/ChromePointer';
 import { ChromePointerCircle } from 'react-color/lib/components/chrome/ChromePointerCircle';
+import { MAX_CUSTOM_COLORS } from 'lib/constants/visualise';
 
 /**
  * Styling is based on react-color
@@ -93,6 +94,15 @@ const buildStyles = ({ hex }) => ({
 /* eslint new-cap: ["error", { "capIsNew": false }] */
 const CustomColorPickerInner = ColorWrap((props) => {
   const styles = buildStyles(props);
+
+  // To fill space when customColors is less than 7.
+  const dummySwatchListLength = Math.max(MAX_CUSTOM_COLORS - props.customColors.size, 0);
+  const dummySwatchList = new List(Array(dummySwatchListLength)).map((_, i) => (
+    <span key={`dummy-swatch-${i}`}>
+      <div style={styles.swatch} />
+    </span>
+  ));
+
   return (
     <div style={styles.picker}>
       <div style={styles.saturation}>
@@ -137,7 +147,7 @@ const CustomColorPickerInner = ColorWrap((props) => {
                 focusStyle={{
                   boxShadow: `0 0 4px ${c}`,
                 }} />
-            )).valueSeq()
+            )).concat(dummySwatchList).valueSeq()
           }
         </div>
 
@@ -167,7 +177,7 @@ class CustomColorPicker extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      color: colorHelper.toState(props.customColors.first('#000000'))
+      color: colorHelper.toState(props.customColors.first() || '#2BD867')
     };
   }
 

@@ -3,12 +3,11 @@ import { connect } from 'react-redux';
 import { CirclePicker } from 'react-color';
 import { compose, withProps } from 'recompose';
 import { Map, List } from 'immutable';
+import { MAX_CUSTOM_COLORS } from 'lib/constants/visualise';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import { VISUALISATION_COLORS } from 'ui/utils/constants';
 import { withModel } from 'ui/utils/hocs';
 import CustomColorPicker from './CustomColorPicker';
-
-const MAX_CUSTOM_COLORS = 7;
 
 class ColorPicker extends React.PureComponent {
 
