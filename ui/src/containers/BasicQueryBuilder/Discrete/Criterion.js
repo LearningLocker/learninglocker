@@ -78,6 +78,7 @@ class Criterion extends Component {
     if (canDeleteCriterion) {
       return this.props.onDeleteCriterion();
     }
+
     return this.changeCriterion(this.getOperator(), values);
   }
 

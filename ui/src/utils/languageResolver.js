@@ -1,7 +1,6 @@
 import { map, isNull } from 'lodash';
 
 const getLabel = (name) => {
-  console.log('701', name);
   const navLangs = (navigator && navigator.languages) || [];
 
   const allLanguages = name;

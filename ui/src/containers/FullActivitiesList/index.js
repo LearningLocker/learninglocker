@@ -1,10 +1,14 @@
 import React from 'react';
 import ModelOptionList from 'ui/components/AutoComplete2/Options/ModelOptionList/ModelOptionList';
-import SingleInput from 'ui/components/AutoComplete2/Inputs/SingleInput/SingleInput';
+// import SingleInput from 'ui/components/AutoComplete2/Inputs/SingleInput/SingleInput';
 import AutoComplete2 from 'ui/components/AutoComplete2';
 import OptionListItem from 'ui/components/OptionListItem';
 import languageResolver from 'ui/utils/languageResolver';
-import { Map } from 'immutable';
+import { compose, withState, withProps } from 'recompose';
+import { Map, fromJS } from 'immutable';
+import { addCriterionFromSection } from 'ui/utils/queries';
+import { withModel } from 'ui/utils/hocs';
+import FullActivitiesInput from './FullActivitiesInput';
 
 const renderOption = ({
   useTooltip = false,
@@ -38,24 +42,47 @@ const renderOption = ({
 
 const fullActivitiesList = ({
   useTooltip,
-  onSelectOption,
   selectedOption,
-  setSearchString
+  setSearchString,
+  setSearchFilter,
+  valuesFilter,
+  model,
+  updateModel
 }) => {
-  const searchString = '';
+  // DEBUG ONLY, remove
+  selectedOption = 'https://www.lynda.com/CourseID/622074';
 
-  selectedOption = 'test';
+  const onSelectOption = (e) => {
+    const newFilters = model.get('filters').map((match) => {
+      const query = match.get('$match');
+      const result = addCriterionFromSection(query, fromJS({
+        $or: [{
+          'statement.object.id': e.get('activityId')
+        }]
+      }), fromJS({
+        keyPath: 'statement.object'
+      }));
+
+      return query.set('$match', result);
+    });
+
+    updateModel({
+      path: 'filters', value: model.get('filters')
+    });
+    console.log('002 result', newFilters);
+  };
 
   const out = (
     <div>
       <AutoComplete2
         renderInput={({ hasFocus, onFocus }) => {
           const ou = (
-            <SingleInput
+            <FullActivitiesInput
+              filter={valuesFilter}
               hasFocus={hasFocus}
               hasInputFocus={hasFocus}
               onFocus={onFocus}
-              searchString={searchString}
+              searchString={valuesFilter.getIn(['activityId', '$regex'])}
               parseOption={option => option}
               renderOption={renderOption({ useTooltip, onFocus })}
               onChangeSearchString={(e) => {
@@ -63,7 +90,10 @@ const fullActivitiesList = ({
                 return o;
               }}
               placeholder={'Select a Course'}
-              selectedOption={selectedOption} />
+              selectedOption={selectedOption}
+              onChangeFilter={(searchFilter) => {
+                setSearchFilter(searchFilter);
+              }} />
           );
 
           return ou;
@@ -71,7 +101,7 @@ const fullActivitiesList = ({
         renderOptions={() => {
           const ou = (
             <ModelOptionList
-              filter={{}}
+              filter={valuesFilter}
               onSelectOption={onSelectOption}
               parseOption={(option) => {
                 const o = (option ? languageResolver(option.get('name', new Map())) : '');
@@ -91,4 +121,14 @@ const fullActivitiesList = ({
   return out;
 };
 
-export default fullActivitiesList;
+export default compose(
+  withState('searchFilter', 'setSearchFilter'),
+  withProps(({ filter = new Map(), searchFilter = new Map(), notValuesFilter }) => ({
+    filter: filter.mergeDeep(searchFilter).mergeDeep(notValuesFilter)
+  })),
+  withProps(({ filter }) => {
+    return {
+      valuesFilter: filter
+    };
+  }),
+)(fullActivitiesList);

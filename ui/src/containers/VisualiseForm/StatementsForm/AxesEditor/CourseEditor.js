@@ -13,6 +13,8 @@ export default class CourseEditor extends Component {
     //type: PropTypes.string.isRequired,
     operator: PropTypes.string,
     value: PropTypes.instanceOf(Map),
+    model: PropTypes.instanceOf(Map),
+    updateModel: PropTypes.func.isRequired,
     //changeOperator: PropTypes.func.isRequired,
     //changeValue: PropTypes.func.isRequired,
   }
@@ -61,7 +63,9 @@ export default class CourseEditor extends Component {
             valueType: new Map({ $eq: 'Number' })
           })}
           onSelectOption={this.props.changeValue}
-          useTooltip="true" />
+          useTooltip="true"
+          model={this.props.model}
+          updateModel={this.props.updateModel} />
       </div>
     );
   }

@@ -53,7 +53,7 @@ class Editor extends Component {
     </div>
   )
 
-  renderCourseDropdown = description => (
+  renderCourseDropdown = () => (
     <div className="form-group">
       <label htmlFor="toggleInput" className="clearfix">Course</label>
       <div className="form-group">
@@ -61,6 +61,8 @@ class Editor extends Component {
           {...this.props}
           changeValue={'12'}
           changeOperator={'14'} 
+          model={this.props.model}
+          updateModel={this.props.updateModel}
           />
       </div>
     </div>

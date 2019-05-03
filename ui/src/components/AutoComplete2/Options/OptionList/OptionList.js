@@ -18,20 +18,23 @@ const OptionList = ({
   onSelectOption,
   deselectOption,
   children
-}) => (
-  <div className={styles.optionList}>
-    <InfiniteOptionList
-      options={options}
-      optionCount={optionCount}
-      fetchMore={fetchMore}
-      displayCount={displayCount}
-      rowHeight={rowHeight}
-      renderOption={renderOption}
-      onSelectOption={onSelectOption}
-      deselectOption={deselectOption} />
-    { children && <Divider /> }
-    { children }
-  </div>
-);
+}) => {
+  const out = (
+    <div className={styles.optionList}>
+      <InfiniteOptionList
+        options={options}
+        optionCount={optionCount}
+        fetchMore={fetchMore}
+        displayCount={displayCount}
+        rowHeight={rowHeight}
+        renderOption={renderOption}
+        onSelectOption={onSelectOption}
+        deselectOption={deselectOption} />
+      { children && <Divider /> }
+      { children }
+    </div>
+  );
+  return out;
+};
 
 export default withStyles(styles)(OptionList);
