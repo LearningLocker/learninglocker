@@ -40,14 +40,18 @@ const isContextInstructor = criteriaPath =>
  * @returns {boolean}
  */
 const shouldConvert = (condition) => {
-  const comment = condition.get('$comment');
-  const criteriaPath = JSON.parse(comment).criteriaPath || [];
+  try {
+    const comment = condition.get('$comment');
+    const criteriaPath = JSON.parse(comment).criteriaPath || [];
 
-  if (isActor(criteriaPath) || isPersonaId(criteriaPath) || isContextInstructor(criteriaPath)) {
+    if (isActor(criteriaPath) || isPersonaId(criteriaPath) || isContextInstructor(criteriaPath)) {
+      return false;
+    }
+
+    return true;
+  } catch (err) {
     return false;
   }
-
-  return true;
 };
 
 /**
