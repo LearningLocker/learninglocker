@@ -3,6 +3,7 @@ import orgUsageTracker from 'cli/commands/orgUsageTracker';
 import * as redis from 'lib/connections/redis';
 import logger from 'lib/logger';
 import cachePrefix from 'lib/helpers/cachePrefix';
+import runBatchDelete from './scheduler/batchDelete';
 
 const redisClient = redis.createClient();
 
@@ -21,7 +22,7 @@ const runExpiration = async () => {
     logger.info('processing expiration');
     await expirationNotificationEmails({ dontExit: true });
   } else {
-    logger.info('skip expiration');
+    logger.debug('skip expiration');
   }
 
   setTimeout(runExpiration, EXPIRATION_TIMEOUT_MSEC - (Date.now() - startTime));
@@ -45,7 +46,7 @@ const runOrgUsage = async () => {
     logger.info('processing org usage');
     await orgUsageTracker({ dontExit: true });
   } else {
-    logger.info('skip org usage');
+    logger.debug('skip org usage');
   }
 
   setTimeout(runOrgUsage, ORG_USAGE_TIMEOUT_MSEC - (Date.now() - startTime));
@@ -62,3 +63,8 @@ const firstRunDatetime = Date.now() < today3am ? today3am : tomorrow3am;
 
 logger.info(`The first org usage tracking is at ${firstRunDatetime}`);
 setTimeout(runOrgUsage, firstRunDatetime - Date.now());
+
+/**
+ * Run delete jobs
+ */
+runBatchDelete({});
