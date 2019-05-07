@@ -1,9 +1,9 @@
 import { expect } from 'chai';
-import supertestApi from 'lib/connections/supertestApi';
 import * as routes from 'lib/constants/routes';
+import supertestApi from 'lib/connections/supertestApi';
 import { getConnection } from 'lib/connections/mongoose';
-import { createUserJWT } from 'api/auth/jwt';
 import Statement from 'lib/models/statement';
+import { createUserJWT } from 'api/auth/jwt';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
 import testId from 'api/routes/tests/utils/testId';
 import DBHelper from './DBHelper';
@@ -107,7 +107,7 @@ describe('API HTTP Route tests', function describeTest() {
   });
 
   describe('statement routes', () => {
-    describe('Call on statements/aggregation', () => {
+    describe('Call on statements/aggregate', () => {
       beforeEach('create organisation and jwt token', async () => {
         orgJwtToken = await createOrgToken(['ALL'], [], '561a679c0c5d017e4004714e');
 
