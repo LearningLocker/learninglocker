@@ -58,7 +58,7 @@ const templateData = fromJS({
       updateModel({ path: ['previewPeriod'], value: LAST_2_MONTHS });
       updateModel({
         path: ['axesgroup'],
-        value: new Map({ optionKey: 'activity', searchString: 'Activity' }),
+        value: new Map({ optionKey: 'activities', searchString: 'Activity' }),
       });
     },
   },

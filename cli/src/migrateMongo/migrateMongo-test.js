@@ -1,5 +1,6 @@
 import chai, { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import logger from 'lib/logger';
 import { OrderedMap } from 'immutable';
 import migration from 'cli/migrateMongo/models/migration';
 import { promisify } from 'bluebird';
@@ -17,27 +18,30 @@ describe('migrateMongo', () => {
   const migrations = new OrderedMap()
     .set('001-test', {
       up: () => {
-        console.log('up 1');
+        logger.info('up 1');
         migrationsRun.push('001-test-up');
       },
       down: () => {
-        console.log('down 1');
+        logger.info('down 1');
         migrationsRun.push('001-test-down');
       }
     }).set('002-test', {
       up: () => {
-        console.log('up 2');
+        logger.info('up 2');
         migrationsRun.push('002-test-up');
       },
       down: () => {
-        console.log('down 2');
+        logger.info('down 2');
         migrationsRun.push('002-test-down');
       }
     });
 
   describe('up', () => {
     it('should run all the migrations', async () => {
-      await promisify(migrator)({ migrations });
+      await promisify(migrator)({
+        migrations,
+        dontExit: true,
+      });
 
       expect(migrationsRun.length).to.equal(2);
       expect(migrationsRun).to.deep.equal(['001-test-up', '002-test-up']);
@@ -52,6 +56,7 @@ describe('migrateMongo', () => {
       await promisify(migrator)({
         up: 'next',
         migrations,
+        dontExit: true,
       });
 
       expect(migrationsRun.length).to.equal(1);
@@ -65,12 +70,14 @@ describe('migrateMongo', () => {
 
     it('should error up next if no up migrations left', async () => {
       await promisify(migrator)({
-        migrations
+        migrations,
+        dontExit: true,
       });
 
       const resultPromise = promisify(migrator)({
         up: 'next',
-        migrations
+        migrations,
+        dontExit: true,
       });
 
       await expect(resultPromise)
@@ -79,7 +86,8 @@ describe('migrateMongo', () => {
 
     it('should error if up key does not exist', async () => {
       await promisify(migrator)({
-        migrations
+        migrations,
+        dontExit: true,
       });
 
       const resultPromise = promisify(migrator)({
@@ -94,7 +102,8 @@ describe('migrateMongo', () => {
   describe('down', () => {
     beforeEach(async () => {
       await promisify(migrator)({
-        migrations
+        migrations,
+        dontExit: true,
       });
       migrationsRun = [];
     });
@@ -102,7 +111,8 @@ describe('migrateMongo', () => {
     it('should down previous/last migration', async () => {
       await promisify(migrator)({
         down: 'previous',
-        migrations
+        migrations,
+        dontExit: true,
       });
 
       expect(migrationsRun).to.deep.equal(['002-test-down']);
@@ -118,7 +128,8 @@ describe('migrateMongo', () => {
     it('should down to target migration', async () => {
       await promisify(migrator)({
         down: '001-test',
-        migrations
+        migrations,
+        dontExit: true,
       });
 
       expect(migrationsRun).to.deep.equal(['002-test-down', '001-test-down']);
@@ -127,12 +138,14 @@ describe('migrateMongo', () => {
     it('should error if down not existing target migration', async () => {
       await promisify(migrator)({
         down: '002-test',
-        migrations
+        migrations,
+        dontExit: true,
       });
 
       const result = promisify(migrator)({
         down: '002-test',
-        migrations
+        migrations,
+        dontExit: true,
       });
 
       await expect(result).to.eventually.be.rejectedWith(
@@ -144,12 +157,14 @@ describe('migrateMongo', () => {
     it('should error if down is last but there are no run migrations', async () => {
       await promisify(migrator)({
         down: '001-test',
-        migrations
+        migrations,
+        dontExit: true,
       });
 
       const result = promisify(migrator)({
         down: 'previous',
-        migrations
+        migrations,
+        dontExit: true,
       });
 
       await expect(result).to.eventually.be.rejectedWith(
@@ -163,21 +178,21 @@ describe('migrateMongo', () => {
     const migrationsError = new OrderedMap()
       .set('001-test', {
         up: () => {
-          console.log('up 1');
+          logger.info('up 1');
           migrationsRun.push('001-test-up');
         },
         down: () => {
-          console.log('down 1');
+          logger.info('down 1');
           migrationsRun.push('001-test-down');
         }
       }).set('002-test', {
         up: () => {
-          console.log('up 2');
+          logger.info('up 2');
           migrationsRun.push('002-test-up');
           throw new Error('migration failed');
         },
         down: () => {
-          console.log('down 2');
+          logger.info('down 2');
           migrationsRun.push('002-test-down');
         }
       });
@@ -186,6 +201,7 @@ describe('migrateMongo', () => {
       try {
         await promisify(migrator)({
           migrations: migrationsError,
+          dontExit: true,
         });
       } catch (err) {
         expect(err.message).to.equal('migration failed');
@@ -203,7 +219,8 @@ describe('migrateMongo', () => {
   describe('up changed past', () => {
     beforeEach(async () => {
       await promisify(migrator)({
-        migrations
+        migrations,
+        dontExit: true,
       });
     });
 
@@ -212,31 +229,7 @@ describe('migrateMongo', () => {
         // no migrations
       });
 
-      await expect(result).to.eventually.be.rejectedWith(
-        Error,
-        'Db does not match the migrations'
-      );
-    });
-
-    it('should error if function changes', async () => {
-      const newMigrations = migrations.set('001-test', {
-        up: () => {
-          const foo = 'bar';
-          return foo;
-        },
-        down: () => {
-
-        }
-      });
-
-      const result = promisify(migrator)({
-        migrations: newMigrations
-      });
-
-      await expect(result).to.eventually.be.rejectedWith(
-        Error,
-        'db up migration for (001-test) does not match the function that was run'
-      );
+      await expect(result).to.eventually.be.rejectedWith(Error);
     });
   });
 });
