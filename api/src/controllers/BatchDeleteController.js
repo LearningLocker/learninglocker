@@ -45,7 +45,7 @@ const initialiseBatchDelete = catchErrors(async (req, res) => {
   }
 
   const filter = {
-    ...(await parseQuery(bodyFilter)),
+    ...(await parseQuery(bodyFilter, { authInfo })),
     ...scopeFilter
   };
 
