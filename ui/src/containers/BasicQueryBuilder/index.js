@@ -26,12 +26,14 @@ const render = ({ componentPath, defaults, query, onQueryChange }) => {
       componentPath={componentPath}
       criteria={criteria}
       defaults={defaults}
-      onCriteriaChange={newCriteria =>
-        onQueryChange(changeCriteria(newCriteria))
-      }
-      onAddCriterion={(criterion, section) =>
-        onQueryChange(addCriterionFromSection(query, criterion, section))
-      }
+      onCriteriaChange={(newCriteria) => {
+        const out = onQueryChange(changeCriteria(newCriteria));
+        return out;
+      }}
+      onAddCriterion={(criterion, section) => {
+        const out = onQueryChange(addCriterionFromSection(query, criterion, section));
+        return out;
+      }}
       onDeleteCriterion={key => onQueryChange(deleteCriterion(criteria, key))} />
   );
 };

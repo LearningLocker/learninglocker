@@ -5,9 +5,12 @@ import AutoComplete2 from 'ui/components/AutoComplete2';
 import OptionListItem from 'ui/components/OptionListItem';
 import languageResolver from 'ui/utils/languageResolver';
 import { compose, withState, withProps } from 'recompose';
-import { Map, fromJS } from 'immutable';
-import { addCriterionFromSection } from 'ui/utils/queries';
-import { withModel } from 'ui/utils/hocs';
+import { Map, List } from 'immutable';
+import { connect } from 'react-redux';
+import { addTokenToQuery } from 'ui/utils/queries';
+import { valueToCriteria } from 'ui/redux/modules/queryBuilder';
+import { modelsSchemaIdSelector } from 'ui/redux/selectors';
+import { createSelector } from 'reselect';
 import FullActivitiesInput from './FullActivitiesInput';
 
 const renderOption = ({
@@ -47,29 +50,36 @@ const fullActivitiesList = ({
   setSearchFilter,
   valuesFilter,
   model,
-  updateModel
+  updateModel,
+  schema,
 }) => {
   // DEBUG ONLY, remove
   selectedOption = 'https://www.lynda.com/CourseID/622074';
 
-  const onSelectOption = (e) => {
+  const onSelectOption = ({ onBlur }) => (e) => {
     const newFilters = model.get('filters').map((match) => {
-      const query = match.get('$match');
-      const result = addCriterionFromSection(query, fromJS({
-        $or: [{
-          'statement.object.id': e.get('activityId')
-        }]
-      }), fromJS({
-        keyPath: 'statement.object'
-      }));
+      const query = match.get('$match', new Map());
 
-      return query.set('$match', result);
+      const keyPath = ['statement', 'object'];
+      const tokenQuery = valueToCriteria(
+        [...keyPath, 'id'].join('.'),
+        new Map({ value: e.get('activityId') })
+      );
+
+      const result = addTokenToQuery(query, new List(keyPath), tokenQuery);
+
+      const out = match.set('$match', result);
+      return out;
     });
 
     updateModel({
-      path: 'filters', value: model.get('filters')
+      schema,
+      id: model.get('_id'),
+      path: 'filters',
+      value: newFilters
     });
-    console.log('002 result', newFilters);
+
+    onBlur();
   };
 
   const out = (
@@ -98,11 +108,11 @@ const fullActivitiesList = ({
 
           return ou;
         }}
-        renderOptions={() => {
+        renderOptions={({ onBlur }) => {
           const ou = (
             <ModelOptionList
-              filter={valuesFilter}
-              onSelectOption={onSelectOption}
+              filter={valuesFilter.mergeDeep({ type: 'http://adlnet.gov/expapi/activities/course' })}
+              onSelectOption={onSelectOption({ onBlur })}
               parseOption={(option) => {
                 const o = (option ? languageResolver(option.get('name', new Map())) : '');
                 return o;
@@ -121,14 +131,31 @@ const fullActivitiesList = ({
   return out;
 };
 
+// const courseIdSelector = (schema, id) => createSelector(
+//   [modelsSchemaIdSelector(schema, id)],
+//   (model) => {
+//     const filters = model.get('filters');
+
+
+
+//   }
+// );
+
 export default compose(
   withState('searchFilter', 'setSearchFilter'),
   withProps(({ filter = new Map(), searchFilter = new Map(), notValuesFilter }) => ({
-    filter: filter.mergeDeep(searchFilter).mergeDeep(notValuesFilter)
+    filter: filter.mergeDeep(searchFilter).mergeDeep(notValuesFilter),
+    schema: 'visualisation'
   })),
   withProps(({ filter }) => {
     return {
       valuesFilter: filter
     };
   }),
+  // connect((state, { schema, model }) => {
+
+  //   return {
+  //     selectedOption: courseIdSelector(schema, model.get('_id')),
+  //   };
+  // }, { })
 )(fullActivitiesList);

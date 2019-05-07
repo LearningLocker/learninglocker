@@ -85,28 +85,36 @@ const getMemoizedCriteria = memoize((args) => {
   iterable.toJS()
 );
 
-const getCriteriaFromQuery = (query, criteria) => getMemoizedCriteria(new Map({ query, criteria }));
+const getCriteriaFromQuery = (query, criteria) => {
+  const out = getMemoizedCriteria(new Map({ query, criteria }));
+  return out;
+};
 
 export const getCriteria = query =>
   getCriteriaFromQuery(query, new Map());
 
-export const changeCriteria = criteria =>
-  new Map(
+export const changeCriteria = (criteria) => {
+  const out = new Map(
     criteria.count() > 0 ?
     { $and: criteria.toList() } :
     {}
   );
+  return out;
+};
 
 export const deleteCriterion = (criteria, key) => changeCriteria(criteria.delete(key));
 
-const changeCriterion = (criteria, criterionKey, newCriterion) =>
-  changeCriteria(criteria.set(criterionKey, newCriterion));
+const changeCriterion = (criteria, criterionKey, newCriterion) => {
+  const out = changeCriteria(criteria.set(criterionKey, newCriterion));
+  return out;
+};
 
 export const addTokenToQuery = (query, keyPath, token) => {
   const criteria = getCriteria(query);
-  const filteredCriteria = criteria.filter(criterion =>
-    new List(JSON.parse(criterion.get('$comment')).criteriaPath).equals(keyPath)
-  );
+  const filteredCriteria = criteria.filter((criterion) => {
+    const out = new List(JSON.parse(criterion.get('$comment')).criteriaPath).equals(keyPath);
+    return out;
+  });
 
   if (filteredCriteria.size === 0) {
     return addCriterion(query, keyPath, new Map({
@@ -136,8 +144,10 @@ const addCriterion = (query, keyPath, criterion) => {
   return changeCriterion(criteria, criterionKey, newCriterion);
 };
 
-export const addCriterionFromSection = (query, criterion, section) =>
-  addCriterion(query, section.get('keyPath', new List()), criterion);
+export const addCriterionFromSection = (query, criterion, section) => {
+  const out = addCriterion(query, section.get('keyPath', new List()), criterion);
+  return out;
+};
 
 const getOperatorFromCriterion = criterion => (criterion.has('$nor') ? '$nor' : '$or');
 
