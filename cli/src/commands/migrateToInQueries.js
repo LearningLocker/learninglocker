@@ -207,7 +207,7 @@ const convertDashboards = async () => {
 
       dashboard.hasBeenMigrated = true;
       await dashboard.save();
-    } catch (err) { logger.error(`Error updating Dashboard ${dashboard._id}` err); }
+    } catch (err) { logger.error(`Error updating Dashboard ${dashboard._id}`, err); }
   }
 };
 
