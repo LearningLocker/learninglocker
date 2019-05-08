@@ -50,7 +50,7 @@ class Statement extends Component {
   renderSubStatement = basePath =>
     <span>({this.renderStatement(basePath)})</span>;
 
-  renderObject = (basePath) => {
+  renderObject = (basePath, filterPath) => {
     const objectTypePath = basePath.concat(['objectType']);
     const objectType = this.getInStatement(objectTypePath);
 
@@ -58,23 +58,27 @@ class Statement extends Component {
       case 'SubStatement': return this.renderSubStatement(basePath);
       case 'StatementRef': return (<span>StatementRef</span>);
       case 'Agent':
-      case 'Group': return this.renderActor(basePath);
+      case 'Group': return this.renderActor(basePath, filterPath);
       default: return this.renderActivity(basePath);
     }
   }
 
   renderStatement = (basePath) => {
-    const actorPath = basePath.size === 1 && this.hasInStatement(new List(['person'])) ?
+    const personPath = basePath.size === 1 && this.hasInStatement(new List(['person'])) ?
       new List(['person']) :
-      basePath.concat(['actor']);
+      undefined;
+
+    const actorPath = basePath.concat(['actor']);
+    const verbPath = basePath.concat(['verb']);
+    const objectPath = basePath.concat(['object']);
 
     return (
       <span>
-        {this.renderActor(basePath.concat(['actor']), actorPath)}
+        {this.renderActor(actorPath, personPath || actorPath)}
         {' '}
-        {this.renderVerb(basePath.concat(['verb']))}
+        {this.renderVerb(verbPath)}
         {' '}
-        {this.renderObject(basePath.concat(['object']))}
+        {this.renderObject(objectPath, objectPath)}
       </span>
     );
   };
