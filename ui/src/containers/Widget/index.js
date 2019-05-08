@@ -114,7 +114,7 @@ class Widget extends Component {
     return 'Enable donut';
   }
 
-  getTitle = model => model.get('title') || <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>{createDefaultTitle(this.props.visualisation, '')}</span>;
+  getTitle = props => props.visualisation.get('description') || <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>{createDefaultTitle(this.props.visualisation, '')}</span>;
 
   toggleEditingTitle = () => {
   }
@@ -196,7 +196,7 @@ class Widget extends Component {
       [styles.title]: true,
       [styles.draggableTitle]: this.props.editable,
     });
-
+    console.log('in modal', model, 'and props: ', this.props)
     return (
       <div className={`panel panel-default animated fadeIn ${styles.widget}`} >
         <div className={styles.widgetContent}>
@@ -205,7 +205,7 @@ class Widget extends Component {
             onDoubleClick={this.toggleEditingTitle}>
             <div className={`panel-title ${titleStyles} react-drag-handle`}>
               { this.props.editable && this.renderMenu(styles) }
-              <span style={{ cursor: 'initial' }}>{this.getTitle(model, this.props)}</span>
+              <span style={{ cursor: 'initial' }}>{this.getTitle(this.props)}</span>
             </div>
           </div>
           {

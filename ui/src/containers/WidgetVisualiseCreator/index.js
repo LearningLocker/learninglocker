@@ -10,7 +10,7 @@ import { withModels } from 'ui/utils/hocs';
 
 const schema = 'visualisation';
 
-class WidgetVisualisePicker extends Component {
+class WidgetVisualiseCreator extends Component {
   static propTypes = {
     isOpened: PropTypes.bool,
     onClickClose: PropTypes.func,
@@ -136,5 +136,5 @@ class WidgetVisualisePicker extends Component {
 }
 
 export default compose(withProps({ schema }), withModels)(
-  WidgetVisualisePicker
+  WidgetVisualiseCreator
 );
