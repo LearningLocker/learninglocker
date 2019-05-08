@@ -1,6 +1,10 @@
 import { Map, Set, Iterable } from 'immutable';
 import { has, isString } from 'lodash';
 
+/**
+ * @param {any} value
+ * @returns {string}
+ */
 export const strDisplay = (value) => {
   if (isString(value)) {
     return value;
@@ -24,6 +28,11 @@ export const displayActor = (actor = new Map()) => {
 };
 
 const actorIdents = new Set(['mbox', 'mbox_sha1sum', 'openid', 'account']);
+
+/**
+ * @param {immutable.Map} actor
+ * @returns {immutable.Map}
+ */
 export const getActorIdentifiers = (actor = new Map()) =>
   actor.filter((value, key) => actorIdents.has(key));
 
@@ -75,6 +84,10 @@ export const identToString = (obj = new Map()) => {
   return obj;
 };
 
+/**
+ * @param {immutable.Map|string} obj
+ * @returns {string}
+ */
 export const objectIdentToString = (obj = new Map()) => {
   if (Iterable.isIterable(obj)) {
     const objectType = obj.get('objectType', 'Activity');

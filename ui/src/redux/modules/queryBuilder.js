@@ -15,29 +15,54 @@ import {
   strDisplay,
 } from 'ui/utils/xapi';
 
+/**
+ * @param {*} searchString
+ * @returns {immutable.Map}
+ */
 const searchStringToVerbFilter = searchString =>
   fromJS({ $or: [
     { 'value.id': { $regex: `${searchString}`, $options: 'i' } },
     { 'value.display.en-GB': { $regex: `${searchString}`, $options: 'i' } },
   ] });
+
 // const searchStringToDefaultFilter = searchString =>
 //   fromJS({ value: { $regex: `${searchString}`, $options: 'i' } });
 
+/**
+ * @param {*} searchString
+ * @returns {immutable.Map}
+ */
 const searchStringToPersonaFilter = searchString =>
   fromJS({
     name: { $regex: `${searchString}`, $options: 'i' }
   });
 
+/**
+ * @param {string} mapPath
+ * @param {immutable.Map} mapQuery
+ * @param {immutable.Map} map
+ * @returns {immutable.Map}
+ */
 export const reduceMap = (mapPath, mapQuery, map) => {
-  const reducer = path => (query, value, key) => {
+  // (path: string) => (
+  //   accQuery: immutable.Map,
+  //   value: immutable.Map|any,
+  //   key: string
+  // ) => immutable.Map
+  const reducer = path => (accQuery, value, key) => {
     if (value instanceof Map) {
-      return reduceMap(`${path}.${key}`, query, value);
+      return reduceMap(`${path}.${key}`, accQuery, value);
     }
-    return query.set(`${path}.${key}`, value);
+    return accQuery.set(`${path}.${key}`, value);
   };
+
   return map.reduce(reducer(mapPath), mapQuery);
 };
 
+/**
+ * @param {immutable.Map} actor
+ * @returns {immutable.Map}
+ */
 export const getActorQuery = (actor) => {
   const result = reduceMap('statement.actor', new Map(), actor);
   return result
@@ -45,6 +70,10 @@ export const getActorQuery = (actor) => {
     .delete('statement.actor.objectType');
 };
 
+/**
+ * @param {any} value
+ * @returns {string}
+ */
 export const displayAuto = (value) => {
   if (Iterable.isIterable(value)) {
     if (value.has('objectType')) {
@@ -83,16 +112,25 @@ export const displayAuto = (value) => {
   return strDisplay(value);
 };
 
+/**
+ * @param {*} date
+ * @returns {immutable.Map}
+ */
 export const getDateQuery = date => fromJS({ $dte: date });
 
 export const operators = {
-  DISCRETE: 'discrete',
+  OR_DISCRETE: 'orDiscrete', // Query uses `$or` and `$nor` for multiple values
+  DISCRETE: 'discrete',      // Query uses `$in` and `$nin` for multiple values
   CONTINUOUS: 'continuous',
   RANGE: 'range',
   BOOLEAN: 'boolean',
   STRING_MATCHES: 'stringMatches'
 };
 
+/**
+ * @param {immutable.List} needle
+ * @returns {(haystack: immutable.List) => boolean}
+ */
 const isChildKey = needle => (haystack) => {
   if (needle.size + 1 > haystack.size) return false;
   return needle.equals(haystack.take(needle.size));
@@ -110,15 +148,14 @@ export const initialSections = fromJS({
   who: {
     title: 'Who',
     keyPath: new List(['person']),
+    getQueryKey: 'person._id',
     sourceSchema: 'persona',
     searchStringToFilter: searchStringToPersonaFilter,
     getModelIdent: model => model.get('_id'),
     getModelDisplay: model => model.get('name', model.get('_id')),
-    getModelQuery: model => new Map({
-      'person._id': new Map({ $oid: model.get('_id') })
-    }),
+    getModelQuery: model => new Map({ $oid: model.get('_id') }),
     getQueryModel: query => new Map({
-      _id: query.get('person._id')
+      _id: new Map({ $oid: query.get('$oid') }),
     }),
     operators: operators.DISCRETE,
     children: {
@@ -126,6 +163,7 @@ export const initialSections = fromJS({
         title: 'Additional Data',
         childGenerators: new List([
           new Map({
+            childOperators: operators.OR_DISCRETE,
             path: new List(['persona', 'import']),
             pathMatcher: path => (
               path.size > 1 &&
@@ -135,13 +173,13 @@ export const initialSections = fromJS({
                 path.get(1) === 'statement.actor.account.homePage'
               )
             ),
-            getQuery: (basePath, value) => {
+            getQuery: basePath => (value) => {
               const query = new Map({ key: basePath, value: value.get('value') });
               return new Map({
                 'person._id': new Map({ $personaIdent: query })
               });
             },
-            getModel: (basePath, query) => new Map({
+            getModel: () => query => new Map({
               value: query
                 .get('person._id', new Map())
                 .get('$personaIdent', new Map())
@@ -184,48 +222,39 @@ export const initialSections = fromJS({
           }
           return new Map({ _id: null });
         },
-        operators: operators.DISCRETE,
+        operators: operators.OR_DISCRETE,
       },
     },
   },
   verbs: {
     title: 'Did',
     keyPath: new List(['statement', 'verb']),
+    getQueryKey: 'statement.verb.id',
     getModelIdent: model => identToString(model.get('value')),
     getModelDisplay: displayCacheValue(displayVerb),
     searchStringToFilter: searchStringToVerbFilter,
-    getModelQuery: model => new Map({
-      'statement.verb.id': model.getIn(['value', 'id'])
-    }),
-    getQueryModel: query => new Map({
-      'value.id': query.get('statement.verb.id')
-    }),
+    getModelQuery: model => model.getIn(['value', 'id']),
+    getQueryModel: query => new Map({ 'value.id': query }),
     operators: operators.DISCRETE,
   },
   objects: {
     title: 'What',
     keyPath: new List(['statement', 'object']),
+    getQueryKey: 'statement.object.id',
     getModelIdent: model => objectIdentToString(model.get('value')),
     getModelDisplay: displayCacheValue(displayActivity),
-    getModelQuery: model => new Map({
-      'statement.object.id': model.getIn(['value', 'id'])
-    }),
-    getQueryModel: query => new Map({
-      'value.id': query.get('statement.object.id')
-    }),
+    getModelQuery: model => model.getIn(['value', 'id']),
+    getQueryModel: query => new Map({ 'value.id': query }),
     operators: operators.DISCRETE,
     children: {
       type: {
         title: 'Type',
         keyPath: new List(['statement', 'object', 'definition', 'type']),
+        getQueryKey: 'statement.object.definition.type',
         getModelIdent: model => model.get('value'),
         getModelDisplay: displayCacheValue(identity),
-        getModelQuery: model => new Map({
-          'statement.object.definition.type': model.get('value')
-        }),
-        getQueryModel: query => new Map({
-          value: query.get('statement.object.definition.type')
-        }),
+        getModelQuery: model => model.get('value'),
+        getQueryModel: query => new Map({ value: query }),
         operators: operators.DISCRETE,
       },
       extensions: {
@@ -260,6 +289,7 @@ export const initialSections = fromJS({
       scaled: {
         title: 'Scaled',
         keyPath: new List(['statement', 'result', 'score', 'scaled']),
+        getQueryKey: 'statement.result.score.scaled',
         operators: operators.RANGE,
         getModelIdent: model => objectIdentToString(model.get('value')),
         getModelDisplay: displayCacheValue(displayActivity),
@@ -270,9 +300,7 @@ export const initialSections = fromJS({
         keyPath: new List(['statement', 'result', 'response']),
         operators: operators.STRING_MATCHES,
         getValueQuery: value => value,
-        getModelQuery: model => new Map({
-          'statement.result.response': model
-        }),
+        getModelQuery: model => new Map({ 'statement.result.response': model }),
         getQueryModel: query => query.get('statement.result.response'),
       },
       complete: {
@@ -292,6 +320,7 @@ export const initialSections = fromJS({
       raw: {
         title: 'Raw result',
         keyPath: new List(['statement', 'result', 'score', 'raw']),
+        getQueryKey: 'statement.result.score.raw',
         operators: operators.RANGE,
         getModelIdent: model => objectIdentToString(model.get('value')),
         getModelDisplay: displayCacheValue(displayActivity),
@@ -302,6 +331,7 @@ export const initialSections = fromJS({
       max: {
         title: 'Max result',
         keyPath: new List(['statement', 'result', 'score', 'max']),
+        getQueryKey: 'statement.result.score.max',
         operators: operators.RANGE,
         getModelIdent: model => objectIdentToString(model.get('value')),
         getModelDisplay: displayCacheValue(displayActivity),
@@ -312,6 +342,7 @@ export const initialSections = fromJS({
       min: {
         title: 'Min result',
         keyPath: new List(['statement', 'result', 'score', 'min']),
+        getQueryKey: 'statement.result.score.min',
         operators: operators.RANGE,
         getModelIdent: model => objectIdentToString(model.get('value')),
         getModelDisplay: displayCacheValue(displayActivity),
@@ -348,6 +379,7 @@ export const initialSections = fromJS({
   stores: {
     title: 'Store',
     keyPath: new List(['lrs_id']),
+    getQueryKey: 'lrs_id',
     sourceSchema: 'lrs',
     getModelIdent: model => model.get('_id'),
     getModelDisplay: (model) => {
@@ -355,16 +387,19 @@ export const initialSections = fromJS({
       const count = model.get('statementCount', 0);
       return `${title} (${count} statements)`;
     },
-    getModelQuery: model => new Map({
-      lrs_id: new Map({ $oid: model.get('_id') })
-    }),
+    getModelQuery: model => new Map({ $oid: model.get('_id') }),
     getQueryModel: query => new Map({
-      _id: query.get('lrs_id')
+      _id: new Map({ $oid: query.get('$oid') }),
     }),
     operators: operators.DISCRETE,
   },
 });
 
+/**
+ * @param {Iterable|immutable.Map} object
+ * @param {immutable.List} path
+ * @returns {immutable.Map}
+ */
 const flattenDeep = (object, path = new List()) => {
   if (Iterable.isIterable(object)) {
     return object.map((child, key) =>
@@ -374,9 +409,22 @@ const flattenDeep = (object, path = new List()) => {
   return new Map({ [path.join('.')]: object });
 };
 
+/**
+ * @param {immutable.Map} value
+ * @returns {immutable.Map}
+ */
 export const getId = value => new Map({ id: value.get('id') });
+
+/**
+ * @param {immutable.Map} value
+ * @returns {immutable.Map}
+ */
 export const getMongoId = value => new Map({ _id: { $oid: value.get('_id') } });
 
+/**
+ * @param {immutable.Iterable} value
+ * @returns {immutable.Map}
+ */
 export const defaultParser = (value) => {
   if (Iterable.isIterable(value)) {
     if (value.has('objectType')) {
@@ -398,14 +446,6 @@ export const defaultParser = (value) => {
 //  "statement.actor.account.name": "bradlycorkery",
 //  "statement.actor.account.homePage": "www.example.com"
 // }
-export const valueToCriteria = (basePath, value) => {
-  const idents = defaultParser(value.get('value'));
-  const flatIdents = flattenDeep(idents);
-  const result = flatIdents.mapKeys(
-    flatKey => ((flatKey === '') ? basePath : `${basePath}.${flatKey}`)
-  ).map(v => fromJS(v));
-  return result;
-};
 
 export const matchArrays = (needle = new List(), hay = new List()) => {
   // if both arrays are empty
@@ -428,16 +468,22 @@ export const matchArrays = (needle = new List(), hay = new List()) => {
   return hasMatch;
 };
 
-const criteriaToValue = (basePath, criteria) => {
-  if (!Iterable.isIterable(criteria)) return criteria;
-  return criteria.mapKeys(key => key.replace(basePath, 'value'));
-};
-
-const getChildOveridesFromValueType = (valueType, generator) => {
+/**
+ * @param {string} valueType
+ * @param {immutable.Map} generator
+ * @param {immutable.List} childPath
+ * @returns {{ operators: string, getValueQuery?: (value: any) => any }}
+ */
+const getChildOverridesFromValueType = (valueType, generator, childPath) => {
   if (valueType === 'Number') {
     return {
       operators: operators.RANGE,
       getValueQuery: value => value
+    };
+  }
+  if (childPath.equals(new List(['statement', 'context', 'instructor']))) {
+    return {
+      operators: operators.OR_DISCRETE
     };
   }
   return {
@@ -445,23 +491,56 @@ const getChildOveridesFromValueType = (valueType, generator) => {
   };
 };
 
+/**
+ * @param {string} basePath
+ * @param {immutable.Iterable} value
+ * @return {immutable.Map}
+ */
+export const valueToCriteria = (basePath, value) => {
+  const idents = defaultParser(value);
+  const flatIdents = flattenDeep(idents);
+  const result = flatIdents.mapKeys(
+    flatKey => ((flatKey === '') ? basePath : `${basePath}.${flatKey}`)
+  ).map(v => fromJS(v));
+  return result;
+};
+
+/**
+ * @param {immutable.Map} generator
+ * @returns {(keyPath: string[], valueType: ) => immutable.Map}
+ */
 const buildInputChild = generator => (keyPath, valueType) => {
-  const getQuery = generator.get('getQuery', valueToCriteria);
-  const getModel = generator.get('getModel', criteriaToValue);
   const joinedPath = keyPath.join('.');
-  const childGenerator = generator.set('path', generator.get('path').push(keyPath.last()));
-  const childOverides = getChildOveridesFromValueType(valueType, generator);
+
+  // (value: immutable.Map) => immutable.Map|string
+  const getModelQuery = generator.has('getQuery')
+    ? generator.get('getQuery')(joinedPath)
+    : value => defaultParser(value.get('value'));
+
+  // (criteria: immutable.Map|string) => immutable.Map
+  const getQueryModel = generator.has('getModel')
+    ? generator.get('getModel')(joinedPath)
+    : criteria => new Map({ value: criteria });
+
+  const childPath = generator.get('path').push(keyPath.last());
+  const childGenerator = generator.set('path', childPath);
+  const childOverrides = getChildOverridesFromValueType(valueType, generator, childPath);
   return new Map({
     keyPath,
+    getQueryKey: joinedPath,
     getModelDisplay: generator.get('getChildDisplay', displayCacheValue(displayAuto)),
     getModelIdent: generator.get('getChildIdent', model => identToString(model.get('value'))),
-    getModelQuery: getQuery.bind(null, joinedPath),
-    getQueryModel: getModel.bind(null, joinedPath),
+    getModelQuery,
+    getQueryModel,
     childGenerators: new List([childGenerator]),
-    ...childOverides,
+    ...childOverrides,
   });
 };
 
+/**
+ * @param {immutable.List<immutable.Map>} caches
+ * @returns {(generator: immutable.Map) => immutable.Map}
+ */
 const getChildPaths = caches => (generator) => {
   const generatorPath = generator.get('path');
   const defaultPathMatcher = isChildKey(generatorPath);
@@ -471,6 +550,10 @@ const getChildPaths = caches => (generator) => {
   return matchedCaches.groupBy(cache => cache.get('path').take(depth));
 };
 
+/**
+ * @param {immutable.List<immutable.Map>} caches
+ * @returns {(generator: immutable.Map) => immutable.Map}
+ */
 export const buildChildrenFromCaches = caches => (generator) => {
   const groupedCaches = getChildPaths(caches)(generator);
   return groupedCaches.map((groupedCache, keyPath) => {
@@ -490,15 +573,22 @@ export const buildChildrenFromCaches = caches => (generator) => {
   }).mapKeys(key => key.join('.'));
 };
 
+/**
+ * @param {immutable.List<immutable.Map>} caches
+ * @returns {(generators: immutable.List<immutable.Map>) => immutable.Map}
+ */
 const buildChildrenFromGenerators = caches => (generators) => {
   const results = generators.map(buildChildrenFromCaches(caches));
-  const out = results.reduce((res, result) => res
-    .merge(result)
-    , new Map()
+  return results.reduce(
+    (res, result) => res.merge(result),
+    new Map()
   );
-  return out;
 };
 
+/**
+ * @param {immutable.Map} section
+ * @returns {(caches: immutable.List<immutable.Map>) => (generators: immutable.List<immutable.Map>) => immutable.Map}
+ */
 const buildSectionFromGenerators = section => caches => (generators) => {
   const generatedChildren = buildChildrenFromGenerators(caches)(generators);
   return section.update('children', new Map(), children => children.merge(

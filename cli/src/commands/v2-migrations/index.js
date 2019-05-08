@@ -9,6 +9,7 @@ import siteSettings from './20180411160000_site_settings';
 import shareableDashboards from './20180320093000_shareable_dashboards';
 import personaAttributesIndexes from './20190212150000_personaAttributes_indexes';
 import oauthTokens from './20190131000000_oauth_tokens';
+import migrateToInQueries from './20190307130000_migrate_to_in_queries';
 
 export default new OrderedMap()
   .set('20171122100800_common_indexes', commonIndexesMigration)
@@ -21,4 +22,5 @@ export default new OrderedMap()
   .set('20180411160000_site_settings', siteSettings)
   .set('20180212_expiration', expiration)
   .set('20190131000000_oauth_tokens', oauthTokens)
-  .set('20190212150000_personaAttributes_indexes', personaAttributesIndexes);
+  .set('20190212150000_personaAttributes_indexes', personaAttributesIndexes)
+  .set('20190307130000_migrate_to_in_queries', migrateToInQueries);

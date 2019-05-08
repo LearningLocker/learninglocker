@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Map } from 'immutable';
-import classNames from 'classnames';
+import styles from '../styles.css';
 import Criterion from './Criterion';
 
 export default class Criteria extends Component {
@@ -19,14 +19,6 @@ export default class Criteria extends Component {
 
   changeCriteria = (key, criterion) => {
     this.props.onCriteriaChange(this.props.criteria.set(key, criterion));
-  }
-
-  getEmptyQuery = () => this.props.section.get('getEmptyQuery')();
-
-  addCriterion = () => {
-    this.props.onAddCriterion(new Map({
-      $gt: this.getEmptyQuery(),
-    }), this.props.section);
   }
 
   createCriterion = (criterion) => {
@@ -54,7 +46,7 @@ export default class Criteria extends Component {
 
   renderEmptyCriteria = () => {
     const criterion = new Map({
-      $gt: this.getEmptyQuery(),
+      $gt: this.props.section.get('getEmptyQuery')(),
       $comment: JSON.stringify({
         criteriaPath: this.props.section.get('keyPath'),
         criterionLabel: 'FAKE_LABEL',
@@ -68,29 +60,15 @@ export default class Criteria extends Component {
     );
   }
 
-  render = () => {
-    const styles = require('../styles.css');
-
-    const addBtnClasses = classNames(styles.criterionButton, 'btn btn-default btn-xs');
-    return (
-      <div>
-        <div className={styles.criteria}>
-          {(
-            this.props.criteria.count() > 0 ?
-            this.renderCriteria() :
-            this.renderEmptyCriteria()
-          )}
-        </div>
-        { false && this.props.criteria.count() > 0 &&
-          <div className="text-right">
-            <button
-              className={addBtnClasses}
-              onClick={this.addCriterion}>
-              <i className="ion-plus-round" />
-            </button>
-          </div>
+  render = () => (
+    <div>
+      <div className={styles.criteria}>
+        {
+          this.props.criteria.count() > 0 ?
+          this.renderCriteria() :
+          this.renderEmptyCriteria()
         }
       </div>
-    );
-  }
+    </div>
+    )
 }
