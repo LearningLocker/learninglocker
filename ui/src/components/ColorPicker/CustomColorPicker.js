@@ -191,7 +191,10 @@ class CustomColorPicker extends React.PureComponent {
 
   render = () => (
     <CustomColorPickerInner
-      color={this.state.color}
+      // Pass HSL to ColorWrap to fix Hue because if props.color has .hex property, HSL is calculated by the hex.
+      // HSL calculated via hex is slightly different from original HSL
+      // https://github.com/casesandberg/react-color/blob/f34fb60230510e1bf53c23c271209ce30fcaed75/src/helpers/color.js#L26-L27
+      color={this.state.color.hsl}
       customColors={this.props.customColors}
       onChange={this.updateColorState}
       onClickCheckMark={this.onClickCheckMark} />
