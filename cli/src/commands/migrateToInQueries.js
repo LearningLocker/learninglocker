@@ -124,50 +124,52 @@ const convertVisualisations = async () => {
   const visualisations = await Visualisation.find({});
 
   for (const visualisation of visualisations) {
-    if (visualisation.hasBeenMigrated) {
-      logger.warn(`visualisation (${visualisation._id}) has been migrated`);
-      return;
-    }
+    try {
+      if (visualisation.hasBeenMigrated) {
+        logger.warn(`visualisation (${visualisation._id}) has been migrated`);
+        return;
+      }
 
-    // filters
-    const oldFilters = visualisation.filters;
-    const newFilters = oldFilters.reduce((acc, oldFilter) => {
-      const newFilter = buildNewQuery(oldFilter);
-      return acc.concat(newFilter);
-    }, []);
+      // filters
+      const oldFilters = visualisation.filters;
+      const newFilters = oldFilters.reduce((acc, oldFilter) => {
+        const newFilter = buildNewQuery(oldFilter);
+        return acc.concat(newFilter);
+      }, []);
 
-    // axesxQuery
-    const oldAxesxQuery = visualisation.axesxQuery;
-    const newAxesxQuery = buildNewQuery(oldAxesxQuery);
+      // axesxQuery
+      const oldAxesxQuery = visualisation.axesxQuery;
+      const newAxesxQuery = buildNewQuery(oldAxesxQuery);
 
-    // axesyQuery
-    const oldAxesyQuery = visualisation.axesyQuery;
-    const newAxesyQuery = buildNewQuery(oldAxesyQuery);
+      // axesyQuery
+      const oldAxesyQuery = visualisation.axesyQuery;
+      const newAxesyQuery = buildNewQuery(oldAxesyQuery);
 
-    // Save updated queries and log
-    logger.info(`Update Visualisation (${visualisation._id})`);
+      // Save updated queries and log
+      logger.info(`Update Visualisation (${visualisation._id})`);
 
-    // mutate visualisation
-    visualisation.oldFilters = visualisation.filters;
-    visualisation.filters = newFilters;
-    logger.info('convert filters');
-    logger.info(oldFilters);
-    logger.info(newFilters);
+      // mutate visualisation
+      visualisation.oldFilters = visualisation.filters;
+      visualisation.filters = newFilters;
+      logger.info('convert filters');
+      logger.info(oldFilters);
+      logger.info(newFilters);
 
-    visualisation.oldAxesxQuery = visualisation.axesxQuery;
-    visualisation.axesxQuery = newAxesxQuery;
-    logger.info('convert axesxQuery');
-    logger.info(oldAxesxQuery);
-    logger.info(newAxesxQuery);
+      visualisation.oldAxesxQuery = visualisation.axesxQuery;
+      visualisation.axesxQuery = newAxesxQuery;
+      logger.info('convert axesxQuery');
+      logger.info(oldAxesxQuery);
+      logger.info(newAxesxQuery);
 
-    visualisation.oldAxesyQuery = visualisation.axesyQuery;
-    visualisation.axesyQuery = newAxesyQuery;
-    logger.info('convert axesyQuery');
-    logger.info(oldAxesyQuery);
-    logger.info(newAxesyQuery);
+      visualisation.oldAxesyQuery = visualisation.axesyQuery;
+      visualisation.axesyQuery = newAxesyQuery;
+      logger.info('convert axesyQuery');
+      logger.info(oldAxesyQuery);
+      logger.info(newAxesyQuery);
 
-    visualisation.hasBeenMigrated = true;
-    await visualisation.save();
+      visualisation.hasBeenMigrated = true;
+      await visualisation.save();
+    } catch (err) { logger.error(`Error updating Visualisation ${visualisation._id}`, err); }
   }
 };
 
@@ -175,35 +177,37 @@ const convertDashboards = async () => {
   const dashboards = await Dashboard.find({});
 
   for (const dashboard of dashboards) {
-    if (dashboard.hasBeenMigrated) {
-      logger.warn(`dashboard (${dashboard._id}) has been migrated`);
-      return;
-    }
+    try {
+      if (dashboard.hasBeenMigrated) {
+        logger.warn(`dashboard (${dashboard._id}) has been migrated`);
+        return;
+      }
 
-    const oldShareableList = lodash.cloneDeep(dashboard.shareable);
+      const oldShareableList = lodash.cloneDeep(dashboard.shareable);
 
-    // mutate shareable
-    dashboard.shareable.forEach((shareable) => {
-      const newFilter = buildNewQuery(shareable.filter);
-      shareable.oldFilter = shareable.filter;
-      shareable.filter = newFilter;
-    });
-
-    const newShareableList = lodash.cloneDeep(dashboard.shareable);
-
-    // Save updated queries and log
-    logger.info(`Update Dashboard (${dashboard._id})`);
-    lodash.zip(oldShareableList, newShareableList)
-      .forEach(([oldShareable, newShareable]) => {
-        if (oldShareable.filter !== newShareable.filter) {
-          logger.info('convert shareable filter');
-          logger.info(oldShareable.filter);
-          logger.info(newShareable.filter);
-        }
+      // mutate shareable
+      dashboard.shareable.forEach((shareable) => {
+        const newFilter = buildNewQuery(shareable.filter);
+        shareable.oldFilter = shareable.filter;
+        shareable.filter = newFilter;
       });
 
-    dashboard.hasBeenMigrated = true;
-    await dashboard.save();
+      const newShareableList = lodash.cloneDeep(dashboard.shareable);
+
+      // Save updated queries and log
+      logger.info(`Update Dashboard (${dashboard._id})`);
+      lodash.zip(oldShareableList, newShareableList)
+        .forEach(([oldShareable, newShareable]) => {
+          if (oldShareable.filter !== newShareable.filter) {
+            logger.info('convert shareable filter');
+            logger.info(oldShareable.filter);
+            logger.info(newShareable.filter);
+          }
+        });
+
+      dashboard.hasBeenMigrated = true;
+      await dashboard.save();
+    } catch (err) { logger.error(`Error updating Dashboard ${dashboard._id}`, err); }
   }
 };
 
@@ -211,24 +215,26 @@ const convertStatementForwarding = async () => {
   const statementForwardings = await StatementForwarding.find();
 
   for (const statementForwarding of statementForwardings) {
-    if (statementForwarding.hasBeenMigrated) {
-      logger.warn(`statementForwarding (${statementForwarding._id}) has been migrated`);
-      return;
-    }
+    try {
+      if (statementForwarding.hasBeenMigrated) {
+        logger.warn(`statementForwarding (${statementForwarding._id}) has been migrated`);
+        return;
+      }
 
-    const oldQuery = statementForwarding.query;
-    const newQuery = buildNewQuery(oldQuery);
+      const oldQuery = statementForwarding.query;
+      const newQuery = buildNewQuery(oldQuery);
 
-    statementForwarding.oldQuery = statementForwarding.query;
-    statementForwarding.query = newQuery;
+      statementForwarding.oldQuery = statementForwarding.query;
+      statementForwarding.query = newQuery;
 
-    logger.info(`Update StatementForwarding (${statementForwarding._id})`);
-    logger.info('convert query');
-    logger.info(oldQuery);
-    logger.info(newQuery);
+      logger.info(`Update StatementForwarding (${statementForwarding._id})`);
+      logger.info('convert query');
+      logger.info(oldQuery);
+      logger.info(newQuery);
 
-    statementForwarding.hasBeenMigrated = true;
-    await statementForwarding.save();
+      statementForwarding.hasBeenMigrated = true;
+      await statementForwarding.save();
+    } catch (err) { logger.error(`Error updating SF ${statementForwarding._id}`, err); }
   }
 };
 
@@ -236,27 +242,29 @@ const convertUsers = async () => {
   const users = await User.find();
 
   for (const user of users) {
-    if (user.hasBeenMigrated) {
-      logger.warn(`user (${user._id}) has been migrated`);
-      return;
-    }
+    try {
+      if (user.hasBeenMigrated) {
+        logger.warn(`user (${user._id}) has been migrated`);
+        return;
+      }
 
-    logger.info(`Update User (${user._id})`);
+      logger.info(`Update User (${user._id})`);
 
-    user.organisationSettings.forEach((organisationSetting) => {
-      const oldFilter = organisationSetting.filter;
-      const newFilter = buildNewQuery(oldFilter);
+      user.organisationSettings.forEach((organisationSetting) => {
+        const oldFilter = organisationSetting.filter;
+        const newFilter = buildNewQuery(oldFilter);
 
-      organisationSetting.oldFilter = organisationSetting.filter;
-      organisationSetting.filter = newFilter;
+        organisationSetting.oldFilter = organisationSetting.filter;
+        organisationSetting.filter = newFilter;
 
-      logger.info('convert organisationSettings filter');
-      logger.info(oldFilter);
-      logger.info(newFilter);
-    });
+        logger.info('convert organisationSettings filter');
+        logger.info(oldFilter);
+        logger.info(newFilter);
+      });
 
-    user.hasBeenMigrated = true;
-    await user.save();
+      user.hasBeenMigrated = true;
+      await user.save();
+    } catch (err) { logger.error(`Error updating User ${user._id}`, err); }
   }
 };
 
@@ -264,25 +272,27 @@ const convertQueries = async () => {
   const queries = await Query.find();
 
   for (const query of queries) {
-    if (query.hasBeenMigrated) {
-      logger.warn(`query (${query._id}) has been migrated`);
-      return;
-    }
+    try {
+      if (query.hasBeenMigrated) {
+        logger.warn(`query (${query._id}) has been migrated`);
+        return;
+      }
 
-    // query.conditions is not string, but has been JSON-parsed.
-    const oldConditions = fromJS(query.conditions);
-    const newConditions = _buildNewQuery(oldConditions).toJS();
+      // query.conditions is not string, but has been JSON-parsed.
+      const oldConditions = fromJS(query.conditions);
+      const newConditions = _buildNewQuery(oldConditions).toJS();
 
-    query.oldConditions = JSON.stringify(query.conditions);
-    query.conditions = JSON.stringify(newConditions);
+      query.oldConditions = JSON.stringify(query.conditions);
+      query.conditions = JSON.stringify(newConditions);
 
-    logger.info(`Update Query (${query._id})`);
-    logger.info('convert conditions');
-    logger.info(JSON.stringify(oldConditions));
-    logger.info(JSON.stringify(newConditions));
+      logger.info(`Update Query (${query._id})`);
+      logger.info('convert conditions');
+      logger.info(JSON.stringify(oldConditions));
+      logger.info(JSON.stringify(newConditions));
 
-    query.hasBeenMigrated = true;
-    await query.save();
+      query.hasBeenMigrated = true;
+      await query.save();
+    } catch (err) { logger.error(`Error updating Query ${query._id}`, err); }
   }
 };
 
