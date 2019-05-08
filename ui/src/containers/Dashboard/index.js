@@ -139,7 +139,7 @@ class Dashboard extends Component {
             <a
               onClick={this.onClickAddWidget}
               className="btn btn-default btn-sm flat-btn flat-white">
-              <i className="ion ion-stats-bars" />Add widget
+              <i className="ion ion-stats-bars" /> Add widget
             </a>
             <PrivacyToggleButton id={model.get('_id')} schema={schema} white />
             <DeleteButton white id={model.get('_id')} schema={schema} />
