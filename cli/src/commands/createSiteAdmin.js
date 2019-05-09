@@ -6,7 +6,6 @@ import SiteSettings from 'lib/models/siteSettings';
 import { SITE_SETTINGS_ID } from 'lib/constants/siteSettings';
 import * as scopes from 'lib/constants/scopes';
 import mongoose from 'mongoose';
-import { MongoError } from 'mongodb';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -119,7 +118,7 @@ const checkSiteSettings = async () => {
       _id: objectId(SITE_SETTINGS_ID)
     }).save();
   } catch (err) {
-    if (err instanceof MongoError && err.code === 11000) return;
+    if (err.code === 11000) return;
     logger.error(err);
   }
 };
