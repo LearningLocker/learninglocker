@@ -60,11 +60,14 @@ class ColorPicker extends React.PureComponent {
 
     const customColors = this.getCustomColors();
 
+    // The selected color or a color that the organisation recently selected
+    const trendColor = VISUALISATION_COLORS.includes(color.toUpperCase()) ? customColors.first() : color;
+
     return (
       <div style={{ display: 'flex' }}>
         <CirclePicker
           color={color}
-          colors={customColors.size > 0 ? VISUALISATION_COLORS.concat(customColors.first()) : VISUALISATION_COLORS}
+          colors={trendColor ? VISUALISATION_COLORS.concat(trendColor) : VISUALISATION_COLORS}
           onChange={onChange}
           width={'auto'} />
 
