@@ -130,6 +130,7 @@ const CustomColorPickerInner = ColorWrap((props) => {
             <EditableInput
               style={{ wrap: styles.HEXwrap, input: styles.HEXinput, label: styles.HEXlabel }}
               label="hex"
+              placeholder="#000000"
               value={props.hex}
               onChange={props.onChange} />
           </div>
