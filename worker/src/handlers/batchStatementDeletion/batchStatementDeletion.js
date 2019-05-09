@@ -65,14 +65,16 @@ export default async ({
   }
 
   let scopeFilter;
+  // simulate the auth policy for the client that started this batch worker
+  const authInfo = {
+    client: await Client.findOne({ _id: batchDelete.client }),
+    token: { tokenType: 'client' }
+  };
   try {
     scopeFilter = await getScopeFilter({
       modelName: 'statement',
       actionName: 'delete',
-      authInfo: {
-        client: await Client.findOne({ _id: batchDelete.client }),
-        token: { tokenType: 'client' }
-      }
+      authInfo
     });
   } catch (err) {
     if (err instanceof NoAccessError) {
@@ -95,7 +97,7 @@ export default async ({
   }
 
   const filter = {
-    ...(await parseQuery(parsedFilter)),
+    ...(await parseQuery(parsedFilter, { authInfo })),
     ...scopeFilter
   };
 
