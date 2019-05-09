@@ -379,6 +379,7 @@ export const initialSections = fromJS({
   stores: {
     title: 'Store',
     keyPath: new List(['lrs_id']),
+    getQueryKey: 'lrs_id',
     sourceSchema: 'lrs',
     getModelIdent: model => model.get('_id'),
     getModelDisplay: (model) => {
@@ -386,11 +387,9 @@ export const initialSections = fromJS({
       const count = model.get('statementCount', 0);
       return `${title} (${count} statements)`;
     },
-    getModelQuery: model => new Map({
-      lrs_id: new Map({ $oid: model.get('_id') })
-    }),
+    getModelQuery: model => new Map({ $oid: model.get('_id') }),
     getQueryModel: query => new Map({
-      _id: query.get('lrs_id')
+      _id: new Map({ $oid: query.get('$oid') }),
     }),
     operators: operators.DISCRETE,
   },

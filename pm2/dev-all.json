@@ -53,6 +53,7 @@
       "pid": "./pids/scheduler.pid",
       "instances": 1,
       "exec_mode": "cluster",
+      "watch": ["cli/dist", ".env"],
       "detached": true,
       "listen_timeout": 30000
     }
