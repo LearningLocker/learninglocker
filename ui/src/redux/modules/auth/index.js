@@ -5,6 +5,7 @@ import { handleActions } from 'redux-actions';
 import { modelsSchemaIdSelector } from 'ui/redux/modules/models';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import * as loginDuck from 'ui/redux/modules/auth/login';
+import * as refreshDuck from 'ui/redux/modules/auth/refresh';
 import * as orgLoginDuck from 'ui/redux/modules/auth/orgLogin';
 import * as tokenDuck from 'ui/redux/modules/auth/token';
 import * as logoutDuck from 'ui/redux/modules/auth/logout';
@@ -19,6 +20,7 @@ export const initialState = fromJS({
   activeTokenType: 'user', // which type of token is default for requests
   activeTokenId: null, // which token id to use for requests e.g. active organisation id
   loginRequestState: false,
+  refreshRequestState: false,
   orgLoginRequestState: false,
   passwordResetState: false,
   passwordRequestResetState: false,
@@ -30,6 +32,7 @@ export const initialState = fromJS({
  */
 const handler = handleActions({
   ...loginDuck.reducers,
+  ...refreshDuck.reducers,
   ...orgLoginDuck.reducers,
   ...tokenDuck.reducers,
   ...logoutDuck.reducers,
@@ -48,6 +51,7 @@ export default function reducer(state = initialState, action = {}) {
  * Actions
  */
 export const loginStart = loginDuck.actions.basic.start;
+export const refreshStart = refreshDuck.actions.start;
 export const oAuthLoginStart = loginDuck.actions.oauth.start;
 export const orgLoginStart = orgLoginDuck.actions.start;
 export const decodeLoginTokenAction = tokenDuck.actions.decodeLoginTokenAction;
@@ -135,6 +139,7 @@ export const activeTokenSelector = tokenDuck.selectors.activeTokenSelector;
  */
 export const sagas = [
   ...loginDuck.sagas,
+  ...refreshDuck.sagas,
   ...orgLoginDuck.sagas,
   ...tokenDuck.sagas,
   ...logoutDuck.sagas,
