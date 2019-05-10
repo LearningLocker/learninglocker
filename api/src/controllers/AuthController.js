@@ -8,7 +8,7 @@ import {
   ACCESS_TOKEN_VALIDITY_PERIOD_SEC,
   DEFAULT_PASSPORT_OPTIONS
 } from 'lib/constants/auth';
-import { createOrgJWT, createUserJWT } from 'api/auth/jwt';
+import { createOrgJWT, createUserJWT, createUserRefreshJWT } from 'api/auth/jwt';
 import { AUTH_FAILURE } from 'api/auth/utils';
 
 /**
@@ -169,9 +169,21 @@ const jwt = (req, res, next) => {
     user.authFailedAttempts = 0;
     user.authLastAttempt = new Date();
     return user.save(() =>
-       createUserJWT(user).then()
-          .then(token => res.send(token))
-          .catch(authFailure)
+      Promise.all([createUserJWT(user), createUserRefreshJWT(user)])
+        .then(
+          ([accessToken, refreshToken]) => res.cookie(
+            `refresh_token_user_${user._id}`,
+            refreshToken,
+            // TODO:
+            {
+              domain: 'localhost',
+              // path: '/api/auth/jwt/refresh',
+              expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+              // secure: true,
+              httpOnly: true,
+            }
+          ).send(accessToken))
+        .catch(authFailure)
     );
   })(req, res, next);
 };

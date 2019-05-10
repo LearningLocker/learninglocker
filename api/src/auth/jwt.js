@@ -9,6 +9,11 @@ import { VIEW_SHAREABLE_DASHBOARD } from 'lib/constants/scopes';
 import Role from 'lib/models/role';
 import getActiveOrgSettings from 'api/utils/getActiveOrgSettings';
 
+/**
+ * @param {string | object | Buffer}
+ * @param {jwt.Secret}
+ * @returns {Promise<any>}
+ */
 const sign = Promise.promisify(jwt.sign);
 
 const getUserScopes = user =>
@@ -38,6 +43,11 @@ const payloadDefaults = ({
   ...others
 });
 
+/**
+ * @param {*} - payload
+ * @param {*} opts - (optional)
+ * @returns {Promise<any>}
+ */
 const createJWT = ({
   userId,
   provider,
@@ -49,7 +59,7 @@ const createJWT = ({
   extensions,
   organisation = null
 }, opts = {
-  expiresIn: '7d'
+  expiresIn: '1h'
 }) => sign(
   { userId, provider, scopes, tokenType, tokenId, shareableId, extensions, filter, organisation },
   process.env.APP_SECRET,
@@ -64,8 +74,29 @@ const createUserTokenPayload = (user, provider) => payloadDefaults({
   tokenId: String(user._id),
 });
 
+/**
+ * @param {*} user
+ * @param {*} provider
+ * @returns {Promise<any>}
+ */
 const createUserJWT = (user, provider) =>
   createJWT(createUserTokenPayload(user, provider));
+
+const createUserRefreshTokenPayload = (user, provider) => payloadDefaults({
+  userId: String(user._id),
+  provider,
+  scopes: ['refresh_token_user'],
+  tokenType: 'user_refresh',
+  tokenId: String(user._id),
+});
+
+/**
+ * @param {*} user
+ * @param {*} provider
+ * @returns {Promise<any>}
+ */
+const createUserRefreshJWT = (user, provider) =>
+  createJWT(createUserRefreshTokenPayload(user, provider), { expiresIn: '7d' });
 
 const createOrgTokenPayload = async (user, orgId, provider) => {
   const activeOrgSettings = getActiveOrgSettings(user, orgId);
@@ -120,8 +151,10 @@ export {
   createJWT,
   createUserTokenPayload,
   createUserJWT,
+  createUserRefreshTokenPayload,
+  createUserRefreshJWT,
   createOrgTokenPayload,
   createOrgJWT,
   createDashboardTokenPayload,
-  createDashboardJWT
+  createDashboardJWT,
 };
