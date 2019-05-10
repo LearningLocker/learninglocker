@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import jsonwebtoken from 'jsonwebtoken';
 import moment from 'moment';
+import { delay } from 'bluebird';
 import * as routes from 'lib/constants/routes';
 import supertestApi from 'lib/connections/supertestApi';
 import { getConnection } from 'lib/connections/mongoose';
@@ -94,6 +95,93 @@ describe('API HTTP Route tests', function describeTest() {
       await apiApp
         .post(routes.AUTH_JWT_PASSWORD)
         .auth('testy@mctestface.com', 'invalid_password')
+        .expect(401)
+        .expect((res) => {
+          expect(res.headers['set-cookie']).to.equal(undefined);
+        });
+    });
+  });
+
+  describe('/api/auth/jwt/refresh', () => {
+    it('should return 200 and user access token when refresh token cookie is valid', async () => {
+      let refreshTokenCookie = '';
+      let accessToken = '';
+
+      await apiApp
+        .post(routes.AUTH_JWT_PASSWORD)
+        .auth('testy@mctestface.com', 'password1')
+        .expect((res) => {
+          refreshTokenCookie = res.headers['set-cookie'][0];
+          accessToken = res.text;
+        });
+
+      // To confirm `iat` and `exp` are changed
+      await delay(1000);
+      refreshTokenCookie = refreshTokenCookie.split('; ')[0];
+
+      await apiApp
+        .post(routes.AUTH_JWT_REFRESH)
+        .set('Cookie', refreshTokenCookie)
+        .send({ id: '561a679c0c5d017e4004714f', tokenType: 'user' })
+        .expect(200)
+        .expect('Content-Type', /text\/html/)
+        .expect((res) => {
+          expect(accessToken).to.not.equal(res.text);
+        });
+    });
+
+    it('should return 200 and user access token when body is incorrect', async () => {
+      let refreshTokenCookie = '';
+
+      await apiApp
+        .post(routes.AUTH_JWT_PASSWORD)
+        .auth('testy@mctestface.com', 'password1')
+        .expect((res) => {
+          refreshTokenCookie = res.headers['set-cookie'][0];
+        });
+
+      // To confirm `iat` and `exp` are changed
+      await delay(1000);
+      refreshTokenCookie = refreshTokenCookie.split('; ')[0];
+
+      await apiApp
+        .post(routes.AUTH_JWT_REFRESH)
+        .set('Cookie', refreshTokenCookie)
+        .send({ id: '561a679c0c5d017e40040000', tokenType: 'user' })
+        .expect(401)
+        .expect((res) => {
+          expect(res.headers['set-cookie']).to.equal(undefined);
+        });
+    });
+
+    it('should return 401 when refresh token cookie is not set', async () => {
+      await apiApp
+        .post(routes.AUTH_JWT_REFRESH)
+        .expect(401)
+        .expect((res) => {
+          expect(res.headers['set-cookie']).to.equal(undefined);
+        });
+    });
+
+    it('should return 401 when refresh token cookie is invalid', async () => {
+      let refreshTokenCookie = '';
+
+      await apiApp
+        .post(routes.AUTH_JWT_PASSWORD)
+        .auth('testy@mctestface.com', 'password1')
+        .expect((res) => {
+          refreshTokenCookie = res.headers['set-cookie'][0];
+        });
+
+      // Falsify the refresh token
+      refreshTokenCookie = refreshTokenCookie.split('; ')[0];
+      refreshTokenCookie = refreshTokenCookie.slice(0, -4);
+      refreshTokenCookie += 'aaaa';
+
+      await apiApp
+        .post(routes.AUTH_JWT_REFRESH)
+        .set('Cookie', refreshTokenCookie)
+        .send({ id: '561a679c0c5d017e4004714f', tokenType: 'user' })
         .expect(401)
         .expect((res) => {
           expect(res.headers['set-cookie']).to.equal(undefined);

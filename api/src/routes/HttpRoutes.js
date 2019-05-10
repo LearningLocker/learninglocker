@@ -96,6 +96,11 @@ router.post(
   AuthController.jwtOrganisation
 );
 
+router.post(
+  routes.AUTH_JWT_REFRESH,
+  AuthController.jwtRefresh,
+);
+
 router.get(
   routes.AUTH_CLIENT_INFO,
   passport.authenticate('clientBasic', DEFAULT_PASSPORT_OPTIONS),

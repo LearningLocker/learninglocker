@@ -1,4 +1,5 @@
 import passport from 'passport';
+import jsonwebtoken from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
 import User from 'lib/models/user';
 import OAuthToken from 'lib/models/oAuthToken';
@@ -8,6 +9,7 @@ import {
   ACCESS_TOKEN_VALIDITY_PERIOD_SEC,
   DEFAULT_PASSPORT_OPTIONS
 } from 'lib/constants/auth';
+import Unauthorized from 'lib/errors/Unauthorised';
 import { createOrgJWT, createUserJWT, createUserRefreshJWT } from 'api/auth/jwt';
 import { AUTH_FAILURE } from 'api/auth/utils';
 
@@ -188,6 +190,33 @@ const jwt = (req, res, next) => {
   })(req, res, next);
 };
 
+const jwtRefresh = (req, res, next) => {
+  (async () => {
+    try {
+      const { id, tokenType } = req.body;
+      const refreshToken = req.cookies[`refresh_token_${tokenType}_${id}`];
+      const decodedToken = await jsonwebtoken.verify(refreshToken, process.env.APP_SECRET);
+
+      const { tokenId } = decodedToken;
+
+      const user = await User.findOne({ _id: tokenId });
+
+      if (!user) {
+        throw new Unauthorized('NO USER');
+      }
+
+      const newToken = await createUserJWT(user);
+      res.status(200).send(newToken);
+    } catch (err) {
+      if (!['JsonWebTokenError', 'TokenExpiredError'].includes(err.name) && !(err instanceof Unauthorized)) {
+        console.error(err);
+      }
+      res.status(401).send('Unauthorized');
+    }
+  })().catch(next);
+};
+
+
 const includes = (organisations, orgId) =>
   organisations.filter(organisationId =>
     String(organisationId) === orgId
@@ -276,6 +305,7 @@ export default {
   resetPasswordRequest,
   resetPassword,
   jwt,
+  jwtRefresh,
   jwtOrganisation,
   googleSuccess,
   success,
