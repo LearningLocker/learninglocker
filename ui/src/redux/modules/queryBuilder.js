@@ -486,7 +486,10 @@ const getChildOverridesFromValueType = (valueType, generator, childPath) => {
       operators: operators.OR_DISCRETE
     };
   }
-  if (childPath.take(3).equals(new List(['statement', 'context', 'contextActivities']))) {
+  if (
+    childPath.size === 4 &&
+    childPath.take(3).equals(new List(['statement', 'context', 'contextActivities']))
+  ) {
     return {
       operators: generator.get('childOperators', operators.DISCRETE),
       getModelQuery: value => value.getIn(['value', 'id'], value),
