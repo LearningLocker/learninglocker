@@ -1,20 +1,15 @@
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, select } from 'redux-saga/effects';
+import { List } from 'immutable';
 import { createSelector } from 'reselect';
 import { post } from 'popsicle';
 import { delay } from 'bluebird';
+import moment from 'moment';
 import * as routes from 'lib/constants/routes';
 import createAsyncDuck from 'ui/utils/createAsyncDuck';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 import { actions as tokenActions } from './token';
 
 const REFRESH_ACTION = 'learninglocker/auth/REFRESH';
-const RESERVE_REFRESH_ACTION = 'learninglocker/auth/RESERVE_REFRESH';
-
-export const reserveRefreshAction = ({ tokenType, tokenId }) => ({
-  type: RESERVE_REFRESH_ACTION,
-  tokenType,
-  tokenId,
-});
 
 const authSelector = state => state.auth;
 
@@ -29,7 +24,12 @@ const shouldRefreshSelector = createSelector(
     (refreshState !== IN_PROGRESS && refreshState !== COMPLETED && refreshState !== FAILED)
 );
 
-const refreshAccessToken = createAsyncDuck({
+const userTokenSelector = createSelector(
+  [authSelector],
+  auth => auth.getIn(['tokens', 'user'], new List()),
+);
+
+const refreshToken = createAsyncDuck({
   actionName: REFRESH_ACTION,
 
   reduceStart: state => state.set('refreshRequestState', IN_PROGRESS),
@@ -59,23 +59,32 @@ const refreshAccessToken = createAsyncDuck({
       throw new Error('There was an error communicating with the refresh token server.');
     } else {
       yield put(tokenActions.decodeLoginTokenAction(body));
-      yield put(reserveRefreshAction({ tokenType, tokenId }));
     }
   }
 });
 
+function* checkTokensExpired() {
+  const userToken = yield select(userTokenSelector);
 
-function* reserveRefresh({ tokenType, tokenId }) {
-  yield call(delay, 5000);
-  yield put(refreshAccessToken.actions.start({ tokenType, tokenId }));
+  const expMoment = moment.unix(userToken.get('exp'));
+  const fiveMinutesLater = moment().add(3, 'minutes');
+  const willExpiredSoon = expMoment.isBefore(fiveMinutesLater);
+  if (willExpiredSoon) {
+    const tokenType = userToken.get('tokenType');
+    const tokenId = userToken.get('tokenId');
+    yield put(refreshToken.actions.start({ tokenType, tokenId }));
+  }
 }
 
-function* watchReserveRefreshSaga() {
-  yield takeEvery(RESERVE_REFRESH_ACTION, reserveRefresh);
+function* pollRefreshTokenSaga() {
+  while (true) {
+    yield call(delay, 30000);
+    yield checkTokensExpired();
+  }
 }
 
 export const selectors = {};
-export const constants = refreshAccessToken.constants;
-export const reducers = refreshAccessToken.reducers;
-export const actions = refreshAccessToken.actions;
-export const sagas = [watchReserveRefreshSaga, ...refreshAccessToken.sagas];
+export const constants = refreshToken.constants;
+export const reducers = refreshToken.reducers;
+export const actions = refreshToken.actions;
+export const sagas = [pollRefreshTokenSaga, ...refreshToken.sagas];
