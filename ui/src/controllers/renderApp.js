@@ -30,6 +30,8 @@ export default async (req, res, next) => {
 
     const html = renderToString(<Html {...data} />);
     global.navigator = { userAgent: req.headers['user-agent'] };
+    res.set('X-XSS-Protection', '1; mode=block');
+    res.set('X-Content-Type-Options', 'nosniff');
     res.status(200);
     res.send(`<!doctype html>${html}`);
   } catch (err) {
