@@ -193,20 +193,26 @@ const jwt = (req, res, next) => {
 const jwtRefresh = (req, res, next) => {
   (async () => {
     try {
-      const { id, tokenType } = req.body;
-      const refreshToken = req.cookies[`refresh_token_${tokenType}_${id}`];
+      const refreshToken = req.cookies[`refresh_token_${req.body.tokenType}_${req.body.id}`];
       const decodedToken = await jsonwebtoken.verify(refreshToken, process.env.APP_SECRET);
 
-      const { tokenId } = decodedToken;
+      const { tokenId, tokenType, userId, provider } = decodedToken;
 
-      const user = await User.findOne({ _id: tokenId });
+      const user = await User.findOne({ _id: userId });
 
       if (!user) {
         throw new Unauthorized('NO USER');
       }
 
-      const newToken = await createUserJWT(user);
-      res.status(200).send(newToken);
+      if (tokenType === 'user_refresh') {
+        const newUserToken = await createUserJWT(user, provider);
+        res.status(200).send(newUserToken);
+      } else if (tokenType === 'organisation_refresh') {
+        const newOrgToken = await createOrgJWT(user, tokenId, provider);
+        res.status(200).send(newOrgToken);
+      } else {
+        throw new Unauthorized('Invalid tokenType');
+      }
     } catch (err) {
       if (!['JsonWebTokenError', 'TokenExpiredError'].includes(err.name) && !(err instanceof Unauthorized)) {
         console.error(err);

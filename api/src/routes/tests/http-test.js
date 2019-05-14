@@ -166,7 +166,7 @@ describe('API HTTP Route tests', function describeTest() {
   });
 
   describe('/api/auth/jwt/refresh', () => {
-    it('should return 200 and user access token when refresh token cookie is valid', async () => {
+    it('should return 200 and user access token when user refresh token cookie is valid', async () => {
       let refreshTokenCookie = '';
       let accessToken = '';
 
@@ -193,7 +193,45 @@ describe('API HTTP Route tests', function describeTest() {
         });
     });
 
-    it('should return 200 and user access token when body is incorrect', async () => {
+    it('should return 200 and org access token when org refresh token cookie is valid', async () => {
+      let userAccessToken = '';
+      let orgAccessToken = '';
+      let orgRefreshTokenCookie = '';
+
+      await apiApp
+        .post(routes.AUTH_JWT_PASSWORD)
+        .auth('testy@mctestface.com', 'password1')
+        .expect((res) => {
+          userAccessToken = res.text;
+        });
+
+      await apiApp
+        .post(routes.AUTH_JWT_ORGANISATION)
+        .set('Authorization', `Bearer ${userAccessToken}`)
+        .send({
+          organisation: '561a679c0c5d017e4004714f',
+        })
+        .expect((res) => {
+          orgRefreshTokenCookie = res.headers['set-cookie'][0];
+          orgAccessToken = res.text;
+        });
+
+      // To confirm `iat` and `exp` are changed
+      await delay(1000);
+      orgRefreshTokenCookie = orgRefreshTokenCookie.split('; ')[0];
+
+      await apiApp
+        .post(routes.AUTH_JWT_REFRESH)
+        .set('Cookie', orgRefreshTokenCookie)
+        .send({ id: '561a679c0c5d017e4004714f', tokenType: 'organisation' })
+        .expect(200)
+        .expect('Content-Type', /text\/html/)
+        .expect((res) => {
+          expect(orgAccessToken).to.not.equal(res.text);
+        });
+    });
+
+    it('should return 401 and user access token when body is incorrect', async () => {
       let refreshTokenCookie = '';
 
       await apiApp
@@ -217,7 +255,7 @@ describe('API HTTP Route tests', function describeTest() {
         });
     });
 
-    it('should return 401 when refresh token cookie is not set', async () => {
+    it('should return 401 when user refresh token cookie is not set', async () => {
       await apiApp
         .post(routes.AUTH_JWT_REFRESH)
         .expect(401)
@@ -226,7 +264,7 @@ describe('API HTTP Route tests', function describeTest() {
         });
     });
 
-    it('should return 401 when refresh token cookie is invalid', async () => {
+    it('should return 401 when user refresh token cookie is invalid', async () => {
       let refreshTokenCookie = '';
 
       await apiApp
