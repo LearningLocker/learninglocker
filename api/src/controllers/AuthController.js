@@ -201,7 +201,7 @@ const jwtRefresh = (req, res, next) => {
       const user = await User.findOne({ _id: userId });
 
       if (!user) {
-        throw new Unauthorized('NO USER');
+        throw new Unauthorized('No User');
       }
 
       if (tokenType === 'user_refresh') {

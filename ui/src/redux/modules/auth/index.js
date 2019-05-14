@@ -20,8 +20,9 @@ export const initialState = fromJS({
   activeTokenType: 'user', // which type of token is default for requests
   activeTokenId: null, // which token id to use for requests e.g. active organisation id
   loginRequestState: false,
-  refreshRequestState: false,
+  userRefreshRequestState: false,
   orgLoginRequestState: false,
+  orgRefreshRequestState: false,
   passwordResetState: false,
   passwordRequestResetState: false,
   tokens: {}
@@ -32,7 +33,8 @@ export const initialState = fromJS({
  */
 const handler = handleActions({
   ...loginDuck.reducers,
-  ...refreshDuck.reducers,
+  ...refreshDuck.refreshUserTokenDuck.reducers,
+  ...refreshDuck.refreshOrgTokenDuck.reducers,
   ...orgLoginDuck.reducers,
   ...tokenDuck.reducers,
   ...logoutDuck.reducers,
@@ -51,7 +53,8 @@ export default function reducer(state = initialState, action = {}) {
  * Actions
  */
 export const loginStart = loginDuck.actions.basic.start;
-export const refreshStart = refreshDuck.actions.start;
+export const refreshUserTokenStart = refreshDuck.refreshUserTokenDuck.actions.start;
+export const refreshOrgTokenStart = refreshDuck.refreshOrgTokenDuck.actions.start;
 export const oAuthLoginStart = loginDuck.actions.oauth.start;
 export const orgLoginStart = orgLoginDuck.actions.start;
 export const decodeLoginTokenAction = tokenDuck.actions.decodeLoginTokenAction;
