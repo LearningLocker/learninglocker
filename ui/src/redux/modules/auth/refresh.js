@@ -91,7 +91,7 @@ function* checkTokensExpired(token, duck) {
 
 function* pollRefreshTokenSaga() {
   while (true) {
-    yield call(delay, 5000);
+    yield call(delay, 10000);
 
     const userToken = yield select(userTokenSelector);
     yield checkTokensExpired(userToken, refreshUserTokenDuck);
