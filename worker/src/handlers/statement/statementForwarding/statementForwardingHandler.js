@@ -29,9 +29,13 @@ export default wrapHandlerForStatement(STATEMENT_FORWARDING_QUEUE, (statement, d
       const queueName = STATEMENT_FORWARDING_REQUEST_QUEUE;
 
       const query = statementForwarding.query && JSON.parse(statementForwarding.query);
-      const parsedQuery = await parseQuery(query, {
-        organisation: statement.organisation
-      });
+      const authInfo = {
+        token: {
+          tokenType: 'worker',
+          tokenId: statement.organisation
+        }
+      };
+      const parsedQuery = await parseQuery(query, { authInfo });
 
       return new Promise((resolve, reject) => {
         const theParsedQuery = parsedQuery && (parsedQuery.$match || parsedQuery);

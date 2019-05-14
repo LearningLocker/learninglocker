@@ -42,7 +42,8 @@ const personaIdentifierConnection = catchErrors(async (req, res) => {
     authInfo
   });
 
-  const parsedFilter = await parseQuery(getJSONFromQuery(req, 'filter', {}));
+  const reqFilter = getJSONFromQuery(req, 'filter', {});
+  const parsedFilter = await parseQuery(reqFilter, { authInfo });
   const {
     persona,
     ...inFilter
@@ -272,9 +273,7 @@ const personaIdentifierCount = catchErrors(async (req, res) => {
     authInfo
   });
 
-  const userFilter = await parseQuery(req.query.query, {
-    organisation: getOrgFromAuthInfo(authInfo)
-  });
+  const userFilter = await parseQuery(req.query.query, { authInfo });
 
   const filter = {
     ...userFilter,

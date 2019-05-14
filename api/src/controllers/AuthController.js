@@ -1,6 +1,7 @@
 import passport from 'passport';
 import jsonwebtoken from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
+import logger from 'lib/logger';
 import User from 'lib/models/user';
 import OAuthToken from 'lib/models/oAuthToken';
 import { sendResetPasswordToken } from 'lib/helpers/email';
@@ -44,14 +45,15 @@ const resetPasswordRequest = (req, res, next) => {
     }
 
     if (!user) {
-      return res.status(404).send({ message: `No user found for ${email}` });
+      return res.status(204).send();
     }
 
     return user.createResetToken((token) => {
       user.resetTokens.push(token);
       user.save((err) => {
         if (err) {
-          return res.status(500).send({ message: 'Could not save resetToken onto user' });
+          logger.error('Password reset error', err);
+          return res.status(500).send({ message: 'There was an issue. Please try again' });
         }
 
         // @TODO: send status based on outcome of send!!
@@ -82,16 +84,8 @@ const resetPassword = (req, res, next) => {
   return User.findOne(
     {
       email,
-      $or: [
-        {
-          'resetTokens.token': token,
-          'resetTokens.expires': { $gt: now }
-        },
-        {
-          'resetTokens.token': token,
-          'resetTokens.expires': null
-        }
-      ],
+      'resetTokens.token': token,
+      'resetTokens.expires': { $gt: now }
     },
     (err, user) => {
       if (err) {
@@ -99,10 +93,10 @@ const resetPassword = (req, res, next) => {
       }
 
       if (!user) {
-        return res.status(404).send({ message: 'Password request has expired or has been used. Please submit a new request' });
+        return res.status(404).send({ message: 'Invalid password reset token. Please submit a new request' });
       }
 
-      // clear the reset tokens and save the password
+      // clear the reset tokens, any lockouts and save the password
       // (hashing and validation will need to take place)
       user.resetTokens = [];
       user.password = password;
@@ -139,10 +133,8 @@ const jwt = (req, res, next) => {
       switch (reason) {
         case AUTH_FAILURE.USER_NOT_FOUND:
         case AUTH_FAILURE.PASSWORD_INCORRECT:
-          message = 'Incorrect login details';
-          break;
         case AUTH_FAILURE.LOCKED_OUT:
-          message = 'Too many incorrect attempts. Account locked';
+          message = 'Incorrect login details';
           break;
         default:
           message = `There was an error (code: ${reason})`;
