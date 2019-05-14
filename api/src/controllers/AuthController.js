@@ -4,12 +4,11 @@ import { v4 as uuid } from 'uuid';
 import User from 'lib/models/user';
 import OAuthToken from 'lib/models/oAuthToken';
 import { sendResetPasswordToken } from 'lib/helpers/email';
-import { AUTH_JWT_SUCCESS } from 'lib/constants/routes';
+import { AUTH_JWT_SUCCESS, AUTH_JWT_REFRESH } from 'lib/constants/routes';
 import {
   ACCESS_TOKEN_VALIDITY_PERIOD_SEC,
   DEFAULT_PASSPORT_OPTIONS
 } from 'lib/constants/auth';
-import * as routes from 'lib/constants/routes';
 import Unauthorized from 'lib/errors/Unauthorised';
 import { createOrgJWT, createOrgRefreshJWT, createUserJWT, createUserRefreshJWT } from 'api/auth/jwt';
 import { AUTH_FAILURE } from 'api/auth/utils';
@@ -17,7 +16,7 @@ import { AUTH_FAILURE } from 'api/auth/utils';
 const buildRefreshCookieOption = protocol => {
 
   const c = {
-    path: `/api${routes.AUTH_JWT_REFRESH}`,
+    path: `/api${AUTH_JWT_REFRESH}`,
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
