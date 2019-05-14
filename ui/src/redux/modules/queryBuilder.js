@@ -379,6 +379,7 @@ export const initialSections = fromJS({
   stores: {
     title: 'Store',
     keyPath: new List(['lrs_id']),
+    getQueryKey: 'lrs_id',
     sourceSchema: 'lrs',
     getModelIdent: model => model.get('_id'),
     getModelDisplay: (model) => {
@@ -386,11 +387,9 @@ export const initialSections = fromJS({
       const count = model.get('statementCount', 0);
       return `${title} (${count} statements)`;
     },
-    getModelQuery: model => new Map({
-      lrs_id: new Map({ $oid: model.get('_id') })
-    }),
+    getModelQuery: model => new Map({ $oid: model.get('_id') }),
     getQueryModel: query => new Map({
-      _id: query.get('lrs_id')
+      _id: new Map({ $oid: query.get('$oid') }),
     }),
     operators: operators.DISCRETE,
   },
@@ -487,6 +486,18 @@ const getChildOverridesFromValueType = (valueType, generator, childPath) => {
       operators: operators.OR_DISCRETE
     };
   }
+  if (
+    childPath.size === 4 &&
+    childPath.take(3).equals(new List(['statement', 'context', 'contextActivities']))
+  ) {
+    return {
+      operators: generator.get('childOperators', operators.DISCRETE),
+      getModelQuery: value => value.getIn(['value', 'id'], value),
+      getQueryModel: criteria => new Map({ value: { id: criteria } }),
+      getQueryKey: childPath.push('id').join('.'),
+      getModelIdent: (model) => identToString(model.getIn(['value', 'id'])),
+    };
+  }
   return {
     operators: generator.get('childOperators', operators.DISCRETE)
   };
@@ -526,6 +537,7 @@ const buildInputChild = generator => (keyPath, valueType) => {
   const childPath = generator.get('path').push(keyPath.last());
   const childGenerator = generator.set('path', childPath);
   const childOverrides = getChildOverridesFromValueType(valueType, generator, childPath);
+
   return new Map({
     keyPath,
     getQueryKey: joinedPath,

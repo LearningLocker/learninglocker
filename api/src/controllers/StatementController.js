@@ -60,6 +60,7 @@ const aggregateAsync = async (req) => {
     status: {
       startedAt: resultsAndStatus.startedAt,
       completedAt: resultsAndStatus.completedAt,
+      isRunning: resultsAndStatus.isRunning,
     },
   });
 };

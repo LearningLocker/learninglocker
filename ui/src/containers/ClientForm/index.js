@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { Map, List } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withProps, withHandlers, setPropTypes } from 'recompose';
@@ -8,8 +9,9 @@ import btoa from 'btoa';
 import Checkbox from 'ui/components/Material/Checkbox';
 import Dropdown from 'ui/components/Material/Dropdown';
 import { withModels, withModel } from 'ui/utils/hocs';
-import { API_SCOPES, XAPI_SCOPES } from 'lib/constants/scopes';
+import { API_SCOPES, getXapiScopes } from 'lib/constants/scopes';
 import ValidationList from 'ui/components/ValidationList';
+import { getAppDataSelector } from 'ui/redux/modules/app';
 import AuthorityEditor from './AuthorityEditor';
 import styles from './styles.css';
 
@@ -68,6 +70,9 @@ const renderScopes = (setScopes, onChangeScopes, selectedScopes) =>
 
 const enhance = compose(
   withStyles(styles),
+  connect(state => ({
+    enableSingleStatementDeletion: getAppDataSelector('ENABLE_SINGLE_STATEMENT_DELETION')(state)
+  }), {}),
   withProps(({ model }) => ({
     schema: 'client',
     id: model.get('_id'),
@@ -99,7 +104,13 @@ const enhance = compose(
   })
 );
 
-export const render = ({ model, handleAttrChange, handleTargetValueChange, onChangeScopes }) => {
+export const render = ({
+  model,
+  handleAttrChange,
+  handleTargetValueChange,
+  onChangeScopes,
+  enableSingleStatementDeletion
+}) => {
   const basicKey = model.getIn(['api', 'basic_key'], '');
   const basicSecret = model.getIn(['api', 'basic_secret'], '');
   const _id = model.get('_id', '');
@@ -167,7 +178,13 @@ export const render = ({ model, handleAttrChange, handleTargetValueChange, onCha
           <div>
             <div className="form-group">
               <label htmlFor="xapiScopesCheckboxGroup">Scopes</label>
-              {renderScopes(scopes, onChangeScopes, XAPI_SCOPES)}
+              {renderScopes(
+                scopes,
+                onChangeScopes,
+                getXapiScopes(
+                  enableSingleStatementDeletion
+                )
+              )}
             </div>
             <div className="form-group">
               <label htmlFor="authorityEditor">Authority</label>

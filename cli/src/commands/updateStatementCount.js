@@ -10,7 +10,7 @@ export default function () {
       logger.info(`Updating count on ${store.title}`);
       const count = await Statement.countDocuments({ lrs_id: store._id });
       store.statementCount = count;
-      store.save();
+      await store.save();
       logger.info('Saved');
     }, Promise.resolve());
     process.exit();

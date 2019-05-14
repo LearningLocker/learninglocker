@@ -458,7 +458,35 @@ exports[`ClientForm renders correctly 1`] = `
           className={undefined}
           data-react-toolbox="label"
         >
-          All
+          API All
+        </span>
+      </label>
+      <label
+        className=""
+        data-react-toolbox="checkbox"
+        onMouseEnter={undefined}
+        onMouseLeave={undefined}
+      >
+        <input
+          checked={false}
+          className={undefined}
+          disabled={false}
+          name={undefined}
+          onChange={[Function]}
+          onClick={[Function]}
+          type="checkbox"
+        />
+        <div
+          className=""
+          data-react-toolbox="check"
+          onMouseDown={[Function]}
+          style={undefined}
+        />
+        <span
+          className={undefined}
+          data-react-toolbox="label"
+        >
+          Delete statements (not covered by All scope)
         </span>
       </label>
     </div>
