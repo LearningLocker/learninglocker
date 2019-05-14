@@ -102,6 +102,69 @@ describe('API HTTP Route tests', function describeTest() {
     });
   });
 
+  describe('/api/auth/jwt/organisation', () => {
+    it('should return 200 when user access token is valid', async () => {
+      let userAccessToken = '';
+
+      await apiApp
+        .post(routes.AUTH_JWT_PASSWORD)
+        .auth('testy@mctestface.com', 'password1')
+        .expect((res) => {
+          userAccessToken = res.text;
+        });
+
+      await apiApp
+        .post(routes.AUTH_JWT_ORGANISATION)
+        .set('Authorization', `Bearer ${userAccessToken}`)
+        .send({
+          organisation: '561a679c0c5d017e4004714f',
+        })
+        .expect(200)
+        .expect((res) => {
+          // Test cookie (refresh token)
+          expect(res.headers['set-cookie'].length).to.equal(1);
+          const refreshTokenCookie = res.headers['set-cookie'][0].split('; ').reduce((acc, kv) => {
+            const [k, v] = kv.split('=');
+            return { ...acc, [k]: v };
+          }, {});
+
+          // expect(refreshTokenCookie.Domain).to.equal('localhost');
+          // expect(refreshTokenCookie.Path).to.equal('/');
+          expect(Object.keys(refreshTokenCookie).includes('HttpOnly')).to.equal(true);
+
+          expect(moment(refreshTokenCookie.Expires).isBefore(moment().add(7, 'days'))).to.equal(true);
+          expect(moment(refreshTokenCookie.Expires).isAfter(moment().add(7, 'days').add(-3, 's'))).to.equal(true);
+
+          const refreshToken = refreshTokenCookie.refresh_token_organisation_561a679c0c5d017e4004714f;
+          const decodedRefreshToken = jsonwebtoken.verify(refreshToken, process.env.APP_SECRET);
+
+          expect(decodedRefreshToken.userId).to.equal('561a679c0c5d017e4004714f');
+          expect(decodedRefreshToken.tokenId).to.equal('561a679c0c5d017e4004714f');
+          expect(decodedRefreshToken.tokenType).to.equal('organisation_refresh');
+          expect(moment.unix(decodedRefreshToken.exp).isBefore(moment().add(7, 'days'))).to.equal(true);
+          expect(moment.unix(decodedRefreshToken.exp).isAfter(moment().add(7, 'days').add(-3, 's'))).to.equal(true);
+
+          // Test body (access token)
+          const decodedAccessToken = jsonwebtoken.verify(res.text, process.env.APP_SECRET);
+          expect(decodedAccessToken.userId).to.equal('561a679c0c5d017e4004714f');
+          expect(decodedAccessToken.tokenType).to.equal('organisation');
+          expect(decodedAccessToken.tokenId).to.equal('561a679c0c5d017e4004714f');
+
+          expect(moment.unix(decodedAccessToken.exp).isBefore(moment().add(1, 'h'))).to.equal(true);
+          expect(moment.unix(decodedAccessToken.exp).isAfter(moment().add(1, 'h').add(-3, 's'))).to.equal(true);
+        });
+    });
+
+    it('should return 401 when user access token is invalid', async () => {
+      await apiApp
+        .post(routes.AUTH_JWT_ORGANISATION)
+        .expect(401)
+        .expect((res) => {
+          expect(res.headers['set-cookie']).to.equal(undefined);
+        });
+    });
+  });
+
   describe('/api/auth/jwt/refresh', () => {
     it('should return 200 and user access token when refresh token cookie is valid', async () => {
       let refreshTokenCookie = '';

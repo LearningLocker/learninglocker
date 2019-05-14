@@ -10,7 +10,7 @@ import {
   DEFAULT_PASSPORT_OPTIONS
 } from 'lib/constants/auth';
 import Unauthorized from 'lib/errors/Unauthorised';
-import { createOrgJWT, createUserJWT, createUserRefreshJWT } from 'api/auth/jwt';
+import { createOrgJWT, createOrgRefreshJWT, createUserJWT, createUserRefreshJWT } from 'api/auth/jwt';
 import { AUTH_FAILURE } from 'api/auth/utils';
 
 /**
@@ -225,12 +225,25 @@ const includes = (organisations, orgId) =>
 const jwtOrganisation = (req, res) => {
   const organisationId = req.body.organisation;
   const { user } = req;
-  const { token } = req.user.authInfo;
+  const userAccessToken = req.user.authInfo.token;
   // check that the user exists in this organisation
   if (includes(user.organisations, organisationId)) {
-    createOrgJWT(user, organisationId, token.provider)
-      .then(newToken => res.send(newToken))
-      .catch(err => res.status(500).send(err));
+    Promise.all([
+      createOrgJWT(user, organisationId, userAccessToken.provider),
+      createOrgRefreshJWT(user, organisationId, userAccessToken.provider),
+    ]).then(
+      ([orgAccessToken, orgRefreshToken]) => res.cookie(
+        `refresh_token_organisation_${organisationId}`,
+        orgRefreshToken,
+        {
+          domain: 'localhost',
+          // path: '/api/auth/jwt/refresh',
+          expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          // secure: true,
+          httpOnly: true,
+        }
+      ).send(orgAccessToken)
+    ).catch(err => res.status(500).send(err));
   } else {
     res.status(401).send('User does not have access to this organisation.');
   }

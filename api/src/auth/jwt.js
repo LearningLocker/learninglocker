@@ -122,6 +122,24 @@ const createOrgJWT = async (user, organisationId, provider) => {
   return createJWT(orgTokenPayload);
 };
 
+const createOrgRefreshTokenPayload = (user, organisationId, provider) => payloadDefaults({
+  userId: String(user._id),
+  provider,
+  scopes: ['refresh_token_organisation'],
+  tokenType: 'organisation_refresh',
+  tokenId: organisationId,
+});
+
+/**
+ * @param {*} user
+ * @param {*} organisationId
+ * @param {*} provider
+ * @returns {Promise<any>}
+ */
+const createOrgRefreshJWT = (user, organisationId, provider) =>
+  createJWT(createOrgRefreshTokenPayload(user, organisationId, provider), { expiresIn: '7d' });
+
+
 const createDashboardTokenPayload = async (dashboard, shareableId, provider) => {
   if (!shareableId && dashboard.shareable.length > 0) {
     shareableId = dashboard.shareable[0]._id;
@@ -155,6 +173,8 @@ export {
   createUserRefreshJWT,
   createOrgTokenPayload,
   createOrgJWT,
+  createOrgRefreshTokenPayload,
+  createOrgRefreshJWT,
   createDashboardTokenPayload,
   createDashboardJWT,
 };
