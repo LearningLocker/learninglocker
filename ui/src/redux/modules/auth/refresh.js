@@ -80,7 +80,7 @@ function* checkTokensExpired(token, duck) {
   }
 
   const expMoment = moment.unix(token.get('exp'));
-  const fiveMinutesLater = moment().add(60, 'minutes');
+  const fiveMinutesLater = moment().add(3, 'minutes');
   const willExpiredSoon = expMoment.isBefore(fiveMinutesLater);
   if (willExpiredSoon) {
     const tokenType = token.get('tokenType');
@@ -91,7 +91,7 @@ function* checkTokensExpired(token, duck) {
 
 function* pollRefreshTokenSaga() {
   while (true) {
-    yield call(delay, 10000);
+    yield call(delay, 5000);
 
     const userToken = yield select(userTokenSelector);
     yield checkTokensExpired(userToken, refreshUserTokenDuck);
