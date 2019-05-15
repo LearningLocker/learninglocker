@@ -6,6 +6,7 @@ import { Map, List } from 'immutable';
 import { noop, identity, debounce, isNull } from 'lodash';
 import OptionList from 'ui/components/OptionList';
 import OptionListItem from 'ui/components/OptionListItem';
+import areEqualProps from 'ui/utils/hocs/areEqualProps';
 import keyCodes from 'lib/constants/keyCodes';
 import Token from './token/Token';
 import styles from './autocomplete.css';
@@ -65,8 +66,8 @@ class AutoComplete extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      ...this.stateFromProps(this.props),
-      inputValue: null
+      focused: false,
+      inputValue: null,
     };
     this.propagateInputChange =
       debounce(this.propagateInputChange, 400, { leading: true, trailing: true });
@@ -81,8 +82,10 @@ class AutoComplete extends Component {
     }
   }
 
-  componentDidUpdate = () => {
-    this.setState(this.stateFromProps(this.props));
+  shouldComponentUpdate(nextProps, nextState) {
+    const p = areEqualProps(this.props, nextProps);
+    const s = areEqualProps(this.state, nextState);
+    return !p || !s;
   }
 
   componentWillUnmount() {
@@ -113,11 +116,11 @@ class AutoComplete extends Component {
       case keyCodes.BACKSPACE:
         if (
           (this.state.inputValue === null || this.state.inputValue.length === 0)
-          && this.state.values.size > 0
+          && this.props.values.size > 0
           && this.props.multi) {
           e.preventDefault();
           this.deleteValue(
-            this.state.values.lastKeyOf(this.state.values.last())
+            this.props.values.lastKeyOf(this.props.values.last())
           );
         }
         break;
@@ -126,8 +129,12 @@ class AutoComplete extends Component {
   }
 
   getAvailableOptions = () => {
-    const { options } = this.state;
-    return options;
+    const { values, options } = this.props;
+    return options.withMutations((optsWithMuts) => {
+      values.forEach((_, key) => {
+        optsWithMuts.delete(key);
+      });
+    }).entrySeq().toList();
   }
 
   focus = () => {
@@ -152,14 +159,11 @@ class AutoComplete extends Component {
   }
 
   deleteValue = (key) => {
-    const newValues = this.state.values.delete(key);
-    // the new values will be picked up from props after going through global state
-    // update them in local state immediately for a faster feel
+    const newValues = this.props.values.delete(key);
+    this.props.onChange(newValues);
     this.setState({
-      values: newValues,
       inputValue: null
     });
-    this.props.onChange(newValues);
     this.focus();
   }
 
@@ -167,20 +171,14 @@ class AutoComplete extends Component {
     const { multi } = this.props;
     const index = option[0];
     const value = option[1];
-    let newValues;
 
-    // the new values will be picked up from props after going through global state
-    // add them to local state immediately for a faster feel
-    if (multi) {
-      newValues = this.state.values.set(index, value);
-    } else {
-      newValues = new Map({ [index]: value });
-    }
+    const newValues = multi ?
+      this.props.values.set(index, value) :
+      new Map({ [index]: value });
 
     this.props.onChange(newValues);
 
     this.setState({
-      values: newValues,
       inputValue: null
     });
 
@@ -208,20 +206,6 @@ class AutoComplete extends Component {
   unbindListeners() {
     window.removeEventListener('keydown', this.onKeyDown);
     delete this.keyDownListener;
-  }
-
-  stateFromProps = (props) => {
-    const { values, options } = props;
-
-    const newOptions = options.withMutations((optsWithMuts) => {
-      values.forEach((value, key) => {
-        optsWithMuts.delete(key);
-      });
-    }).entrySeq().toList();
-    return {
-      values,
-      options: newOptions
-    };
   }
 
   // if in single value mode, get the user's input or the current value as a string
@@ -259,7 +243,7 @@ class AutoComplete extends Component {
           renderOption={this.renderOption}
           isLoading={this.props.isLoading}
           fetchMore={this.props.fetchMore}
-          rowCount={this.props.optionCount - this.state.values.size}>
+          rowCount={this.props.optionCount - this.props.values.size}>
           {this.props.children}
         </OptionList>
       );
@@ -282,8 +266,7 @@ class AutoComplete extends Component {
   }
 
   renderInput = () => {
-    const { multi } = this.props;
-    const { values } = this.state;
+    const { multi, values } = this.props;
     const hasSingleValue = !multi && values.first();
     const placeholder = hasSingleValue ? '' : this.props.placeholder;
     const inputValue = this.getInputValue();
@@ -299,8 +282,8 @@ class AutoComplete extends Component {
   }
 
   renderValues = () => {
-    const { values, inputValue } = this.state;
-    const { multi, parseOption, parseOptionTooltip } = this.props;
+    const { inputValue } = this.state;
+    const { values, multi, parseOption, parseOptionTooltip } = this.props;
     const hasSingleValue = !multi && values.first();
 
     if (multi) {

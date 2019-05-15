@@ -16,15 +16,13 @@ class TypeEditor extends Component {
 
   constructor(props) {
     super(props);
-    this.state = this.getStateFromProps(props);
+    this.state = {
+      type: props.model.get('type'),
+    };
   }
 
   shouldComponentUpdate = (_, nextState) =>
     this.state.type !== nextState.type
-
-  componentDidUpdate = () => {
-    this.setState(this.getStateFromProps(this.props));
-  }
 
   onClickType = type => this.setState({ type })
 
@@ -33,8 +31,6 @@ class TypeEditor extends Component {
     const value = this.state.type;
     this.props.updateModel({ path, value });
   }
-
-  getStateFromProps = props => ({ type: props.model.get('type') })
 
   isActive = type => this.state.type === type
 
