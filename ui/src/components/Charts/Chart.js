@@ -158,7 +158,6 @@ export const renderLegend = (labels, toggleHiddenSeries) => (labels.size > 1 ?
     wrapperStyle={{ marginLeft: '20px', paddingBottom: '20px' }}
     verticalAlign={'top'}
     align="center"
-    height={'auto'}
     onClick={toggleHiddenSeries ? onLegendClick(toggleHiddenSeries) : null} /> : <noscript />
   );
 
