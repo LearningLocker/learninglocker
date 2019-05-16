@@ -167,6 +167,8 @@ const CustomColorPickerInner = ColorWrap((props) => {
 class CustomColorPicker extends React.PureComponent {
 
   static propTypes = {
+    initialColor: React.PropTypes.string,
+
     // immutable.List<tinycolor.ColorInput>
     // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/tinycolor2/index.d.ts
     customColors: React.PropTypes.instanceOf(List),
@@ -178,7 +180,7 @@ class CustomColorPicker extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      color: colorHelper.toState(props.customColors.first() || '#2BD867')
+      color: colorHelper.toState(props.initialColor || '#2BD867')
     };
   }
 

@@ -99,6 +99,7 @@ class ColorPicker extends React.PureComponent {
                 <div style={{ position: 'relative' }}>
                   <div style={{ position: 'absolute', bottom: '40px', right: '-32px' }}>
                     <CustomColorPicker
+                      initialColor={color}
                       customColors={customColors}
                       onClickCheckMark={this.onSelectCustomColor} />
                   </div>
