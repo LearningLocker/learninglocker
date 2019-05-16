@@ -133,6 +133,7 @@
     "react-onclickoutside": "^5.9.0",
     "react-portal": "^3.0.0",
     "react-redux": "^5.0.3",
+    "react-scroll": "^1.7.11",
     "react-textarea-autosize": "^7.1.0",
     "react-toolbox": "2.0.0-beta.13",
     "react-virtualized": "^9.20.1",

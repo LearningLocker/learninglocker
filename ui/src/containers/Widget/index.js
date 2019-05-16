@@ -115,7 +115,7 @@ class Widget extends Component {
     return 'Enable donut';
   }
 
-  getTitle = model => model.get('title') || <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>{createDefaultTitle(this.props.visualisation, '')}</span>;
+  getTitle = (model, props) => model.get('title') || props.visualisation.get('description') || <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>{createDefaultTitle(this.props.visualisation, '')}</span>;
 
   toggleEditingTitle = () => {
   }
@@ -167,9 +167,9 @@ class Widget extends Component {
             Go to visualisation
           </Link>
         }
-        <a onClick={this.openModal.bind(null, VISUALISATION)} title="Widget settings">
+        <a onClick={this.openModal.bind(null, VISUALISATION)} title="Edit widget visualisation or title">
           <i className={`ion ${styles.marginRight} ion-gear-b grey`} />
-          Settings
+          Edit Widget
         </a>
         { this.props.editable &&
           <a
@@ -197,7 +197,7 @@ class Widget extends Component {
       [styles.title]: true,
       [styles.draggableTitle]: this.props.editable,
     });
-
+    console.log('in modal', model, 'and props: ', this.props)
     return (
       <div className={`panel panel-default animated fadeIn ${styles.widget}`} >
         <div className={styles.widgetContent}>
@@ -217,9 +217,9 @@ class Widget extends Component {
             </div>
           }
           {
-            isModalOpen &&
+            (isModalOpen) &&
               <WidgetVisualisePicker
-                isOpened={isModalOpen}
+                isOpened={isModalOpen || this.props.widgetModalOpen}
                 model={model}
                 onClickClose={this.closeModal}
                 onChangeTitle={this.props.onChangeTitle}
