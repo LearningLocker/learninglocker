@@ -1,8 +1,10 @@
 import React, { PropTypes, Component } from 'react';
+import Scroll from 'react-scroll';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import WidgetVisualiseCreator from 'ui/containers/WidgetVisualiseCreator';
 import { Map, List, is } from 'immutable';
 import Input from 'ui/components/Material/Input';
-import { withProps, compose } from 'recompose';
+import { withProps, compose, lifecycle } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import DashboardGrid from 'ui/containers/DashboardGrid';
 import DeleteButton from 'ui/containers/DeleteButton';
@@ -24,6 +26,13 @@ class Dashboard extends Component {
     model: new Map()
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      widgetModalOpen: false,
+    };
+  }
+
   onChangeWidgets = (newWidgets) => {
     if (is(this.props.model.get('widgets'), newWidgets)) {
       return;
@@ -31,11 +40,13 @@ class Dashboard extends Component {
     this.props.updateModel({ path: ['widgets'], value: newWidgets });
   };
 
+  toggleWidgetModal = () => {
+    this.setState({ widgetModalOpen: !this.state.widgetModalOpen });
+  }
+
+
   onClickAddWidget = () => {
-    const newWidgetsAttr = this.props.model
-      .get('widgets', new List())
-      .push(new Map());
-    this.props.saveModel({ attrs: new Map({ widgets: newWidgetsAttr }) });
+    this.toggleWidgetModal();
   };
 
   onTitleChange = (value) => {
@@ -68,6 +79,21 @@ class Dashboard extends Component {
       path: ['widgets'],
       value: widgetsUpdate
     });
+  };
+
+  createPopulatedWidget = (widgetIndex) => {
+    const model = this.props.model;
+    const lastWidget = model.get('widgets').last() || new Map();
+    const newModel = model
+      .get('widgets', new List())
+      .push(new Map({
+        visualisation: widgetIndex,
+        w: 5,
+        h: 8,
+        y: lastWidget.get('y', 0) + lastWidget.get('h', 0)
+      }));
+    this.props.saveModel({ attrs: new Map({ widgets: newModel }) });
+    this.toggleWidgetModal();
   };
 
   onChangeVisibility = (value) => {
@@ -140,6 +166,11 @@ class Dashboard extends Component {
           }
         </div>
         <div className="clearfix" />
+        <WidgetVisualiseCreator
+          isOpened={this.state.widgetModalOpen}
+          model={model}
+          onClickClose={() => this.toggleWidgetModal()}
+          onChangeVisualisation={this.createPopulatedWidget} />
         <DashboardGrid
           organisationId={organisationId}
           widgets={model.get('widgets')}
@@ -159,5 +190,13 @@ export default compose(
       id: id || params.dashboardId
     })
   ),
-  withModel
+  withModel,
+  lifecycle({
+    componentDidUpdate(previousProps) {
+      if (this.props.model.get('widgets').size > previousProps.model.get('widgets').size && window) {
+        const scroll = Scroll.animateScroll;
+        scroll.scrollToBottom({ smooth: true });
+      }
+    }
+  }),
 )(Dashboard);

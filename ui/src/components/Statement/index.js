@@ -18,23 +18,20 @@ class Statement extends Component {
   hasInStatement = path =>
     this.props.statement.hasIn(path);
 
-  setFilterAt = (keyPath, value, event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    this.props.setFilterAt(keyPath, value);
-  }
-
-  renderPart = (path, part, displayer, filterPath = path) => {
+  renderPart = (path, part, displayer, filterPath) => {
+    const filterValue = this.getInStatement(filterPath);
     const value = this.getInStatement(path);
-    const filterValue = path === filterPath ? value : this.getInStatement(filterPath);
     const display = displayer(value);
     const title = JSON.stringify(value.toJS(), null, 2);
-    const setFilter = this.setFilterAt.bind(null, filterPath, filterValue);
 
     return (
       <a
         className={styles[part]}
-        onClick={setFilter}
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          this.props.setFilterAt(filterPath, filterValue);
+        }}
         title={title}>
         {display}
       </a>
@@ -45,60 +42,59 @@ class Statement extends Component {
     this.renderPart(path, 'actor', displayActor, filterPath);
 
   renderVerb = path =>
-    this.renderPart(path, 'verb', displayVerb);
+    this.renderPart(path, 'verb', displayVerb, path);
 
   renderActivity = path =>
-    this.renderPart(path, 'object', displayActivity);
-
-  renderStatement = basePath => (
-    <span>
-      {this.renderActor(basePath.concat(['actor']), (
-        basePath.size === 1 && this.hasInStatement(new List(['person'])) ?
-        new List(['person']) :
-        basePath.concat(['actor'])
-      ))}{' '}
-      {this.renderVerb(basePath.concat(['verb']))}{' '}
-      {this.renderObject(basePath.concat(['object']))}
-    </span>
-  );
+    this.renderPart(path, 'object', displayActivity, path);
 
   renderSubStatement = basePath =>
     <span>({this.renderStatement(basePath)})</span>;
 
-  renderStatementRef = () =>
-    <span>StatementRef</span>;
-
-  renderObject = (basePath) => {
+  renderObject = (basePath, filterPath) => {
     const objectTypePath = basePath.concat(['objectType']);
     const objectType = this.getInStatement(objectTypePath);
+
     switch (objectType) {
       case 'SubStatement': return this.renderSubStatement(basePath);
-      case 'StatementRef': return this.renderStatementRef(basePath);
+      case 'StatementRef': return (<span>StatementRef</span>);
       case 'Agent':
-      case 'Group': return this.renderActor(basePath);
+      case 'Group': return this.renderActor(basePath, filterPath);
       default: return this.renderActivity(basePath);
     }
   }
 
-  renderTimestamp = (basePath) => {
-    const timestampPath = basePath.concat(['timestamp']);
-    const timestamp = moment(this.getInStatement(timestampPath));
-    return (
-      <AutoUpdate>
-        <span className={`pull-right ${styles.timestamp}`}>
-          {timestamp.fromNow()}
-        </span>
-      </AutoUpdate>
-    );
-  }
+  renderStatement = (basePath) => {
+    const personPath = basePath.size === 1 && this.hasInStatement(new List(['person'])) ?
+      new List(['person']) :
+      undefined;
 
-  render = () => {
-    const basePath = new List(['statement']);
+    const actorPath = basePath.concat(['actor']);
+    const verbPath = basePath.concat(['verb']);
+    const objectPath = basePath.concat(['object']);
 
     return (
       <span>
-        {this.renderTimestamp(basePath)}
-        {this.renderStatement(basePath)}
+        {this.renderActor(actorPath, personPath || actorPath)}
+        {' '}
+        {this.renderVerb(verbPath)}
+        {' '}
+        {this.renderObject(objectPath, objectPath)}
+      </span>
+    );
+  };
+
+  render = () => {
+    const timestamp = moment(this.getInStatement(new List(['statement', 'timestamp'])));
+
+    return (
+      <span>
+        {this.renderStatement(new List(['statement']))}
+
+        <AutoUpdate>
+          <span className={`pull-right ${styles.timestamp}`}>
+            {timestamp.fromNow()}
+          </span>
+        </AutoUpdate>
       </span>
     );
   };

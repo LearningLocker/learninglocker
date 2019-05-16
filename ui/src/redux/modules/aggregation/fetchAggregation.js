@@ -1,17 +1,17 @@
-import { OrderedMap, fromJS } from 'immutable';
-import map from 'lodash/map';
+import { OrderedMap, Map, fromJS } from 'immutable';
 import { createSelector } from 'reselect';
-import { call } from 'redux-saga/effects';
+import moment from 'moment';
+import { call, put, takeEvery } from 'redux-saga/effects';
+import { delay } from 'bluebird';
 import createAsyncDuck from 'ui/utils/createAsyncDuck';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
-import { setReviver } from 'ui/utils/immutable';
 
-export function defaultMapping(set) {
-  return new OrderedMap(fromJS(map(set, value => ([value._id, value]))));
-}
-
-export function suggestionMapping(set) {
-  return fromJS(map(set, 'result'), setReviver);
+export function defaultMapping(body) {
+  return new Map({
+    result: body.result && new OrderedMap(body.result.map(v => fromJS([v._id, v]))),
+    startedAt: body.status.startedAt,
+    completedAt: body.status.completedAt,
+  });
 }
 
 const aggregationSelector = state => state.aggregation;
@@ -30,16 +30,57 @@ const aggregationShouldFetchSelector = pipeline => createSelector(
     )
 );
 
-const fetchAggregaation = createAsyncDuck({
+const aggregationShouldRecallSelector = pipeline => createSelector(
+  aggregationSelector,
+  (aggregations) => {
+    const requestState = aggregations.getIn([pipeline, 'requestState']);
+    if (requestState === IN_PROGRESS) {
+      return false;
+    }
+
+    const result = aggregations.getIn([pipeline, 'result']);
+    const startedAt = aggregations.getIn([pipeline, 'startedAt']);
+    const completedAt = aggregations.getIn([pipeline, 'completedAt']);
+
+    // Cached and is running
+    const cachedAndIsRunning = startedAt && completedAt && moment(completedAt).isBefore(moment(startedAt));
+    if (cachedAndIsRunning) {
+      return true;
+    }
+
+    // No cache in redux
+    if (!OrderedMap.isOrderedMap(result)) {
+      return true;
+    }
+
+    // Redux has result, but completedAt is null
+    if (completedAt === null) {
+      return true;
+    }
+
+    return false;
+  }
+);
+
+const fetchAggregation = createAsyncDuck({
   actionName: 'learninglocker/aggregation/FETCH_AGGREGATION',
   failureDelay: 2000,
 
   reduceStart: (state, { pipeline }) => state
     .setIn([pipeline, 'requestState'], IN_PROGRESS),
 
-  reduceSuccess: (state, { pipeline, result }) => state
-    .setIn([pipeline, 'requestState'], COMPLETED)
-    .setIn([pipeline, 'result'], result),
+  reduceSuccess: (state, { pipeline, result }) => {
+    const x = state
+      .setIn([pipeline, 'requestState'], COMPLETED)
+      .setIn([pipeline, 'startedAt'], result.get('startedAt'))
+      .setIn([pipeline, 'completedAt'], result.get('completedAt'));
+
+    if (result.get('result') === null) {
+      return x;
+    }
+
+    return x.setIn([pipeline, 'result'], result.get('result'));
+  },
 
   reduceFailure: (state, { pipeline, err }) => state
     .setIn([pipeline, 'requestState'], FAILED)
@@ -48,33 +89,60 @@ const fetchAggregaation = createAsyncDuck({
   reduceComplete: (state, { pipeline }) => state
     .setIn([pipeline, 'requestState'], COMPLETED),
 
-  startAction: ({ pipeline, mapping = defaultMapping }) => ({ pipeline, mapping }),
+  startAction: ({ pipeline, mapping = defaultMapping, sinceAt }) => ({ pipeline, mapping, sinceAt }),
 
-  successAction: ({ pipeline, result }) => ({ pipeline, result }),
+  successAction: ({ pipeline, result, sinceAt }) => ({ pipeline, result, sinceAt }),
 
   failureAction: ({ pipeline, err }) => ({ pipeline, err }),
 
   completeAction: ({ pipeline }) => ({ pipeline }),
 
   checkShouldFire: ({ pipeline }, state) => {
-    const checkShouldFire = aggregationShouldFetchSelector(pipeline)(state);
-    return checkShouldFire;
+    const shouldFetch = aggregationShouldFetchSelector(pipeline)(state);
+    const shouldRecall = aggregationShouldRecallSelector(pipeline)(state);
+    return shouldFetch || shouldRecall;
   },
 
-  doAction: function* fetchAggregationSaga({ pipeline, mapping, llClient }) {
-    const { body, status } = yield call(llClient.getAggregation, pipeline);
-    if (status > 300) throw new Error(body.error);
+  doAction: function* fetchAggregationSaga({ pipeline, mapping, llClient, sinceAt }) {
+    const { body } = yield call(llClient.aggregateAsync, pipeline, undefined, sinceAt);
     const result = mapping(body);
-    // map the ids against the filter in the pagination store
-    return yield { pipeline, result };
+
+    return yield { pipeline, result, sinceAt };
   }
 });
+
+function* recallAggregationIfRequired(args) {
+  const pipeline = args.pipeline;
+  const sinceAt = args.sinceAt;
+  const result = args.result.get('result');
+  const startedAt = args.result.get('startedAt');
+  const completedAt = args.result.get('completedAt');
+
+  // Cached and is running
+  const cachedAndIsRunning = startedAt && completedAt && moment(completedAt).isBefore(moment(startedAt));
+  if (cachedAndIsRunning) {
+    yield call(delay, 1000);
+    yield put(fetchAggregation.actions.start({ pipeline, sinceAt: completedAt }));
+    return;
+  }
+
+  // No cache
+  if (result === null) {
+    yield call(delay, 1000);
+    yield put(fetchAggregation.actions.start({ pipeline, sinceAt }));
+    return;
+  }
+}
+
+function* watchAggregationSuccess() {
+  if (__CLIENT__) yield takeEvery(fetchAggregation.constants.success, recallAggregationIfRequired);
+}
 
 export const selectors = {
   aggregationRequestStateSelector,
   aggregationShouldFetchSelector
 };
 
-export const reducers = fetchAggregaation.reducers;
-export const actions = fetchAggregaation.actions;
-export const sagas = fetchAggregaation.sagas;
+export const reducers = fetchAggregation.reducers;
+export const actions = fetchAggregation.actions;
+export const sagas = [...fetchAggregation.sagas, watchAggregationSuccess];

@@ -3,7 +3,12 @@ import express from 'express';
 import restify from 'express-restify-mongoose';
 import git from 'git-rev';
 import Promise from 'bluebird';
-import { omit, findIndex } from 'lodash';
+import {
+  omit,
+  findIndex,
+  get,
+  pick
+} from 'lodash';
 import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
 import getTokenTypeFromAuthInfo from 'lib/services/auth/authInfoSelectors/getTokenTypeFromAuthInfo';
 import getScopesFromAuthInfo from 'lib/services/auth/authInfoSelectors/getScopesFromAuthInfo';
@@ -17,6 +22,7 @@ import {
   RESTIFY_DEFAULTS,
   setNoCacheHeaders
 } from 'lib/constants/auth';
+import { MANAGER_SELECT } from 'lib/services/auth/selects/models/user.js';
 
 // CONTROLLERS
 import AuthController from 'api/controllers/AuthController';
@@ -28,6 +34,7 @@ import generateConnectionController from 'api/controllers/ConnectionController';
 import generateIndexesController from 'api/controllers/IndexesController';
 import ImportPersonasController from 'api/controllers/ImportPersonasController';
 import StatementMetadataController from 'api/controllers/StatementMetadataController';
+import BatchDeleteController from 'api/controllers/BatchDeleteController';
 
 // REST
 import LRS from 'lib/models/lrs';
@@ -52,6 +59,7 @@ import SiteSettings from 'lib/models/siteSettings';
 import personaRESTHandler from 'api/routes/personas/personaRESTHandler';
 import personaIdentifierRESTHandler from 'api/routes/personas/personaIdentifierRESTHandler';
 import personaAttributeRESTHandler from 'api/routes/personas/personaAttributeRESTHandler';
+import BatchDelete from 'lib/models/batchDelete';
 import * as routes from 'lib/constants/routes';
 
 const router = new express.Router();
@@ -140,19 +148,19 @@ router.post(
 
 router.post(
   routes.UPLOADPERSONAS,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   ImportPersonasController.uploadPersonas
 );
 
 router.post(
   routes.IMPORTPERSONAS,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   ImportPersonasController.importPersonas
 );
 
 router.get(
   routes.IMPORTPERSONASERROR,
-  passport.authenticate(['jwt', 'jwt-cookie'], DEFAULT_PASSPORT_OPTIONS),
+  passport.authenticate(['jwt', 'jwt-cookie', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   ImportPersonasController.importPersonasError
 );
 
@@ -188,6 +196,11 @@ router.get(
   StatementController.aggregate
 );
 router.get(
+  routes.STATEMENTS_AGGREGATE_ASYNC,
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  StatementController.aggregateAsync
+);
+router.get(
   routes.STATEMENTS_COUNT,
   passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   StatementController.count
@@ -202,6 +215,24 @@ router.post(
   routes.STATEMENT_METADATA,
   passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   StatementMetadataController.postStatementMetadata
+);
+
+router.post(
+  routes.STATEMENT_BATCH_DELETE_INITIALISE,
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  BatchDeleteController.initialiseBatchDelete
+);
+
+router.post(
+  routes.STATEMENT_BATCH_DELETE_TERMINATE_ALL,
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  BatchDeleteController.terminateAllBatchDeletes
+);
+
+router.post(
+  routes.STATEMENT_BATCH_DELETE_TERMINATE,
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  BatchDeleteController.terminateBatchDelete
 );
 
 
@@ -257,7 +288,19 @@ restify.serve(router, User, {
     }
 
     next();
-  }
+  },
+  postCreate: (req, _, next) => {
+    req.erm.result = pick(req.erm.result, Object.keys(MANAGER_SELECT));
+    next();
+  },
+  postUpdate: (req, _, next) => {
+    req.erm.result = pick(req.erm.result, Object.keys(MANAGER_SELECT));
+    next();
+  },
+  postDelete: (req, _, next) => {
+    req.erm.result = pick(req.erm.result, Object.keys(MANAGER_SELECT));
+    next();
+  },
 });
 restify.serve(router, Client);
 restify.serve(router, Visualisation);
@@ -265,7 +308,16 @@ restify.serve(router, Dashboard);
 restify.serve(router, LRS);
 restify.serve(router, Statement, {
   preCreate: (req, res) => res.sendStatus(405),
-  preDelete: (req, res) => res.sendStatus(405),
+  preDelete: (req, res, next) => {
+    if (!boolean(get(process.env, 'ENABLE_STATEMENT_DELETION', true))) {
+      return res.send('Statement deletions not enabled for this instance', 405);
+    }
+    if (!req.params.id) {
+      return res.send('No ID sent', 400);
+    }
+    next();
+    return;
+  },
   preUpdate: (req, res) => res.sendStatus(405),
 });
 restify.serve(router, StatementForwarding);
@@ -275,6 +327,11 @@ restify.serve(router, Role);
 restify.serve(router, PersonasImport);
 restify.serve(router, PersonasImportTemplate);
 restify.serve(router, SiteSettings);
+restify.serve(router, BatchDelete, {
+  preCreate: (req, res) => res.sendStatus(405),
+  preDelete: (req, res) => res.sendStatus(405),
+  preUpdate: (req, res) => res.sendStatus(405)
+});
 
 /**
  * CONNECTIONS and INDEXES
@@ -296,7 +353,8 @@ const generatedRouteModels = [
   ImportCsv,
   Role,
   PersonasImport,
-  PersonasImportTemplate
+  PersonasImportTemplate,
+  BatchDelete
 ];
 
 const generateConnectionsRoute = (model, routeSuffix, authentication) => {

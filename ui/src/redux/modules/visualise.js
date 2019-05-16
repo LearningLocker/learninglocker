@@ -6,14 +6,10 @@ import {
   fetchAggregation,
   aggregationShouldFetchSelector,
   aggregationResultsSelector,
-  aggregationRequestStateSelector,
-  IN_PROGRESS,
-  SUCCESS,
-  FAILED,
+  aggregationHasResultSelector,
 } from 'ui/redux/modules/aggregation';
 import {
   shouldFetchSelector,
-  requestStateSelector,
   fetchModels,
   fetchModelsCount,
   countSelector
@@ -34,7 +30,7 @@ import {
   JOURNEY,
   JOURNEY_PROGRESS,
 } from 'ui/utils/constants';
-import { pipelinesFromQueries, getJourney } from 'ui/utils/visualisations';
+import { pipelinesFromQueries } from 'ui/utils/visualisations';
 import { unflattenAxes } from 'lib/helpers/visualisation';
 import { OFF, ANY } from 'lib/constants/dashboard';
 
@@ -178,6 +174,11 @@ const shareableDashboardFilterSelector = () => createSelector(
   }
 );
 
+/**
+ * @param {string} id - visualisation._id
+ * @param {(queries: immutable.List) => immutableList} cb - queries to pipelines
+ * @return {(state: any) => immutable.List} - selector. Select pipelines from state
+ */
 export const visualisationPipelinesSelector = (
   id,
   cb = pipelinesFromQueries // whilst waiting for https://github.com/facebook/jest/issues/3608
@@ -286,14 +287,23 @@ const getJourneyResults = (visualisation, filter, state) => {
   return journeyProgressResultsSelector(journey, filter)(state);
 };
 
+/**
+ * @param {*} state
+ * @returns {(pipelines: immutable.List) => immutable.List}
+ */
 const getPipelinesResults = state => pipelines => pipelines.map(pipeline => (
   aggregationResultsSelector(pipeline)(state) || new Map()
 ));
 
+/**
+ *
+ * @param {string} visualisationId
+ * @param {*} state
+ * @return {immutable.List}
+ */
 const getSeriesResults = (visualisationId, state) => {
   const series = visualisationPipelinesSelector(visualisationId)(state);
-  const out = series.map(getPipelinesResults(state));
-  return out;
+  return series.map(getPipelinesResults(state));
 };
 
 /**
@@ -313,56 +323,19 @@ export const visualisationResultsSelector = (visualisationId, filter) => createS
   }
 });
 
-const getWaypointFetchStates = (visualisation, pipelines, state) => {
-  const journeyId = visualisation.get('journey');
-  return pipelines.map(() => {
-    const waypoint = getJourney(journeyId, 'waypoint');
-    return requestStateSelector('journeyProgress', waypoint)(state);
-  });
-};
-
-const getPipelinesFetchStates = (pipelines, state) => pipelines.map(pipeline => (
-  aggregationRequestStateSelector(pipeline)(state)
-));
-
-const getSeriesFetchStates = (series, state) =>
-  series.reduce((fetchStates, pipelines) => {
-    const states = getPipelinesFetchStates(pipelines, state);
-    return fetchStates.concat(states);
-  }, new List());
-
-const getVisualisationFetchStates = (id, state) => {
-  const visualisation = modelsSchemaIdSelector('visualisation', id)(state);
-  const pipelines = visualisationPipelinesSelector(id)(state);
-  switch (visualisation.get('type')) {
-    case JOURNEY_PROGRESS:
-      return getWaypointFetchStates(visualisation, pipelines, state);
-    default:
-      return getSeriesFetchStates(pipelines, state);
-  }
-};
-
-const getOverallFetchState = (fetchStates) => {
-  const potentialStates = new List([IN_PROGRESS, SUCCESS, FAILED]);
-  return fetchStates.reduce((reduction, requestState) => {
-    const reductionPriority = potentialStates.indexOf(reduction);
-    const requestStatePriority = potentialStates.indexOf(requestState);
-    return reductionPriority > requestStatePriority ? reduction : requestState;
-  });
-};
-
-/**
- * Takes a visualisation id and returns the fetching state of its queries
- * where the fetch states are different between queries the highest priorty state will be returned
- * priority order lw to high = [COMPLETED, IN_PROGRESS, FAILED]
- * @param  {visualisationId} id of the visualisation to check
- * @return {Immutable.List}
- */
-export const visualisationFetchStateSelector =
-  visualisationId => createSelector([identity], (state) => {
-    const fetchStates = getVisualisationFetchStates(visualisationId, state);
-    return getOverallFetchState(fetchStates);
-  });
+export const visualisationAllAggregationsHaveResultSelector = visualisationId => createSelector([
+  identity,
+], (state) => {
+  const series = visualisationPipelinesSelector(visualisationId)(state);
+  return series.reduce(
+    (acc1, pipelines) =>
+      acc1 && pipelines.reduce(
+        (acc2, pipeline) => acc2 && aggregationHasResultSelector(pipeline)(state),
+        true
+      ),
+    true
+  );
+});
 
 function* handleVisualisation(action) {
   const { keyPath, silent } = action;

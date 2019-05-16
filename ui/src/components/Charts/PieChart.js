@@ -18,7 +18,6 @@ const cellPadding = 5;
 
 const getInnerRadius = size => i => (hole) => {
   const out = (size * i) + (cellPadding * i) + hole;
-  console.log('001', out);
   return out;
 };
 

@@ -14,7 +14,7 @@ import pipelineFromQuery from './pipelineFromQuery';
  * @param {boolean} benchmarkingEnabled - optional
  * @returns immutable.List
  */
-export default (
+const pipelinesFromQueries = (
   queries,
   axes,
   type,
@@ -46,3 +46,5 @@ export default (
     query, axes, type, previewPeriod, id, timezone, currentMoment
   })));
 };
+
+export default pipelinesFromQueries;

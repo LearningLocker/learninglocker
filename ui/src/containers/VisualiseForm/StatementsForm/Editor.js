@@ -6,11 +6,11 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
 import { updateModel } from 'ui/redux/modules/models';
 import Tabs from 'ui/components/Material/Tabs';
-import TypeEditor from './TypeEditor';
 import SeriesEditor from './SeriesEditor';
 import AxesEditor from './AxesEditor/AxesEditor';
 import styles from '../visualiseform.css';
 import OptionsEditor from './OptionsEditor';
+import NewVisualisation from './NewVisualisation';
 
 const SCHEMA = 'visualisation';
 
@@ -20,6 +20,7 @@ class Editor extends Component {
     orgTimezone: PropTypes.string.isRequired,
     exportVisualisation: PropTypes.func,
     updateModel: PropTypes.func,
+    shouldShowNewVisualisation: PropTypes.bool,
   }
 
   state = {
@@ -77,14 +78,7 @@ class Editor extends Component {
   changeStep = step =>
     this.setState({ step })
 
-  hasType = () =>
-    this.props.model.has('type')
-
   isSeriesType = () => false;
-
-  renderTypeEditor = () =>
-    <TypeEditor model={this.props.model} />
-
 
   renderDescription = description => (
     <div className="form-group">
@@ -147,9 +141,12 @@ class Editor extends Component {
     this.isSeriesType() ? this.renderSeriesEditor() : this.renderTabs()
   )
 
-  render = () => (
-    this.hasType() ? this.renderSteps() : this.renderTypeEditor()
-  )
+  render = () => {
+    if (this.props.shouldShowNewVisualisation) {
+      return <NewVisualisation visualisationModel={this.props.model} />;
+    }
+    return this.renderSteps();
+  }
 }
 
 export default (

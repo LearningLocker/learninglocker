@@ -78,7 +78,7 @@ class Source extends PureComponent {
   }
 
   setFilterAt = (keyPath, value) => {
-    const tokenQuery = valueToCriteria(keyPath.join('.'), new Map({ value }));
+    const tokenQuery = valueToCriteria(keyPath.join('.'), value);
     this.onChangeQuery(addTokenToQuery(this.props.query, keyPath, tokenQuery));
   }
 

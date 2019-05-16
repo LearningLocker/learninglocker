@@ -8,6 +8,7 @@ import { operators, getAvailableSection } from 'ui/redux/modules/queryBuilder';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { withModels } from 'ui/utils/hocs';
 import DiscreteCriteria from './Discrete/Criteria';
+import ActorDiscreteCriteria from './ActorDiscrete/Criteria';
 import ContinuousCriteria from './Continuous/Criteria';
 import RangeCriteria from './Range/Criteria';
 import BooleanCriteria from './Boolean/Criteria';
@@ -120,17 +121,21 @@ class ExpandedSection extends Component {
     onDeleteCriterion={this.props.onDeleteCriterion} />
     )
 
-  renderDiscreteCriteria = () => {
-    const out = (
-      <DiscreteCriteria
-        section={this.props.section}
-        criteria={this.props.sectionCriteria}
-        onCriteriaChange={this.props.onCriteriaChange}
-        onAddCriterion={this.props.onAddCriterion}
-        onDeleteCriterion={this.props.onDeleteCriterion} />
-    );
-    return out;
-  };
+  renderDiscreteCriteria = () => (<DiscreteCriteria
+    section={this.props.section}
+    criteria={this.props.sectionCriteria}
+    onCriteriaChange={this.props.onCriteriaChange}
+    onAddCriterion={this.props.onAddCriterion}
+    onDeleteCriterion={this.props.onDeleteCriterion} />
+    )
+
+  renderActorDiscreteCriteria = () => (<ActorDiscreteCriteria
+    section={this.props.section}
+    criteria={this.props.sectionCriteria}
+    onCriteriaChange={this.props.onCriteriaChange}
+    onAddCriterion={this.props.onAddCriterion}
+    onDeleteCriterion={this.props.onDeleteCriterion} />
+    )
 
   renderCriteria = () => {
     const ops = this.props.section.get('operators');
@@ -146,6 +151,7 @@ class ExpandedSection extends Component {
         );
       case operators.BOOLEAN: return this.renderBooleanCriteria();
       case operators.STRING_MATCHES: return this.renderStringMatchesCriteria();
+      case operators.OR_DISCRETE: return this.renderActorDiscreteCriteria();
       default: return this.renderDiscreteCriteria();
     }
   };
