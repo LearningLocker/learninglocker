@@ -5,10 +5,11 @@
 }
 
 .card {
+  display: flex;
+  align-content: center;
+  flex-direction: column;
   width: 180px;
-  height: 200px;
   padding: 8px;
-  margin: 16px 12px;
 }
 
 .card:hover {
@@ -20,10 +21,10 @@
   text-decoration: none;
 }
 
-.cardImg {
-  text-align: center;
+.card img {
+  height: 100px;
 }
 
-.cardTitle {
+.card p {
   text-align: center;
 }

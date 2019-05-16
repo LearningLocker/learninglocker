@@ -4,14 +4,9 @@ import VisualiseIcon from 'ui/components/VisualiseIcon';
 import styles from './styles.css';
 
 const Card = ({ title, type, onSelect }) => (
-  <div
-    className={styles.card}
-    onClick={() => onSelect()}>
-    <div className={styles.cardImg} >
-      <VisualiseIcon type={type} isSmall />
-    </div>
-
-    <p className={styles.cardTitle} >{title}</p>
+  <div className={styles.card} onClick={() => onSelect()}>
+    <VisualiseIcon type={type} isSmall />
+    <p>{title}</p>
   </div>
 );
 
