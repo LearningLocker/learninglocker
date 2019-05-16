@@ -40,4 +40,16 @@ describe('areEqualProps', () => {
     const o2 = { a: fromJS([1, 2, 3]) };
     expect(areEqualProps(o1, o2)).toEqual(false);
   });
+
+  test('should return true when o1 is not an array but o1 and o2 are deeply equal', () => {
+    const o1 = { a: [1, 2] };
+    const o2 = { a: [1, 2] };
+    expect(areEqualProps(o1, o2)).toEqual(true);
+  });
+
+  test('should return true when o1 is not an object but o1 and o2 are deeply equal', () => {
+    const o1 = { a: { x: 1 } };
+    const o2 = { a: { x: 1 } };
+    expect(areEqualProps(o1, o2)).toEqual(true);
+  });
 });
