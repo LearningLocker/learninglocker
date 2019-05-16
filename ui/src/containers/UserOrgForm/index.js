@@ -92,7 +92,7 @@ const getDefaultOrgSettings = organisation =>
 const getActiveOrgSettings = ({ model, organisationId }) => {
   // @TODO: org isn't available and when it is, it doesnt retrigger this
   const org = organisationId.toString();
-  const settings = model.get(ORG_SETTINGS).find(val =>
+  const settings = model.get(ORG_SETTINGS, new List()).find(val =>
     val.get('organisation').toString() === org
   );
   return settings || getDefaultOrgSettings(organisationId);
