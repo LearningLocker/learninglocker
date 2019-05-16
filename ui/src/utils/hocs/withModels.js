@@ -20,9 +20,13 @@ export default (WrappedComponent) => {
   class WithModels extends Component {
     componentDidMount = () => this.fetchModels(this.props);
 
-    shouldComponentUpdate = nextProps => !areEqualProps(this.props, nextProps);
+    shouldComponentUpdate = nextProps => !areEqualProps(this.props, nextProps, true);
 
-    componentDidUpdate = () => this.fetchModels(this.props);
+    componentDidUpdate = () => {
+      if (this.props.shouldFetch) {
+        this.fetchModels(this.props);
+      }
+    }
 
     fetchModels = ({ schema, filter, sort, first }) => {
       if (filter) {
