@@ -16,7 +16,7 @@ import { AUTH_FAILURE } from 'api/auth/utils';
 
 const buildRefreshCookieOption = protocol => {
 
-  const c = {
+  const cookieOption = {
     path: `/api${AUTH_JWT_REFRESH}`,
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -25,9 +25,9 @@ const buildRefreshCookieOption = protocol => {
   };
 
   if (protocol === 'https') {
-    return { ...c, secure: true };
+    return { ...cookieOption, secure: true };
   }
-  return c;
+  return cookieOption;
 };
 
 /**
