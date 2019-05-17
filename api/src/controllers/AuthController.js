@@ -14,12 +14,14 @@ import Unauthorized from 'lib/errors/Unauthorised';
 import { createOrgJWT, createOrgRefreshJWT, createUserJWT, createUserRefreshJWT } from 'api/auth/jwt';
 import { AUTH_FAILURE } from 'api/auth/utils';
 
+const REFRESH_TOKEN_EXPIRATION_MSEC = 7 * 24 * 60 * 60 * 1000; // 7 days
+
 const buildRefreshCookieOption = protocol => {
 
   const cookieOption = {
     path: `/api${AUTH_JWT_REFRESH}`,
-    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    expires: new Date(Date.now() + REFRESH_TOKEN_EXPIRATION_MSEC),
+    maxAge: REFRESH_TOKEN_EXPIRATION_MSEC,
     httpOnly: true,
     sameSite: 'Strict',
   };
