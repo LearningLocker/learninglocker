@@ -132,6 +132,24 @@ class Widget extends Component {
   renderMenu = () => {
     const { model, organisationId, visualisation } = this.props;
 
+    const shouldShowTableModeToggle = (
+      visualisation.size > 0 &&
+      visualisation.get('type') !== COUNTER &&
+      model.has('visualisation')
+    );
+
+    const shouldShowDonutModeToggle = (
+      visualisation.size > 0 &&
+      visualisation.get('type') === PIE &&
+      !visualisation.get('sourceView') &&
+      model.has('visualisation')
+    );
+
+    const shouldShowGoVisualisation = (
+      model.has('visualisation') &&
+      visualisation.size > 0
+    );
+
     return (
       <DropDownMenu
         button={
@@ -139,7 +157,7 @@ class Widget extends Component {
             <i className="ion ion-navicon-round" />
           </a>
         }>
-        { visualisation.size > 0 && visualisation.get('type') !== COUNTER && model.has('visualisation') &&
+        { shouldShowTableModeToggle &&
           <a
             onClick={this.toggleSourceView}
             title="Table mode"
@@ -147,10 +165,8 @@ class Widget extends Component {
             <i className={`ion ${styles.marginRight} ion-edit grey`} />{this.getSourceView()}
           </a>
         }
-        { visualisation.size > 0
-          && visualisation.get('type') === PIE
-          && !visualisation.get('sourceView')
-          && model.has('visualisation') &&
+
+        { shouldShowDonutModeToggle &&
           <a
             onClick={this.toggleDonutView}
             title="Donut mode"
@@ -158,7 +174,8 @@ class Widget extends Component {
             <i className={`ion ${styles.marginRight} ion-edit grey`} />{this.getDonutView()}
           </a>
         }
-        { model.has('visualisation') && visualisation.size > 0 &&
+
+        { shouldShowGoVisualisation &&
           <Link
             routeName={'organisation.data.visualise.visualisation'}
             routeParams={{ organisationId, visualisationId: visualisation.get('_id') }} >
@@ -166,17 +183,22 @@ class Widget extends Component {
             Go to visualisation
           </Link>
         }
-        <a onClick={this.openModal.bind(null, VISUALISATION)} title="Edit widget visualisation or title">
+
+        <a
+          onClick={this.openModal.bind(null, VISUALISATION)}
+          title="Edit widget visualisation or title">
           <i className={`ion ${styles.marginRight} ion-gear-b grey`} />
           Edit Widget
         </a>
+
         { this.props.editable &&
           <a
             onClick={this.openDeleteModal}
             title="Delete Widget">
-            <i className={`ion ${styles.marginRight}  ion-close-round grey`} />Delete
+            <i className={`ion ${styles.marginRight}  ion-close-round grey`} />
+            Delete
           </a>
-                    }
+        }
       </DropDownMenu>
     );
   }
