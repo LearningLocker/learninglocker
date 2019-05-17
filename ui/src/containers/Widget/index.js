@@ -130,7 +130,7 @@ class Widget extends Component {
   }
 
   renderMenu = () => {
-    const { model, organisationId } = this.props;
+    const { model, organisationId, visualisation } = this.props;
 
     return (
       <DropDownMenu
@@ -139,7 +139,7 @@ class Widget extends Component {
             <i className="ion ion-navicon-round" />
           </a>
         }>
-        { this.props.visualisation.size > 0 && this.props.visualisation.get('type') !== COUNTER && model.has('visualisation') &&
+        { visualisation.size > 0 && visualisation.get('type') !== COUNTER && model.has('visualisation') &&
           <a
             onClick={this.toggleSourceView}
             title="Table mode"
@@ -147,9 +147,9 @@ class Widget extends Component {
             <i className={`ion ${styles.marginRight} ion-edit grey`} />{this.getSourceView()}
           </a>
         }
-        { this.props.visualisation.size > 0
-          && this.props.visualisation.get('type') === PIE
-          && !this.props.visualisation.get('sourceView')
+        { visualisation.size > 0
+          && visualisation.get('type') === PIE
+          && !visualisation.get('sourceView')
           && model.has('visualisation') &&
           <a
             onClick={this.toggleDonutView}
@@ -158,10 +158,10 @@ class Widget extends Component {
             <i className={`ion ${styles.marginRight} ion-edit grey`} />{this.getDonutView()}
           </a>
         }
-        { model.has('visualisation') && this.props.visualisation.size > 0 &&
+        { model.has('visualisation') && visualisation.size > 0 &&
           <Link
             routeName={'organisation.data.visualise.visualisation'}
-            routeParams={{ organisationId, visualisationId: this.props.visualisation.get('_id') }} >
+            routeParams={{ organisationId, visualisationId: visualisation.get('_id') }} >
             <i className={`ion ${styles.marginRight} ion-edit grey`} />
             Go to visualisation
           </Link>
@@ -182,7 +182,7 @@ class Widget extends Component {
   }
 
   render = () => {
-    const { model } = this.props;
+    const { model, visualisation } = this.props;
     const delPopupProps = {
       schema,
       onClickClose: this.closeDeleteModal,
@@ -210,8 +210,8 @@ class Widget extends Component {
           </div>
           {
             <div className={`panel-body ${styles.body}`}>
-              {!this.props.visualisation.get('sourceView') && model.has('visualisation') && <VisualiseResults id={model.get('visualisation')} />}
-              {this.props.visualisation.get('sourceView') && <SourceResults id={model.get('visualisation')} />
+              {!visualisation.get('sourceView') && model.has('visualisation') && <VisualiseResults id={model.get('visualisation')} />}
+              {visualisation.get('sourceView') && <SourceResults id={model.get('visualisation')} />
               }
             </div>
           }
