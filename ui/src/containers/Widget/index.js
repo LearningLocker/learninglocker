@@ -134,6 +134,7 @@ class Widget extends Component {
 
     const shouldShowTableModeToggle = (
       visualisation.size > 0 &&
+      visualisation.get('type') &&
       visualisation.get('type') !== COUNTER &&
       model.has('visualisation')
     );
