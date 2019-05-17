@@ -495,7 +495,7 @@ const getChildOverridesFromValueType = (valueType, generator, childPath) => {
       getModelQuery: value => value.getIn(['value', 'id'], value),
       getQueryModel: criteria => new Map({ value: { id: criteria } }),
       getQueryKey: childPath.push('id').join('.'),
-      getModelIdent: (model) => identToString(model.getIn(['value', 'id'])),
+      getModelIdent: model => identToString(model.getIn(['value', 'id'])),
     };
   }
   return {
