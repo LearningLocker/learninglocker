@@ -7,6 +7,7 @@ export const QUESTIONANALYSIS = 'QUESTIONANALYSIS';
 export const XVSY = 'XVSY';
 export const SESSIONS = 'SESSIONS';
 export const STATEMENTS = 'STATEMENTS';
+export const JOURNEY_PROGRESS = 'JOURNEY_PROGRESS';
 export const FREQUENCY = 'FREQUENCY';
 export const COUNTER = 'COUNTER';
 export const PIE = 'PIE';
@@ -27,6 +28,8 @@ export const LAST_2_YEARS = 'LAST_1_YEARS';
 export const TYPES = 'stages/TYPES';
 export const STORES = 'stages/STORES';
 export const NONE = 'stages/NONE';
+export const JOURNEY = 'stages/JOURNEY';
+
 export const FIVE = 5;
 export const TEN = 10;
 export const FIFTEEN = 15;
