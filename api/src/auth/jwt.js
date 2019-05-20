@@ -5,6 +5,7 @@ import map from 'lodash/map';
 import reject from 'lodash/reject';
 import isEmpty from 'lodash/isEmpty';
 import toString from 'lodash/toString';
+import { JWT_ACCESS_TOKEN_EXPIRATION, JWT_REFRESH_TOKEN_EXPIRATION } from 'lib/constants/auth';
 import { VIEW_SHAREABLE_DASHBOARD } from 'lib/constants/scopes';
 import Role from 'lib/models/role';
 import getActiveOrgSettings from 'api/utils/getActiveOrgSettings';
@@ -80,7 +81,10 @@ const createUserTokenPayload = (user, provider) => payloadDefaults({
  * @returns {Promise<any>}
  */
 const createUserJWT = (user, provider) =>
-  createJWT(createUserTokenPayload(user, provider));
+  createJWT(
+    createUserTokenPayload(user, provider),
+    { expiresIn: JWT_ACCESS_TOKEN_EXPIRATION },
+  );
 
 const createUserRefreshTokenPayload = (user, provider) => payloadDefaults({
   userId: String(user._id),
@@ -96,7 +100,10 @@ const createUserRefreshTokenPayload = (user, provider) => payloadDefaults({
  * @returns {Promise<any>}
  */
 const createUserRefreshJWT = (user, provider) =>
-  createJWT(createUserRefreshTokenPayload(user, provider), { expiresIn: '7d' });
+  createJWT(
+    createUserRefreshTokenPayload(user, provider),
+    { expiresIn: JWT_REFRESH_TOKEN_EXPIRATION },
+  );
 
 const createOrgTokenPayload = async (user, orgId, provider) => {
   const activeOrgSettings = getActiveOrgSettings(user, orgId);
@@ -119,7 +126,10 @@ const createOrgTokenPayload = async (user, orgId, provider) => {
 };
 const createOrgJWT = async (user, organisationId, provider) => {
   const orgTokenPayload = await createOrgTokenPayload(user, organisationId, provider);
-  return createJWT(orgTokenPayload);
+  return createJWT(
+    orgTokenPayload,
+    { expiresIn: JWT_ACCESS_TOKEN_EXPIRATION },
+  );
 };
 
 const createOrgRefreshTokenPayload = (user, organisationId, provider) => payloadDefaults({
@@ -137,7 +147,10 @@ const createOrgRefreshTokenPayload = (user, organisationId, provider) => payload
  * @returns {Promise<any>}
  */
 const createOrgRefreshJWT = (user, organisationId, provider) =>
-  createJWT(createOrgRefreshTokenPayload(user, organisationId, provider), { expiresIn: '7d' });
+  createJWT(
+    createOrgRefreshTokenPayload(user, organisationId, provider),
+    { expiresIn: JWT_REFRESH_TOKEN_EXPIRATION },
+  );
 
 
 const createDashboardTokenPayload = async (dashboard, shareableId, provider) => {
@@ -162,7 +175,10 @@ const createDashboardTokenPayload = async (dashboard, shareableId, provider) => 
 
 const createDashboardJWT = async (dashboard, shareableId, provider) => {
   const dashboardPayload = await createDashboardTokenPayload(dashboard, shareableId, provider);
-  return createJWT(dashboardPayload);
+  return createJWT(
+    dashboardPayload,
+    { expiresIn: JWT_ACCESS_TOKEN_EXPIRATION },
+  );
 };
 
 export {

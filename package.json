@@ -103,6 +103,7 @@
     "mongoose-findorcreate": "^0.1.2",
     "mongoose-timestamp": "^0.5.0",
     "morgan": "^1.7.0",
+    "ms": "^2.1.1",
     "multer": "^1.1.0",
     "multiparty": "^4.1.2",
     "newrelic": "^4.7.0",

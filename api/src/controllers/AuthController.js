@@ -1,6 +1,7 @@
 import passport from 'passport';
 import jsonwebtoken from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
+import ms from 'ms';
 import logger from 'lib/logger';
 import User from 'lib/models/user';
 import OAuthToken from 'lib/models/oAuthToken';
@@ -8,20 +9,20 @@ import { sendResetPasswordToken } from 'lib/helpers/email';
 import { AUTH_JWT_SUCCESS, AUTH_JWT_REFRESH } from 'lib/constants/routes';
 import {
   ACCESS_TOKEN_VALIDITY_PERIOD_SEC,
+  JWT_REFRESH_TOKEN_EXPIRATION,
   DEFAULT_PASSPORT_OPTIONS
 } from 'lib/constants/auth';
 import Unauthorized from 'lib/errors/Unauthorised';
 import { createOrgJWT, createOrgRefreshJWT, createUserJWT, createUserRefreshJWT } from 'api/auth/jwt';
 import { AUTH_FAILURE } from 'api/auth/utils';
 
-const REFRESH_TOKEN_EXPIRATION_MSEC = 7 * 24 * 60 * 60 * 1000; // 7 days
-
-const buildRefreshCookieOption = protocol => {
+const buildRefreshCookieOption = (protocol) => {
+  const validPeriodMsec = ms(JWT_REFRESH_TOKEN_EXPIRATION);
 
   const cookieOption = {
     path: `/api${AUTH_JWT_REFRESH}`,
-    expires: new Date(Date.now() + REFRESH_TOKEN_EXPIRATION_MSEC),
-    maxAge: REFRESH_TOKEN_EXPIRATION_MSEC,
+    expires: new Date(Date.now() + validPeriodMsec),
+    maxAge: validPeriodMsec,
     httpOnly: true,
     sameSite: 'Strict',
   };
