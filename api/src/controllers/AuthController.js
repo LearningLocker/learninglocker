@@ -184,11 +184,16 @@ const jwt = (req, res, next) => {
     return user.save(() =>
       Promise.all([createUserJWT(user), createUserRefreshJWT(user)])
         .then(
-          ([accessToken, refreshToken]) => res.cookie(
-            `refresh_token_user_${user._id}`,
-            refreshToken,
-            buildRefreshCookieOption(req.protocol),
-          ).send(accessToken))
+          ([accessToken, refreshToken]) =>
+            res
+              .cookie(
+                `refresh_token_user_${user._id}`,
+                refreshToken,
+                buildRefreshCookieOption(req.protocol),
+              )
+              .set('Content-Type', 'text/plain')
+              .send(accessToken)
+          )
         .catch(authFailure)
     );
   })(req, res, next);
@@ -208,12 +213,13 @@ const jwtRefresh = (req, res, next) => {
         throw new Unauthorized('No User');
       }
 
+
       if (tokenType === 'user_refresh') {
         const newUserToken = await createUserJWT(user, provider);
-        res.status(200).send(newUserToken);
+        res.status(200).set('Content-Type', 'text/plain').send(newUserToken);
       } else if (tokenType === 'organisation_refresh') {
         const newOrgToken = await createOrgJWT(user, tokenId, provider);
-        res.status(200).send(newOrgToken);
+        res.status(200).set('Content-Type', 'text/plain').send(newOrgToken);
       } else {
         throw new Unauthorized('Invalid tokenType');
       }
@@ -242,11 +248,15 @@ const jwtOrganisation = (req, res) => {
       createOrgJWT(user, organisationId, userAccessToken.provider),
       createOrgRefreshJWT(user, organisationId, userAccessToken.provider),
     ]).then(
-      ([orgAccessToken, orgRefreshToken]) => res.cookie(
-        `refresh_token_organisation_${organisationId}`,
-        orgRefreshToken,
-        buildRefreshCookieOption(req.protocol),
-      ).send(orgAccessToken)
+      ([orgAccessToken, orgRefreshToken]) =>
+        res
+          .cookie(
+            `refresh_token_organisation_${organisationId}`,
+            orgRefreshToken,
+            buildRefreshCookieOption(req.protocol),
+          )
+          .set('Content-Type', 'text/plain')
+          .send(orgAccessToken)
     ).catch(err => res.status(500).send(err));
   } else {
     res.status(401).send('User does not have access to this organisation.');

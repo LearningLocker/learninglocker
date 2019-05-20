@@ -56,7 +56,7 @@ describe('API HTTP Route tests', function describeTest() {
         .post(routes.AUTH_JWT_PASSWORD)
         .auth('testy@mctestface.com', 'password1')
         .expect(200)
-        .expect('Content-Type', /text\/html/)
+        .expect('Content-Type', /text\/plain/)
         .expect((res) => {
           // Test cookie (refresh token)
           expect(res.headers['set-cookie'].length).to.equal(1);
@@ -187,7 +187,7 @@ describe('API HTTP Route tests', function describeTest() {
         .set('Cookie', refreshTokenCookie)
         .send({ id: '561a679c0c5d017e4004714f', tokenType: 'user' })
         .expect(200)
-        .expect('Content-Type', /text\/html/)
+        .expect('Content-Type', /text\/plain/)
         .expect((res) => {
           expect(accessToken).to.not.equal(res.text);
         });
@@ -225,7 +225,7 @@ describe('API HTTP Route tests', function describeTest() {
         .set('Cookie', orgRefreshTokenCookie)
         .send({ id: '561a679c0c5d017e4004714f', tokenType: 'organisation' })
         .expect(200)
-        .expect('Content-Type', /text\/html/)
+        .expect('Content-Type', /text\/plain/)
         .expect((res) => {
           expect(orgAccessToken).to.not.equal(res.text);
         });
