@@ -15,6 +15,7 @@ import {
 import Unauthorized from 'lib/errors/Unauthorised';
 import { createOrgJWT, createOrgRefreshJWT, createUserJWT, createUserRefreshJWT } from 'api/auth/jwt';
 import { AUTH_FAILURE } from 'api/auth/utils';
+import catchErrors from 'api/controllers/utils/catchErrors';
 
 const buildRefreshCookieOption = (protocol) => {
   const validPeriodMsec = ms(JWT_REFRESH_TOKEN_EXPIRATION);
@@ -199,38 +200,35 @@ const jwt = (req, res, next) => {
   })(req, res, next);
 };
 
-const jwtRefresh = (req, res, next) => {
-  (async () => {
-    try {
-      const refreshToken = req.cookies[`refresh_token_${req.body.tokenType}_${req.body.id}`];
-      const decodedToken = await jsonwebtoken.verify(refreshToken, process.env.APP_SECRET);
+const jwtRefresh = catchErrors(async (req, res) => {
+  try {
+    const refreshToken = req.cookies[`refresh_token_${req.body.tokenType}_${req.body.id}`];
+    const decodedToken = await jsonwebtoken.verify(refreshToken, process.env.APP_SECRET);
 
-      const { tokenId, tokenType, userId, provider } = decodedToken;
+    const { tokenId, tokenType, userId, provider } = decodedToken;
 
-      const user = await User.findOne({ _id: userId });
+    const user = await User.findOne({ _id: userId });
 
-      if (!user) {
-        throw new Unauthorized('No User');
-      }
-
-
-      if (tokenType === 'user_refresh') {
-        const newUserToken = await createUserJWT(user, provider);
-        res.status(200).set('Content-Type', 'text/plain').send(newUserToken);
-      } else if (tokenType === 'organisation_refresh') {
-        const newOrgToken = await createOrgJWT(user, tokenId, provider);
-        res.status(200).set('Content-Type', 'text/plain').send(newOrgToken);
-      } else {
-        throw new Unauthorized('Invalid tokenType');
-      }
-    } catch (err) {
-      if (!['JsonWebTokenError', 'TokenExpiredError'].includes(err.name) && !(err instanceof Unauthorized)) {
-        console.error(err);
-      }
-      res.status(401).send('Unauthorized');
+    if (!user) {
+      throw new Unauthorized();
     }
-  })().catch(next);
-};
+
+    if (tokenType === 'user_refresh') {
+      const newUserToken = await createUserJWT(user, provider);
+      res.status(200).set('Content-Type', 'text/plain').send(newUserToken);
+    } else if (tokenType === 'organisation_refresh') {
+      const newOrgToken = await createOrgJWT(user, tokenId, provider);
+      res.status(200).set('Content-Type', 'text/plain').send(newOrgToken);
+    } else {
+      throw new Unauthorized();
+    }
+  } catch (err) {
+    if (['JsonWebTokenError', 'TokenExpiredError'].includes(err.name)) {
+      throw new Unauthorized();
+    }
+    throw err;
+  }
+});
 
 
 const includes = (organisations, orgId) =>

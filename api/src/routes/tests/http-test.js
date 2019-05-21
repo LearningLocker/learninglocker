@@ -65,8 +65,7 @@ describe('API HTTP Route tests', function describeTest() {
             return { ...acc, [k]: v };
           }, {});
 
-          // expect(refreshTokenCookie.Domain).to.equal('localhost');
-          // expect(refreshTokenCookie.Path).to.equal('/');
+          expect(refreshTokenCookie.Path).to.equal(`/api${routes.AUTH_JWT_REFRESH}`);
           expect(Object.keys(refreshTokenCookie).includes('HttpOnly')).to.equal(true);
 
           expect(moment(refreshTokenCookie.Expires).isBefore(moment().add(7, 'days'))).to.equal(true);
@@ -128,8 +127,7 @@ describe('API HTTP Route tests', function describeTest() {
             return { ...acc, [k]: v };
           }, {});
 
-          // expect(refreshTokenCookie.Domain).to.equal('localhost');
-          // expect(refreshTokenCookie.Path).to.equal('/');
+          expect(refreshTokenCookie.Path).to.equal(`/api${routes.AUTH_JWT_REFRESH}`);
           expect(Object.keys(refreshTokenCookie).includes('HttpOnly')).to.equal(true);
 
           expect(moment(refreshTokenCookie.Expires).isBefore(moment().add(7, 'days'))).to.equal(true);
