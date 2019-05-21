@@ -50,13 +50,13 @@ const withSearchStringToFilter = defaultProps({
 
 export default compose(
   withProps(({
-    activityId,
+    selectedOption,
   }) => ({
     first: 1,
     schema: 'fullActivities',
-    filter: {
-      activityId
-    },
+    filter: fromJS({
+      activityId: selectedOption
+    }),
   })),
   withSearchStringToFilter,
   withOnChangeSearchString,

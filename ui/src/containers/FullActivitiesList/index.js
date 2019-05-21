@@ -4,44 +4,16 @@ import ModelOptionList from 'ui/components/AutoComplete2/Options/ModelOptionList
 import AutoComplete2 from 'ui/components/AutoComplete2';
 import OptionListItem from 'ui/components/OptionListItem';
 import languageResolver from 'ui/utils/languageResolver';
-import { compose, withState, withProps } from 'recompose';
-import { Map, List } from 'immutable';
+import { compose, withState, withProps, shouldUpdate } from 'recompose';
+import { Map, List, fromJS } from 'immutable';
 import { connect } from 'react-redux';
-import { addTokenToQuery } from 'ui/utils/queries';
+import { addTokenToQuery, getCriteria, changeCriteria } from 'ui/utils/queries';
 import { valueToCriteria } from 'ui/redux/modules/queryBuilder';
 import { modelsSchemaIdSelector } from 'ui/redux/selectors';
 import { createSelector } from 'reselect';
+import { withModels } from 'ui/utils/hocs';
+import shallowEqualObjects from 'shallow-equal/objects';
 import FullActivitiesInput from './FullActivitiesInput';
-
-const renderOption = ({
-  useTooltip = false,
-  onFocus = () => {},
-}) => ({
-  option = new Map(),
-  onSelectOption = () => {}
-}) => {
-  // const out = (
-  //   <OptionListItem
-  //     data={option}
-  //     label={option.get('searchString')}
-  //     tooltip={useTooltip ? option.get('searchString') : null}
-  //     onClick={(event) => {
-  //       onFocus(event);
-  //       onSelectOption(event);
-  //     }} />
-  // );
-  const out = (
-    <OptionListItem
-      data={option}
-      label={option}
-      tooltip={useTooltip ? option : null}
-      onClick={(event) => {
-        onFocus(event);
-        onSelectOption(event);
-      }} />
-  );
-  return out;
-};
 
 const fullActivitiesList = ({
   useTooltip,
@@ -50,20 +22,38 @@ const fullActivitiesList = ({
   setSearchFilter,
   valuesFilter,
   model,
-  updateModel,
-  schema,
+  models, // remove currently selected model
+  updateVisualisationModel,
 }) => {
-  // DEBUG ONLY, remove
-  selectedOption = 'https://www.lynda.com/CourseID/622074';
+  const onSelectOption = ({
+    onBlur,
+  }) => (e) => {
 
-  const onSelectOption = ({ onBlur }) => (e) => {
-    const newFilters = model.get('filters').map((match) => {
+    let deselectedFilters = model.get('filters');
+    if (models.size > 0) {
+      // remove these models from the query builder.
+      deselectedFilters = model.get('filters').map((filter) => {
+        const criteria = getCriteria(filter);
+
+        const objectCriteriaToDelete =
+          criteria.filter(
+            (value, key) =>
+              key.get('criteriaPath').equals(new List(['statement', 'object'])) &&
+              value.get('$in', new List()).includes(models.first().get('activityId'))
+          );
+        const out = changeCriteria(objectCriteriaToDelete);
+        return out;
+      });
+    }
+
+    const newFilters = deselectedFilters.map((match) => {
       const query = match.get('$match', new Map());
 
       const keyPath = ['statement', 'object'];
       const tokenQuery = valueToCriteria(
         [...keyPath, 'id'].join('.'),
-        new Map({ value: e.get('activityId') })
+        // new Map({ value: e.get('activityId') })
+        e.get('activityId')
       );
 
       const result = addTokenToQuery(query, new List(keyPath), tokenQuery);
@@ -72,8 +62,8 @@ const fullActivitiesList = ({
       return out;
     });
 
-    updateModel({
-      schema,
+    updateVisualisationModel({
+      schema: 'visualisation',
       id: model.get('_id'),
       path: 'filters',
       value: newFilters
@@ -94,7 +84,6 @@ const fullActivitiesList = ({
               onFocus={onFocus}
               searchString={valuesFilter.getIn(['activityId', '$regex'])}
               parseOption={option => option}
-              renderOption={renderOption({ useTooltip, onFocus })}
               onChangeSearchString={(e) => {
                 const o = setSearchString(e.target.value);
                 return o;
@@ -123,39 +112,99 @@ const fullActivitiesList = ({
               canAdd={() => false} />
           );
           return ou;
-        }}
-      />
+        }} />
     </div>
   );
 
   return out;
 };
 
-// const courseIdSelector = (schema, id) => createSelector(
-//   [modelsSchemaIdSelector(schema, id)],
-//   (model) => {
-//     const filters = model.get('filters');
+const objectIdsSelector = (schema, id) => createSelector(
+  [modelsSchemaIdSelector(schema, id)],
+  (model) => {
+    const filters = model.get('filters', new Map());
+    const objectIds = filters.map((filter) => {
+      const criteria = getCriteria(filter);
 
+      const objectCriteria =
+        criteria.filter(
+          (value, key) => key.get('criteriaPath').equals(new List(['statement', 'object']))
+        );
 
+      return objectCriteria.toList()
+        .flatMap(object => object.getIn(['statement.object.id', '$in'])).toSet();
+    });
 
-//   }
-// );
+    if (objectIds.size > 1) {
+      const out = objectIds.first().intersect(...objectIds.rest());
+      return out.toList();
+    }
+    if (objectIds.size === 0) {
+      return new List();
+    }
+    return objectIds.first().toList();
+    // return 'https://www.lynda.com/CourseID/622074';
+  }
+);
 
 export default compose(
+
   withState('searchFilter', 'setSearchFilter'),
-  withProps(({ filter = new Map(), searchFilter = new Map(), notValuesFilter }) => ({
-    filter: filter.mergeDeep(searchFilter).mergeDeep(notValuesFilter),
-    schema: 'visualisation'
-  })),
-  withProps(({ filter }) => {
+  withProps(({
+    filter = new Map(),
+    searchFilter = new Map(),
+    notValuesFilter,
+    updateModel
+  }) => {
+    filter = new Map();
+    const out = ({
+      fullActivitiesFilter: filter.mergeDeep(searchFilter).mergeDeep(notValuesFilter),
+      updateVisualisationModel: updateModel
+    });
+    return out;
+  }),
+  withProps(({ fullActivitiesFilter }) => {
+    const out = {
+      valuesFilter: fullActivitiesFilter
+    };
+    return out;
+  }),
+  connect((state, { model }) => {
+    const out = {
+      objectIds: objectIdsSelector('visualisation', model.get('_id'))(state),
+    };
+    return out;
+  }, { }),
+  withProps(({ objectIds }) => {
+    const out = {
+      schema: 'fullActivities',
+      first: 1,
+      filter: fromJS({
+        activityId: {
+          $in: objectIds.toJS()
+        }
+      }),
+    };
+    return out;
+  }),
+  withModels,
+  withProps(({ models }) => {
+    const firstModel = models.first() || new Map();
     return {
-      valuesFilter: filter
+      selectedOption: firstModel.get('activityId')
     };
   }),
-  // connect((state, { schema, model }) => {
-
-  //   return {
-  //     selectedOption: courseIdSelector(schema, model.get('_id')),
-  //   };
-  // }, { })
+  shouldUpdate((
+    { objectIds, ...props },
+    { objectIds: nextObjectIds, ...nextProps }
+  ) => {
+    const out = !(
+      objectIds.equals(nextObjectIds)
+      && shallowEqualObjects(
+        props,
+        nextProps, ['shouldFetch', 'isLoading']
+      )
+    );
+    return out;
+  }),
 )(fullActivitiesList);
