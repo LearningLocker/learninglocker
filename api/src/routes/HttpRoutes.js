@@ -376,7 +376,18 @@ const generateIndexesRoute = (model, routeSuffix, authentication) => {
 
 const generateModelRoutes = (model) => {
   const routeSuffix = model.modelName.toLowerCase();
-  const authentication = passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS);
+  const authentication = (req, res, next) => passport.authenticate(
+      ['jwt', 'clientBasic'],
+      DEFAULT_PASSPORT_OPTIONS,
+      (err, user) => {
+        if (err || !user) {
+          res.status(401).set('Content-Type', 'text/plain').send('Unauthorized');
+          return;
+        }
+        req.user = user;
+        next();
+      },
+    )(req, res, next);
   generateConnectionsRoute(model, routeSuffix, authentication);
   generateIndexesRoute(model, routeSuffix, authentication);
 };
