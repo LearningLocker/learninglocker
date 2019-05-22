@@ -2,8 +2,8 @@ import { Map, List, fromJS } from 'immutable';
 import grouper from 'ui/utils/visualisations/aggregationGroup/grouper';
 
 const aggregateScatterAxis = (axis, preReqs, axes) => {
-  const valueType = axes.getIn([`${axis}Value`, 'optionKey']);
-  const groupType = axes.getIn(['group', 'optionKey']);
+  const valueType = axes.getIn([`${axis}Value`, 'optionKey'], 'statement');
+  const groupType = axes.getIn(['group', 'optionKey'], 'date');
   const operatorType = axes.get(`${axis}Operator`);
   const contextActivityDefinitionType = axes.getIn(['group', 'contextActivityDefinitionType'], null);
   const match = axes.getIn([`${axis}Query`, '$match'], new Map());
