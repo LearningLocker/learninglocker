@@ -24,7 +24,7 @@ export const LAST_2_MONTHS = 'LAST_2_MONTHS';
 export const LAST_6_MONTHS = 'LAST_6_MONTHS';
 export const LAST_24_HOURS = 'LAST_24_HOURS';
 export const LAST_1_YEAR = 'LAST_1_YEAR';
-export const LAST_2_YEARS = 'LAST_1_YEARS';
+export const LAST_2_YEARS = 'LAST_2_YEARS';
 
 export const TYPES = 'stages/TYPES';
 export const STORES = 'stages/STORES';
