@@ -1,8 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import { Map, Set } from 'immutable';
 import classNames from 'classnames';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { toTimezone } from 'lib/constants/timezones';
 import DatePicker from 'ui/components/Material/DatePicker';
 import Operator from '../Operator';
 import styles from '../styles.css';
@@ -50,7 +51,7 @@ class TempCriterion extends Component {
    */
   onChangeDate = (value) => {
     const yyyymmdd = moment(value).format('YYYY-MM-DD');
-    const timezone = this.props.timezone || this.props.orgTimezone;
+    const timezone = toTimezone(this.props.timezone || this.props.orgTimezone);
     const z = moment(yyyymmdd).tz(timezone).format('Z');
     const datetimeString = `${yyyymmdd}T00:00${z}`;
 
