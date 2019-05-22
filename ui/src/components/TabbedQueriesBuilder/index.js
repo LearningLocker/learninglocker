@@ -5,7 +5,7 @@ import Tabs from 'ui/components/Material/Tabs';
 import { Tab } from 'react-toolbox/lib/tabs';
 import DebounceInput from 'react-debounce-input';
 import QueryBuilder from 'ui/containers/QueryBuilder';
-import { CirclePicker } from 'react-color';
+import ColorPicker from 'ui/components/ColorPicker';
 import { VISUALISATION_COLORS } from 'ui/utils/constants';
 
 class TabbedQueriesBuilder extends Component {
@@ -50,13 +50,11 @@ class TabbedQueriesBuilder extends Component {
           defaults={this.props.defaults} />
       </div>
       <div className="form-group">
-        <CirclePicker
-          onChangeComplete={(color) => {
+        <ColorPicker
+          color={this.props.queries.getIn([index, 'color'], VISUALISATION_COLORS[index])}
+          onChange={(color) => {
             this.props.onChangeColor(index, color.hex);
-          }}
-          width="auto"
-          colors={VISUALISATION_COLORS}
-          color={this.props.queries.getIn([index, 'color'])} />
+          }} />
       </div>
     </div>
   );
