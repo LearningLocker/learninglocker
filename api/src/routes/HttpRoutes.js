@@ -6,7 +6,8 @@ import Promise from 'bluebird';
 import {
   omit,
   findIndex,
-  get
+  get,
+  pick
 } from 'lodash';
 import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
 import getTokenTypeFromAuthInfo from 'lib/services/auth/authInfoSelectors/getTokenTypeFromAuthInfo';
@@ -21,6 +22,7 @@ import {
   RESTIFY_DEFAULTS,
   setNoCacheHeaders
 } from 'lib/constants/auth';
+import { MANAGER_SELECT } from 'lib/services/auth/selects/models/user.js';
 
 // CONTROLLERS
 import AuthController from 'api/controllers/AuthController';
@@ -287,7 +289,19 @@ restify.serve(router, User, {
     }
 
     next();
-  }
+  },
+  postCreate: (req, _, next) => {
+    req.erm.result = pick(req.erm.result, Object.keys(MANAGER_SELECT));
+    next();
+  },
+  postUpdate: (req, _, next) => {
+    req.erm.result = pick(req.erm.result, Object.keys(MANAGER_SELECT));
+    next();
+  },
+  postDelete: (req, _, next) => {
+    req.erm.result = pick(req.erm.result, Object.keys(MANAGER_SELECT));
+    next();
+  },
 });
 restify.serve(router, Client);
 restify.serve(router, Visualisation);

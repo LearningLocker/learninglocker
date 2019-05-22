@@ -10,7 +10,10 @@ const TooltipLink = tooltipFactory(MaterialLink);
 
 class OptionListItem extends Component {
   static propTypes = {
-    label: PropTypes.string,
+    label: PropTypes.oneOfType([
+      PropTypes.object,
+      PropTypes.string,
+    ]),
     href: PropTypes.string,
     target: PropTypes.string,
     rel: PropTypes.string,
