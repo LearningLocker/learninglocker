@@ -82,7 +82,7 @@ const fullActivitiesList = ({
               hasFocus={hasFocus}
               hasInputFocus={hasFocus}
               onFocus={onFocus}
-              searchString={valuesFilter.getIn(['activityId', '$regex'])}
+              searchString={valuesFilter.getIn(['searchString', '$regex'])}
               parseOption={option => option}
               onChangeSearchString={(e) => {
                 const o = setSearchString(e.target.value);

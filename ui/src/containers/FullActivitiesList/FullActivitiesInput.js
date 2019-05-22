@@ -41,7 +41,7 @@ const withOnChangeSearchString = withProps(({
 const defaultSearchStringToFilter = (searchString) => {
   switch (searchString) {
     case '': return new Map();
-    default: return fromJS({ activityId: { $regex: searchString, $options: 'i' } });
+    default: return fromJS({ searchString: { $regex: searchString, $options: 'i' }})
   }
 };
 const withSearchStringToFilter = defaultProps({
