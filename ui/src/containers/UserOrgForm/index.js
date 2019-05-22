@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { getAppDataSelector } from 'ui/redux/modules/app';
 import { currentScopesSelector } from 'ui/redux/modules/auth';
 import { SITE_ADMIN, SITE_CAN_CREATE_ORG, SITE_SCOPES } from 'lib/constants/scopes';
+import { MANAGE_ALL_ROLES } from 'lib/constants/orgScopes';
 
 const ORG_SETTINGS = 'organisationSettings';
 
@@ -164,10 +165,11 @@ const enhance = compose(
   })
 );
 
-const render = (props) => {
+const UserOrgForm = (props) => {
   const {
     model,
     organisationId,
+    activeScopes,
     handleRolesChange,
     handleFilterChange,
     handleSiteRolesChange,
@@ -181,13 +183,14 @@ const render = (props) => {
   const filter = fromJS(userOrgSettings.get('filter', new Map({})));
 
   const siteRoles = model.get('scopes', new List());
-  const canEditSiteRoles = RESTRICT_CREATE_ORGANISATION &&
-    props.activeScopes.includes(SITE_ADMIN);
+  const canEditOrgRoles = activeScopes.includes(MANAGE_ALL_ROLES) || activeScopes.includes(SITE_ADMIN);
+  const canEditSiteRoles = RESTRICT_CREATE_ORGANISATION && activeScopes.includes(SITE_ADMIN);
 
   return (
     <div>
       <UserForm {...props} />
-      <div className="row">
+
+      {canEditOrgRoles && <div className="row">
         <div className="col-md-12" >
           <div className="form-group">
             <label htmlFor={rolesId}>Organisation Roles</label>
@@ -196,8 +199,7 @@ const render = (props) => {
             </div>
           </div>
         </div>
-      </div>
-
+      </div>}
 
       {canEditSiteRoles && <div className="row">
         <div className="col-md-12">
@@ -225,4 +227,4 @@ const render = (props) => {
   );
 };
 
-export default enhance(render);
+export default enhance(UserOrgForm);
