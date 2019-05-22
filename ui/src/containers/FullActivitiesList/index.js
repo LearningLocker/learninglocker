@@ -2,7 +2,6 @@ import React from 'react';
 import ModelOptionList from 'ui/components/AutoComplete2/Options/ModelOptionList/ModelOptionList';
 // import SingleInput from 'ui/components/AutoComplete2/Inputs/SingleInput/SingleInput';
 import AutoComplete2 from 'ui/components/AutoComplete2';
-import OptionListItem from 'ui/components/OptionListItem';
 import languageResolver from 'ui/utils/languageResolver';
 import { compose, withState, withProps, shouldUpdate } from 'recompose';
 import { Map, List, fromJS } from 'immutable';
@@ -16,7 +15,6 @@ import shallowEqualObjects from 'shallow-equal/objects';
 import FullActivitiesInput from './FullActivitiesInput';
 
 const fullActivitiesList = ({
-  useTooltip,
   selectedOption,
   setSearchString,
   setSearchFilter,

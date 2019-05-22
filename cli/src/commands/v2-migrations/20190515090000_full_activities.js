@@ -1,8 +1,7 @@
 import { getConnection } from 'lib/connections/mongoose';
 import 'lib/models/fullActivities';
-import { values, map as loMap } from 'lodash';
+import { map as loMap } from 'lodash';
 import highland from 'highland';
-import { map } from 'bluebird';
 
 const connection = getConnection();
 
@@ -26,9 +25,9 @@ const up = async () => {
   let i = BATCH_SIZE;
   const processStream = highland(cursor)
     .batch(BATCH_SIZE)
-    .flatMap((fullActivities) => {
+    .flatMap((fullActivitie) => {
       const bulkOp = fullActivitiesCollection.initializeUnorderedBulkOp();
-      loMap(fullActivities, (fullActivity) => {
+      loMap(fullActivitie, (fullActivity) => {
 
         bulkOp.find({ _id: fullActivity._id}).updateOne({
           $set: {
