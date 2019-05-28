@@ -136,7 +136,8 @@ export default async ({
       queueName: BATCH_STATEMENT_DELETION_QUEUE,
       payload: {
         batchDeleteId
-      }
+      },
+      visibilityTimeout: 60 * 60 // 1 hour
     });
   }
 

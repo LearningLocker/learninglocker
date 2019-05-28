@@ -46,7 +46,8 @@ const runBatchDelete = async ({
           queueName: BATCH_STATEMENT_DELETION_QUEUE,
           payload: {
             batchDeleteId: batchDelete._id.toString(),
-          }
+          },
+          visibilityTimeout: 60 * 60 // 1 hour
         });
       });
     } else {
