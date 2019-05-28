@@ -6,7 +6,12 @@ import {
 import { connect } from 'react-redux';
 import { fromJS } from 'immutable';
 import { updateModel } from 'ui/redux/modules/models';
-import { COLUMN_TYPES, COLUMN_TYPE_LABELS, COLUMN_ACCOUNT_KEY } from 'lib/constants/personasImport';
+import {
+  COLUMN_TYPES,
+  COLUMN_TYPE_LABELS,
+  COLUMN_ACCOUNT_KEY,
+  COLUMN_ACCOUNT_VALUE
+} from 'lib/constants/personasImport';
 import { map } from 'lodash';
 import {
   hasRelatedField,
@@ -16,6 +21,7 @@ import {
   isColumnOrderable,
   getPrimaryMaxPlusOne
 } from 'lib/services/importPersonas/personasImportHelpers';
+import Switch from 'ui/components/Material/Switch';
 
 const schema = 'personasImport';
 
@@ -107,6 +113,49 @@ const headerItemHandlers = withHandlers({
       path: 'structure',
       value: newStructure
     });
+  },
+  onUseConstantChange: ({
+    columnName,
+    model,
+    updateModel: doUpdateModel
+  }) => (event) => {
+    let newStructure = model
+      .get('structure')
+      .setIn([columnName, 'useConstant'], event);
+    if (event === true) {
+      // deselect any related columns
+      newStructure = updateRelatedStructure({
+        structure: newStructure,
+        columnName,
+        relatedColumn: false
+      });
+
+      newStructure = newStructure.setIn(
+        [columnName, 'primary'],
+        getPrimaryMaxPlusOne({ structure: newStructure })
+      );
+    } else {
+      newStructure = newStructure.setIn([columnName, 'primary'], null);
+    }
+
+    doUpdateModel({
+      schema,
+      id: model.get('_id'),
+      path: 'structure',
+      value: newStructure
+    });
+  },
+  onConstantChange: ({
+    columnName,
+    model,
+    updateModel: doUpdateModel
+  }) => (event) => {
+    doUpdateModel({
+      schema,
+      id: model.get('_id'),
+      path: ['structure', columnName, 'constant'],
+      value: event.target.value
+    });
   }
 });
 
@@ -116,15 +165,20 @@ export const HeaderItemComponent = ({
   onColumnTypeChange,
   onPrimaryOrderChange,
   onRelatedColumnChange,
+  onUseConstantChange,
+  onConstantChange,
   model,
   disabled
 }) => {
   const columnType = columnStructure.get('columnType');
+
   return (
     <div>
       <h3>{columnName}</h3>
 
-      {isColumnOrderable({ columnStructure: columnStructure.toJS() }) && <div className="form-group">
+      {isColumnOrderable({
+        columnStructure: columnStructure.toJS()
+      }) && <div className="form-group">
         <label htmlFor={`${model.get('_id')}-${columnName}-order`}>Order</label>
         <input
           className="form-control"
@@ -161,7 +215,15 @@ export const HeaderItemComponent = ({
               : 'Account home page column'
             )}
           </label>
-          <select
+
+          {(columnType === COLUMN_ACCOUNT_VALUE) &&
+            <Switch
+              label="Set value"
+              checked={columnStructure.get('useConstant', true)}
+              onChange={onUseConstantChange}
+            />
+          }
+          {!columnStructure.get('useConstant') && <select
             id={`${model.get('_id')}-${columnName}-relatedColumn`}
             className="form-control"
             onChange={onRelatedColumnChange}
@@ -179,7 +241,15 @@ export const HeaderItemComponent = ({
                   (<option key={relatedColumn} value={relatedColumn}>{relatedColumn}</option>)
               )
             }
-          </select>
+          </select>}
+          {columnStructure.get('useConstant') &&
+            <input
+              id={`${model.get('_id')}-${columnName}-relatedColumnConstant`}
+              type="text"
+              className="form-control"
+              onChange={onConstantChange}
+              value={columnStructure.get('constant', '')} />
+          }
         </div>
       }
     </div>
