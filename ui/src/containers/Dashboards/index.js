@@ -15,10 +15,19 @@ import Spinner from 'ui/components/Spinner';
 import Dashboard from 'ui/containers/Dashboard';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
 
-const renderSpinner = () => (
+const StyledSpinner = () => (
   <div style={{ height: '60vh', display: 'flex' }}>
     <Spinner />
   </div>
+);
+
+const NoDashboards = ({ handleAddDashboard }) => (
+  <h3>
+    {"You don't have any dashboards yet! Add one to get started. "}
+    <a className="addnew" onClick={handleAddDashboard}>
+      <i className="ion ion-plus-circled" />
+    </a>
+  </h3>
 );
 
 const renderDashboard = params => (model, index) => (
@@ -105,35 +114,22 @@ const enhance = compose(
   })
 );
 
-const render = ({
+const Dashboards = ({
   handleTabChange,
   handleAddDashboard,
   isLoading,
-  // models,
   params,
-  // id,
-  // model,
   modelsWithModel
 }) => {
   if (isLoading) {
-    return renderSpinner();
+    return <StyledSpinner />;
   }
 
-  // Render no dashboards.
   if (modelsWithModel.size === 0) {
-    return (
-      <h3>
-        {"You don't have any dashboards yet! Add one to get started. "}
-        <a className="addnew" onClick={handleAddDashboard}>
-          <i className="ion ion-plus-circled" />
-        </a>
-      </h3>
-    );
+    return <NoDashboards handleAddDashboard={handleAddDashboard} />;
   }
 
-  // Render dashboards.
-  const { dashboardId } = params;
-  const activeTab = modelsWithModel.toList().keyOf(modelsWithModel.get(dashboardId));
+  const activeTab = modelsWithModel.toList().keyOf(modelsWithModel.get(params.dashboardId));
 
   return (
     <Tabs index={activeTab} onChange={handleTabChange}>
@@ -143,4 +139,4 @@ const render = ({
   );
 };
 
-export default enhance(render);
+export default enhance(Dashboards);
