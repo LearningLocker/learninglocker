@@ -64,6 +64,7 @@ const initialiseBatchDelete = catchErrors(async (req, res) => {
     payload: {
       batchDeleteId: batchDelete._id.toString(),
     },
+    visibilityTimeout: 60 * 60 // 1 hour
   });
 
   return res.status(200).send(batchDelete);
