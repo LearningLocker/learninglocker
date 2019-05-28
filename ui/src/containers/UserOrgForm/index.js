@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { getAppDataSelector } from 'ui/redux/modules/app';
 import { currentScopesSelector } from 'ui/redux/modules/auth';
 import { SITE_ADMIN, SITE_CAN_CREATE_ORG, SITE_SCOPES } from 'lib/constants/scopes';
-import { MANAGE_ALL_ROLES } from 'lib/constants/orgScopes';
+import { MANAGE_ALL_USERS, ALL } from 'lib/constants/orgScopes';
 
 const ORG_SETTINGS = 'organisationSettings';
 
@@ -183,7 +183,8 @@ const UserOrgForm = (props) => {
   const filter = fromJS(userOrgSettings.get('filter', new Map({})));
 
   const siteRoles = model.get('scopes', new List());
-  const canEditOrgRoles = activeScopes.includes(MANAGE_ALL_ROLES) || activeScopes.includes(SITE_ADMIN);
+
+  const canEditOrgRoles = activeScopes.some(s => [SITE_ADMIN, ALL, MANAGE_ALL_USERS].includes(s));
   const canEditSiteRoles = RESTRICT_CREATE_ORGANISATION && activeScopes.includes(SITE_ADMIN);
 
   return (
