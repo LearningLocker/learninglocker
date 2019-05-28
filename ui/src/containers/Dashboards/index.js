@@ -13,7 +13,10 @@ import {
 import { loggedInUserId } from 'ui/redux/modules/auth';
 import Spinner from 'ui/components/Spinner';
 import Dashboard from 'ui/containers/Dashboard';
+import DashboardTemplates from 'ui/containers/DashboardTemplates';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
+
+const ADD_ROUTE = 'add';
 
 const StyledSpinner = () => (
   <div style={{ height: '60vh', display: 'flex' }}>
@@ -39,26 +42,24 @@ const renderDashboard = params => (model, index) => (
 
 const enhance = compose(
   connect(
-    state =>
-      ({
-        isLoading: isLoadingSelector('dashboard', new Map())(state),
-        userId: loggedInUserId(state),
-        params: routeNodeSelector('organisation.dashboards')(state).route.params,
-        first: 300,
-        organisation: activeOrgIdSelector(state)
-      })
-    ,
+    state => ({
+      isLoading: isLoadingSelector('dashboard', new Map())(state),
+      userId: loggedInUserId(state),
+      route: routeNodeSelector('organisation.dashboards')(state).route,
+      organisation: activeOrgIdSelector(state)
+    }),
     { navigateTo: actions.navigateTo }
   ),
-  withProps({ schema: 'dashboard', filter: new Map() }),
+  withProps({
+    schema: 'dashboard',
+    filter: new Map(),
+    first: 300,
+  }),
   withModels,
   withProps(
-    ({
-      params
-    }) =>
-      ({
-        id: params.dashboardId
-      })
+    ({ route }) => ({
+      id: route.name === 'organisation.data.dashboards.add' ? undefined : route.params.dashboardId
+    })
   ),
   withModel,
   withProps(
@@ -79,10 +80,18 @@ const enhance = compose(
     }
   ),
   withHandlers({
-    pushRoute: ({ navigateTo, params: { organisationId } }) => (dashboardId) => {
+    pushRoute: ({
+      navigateTo,
+      route,
+    }) => (dashboardIdOrAdd) => {
+      const organisationId = route.params.organisationId;
+      if (dashboardIdOrAdd === ADD_ROUTE) {
+        navigateTo('organisation.data.dashboards.add', { organisationId });
+        return;
+      }
       navigateTo('organisation.data.dashboards.id', {
         organisationId,
-        dashboardId
+        dashboardId: dashboardIdOrAdd
       });
     }
   }),
@@ -97,29 +106,28 @@ const enhance = compose(
       });
       pushRoute(model.get('_id'));
     },
-    handleDashboardSwitch: ({ modelsWithModel, pushRoute }) => (tab) => {
-      const selectedDashboard = modelsWithModel.toList().get(tab);
+    handleTabChange: ({
+      models,
+      modelsWithModel,
+      pushRoute,
+    }) => (tabIndex) => {
+      if (tabIndex === models.size) {
+        pushRoute(ADD_ROUTE);
+        return;
+      }
+      const selectedDashboard = modelsWithModel.toList().get(tabIndex);
       pushRoute(selectedDashboard.get('_id'));
     }
   }),
-  withHandlers({
-    handleTabChange: ({
-      models,
-      handleAddDashboard,
-      handleDashboardSwitch
-    }) => (tab) => {
-      if (tab === models.size) return handleAddDashboard();
-      return handleDashboardSwitch(tab);
-    }
-  })
 );
 
 const Dashboards = ({
   handleTabChange,
   handleAddDashboard,
   isLoading,
-  params,
-  modelsWithModel
+  modelsWithModel,
+  models,
+  route,
 }) => {
   if (isLoading) {
     return <StyledSpinner />;
@@ -129,12 +137,16 @@ const Dashboards = ({
     return <NoDashboards handleAddDashboard={handleAddDashboard} />;
   }
 
-  const activeTab = modelsWithModel.toList().keyOf(modelsWithModel.get(params.dashboardId));
+  const activeTab = (route.name === 'organisation.data.dashboards.add') ?
+    models.size :
+    modelsWithModel.toList().keyOf(modelsWithModel.get(route.params.dashboardId));
 
   return (
     <Tabs index={activeTab} onChange={handleTabChange}>
-      {modelsWithModel.map(renderDashboard(params)).valueSeq()}
-      <Tab label="Add" />
+      {modelsWithModel.map(renderDashboard(route.params)).valueSeq()}
+      <Tab label={ADD_ROUTE} >
+        <DashboardTemplates />
+      </Tab>
     </Tabs>
   );
 };
