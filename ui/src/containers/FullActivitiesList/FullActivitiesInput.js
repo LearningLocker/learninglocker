@@ -4,7 +4,7 @@ import OptionListItem from 'ui/components/OptionListItem';
 import { compose, withProps, defaultProps } from 'recompose';
 import { withModels } from 'ui/utils/hocs';
 import { fromJS, Map } from 'immutable';
-import languageResolver from 'ui/utils/languageResolver';
+import { displayLangMap } from 'ui/utils/xapi';
 
 const renderOption = ({
   useTooltip = false,
@@ -17,7 +17,7 @@ const renderOption = ({
   const out = (
     <OptionListItem
       data={option}
-      label={models.first() ? languageResolver(models.first().get('name', new Map())) : option}
+      label={models.first() ? displayLangMap(models.first().get('name', new Map())) : option}
       tooltip={useTooltip ? option : null}
       onClick={(event) => {
         onFocus(event);

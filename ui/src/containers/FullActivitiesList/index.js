@@ -1,7 +1,6 @@
 import React from 'react';
 import ModelOptionList from 'ui/components/AutoComplete2/Options/ModelOptionList/ModelOptionList';
 import AutoComplete2 from 'ui/components/AutoComplete2';
-import languageResolver from 'ui/utils/languageResolver';
 import { compose, withState, withProps, shouldUpdate } from 'recompose';
 import { Map, List, fromJS } from 'immutable';
 import { connect } from 'react-redux';
@@ -11,6 +10,7 @@ import { modelsSchemaIdSelector } from 'ui/redux/selectors';
 import { createSelector } from 'reselect';
 import { withModels } from 'ui/utils/hocs';
 import shallowEqualObjects from 'shallow-equal/objects';
+import { displayLangMap } from 'ui/utils/xapi';
 import FullActivitiesInput from './FullActivitiesInput';
 
 const fullActivitiesList = ({
@@ -99,7 +99,7 @@ const fullActivitiesList = ({
               filter={valuesFilter.mergeDeep({ type: 'http://adlnet.gov/expapi/activities/course' })}
               onSelectOption={onSelectOption({ onBlur })}
               parseOption={(option) => {
-                const o = (option ? languageResolver(option.get('name', new Map())) : '');
+                const o = (option ? displayLangMap(option.get('name', new Map())) : '');
                 return o;
               }}
               parseOptionTooltip={option => (option ? option.get('activityId') : '')}
