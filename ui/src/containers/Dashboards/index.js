@@ -24,13 +24,11 @@ const StyledSpinner = () => (
   </div>
 );
 
-const NoDashboards = ({ handleAddDashboard }) => (
-  <h3>
-    {"You don't have any dashboards yet! Add one to get started. "}
-    <a className="addnew" onClick={handleAddDashboard}>
-      <i className="ion ion-plus-circled" />
-    </a>
-  </h3>
+const NoDashboards = () => (
+  <div>
+    <h3>You don't have any dashboards yet! Add one to get started.</h3>
+    <DashboardTemplates />
+  </div>
 );
 
 const renderDashboard = params => (model, index) => (
@@ -80,50 +78,27 @@ const enhance = compose(
     }
   ),
   withHandlers({
-    pushRoute: ({
-      navigateTo,
-      route,
-    }) => (dashboardIdOrAdd) => {
-      const organisationId = route.params.organisationId;
-      if (dashboardIdOrAdd === ADD_ROUTE) {
-        navigateTo('organisation.data.dashboards.add', { organisationId });
-        return;
-      }
-      navigateTo('organisation.data.dashboards.id', {
-        organisationId,
-        dashboardId: dashboardIdOrAdd
-      });
-    }
-  }),
-  withHandlers({
-    handleAddDashboard: ({ userId, addModel, pushRoute }) => async () => {
-      const { model } = await addModel({
-        props: {
-          owner: userId,
-          title: 'New dash',
-          isExpanded: true
-        }
-      });
-      pushRoute(model.get('_id'));
-    },
     handleTabChange: ({
       models,
       modelsWithModel,
-      pushRoute,
+      navigateTo,
     }) => (tabIndex) => {
+      const organisationId = route.params.organisationId;
       if (tabIndex === models.size) {
-        pushRoute(ADD_ROUTE);
+        navigateTo('organisation.data.dashboards.add', { organisationId });
         return;
       }
       const selectedDashboard = modelsWithModel.toList().get(tabIndex);
-      pushRoute(selectedDashboard.get('_id'));
+      navigateTo('organisation.data.dashboards.id', {
+        organisationId,
+        dashboardId: selectedDashboard.get('_id'),
+      });
     }
   }),
 );
 
 const Dashboards = ({
   handleTabChange,
-  handleAddDashboard,
   isLoading,
   modelsWithModel,
   models,
@@ -134,7 +109,7 @@ const Dashboards = ({
   }
 
   if (modelsWithModel.size === 0) {
-    return <NoDashboards handleAddDashboard={handleAddDashboard} />;
+    return <NoDashboards />;
   }
 
   const activeTab = (route.name === 'organisation.data.dashboards.add') ?
