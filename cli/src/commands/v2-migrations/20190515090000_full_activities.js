@@ -5,7 +5,7 @@ import highland from 'highland';
 
 const connection = getConnection();
 
-const BATCH_SIZE = 10000; // TODO: Change to 10,000
+const BATCH_SIZE = 10000;
 
 const up = async () => {
   const fullActivities = connection.model('FullActivities');
