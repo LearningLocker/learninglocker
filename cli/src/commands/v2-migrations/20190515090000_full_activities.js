@@ -18,7 +18,6 @@ const up = async () => {
   const query = fullActivities
     .find({});
 
-  // const allFullActivities = await query.exec();
   const cursor = query.cursor();
 
   let i = BATCH_SIZE;
