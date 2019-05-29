@@ -17,7 +17,6 @@ const up = async () => {
 
   const query = fullActivities
     .find({});
-    // .limit(5000); // DEBUG ONLY, remove
 
   // const allFullActivities = await query.exec();
   const cursor = query.cursor();
