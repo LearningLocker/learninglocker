@@ -1,10 +1,11 @@
 import * as blankDashboard from './blankDashboard';
-
-export const actions = [];
+import * as gettingStarted from './gettingStarted';
 
 /*
  * Sagas
  */
+/* eslint-disable import/prefer-default-export */
 export const sagas = [
   ...blankDashboard.sagas,
+  ...gettingStarted.sagas,
 ];

@@ -2,7 +2,7 @@ import { actions as routerActions } from 'redux-router5';
 import { put, call, takeEvery } from 'redux-saga/effects';
 import { addModel } from '../models';
 
-export const CREATE_BLANK_DASHBOARD = 'learninglocker/CREATE_BLANK_DASHBOARD';
+export const CREATE_BLANK_DASHBOARD = 'learninglocker/dashboard/CREATE_BLANK_DASHBOARD';
 
 function* createBlankDashboard({ userId, organisationId, dispatch }) {
   const { model } = yield call(dispatch, addModel({
@@ -27,5 +27,4 @@ function* watchBlankDashboardSaga() {
   if (__CLIENT__) yield takeEvery(CREATE_BLANK_DASHBOARD, createBlankDashboard);
 }
 
-export const actions = { CREATE_BLANK_DASHBOARD };
 export const sagas = [watchBlankDashboardSaga];
