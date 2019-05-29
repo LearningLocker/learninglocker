@@ -13,7 +13,6 @@ const up = async () => {
 
   // EO CREATE INDEX
 
-  // console.log('-001', fullActivities);
 
   const query = fullActivities
     .find({});
