@@ -10,13 +10,10 @@ import {
 
 export default class CourseEditor extends Component {
   static propTypes = {
-    //type: PropTypes.string.isRequired,
     operator: PropTypes.string,
     value: PropTypes.instanceOf(Map),
     model: PropTypes.instanceOf(Map),
     updateModel: PropTypes.func.isRequired,
-    //changeOperator: PropTypes.func.isRequired,
-    //changeValue: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -26,11 +23,6 @@ export default class CourseEditor extends Component {
 
   state = {
     operatorInput: '',
-  }
-
-  componentWillMount = () => {
-    //this.props.changeOperator(this.props.operator);
-    //this.props.changeValue(this.props.value);
   }
 
   changeOperator = newOperator =>
@@ -47,8 +39,6 @@ export default class CourseEditor extends Component {
 
   changeOperatorInput = newOperator =>
     this.setState({ operatorInput: newOperator })
-
-//    find({"type": "http://adlnet.gov/expapi/activities/course"})
 
   render = () => {
     const { operator, value } = this.props;

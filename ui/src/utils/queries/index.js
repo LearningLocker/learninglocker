@@ -108,7 +108,6 @@ const getMemoizedCriteria = memoize((args) => {
 );
 
 const getCriteriaFromQuery = (query, criteria) => {
-  // console.log('001 queries.getCriteriaFromQuery', query, criteria);
   const out = getMemoizedCriteria(new Map({ query, criteria }));
   return out;
 };
@@ -130,13 +129,8 @@ export const changeCriteria = (criteria) => {
 };
 
 export const deleteCriterion = (criteria, key) => {
-  console.log('101 deleteCriterion');
-  console.log('101.1 criteria', criteria);
-  console.log('101.2 key', key);
-  console.trace();
   const out = changeCriteria(criteria.delete(key));
 
-  console.log('101.3 out', out);
   return out;
 };
 

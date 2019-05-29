@@ -1,6 +1,5 @@
 import React from 'react';
 import ModelOptionList from 'ui/components/AutoComplete2/Options/ModelOptionList/ModelOptionList';
-// import SingleInput from 'ui/components/AutoComplete2/Inputs/SingleInput/SingleInput';
 import AutoComplete2 from 'ui/components/AutoComplete2';
 import languageResolver from 'ui/utils/languageResolver';
 import { compose, withState, withProps, shouldUpdate } from 'recompose';
@@ -26,7 +25,6 @@ const fullActivitiesList = ({
   const onSelectOption = ({
     onBlur,
   }) => (e) => {
-
     let deselectedFilters = model.get('filters');
     if (models.size > 0) {
       // remove these models from the query builder.
@@ -141,7 +139,6 @@ const objectIdsSelector = (schema, id) => createSelector(
       return new List();
     }
     return objectIds.first().toList();
-    // return 'https://www.lynda.com/CourseID/622074';
   }
 );
 

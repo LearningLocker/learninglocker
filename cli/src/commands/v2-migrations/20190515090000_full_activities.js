@@ -22,11 +22,10 @@ const up = async () => {
   let i = BATCH_SIZE;
   const processStream = highland(cursor)
     .batch(BATCH_SIZE)
-    .flatMap((fullActivitie) => {
+    .flatMap((fullActivitiesBatch) => {
       const bulkOp = fullActivitiesCollection.initializeUnorderedBulkOp();
-      loMap(fullActivitie, (fullActivity) => {
-
-        bulkOp.find({ _id: fullActivity._id}).updateOne({
+      loMap(fullActivitiesBatch, (fullActivity) => {
+        bulkOp.find({ _id: fullActivity._id }).updateOne({
           $set: {
             searchString: JSON.stringify({
               activityId: fullActivity.activityId,
@@ -37,7 +36,7 @@ const up = async () => {
       });
 
       return highland(bulkOp.execute().then(() => {
-        console.log(`FullActivities migrated ${i}`)
+        console.log(`FullActivities migrated ${i}`);
         i += BATCH_SIZE;
       }));
     });
