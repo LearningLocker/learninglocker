@@ -83,12 +83,12 @@ function* createGettingStarted({ userId, organisationId, dispatch }) {
       title: 'Getting Started',
       isExpanded: true,
       widgets: [
-        { x: 0, y: 0, w: 3, h: 4, visualisation: visualisationIds[0] },
-        { x: 3, y: 0, w: 6, h: 11, visualisation: visualisationIds[1] },
-        { x: 0, y: 4, w: 3, h: 7, visualisation: visualisationIds[2] },
-        { x: 0, y: 11, w: 3, h: 8, visualisation: visualisationIds[3] },
-        { x: 6, y: 11, w: 3, h: 8, visualisation: visualisationIds[4] },
-        { x: 3, y: 11, w: 3, h: 8, visualisation: visualisationIds[5] },
+        { x: 0, y: 0, w: 6, h: 8, visualisation: visualisationIds[0] },
+        { x: 6, y: 0, w: 6, h: 8, visualisation: visualisationIds[1] },
+        { x: 0, y: 8, w: 6, h: 9, visualisation: visualisationIds[2] },
+        { x: 6, y: 8, w: 6, h: 9, visualisation: visualisationIds[3] },
+        { x: 0, y: 17, w: 6, h: 9, visualisation: visualisationIds[4] },
+        { x: 6, y: 17, w: 6, h: 9, visualisation: visualisationIds[5] },
       ],
     },
   }));

@@ -26,7 +26,7 @@ const StyledSpinner = () => (
 
 const NoDashboards = () => (
   <div>
-    <h3>You don't have any dashboards yet! Add one to get started.</h3>
+    <h3>{"You don't have any dashboards yet! Add one to get started."}</h3>
     <DashboardTemplates />
   </div>
 );
@@ -82,6 +82,7 @@ const enhance = compose(
       models,
       modelsWithModel,
       navigateTo,
+      route,
     }) => (tabIndex) => {
       const organisationId = route.params.organisationId;
       if (tabIndex === models.size) {
