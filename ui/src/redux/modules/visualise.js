@@ -2,7 +2,6 @@ import { List, Map, fromJS } from 'immutable';
 import { createSelector } from 'reselect';
 import { take, takeEvery, put, fork, select } from 'redux-saga/effects';
 import { identity, get } from 'lodash';
-import moment from 'moment';
 import {
   fetchAggregation,
   aggregationShouldFetchSelector,
@@ -20,6 +19,8 @@ import {
   modelsByFilterSelector,
   updateModel
 } from 'ui/redux/modules/models';
+import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
+import { orgTimezoneFromTokenSelector } from 'ui/redux/modules/auth';
 import { metadataSelector } from 'ui/redux/modules/metadata';
 import { modelsSelector } from 'ui/redux/modules/models/selectors';
 import { UPDATE_MODEL } from 'ui/redux/modules/models/updateModel';
@@ -31,7 +32,6 @@ import {
 } from 'ui/utils/constants';
 import { pipelinesFromQueries } from 'ui/utils/visualisations';
 import { unflattenAxes } from 'lib/helpers/visualisation';
-import { periodToDate } from 'ui/utils/dates';
 import { OFF, ANY } from 'lib/constants/dashboard';
 
 export const FETCH_VISUALISATION = 'learninglocker/models/learninglocker/visualise/FETCH_VISUALISATION';
@@ -183,13 +183,19 @@ export const visualisationPipelinesSelector = (
   id,
   cb = pipelinesFromQueries // whilst waiting for https://github.com/facebook/jest/issues/3608
 ) => createSelector(
-  [modelsSchemaIdSelector('visualisation', id), shareableDashboardFilterSelector()],
-  (visualisation, filter) => {
+  [
+    modelsSchemaIdSelector('visualisation', id),
+    shareableDashboardFilterSelector(),
+    activeOrgSelector,
+    orgTimezoneFromTokenSelector,
+  ],
+  (visualisation, filter, organisationModel, orgTimezoneFromToken) => {
     if (!visualisation) return new List();
     const type = visualisation.get('type');
     const journey = visualisation.get('journey');
     const previewPeriod = visualisation.get('previewPeriod');
     const benchmarkingEnabled = visualisation.get('benchmarkingEnabled', false);
+    const timezone = visualisation.get('timezone') || orgTimezoneFromToken || organisationModel.get('timezone', 'UTC');
     const queries = visualisation.get('filters', new List()).map((vFilter) => {
       if (!filter) {
         return vFilter;
@@ -208,7 +214,7 @@ export const visualisationPipelinesSelector = (
     });
 
     const axes = unflattenAxes(visualisation);
-    return cb(queries, axes, type, previewPeriod, journey, benchmarkingEnabled);
+    return cb(queries, axes, type, previewPeriod, journey, timezone, benchmarkingEnabled);
   }
 );
 
@@ -390,39 +396,6 @@ export function* watchFetchVisualisation() {
 }
 
 export const sagas = [watchUpdateVisualisation, watchFetchVisualisation];
-
-export const getEndDate = (dateStart, period) => {
-  const dateEnd = moment(dateStart); // Clones the date so it's not mutated.
-  return periodToDate(period, dateEnd);
-};
-
-export const getDates = (dateStart, dateEnd) => {
-  const values = [];
-  while (dateStart.isAfter(dateEnd, 'day')) {
-    values.push({ x: dateEnd.format('YYYY-MM-DD'), s1: 0, s2: 0, s3: 0 });
-    dateEnd.add(1, 'day');
-  }
-  values.push({ x: dateStart.format('YYYY-MM-DD'), s1: 0, s2: 0, s3: 0 });
-  return values;
-};
-
-export const getHours = (dateStart, dateEnd) => {
-  const values = [];
-  while (dateStart.isAfter(dateEnd, 'hours')) {
-    values.push({ x: dateEnd.format('HH'), y: 0 });
-    dateEnd.add(1, 'hours');
-  }
-  return values;
-};
-
-export const getDateRange = (period) => {
-  const dateStart = moment();
-  const dateEnd = getEndDate(dateStart, period);
-  switch (period) {
-    case 'LAST_24_HOURS': return getHours(dateStart, dateEnd);
-    default: return getDates(dateStart, dateEnd);
-  }
-};
 
 const MAX_NAME_LENGTH = 17;
 export const trimName = (name, length = MAX_NAME_LENGTH) => {
