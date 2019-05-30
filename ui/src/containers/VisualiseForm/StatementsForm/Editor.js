@@ -38,6 +38,7 @@ class Editor extends Component {
   changeStep = step =>
     this.setState({ step })
 
+  // This method is for LearningLocker/enterprise
   isSeriesType = () => false;
 
   renderDescription = description => (
