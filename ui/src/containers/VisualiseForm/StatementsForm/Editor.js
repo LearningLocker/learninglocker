@@ -9,7 +9,7 @@ import SeriesEditor from './SeriesEditor';
 import AxesEditor from './AxesEditor/AxesEditor';
 import styles from '../visualiseform.css';
 import OptionsEditor from './OptionsEditor';
-import NewVisualisation from './NewVisualisation';
+
 
 const SCHEMA = 'visualisation';
 
@@ -17,23 +17,20 @@ class Editor extends Component {
   static propTypes = {
     model: PropTypes.instanceOf(Map),
     exportVisualisation: PropTypes.func,
-    shouldShowNewVisualisation: PropTypes.bool,
   }
 
   state = {
     step: 0,
   }
 
-  changeAttr = attr => newValue =>
+  onChangeDescription = (e) => {
     this.props.updateModel({
       schema: SCHEMA,
       id: this.props.model.get('_id'),
-      path: attr,
-      value: newValue
-    })
-
-  onChangeAttr = attr => event =>
-    this.changeAttr(attr)(event.target.value)
+      path: 'description',
+      value: e.target.value
+    });
+  }
 
   changeStep = step =>
     this.setState({ step })
@@ -49,7 +46,7 @@ class Editor extends Component {
         className="form-control"
         placeholder="What does this visualisation show?"
         value={description}
-        onChange={this.onChangeAttr('description')} />
+        onChange={this.onChangeDescription} />
     </div>
   )
 
@@ -64,7 +61,6 @@ class Editor extends Component {
       <Tab key="options" label="Options">{ this.renderOptionsEditor() }</Tab>
     ];
 
-
     const isCounter = (this.props.model.get('type') === 'COUNTER');
     const seriesTab = <Tab key="series" label="Series">{ this.renderSeriesEditor() }</Tab>;
     const StatementSeriesTab = <Tab key="filter" label="Filter">{ this.renderSeriesEditor() }</Tab>;
@@ -75,7 +71,16 @@ class Editor extends Component {
     }
     return (
       <div className={styles.tab}>
-        { this.renderDescription(this.props.model.get('description')) }
+        <div className="form-group">
+          <label htmlFor="lrsDescriptionInput">Name</label>
+          <input
+            id="lrsDescriptionInput"
+            className="form-control"
+            placeholder="What does this visualisation show?"
+            value={this.props.model.get('description')}
+            onChange={this.onChangeDescription} />
+        </div>
+
         <Tabs index={this.state.step} onChange={this.changeStep}> children={tabs}</Tabs>
       </div>
     );
@@ -92,15 +97,11 @@ class Editor extends Component {
       model={this.props.model} />
   )
 
-  renderSteps = () => (
-    this.isSeriesType() ? this.renderSeriesEditor() : this.renderTabs()
-  )
-
   render = () => {
-    if (this.props.shouldShowNewVisualisation) {
-      return <NewVisualisation visualisationModel={this.props.model} />;
+    if (this.isSeriesType()) {
+      return this.renderSeriesEditor();
     }
-    return this.renderSteps();
+    return this.renderTabs();
   }
 }
 

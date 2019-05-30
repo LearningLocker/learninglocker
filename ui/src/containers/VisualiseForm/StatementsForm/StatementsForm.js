@@ -16,6 +16,7 @@ import {
 
 import Editor from './Editor';
 import PreviewPeriodPicker from './PreviewPeriodPicker';
+import NewVisualisation from './NewVisualisation';
 
 export const toggleSourceSelector = ({ id }) => createSelector(
   [getMetadataSelector({ schema: 'visualisation', id })],
@@ -94,17 +95,15 @@ class StatementsForm extends Component {
     </div>
   );
 
-  renderEditorOnly = () => (
-    <div className="row">
-      <div className="col-md-12 left-border">
-        { this.renderEditor() }
-      </div>
-    </div>
-  );
-
   render = () => {
     if (this.shouldShowNewVisualisation()) {
-      return this.renderEditorOnly();
+      return (
+        <div className="row">
+          <div className="col-md-12 left-border">
+            <NewVisualisation visualisationModel={this.props.model} />;
+          </div>
+        </div>
+      );
     }
     return this.renderFormWithResults();
   }
