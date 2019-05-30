@@ -317,7 +317,7 @@ export const visualisationResultsSelector = (visualisationId, filter) => createS
 ], (state, visualisation) => {
   switch (visualisation.get('type')) {
     case JOURNEY_PROGRESS:
-      return getJourneyResults(visualisation, filter)(state);
+      return getJourneyResults(visualisation, filter, state);
     default:
       return getSeriesResults(visualisationId, state);
   }
