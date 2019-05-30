@@ -1,10 +1,18 @@
 import formatDate from 'ui/utils/visualisations/helpers/formatDate';
 
-const map = {
-  minute: formatDate('%Y-%m-%dT%H-%M'),
-  hour: formatDate('%Y-%m-%dT%H'),
-  weekday: formatDate('%Y-%m-%d'),
-  month: formatDate('%Y-%m'),
+/**
+ * Build "date" expression used in projection stage
+ *
+ * @param {string} groupType
+ * @param {string} timezone
+ * @returns object|string
+ */
+export default (groupType, timezone) => {
+  switch (groupType) {
+    case 'minute': return formatDate('%Y-%m-%dT%H-%M', timezone);
+    case 'hour': return formatDate('%Y-%m-%dT%H', timezone);
+    case 'weekday': return formatDate('%Y-%m-%d', timezone);
+    case 'month': return formatDate('%Y-%m', timezone);
+    default: return 'PROBLEM IN DATE PROJECTION';
+  }
 };
-
-export default group => map[group] || 'PROBLEM IN DATE PROJECTION';
