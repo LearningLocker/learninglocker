@@ -21,8 +21,10 @@ const reduceUpdateModel = (state, { schema, id, path, value }) => {
   return out;
 };
 
-const reduceUpdateModelErrors = (state, { schema, id, errors }) =>
-  state.setIn([schema, id, 'localCache', 'unsaved', 'errors'], errors);
+const reduceUpdateModelErrors = (state, { schema, id, errors }) => {
+  const out = state.setIn([schema, id, 'localCache', 'unsaved', 'errors'], errors);
+  return out;
+};
 
 const reduceMakePending = (state, { schema, id }) => {
   const unsavedState = state.getIn([schema, id, 'localCache', 'unsaved']);
