@@ -1,34 +1,24 @@
 import React, { Component, PropTypes } from 'react';
 import { Map } from 'immutable';
 import { compose, withProps } from 'recompose';
-import { updateModel } from 'ui/redux/modules/models';
+import { createSelector } from 'reselect';
 import { connect } from 'react-redux';
 import { TEMPLATE_STAGE_INTERMEDIATE } from 'lib/constants/visualise';
+import { updateModel } from 'ui/redux/modules/models';
 import VisualiseResults from 'ui/containers/VisualiseResults';
 import SourceResults from 'ui/containers/VisualiseResults/SourceResults';
-import {
-  LAST_30_DAYS,
-  LAST_7_DAYS,
-  LAST_2_MONTHS,
-  LAST_6_MONTHS,
-  LAST_24_HOURS,
-  LAST_1_YEAR,
-  LAST_2_YEARS,
-  TODAY
-} from 'ui/utils/constants';
 import { withSchema } from 'ui/utils/hocs';
 import { isContextActivity } from 'ui/utils/visualisations';
 import {
   getMetadataSelector,
   setInMetadata
 } from 'ui/redux/modules/metadata';
-import { createSelector } from 'reselect';
-import Editor from './Editor';
 
-const SCHEMA = 'visualisation';
+import Editor from './Editor';
+import PreviewPeriodPicker from './PreviewPeriodPicker';
 
 export const toggleSourceSelector = ({ id }) => createSelector(
-  [getMetadataSelector({ schema: SCHEMA, id })],
+  [getMetadataSelector({ schema: 'visualisation', id })],
   metadata =>
     metadata.get('source')
 );
@@ -55,11 +45,11 @@ class StatementsForm extends Component {
       (this.props.queryBuilderCacheValueModels.equals(nextProps.queryBuilderCacheValueModels))
   )
 
-  onChangeAttr = (attr, e) => this.props.updateModel({
+  onChangePreviewPeriod = previewPeriod => this.props.updateModel({
     schema: 'visualisation',
     id: this.props.model.get('_id'),
-    path: attr,
-    value: e.target.value
+    path: 'previewPeriod',
+    value: previewPeriod,
   })
 
   hasType = () => this.props.model.has('type')
@@ -82,23 +72,6 @@ class StatementsForm extends Component {
       shouldShowNewVisualisation={this.shouldShowNewVisualisation()} />
   );
 
-  renderTimePicker = () => (
-    <select
-      id={`${this.props.model.get('_id')}previewPeriodInput`}
-      className="form-control"
-      value={this.props.model.get('previewPeriod')}
-      onChange={this.onChangeAttr.bind(null, 'previewPeriod')}>
-      <option value={TODAY}>Today</option>
-      <option value={LAST_24_HOURS}>Last 24 hours</option>
-      <option value={LAST_7_DAYS}>Last 7 days</option>
-      <option value={LAST_30_DAYS}>Last 30 days</option>
-      <option value={LAST_2_MONTHS}>Last 2 months</option>
-      <option value={LAST_6_MONTHS}>Last 6 months</option>
-      <option value={LAST_1_YEAR}>Last 1 year</option>
-      <option value={LAST_2_YEARS}>Last 2 years</option>
-    </select>
-  )
-
   renderFormWithResults = () => (
     <div className="row">
       <div className="col-md-6 left-border">
@@ -107,7 +80,9 @@ class StatementsForm extends Component {
       <div
         className="col-md-6">
         <div className="form-group form-inline" style={{ textAlign: 'right' }}>
-          { this.renderTimePicker() }
+          <PreviewPeriodPicker
+            visualisation={this.props.model}
+            onChange={this.onChangePreviewPeriod} />
         </div>
         <div style={{ height: '400px', paddingTop: 5 }}>
           {!this.props.model.get('sourceView') && <VisualiseResults id={this.props.model.get('_id')} />}
