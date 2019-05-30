@@ -25,14 +25,14 @@ const getCountPipeline = ({ operatorType, valueOpCase, projections }) => {
   }
 };
 
-const getProjections = ({ valueType, groupType, valueOpCase }) => {
+const getProjections = ({ valueType, groupType, valueOpCase, timezone }) => {
   switch (valueOpCase) {
     case VALUE_OP_CASE.value:
     case VALUE_OP_CASE.uniqueCount:
       return { value: value(valueType) };
     case VALUE_OP_CASE.uniqueStatementModifier:
     case VALUE_OP_CASE.uniqueModifier:
-      return { group: group(groupType) };
+      return { group: group(groupType, timezone) };
     case VALUE_OP_CASE.uniqueStatementCount:
     default:
       return {};
@@ -53,10 +53,10 @@ const getExistsMatch = ({ valueType, groupType, valueOpCase }) => {
   }
 };
 
-export default ({ valueType, groupType, operatorType }) => {
+export default ({ valueType, groupType, operatorType, timezone }) => {
   const valueOpCase = getValueOpCase({ valueType, operatorType });
   const existsMatch = getExistsMatch({ valueType, groupType, valueOpCase });
-  const projections = getProjections({ valueType, groupType, valueOpCase });
+  const projections = getProjections({ valueType, groupType, valueOpCase, timezone });
   const matchStage = createStagePipeline('$match', existsMatch);
   const projectStage = createStagePipeline('$project', projections);
   const preReqs = matchStage.concat(projectStage);

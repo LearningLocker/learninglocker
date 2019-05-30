@@ -46,6 +46,11 @@ const activeTokenSelector = createSelector(
   (state, { tokenType, tokenId }) => authTokenSelector(tokenType, tokenId)(state)
 );
 
+const orgTimezoneSelector = createSelector(
+  activeAuthSelector,
+  activeAuth => activeAuth.getIn(['extensions', 'orgTimezone'], null)
+);
+
 const getTypeFromDecodedToken = (decoded) => {
   if (decoded.tokenType) return decoded.tokenType;
   return 'user';
@@ -128,7 +133,8 @@ export const selectors = {
   authSelector,
   authTokenSelector,
   activeTokenSelector,
-  activeAuthSelector
+  activeAuthSelector,
+  orgTimezoneSelector
 };
 
 export const reducers = {
