@@ -7,7 +7,6 @@ export const QUESTIONANALYSIS = 'QUESTIONANALYSIS';
 export const XVSY = 'XVSY';
 export const SESSIONS = 'SESSIONS';
 export const STATEMENTS = 'STATEMENTS';
-export const JOURNEY_PROGRESS = 'JOURNEY_PROGRESS';
 export const FREQUENCY = 'FREQUENCY';
 export const COUNTER = 'COUNTER';
 export const PIE = 'PIE';
