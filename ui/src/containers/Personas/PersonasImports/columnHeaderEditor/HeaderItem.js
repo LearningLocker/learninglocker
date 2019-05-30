@@ -30,7 +30,6 @@ const headerItemHandlers = withHandlers({
     columnName,
     model,
     updateModel: doUpdateModel,
-    // columnStructure,
   }) => (event) => {
     const value = event.target.value;
 
@@ -39,9 +38,12 @@ const headerItemHandlers = withHandlers({
       columnName
     });
 
-    const newStructure =
+    let newStructure =
       resetStructure.setIn([columnName, 'columnType'], value);
 
+    if (value === COLUMN_ACCOUNT_VALUE) {
+      newStructure = newStructure.setIn([columnName, 'useConstant'], true);
+    }
     const isOrderable = isColumnOrderable({ columnStructure: newStructure.get(columnName).toJS() });
     const newStructureOrder = isOrderable ?
       newStructure.setIn(
@@ -153,8 +155,8 @@ const headerItemHandlers = withHandlers({
     doUpdateModel({
       schema,
       id: model.get('_id'),
-      path: ['structure', columnName, 'constant'],
-      value: event.target.value
+      path: ['structure'],
+      value: model.get('structure').setIn([columnName, 'constant'], event.target.value)
     });
   }
 });
