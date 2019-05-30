@@ -7,11 +7,6 @@ import Criterion from './Criterion.js';
 
 const WrappedCriterion = withInsertCSS(Criterion);
 
-test('renders criterion', () => {
-  const criterion = ReactTestRenderer.create(<WrappedCriterion />).toJSON();
-  expect(criterion).toMatchSnapshot();
-});
-
 test('render criterion with value', () => {
   const testDate = moment('1986-10-31', 'YYYY-MM-DD');
   const criterion = fromJS({
@@ -28,13 +23,16 @@ test('render criterion with value', () => {
     getQueryDisplay: value => value
   });
 
-  const onDeleteCriterion = () => null;
+  const noop = () => null;
 
   const criterionOut = ReactTestRenderer.create(
     <WrappedCriterion
+      timezone="Etc/GMT-2"
+      orgTimezone="Etc/GMT+3"
       criterion={criterion}
       section={section}
-      onDeleteCriterion={onDeleteCriterion} />
+      onCriterionChange={noop}
+      onDeleteCriterion={noop} />
   ).toJSON();
   expect(criterionOut).toMatchSnapshot();
 });

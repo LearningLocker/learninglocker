@@ -122,7 +122,7 @@ const renderLoadMoreButton = ({ isLoading, hasMore, fetchMore }) =>
     </div>
   );
 
-const render = ({
+const ModelList = ({
   isLoading,
   modelsWithModel,
   schema,
@@ -167,4 +167,4 @@ const render = ({
   );
 };
 
-export default enhance(render);
+export default enhance(ModelList);

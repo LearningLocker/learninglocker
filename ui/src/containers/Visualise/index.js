@@ -10,6 +10,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { withModels, withModel } from 'ui/utils/hocs';
 import { addModel } from 'ui/redux/modules/models';
 import { loggedInUserId } from 'ui/redux/modules/auth';
+import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
 import SearchBox from 'ui/containers/SearchBox';
 import ModelList from 'ui/containers/ModelList';
 import VisualiseForm from 'ui/containers/VisualiseForm';
@@ -21,13 +22,16 @@ import styles from './visualise.css';
 
 const schema = 'visualisation';
 
+/**
+ * @param {string} orgTimezone
+ */
 const VisualisationList = compose(
   withProps({
     schema,
-    sort: fromJS({ createdAt: -1, _id: -1 })
+    sort: fromJS({ createdAt: -1, _id: -1 }),
   }),
   withModels,
-  withModel
+  withModel,
 )(ModelList);
 
 class Visualise extends Component {
@@ -36,7 +40,12 @@ class Visualise extends Component {
     addModel: PropTypes.func,
     searchString: PropTypes.string,
     visualisationId: PropTypes.string, // optional
+    organisationModel: PropTypes.instanceOf(Map),
   };
+
+  static defaultProps = {
+    organisationModel: new Map(),
+  }
 
   state = {
     criteria: ''
@@ -48,7 +57,8 @@ class Visualise extends Component {
       schema,
       props: new Map({
         owner: this.props.userId,
-        isExpanded: true
+        isExpanded: true,
+        timezone: null,
       })
     });
   }
@@ -60,43 +70,47 @@ class Visualise extends Component {
     return createVisualisationName(model);
   }
 
-  render = () => (
-    <div>
-      <header id="topbar">
-        <div className="heading heading-light">
-          <span className="pull-right open_panel_btn" >
-            <button
-              className="btn btn-primary btn-sm"
-              ref={(ref) => { this.addButton = ref; }}
-              onClick={this.onClickAdd}>
-              <i className="ion ion-plus" /> Add new
-            </button>
-          </span>
-          <span className="pull-right open_panel_btn">
-            <SearchBox schema={schema} />
-          </span>
-          Visualise
-        </div>
-      </header>
-      <div className="row">
-        <div className="col-md-12">
-          <VisualisationList
-            id={this.props.visualisationId}
-            filter={queryStringToQuery(this.props.searchString, schema)}
-            ModelForm={VisualiseForm}
-            buttons={[PrivacyToggleButton, DeleteButton]}
-            getDescription={model => (
-              <span>
-                <span style={{ paddingRight: 10 }}>
-                  <VisualisationTypeIcon id={model.get('_id')} tableIcon={false} />
+  render = () => {
+    const orgTimezone = this.props.organisationModel.get('timezone', 'UTC');
+    return (
+      <div>
+        <header id="topbar">
+          <div className="heading heading-light">
+            <span className="pull-right open_panel_btn" >
+              <button
+                className="btn btn-primary btn-sm"
+                ref={(ref) => { this.addButton = ref; }}
+                onClick={this.onClickAdd}>
+                <i className="ion ion-plus" /> Add new
+              </button>
+            </span>
+            <span className="pull-right open_panel_btn">
+              <SearchBox schema={schema} />
+            </span>
+            Visualise
+          </div>
+        </header>
+        <div className="row">
+          <div className="col-md-12">
+            <VisualisationList
+              id={this.props.visualisationId}
+              filter={queryStringToQuery(this.props.searchString, schema)}
+              ModelForm={VisualiseForm}
+              buttons={[PrivacyToggleButton, DeleteButton]}
+              orgTimezone={orgTimezone}
+              getDescription={model => (
+                <span>
+                  <span style={{ paddingRight: 10 }}>
+                    <VisualisationTypeIcon id={model.get('_id')} tableIcon={false} />
+                  </span>
+                  {this.populateTitle(model)}
                 </span>
-                {this.populateTitle(model)}
-              </span>
-            )} />
+              )} />
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 }
 
 export default compose(
@@ -108,6 +122,7 @@ export default compose(
       routeNodeSelector('organisation.data.visualise.visualisation')(state)
         .route
         .params
-        .visualisationId
+        .visualisationId,
+    organisationModel: activeOrgSelector(state),
   }), { addModel })
 )(Visualise);

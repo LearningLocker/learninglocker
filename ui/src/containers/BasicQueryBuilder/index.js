@@ -8,6 +8,8 @@ import QueryBuilderSections from './QueryBuilderSections';
 const enhance = compose(
   setPropTypes({
     componentPath: PropTypes.instanceOf(List),
+    timezone: PropTypes.string,
+    orgTimezone: PropTypes.string.isRequired,
     query: PropTypes.instanceOf(Map),
     defaults: PropTypes.instanceOf(Map),
     onQueryChange: PropTypes.func,
@@ -16,14 +18,18 @@ const enhance = compose(
     query: new Map(),
   }),
   shouldUpdate((prev, next) => !(
+    prev.timezone === next.timezone &&
+    prev.orgTimezone === next.orgTimezone &&
     prev.query.equals(next.query)
   ))
 );
 
-const render = ({ componentPath, defaults, query, onQueryChange }) => {
+const BasicQueryBuilder = ({ componentPath, timezone, orgTimezone, defaults, query, onQueryChange }) => {
   const criteria = getCriteria(query);
   return (
     <QueryBuilderSections
+      timezone={timezone}
+      orgTimezone={orgTimezone}
       componentPath={componentPath}
       criteria={criteria}
       defaults={defaults}
@@ -37,4 +43,4 @@ const render = ({ componentPath, defaults, query, onQueryChange }) => {
   );
 };
 
-export default enhance(render);
+export default enhance(BasicQueryBuilder);

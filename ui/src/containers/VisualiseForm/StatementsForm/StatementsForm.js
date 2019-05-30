@@ -2,11 +2,16 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import { compose, withProps } from 'recompose';
-import { updateModel } from 'ui/redux/modules/models';
 import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
 import { TEMPLATE_STAGE_INTERMEDIATE } from 'lib/constants/visualise';
 import VisualiseResults from 'ui/containers/VisualiseResults';
 import SourceResults from 'ui/containers/VisualiseResults/SourceResults';
+import { updateModel } from 'ui/redux/modules/models';
+import {
+  getMetadataSelector,
+  setInMetadata
+} from 'ui/redux/modules/metadata';
 import {
   LAST_30_DAYS,
   LAST_7_DAYS,
@@ -19,11 +24,7 @@ import {
 } from 'ui/utils/constants';
 import { withSchema } from 'ui/utils/hocs';
 import { isContextActivity } from 'ui/utils/visualisations';
-import {
-  getMetadataSelector,
-  setInMetadata
-} from 'ui/redux/modules/metadata';
-import { createSelector } from 'reselect';
+
 import Editor from './Editor';
 
 const SCHEMA = 'visualisation';
@@ -36,10 +37,10 @@ export const toggleSourceSelector = ({ id }) => createSelector(
 
 class StatementsForm extends Component {
   static propTypes = {
-    model: PropTypes.instanceOf(Map),
+    model: PropTypes.instanceOf(Map), // visualisation
+    orgTimezone: PropTypes.string.isRequired,
     queryBuilderCacheValueModels: PropTypes.instanceOf(Map),
     isLoading: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
-    filter: PropTypes.instanceOf(Map), // eslint-disable-line react/no-unused-prop-types
     hasMore: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
     updateModel: PropTypes.func,
     exportVisualisation: PropTypes.func
@@ -52,6 +53,7 @@ class StatementsForm extends Component {
 
   shouldComponentUpdate = nextProps => !(
     this.props.model.equals(nextProps.model) &&
+      (this.props.orgTimezone === nextProps.orgTimezone) &&
       (this.props.source === nextProps.source) &&
       (this.props.queryBuilderCacheValueModels.equals(nextProps.queryBuilderCacheValueModels))
   )
@@ -78,6 +80,7 @@ class StatementsForm extends Component {
   renderEditor = () => (
     <Editor
       model={this.props.model}
+      orgTimezone={this.props.orgTimezone}
       queryBuilderCacheValueModels={this.props.queryBuilderCacheValueModels}
       exportVisualisation={this.props.exportVisualisation}
       shouldShowNewVisualisation={this.shouldShowNewVisualisation()} />

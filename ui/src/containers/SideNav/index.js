@@ -134,35 +134,38 @@ class SideNav extends Component {
 
     return (
       <div className={`col-sm-3 col-md-2 ${styles.sidenav}`} >
-        <header className={styles.sidenavHeader}>
-          <div className={styles.orgAvatar} >
-            <OrgLogo organisation={model} />
-          </div>
-          <div className="media-body">
-            <div className={styles.mediaAuthor}>{model.get('name')}</div>
-          </div>
-        </header>
+        <div className={styles.sidenavInner} >
+          <header className={styles.sidenavHeader}>
+            <div className={styles.orgAvatar}>
+              <OrgLogo organisation={model} />
+            </div>
+            <div className="media-body">
+              <div className={styles.mediaAuthor}>{model.get('name')}</div>
+            </div>
+          </header>
 
-        <ul className={`nav ${styles.navSidenav}`}>
-          <CollapsibleNav
-            onClick={this.onClickMenuItem}
-            routeName={'organisation.data'}
-            routeParams={{ organisationId }}
-            label={'Data'}
-            manuallyExpanded={!!groups['organisation.data']}
-            icon={'ion ion-ionic'} >
-            {this.renderLink(activeClass, 'organisation.data.dashboards', 'Dashboards')}
-            {this.renderLink(activeClass, 'organisation.data.visualise', 'Visualise')}
-            {this.renderLink(activeClass, 'organisation.data.source', 'Source')}
-            {this.renderLink(activeClass, 'organisation.data.statementForwarding', 'Statement Forwarding')}
-          </CollapsibleNav>
+          <ul className={`nav ${styles.navSidenav}`}>
+            <CollapsibleNav
+              onClick={this.onClickMenuItem}
+              routeName={'organisation.data'}
+              routeParams={{ organisationId }}
+              label={'Data'}
+              manuallyExpanded={!!groups['organisation.data']}
+              icon={'ion ion-ionic'}>
+              {this.renderLink(activeClass, 'organisation.data.dashboards', 'Dashboards')}
+              {this.renderLink(activeClass, 'organisation.data.visualise', 'Visualise')}
+              {this.renderLink(activeClass, 'organisation.data.source', 'Source')}
+              {this.renderLink(activeClass, 'organisation.data.statementForwarding', 'Statement Forwarding')}
+            </CollapsibleNav>
 
-          {this.renderPeople()}
-          {this.renderSettings()}
-        </ul>
-        <footer>
-          <SideNavFooter />
-        </footer>
+            {this.renderPeople()}
+            {this.renderSettings()}
+          </ul>
+
+          <footer className={styles.sidenavFooter}>
+            <SideNavFooter />
+          </footer>
+        </div>
       </div>
     );
   }

@@ -19,7 +19,8 @@ export {
   fetchAllOutstandingModels
 } from 'ui/redux/modules/pagination';
 export {
-  updateStatementQuery
+  updateStatementQuery,
+  updateStatementTimezone
 } from 'ui/redux/modules/statements';
 export {
   downloadExport

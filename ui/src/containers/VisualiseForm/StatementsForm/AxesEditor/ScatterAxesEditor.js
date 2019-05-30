@@ -13,7 +13,8 @@ import BaseAxesEditor from './BaseAxesEditor';
 
 export class ScatterAxesEditor extends BaseAxesEditor {
   static propTypes = {
-    model: PropTypes.instanceOf(Map),
+    model: PropTypes.instanceOf(Map), // visualisation
+    orgTimezone: PropTypes.string.isRequired,
     updateModel: PropTypes.func
   };
 
@@ -60,11 +61,11 @@ export class ScatterAxesEditor extends BaseAxesEditor {
       </div>
       <div className="form-group">
         <QueryEditor
+          timezone={this.props.model.get('timezone', null)}
+          orgTimezone={this.props.orgTimezone}
           query={this.getAxesValue(`${axis}Query`)}
           changeQuery={this.changeAxes.bind(this, `${axis}Query`)}
-          componentPath={
-            new List(['visualise', this.props.model.get('_id'), axis])
-          } />
+          componentPath={new List(['visualise', this.props.model.get('_id'), axis])} />
       </div>
     </div>
   );

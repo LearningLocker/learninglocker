@@ -6,21 +6,25 @@ import QueryBuilder from 'ui/containers/QueryBuilder';
 
 export default class QueryEditor extends Component {
   static propTypes = {
+    timezone: PropTypes.string,
+    orgTimezone: PropTypes.string.isRequired,
     query: PropTypes.instanceOf(Map),
     componentPath: PropTypes.instanceOf(List),
     changeQuery: PropTypes.func,
   }
 
   shouldComponentUpdate = nextProps => !((
-    this.props.query === undefined &&
-    nextProps.query !== undefined
-  ) && (
-    this.props.query == null &&
-    nextProps.query !== null
-  ) && (
-    (this.props.query !== undefined && this.props.query !== null) &&
-    this.props.query.equals(nextProps.query)
-  ));
+      this.props.query === undefined &&
+      nextProps.query !== undefined
+    ) && (
+      this.props.query == null &&
+      nextProps.query !== null
+    ) && (
+      (this.props.query !== undefined && this.props.query !== null) &&
+      this.props.query.equals(nextProps.query)
+    ))
+    || this.props.orgTimezone !== nextProps.orgTimezone
+    || this.props.timezone !== nextProps.timezone;
 
   toggleQuery = (enabled) => {
     const query = enabled === true ? fromJS({ $match: {} }) : undefined;
@@ -42,6 +46,8 @@ export default class QueryEditor extends Component {
       {
           this.hasQuery() &&
             <QueryBuilder
+              timezone={this.props.timezone}
+              orgTimezone={this.props.orgTimezone}
               componentPath={this.props.componentPath}
               query={this.props.query.get('$match', new Map())}
               onChange={this.changeQuery} />

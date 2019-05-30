@@ -10,11 +10,13 @@ import { VISUALISATION_COLORS } from 'ui/utils/constants';
 
 class TabbedQueriesBuilder extends Component {
   static propTypes = {
+    timezone: PropTypes.string,
+    orgTimezone: PropTypes.string.isRequired,
     labelled: PropTypes.bool,
     queries: PropTypes.instanceOf(List),
     componentBasePath: PropTypes.instanceOf(List),
     defaults: PropTypes.instanceOf(Map),
-    onQueryChange: PropTypes.func,
+    onChangeQuery: PropTypes.func,
     onDeleteQuery: PropTypes.func,
     onChangeLabel: PropTypes.func,
     onChangeColor: PropTypes.func,
@@ -26,6 +28,8 @@ class TabbedQueriesBuilder extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     return !(
+      this.props.timezone === nextProps.timezone &&
+      this.props.orgTimezone === nextProps.orgTimezone &&
       this.props.queries.equals(nextProps.queries) &&
       this.state.tabIndex === nextState.tabIndex
     );
@@ -44,9 +48,11 @@ class TabbedQueriesBuilder extends Component {
     <div>
       <div className="form-group">
         <QueryBuilder
+          timezone={this.props.timezone}
+          orgTimezone={this.props.orgTimezone}
           componentPath={this.props.componentBasePath.push(index)}
           query={this.props.queries.getIn([index, '$match'], new Map())}
-          onChange={this.props.onQueryChange.bind(null, index)}
+          onChange={this.props.onChangeQuery.bind(null, index)}
           defaults={this.props.defaults} />
       </div>
       <div className="form-group">
