@@ -196,7 +196,6 @@ class Widget extends Component {
       [styles.title]: true,
       [styles.draggableTitle]: this.props.editable,
     });
-    console.log('in modal', model, 'and props: ', this.props)
     return (
       <div className={`panel panel-default animated fadeIn ${styles.widget}`} >
         <div className={styles.widgetContent}>

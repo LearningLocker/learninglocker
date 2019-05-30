@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { updateModel } from 'ui/redux/modules/models';
 import Checkbox from 'ui/components/Material/Checkbox';
+import { TimezoneSelector } from 'ui/components/TimezoneSelector';
 import {
   uploadLogo,
   IN_PROGRESS,
@@ -344,6 +345,19 @@ class SubOrgForm extends Component {
         <div className="col-md-12">
           <fieldset>
             {this.renderNameSetting(model)}
+
+            <div className="form-group">
+              <label htmlFor="SubOrgForm_TimezoneSelector">Timezone</label>
+              <TimezoneSelector
+                id="SubOrgForm_TimezoneSelector"
+                value={model.get('timezone', 'UTC')}
+                onChange={value => this.props.updateModel({
+                  schema,
+                  id: this.props.model.get('_id'),
+                  path: 'timezone',
+                  value
+                })} />
+            </div>
 
             <div className="form-group">
               <OrgLogo

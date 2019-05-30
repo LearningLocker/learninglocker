@@ -1,5 +1,4 @@
-import formatDate from 'ui/utils/visualisations/helpers/formatDate';
-import { map as periodMap } from 'ui/utils/visualisations/projections/period';
+import period from 'ui/utils/visualisations/projections/period';
 
 const map = {
   people: '$person._id',
@@ -8,9 +7,14 @@ const map = {
   type: '$statement.object.definition.type',
   raw: '$statement.result.score.raw',
   response: '$statement.result.response',
-  year: { $year: '$timestamp' },
-  date: formatDate('%Y-%m-%d'),
-  ...periodMap,
 };
 
-export default group => map[group] || `$${group}`;
+/**
+ * Build "group" expression used in projection stage
+ *
+ * @param {string} groupType
+ * @param {string} timezone
+ * @returns object|string
+ */
+export default (groupType, timezone) =>
+  map[groupType] || period(groupType, timezone) || `$${groupType}`;
