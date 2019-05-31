@@ -1,10 +1,9 @@
 import React from 'react';
 import { OPERATOR_OPTS } from 'ui/utils/visualisations/localOptions';
-import { COMPONENT, TEXT } from 'ui/utils/constants';
+import { COMPONENT, TEXT, VISUALISATION_TEMPLATE_TITLES } from 'ui/utils/constants';
 import uuid from 'uuid';
 import { startCase, toLower } from 'lodash';
 import VisualisationTypeIcon from '../containers/Visualise/VisualisationTypeIcon';
-import templateData from '../containers/VisualiseForm/NewVisualisation/templateData';
 import chevronUpIcon from './assets/ll-chevron-up-icon.svg';
 import chevronDownIcon from './assets/ll-chevron-down-icon.svg';
 
@@ -79,7 +78,7 @@ const formattedDefault = (model, type) => {
 
   const templateId = model.get('templateId', null);
   if (templateId) {
-    return templateData.getIn([templateId, 'title'], 'Empty');
+    return VISUALISATION_TEMPLATE_TITLES[templateId] || 'Empty';
   }
 
   switch (type) {

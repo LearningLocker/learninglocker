@@ -8,6 +8,7 @@ import {
   FREQUENCY,
   COUNTER,
   LAST_2_MONTHS,
+  VISUALISATION_TEMPLATE_TITLES,
 } from 'ui/utils/constants';
 import TemplateCard from './TemplateCard';
 import styles from './styles.css';
@@ -18,7 +19,7 @@ const TemplateCardList = ({ model, saveModel }) => (
     className={styles.cardList}>
 
     <TemplateCard
-      title="How many statements have been stored in the last 7 days?"
+      title={VISUALISATION_TEMPLATE_TITLES['1']}
       type={COUNTER}
       onSelect={() => {
         saveModel({
@@ -30,7 +31,7 @@ const TemplateCardList = ({ model, saveModel }) => (
       }} />
 
     <TemplateCard
-      title="How has activity changed over time?"
+      title={VISUALISATION_TEMPLATE_TITLES['2']}
       type={FREQUENCY}
       onSelect={() => {
         saveModel({
@@ -43,7 +44,7 @@ const TemplateCardList = ({ model, saveModel }) => (
       }} />
 
     <TemplateCard
-      title="What are the most popular verbs?"
+      title={VISUALISATION_TEMPLATE_TITLES['3']}
       type={LEADERBOARD}
       onSelect={() => {
         saveModel({
@@ -57,7 +58,7 @@ const TemplateCardList = ({ model, saveModel }) => (
       }} />
 
     <TemplateCard
-      title="What are the most popular activities?"
+      title={VISUALISATION_TEMPLATE_TITLES['4']}
       type={LEADERBOARD}
       onSelect={() => {
         saveModel({
@@ -71,7 +72,7 @@ const TemplateCardList = ({ model, saveModel }) => (
       }} />
 
     <TemplateCard
-      title="Who are the most active people?"
+      title={VISUALISATION_TEMPLATE_TITLES['5']}
       type={LEADERBOARD}
       onSelect={() => {
         saveModel({
@@ -85,7 +86,7 @@ const TemplateCardList = ({ model, saveModel }) => (
       }} />
 
     <TemplateCard
-      title="How does activity change in a week?"
+      title={VISUALISATION_TEMPLATE_TITLES['6']}
       type={STATEMENTS}
       onSelect={() => {
         saveModel({

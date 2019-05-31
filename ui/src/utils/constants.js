@@ -78,3 +78,12 @@ export const VISUALISATION_TYPES = [
 ];
 
 export const VISUALISATION_COLORS = ['#F5AB36', '#DB0A5B', '#36D7B7', '#9B59B6', '#F77F3F', '#1E8BC3', '#ED4444'];
+
+export const VISUALISATION_TEMPLATE_TITLES = {
+  1: 'How many statements have been stored in the last 7 days?',
+  2: 'How has activity changed over time?',
+  3: 'What are the most popular verbs?',
+  4: 'What are the most popular activities?',
+  5: 'Who are the most active people?',
+  6: 'How does activity change in a week?',
+};
