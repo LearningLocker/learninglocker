@@ -7,7 +7,7 @@ import Tabs from 'ui/components/Material/Tabs';
 import { updateModel } from 'ui/redux/modules/models';
 import styles from '../visualiseform.css';
 import SeriesEditor from './SeriesEditor';
-import AxesEditor from './AxesEditor/AxesEditor';
+import AxesEditor from './AxesEditor';
 import OptionsEditor from './OptionsEditor';
 
 class Editor extends Component {
