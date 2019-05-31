@@ -4,7 +4,7 @@ import { COMPONENT, TEXT } from 'ui/utils/constants';
 import uuid from 'uuid';
 import { startCase, toLower } from 'lodash';
 import VisualisationTypeIcon from '../containers/Visualise/VisualisationTypeIcon';
-import templateData from '../containers/VisualiseForm/StatementsForm/NewVisualisation/templateData';
+import templateData from '../containers/VisualiseForm/NewVisualisation/templateData';
 import chevronUpIcon from './assets/ll-chevron-up-icon.svg';
 import chevronDownIcon from './assets/ll-chevron-down-icon.svg';
 

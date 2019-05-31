@@ -10,16 +10,18 @@ const NewVisualisation = ({
   model,
   saveModel,
 }) => (
-  <div>
-    <label htmlFor="new-visualisation-custom" >
-      Custom
-    </label>
-    <TypeEditor model={model} />
+  <div className="row">
+    <div className="col-md-12 left-border">
+      <label htmlFor="new-visualisation-custom" >
+        Custom
+      </label>
+      <TypeEditor model={model} />
 
-    <label htmlFor="new-visualisation-templates" >
-      Templates
-    </label>
-    <TemplateCardList model={model} saveModel={saveModel} />
+      <label htmlFor="new-visualisation-templates" >
+        Templates
+      </label>
+      <TemplateCardList model={model} saveModel={saveModel} />
+    </div>
   </div>
 );
 
