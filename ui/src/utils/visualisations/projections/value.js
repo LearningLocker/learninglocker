@@ -10,4 +10,10 @@ const map = {
   statements: '$_id',
 };
 
-export default value => map[value] || `$${value}`;
+/**
+ * Build "value" expression used in projection stage
+ *
+ * @param {string} valueType
+ * @returns string
+ */
+export default valueType => map[valueType] || `$${valueType}`;
