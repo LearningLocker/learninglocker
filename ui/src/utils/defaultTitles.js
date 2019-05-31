@@ -79,7 +79,7 @@ const formattedDefault = (model, type) => {
 
   const templateId = model.get('templateId', null);
   if (templateId) {
-    return templateData.getIn([model.get('templateId'), 'title']);
+    return templateData.getIn([templateId, 'title'], 'Empty');
   }
 
   switch (type) {

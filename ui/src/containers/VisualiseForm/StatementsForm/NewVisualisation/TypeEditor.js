@@ -47,7 +47,7 @@ class TypeEditor extends Component {
   )
 
   render = () => (
-    <div>
+    <div id="new-visualisation-custom">
       <div style={{ maxHeight: '500px', padding: '0px', overflow: 'auto' }}>
         {VISUALISATION_TYPES.map(this.renderIcon)}
       </div>
