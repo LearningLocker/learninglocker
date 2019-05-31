@@ -15,5 +15,4 @@ const VisualiseForm = ({ model, exportVisualisation }) => {
   return <NewVisualisation visualisationModel={model} />;
 };
 
-
 export default VisualiseForm;

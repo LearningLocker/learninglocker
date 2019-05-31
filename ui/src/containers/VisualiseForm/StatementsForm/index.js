@@ -64,10 +64,10 @@ class StatementsForm extends Component {
 
         <div style={{ height: '400px', paddingTop: 5 }}>
           {
-              this.props.model.get('sourceView') ?
-                <SourceResults id={this.props.model.get('_id')} /> :
-                <VisualiseResults id={this.props.model.get('_id')} />
-            }
+            this.props.model.get('sourceView') ?
+              <SourceResults id={this.props.model.get('_id')} /> :
+              <VisualiseResults id={this.props.model.get('_id')} />
+          }
         </div>
       </div>
     </div>

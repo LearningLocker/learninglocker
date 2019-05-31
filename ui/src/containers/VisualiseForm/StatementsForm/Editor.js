@@ -5,10 +5,10 @@ import { Tab } from 'react-toolbox/lib/tabs';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import Tabs from 'ui/components/Material/Tabs';
 import { updateModel } from 'ui/redux/modules/models';
-import styles from '../visualiseform.css';
 import SeriesEditor from './SeriesEditor';
 import AxesEditor from './AxesEditor';
 import OptionsEditor from './OptionsEditor';
+import styles from './styles.css';
 
 class Editor extends Component {
   static propTypes = {

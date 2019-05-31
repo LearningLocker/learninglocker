@@ -1,12 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import { Map } from 'immutable';
+import { connect } from 'react-redux';
 import Switch from 'ui/components/Material/Switch';
 import { updateModel } from 'ui/redux/modules/models';
-import { connect } from 'react-redux';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import VisualiseFilterForm from 'ui/containers/VisualiseFilterForm';
 import { STACKED_TYPES } from 'ui/utils/constants';
-import styles from '../visualiseform.css';
 
 class SeriesEditor extends Component {
   static propTypes = {
@@ -104,4 +102,4 @@ class SeriesEditor extends Component {
   }
 }
 
-export default withStyles(styles)(connect(() => ({}), { updateModel })(SeriesEditor));
+export default connect(() => ({}), { updateModel })(SeriesEditor);
