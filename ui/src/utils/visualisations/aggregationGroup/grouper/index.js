@@ -14,7 +14,7 @@ import uniqueTotalGrouper from './uniqueTotalGrouper';
 import uniqueTotalStatementGrouper from './uniqueTotalStatementGrouper';
 import valueGrouper from './valueGrouper';
 
-const getGroupPipeline = ({ operatorType, groupType, valueOpCase, projections }) => {
+const getGroupPipeline = ({ operatorType, groupType, valueOpCase, projections, timezone }) => {
   switch (valueOpCase) {
     case VALUE_OP_CASE.value:
       return valueGrouper({ operator: getOperator(operatorType), projections });
@@ -23,40 +23,40 @@ const getGroupPipeline = ({ operatorType, groupType, valueOpCase, projections })
     case VALUE_OP_CASE.uniqueCount:
       return uniqueTotalGrouper({ projections });
     case VALUE_OP_CASE.uniqueStatementModifier:
-      return uniqueStatementModifierGrouper({ operator: getOperator(operatorType), groupType, projections });
+      return uniqueStatementModifierGrouper({ operator: getOperator(operatorType), groupType, projections, timezone });
     case VALUE_OP_CASE.uniqueModifier:
-      return uniqueModifierGrouper({ operator: getOperator(operatorType), groupType, projections });
+      return uniqueModifierGrouper({ operator: getOperator(operatorType), groupType, projections, timezone });
     default:
       return [];
   }
 };
 
-const getProjections = ({ valueType, groupType, valueOpCase }) => {
+const getProjections = ({ valueType, groupType, valueOpCase, timezone }) => {
   switch (valueOpCase) {
     case VALUE_OP_CASE.value:
     case VALUE_OP_CASE.uniqueCount:
       return {
-        group: group(groupType),
+        group: group(groupType, timezone),
         value: value(valueType),
-        model: model(groupType),
+        model: model(groupType, timezone),
       };
     case VALUE_OP_CASE.uniqueStatementModifier:
       return {
-        date: date(groupType),
+        date: date(groupType, timezone),
         timestamp: '$timestamp',
-        model: model(groupType),
+        model: model(groupType, timezone),
       };
     case VALUE_OP_CASE.uniqueModifier:
       return {
-        date: date(groupType),
+        date: date(groupType, timezone),
         timestamp: '$timestamp',
         value: value(valueType),
-        model: model(groupType),
+        model: model(groupType, timezone),
       };
     case VALUE_OP_CASE.uniqueStatementCount:
       return {
-        group: group(groupType),
-        model: model(groupType),
+        group: group(groupType, timezone),
+        model: model(groupType, timezone),
       };
     default:
       return {};
@@ -137,7 +137,15 @@ const getContextActivityTypeMatch = (groupType, pattern) => {
   return null;
 };
 
-export default ({ valueType, groupType, operatorType, contextActivityDefinitionType }) => {
+/**
+ * @param {object} - valueType {*}
+ *                   groupType {*}
+ *                   operatorType {*}
+ *                   timezone {string}
+ *                   contextActivityDefinitionType {any}
+ * @returns {immutable.List} grouping pipeline
+ */
+export default ({ valueType, groupType, operatorType, timezone, contextActivityDefinitionType }) => {
   const valueOpCase = getValueOpCase({ valueType, operatorType });
 
   const isPersonaImportGroup = groupType.startsWith('persona.import.');
@@ -168,11 +176,12 @@ export default ({ valueType, groupType, operatorType, contextActivityDefinitionT
     valueType,
     groupType: isPersonaImportGroup ? 'personaAttrs.value' : groupType,
     valueOpCase,
+    timezone,
   });
   const projectStage = createStagePipeline('$project', projections);
 
   // 4th stages
-  const countPipeline = fromJS(getGroupPipeline({ operatorType, groupType, valueOpCase, projections }));
+  const countPipeline = fromJS(getGroupPipeline({ operatorType, groupType, valueOpCase, projections, timezone }));
 
   // 5th stages
   const postReqs = fromJS(getPostReqs());

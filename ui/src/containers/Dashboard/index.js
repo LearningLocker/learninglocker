@@ -1,10 +1,13 @@
 import React, { PropTypes, Component } from 'react';
 import Scroll from 'react-scroll';
+import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import WidgetVisualiseCreator from 'ui/containers/WidgetVisualiseCreator';
-import { Map, List, is } from 'immutable';
-import Input from 'ui/components/Material/Input';
+import { actions as routerActions } from 'redux-router5';
 import { withProps, compose, lifecycle } from 'recompose';
+import { Map, List, is } from 'immutable';
+import { activeOrgIdSelector } from 'ui/redux/modules/router';
+import Input from 'ui/components/Material/Input';
+import WidgetVisualiseCreator from 'ui/containers/WidgetVisualiseCreator';
 import { withModel } from 'ui/utils/hocs';
 import DashboardGrid from 'ui/containers/DashboardGrid';
 import DeleteButton from 'ui/containers/DeleteButton';
@@ -116,7 +119,7 @@ class Dashboard extends Component {
   };
 
   render() {
-    const { model, organisationId } = this.props;
+    const { model, organisationId, navigateTo } = this.props;
 
     if (!model.get('_id')) {
       return <Spinner />;
@@ -135,14 +138,28 @@ class Dashboard extends Component {
                 onChange={this.onTitleChange}
                 style={{ fontSize: '13px' }} />
             </div>
+
             &nbsp;&nbsp;
+
             <a
               onClick={this.onClickAddWidget}
               className="btn btn-default btn-sm flat-btn flat-white">
               <i className="ion ion-stats-bars" /> Add widget
             </a>
-            <PrivacyToggleButton id={model.get('_id')} schema={schema} white />
-            <DeleteButton white id={model.get('_id')} schema={schema} />
+
+            <PrivacyToggleButton
+              white
+              id={model.get('_id')}
+              schema={schema} />
+
+            <DeleteButton
+              white
+              id={model.get('_id')}
+              schema={schema}
+              onDeletedModel={() =>
+                navigateTo('organisation.data.dashboards', { organisationId })
+              } />
+
             <button
               className="btn btn-default btn-sm flat-btn flat-white"
               title="Share"
@@ -153,6 +170,7 @@ class Dashboard extends Component {
               }}>
               <i className="icon ion-android-share-alt" />
             </button>
+
             <span style={{ marginLeft: 'auto' }}>
               <Owner model={model} />
             </span>
@@ -165,14 +183,16 @@ class Dashboard extends Component {
             </div>
           }
         </div>
+
         <div className="clearfix" />
+
         <WidgetVisualiseCreator
           isOpened={this.state.widgetModalOpen}
           model={model}
           onClickClose={() => this.toggleWidgetModal()}
           onChangeVisualisation={this.createPopulatedWidget} />
+
         <DashboardGrid
-          organisationId={organisationId}
           widgets={model.get('widgets')}
           onChange={this.onChangeWidgets}
           onChangeTitle={this.onChangeWidgetTitle}
@@ -199,4 +219,12 @@ export default compose(
       }
     }
   }),
+  connect(
+    state => ({
+      organisationId: activeOrgIdSelector(state)
+    }),
+    {
+      navigateTo: routerActions.navigateTo,
+    },
+  )
 )(Dashboard);

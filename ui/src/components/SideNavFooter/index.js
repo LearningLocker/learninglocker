@@ -2,7 +2,7 @@ import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import styles from './sidenavfooter.css';
 
-const component = () => (
+const SideNavFooter = () => (
   <div className={styles['sidenav-footer']}>
     <a href="https://ht2ltd.zendesk.com/hc/en-us/categories/115000129989-Learning-Locker">Help centre</a>
     <div>Powered by</div>
@@ -10,4 +10,4 @@ const component = () => (
   </div>
 );
 
-export default withStyles(styles)(component);
+export default withStyles(styles)(SideNavFooter);

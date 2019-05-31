@@ -2,11 +2,12 @@ import React from 'react';
 import StatementsForm from './StatementsForm';
 import NewVisualisation from './NewVisualisation';
 
-const VisualiseForm = ({ model, exportVisualisation }) => {
+const VisualiseForm = ({ model, orgTimezone, exportVisualisation }) => {
   if (model.has('type')) {
     return (
       <StatementsForm
         model={model}
+        orgTimezone={orgTimezone}
         exportVisualisation={exportVisualisation} />
     );
   }

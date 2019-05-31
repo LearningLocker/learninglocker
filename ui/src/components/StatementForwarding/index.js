@@ -35,7 +35,8 @@ class StatementForwarding extends Component {
       schema,
       props: {
         owner: this.props.userId,
-        isExpanded: true
+        isExpanded: true,
+        timezone: null,
       }
     });
   }
@@ -73,5 +74,5 @@ class StatementForwarding extends Component {
 
 export default connect(state => ({
   userId: loggedInUserId(state),
-  searchString: modelQueryStringSelector(schema)(state)
+  searchString: modelQueryStringSelector(schema)(state),
 }), { addModel })(StatementForwarding);

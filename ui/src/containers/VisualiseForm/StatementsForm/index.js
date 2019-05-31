@@ -24,6 +24,7 @@ export const toggleSourceSelector = ({ id }) => createSelector(
 class StatementsForm extends Component {
   static propTypes = {
     model: PropTypes.instanceOf(Map),
+    orgTimezone: PropTypes.string.isRequired,
     isLoading: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
     filter: PropTypes.instanceOf(Map), // eslint-disable-line react/no-unused-prop-types
     hasMore: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
@@ -52,6 +53,7 @@ class StatementsForm extends Component {
       <div className="col-md-6 left-border">
         <Editor
           model={this.props.model}
+          orgTimezone={this.props.orgTimezone}
           exportVisualisation={this.props.exportVisualisation} />
       </div>
 

@@ -29,6 +29,7 @@ export const LAST_2_YEARS = 'LAST_2_YEARS';
 export const TYPES = 'stages/TYPES';
 export const STORES = 'stages/STORES';
 export const NONE = 'stages/NONE';
+
 export const FIVE = 5;
 export const TEN = 10;
 export const FIFTEEN = 15;
