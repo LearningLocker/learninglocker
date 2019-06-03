@@ -1,18 +1,29 @@
 import { fromJS } from 'immutable';
 import { visualisationPipelinesSelector } from './visualise';
 
-test('visualisationPipelinesSelector should unflattern axis', () => {
+test('visualisationPipelinesSelector should unflatten axis', () => {
   const mockVisualisation = fromJS({
     axesxValue: 6245
   });
-  const mockState = { models:
-    fromJS({
+  const mockState = {
+    models: fromJS({
       visualisation: {
         56: {
           remoteCache: mockVisualisation
         }
       }
-    })
+    }),
+    auth: fromJS({
+      activeTokenType: 'dashboard',
+      activeTokenId: '111111111111111111111111',
+      tokens: {
+        dashboard: {
+          '111111111111111111111111': {
+            organisation: '222222222222222222222222'
+          },
+        },
+      },
+    }),
   };
 
   const mockCb = jest.fn().mockReturnValue(3624);
