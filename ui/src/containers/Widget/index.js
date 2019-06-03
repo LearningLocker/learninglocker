@@ -130,7 +130,26 @@ class Widget extends Component {
   }
 
   renderMenu = () => {
-    const { model, organisationId } = this.props;
+    const { model, organisationId, visualisation } = this.props;
+
+    const shouldShowTableModeToggle = (
+      visualisation.size > 0 &&
+      visualisation.get('type') &&
+      visualisation.get('type') !== COUNTER &&
+      model.has('visualisation')
+    );
+
+    const shouldShowDonutModeToggle = (
+      visualisation.size > 0 &&
+      visualisation.get('type') === PIE &&
+      !visualisation.get('sourceView') &&
+      model.has('visualisation')
+    );
+
+    const shouldShowGoVisualisation = (
+      model.has('visualisation') &&
+      visualisation.size > 0
+    );
 
     return (
       <DropDownMenu
@@ -139,7 +158,7 @@ class Widget extends Component {
             <i className="ion ion-navicon-round" />
           </a>
         }>
-        { this.props.visualisation.size > 0 && this.props.visualisation.get('type') !== COUNTER && model.has('visualisation') &&
+        { shouldShowTableModeToggle &&
           <a
             onClick={this.toggleSourceView}
             title="Table mode"
@@ -147,10 +166,8 @@ class Widget extends Component {
             <i className={`ion ${styles.marginRight} ion-edit grey`} />{this.getSourceView()}
           </a>
         }
-        { this.props.visualisation.size > 0
-          && this.props.visualisation.get('type') === PIE
-          && !this.props.visualisation.get('sourceView')
-          && model.has('visualisation') &&
+
+        { shouldShowDonutModeToggle &&
           <a
             onClick={this.toggleDonutView}
             title="Donut mode"
@@ -158,31 +175,37 @@ class Widget extends Component {
             <i className={`ion ${styles.marginRight} ion-edit grey`} />{this.getDonutView()}
           </a>
         }
-        { model.has('visualisation') && this.props.visualisation.size > 0 &&
+
+        { shouldShowGoVisualisation &&
           <Link
             routeName={'organisation.data.visualise.visualisation'}
-            routeParams={{ organisationId, visualisationId: this.props.visualisation.get('_id') }} >
+            routeParams={{ organisationId, visualisationId: visualisation.get('_id') }} >
             <i className={`ion ${styles.marginRight} ion-edit grey`} />
             Go to visualisation
           </Link>
         }
-        <a onClick={this.openModal.bind(null, VISUALISATION)} title="Edit widget visualisation or title">
+
+        <a
+          onClick={this.openModal.bind(null, VISUALISATION)}
+          title="Edit widget visualisation or title">
           <i className={`ion ${styles.marginRight} ion-gear-b grey`} />
           Edit Widget
         </a>
+
         { this.props.editable &&
           <a
             onClick={this.openDeleteModal}
             title="Delete Widget">
-            <i className={`ion ${styles.marginRight}  ion-close-round grey`} />Delete
+            <i className={`ion ${styles.marginRight}  ion-close-round grey`} />
+            Delete
           </a>
-                    }
+        }
       </DropDownMenu>
     );
   }
 
   render = () => {
-    const { model } = this.props;
+    const { model, visualisation } = this.props;
     const delPopupProps = {
       schema,
       onClickClose: this.closeDeleteModal,
@@ -196,7 +219,6 @@ class Widget extends Component {
       [styles.title]: true,
       [styles.draggableTitle]: this.props.editable,
     });
-    console.log('in modal', model, 'and props: ', this.props);
     return (
       <div className={`panel panel-default animated fadeIn ${styles.widget}`} >
         <div className={styles.widgetContent}>
@@ -210,8 +232,8 @@ class Widget extends Component {
           </div>
           {
             <div className={`panel-body ${styles.body}`}>
-              {!this.props.visualisation.get('sourceView') && model.has('visualisation') && <VisualiseResults id={model.get('visualisation')} />}
-              {this.props.visualisation.get('sourceView') && <SourceResults id={model.get('visualisation')} />
+              {!visualisation.get('sourceView') && model.has('visualisation') && <VisualiseResults id={model.get('visualisation')} />}
+              {visualisation.get('sourceView') && <SourceResults id={model.get('visualisation')} />
               }
             </div>
           }

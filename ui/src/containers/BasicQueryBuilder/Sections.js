@@ -5,15 +5,20 @@ import CollapsedSection from './CollapsedSection';
 
 export default class Sections extends Component {
   static propTypes = {
+    timezone: PropTypes.string,
+    orgTimezone: PropTypes.string.isRequired,
     sections: PropTypes.instanceOf(Map),
     criteria: PropTypes.instanceOf(Map),
     onCriteriaChange: PropTypes.func,
     onSectionsChange: PropTypes.func,
     onAddCriterion: PropTypes.func,
     onDeleteCriterion: PropTypes.func,
+    onChangeTimezone: PropTypes.func,
   }
 
   shouldComponentUpdate = nextProps => !(
+    this.props.timezone === nextProps.timezone &&
+    this.props.orgTimezone === nextProps.orgTimezone &&
     this.props.sections.equals(nextProps.sections) &&
     this.props.criteria.equals(nextProps.criteria)
   );
@@ -80,6 +85,8 @@ export default class Sections extends Component {
 
   renderExpandedSection = (section, key) => (
     <ExpandedSection
+      timezone={this.props.timezone}
+      orgTimezone={this.props.orgTimezone}
       section={section}
       sectionCriteria={this.getCriteriaForSection(section)}
       key={key}
@@ -88,7 +95,8 @@ export default class Sections extends Component {
       onDeleteCriterion={this.props.onDeleteCriterion}
       onCollapse={this.collapseSection.bind(this, key)}
       onChildrenChange={this.changeChildSections.bind(this, key)}
-      onAddCriterion={this.props.onAddCriterion} />
+      onAddCriterion={this.props.onAddCriterion}
+      onChangeTimezone={this.props.onChangeTimezone} />
   );
 
   renderCollapsedSection = (section, key) => (<CollapsedSection

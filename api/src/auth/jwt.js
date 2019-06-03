@@ -8,6 +8,7 @@ import toString from 'lodash/toString';
 import { JWT_ACCESS_TOKEN_EXPIRATION, JWT_REFRESH_TOKEN_EXPIRATION } from 'lib/constants/auth';
 import { VIEW_SHAREABLE_DASHBOARD } from 'lib/constants/scopes';
 import Role from 'lib/models/role';
+import Organisation from 'lib/models/organisation';
 import getActiveOrgSettings from 'api/utils/getActiveOrgSettings';
 
 /**
@@ -28,6 +29,11 @@ const getVisualisationIdsFromDashboard = (dashboard) => {
   visualisationIds = reject(visualisationIds, isEmpty);
   visualisationIds = map(visualisationIds, toString);
   return visualisationIds;
+};
+
+const getOrgTimezoneFromDashboard = async (dashboard) => {
+  const org = await Organisation.findOne({ _id: dashboard.organisation });
+  return org && org.timezone ? org.timezone : null;
 };
 
 const payloadDefaults = ({
@@ -159,6 +165,9 @@ const createDashboardTokenPayload = async (dashboard, shareableId, provider) => 
   }
 
   const visualisationIds = getVisualisationIdsFromDashboard(dashboard);
+
+  const orgTimezone = await getOrgTimezoneFromDashboard(dashboard);
+
   return payloadDefaults({
     provider,
     scopes: getDashboardScopes(dashboard),
@@ -169,6 +178,7 @@ const createDashboardTokenPayload = async (dashboard, shareableId, provider) => 
     filter: {},
     extensions: {
       visualisationIds,
+      orgTimezone,
     }
   });
 };
