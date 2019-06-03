@@ -16,10 +16,9 @@ import styles from './styles.css';
 
 const cellPadding = 5;
 
-const getInnerRadius = size => i => (hole) => {
-  const out = (size * i) + (cellPadding * i) + hole;
-  return out;
-};
+const getInnerRadius = size => i => hole => (
+  (size * i) + (cellPadding * i) + hole
+);
 
 const getOuterRadius = size => i => hole =>
   (size * (i + 1)) + (cellPadding * i) + hole;
