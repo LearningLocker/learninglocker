@@ -81,7 +81,7 @@ const getLayout = widgets =>
     };
   });
 
-const render = ({
+const DashboardGrid = ({
   containerWidth,
   widgets,
   editable,
@@ -121,4 +121,4 @@ const render = ({
   );
 };
 
-export default enhance(render);
+export default enhance(DashboardGrid);
