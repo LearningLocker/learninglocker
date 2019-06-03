@@ -4,7 +4,7 @@ import { Map, fromJS, Iterable } from 'immutable';
 import isString from 'lodash/isString';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import ModelAutoComplete from 'ui/containers/ModelAutoComplete';
-import { mergeQueries, queryToString } from 'ui/utils/queries';
+import { mergeQueries, queryToStringList } from 'ui/utils/queries';
 import { withModel } from 'ui/utils/hocs';
 import styles from './savedqueries.css'; // 'ui/containers/QueryBuilder/savedqueries.css' doesn't work in testing on import
 
@@ -31,20 +31,19 @@ const searchStringToFilter = (searchString) => {
 };
 const parseOption = option => (option ? option.get('name') : '');
 const parseOptionTooltip = (option) => {
-  const out = (option
-    ? (<div> {
-      queryToString(option.get('conditions'), {
-        join: false
-      }).map(item =>
-        <div>
-          {item}
-        </div>
-      )
-    }
-    </div>)
-    : ''
+  if (!option) {
+    return '';
+  }
+  const stringList = queryToStringList(option.get('conditions'));
+  return (
+    <div>
+      {
+        stringList.map((item, i) => (
+          <div key={i}>{item}</div>
+        ))
+      }
+    </div>
   );
-  return out;
 };
 
 const withSelectedQuery = compose(
@@ -86,7 +85,7 @@ const enhance = compose(
   }),
 );
 
-const savedQueries = ({
+const SavedQueries = ({
   selectedQuery,
   query,
   updateSelectedQuery,
@@ -136,4 +135,4 @@ const savedQueries = ({
   );
 };
 
-export default enhance(savedQueries);
+export default enhance(SavedQueries);

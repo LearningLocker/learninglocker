@@ -283,22 +283,23 @@ const plural = (size) => {
   return 's';
 };
 
+/**
+ * @param {} criterion
+ * @param {} criterionKey
+ * @returns {string}
+ */
 const criterionToString = (criterion, criterionKey) =>
   `${criterionKey.get('criteriaPath').join('.')} (${getValueFromCriterion(criterion).size} item${plural(getValueFromCriterion(criterion).size)})`;
 
 /**
  * Returns a human readable representation of a query
- * @param {Map} query
+ * @param {immutable.Map} query
+ * @returns {immutable.List<string>}
  */
-export const queryToString = (query, {
-  join = true
-}) => {
+export const queryToStringList = (query) => {
   const criteria = getCriteria(query);
   const output = criteria.reduce((description, criterion, criterionKey) =>
     description.push(criterionToString(criterion, criterionKey))
   , new List());
-  if (join) {
-    return output.join(' - ');
-  }
   return output;
 };
