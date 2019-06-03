@@ -102,6 +102,7 @@ class WaypointForm extends Component {
         <div className="col-md-8">
           <div className="form-group">
             <label htmlFor={`${waypoint.get('_id')}conditionsInput`}>Conditions</label>
+            {/* I didn't add required props (e.g. orgTimezone) because WaypointForm is not used. */}
             <QueryBuilder
               id={`${waypoint.get('_id')}conditionsInput`}
               componentPath={new List(['waypoint', this.props.waypoint.get('_id')])}

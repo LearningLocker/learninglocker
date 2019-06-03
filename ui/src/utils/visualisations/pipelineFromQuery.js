@@ -1,5 +1,6 @@
 import { Map, fromJS } from 'immutable';
 import { memoize } from 'lodash';
+import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
 import { periodToDate } from 'ui/utils/dates';
 import aggregateChart from 'ui/utils/visualisations/aggregateChart';
 import aggregateCounter from 'ui/utils/visualisations/aggregateCounter';
@@ -14,37 +15,48 @@ import {
   PIE
 } from 'ui/utils/constants';
 
+/**
+ * build pipeline from query
+ *
+ * @param {immutable.Map} args - optional (default is empty Map)
+ */
 export default memoize((args = new Map()) => {
-  const query = args.getIn(['query', '$match'], new Map());
   const previewPeriod = args.get('previewPeriod');
-  const today = args.get('today');
-  const queryMatch = query.size === 0 ? [] : [{ $match: query }];
-  const previousStartDate = periodToDate(previewPeriod, today, 2).toISOString();
+  const timezone = args.get('timezone');
+  const currentMoment = args.get('currentMoment');
 
   let previewPeriodMatch = [{ $match: {
-    timestamp: { $gte: { $dte: periodToDate(previewPeriod, today).toISOString() } }
+    timestamp: { $gte: { $dte: periodToDate(previewPeriod, timezone, currentMoment).toISOString() } }
   } }];
 
   if (args.get('benchmarkingEnabled')) {
+    const previousStartDate = periodToDate(previewPeriod, timezone, currentMoment, 2).toISOString();
     previewPeriodMatch = [{ $match: {
-      timestamp: { $gte: { $dte: previousStartDate }, $lte: { $dte: periodToDate(previewPeriod, today).toISOString() } }
+      timestamp: { $gte: { $dte: previousStartDate }, $lte: { $dte: periodToDate(previewPeriod, timezone, currentMoment).toISOString() } }
     } }];
   }
 
+  const query = args.getIn(['query', '$match'], new Map());
+  // Set timezone of When filters (timestamp and stored)
+  const offsetFixedQuery = update$dteTimezone(query, timezone);
+  const queryMatch = offsetFixedQuery.size === 0 ? [] : [{ $match: offsetFixedQuery }];
+
+  const preReqs = fromJS(previewPeriodMatch.concat(queryMatch));
+
   const type = args.get('type');
   const axes = args.get('axes');
-  const preReqs = fromJS(previewPeriodMatch.concat(queryMatch));
+
   switch (type) {
     case POPULARACTIVITIES:
     case LEADERBOARD:
     case PIE:
     case STATEMENTS:
     case FREQUENCY:
-      return aggregateChart(preReqs, axes);
+      return aggregateChart(preReqs, axes, timezone);
     case XVSY:
-      return aggregateXvsY(preReqs, axes);
+      return aggregateXvsY(preReqs, axes, timezone);
     case COUNTER:
-      return aggregateCounter(preReqs, axes);
+      return aggregateCounter(preReqs, axes, timezone);
     default:
       return query;
   }

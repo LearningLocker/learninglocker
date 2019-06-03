@@ -7,7 +7,6 @@ import ModelAutoComplete from 'ui/containers/ModelAutoComplete';
 import uuid from 'uuid';
 import { withModels } from 'ui/utils/hocs';
 
-
 const schema = 'visualisation';
 
 class WidgetVisualisePicker extends Component {
@@ -34,12 +33,10 @@ class WidgetVisualisePicker extends Component {
         (this.props.model.get('title') || 'No visualisation')
       );
     }
-
     const out = this.props.onChangeVisualisation(
       visualisation.get('_id'),
-      (this.props.model.get('title') || visualisation.get('description') || createDefaultTitle(visualisation))
+      (visualisation.get('description', ''))
     );
-
     return out;
   }
 
@@ -104,7 +101,6 @@ class WidgetVisualisePicker extends Component {
           <div className="modal animated fast fadeIn">
             <div className="modal-dialog">
               <div className="modal-content">
-
                 <div className="modal-header modal-header-bg">
                   <button
                     type="button"
@@ -113,9 +109,8 @@ class WidgetVisualisePicker extends Component {
                     onClick={this.onClickClose}>
                     <span aria-hidden="true">×</span>
                   </button>
-                  <h4 className="modal-title">Choose visualisation</h4>
+                  <h4 className="modal-title">Edit Widget</h4>
                 </div>
-
                 <div
                   className="modal-body clearfix"
                   style={{
