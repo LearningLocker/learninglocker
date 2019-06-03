@@ -171,7 +171,6 @@ const displayInfo = async ({ info, migrations }) => {
 };
 
 export default async function ({ down, up, info, migrations = v2Migrations, dontExit = false }, next = null) {
-  console.log(next);
   try {
     if (info) {
       await displayInfo({ info, migrations });
