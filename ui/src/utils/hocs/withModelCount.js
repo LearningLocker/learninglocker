@@ -11,10 +11,11 @@ import {
 
 export default (WrappedComponent) => {
   class WithModelCount extends Component {
-    componentWillMount = () => {
+    componentDidMount  = () => {
       this.fetchModelsCount(this.props);
     }
-    componentWillReceiveProps = ({ schema, filter, shouldFetchCount }) => {
+    componentDidUpdate = () => {
+      const { schema, filter, shouldFetchCount } = this.props;
       if (shouldFetchCount) {
         this.fetchModelsCount({ schema, filter });
       }
