@@ -4,7 +4,7 @@ import { Map, fromJS, Iterable } from 'immutable';
 import isString from 'lodash/isString';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import ModelAutoComplete from 'ui/containers/ModelAutoComplete';
-import { mergeQueries, queryToStringList } from 'ui/utils/queries';
+import { queryToStringList } from 'ui/utils/queries';
 import { withModel } from 'ui/utils/hocs';
 import styles from './savedqueries.css'; // 'ui/containers/QueryBuilder/savedqueries.css' doesn't work in testing on import
 
@@ -78,10 +78,6 @@ const enhance = compose(
       e.preventDefault();
       onQueryChange(selectedQuery.get('conditions'));
     },
-    mergeSelectedQuery: ({ selectedQuery, query, onQueryChange }) => (e) => {
-      e.preventDefault();
-      onQueryChange(mergeQueries(query, selectedQuery.get('conditions')));
-    }
   }),
 );
 
@@ -90,8 +86,7 @@ const SavedQueries = ({
   query,
   updateSelectedQuery,
   applySelectedQuery,
-  mergeSelectedQuery,
-  setSelectedQuery
+  setSelectedQuery,
 }) => {
   const conditions = getConditions(selectedQuery);
   const queriesEqual = conditions.equals(query);
@@ -122,13 +117,6 @@ const SavedQueries = ({
           onClick={applySelectedQuery}
           title={queriesEqual ? queriesEqualMessage : 'Load saved query'}>
           <i className="glyphicon glyphicon-save" />
-        </button>
-        <button
-          disabled={isQueryEmpty || queriesEqual}
-          className="btn btn-default btn-sm"
-          onClick={mergeSelectedQuery}
-          title={queriesEqual ? queriesEqualMessage : 'Merge saved query'}>
-          <i className="glyphicon glyphicon-import" />
         </button>
       </div>
     </div>

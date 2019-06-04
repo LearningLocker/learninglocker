@@ -189,11 +189,11 @@ export const addTokenToQuery = (query, keyPath, token) => {
   // Add token to exiting $or criterion
   const criterion = filteredCriteria.first();
   const criterionKey = filteredCriteria.keyOf(criterion);
-  const operator = getOperatorFromOrCriterion(criterion);
+  const operator = getOperatorFrom$orCriterion(criterion);
   const tokens = criterion.get(operator, new List());
   const newTokens = tokens.has(token) ? tokens : tokens.push(token);
-  const newOrCriterion = criterion.set(operator, newTokens);
-  return changeCriterion(criteria, criterionKey, newOrCriterion);
+  const new$orCriterion = criterion.set(operator, newTokens);
+  return changeCriterion(criteria, criterionKey, new$orCriterion);
 };
 
 /**
@@ -217,63 +217,43 @@ const addCriterion = (query, keyPath, criterion) => {
 export const addCriterionFromSection = (query, criterion, section) =>
   addCriterion(query, section.get('keyPath', new List()), criterion);
 
-const getOperatorFromOrCriterion = criterion => (criterion.has('$nor') ? '$nor' : '$or');
-
-const getValueFromCriterion = criterion => criterion.get(getOperatorFromOrCriterion(criterion), new List());
-
 /**
- * finds all criteria matching keyPath and operator in criteria
+ * returns whether the criterion is $or / $nor type criterion
+ *
+ * @param {immutable.Map} criterion
+ * @returns {boolean}
  */
-const findMatchingCriteria = (criteria, keyPath, operator) =>
-  criteria.filter((criterion, criterionKey) => {
-    const criterionKeyPath = criterionKey.get('criteriaPath');
-    const criterionOperator = getOperatorFromOrCriterion(criterion);
-    return criterionKeyPath.equals(keyPath) && operator === criterionOperator;
-  });
+const is$orCriterion = criterion => Map.isMap(criterion) && (criterion.has('$nor') || criterion.has('$or'));
 
-const mergeCriterion = (criterionA, criterionB) => {
-  if (!criterionA) return criterionB;
-  if (!criterionB) return criterionA;
-
-  const operatorA = getOperatorFromOrCriterion(criterionA);
-  const operatorB = getOperatorFromOrCriterion(criterionB);
-
-  const valueA = criterionA.get(operatorA);
-  const valueB = criterionB.get(operatorB);
-  const newValue = new Set(valueA.concat(valueB)).toList();
-
-  return criterionA.set(operatorA, newValue);
+const is$inCriterion = (criterion) => {
+  const queryKey = criterion.keySeq().last();
+  const query = criterion.get(queryKey);
+  return Map.isMap(criterion) && Map.isMap(query) && (query.has('$nin') || query.has('$in'));
 };
 
+const isDiscreteCriterion = criterion => is$orCriterion(criterion) || is$inCriterion(criterion);
+
 /**
- * Merges two queries
- * @param {Map} query1
- * @param {Map} query2
+ * @param {immutable.Map} criterion
+ * @returns {string} - '$or'|'$nor'
  */
-export const mergeQueries = (query1, query2) => {
-  // extract all criteria from each query
-  const criteria1 = getCriteria(query1);
-  const criteria2 = getCriteria(query2);
+const getOperatorFrom$orCriterion = criterion => (criterion.has('$nor') ? '$nor' : '$or');
 
-  const merged = criteria2.reduce(
-    (allCriteria, criterion, criterionKey) => {
-      const keyPath = criterionKey.get('criteriaPath');
-      const operator = getOperatorFromOrCriterion(criterion);
+/**
+ * @param {immutable.Map} criterion
+ * @returns {string} - '$nin'|'$in'
+ */
+const getOperatorFrom$inCriterion = (criterion) => {
+  const queryKey = criterion.keySeq().last();
+  return criterion.hasIn([queryKey, '$nin']) ? '$nin' : '$in';
+};
 
-      const matchingCriteria = findMatchingCriteria(allCriteria, keyPath, operator);
-      const matchingCriterion = matchingCriteria.first();
-      const matchingCriterionKey = matchingCriteria.keySeq().first();
-      const newCriterion = mergeCriterion(matchingCriterion, criterion);
-      const newCriterionKey = matchingCriterionKey || criterionKey;
+const getValueFrom$orCriterion = criterion => criterion.get(getOperatorFrom$orCriterion(criterion), new List());
 
-      return allCriteria.set(newCriterionKey, newCriterion);
-    },
-    criteria1
-  );
-
-  // create a new query by merging in the remainer of each original query
-  // apply the fields from each query
-  return changeCriteria(merged);
+const getValueFrom$inCriterion = (criterion) => {
+  const queryKey = criterion.keySeq().last();
+  const op = getOperatorFrom$inCriterion(criterion);
+  return criterion.getIn([queryKey, op], new List());
 };
 
 const plural = (size) => {
@@ -283,13 +263,28 @@ const plural = (size) => {
   return 's';
 };
 
+const countValues = (criterion) => {
+  if (is$orCriterion(criterion)) {
+    return getValueFrom$orCriterion(criterion).size;
+  }
+  return getValueFrom$inCriterion(criterion).size;
+};
+
 /**
  * @param {} criterion
  * @param {} criterionKey
  * @returns {string}
  */
-const criterionToString = (criterion, criterionKey) =>
-  `${criterionKey.get('criteriaPath').join('.')} (${getValueFromCriterion(criterion).size} item${plural(getValueFromCriterion(criterion).size)})`;
+const criterionToString = (criterion, criterionKey) => {
+  const criteriaPathString = criterionKey.get('criteriaPath').join('.');
+
+  if (isDiscreteCriterion(criterion)) {
+    const size = countValues(criterion);
+    return `${criteriaPathString} (${size} item${plural(size)})`;
+  }
+
+  return criteriaPathString;
+};
 
 /**
  * Returns a human readable representation of a query
