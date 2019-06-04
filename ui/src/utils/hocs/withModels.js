@@ -17,10 +17,10 @@ import {
 
 export default (WrappedComponent) => {
   class WithModels extends Component {
-    componentWillMount = () => this.fetchModels(this.props)
+    componentDidMount = () => this.fetchModels(this.props)
 
-    componentWillReceiveProps = nextProps =>
-      this.fetchModels(nextProps);
+    componentDidUpdate = () =>
+      this.fetchModels(this.props);
 
     fetchModels = ({ schema, filter, sort, first }) => {
       if (filter) {
