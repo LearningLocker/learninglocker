@@ -1,4 +1,5 @@
 import React from 'react';
+import DebounceInput from 'react-debounce-input';
 import classNames from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withHandlers, withState } from 'recompose';
@@ -64,13 +65,14 @@ const SingleInput = ({
   return (
     <div className={wrapperClasses}>
       { shouldRenderSearch &&
-        <input
-          type="text"
+        <DebounceInput
+          debounceTimeout={377}
+          value={value}
+          placeholder={placeholder}
           onChange={onChangeSearchString}
           onBlur={setInputFocusedFalse}
           onFocus={setInputFocusedTrue}
-          placeholder={placeholder}
-          value={value} />
+          />
       }
       { !shouldRenderSearch &&
         renderOption({ option: selectedOption })
