@@ -77,7 +77,7 @@ export default compose(
         parseOption={option => (option ? parseOption(option) : '')}
         parseOptionTooltip={option => (option ? parseOptionTooltip(option) : '')}
         filter={filter}
-        first={1000}
+        first={50}
         canEdit={() => false}
         schema={schema} />
     )} />
