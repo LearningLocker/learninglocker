@@ -157,7 +157,7 @@ exports[`HeaderItem should render with orderable when disabled 1`] = `
     </label>
     <select
       className="form-control"
-      disabled="true"
+      disabled={true}
       id="1-test1-columnType"
       value=""
     >

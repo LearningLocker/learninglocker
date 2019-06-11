@@ -1,9 +1,11 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Map, List, fromJS } from 'immutable';
 import uuid from 'uuid';
 import { compose, setPropTypes, withProps, withHandlers } from 'recompose';
 import { SITE_ADMIN, SITE_CAN_CREATE_ORG, SITE_SCOPES } from 'lib/constants/scopes';
+import { MANAGE_ALL_USERS, ALL } from 'lib/constants/orgScopes';
 import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
 import { withSchema, withModel } from 'ui/utils/hocs';
 import QueryBuilder from 'ui/containers/QueryBuilder';
@@ -105,7 +107,7 @@ const getDefaultOrgSettings = organisationModel =>
 const getActiveOrgSettings = ({ model, organisationModel }) => {
   // @TODO: org isn't available and when it is, it doesnt retrigger this
   const org = organisationModel.get('_id').toString();
-  const settings = model.get(ORG_SETTINGS).find(val =>
+  const settings = model.get(ORG_SETTINGS, new List()).find(val =>
     val.get('organisation').toString() === org
   );
   return settings || getDefaultOrgSettings(organisationModel);
@@ -230,15 +232,17 @@ class UserOrgForm extends React.Component {
     const filter = fromJS(userOrgSettings.get('filter', new Map({})));
 
     const siteRoles = model.get('scopes', new List());
-    const canEditSiteRoles = RESTRICT_CREATE_ORGANISATION &&
-      activeScopes.includes(SITE_ADMIN);
+
+    const canEditOrgRoles = activeScopes.some(s => [SITE_ADMIN, ALL, MANAGE_ALL_USERS].includes(s));
+    const canEditSiteRoles = RESTRICT_CREATE_ORGANISATION && activeScopes.includes(SITE_ADMIN);
 
     const orgTimezone = organisationModel.get('timezone', 'UTC');
 
     return (
       <div>
         <UserForm {...this.props} />
-        <div className="row">
+
+        {canEditOrgRoles && <div className="row">
           <div className="col-md-12" >
             <div className="form-group">
               <label htmlFor={rolesId}>Organisation Roles</label>
@@ -247,7 +251,7 @@ class UserOrgForm extends React.Component {
               </div>
             </div>
           </div>
-        </div>
+        </div>}
 
 
         {canEditSiteRoles && <div className="row">

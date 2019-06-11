@@ -16,18 +16,24 @@ import {
   setInMetadata,
   deleteInMetadata,
 } from 'ui/redux/modules/metadata';
+import areEqualProps from './areEqualProps';
 
 export default (WrappedComponent) => {
   class WithModel extends Component {
-    componentWillMount = () => {
+    componentDidMount = () => {
       const { schema, id, doWhile } = this.props;
       this.fetchModel({ schema, id });
       this.pollWhile({ schema, id, doWhile });
     }
-    componentWillReceiveProps = ({ schema, id, doWhile }) => {
+
+    shouldComponentUpdate = nextProps => !areEqualProps(this.props, nextProps);
+
+    componentDidUpdate = () => {
+      const { schema, id, doWhile } = this.props;
       this.fetchModel({ schema, id });
       this.pollWhile({ schema, id, doWhile });
     }
+
     fetchModel = ({ schema, id }) => {
       this.props.fetchModel({ schema, id }).catch(err => console.error(schema, id, err.message));
     }

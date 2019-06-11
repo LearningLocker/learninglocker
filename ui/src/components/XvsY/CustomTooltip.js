@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { round } from 'lodash';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import styles from './styles.css';

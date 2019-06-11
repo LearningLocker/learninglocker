@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Map, Set } from 'immutable';
 import classNames from 'classnames';
 import moment from 'moment-timezone';

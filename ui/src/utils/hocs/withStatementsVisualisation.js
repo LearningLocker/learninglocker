@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { List, Map } from 'immutable';
 import { connect } from 'react-redux';
 import { compose, withProps } from 'recompose';
@@ -36,10 +37,6 @@ const withStatementsVisualisation = (WrappedComponent) => {
       this.fetchIfRequired(this.props);
     }
 
-    componentWillReceiveProps = (nextProps) => {
-      this.fetchIfRequired(nextProps);
-    }
-
     shouldComponentUpdate = ({ results, hasAllResult, model }) => !(
       this.props.results.equals(results) &&
       this.props.hasAllResult === hasAllResult &&
@@ -50,6 +47,10 @@ const withStatementsVisualisation = (WrappedComponent) => {
       this.props.model.get('filters').equals(model.get('filters')) &&
       this.props.model.get('trendLines') === model.get('trendLines')
     );
+
+    componentDidUpdate = () => {
+      this.fetchIfRequired(this.props);
+    }
 
     fetchIfRequired = (props) => {
       if (props.shouldFetch) {

@@ -28,6 +28,10 @@ const isValueNotEqModel = value => model =>
 const getModelByValue = models => value =>
   models.skipWhile(isValueNotEqModel(value)).first() || convertValueToModel(value);
 
+/**
+ * @param {immutable.List} values
+ * @returns {(models: immutable.OrderedMap) => immutable.List}
+ */
 const convertValuesToModel = values => models =>
   values.map(getModelByValue(models));
 
@@ -35,6 +39,21 @@ const withLoadedOptions = connect((state, { schema }) => ({
   loadedModels: modelsByFilterSelector(schema)(state)
 }));
 
+/**
+ * params
+ * {
+ *   models: immutable.OrderedMap
+ *   values: immutable.List
+ *   loadedModels: immutable.OrderedMap
+ * }
+ *
+ * returns
+ * {
+ *   selectedOptions: immutable.OrderedMap|immutable.List
+ * }
+ *
+ * if models.size > 0 immutable.OrderedMap else immutable.List
+ */
 const withSelectedOptions = withProps(({ models, values, loadedModels }) => ({
   selectedOptions: models.size > 0 ? models : convertValuesToModel(values)(loadedModels)
 }));
@@ -72,7 +91,7 @@ const withRenderOption = withProps(
   })
 );
 
-export default compose(
+const QueryBuilderInput = compose(
   withSearchStringToFilter,
   withOnChangeSearchString,
   withModels,
@@ -80,3 +99,5 @@ export default compose(
   withLoadedOptions,
   withSelectedOptions
 )(MultiInput);
+
+export default QueryBuilderInput;

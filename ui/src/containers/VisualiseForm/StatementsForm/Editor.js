@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import { connect } from 'react-redux';
 import { Tab } from 'react-toolbox/lib/tabs';
@@ -117,7 +118,7 @@ class Editor extends Component {
     }
     return (
       <div className={styles.tab}>
-        { this.renderDescription(this.props.model.get('description')) }
+        { this.renderDescription(this.props.model.get('description', '')) }
         <Tabs index={this.state.step} onChange={this.changeStep}> children={tabs}</Tabs>
       </div>
     );
