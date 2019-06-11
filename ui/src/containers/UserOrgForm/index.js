@@ -133,20 +133,20 @@ const enhance = compose(
        */
       updateOrgSettings: (attrValueList) => {
         const org = organisationModel.get('_id').toString();
-        const hasExistingSetting = model.get(ORG_SETTINGS).find(orgSettings =>
+        const hasExistingSetting = model.get(ORG_SETTINGS, new List()).find(orgSettings =>
           orgSettings.get('organisation').toString() === org
         );
 
         let allOrgSettings;
         if (hasExistingSetting) {
-          allOrgSettings = model.get(ORG_SETTINGS).map((val) => {
+          allOrgSettings = model.get(ORG_SETTINGS, new List()).map((val) => {
             if (val.get('organisation').toString() === org) {
               return attrValueList.reduce((acc, { attr, value }) => acc.set(attr, value), val);
             }
             return val;
           });
         } else {
-          allOrgSettings = model.get(ORG_SETTINGS) || new List();
+          allOrgSettings = model.get(ORG_SETTINGS, new List());
           allOrgSettings = allOrgSettings.push(
             attrValueList.reduce(
               (acc, { attr, value }) => acc.set(attr, value),
