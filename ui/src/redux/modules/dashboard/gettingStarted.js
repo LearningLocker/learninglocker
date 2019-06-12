@@ -8,6 +8,7 @@ import {
   COUNTER,
   LAST_2_MONTHS,
 } from 'ui/utils/constants';
+import { setInMetadata } from 'ui/redux/modules/metadata';
 import { addModel } from '../models';
 
 export const CREATE_GETTING_STARTED = 'learninglocker/dashboard/CREATE_GETTING_STARTED';
@@ -75,6 +76,15 @@ const createVisualisations = async (dispatch) => {
 
 function* createGettingStarted({ userId, organisationId, dispatch }) {
   const visualisationIds = yield call(createVisualisations, dispatch);
+
+  for (const id of visualisationIds) {
+    yield put(setInMetadata({
+      schema: 'visualisation',
+      id,
+      path: ['isExpanded'],
+      value: false,
+    }));
+  }
 
   const { model } = yield call(dispatch, addModel({
     schema: 'dashboard',
