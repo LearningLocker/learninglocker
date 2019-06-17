@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Map, fromJS } from 'immutable';
 import Textarea from 'react-textarea-autosize';
 import classNames from 'classnames';
@@ -38,14 +39,14 @@ export default class JsonTextArea extends Component {
     const oldValue = this.state.value;
     const stateWithValue = stateFromProps(nextProps);
     const selectionStart = cursorPosition({
-      oldCursorPosition: this.textarea._rootDOMNode.selectionStart,
+      oldCursorPosition: this.textarea._ref.selectionStart,
       oldValue,
       newValue: stateWithValue.value,
     });
 
     const selectionDifference =
-      this.textarea._rootDOMNode.selectionEnd -
-        this.textarea._rootDOMNode.selectionStart;
+      this.textarea._ref.selectionEnd -
+        this.textarea._ref.selectionStart;
 
     const stateWithCursor = {
       selectionStart,
@@ -66,8 +67,8 @@ export default class JsonTextArea extends Component {
       selectionEnd
     } = this.state;
 
-    this.textarea._rootDOMNode.selectionStart = selectionStart;
-    this.textarea._rootDOMNode.selectionEnd = selectionEnd;
+    this.textarea._ref.selectionStart = selectionStart;
+    this.textarea._ref.selectionEnd = selectionEnd;
   }
 
   textarea = null

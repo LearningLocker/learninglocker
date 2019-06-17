@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import { TEMPLATE_STAGE_COMPLETED } from 'lib/constants/visualise';
 import VisualiseResults from 'ui/containers/VisualiseResults';

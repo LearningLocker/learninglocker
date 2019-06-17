@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import CacheKeysAutoComplete from 'ui/containers/CacheKeysAutoComplete';
 import { GROUP_OPTS } from 'ui/utils/visualisations/localOptions';
@@ -13,7 +14,7 @@ export default class GroupEditor extends Component {
     group: GROUP_OPTS.get('hour'),
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     this.props.changeGroup(this.props.group);
   }
 

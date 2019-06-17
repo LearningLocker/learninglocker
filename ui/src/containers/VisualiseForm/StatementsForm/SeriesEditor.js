@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import Switch from 'ui/components/Material/Switch';
 import { updateModel } from 'ui/redux/modules/models';

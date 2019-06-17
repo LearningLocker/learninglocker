@@ -35,6 +35,7 @@ exports[`render criterion with value 1`] = `
     className="criterionValue"
   >
     <div
+      className={undefined}
       data-react-toolbox="date-picker"
     >
       <div
@@ -43,6 +44,7 @@ exports[`render criterion with value 1`] = `
       >
         <input
           className="undefined"
+          defaultValue={undefined}
           disabled={false}
           maxLength={undefined}
           name={undefined}

@@ -14,13 +14,19 @@ import {
   deleteModel,
   updateModel
 } from 'ui/redux/actions';
+import areEqualProps from './areEqualProps';
 
 export default (WrappedComponent) => {
   class WithModels extends Component {
-    componentWillMount = () => this.fetchModels(this.props)
+    componentDidMount = () => this.fetchModels(this.props);
 
-    componentWillReceiveProps = nextProps =>
-      this.fetchModels(nextProps);
+    shouldComponentUpdate = nextProps => !areEqualProps(this.props, nextProps, true);
+
+    componentDidUpdate = () => {
+      if (this.props.shouldFetch) {
+        this.fetchModels(this.props);
+      }
+    }
 
     fetchModels = ({ schema, filter, sort, first }) => {
       if (filter) {

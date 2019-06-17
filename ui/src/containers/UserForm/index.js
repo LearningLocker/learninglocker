@@ -54,7 +54,7 @@ const renderName = (model, onChangeAttr) => {
         id={nameId}
         className="form-control"
         placeholder="Name"
-        value={model.get('name')}
+        value={model.get('name', '')}
         onChange={onChangeAttr('name')} />
     </div>
   );
@@ -74,7 +74,7 @@ const renderEmail = (model, onChangeAttr) => {
         className="form-control"
         disabled={model.has('googleId')}
         placeholder="E-Mail"
-        value={model.get('email')}
+        value={model.get('email', '')}
         onChange={onChangeAttr('email')} />
       { model.getIn(['errors', 'messages', 'email'], false) &&
         (<span className="help-block">
