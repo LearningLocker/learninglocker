@@ -11,7 +11,7 @@ import {
 
 export default (WrappedComponent) => {
   class WithModelCount extends Component {
-    componentDidMount  = () => {
+    componentDidMount = () => {
       this.fetchModelsCount(this.props);
     }
     componentDidUpdate = () => {

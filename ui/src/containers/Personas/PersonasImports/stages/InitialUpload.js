@@ -35,7 +35,7 @@ export const UploadButtonComponent = ({
       return (
         <button
           onClick={onSubmit}
-          disabled="true"
+          disabled
           className="btn btn-primary pull-right">
           <i className="icon animated fadeIn ion-checkmark" />
         </button>

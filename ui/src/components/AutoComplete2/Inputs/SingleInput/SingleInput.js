@@ -3,7 +3,7 @@ import DebounceInput from 'react-debounce-input';
 import classNames from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withHandlers, withState } from 'recompose';
-import { componentWillReceiveProps } from 'react-functional-lifecycle';
+import { componentDidUpdate } from 'react-functional-lifecycle';
 import styles from '../styles.css';
 
 const withFocusState = withState('inputFocused', 'setInputFocused', false);
@@ -17,7 +17,7 @@ const withFocusStateHandlers = withHandlers({
   }
 });
 
-const checkInputFocus = componentWillReceiveProps(({
+const checkInputFocus = componentDidUpdate(({
   hasFocus,
   selectedOption,
   inputFocused,
@@ -71,8 +71,7 @@ const SingleInput = ({
           placeholder={placeholder}
           onChange={onChangeSearchString}
           onBlur={setInputFocusedFalse}
-          onFocus={setInputFocusedTrue}
-          />
+          onFocus={setInputFocusedTrue} />
       }
       { !shouldRenderSearch &&
         renderOption({ option: selectedOption })

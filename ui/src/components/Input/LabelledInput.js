@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { compose, setPropTypes, defaultProps } from 'recompose';
 import { v4 as uuid } from 'uuid';
 import Input from './Input';

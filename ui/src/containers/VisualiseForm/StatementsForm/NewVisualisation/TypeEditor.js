@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { withModel } from 'ui/utils/hocs';
 import { withProps, compose } from 'recompose';
 import VisualiseIcon from 'ui/components/VisualiseIcon';
@@ -15,16 +16,13 @@ class TypeEditor extends Component {
 
   constructor(props) {
     super(props);
-    this.state = this.getStateFromProps(props);
+    this.state = {
+      type: props.model.get('type'),
+    };
   }
 
-  componentWillReceiveProps = nextProps => (
-    this.setState(this.getStateFromProps(nextProps))
-  )
-
-  shouldComponentUpdate = (nextProps, nextState) => !(
-    this.state.type === nextState.type
-  )
+  shouldComponentUpdate = (_, nextState) =>
+    this.state.type !== nextState.type
 
   onClickType = type => this.setState({ type })
 
@@ -33,8 +31,6 @@ class TypeEditor extends Component {
     const value = this.state.type;
     this.props.updateModel({ path, value });
   }
-
-  getStateFromProps = props => ({ type: props.model.get('type') })
 
   isActive = type => this.state.type === type
 

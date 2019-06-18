@@ -1,4 +1,5 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { fetchModels } from 'ui/redux/modules/pagination';
 import { loggedInUserId, loggedInUserSelector } from 'ui/redux/modules/auth';
@@ -20,8 +21,8 @@ class AuthContainer extends Component {
     this._getAuthUser(this.props);
   }
 
-  componentWillReceiveProps = (nextProps) => {
-    this._getAuthUser(nextProps);
+  componentDidUpdate = () => {
+    this._getAuthUser(this.props);
   }
 
   _getAuthUser = (props) => {

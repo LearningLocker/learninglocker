@@ -1,5 +1,6 @@
 import validateSha1 from '@learninglocker/xapi-validation/dist/regexValues/sha1';
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { compose, setPropTypes, defaultProps } from 'recompose';
 import classNames from 'classnames';
 import Input from 'ui/components/Input/Input';

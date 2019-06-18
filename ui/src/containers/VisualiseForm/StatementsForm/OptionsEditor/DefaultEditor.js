@@ -22,7 +22,7 @@ const DefaultEditorComponent = ({ model, sourceViewHandler, donutHandler }) => (
 const DefaultEditor = compose(
   connect(() => ({}), { updateModel }),
   withHandlers({
-    sourceViewHandler: ({ updateModel: updateModelAction, model }) => {
+    sourceViewHandler: ({ updateModel: updateModelAction, model }) => () => {
       updateModelAction({
         schema: 'visualisation',
         id: model.get('_id'),
@@ -30,7 +30,7 @@ const DefaultEditor = compose(
         value: !model.get('sourceView')
       });
     },
-    donutHandler: ({ updateModel: updateModelAction, model }) => {
+    donutHandler: ({ updateModel: updateModelAction, model }) => () => {
       updateModelAction({
         schema: 'visualisation',
         id: model.get('_id'),

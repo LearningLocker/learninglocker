@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-indent */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { compose, withProps, setPropTypes, defaultProps } from 'recompose';
 import { Map } from 'immutable';
 import Tabs from 'ui/components/Material/Tabs';

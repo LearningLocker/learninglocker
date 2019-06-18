@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose } from 'recompose';
@@ -147,7 +148,7 @@ class SubOrgForm extends Component {
           id={nameId}
           className="form-control"
           placeholder="Name for this organisation"
-          value={model.get('name')}
+          value={model.get('name', '')}
           onChange={this.onChangeAttr.bind(null, 'name')} />
       </div>
     );

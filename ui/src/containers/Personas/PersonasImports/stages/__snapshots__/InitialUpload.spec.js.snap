@@ -58,7 +58,7 @@ exports[`InitialUpload should render 1`] = `
 exports[`InitialUpload should render upload button COMPLETED 1`] = `
 <button
   className="btn btn-primary pull-right"
-  disabled="true"
+  disabled={true}
 >
   <i
     className="icon animated fadeIn ion-checkmark"
