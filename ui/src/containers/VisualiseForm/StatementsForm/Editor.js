@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import { connect } from 'react-redux';
 import { Tab } from 'react-toolbox/lib/tabs';
@@ -94,7 +95,7 @@ class Editor extends Component {
             id="lrsDescriptionInput"
             className="form-control"
             placeholder="What does this visualisation show?"
-            value={this.props.model.get('description')}
+            value={this.props.model.get('description', '')}
             onChange={this.onChangeDescription} />
         </div>
 

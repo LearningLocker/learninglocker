@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withHandlers, withState } from 'recompose';
-import { componentWillReceiveProps } from 'react-functional-lifecycle';
+import { componentDidUpdate } from 'react-functional-lifecycle';
 import styles from '../styles.css';
 
 const withFocusState = withState('inputFocused', 'setInputFocused', false);
@@ -16,7 +16,7 @@ const withFocusStateHandlers = withHandlers({
   }
 });
 
-const checkInputFocus = componentWillReceiveProps(({
+const checkInputFocus = componentDidUpdate(({
   hasFocus,
   selectedOption,
   inputFocused,

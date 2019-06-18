@@ -1,6 +1,5 @@
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { map } from 'lodash';
 import DebounceInput from 'react-debounce-input';
 import { Map } from 'immutable';
 import {
@@ -61,39 +60,51 @@ const withHandlersEnhance = withHandlers(
   }
 );
 
-const renderItems = ({
+/**
+ * @param {object} { staticValues: immutable.Map }
+ * @returns {immutable.Seq}
+ */
+const renderStaticValueHeaders = ({
   staticValues,
-  values,
-  onKeyChange,
-  onValueChange,
-  inputComponent = defaultInputComponent,
-  remove
-}) => {
-  const valuesJs = values.toJS();
-
-  const staticValuesRendered = map(staticValues.toJS(), (value, key) => (<tr>
+}) => staticValues.mapEntries(([value, key], index) => [index, (
+  <tr key={`static-value-header-${index}`} >
     <td>
-      <input className="form-control" type="text" value={key} disabled="true" />
+      <input
+        className="form-control"
+        type="text"
+        value={key}
+        disabled />
     </td>
     <td>
       <input
         className="form-control"
         type="text"
         value={value}
-        disabled="true" />
+        disabled />
     </td>
-  </tr>)
-  );
+  </tr>
+)]).valueSeq();
 
-  let trKey = 0;
-  const valuesRendered = map(valuesJs, (value, key) => {
-    if (key === '_id') {
-      return null;
-    }
-
-    trKey += 1;
-
-    return (<tr key={trKey}>
+/**
+ * @param {object} {
+ *   values: immutable.Map
+ *   onKeyChange: (key: string) => (event) => void
+ *   onValueChange: (key: string) => (event) => void
+ *   inputComponent: ({ key: string, onChange: function, value: string }) => any,
+ *   remove: (key: string) => (event) => void
+ * }
+ * @returns {immutable.Seq}
+ */
+const renderCustomHeaders = ({
+  values,
+  onKeyChange,
+  onValueChange,
+  inputComponent = defaultInputComponent,
+  remove
+}) => values
+  .filter((_, k) => k !== '_id')
+  .mapEntries(([key, value], index) => [index, (
+    <tr key={`custom-header-${index}`}>
       <td>
         <DebounceInput
           className="form-control"
@@ -113,12 +124,10 @@ const renderItems = ({
           <i className="icon ion-close" />
         </a>
       </td>
-    </tr>);
-  });
-  return [staticValuesRendered, valuesRendered];
-};
+    </tr>
+)]).valueSeq();
 
-const render = ({
+const TableInput = ({
   keyName = 'Column',
   valueName = 'Source',
   staticValues = new Map(),
@@ -129,18 +138,8 @@ const render = ({
   add,
   onKeyChange,
   onValueChange,
-}) => {
-  const items = renderItems({
-    staticValues,
-    values,
-    onChange,
-    onKeyChange,
-    onValueChange,
-    remove,
-    inputComponent
-  });
-
-  return (<span>
+}) => (
+  <span>
     <table className={`table table-borderless ${styles.table}`}>
       <thead>
         <tr>
@@ -149,16 +148,28 @@ const render = ({
           <th />
         </tr>
       </thead>
-      <tbody id="models">{items}</tbody>
+
+      <tbody id="models">
+        {renderStaticValueHeaders({ staticValues })}
+        {renderCustomHeaders({
+          values,
+          onChange,
+          onKeyChange,
+          onValueChange,
+          remove,
+          inputComponent,
+        })}
+      </tbody>
     </table>
+
     <a className="btn btn-sm btn-inverse" style={{ width: '33px' }} onClick={add}>
       <i className="icon ion-plus" />
     </a>
-  </span>);
-};
+  </span>
+);
 
 export default compose(
   withStyles(styles),
   // withPropsOnChangeEnhance,
   withHandlersEnhance,
-)(render);
+)(TableInput);

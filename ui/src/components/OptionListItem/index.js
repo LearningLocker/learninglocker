@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import tooltipFactory from 'react-toolbox/lib/tooltip';
 import MaterialLink from 'react-toolbox/lib/link';
@@ -22,7 +23,10 @@ class OptionListItem extends Component {
       PropTypes.instanceOf(Map),
       PropTypes.string
     ]),
-    tooltip: PropTypes.string,
+    tooltip: PropTypes.oneOfType([
+      PropTypes.object,
+      PropTypes.string,
+    ]),
     onClick: PropTypes.func,
     onEdit: PropTypes.func,
     onDelete: PropTypes.func,

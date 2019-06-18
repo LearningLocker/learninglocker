@@ -1,7 +1,8 @@
 /* eslint-disable react/jsx-indent */
 import { isString } from 'lodash';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import { withProps, compose, setPropTypes, shouldUpdate, defaultProps } from 'recompose';
 import { MultiGrid, AutoSizer } from 'react-virtualized';

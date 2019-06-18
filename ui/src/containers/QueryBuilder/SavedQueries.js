@@ -1,10 +1,11 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { compose, setPropTypes, withState, withProps, withHandlers } from 'recompose';
 import { Map, fromJS, Iterable } from 'immutable';
 import isString from 'lodash/isString';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import ModelAutoComplete from 'ui/containers/ModelAutoComplete';
-import { mergeQueries, queryToString } from 'ui/utils/queries';
+import { queryToStringList } from 'ui/utils/queries';
 import { withModel } from 'ui/utils/hocs';
 import styles from './savedqueries.css'; // 'ui/containers/QueryBuilder/savedqueries.css' doesn't work in testing on import
 
@@ -31,20 +32,19 @@ const searchStringToFilter = (searchString) => {
 };
 const parseOption = option => (option ? option.get('name') : '');
 const parseOptionTooltip = (option) => {
-  const out = (option
-    ? (<div> {
-      queryToString(option.get('conditions'), {
-        join: false
-      }).map(item =>
-        <div>
-          {item}
-        </div>
-      )
-    }
-    </div>)
-    : ''
+  if (!option) {
+    return '';
+  }
+  const stringList = queryToStringList(option.get('conditions'));
+  return (
+    <div>
+      {
+        stringList.map((item, i) => (
+          <div key={i}>{item}</div>
+        ))
+      }
+    </div>
   );
-  return out;
 };
 
 const withSelectedQuery = compose(
@@ -79,20 +79,15 @@ const enhance = compose(
       e.preventDefault();
       onQueryChange(selectedQuery.get('conditions'));
     },
-    mergeSelectedQuery: ({ selectedQuery, query, onQueryChange }) => (e) => {
-      e.preventDefault();
-      onQueryChange(mergeQueries(query, selectedQuery.get('conditions')));
-    }
   }),
 );
 
-const savedQueries = ({
+const SavedQueries = ({
   selectedQuery,
   query,
   updateSelectedQuery,
   applySelectedQuery,
-  mergeSelectedQuery,
-  setSelectedQuery
+  setSelectedQuery,
 }) => {
   const conditions = getConditions(selectedQuery);
   const queriesEqual = conditions.equals(query);
@@ -124,16 +119,9 @@ const savedQueries = ({
           title={queriesEqual ? queriesEqualMessage : 'Load saved query'}>
           <i className="glyphicon glyphicon-save" />
         </button>
-        <button
-          disabled={isQueryEmpty || queriesEqual}
-          className="btn btn-default btn-sm"
-          onClick={mergeSelectedQuery}
-          title={queriesEqual ? queriesEqualMessage : 'Merge saved query'}>
-          <i className="glyphicon glyphicon-import" />
-        </button>
       </div>
     </div>
   );
 };
 
-export default enhance(savedQueries);
+export default enhance(SavedQueries);

@@ -34,7 +34,7 @@ const renderTarget = ({ hasTarget, mergeTargetId }) => {
   );
 };
 
-const render = ({ id, hasMetadata, getMetadata, setMetadata }) => {
+const MergeForm = ({ id, hasMetadata, getMetadata, setMetadata }) => {
   const hasTarget = hasMetadata('mergeTargetId');
   const mergeTargetId = getMetadata('mergeTargetId');
   const handleMergeTargetChange = (persona) => {
@@ -60,4 +60,4 @@ const render = ({ id, hasMetadata, getMetadata, setMetadata }) => {
   );
 };
 
-export default enhance(render);
+export default enhance(MergeForm);

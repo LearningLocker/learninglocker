@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { CirclePicker } from 'react-color';
 import { compose, withProps } from 'recompose';
@@ -12,10 +13,10 @@ import CustomColorPicker from './CustomColorPicker';
 class ColorPicker extends React.PureComponent {
 
   static propTypes = {
-    color: React.PropTypes.string,
-    model: React.PropTypes.instanceOf(Map), // organisation
-    onChange: React.PropTypes.func,
-    updateModel: React.PropTypes.func, // update organisation
+    color: PropTypes.string,
+    model: PropTypes.instanceOf(Map), // organisation
+    onChange: PropTypes.func,
+    updateModel: PropTypes.func, // update organisation
   }
 
   constructor(props) {

@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Set } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import Option from '../Option/Option';
@@ -97,4 +98,3 @@ class Dropdown extends Component {
 }
 
 export default withStyles(styles)(Dropdown);
-

@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Portal from 'react-portal';
 import uuid from 'uuid';
@@ -188,4 +189,3 @@ export default compose(
   { addModel }
   )
 )(Users);
-

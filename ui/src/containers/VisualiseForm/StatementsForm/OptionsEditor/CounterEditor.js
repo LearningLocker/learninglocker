@@ -20,7 +20,7 @@ const CounterEditorComponent = ({ model, benchmarkingHandler }) => (
 const CounterEditor = compose(
   connect(() => ({}), { updateModel }),
   withHandlers({
-    benchmarkingHandler: ({ updateModel: updateModelAction, model }) => {
+    benchmarkingHandler: ({ updateModel: updateModelAction, model }) => () => {
       updateModelAction({
         schema: 'visualisation',
         id: model.get('_id'),

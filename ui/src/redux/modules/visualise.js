@@ -99,7 +99,7 @@ const shareableDashboardFilterSelector = () => createSelector(
   ],
   (metadata, models, routeShareableId, routeDashboardId, routeName, filter) => {
     const viewingDashboardExternally = (routeName && routeName.indexOf('embedded-dashboard') !== -1);
-    const dashboards = models.get('dashboard', new Map());
+    const dashboards = models.get('dashboard', new Map()).filter(d => Map.isMap(d));
 
     // if we are viewing a shared dashboard externally
     if (viewingDashboardExternally) {
