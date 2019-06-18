@@ -7,7 +7,7 @@ import { fromJS, Map } from 'immutable';
 import { displayLangMap } from 'ui/utils/xapi';
 
 const renderOption = ({
-  useTooltip = false,
+  useTooltip,
   onFocus = () => {},
   models
 }) => ({

@@ -92,7 +92,7 @@ class Editor extends Component {
     return (
       <div className={styles.tab}>
         { this.renderDescription(this.props.model.get('description')) }
-        { this.props.model.get('hasCourseDropdown', false) && this.renderCourseDropdown(this.props)}
+        { this.props.model.get('hasCourseDropdown', false) && this.renderCourseDropdown()}
         <Tabs index={this.state.step} onChange={this.changeStep}> children={tabs}</Tabs>
       </div>
     );

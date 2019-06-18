@@ -32,7 +32,7 @@ export default class CourseEditor extends Component {
     xs.indexOf(ys) !== -1
 
   isUniquenessOp = op =>
-    this.includes(op)(UNIQUENESS_OPS)
+    UNIQUENESS_OPS.includes(op)
 
   getOperatorOptions = () =>
     getTypeOpts(this.props.type).filter(this.includes(this.state.operatorInput))

@@ -48,7 +48,6 @@ const fullActivitiesList = ({
       const keyPath = ['statement', 'object'];
       const tokenQuery = valueToCriteria(
         [...keyPath, 'id'].join('.'),
-        // new Map({ value: e.get('activityId') })
         e.get('activityId')
       );
 
@@ -80,10 +79,7 @@ const fullActivitiesList = ({
               onFocus={onFocus}
               searchString={valuesFilter.getIn(['searchString', '$regex'])}
               parseOption={option => option}
-              onChangeSearchString={(e) => {
-                const o = setSearchString(e.target.value);
-                return o;
-              }}
+              onChangeSearchString={e => setSearchString(e.target.value)}
               placeholder={'Select a Course'}
               selectedOption={selectedOption}
               onChangeFilter={(searchFilter) => {
@@ -98,10 +94,7 @@ const fullActivitiesList = ({
             <ModelOptionList
               filter={valuesFilter.mergeDeep({ type: 'http://adlnet.gov/expapi/activities/course' })}
               onSelectOption={onSelectOption({ onBlur })}
-              parseOption={(option) => {
-                const o = (option ? displayLangMap(option.get('name', new Map())) : '');
-                return o;
-              }}
+              parseOption={option => (option ? displayLangMap(option.get('name', new Map())) : '')}
               parseOptionTooltip={option => (option ? option.get('activityId') : '')}
               schema={'fullActivities'}
               canEdit={() => false}
