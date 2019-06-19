@@ -12,6 +12,7 @@ import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 import { modelsSelector } from 'ui/redux/modules/models/selectors';
 import Unauthorised from 'lib/errors/Unauthorised';
 import HttpError from 'ui/utils/errors/HttpError';
+import { get } from 'lodash';
 
 const addStateSelector = schema => createSelector(
   [modelsSelector],
@@ -32,14 +33,14 @@ const addModel = createAsyncDuck({
   reduceFailure: (state, { schema }) => state.setIn([schema, 'requestState'], FAILED),
   reduceComplete: (state, { schema }) => state.setIn([schema, 'requestState'], null),
 
-  startAction: ({ schema, props }) => ({ schema, props }),
+  startAction: ({ schema, props, isExpanded = true }) => ({ schema, props, isExpanded }),
   successAction: ({ schema }) => ({ schema }),
   failureAction: ({ schema }) => ({ schema }),
   completeAction: ({ schema }) => ({ schema }),
   checkShouldFire: ({ schema }, state) => shouldAddSelector({ schema })(state),
 
   doAction: function* fetchModelSaga(
-    { schema, props, llClient }
+    { schema, props, isExpanded = true, llClient }
   ) {
     const schemaClass = schemas[schema];
     const safeProps = schemaClass.preSave(fromJS(props));
@@ -63,7 +64,7 @@ const addModel = createAsyncDuck({
     yield put(mergeEntitiesDuck.actions.mergeEntitiesAction(entities));
     yield put(clearModelsCacheDuck.actions.clearModelsCache({ schema }));
     const id = model.get('_id');
-    yield put(setInMetadata({ schema, id, path: ['isExpanded'], value: true }));
+    yield put(setInMetadata({ schema, id, path: ['isExpanded'], value: isExpanded }));
     yield put(setInMetadata({ schema, id, path: ['isNew'], value: true }));
     // map the ids against the filter in the pagination store
     return yield { schema, model };

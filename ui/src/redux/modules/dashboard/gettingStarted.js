@@ -8,7 +8,6 @@ import {
   COUNTER,
   LAST_2_MONTHS,
 } from 'ui/utils/constants';
-import { setInMetadata } from 'ui/redux/modules/metadata';
 import { addModel } from '../models';
 
 export const CREATE_GETTING_STARTED = 'learninglocker/dashboard/CREATE_GETTING_STARTED';
@@ -25,6 +24,7 @@ const createVisualisations = async (dispatch) => {
         description: 'How many statements have been stored in the last 7 days?',
         type: COUNTER,
       },
+      isExpanded: false,
     })),
     dispatch(addModel({
       schema: 'visualisation',
@@ -33,6 +33,7 @@ const createVisualisations = async (dispatch) => {
         type: FREQUENCY,
         previewPeriod: LAST_2_MONTHS,
       },
+      isExpanded: false,
     })),
     dispatch(addModel({
       schema: 'visualisation',
@@ -42,6 +43,7 @@ const createVisualisations = async (dispatch) => {
         previewPeriod: LAST_2_MONTHS,
         axesgroup: new Map({ optionKey: 'verb', searchString: 'Verb' }),
       },
+      isExpanded: false,
     })),
     dispatch(addModel({
       schema: 'visualisation',
@@ -51,6 +53,7 @@ const createVisualisations = async (dispatch) => {
         previewPeriod: LAST_2_MONTHS,
         axesgroup: new Map({ optionKey: 'activities', searchString: 'Activity' }),
       },
+      isExpanded: false,
     })),
     dispatch(addModel({
       schema: 'visualisation',
@@ -60,6 +63,7 @@ const createVisualisations = async (dispatch) => {
         previewPeriod: LAST_2_MONTHS,
         axesgroup: new Map({ optionKey: 'people', searchString: 'Person' }),
       },
+      isExpanded: false,
     })),
     dispatch(addModel({
       schema: 'visualisation',
@@ -68,6 +72,7 @@ const createVisualisations = async (dispatch) => {
         type: STATEMENTS,
         axesgroup: new Map({ optionKey: 'weekday', searchString: 'Day' }),
       },
+      isExpanded: false,
     })),
   ]);
 
@@ -76,15 +81,6 @@ const createVisualisations = async (dispatch) => {
 
 function* createGettingStarted({ userId, organisationId, dispatch }) {
   const visualisationIds = yield call(createVisualisations, dispatch);
-
-  for (const id of visualisationIds) {
-    yield put(setInMetadata({
-      schema: 'visualisation',
-      id,
-      path: ['isExpanded'],
-      value: false,
-    }));
-  }
 
   const { model } = yield call(dispatch, addModel({
     schema: 'dashboard',
