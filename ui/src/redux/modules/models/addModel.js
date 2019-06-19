@@ -12,7 +12,6 @@ import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 import { modelsSelector } from 'ui/redux/modules/models/selectors';
 import Unauthorised from 'lib/errors/Unauthorised';
 import HttpError from 'ui/utils/errors/HttpError';
-import { get } from 'lodash';
 
 const addStateSelector = schema => createSelector(
   [modelsSelector],
