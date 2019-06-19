@@ -15,7 +15,7 @@ import ScatterAxesEditor from './ScatterAxesEditor';
 import CounterAxesEditor from './CounterAxesEditor';
 import PieAxesEditor from './PieAxesEditor';
 
-export default ({ model, orgTimezone }) => {
+const AxesEditor = ({ model, orgTimezone }) => {
   switch (model.get('type')) {
     case LEADERBOARD:
     case POPULARACTIVITIES:
@@ -28,3 +28,5 @@ export default ({ model, orgTimezone }) => {
     default: return <div>renderDefault</div>;
   }
 };
+
+export default AxesEditor;

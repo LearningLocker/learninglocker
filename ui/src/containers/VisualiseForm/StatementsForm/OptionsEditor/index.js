@@ -1,11 +1,10 @@
 import React from 'react';
 import { XVSY, LEADERBOARD, COUNTER, STATEMENTS, PIE, FREQUENCY } from 'ui/utils/constants';
 import { TimezoneSelector, buildDefaultOptionLabel } from 'ui/components/TimezoneSelector';
-import XvsYOptionsEditor from './OptionsEditor/XvsYOptionsEditor';
-import BarEditor from './OptionsEditor/BarEditor';
-import CounterEditor from './OptionsEditor/CounterEditor';
-import DefaultEditor from './OptionsEditor/DefaultEditor';
-
+import BarEditor from './BarEditor';
+import CounterEditor from './CounterEditor';
+import DefaultEditor from './DefaultEditor';
+import XvsYOptionsEditor from './XvsYOptionsEditor';
 
 const OptionsEditor = ({ model, orgTimezone, updateModel }) => {
   const timezoneSelectorId = `Vis_${model._id}_TimezoneSelector`;
