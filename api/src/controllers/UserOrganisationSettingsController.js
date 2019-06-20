@@ -34,7 +34,14 @@ const updateOrganisationSetting = catchErrors(async (req, res) => {
 });
 
 const deleteOrganisationSetting = catchErrors(async (req, res) => {
-  res.status(200).send('');
+  const user = await User.findOne({ _id: req.params.userId });
+  if (!user) {
+    throw new NotFoundError();
+  }
+
+  user.organisationSettings = user.organisationSettings.filter(s => s.organisation.toString() !== req.params.organisationId);
+  await user.save();
+  res.status(200).send();
 });
 
 const UserOrganisationSettingsController = {

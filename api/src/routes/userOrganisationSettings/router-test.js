@@ -1,3 +1,4 @@
+import assert from 'assert';
 import mongoose from 'mongoose';
 import uuid from 'uuid';
 import { ALL, SITE_ADMIN } from 'lib/constants/scopes';
@@ -37,6 +38,14 @@ describe('userOrganisationSettings.router', () => {
     roles: [],
     filter: '{}',
     timezone: 'Europe/London',
+  };
+
+  const org2OrganisationSetting = {
+    organisation: objectId(org2Id),
+    scopes: '',
+    roles: [],
+    filter: '{}',
+    timezone: 'Asia/Singapore',
   };
 
   /**
@@ -159,12 +168,34 @@ describe('userOrganisationSettings.router', () => {
     });
 
     it('can delete a organisationSettings for anyone', async () => {
-      const targetUser = createTargetUser();
+      const targetUser = await createTargetUser([
+        org1OrganisationSetting,
+        org2OrganisationSetting,
+      ]);
 
       await apiApp
         .delete(`/v2/users/${targetUser._id}/organisationSettings/${org1Id}`)
         .set('Authorization', `Bearer ${siteAdminOrg1Token}`)
         .expect(200);
+
+      const updatedTargetUser = await User.findOne({ _id: targetUser._id });
+      assert.equal(updatedTargetUser.organisationSettings.length, 1);
+      assert.equal(updatedTargetUser.organisationSettings[0].organisation, org2Id);
+    });
+
+    it('succeeds but do nothing if the target organisationId is not exists', async () => {
+      const targetUser = await createTargetUser([
+        org2OrganisationSetting,
+      ]);
+
+      await apiApp
+        .delete(`/v2/users/${targetUser._id}/organisationSettings/${org1Id}`)
+        .set('Authorization', `Bearer ${siteAdminOrg1Token}`)
+        .expect(200);
+
+      const updatedTargetUser = await User.findOne({ _id: targetUser._id });
+      assert.equal(updatedTargetUser.organisationSettings.length, 1);
+      assert.equal(updatedTargetUser.organisationSettings[0].organisation, org2Id);
     });
   });
 
@@ -212,7 +243,7 @@ describe('userOrganisationSettings.router', () => {
     });
 
     it('can delete a organisationSettings of org1 for anyone', async () => {
-      const targetUser = createTargetUser();
+      const targetUser = await createTargetUser();
 
       await apiApp
         .delete(`/v2/users/${targetUser._id}/organisationSettings/${org1Id}`)
@@ -279,7 +310,7 @@ describe('userOrganisationSettings.router', () => {
     });
 
     it('can not delete a organisationSettings of org1 for anyone', async () => {
-      const targetUser = createTargetUser();
+      const targetUser = await createTargetUser();
 
       await apiApp
         .delete(`/v2/users/${targetUser._id}/organisationSettings/${org1Id}`)
