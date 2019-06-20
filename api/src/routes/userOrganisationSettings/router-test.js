@@ -35,7 +35,7 @@ describe('userOrganisationSettings.router', () => {
   const org1OrganisationSetting = {
     organisation: objectId(org1Id),
     scopes: '',
-    roles: [],
+    roles: [nonUserManagerRoleId],
     filter: '{}',
     timezone: 'Europe/London',
   };
@@ -158,13 +158,24 @@ describe('userOrganisationSettings.router', () => {
     });
 
     it('can update a organisationSettings for anyone', async () => {
-      const targetUser = await createTargetUser();
+      const targetUser = await createTargetUser([
+        org1OrganisationSetting,
+        org2OrganisationSetting,
+      ]);
 
       await apiApp
         .patch(`/v2/users/${targetUser._id}/organisationSettings/${org1Id}`)
         .set('Authorization', `Bearer ${siteAdminOrg1Token}`)
-        .send({ todo: 'something 2' })
+        .send({
+          filter: '{$and:[]}',
+          timezone: 'Europe/Paris',
+        })
         .expect(200);
+
+      const updatedTargetUser = await User.findOne({ _id: targetUser._id });
+      assert.equal(updatedTargetUser.organisationSettings.length, 2);
+      assert.equal(updatedTargetUser.organisationSettings[0].filter, '{$and:[]}');
+      assert.equal(updatedTargetUser.organisationSettings[0].timezone, 'Europe/Paris');
     });
 
     it('can delete a organisationSettings for anyone', async () => {
@@ -233,13 +244,34 @@ describe('userOrganisationSettings.router', () => {
     });
 
     it('can update a organisationSettings of org1 for anyone', async () => {
-      const targetUser = await createTargetUser();
+      const targetUser = await createTargetUser([
+        org1OrganisationSetting,
+        org2OrganisationSetting,
+      ]);
 
       await apiApp
         .patch(`/v2/users/${targetUser._id}/organisationSettings/${org1Id}`)
         .set('Authorization', `Bearer ${userManagerOrg1Token}`)
-        .send({ todo: 'something 2' })
+        .send({ roles: [nonUserManagerRoleId, userManagerRoleId] })
         .expect(200);
+
+      const updatedTargetUser = await User.findOne({ _id: targetUser._id });
+      assert.equal(updatedTargetUser.organisationSettings.length, 2);
+      assert.equal(updatedTargetUser.organisationSettings[0].roles.length, 2);
+      assert.equal(updatedTargetUser.organisationSettings[0].roles[1].toString(), userManagerRoleId);
+    });
+
+    it('can not update a organisationSettings if body includes invalid fields', async () => {
+      const targetUser = await createTargetUser([
+        org1OrganisationSetting,
+        org2OrganisationSetting,
+      ]);
+
+      await apiApp
+        .patch(`/v2/users/${targetUser._id}/organisationSettings/${org1Id}`)
+        .set('Authorization', `Bearer ${userManagerOrg1Token}`)
+        .send({ timezone: 'Asia/Tokyo' })
+        .expect(400);
     });
 
     it('can delete a organisationSettings of org1 for anyone', async () => {
@@ -287,25 +319,31 @@ describe('userOrganisationSettings.router', () => {
       await apiApp
         .patch(`/v2/users/${loginUser._id}/organisationSettings/${org1Id}`)
         .set('Authorization', `Bearer ${nonUserManagerOrg1Token}`)
-        .send({ todo: 'something 2' })
+        .send({ samlEnabled: false })
         .expect(200);
+
+      // const updatedLoginUser = await User.findOne({ _id: loginUser._id });
+      // TODO assert.equal(updatedLoginUser.organisationSettings[0].samlEnabled, false);
     });
 
     it('can not update its own organisationSettings of org1 if body has not-updatable fields', async () => {
       await apiApp
         .patch(`/v2/users/${loginUser._id}/organisationSettings/${org1Id}`)
         .set('Authorization', `Bearer ${nonUserManagerOrg1Token}`)
-        .send({ invalidField: 'x' });
-        // TODO .expect(401);
+        .send({ filter: '$and:[]' })
+        .expect(400);
     });
 
     it('can not update another user\'s organisationSettings of org1', async () => {
-      const targetUser = await createTargetUser();
+      const targetUser = await createTargetUser([
+        org1OrganisationSetting,
+        org2OrganisationSetting,
+      ]);
 
       await apiApp
         .patch(`/v2/users/${targetUser._id}/organisationSettings/${org1Id}`)
         .set('Authorization', `Bearer ${nonUserManagerOrg1Token}`)
-        .send({ todo: 'something 2' })
+        .send({})
         .expect(401);
     });
 
