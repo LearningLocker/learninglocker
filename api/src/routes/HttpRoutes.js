@@ -59,6 +59,7 @@ import SiteSettings from 'lib/models/siteSettings';
 import personaRESTHandler from 'api/routes/personas/personaRESTHandler';
 import personaIdentifierRESTHandler from 'api/routes/personas/personaIdentifierRESTHandler';
 import personaAttributeRESTHandler from 'api/routes/personas/personaAttributeRESTHandler';
+import UserOrganisationSettingsRouter from 'api/routes/userOrganisationSettings/router';
 import BatchDelete from 'lib/models/batchDelete';
 import * as routes from 'lib/constants/routes';
 
@@ -141,6 +142,11 @@ router.get(
 router.use(personaRESTHandler);
 router.use(personaIdentifierRESTHandler);
 router.use(personaAttributeRESTHandler);
+
+/**
+ * User OrganisationSettings
+ */
+router.use(UserOrganisationSettingsRouter);
 
 /**
  * UPLOADS
@@ -239,7 +245,6 @@ router.post(
   passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   BatchDeleteController.terminateBatchDelete
 );
-
 
 /**
  * V1 compatability

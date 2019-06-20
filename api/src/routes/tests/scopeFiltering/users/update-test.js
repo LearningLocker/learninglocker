@@ -375,15 +375,15 @@ describe('API HTTP PATCH user route', () => {
   });
 
   describe('scope who has all scopes other than "all" and "org/all/user/manage"', () => {
-    const createNonUserManager = async () => {
-      const loginUser = await createLoginUser([], [{
-        organisation: currentOrgId,
-        scopes: [],
-        roles: [nonUserManagerRoleId],
-        filter: '{"key":"login user"}',
-      }]);
-      return loginUser;
-    };
+    // const createNonUserManager = async () => {
+    //   const loginUser = await createLoginUser([], [{
+    //     organisation: currentOrgId,
+    //     scopes: [],
+    //     roles: [nonUserManagerRoleId],
+    //     filter: '{"key":"login user"}',
+    //   }]);
+    //   return loginUser;
+    // };
 
     it('can update some current organisation\'s fields of themselves', async () => {
       // create loginUser
