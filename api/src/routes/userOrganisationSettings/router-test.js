@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import uuid from 'uuid';
 import { ALL, SITE_ADMIN } from 'lib/constants/scopes';
 import * as orgScopes from 'lib/constants/orgScopes';
@@ -6,6 +7,8 @@ import User from 'lib/models/user';
 import Role from 'lib/models/role';
 import setup from 'api/routes/tests/utils/setup';
 import { createOrgJWT } from 'api/auth/jwt';
+
+const objectId = mongoose.Types.ObjectId;
 
 describe('userOrganisationSettings.router', () => {
   const apiApp = setup();
@@ -27,6 +30,14 @@ describe('userOrganisationSettings.router', () => {
   const allRoleId = 'ffffcccc0000cccc0000cccc';
   const userManagerRoleId = 'ffffcccc1111cccc1111cccc';
   const nonUserManagerRoleId = 'ffffcccc2222cccc2222cccc';
+
+  const org1OrganisationSetting = {
+    organisation: objectId(org1Id),
+    scopes: '',
+    roles: [],
+    filter: '{}',
+    timezone: 'Europe/London',
+  };
 
   /**
    * @returns {Promise<User>}
@@ -110,7 +121,7 @@ describe('userOrganisationSettings.router', () => {
       await apiApp
         .post(`/v2/users/${targetUser._id}/organisationSettings/${org1Id}`)
         .set('Authorization', `Bearer ${siteAdminOrg1Token}`)
-        .send({ todo: 'something' })
+        .send(org1OrganisationSetting)
         .expect(200);
     });
 
@@ -120,8 +131,21 @@ describe('userOrganisationSettings.router', () => {
       await apiApp
         .post(`/v2/users/${targetUser._id}/organisationSettings/${org2Id}`)
         .set('Authorization', `Bearer ${siteAdminOrg1Token}`)
-        .send({ todo: 'something' })
+        .send(org1OrganisationSetting)
         .expect(401);
+    });
+
+    it('can not create a organisationSettings if organisationId in URL and organisationId in request body are not matched', async () => {
+      const targetUser = await createTargetUser();
+
+      await apiApp
+        .post(`/v2/users/${targetUser._id}/organisationSettings/${org1Id}`)
+        .set('Authorization', `Bearer ${siteAdminOrg1Token}`)
+        .send({
+          ...org1OrganisationSetting,
+          organisation: 'invalid'
+        })
+        .expect(400);
     });
 
     it('can update a organisationSettings for anyone', async () => {
