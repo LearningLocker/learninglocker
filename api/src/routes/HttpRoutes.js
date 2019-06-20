@@ -23,6 +23,7 @@ import {
   setNoCacheHeaders
 } from 'lib/constants/auth';
 import { MANAGER_SELECT } from 'lib/services/auth/selects/models/user.js';
+import Unauthorised from 'lib/errors/Unauthorised';
 
 // CONTROLLERS
 import AuthController from 'api/controllers/AuthController';
@@ -277,13 +278,18 @@ restify.serve(router, Download);
 restify.serve(router, Query);
 restify.serve(router, ImportCsv);
 restify.serve(router, User, {
+  preCreate: (req, _, next) => {
+    // Use UserOrganisationSettingsRouter if you'd like to add organisationSettings
+    // req.body = omit(req.body, 'organisationSettings');
+    next();
+  },
   preUpdate: (req, res, next) => {
     const authInfo = getAuthFromRequest(req);
     const scopes = getScopesFromAuthInfo(authInfo);
     const tokenType = getTokenTypeFromAuthInfo(authInfo);
 
     // if site admin, skip over this section
-    if (findIndex(scopes, item => item === SITE_ADMIN) < 0) {
+    if (!scopes.includes(SITE_ADMIN)) {
       // remove scope changes
       req.body = omit(req.body, 'scopes');
       if (tokenType === 'user' || tokenType === 'organisation') {
@@ -296,6 +302,14 @@ restify.serve(router, User, {
         req.body = omit(req.body, 'password');
       }
     }
+
+    if (req.body.organisationSettings) {
+      res.status(401).send('can not update organisationSettings')
+      next('route');
+      return;
+    }
+    // Use UserOrganisationSettingsRouter if you'd like to update organisationSettings
+    // req.body = omit(req.body, 'organisationSettings');
 
     next();
   },
