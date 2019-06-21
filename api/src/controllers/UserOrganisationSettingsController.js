@@ -37,10 +37,11 @@ const createOrganisationSetting = catchErrors(async (req, res) => {
  * @returns {boolean}
  */
 const validateUpdatableKeys = (body, scopes) => {
-  const updatingKeys = Object.keys(body);
   if (scopes.includes(SITE_ADMIN)) {
     return true;
   }
+
+  const updatingKeys = Object.keys(body);
 
   if (scopes.includes(MANAGE_ALL_USERS)) {
     return updatingKeys.every(key => ['filter', 'roles', 'scopes'].includes(key));

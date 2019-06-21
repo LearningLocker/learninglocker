@@ -35,6 +35,7 @@ export default combineReducers({
   metadata: recycleState(metadata, [LOGOUT, ORG_LOGOUT]),
   uploadPersonas: recycleState(uploadPersona, [LOGOUT, ORG_LOGOUT]),
   alerts: recycleState(alerts, [LOGOUT, ORG_LOGOUT]),
+  // todo userOrganisationSettings: recycleState(userOrganisationSettings, [LOGOUT, ORG_LOGOUT]),
   app,
   router: router5Reducer
 });

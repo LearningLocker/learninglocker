@@ -15,6 +15,7 @@ import Checkbox from 'ui/components/Material/Checkbox';
 import { TimezoneSelector, buildDefaultOptionLabel } from 'ui/components/TimezoneSelector';
 import { getAppDataSelector } from 'ui/redux/modules/app';
 import { currentScopesSelector } from 'ui/redux/modules/auth';
+import { updateUserOrganisationSetting } from 'ui/redux/actions';
 
 const ORG_SETTINGS = 'organisationSettings';
 
@@ -117,45 +118,34 @@ const enhance = compose(
   setPropTypes({
     id: PropTypes.string.isRequired,
   }),
-  connect(state => ({
-    organisationModel: activeOrgSelector(state),
-    activeScopes: currentScopesSelector(state),
-    RESTRICT_CREATE_ORGANISATION: getAppDataSelector('RESTRICT_CREATE_ORGANISATION')(state)
-  })),
+  connect(
+    state => ({
+      organisationModel: activeOrgSelector(state),
+      activeScopes: currentScopesSelector(state),
+      RESTRICT_CREATE_ORGANISATION: getAppDataSelector('RESTRICT_CREATE_ORGANISATION')(state)
+    }),
+    dispatch => ({
+      dispatchUpdateUserOrganisationSetting: args => dispatch(updateUserOrganisationSetting(args)),
+    }),
+  ),
   withProps({
     schema: 'user',
   }),
   withModel,
-  withProps(({ model, organisationModel, updateModel }) =>
+  withProps(({ model, organisationModel, dispatchUpdateUserOrganisationSetting }) =>
     ({
       /**
        * @params {{ attr: string, value: any }[]} attrValueList
        */
       updateOrgSettings: (attrValueList) => {
-        const org = organisationModel.get('_id').toString();
-        const hasExistingSetting = model.get(ORG_SETTINGS, new List()).find(orgSettings =>
-          orgSettings.get('organisation').toString() === org
-        );
+        const organisationId = organisationModel.get('_id').toString();
+        const userId = model.get('_id').toString();
+        const values = attrValueList.reduce((acc, { attr, value }) => {
+          acc[attr] = value;
+          return acc;
+        }, {});
 
-        let allOrgSettings;
-        if (hasExistingSetting) {
-          allOrgSettings = model.get(ORG_SETTINGS, new List()).map((val) => {
-            if (val.get('organisation').toString() === org) {
-              return attrValueList.reduce((acc, { attr, value }) => acc.set(attr, value), val);
-            }
-            return val;
-          });
-        } else {
-          allOrgSettings = model.get(ORG_SETTINGS, new List());
-          allOrgSettings = allOrgSettings.push(
-            attrValueList.reduce(
-              (acc, { attr, value }) => acc.set(attr, value),
-              getDefaultOrgSettings(organisationModel)
-            )
-          );
-        }
-
-        updateModel({ path: [ORG_SETTINGS], value: allOrgSettings.toList() });
+        dispatchUpdateUserOrganisationSetting({ userId, organisationId, values });
       },
     })
   ),

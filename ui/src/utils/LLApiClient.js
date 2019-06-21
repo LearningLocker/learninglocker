@@ -239,6 +239,19 @@ class _LLApiClient {
     },
     body: { id },
   });
+
+  updateUserOrganisationSettings = ({
+    userId,
+    organisationId,
+    values,
+  }) => patch({
+    url: formatUrl(`${routes.RESTIFY_PREFIX}/users/${userId}/organisationSettings/${organisationId}`),
+    headers: {
+      Authorization: `Bearer ${this.getToken()}`,
+      ContentType: 'application/json'
+    },
+    body: values,
+  });
 }
 
 const LLApiClient = _LLApiClient;

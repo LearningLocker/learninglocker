@@ -25,3 +25,6 @@ export {
 export {
   downloadExport
 } from 'ui/redux/modules/exports';
+export {
+  updateUserOrganisationSetting,
+} from 'ui/redux/modules/userOrganisationSettings';
