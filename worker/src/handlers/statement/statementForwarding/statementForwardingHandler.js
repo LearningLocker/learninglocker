@@ -49,9 +49,7 @@ export default wrapHandlerForStatement(STATEMENT_FORWARDING_QUEUE, (statement, d
             status: queueName,
             statement,
             statementForwarding
-          },
-          deadLetter: STATEMENT_FORWARDING_DEADLETTER_QUEUE,
-          opts: { lifo: true }
+          }
         }, (err) => {
           if (err) reject(err);
           resolve();

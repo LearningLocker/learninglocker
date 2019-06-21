@@ -67,8 +67,7 @@ export const addStatementToPendingQueues = (statement, passedQueues, done) => {
         logger.debug('ADDING STATEMENT TO QUEUE', queueName);
         const response = Queue.publish({
           queueName,
-          payload: { statementId: statement._id },
-          opts: { lifo: true }
+          payload: { statementId: statement._id }
         });
         return highland(response);
       }).apply(() => {
