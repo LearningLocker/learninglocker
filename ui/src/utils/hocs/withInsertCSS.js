@@ -4,7 +4,7 @@
  * it should not be used outside of tests
  */
 import { withContext } from 'recompose';
-import { PropTypes } from 'react';
+import PropTypes from 'prop-types';
 
 const withInsertCSS = withContext(
   { insertCss: PropTypes.func },

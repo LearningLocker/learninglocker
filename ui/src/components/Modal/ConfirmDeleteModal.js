@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { compose, withProps, setPropTypes } from 'recompose';
 import ConfirmModal from 'ui/components/Modal/ConfirmModal';
 
@@ -17,4 +18,3 @@ const enhanceConfirmModal = compose(
 );
 
 export default enhanceConfirmModal(ConfirmModal);
-

@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getMetadataSelector } from 'ui/redux/modules/metadata';
 import { Iterable } from 'immutable';
@@ -83,12 +84,14 @@ const enhance = compose(
   ),
   withState('isExpandedOnce', 'setExpandedOnce', false),
   lifecycle({
-    componentWillReceiveProps: ({
-      setMetadata,
-      isExpandedOnce,
-      setExpandedOnce,
-      model
-    }) => {
+    componentDidUpdate() {
+      const {
+        setMetadata,
+        isExpandedOnce,
+        setExpandedOnce,
+        model
+      } = this.props;
+
       // If this component also has a withModel hoc on it,
       // then we want that to be expanded by default.
       if (model && model.get('_id') && isExpandedOnce === false) {

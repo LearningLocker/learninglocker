@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Map, List, fromJS } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { withProps, withState, compose } from 'recompose';
@@ -111,7 +112,7 @@ class ExportForm extends Component {
       case downloadRequestStates.default:
         return <button className="btn btn-default pull-right" onClick={this.onDownloadExport}>Download</button>;
       case downloadRequestStates.waiting:
-        return <button className="btn btn-default pull-right" disabled="disabled"><i className="ion ion-clock" /> Requesting download...</button>;
+        return <button className="btn btn-default pull-right" disabled ><i className="ion ion-clock" /> Requesting download...</button>;
       case downloadRequestStates.inqueue:
         return <div className="alert alert-success pull-right">Your download will be available in the Downloads tab.</div>;
     }

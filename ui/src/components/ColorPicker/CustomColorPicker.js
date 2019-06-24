@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { List } from 'immutable';
 import colorHelper from 'react-color/lib/helpers/color';
 import { ColorWrap, EditableInput, Hue, Saturation, Swatch } from 'react-color/lib/components/common';
@@ -167,14 +168,14 @@ const CustomColorPickerInner = ColorWrap((props) => {
 class CustomColorPicker extends React.PureComponent {
 
   static propTypes = {
-    initialColor: React.PropTypes.string,
+    initialColor: PropTypes.string,
 
     // immutable.List<tinycolor.ColorInput>
     // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/tinycolor2/index.d.ts
-    customColors: React.PropTypes.instanceOf(List),
+    customColors: PropTypes.instanceOf(List),
 
     // (color: tinycolor.Instance) => void
-    onClickCheckMark: React.PropTypes.func
+    onClickCheckMark: PropTypes.func
   }
 
   constructor(props) {

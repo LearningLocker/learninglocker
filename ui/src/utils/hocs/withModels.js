@@ -12,15 +12,22 @@ import {
   fetchMore,
   addModel,
   deleteModel,
-  updateModel
+  updateModel,
+  saveModel,
 } from 'ui/redux/actions';
+import areEqualProps from './areEqualProps';
 
 export default (WrappedComponent) => {
   class WithModels extends Component {
-    componentWillMount = () => this.fetchModels(this.props)
+    componentDidMount = () => this.fetchModels(this.props);
 
-    componentWillReceiveProps = nextProps =>
-      this.fetchModels(nextProps);
+    shouldComponentUpdate = nextProps => !areEqualProps(this.props, nextProps, true);
+
+    componentDidUpdate = () => {
+      if (this.props.shouldFetch) {
+        this.fetchModels(this.props);
+      }
+    }
 
     fetchModels = ({ schema, filter, sort, first }) => {
       if (filter) {
@@ -34,8 +41,12 @@ export default (WrappedComponent) => {
       const { schema } = this.props;
       return this.props.addModel({ ...args, schema });
     }
-    updateModel = ({ id, path, value }) => {
-      const { schema } = this.props;
+    saveModel = ({ attrs }) => {
+      const { schema, id } = this.props;
+      return this.props.saveModel({ schema, id, props: attrs });
+    }
+    updateModel = ({ path, value }) => {
+      const { schema, id } = this.props;
       return this.props.updateModel({ schema, id, path, value });
     }
     deleteModel = ({ id }) => {
@@ -62,5 +73,5 @@ export default (WrappedComponent) => {
       shouldFetch: shouldFetchSelector({ schema, filter, sort, cursor })(state),
       hasMore: hasMoreSelector(schema, filter, sort)(state)
     }
-  ), { fetchModels, fetchMore, addModel, deleteModel, updateModel, fetchAllOutstandingModels })(WithModels);
+  ), { fetchModels, fetchMore, addModel, deleteModel, updateModel, saveModel, fetchAllOutstandingModels })(WithModels);
 };

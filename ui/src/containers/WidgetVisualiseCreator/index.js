@@ -1,5 +1,6 @@
 import { Map, fromJS } from 'immutable';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Portal from 'react-portal';
 import { withProps, compose } from 'recompose';
 import { createDefaultTitleWithIcon, createDefaultTitle } from 'ui/utils/defaultTitles';
