@@ -1,9 +1,11 @@
-import { fromJS, Iterable } from 'immutable';
-import { call } from 'redux-saga/effects';
+import { fromJS, Iterable, Map } from 'immutable';
+import { call, put } from 'redux-saga/effects';
+import { handleActions } from 'redux-actions';
 import Unauthorised from 'lib/errors/Unauthorised';
 import HttpError from 'ui/utils/errors/HttpError';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 import createAsyncDuck from 'ui/utils/createAsyncDuck';
+import { fetchModel } from 'ui/redux/actions';
 
 const UPDATE_USER_ORGANISATION_SETTING = 'learninglocker/userOrganisationSettings/UPDATE';
 
@@ -13,11 +15,11 @@ const UPDATE_USER_ORGANISATION_SETTING = 'learninglocker/userOrganisationSetting
 const duck = createAsyncDuck({
   actionName: UPDATE_USER_ORGANISATION_SETTING,
 
-  reduceStart: (state, { userId, organisationId }) => state.setIn(['userOrganisationSettings', userId, organisationId, 'remoteCache', 'requestState'], IN_PROGRESS),
-  reduceSuccess: (state, { userId, organisationId }) => state.setIn(['userOrganisationSettings', userId, organisationId, 'remoteCache', 'requestState'], COMPLETED),
-  reduceFailure: (state, { userId, organisationId }) => state.setIn(['userOrganisationSettings', userId, organisationId, 'remoteCache', 'requestState'], FAILED),
+  reduceStart: (state, { userId, organisationId }) => state.setIn([userId, organisationId, 'remoteCache', 'requestState'], IN_PROGRESS),
+  reduceSuccess: (state, { userId, organisationId }) => state.setIn([userId, organisationId, 'remoteCache', 'requestState'], COMPLETED),
+  reduceFailure: (state, { userId, organisationId }) => state.setIn([userId, organisationId, 'remoteCache', 'requestState'], FAILED),
   reduceComplete: (state, { userId, organisationId }) => {
-    const path = ['userOrganisationSettings', userId, organisationId, 'remoteCache', 'requestState'];
+    const path = [userId, organisationId, 'remoteCache', 'requestState'];
     if (state.hasIn(path)) {
       return state.setIn(path, null);
     }
@@ -49,11 +51,24 @@ const duck = createAsyncDuck({
       throw new HttpError(errorMessage, { status });
     }
 
-    // todo put fetch user
+    yield put(fetchModel({ schema: 'user', id: userId, force: true }));
 
-    return yield body;
+    return yield {
+      body,
+      userId,
+      organisationId,
+    };
   }
 });
+
+/**
+ * Reducer
+ */
+const handler = handleActions(duck.reducers);
+const initialState = new Map();
+export default function reducer(state = initialState, action = {}) {
+  return handler(state, action);
+}
 
 export const constants = duck.constants;
 export const reducers = duck.reducers;

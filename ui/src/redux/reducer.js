@@ -18,6 +18,7 @@ import queries from 'ui/redux/modules/queries';
 import metadata from 'ui/redux/modules/metadata';
 import app from 'ui/redux/modules/app';
 import alerts from 'ui/redux/modules/alerts';
+import userOrganisationSettings from 'ui/redux/modules/userOrganisationSettings';
 
 export default combineReducers({
   auth: recycleState(auth, [LOGOUT]),
@@ -35,7 +36,7 @@ export default combineReducers({
   metadata: recycleState(metadata, [LOGOUT, ORG_LOGOUT]),
   uploadPersonas: recycleState(uploadPersona, [LOGOUT, ORG_LOGOUT]),
   alerts: recycleState(alerts, [LOGOUT, ORG_LOGOUT]),
-  // todo userOrganisationSettings: recycleState(userOrganisationSettings, [LOGOUT, ORG_LOGOUT]),
+  userOrganisationSettings: recycleState(userOrganisationSettings, [LOGOUT, ORG_LOGOUT]),
   app,
   router: router5Reducer
 });
