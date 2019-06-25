@@ -17,7 +17,7 @@ export const unawaitedErrorHandler = (err) => {
   logger.error(errorId, err);
 };
 
-export default (res, err) => {
+const handleRequestError = (res, err) => {
   const errorId = uuid();
 
   // persona errors
@@ -109,3 +109,5 @@ export default (res, err) => {
     message: 'Error'
   });
 };
+
+export default handleRequestError;
