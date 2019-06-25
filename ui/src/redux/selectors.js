@@ -18,7 +18,8 @@ export {
   cursorSelector
 } from 'ui/redux/modules/pagination';
 export {
-  statementQuerySelector
+  statementQuerySelector,
+  statementTimezoneSelector
 } from 'ui/redux/modules/statements';
 export {
   isAuthenticatedSelector,

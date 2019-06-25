@@ -53,7 +53,7 @@ exports[`PersonasImportForm should render the form in STAGE_IMPORTED 1`] = `
   >
     <withProps(Connect(WithModel))
       className="configureUpload"
-      disabled="true"
+      disabled={true}
       model={
         Object {
           "_id": "1",

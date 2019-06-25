@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose } from 'recompose';
@@ -6,6 +7,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { updateModel } from 'ui/redux/modules/models';
 import Checkbox from 'ui/components/Material/Checkbox';
+import { TimezoneSelector } from 'ui/components/TimezoneSelector';
 import {
   uploadLogo,
   IN_PROGRESS,
@@ -146,7 +148,7 @@ class SubOrgForm extends Component {
           id={nameId}
           className="form-control"
           placeholder="Name for this organisation"
-          value={model.get('name')}
+          value={model.get('name', '')}
           onChange={this.onChangeAttr.bind(null, 'name')} />
       </div>
     );
@@ -344,6 +346,19 @@ class SubOrgForm extends Component {
         <div className="col-md-12">
           <fieldset>
             {this.renderNameSetting(model)}
+
+            <div className="form-group">
+              <label htmlFor="SubOrgForm_TimezoneSelector">Timezone</label>
+              <TimezoneSelector
+                id="SubOrgForm_TimezoneSelector"
+                value={model.get('timezone', 'UTC')}
+                onChange={value => this.props.updateModel({
+                  schema,
+                  id: this.props.model.get('_id'),
+                  path: 'timezone',
+                  value
+                })} />
+            </div>
 
             <div className="form-group">
               <OrgLogo

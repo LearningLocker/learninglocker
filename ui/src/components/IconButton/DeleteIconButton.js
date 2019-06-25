@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { compose, withProps, setPropTypes, withState } from 'recompose';
 import ConfirmDeleteModal from 'ui/components/Modal/ConfirmDeleteModal';
 import IconButton from './IconButton';
@@ -35,4 +36,3 @@ const renderIconButton = ({ onConfirm, disabled, target, isConfirming, setConfir
 );
 
 export default enhanceIconButton(renderIconButton);
-

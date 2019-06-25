@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose, withProps } from 'recompose';
 import { Map, List } from 'immutable';
@@ -58,6 +59,8 @@ const withQueryBuilderCacheProps = withProps(
 
 class ExpandedSection extends Component {
   static propTypes = {
+    timezone: PropTypes.string,
+    orgTimezone: PropTypes.string.isRequired,
     section: PropTypes.instanceOf(Map),
     sectionCriteria: PropTypes.instanceOf(Map),
     criteria: PropTypes.instanceOf(Map),
@@ -65,11 +68,13 @@ class ExpandedSection extends Component {
     onDeleteCriterion: PropTypes.func,
     onCollapse: PropTypes.func,
     onChildrenChange: PropTypes.func,
-    onAddCriterion: PropTypes.func
+    onAddCriterion: PropTypes.func,
   }
 
   shouldComponentUpdate = (nextProps) => {
     const out = !(
+      this.props.timezone === nextProps.timezone &&
+      this.props.orgTimezone === nextProps.orgTimezone &&
       this.props.section.equals(nextProps.section) &&
       this.props.criteria.equals(nextProps.criteria) &&
       this.props.models.equals(nextProps.models)
@@ -85,6 +90,8 @@ class ExpandedSection extends Component {
 
   renderContinuousCriteria = () => (
     <ContinuousCriteria
+      timezone={this.props.timezone}
+      orgTimezone={this.props.orgTimezone}
       section={this.props.section}
       criteria={this.props.sectionCriteria}
       onCriteriaChange={this.props.onCriteriaChange}
@@ -168,6 +175,8 @@ class ExpandedSection extends Component {
         </div>}
         {children.size > 0 &&
           <Sections
+            timezone={this.props.timezone}
+            orgTimezone={this.props.orgTimezone}
             className={styles.expandedChildren}
             sections={children}
             criteria={this.props.criteria}

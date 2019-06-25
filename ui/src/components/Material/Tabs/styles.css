@@ -1,3 +1,7 @@
 .tabs .pointer {
   background-color: rgb(245,171,53);
 }
+
+.tab {
+  overflow: visible;
+}

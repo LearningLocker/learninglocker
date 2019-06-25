@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { TextInputGroup } from 'ui/components';
 import { Button } from 'react-toolbox/lib/button';
@@ -51,4 +52,3 @@ class ActorOptionEditor extends Component {
 }
 
 export default withStyles(styles)(ActorOptionEditor);
-

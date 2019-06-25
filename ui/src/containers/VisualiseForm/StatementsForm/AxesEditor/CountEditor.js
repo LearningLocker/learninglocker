@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import AutoComplete from 'ui/components/AutoComplete';
 import CacheKeysAutoComplete from 'ui/containers/CacheKeysAutoComplete';
@@ -27,7 +28,7 @@ export default class CountEditor extends Component {
     operatorInput: '',
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     this.props.changeOperator(this.props.operator);
     this.props.changeValue(this.props.value);
   }

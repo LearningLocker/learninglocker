@@ -14,9 +14,13 @@ import HttpError from 'ui/utils/errors/HttpError';
 import Unauthorised from 'lib/errors/Unauthorised';
 import diffEdges from './fetchModelsDiff';
 
-
 export const FORWARD = 'FORWARD'; // forward pagination direction
 export const BACKWARD = 'BACKWARD'; // backward pagination direction
+
+/**
+ * If input is an plain JS object, convert to Immutable Map/List
+ */
+const toImmutable = x => (Iterable.isIterable(x) ? x : fromJS(x));
 
 /**
  * REDUCERS
@@ -36,35 +40,33 @@ const paginationStateSelector = (
   schema,
   filter = defaultFilter,
   sort = defaultSort
-) =>
-  createSelector(paginationSelector,
-    pagination => pagination.getIn([schema, filter, sort], new Map())
-  );
+) => createSelector(
+  paginationSelector,
+  pagination => pagination.getIn([schema, toImmutable(filter), sort], new Map())
+);
 
 const paginationPageInfoSelector = (schema, filter, sort) =>
-  createSelector(paginationStateSelector(schema, filter, sort), pagination =>
-    pagination.get('pageInfo', new Map())
+  createSelector(
+    paginationStateSelector(schema, toImmutable(filter), sort),
+    pagination => pagination.get('pageInfo', new Map())
   );
 
-const cursorSelector = (schema, filter, sort, direction) =>
-  createSelector(paginationPageInfoSelector(schema, filter, sort), (pageInfo) => {
-    switch (direction) {
-      case FORWARD:
-        return fromJS({ after: pageInfo.get('endCursor', null) });
-      case BACKWARD:
-        return fromJS({ before: pageInfo.get('startCursor', null) });
-      default:
-        return pageInfo.get('currentCursor');
-    }
-  });
+const cursorSelector = (schema, filter, sort, direction) => createSelector(paginationPageInfoSelector(schema, toImmutable(filter), sort), (pageInfo) => {
+  switch (direction) {
+    case FORWARD:
+      return fromJS({ after: pageInfo.get('endCursor', null) });
+    case BACKWARD:
+      return fromJS({ before: pageInfo.get('startCursor', null) });
+    default:
+      return pageInfo.get('currentCursor');
+  }
+});
 
-const requestStateSelector = ({ schema, filter, sort, cursor }) =>
-  createSelector(paginationStateSelector(schema, filter, sort), pagination =>
+const requestStateSelector = ({ schema, filter, sort, cursor }) => createSelector(paginationStateSelector(schema, toImmutable(filter), sort), pagination =>
     pagination.getIn([cursor, 'requestState'], false)
   );
 
-const cachedAtSelector = ({ schema, filter, sort, cursor }) =>
-  createSelector(paginationStateSelector(schema, filter, sort), pagination =>
+const cachedAtSelector = ({ schema, filter, sort, cursor }) => createSelector(paginationStateSelector(schema, toImmutable(filter), sort), pagination =>
     pagination.getIn([cursor, 'cachedAt'], moment(0))
   );
 
@@ -79,10 +81,7 @@ const shouldFetchSelector = ({ schema, filter, sort, cursor }) => (createSelecto
     }
 
     const cachedFor = moment().diff(cachedAt);
-    if (cachedFor < cacheDuration.asMilliseconds()) {
-      return false;
-    }
-    return true;
+    return cachedFor >= cacheDuration.asMilliseconds();
   })
 );
 
@@ -100,35 +99,32 @@ const isCompletedSelector = paginationArgs =>
 
 export const idsByFilterSelector = (schema, filter, sort) =>
   createSelector(
-    paginationStateSelector(schema, filter, sort),
-    (pagination) => {
-      const out =
-        pagination
-          .get('edges', new OrderedSet())
-          .map(item => (item.get('id')))
-      ;
-
-      return out;
-    }
+    paginationStateSelector(schema, toImmutable(filter), sort),
+    pagination =>
+      pagination
+        .get('edges', new OrderedSet())
+        .map(item => (item.get('id')))
   );
 
 const hasMoreSelector = (schema, filter, sort, direction = FORWARD) =>
-  createSelector(paginationPageInfoSelector(schema, filter, sort), (pageInfo) => {
-    switch (direction) {
-      case FORWARD:
-        return pageInfo.get('hasNextPage', false);
-      case BACKWARD:
-        return pageInfo.get('hasPreviousPage', false);
-      default:
-        return false;
+  createSelector(
+    paginationPageInfoSelector(schema, toImmutable(filter), sort),
+    (pageInfo) => {
+      switch (direction) {
+        case FORWARD:
+          return pageInfo.get('hasNextPage', false);
+        case BACKWARD:
+          return pageInfo.get('hasPreviousPage', false);
+        default:
+          return false;
+      }
     }
-  });
+  );
 
-export const reduceStart = (state, { schema, filter, sort, cursor }) => (
+export const reduceStart = (state, { schema, filter, sort, cursor }) =>
   state
-    .setIn([schema, filter, sort, cursor, 'requestState'], IN_PROGRESS)
-    .setIn([schema, filter, sort, 'pageInfo', 'currentCursor'], cursor)
-);
+    .setIn([schema, toImmutable(filter), sort, cursor, 'requestState'], IN_PROGRESS)
+    .setIn([schema, toImmutable(filter), sort, 'pageInfo', 'currentCursor'], cursor);
 
 export const reduceSuccess = (
   state,
@@ -147,7 +143,7 @@ export const reduceSuccess = (
   const newEdges = new OrderedSet(edges)
     .map(item => item.set('cachedAt', cachedAt));
 
-  const oldEdges = state.getIn([schema, filter, sort, 'edges'], new OrderedSet());
+  const oldEdges = state.getIn([schema, toImmutable(filter), sort, 'edges'], new OrderedSet());
   const cursorKey = cursor !== undefined ? (cursor.get('after') || cursor.get('before')) : undefined;
 
   const newEdges2 = new OrderedSet(
@@ -160,13 +156,11 @@ export const reduceSuccess = (
     )
   );
 
-  const out = state
-    .mergeIn([schema, filter, sort, 'pageInfo'], pageInfo)
-    .setIn([schema, filter, sort, cursor, 'cachedAt'], cachedAt)
-    .setIn([schema, filter, sort, cursor, 'requestState'], COMPLETED)
-    .setIn([schema, filter, sort, 'edges'], newEdges2);
-
-  return out;
+  return state
+    .mergeIn([schema, toImmutable(filter), sort, 'pageInfo'], pageInfo)
+    .setIn([schema, toImmutable(filter), sort, cursor, 'cachedAt'], cachedAt)
+    .setIn([schema, toImmutable(filter), sort, cursor, 'requestState'], COMPLETED)
+    .setIn([schema, toImmutable(filter), sort, 'edges'], newEdges2);
 };
 
 const fetchModels = createAsyncDuck({
@@ -178,11 +172,11 @@ const fetchModels = createAsyncDuck({
   reduceSuccess,
 
   reduceFailure: (state, { schema, filter, sort, cursor }) =>
-    state.setIn([schema, filter, sort, cursor, 'requestState'], FAILED)
-      .setIn([schema, filter, sort, cursor, 'cachedAt'], moment()),
+    state.setIn([schema, toImmutable(filter), sort, cursor, 'requestState'], FAILED)
+      .setIn([schema, toImmutable(filter), sort, cursor, 'cachedAt'], moment()),
 
   reduceComplete: (state, { schema, filter, sort, cursor }) =>
-    state.setIn([schema, filter, sort, cursor, 'requestState'], null),
+    state.setIn([schema, toImmutable(filter), sort, cursor, 'requestState'], null),
 
   startAction: (
     {
@@ -230,7 +224,7 @@ const fetchModels = createAsyncDuck({
   }),
 
   checkShouldFire: ({ schema, filter, sort, cursor }, state) =>
-    (shouldFetchSelector({ schema, filter, sort, cursor })(state)),
+    shouldFetchSelector({ schema, filter, sort, cursor })(state),
 
   doAction: function* fetchModelSaga({
     schema,

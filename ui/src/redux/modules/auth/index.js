@@ -129,6 +129,7 @@ export const loginRequestStateSelector = loginDuck.selectors.loginRequestStateSe
 
 export const activeAuthSelector = tokenDuck.selectors.activeAuthSelector;
 export const activeTokenSelector = tokenDuck.selectors.activeTokenSelector;
+export const orgTimezoneFromTokenSelector = tokenDuck.selectors.orgTimezoneSelector;
 
 /**
  * Sagas

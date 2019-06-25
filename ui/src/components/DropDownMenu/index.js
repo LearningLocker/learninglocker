@@ -1,5 +1,6 @@
 import onClickOutside from 'react-onclickoutside';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import classNames from 'classnames';
 import { compose } from 'recompose';
@@ -56,4 +57,3 @@ export default compose(
   withStyles(styles),
   onClickOutside
 )(DropDownMenu);
-

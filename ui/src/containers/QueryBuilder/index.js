@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-indent */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import BasicQueryBuilder from 'ui/containers/BasicQueryBuilder';
@@ -14,6 +15,8 @@ const BLANK_QUERY = new Map();
 
 class QueryBuilder extends Component {
   static propTypes = {
+    timezone: PropTypes.string,
+    orgTimezone: PropTypes.string.isRequired,
     componentPath: PropTypes.instanceOf(List),
     query: PropTypes.instanceOf(Map),
     onChange: PropTypes.func,
@@ -56,6 +59,8 @@ class QueryBuilder extends Component {
         query={this.props.query} />
     ) : (
       <BasicQueryBuilder
+        timezone={this.props.timezone}
+        orgTimezone={this.props.orgTimezone}
         componentPath={this.props.componentPath}
         onQueryChange={this.onQueryChange}
         query={this.props.query}
@@ -102,4 +107,3 @@ export default compose(
   withState('isRawMode', 'setIsRawMode', false),
   connect(() => ({}), { clearModelsCache })
 )(QueryBuilder);
-

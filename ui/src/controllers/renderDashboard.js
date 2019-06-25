@@ -87,7 +87,7 @@ export default (req, res) => {
     })
   )
   .catch((err) => {
-    logger.error(err);
-    res.status(404).send(err.message);
+    logger.error('Error in request', JSON.stringify(err));
+    res.status(404).send('Dashboard not found');
   });
 };

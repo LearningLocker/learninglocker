@@ -1,4 +1,5 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { routeNodeSelector } from 'redux-router5';
 import { VelocityComponent } from 'velocity-react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';

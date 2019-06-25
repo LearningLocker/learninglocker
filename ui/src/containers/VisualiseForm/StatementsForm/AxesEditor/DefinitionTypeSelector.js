@@ -34,7 +34,7 @@ const DefinitionTypeSelector = ({
   return (
     <div className="form-group">
       <label htmlFor="toggleInput" className="clearfix">
-        Content Activities Definition Type
+        Context Activities Definition Type
       </label>
 
       <Dropdown

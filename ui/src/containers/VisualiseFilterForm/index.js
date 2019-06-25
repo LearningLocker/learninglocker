@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { List, Map, fromJS } from 'immutable';
 import { updateModel } from 'ui/redux/modules/models';
 import { connect } from 'react-redux';
@@ -15,7 +16,8 @@ import {
 
 class VisualiseFilterForm extends Component {
   static propTypes = {
-    model: PropTypes.instanceOf(Map),
+    model: PropTypes.instanceOf(Map), // visualisation
+    orgTimezone: PropTypes.string.isRequired,
     updateModel: PropTypes.func
   };
 
@@ -74,6 +76,15 @@ class VisualiseFilterForm extends Component {
     });
   }
 
+  onChangeTimezone = (value) => {
+    this.props.updateModel({
+      schema: 'visualisation',
+      id: this.props.model.get('_id'),
+      path: ['timezone'],
+      value
+    });
+  }
+
   renderTabbedQueryBuilder = (labelled = true, defaults = {}, text = 'Build your query') => {
     const queries = this.props.model.get('filters', new List());
 
@@ -83,15 +94,18 @@ class VisualiseFilterForm extends Component {
           {text}
         </label>
         <TabbedQueriesBuilder
+          timezone={this.props.model.get('timezone', null)}
+          orgTimezone={this.props.orgTimezone}
           queries={queries}
           labelled={labelled}
           componentBasePath={
             new List(['visualise', this.props.model.get('_id')])
           }
-          onQueryChange={this.onChangeQuery}
+          onChangeQuery={this.onChangeQuery}
           onChangeLabel={this.onChangeLabel}
           onDeleteQuery={this.onDeleteQuery}
           onChangeColor={this.onChangeColor}
+          onChangeTimezone={this.onChangeTimezone}
           defaults={fromJS(defaults)} />
       </div>
     );

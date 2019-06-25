@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import { withProps, compose, setPropTypes } from 'recompose';
 import { routeNodeSelector } from 'redux-router5';

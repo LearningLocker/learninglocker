@@ -34,7 +34,7 @@ describe('ConfigureUpload', () => {
       model={fromJS({
         csvHeaders: ['test1', 'test2']
       })}
-      disabled="true" />
+      disabled />
     );
 
     expect(rendered).toMatchSnapshot();
