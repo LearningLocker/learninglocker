@@ -23,7 +23,10 @@ class OptionListItem extends Component {
       PropTypes.instanceOf(Map),
       PropTypes.string
     ]),
-    tooltip: PropTypes.string,
+    tooltip: PropTypes.oneOfType([
+      PropTypes.object,
+      PropTypes.string,
+    ]),
     onClick: PropTypes.func,
     onEdit: PropTypes.func,
     onDelete: PropTypes.func,
