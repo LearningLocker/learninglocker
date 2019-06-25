@@ -225,6 +225,7 @@ class UserOrgForm extends React.Component {
 
     const canEditOrgRoles = activeScopes.some(s => [SITE_ADMIN, ALL, MANAGE_ALL_USERS].includes(s));
     const canEditSiteRoles = RESTRICT_CREATE_ORGANISATION && activeScopes.includes(SITE_ADMIN);
+    const isSiteAdmin = activeScopes.includes(SITE_ADMIN);
 
     const orgTimezone = organisationModel.get('timezone', 'UTC');
 
@@ -261,6 +262,7 @@ class UserOrgForm extends React.Component {
               <label htmlFor={filterId}>User Filter Timezone</label>
               <TimezoneSelector
                 id={filterId}
+                disabled={!isSiteAdmin}
                 value={userOrgSettings.get('timezone', null)}
                 onChange={handleTimezoneChange}
                 defaultOption={{

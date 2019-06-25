@@ -60,7 +60,7 @@ const renderName = (model, onChangeAttr) => {
   );
 };
 
-const renderEmail = (model, onChangeAttr) => {
+const renderEmail = (model, onChangeAttr, isSiteAdmin) => {
   const emailId = uuid.v4();
   return (
     <div
@@ -72,7 +72,7 @@ const renderEmail = (model, onChangeAttr) => {
       <input
         id={emailId}
         className="form-control"
-        disabled={model.has('googleId')}
+        disabled={model.has('googleId') || !isSiteAdmin}
         placeholder="E-Mail"
         value={model.get('email', '')}
         onChange={onChangeAttr('email')} />
@@ -207,7 +207,7 @@ const render = ({
 
         {renderVerified(model, styles)}
         {renderName(model, onChangeAttr)}
-        {renderEmail(model, onChangeAttr)}
+        {renderEmail(model, onChangeAttr, isSiteAdmin)}
         {isAuthorisedToChangePassword && renderPasswordChanges(model, onPasswordCheckboxChange(updateModel, model, setChangePasswordChecked), canChangePassword)}
 
         {passwordInputsVisible && (
