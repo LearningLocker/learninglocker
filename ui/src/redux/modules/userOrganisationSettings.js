@@ -15,11 +15,11 @@ const UPDATE_USER_ORGANISATION_SETTING = 'learninglocker/userOrganisationSetting
 const duck = createAsyncDuck({
   actionName: UPDATE_USER_ORGANISATION_SETTING,
 
-  reduceStart: (state, { userId, organisationId }) => state.setIn([userId, organisationId, 'remoteCache', 'requestState'], IN_PROGRESS),
-  reduceSuccess: (state, { userId, organisationId }) => state.setIn([userId, organisationId, 'remoteCache', 'requestState'], COMPLETED),
-  reduceFailure: (state, { userId, organisationId }) => state.setIn([userId, organisationId, 'remoteCache', 'requestState'], FAILED),
+  reduceStart: (state, { userId, organisationId }) => state.setIn([`${userId}-${organisationId}`, 'remoteCache', 'requestState'], IN_PROGRESS),
+  reduceSuccess: (state, { userId, organisationId }) => state.setIn([`${userId}-${organisationId}`, 'remoteCache', 'requestState'], COMPLETED),
+  reduceFailure: (state, { userId, organisationId }) => state.setIn([`${userId}-${organisationId}`, 'remoteCache', 'requestState'], FAILED),
   reduceComplete: (state, { userId, organisationId }) => {
-    const path = [userId, organisationId, 'remoteCache', 'requestState'];
+    const path = [`${userId}-${organisationId}`, 'remoteCache', 'requestState'];
     if (state.hasIn(path)) {
       return state.setIn(path, null);
     }

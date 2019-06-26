@@ -46,8 +46,14 @@ export const savingSelector = () => createSelector(
     ).toList().map(model =>
       model.getIn(['requestState'])
     ),
-  (saving, uploadPersonasSaving, mergePersonaSaving) => {
-    saving = saving.concat(uploadPersonasSaving).concat(mergePersonaSaving);
+  state => // update UserOrganisationSettings
+    state.userOrganisationSettings.filter(model =>
+      model && model.getIn && !!model.getIn(['remoteCache', 'requestState'])
+    ).toList().map(model =>
+      model.getIn(['remoteCache', 'requestState'])
+    ),
+  (saving, uploadPersonasSaving, mergePersonaSaving, userOrganisationSettingsSaving) => {
+    saving = saving.concat(uploadPersonasSaving).concat(mergePersonaSaving).concat(userOrganisationSettingsSaving);
 
     if (saving.includes(IN_PROGRESS)) {
       return IN_PROGRESS;
