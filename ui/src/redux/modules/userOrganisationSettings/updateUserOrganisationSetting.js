@@ -12,7 +12,7 @@ const UPDATE_USER_ORGANISATION_SETTING = 'learninglocker/userOrganisationSetting
 /*
  * Sagas
  */
-const duck = createAsyncDuck({
+export const duck = createAsyncDuck({
   actionName: UPDATE_USER_ORGANISATION_SETTING,
 
   reduceStart: (state, { userId, organisationId }) => state.setIn([`${userId}-${organisationId}`, 'requestState'], IN_PROGRESS),
@@ -66,13 +66,4 @@ const duck = createAsyncDuck({
  */
 const handler = handleActions(duck.reducers);
 const initialState = new Map();
-export default function reducer(state = initialState, action = {}) {
-  return handler(state, action);
-}
-
-export const constants = duck.constants;
-export const reducers = duck.reducers;
-export const actions = duck.actions;
-export const sagas = duck.sagas;
-
-export const updateUserOrganisationSetting = duck.actions.start;
+export const reducers = (state = initialState, action = {}) => handler(state, action);

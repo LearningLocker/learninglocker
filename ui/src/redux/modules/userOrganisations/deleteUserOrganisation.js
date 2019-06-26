@@ -14,7 +14,10 @@ const DELETE_USER_ORGANISATION = 'learninglocker/userOrganisations/DELETE';
 export const duck = createAsyncDuck({
   actionName: DELETE_USER_ORGANISATION,
 
-  reduceStart: (state, { userId, organisationId }) => state.setIn([`${userId}-${organisationId}`, 'requestState'], IN_PROGRESS),
+  reduceStart: (state, { userId, organisationId }) => {
+    console.log('reducer Start');
+    return state.setIn([`${userId}-${organisationId}`, 'requestState'], IN_PROGRESS);
+  },
   reduceSuccess: (state, { userId, organisationId }) => state.setIn([`${userId}-${organisationId}`, 'requestState'], COMPLETED),
   reduceFailure: (state, { userId, organisationId }) => state.setIn([`${userId}-${organisationId}`, 'requestState'], FAILED),
   reduceComplete: (state, { userId, organisationId }) => {
@@ -60,4 +63,4 @@ export const duck = createAsyncDuck({
  */
 const handler = handleActions(duck.reducers);
 const initialState = new Map();
-export const reducer = (state = initialState, action = {}) => handler(state, action);
+export const reducers = (state = initialState, action = {}) => handler(state, action);

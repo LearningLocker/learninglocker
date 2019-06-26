@@ -1,4 +1,3 @@
-import Organisation from 'lib/models/organisation';
 import User from 'lib/models/user';
 import NotFoundError from 'lib/errors/NotFoundError';
 import catchErrors from 'api/controllers/utils/catchErrors';

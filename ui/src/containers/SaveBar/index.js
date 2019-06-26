@@ -1,5 +1,5 @@
 import React from 'react';
-import { List } from 'immutable';
+import { List, fromJS } from 'immutable';
 import { createSelector } from 'reselect';
 import { connect } from 'react-redux';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
@@ -47,11 +47,11 @@ export const savingSelector = () => createSelector(
       model.getIn(['requestState'])
     ),
   state => // update UserOrganisationSettings
-    state.userOrganisationSettings.filter(model =>
-      model && model.getIn && !!model.getIn(['requestState'])
-    ).toList().map(model =>
-      model.getIn(['requestState'])
-    ),
+    fromJS(state.userOrganisationSettings)
+      .flatMap((v1, k1) => v1.mapKeys(k2 => `${k1}-${k2}`))
+      .filter(model => model && model.getIn && !!model.getIn(['requestState']))
+      .toList()
+      .map(model => model.getIn(['requestState'])),
   (saving, uploadPersonasSaving, mergePersonaSaving, userOrganisationSettingsSaving) => {
     saving = saving.concat(uploadPersonasSaving).concat(mergePersonaSaving).concat(userOrganisationSettingsSaving);
 

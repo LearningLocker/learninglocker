@@ -1,29 +1,22 @@
 import { combineReducers } from 'redux';
-import { handleActions } from 'redux-actions';
-import * as deleteUserOrganisationD from './deleteUserOrganisation';
-
+import { duck as deleteDuck, reducers as deleteReducers } from './deleteUserOrganisation';
 
 /**
  * Action Creators
  */
-export const deleteUserOrganisation = deleteUserOrganisationD.duck.actions.start;
+export const deleteUserOrganisation = deleteDuck.actions.start;
 
 /*
  * Reducers
  */
 const reducers = combineReducers({
-  DELETE: deleteUserOrganisationD.reducer,
+  delete: deleteReducers,
 });
-const handler = handleActions(reducers);
-
-const initialState = new Map();
-export default function reducer(state = initialState, action = {}) {
-  return handler(state, action);
-}
+export default reducers;
 
 /**
  * Sagas
  */
 export const sagas = [
-  ...deleteUserOrganisationD.duck.sagas,
+  ...deleteDuck.sagas,
 ];
