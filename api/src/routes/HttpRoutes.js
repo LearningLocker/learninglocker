@@ -59,6 +59,7 @@ import SiteSettings from 'lib/models/siteSettings';
 import personaRESTHandler from 'api/routes/personas/personaRESTHandler';
 import personaIdentifierRESTHandler from 'api/routes/personas/personaIdentifierRESTHandler';
 import personaAttributeRESTHandler from 'api/routes/personas/personaAttributeRESTHandler';
+import UserOrganisationsRouter from 'api/routes/userOrganisations/router';
 import UserOrganisationSettingsRouter from 'api/routes/userOrganisationSettings/router';
 import BatchDelete from 'lib/models/batchDelete';
 import * as routes from 'lib/constants/routes';
@@ -142,6 +143,11 @@ router.get(
 router.use(personaRESTHandler);
 router.use(personaIdentifierRESTHandler);
 router.use(personaAttributeRESTHandler);
+
+/**
+ * User Organisations
+ */
+router.use(UserOrganisationsRouter);
 
 /**
  * User OrganisationSettings
