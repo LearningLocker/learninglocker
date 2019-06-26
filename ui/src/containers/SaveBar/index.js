@@ -48,9 +48,9 @@ export const savingSelector = () => createSelector(
     ),
   state => // update UserOrganisationSettings
     state.userOrganisationSettings.filter(model =>
-      model && model.getIn && !!model.getIn(['remoteCache', 'requestState'])
+      model && model.getIn && !!model.getIn(['requestState'])
     ).toList().map(model =>
-      model.getIn(['remoteCache', 'requestState'])
+      model.getIn(['requestState'])
     ),
   (saving, uploadPersonasSaving, mergePersonaSaving, userOrganisationSettingsSaving) => {
     saving = saving.concat(uploadPersonasSaving).concat(mergePersonaSaving).concat(userOrganisationSettingsSaving);

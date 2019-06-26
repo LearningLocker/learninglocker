@@ -14,11 +14,11 @@ const DELETE_USER_ORGANISATION = 'learninglocker/userOrganisations/DELETE';
 export const duck = createAsyncDuck({
   actionName: DELETE_USER_ORGANISATION,
 
-  reduceStart: (state, { userId, organisationId }) => state.setIn([`${userId}-${organisationId}`, 'remoteCache', 'requestState'], IN_PROGRESS),
-  reduceSuccess: (state, { userId, organisationId }) => state.setIn([`${userId}-${organisationId}`, 'remoteCache', 'requestState'], COMPLETED),
-  reduceFailure: (state, { userId, organisationId }) => state.setIn([`${userId}-${organisationId}`, 'remoteCache', 'requestState'], FAILED),
+  reduceStart: (state, { userId, organisationId }) => state.setIn([`${userId}-${organisationId}`, 'requestState'], IN_PROGRESS),
+  reduceSuccess: (state, { userId, organisationId }) => state.setIn([`${userId}-${organisationId}`, 'requestState'], COMPLETED),
+  reduceFailure: (state, { userId, organisationId }) => state.setIn([`${userId}-${organisationId}`, 'requestState'], FAILED),
   reduceComplete: (state, { userId, organisationId }) => {
-    const path = [`${userId}-${organisationId}`, 'remoteCache', 'requestState'];
+    const path = [`${userId}-${organisationId}`, 'requestState'];
     if (state.hasIn(path)) {
       return state.setIn(path, null);
     }
