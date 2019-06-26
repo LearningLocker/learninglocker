@@ -105,34 +105,6 @@ describe('userOrganisations.router', () => {
       siteAdminOrg1Token = await createOrgJWT(loginUser, org1Id, 'native');
     });
 
-    it('can add organisation to any users', async () => {
-      const targetUser = await createTargetUser([]);
-
-      await apiApp
-        .post(`/v2/users/${targetUser._id}/organisations/${org1Id}`)
-        .set('Authorization', `Bearer ${siteAdminOrg1Token}`)
-        .expect(200);
-
-      const updatedTargetUser = await User.findOne({ _id: targetUser._id });
-      assert.equal(updatedTargetUser.organisations.length, 1);
-      assert.equal(updatedTargetUser.organisations[0].toString(), org1Id);
-    });
-
-    it('succeeds but do nothing if the target organisationId already exists', async () => {
-      const targetUser = await createTargetUser([org1Id, org2Id]);
-
-      await apiApp
-        .post(`/v2/users/${targetUser._id}/organisations/${org1Id}`)
-        .set('Authorization', `Bearer ${siteAdminOrg1Token}`)
-        .expect(200);
-
-      const updatedTargetUser = await User.findOne({ _id: targetUser._id });
-      assert.equal(updatedTargetUser.organisations.length, 2);
-      assert.equal(updatedTargetUser.organisations[0].toString(), org1Id);
-      assert.equal(updatedTargetUser.organisations[1].toString(), org2Id);
-    });
-
-
     it('can remove an organisation from any users', async () => {
       const targetUser = await createTargetUser([org1Id, org2Id]);
 
@@ -173,15 +145,6 @@ describe('userOrganisations.router', () => {
       userManagerOrg1Token = await createOrgJWT(loginUser, org1Id, 'native');
     });
 
-    it('can add an organisation to any users', async () => {
-      const targetUser = await createTargetUser([]);
-
-      await apiApp
-        .post(`/v2/users/${targetUser._id}/organisations/${org1Id}`)
-        .set('Authorization', `Bearer ${userManagerOrg1Token}`)
-        .expect(200);
-    });
-
     it('can remove an organisation from any users', async () => {
       const targetUser = await createTargetUser([org1Id]);
 
@@ -203,15 +166,6 @@ describe('userOrganisations.router', () => {
       }];
       loginUser = await createLoginUser([], organisationSettings);
       nonUserManagerOrg1Token = await createOrgJWT(loginUser, org1Id, 'native');
-    });
-
-    it('can not add an organisation to any users', async () => {
-      const targetUser = await createTargetUser([]);
-
-      await apiApp
-        .post(`/v2/users/${targetUser._id}/organisations/${org1Id}`)
-        .set('Authorization', `Bearer ${nonUserManagerOrg1Token}`)
-        .expect(401);
     });
 
     it('can not remove an organisation from any users', async () => {

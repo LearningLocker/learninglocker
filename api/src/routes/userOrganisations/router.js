@@ -22,11 +22,6 @@ const hasValidScope = (req) => {
   return scopes.some(s => [SITE_ADMIN, ALL, MANAGE_ALL_USERS].includes(s));
 };
 
-
-const canAddOrgToUser = req =>
-  matchesTargetOrgAndTokenOrg(req) &&
-  hasValidScope(req);
-
 const canRemoveOrgFromUser = req =>
   matchesTargetOrgAndTokenOrg(req) &&
   hasValidScope(req);
@@ -52,15 +47,8 @@ const checkAuth = canHandle => (req, res, next) => {
 };
 
 /**
- * ORGANISATION_SETTINGS
+ * ORGANISATIONS
  */
-router.post(
-  routes.USER_ORGANISATIONS,
-  passport.authenticate(['jwt'], DEFAULT_PASSPORT_OPTIONS),
-  checkAuth(canAddOrgToUser),
-  UserOrganisationsController.create,
-);
-
 router.delete(
   routes.USER_ORGANISATIONS,
   passport.authenticate(['jwt'], DEFAULT_PASSPORT_OPTIONS),
