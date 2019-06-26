@@ -12,6 +12,10 @@ import handleRequestError from 'api/controllers/utils/handleRequestError';
 const router = new express.Router();
 
 const matchesTargetOrgAndTokenOrg = (req) => {
+  if (req.user.authInfo.token.tokenType !== 'organisation') {
+    return false;
+  }
+
   const orgIdInToken = req.user.authInfo.token.tokenId;
   const orgIdInParams = req.params.organisationId;
   return (orgIdInToken === orgIdInParams);
