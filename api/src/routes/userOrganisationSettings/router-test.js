@@ -124,7 +124,7 @@ describe('userOrganisationSettings.router', () => {
       siteAdminOrg1Token = await createOrgJWT(loginUser, org1Id, 'native');
     });
 
-    it('can create a organisationSettings for anyone', async () => {
+    it('can create an organisationSettings for anyone', async () => {
       const targetUser = await createTargetUser();
 
       await apiApp
@@ -134,7 +134,7 @@ describe('userOrganisationSettings.router', () => {
         .expect(200);
     });
 
-    it('can not create a organisationSettings if organisation is not matched', async () => {
+    it('can not create an organisationSettings if organisation is not matched', async () => {
       const targetUser = await createTargetUser();
 
       await apiApp
@@ -144,7 +144,7 @@ describe('userOrganisationSettings.router', () => {
         .expect(401);
     });
 
-    it('can not create a organisationSettings if organisationId in URL and organisationId in request body are not matched', async () => {
+    it('can not create an organisationSettings if organisationId in URL and organisationId in request body are not matched', async () => {
       const targetUser = await createTargetUser();
 
       await apiApp
@@ -157,7 +157,7 @@ describe('userOrganisationSettings.router', () => {
         .expect(400);
     });
 
-    it('can update a organisationSettings for anyone', async () => {
+    it('can update an organisationSettings for anyone', async () => {
       const targetUser = await createTargetUser([
         org1OrganisationSetting,
         org2OrganisationSetting,
@@ -178,7 +178,7 @@ describe('userOrganisationSettings.router', () => {
       assert.equal(updatedTargetUser.organisationSettings[0].timezone, 'Europe/Paris');
     });
 
-    it('can delete a organisationSettings for anyone', async () => {
+    it('can delete an organisationSettings for anyone', async () => {
       const targetUser = await createTargetUser([
         org1OrganisationSetting,
         org2OrganisationSetting,
@@ -223,7 +223,7 @@ describe('userOrganisationSettings.router', () => {
       userManagerOrg1Token = await createOrgJWT(loginUser, org1Id, 'native');
     });
 
-    it('can create a organisationSettings of org1 for anyone', async () => {
+    it('can create an organisationSettings of org1 for anyone', async () => {
       const targetUser = await createTargetUser();
 
       await apiApp
@@ -233,7 +233,7 @@ describe('userOrganisationSettings.router', () => {
         .expect(200);
     });
 
-    it('can not create a organisationSettings if organisation is not matched', async () => {
+    it('can not create an organisationSettings if organisation is not matched', async () => {
       const targetUser = await createTargetUser();
 
       await apiApp
@@ -243,7 +243,7 @@ describe('userOrganisationSettings.router', () => {
         .expect(401);
     });
 
-    it('can update a organisationSettings of org1 for anyone', async () => {
+    it('can update an organisationSettings of org1 for anyone', async () => {
       const targetUser = await createTargetUser([
         org1OrganisationSetting,
         org2OrganisationSetting,
@@ -261,7 +261,7 @@ describe('userOrganisationSettings.router', () => {
       assert.equal(updatedTargetUser.organisationSettings[0].roles[1].toString(), userManagerRoleId);
     });
 
-    it('can not update a organisationSettings if body includes invalid fields', async () => {
+    it('can not update an organisationSettings if body includes invalid fields', async () => {
       const targetUser = await createTargetUser([
         org1OrganisationSetting,
         org2OrganisationSetting,
@@ -274,7 +274,7 @@ describe('userOrganisationSettings.router', () => {
         .expect(400);
     });
 
-    it('can delete a organisationSettings of org1 for anyone', async () => {
+    it('can delete an organisationSettings of org1 for anyone', async () => {
       const targetUser = await createTargetUser();
 
       await apiApp
@@ -297,7 +297,7 @@ describe('userOrganisationSettings.router', () => {
       nonUserManagerOrg1Token = await createOrgJWT(loginUser, org1Id, 'native');
     });
 
-    it('can not create a organisationSettings for anyone', async () => {
+    it('can not create an organisationSettings for anyone', async () => {
       const targetUser = await createTargetUser();
 
       await apiApp
@@ -347,7 +347,7 @@ describe('userOrganisationSettings.router', () => {
         .expect(401);
     });
 
-    it('can not delete a organisationSettings of org1 for anyone', async () => {
+    it('can not delete an organisationSettings of org1 for anyone', async () => {
       const targetUser = await createTargetUser();
 
       await apiApp
