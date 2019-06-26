@@ -14,6 +14,7 @@ import { sagas as toastSagas } from './toasts';
 import { sagas as appSagas } from './app';
 import { sagas as personasSagas } from './persona';
 import { sagas as alertsSagas } from './alerts';
+import { sagas as userOrganisationsSagas } from './userOrganisations';
 import { sagas as userOrganisationSettingsSagas } from './userOrganisationSettings';
 
 export const sagaMiddleware = createSagaMiddleware();
@@ -35,6 +36,7 @@ export default function* rootSaga() {
     ...map(appSagas, runSaga),
     ...map(alertsSagas, runSaga),
     ...map(personasSagas, runSaga),
+    ...map(userOrganisationsSagas, runSaga),
     ...map(userOrganisationSettingsSagas, runSaga),
   ];
 }

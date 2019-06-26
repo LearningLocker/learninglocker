@@ -56,21 +56,24 @@ const updateOrganisationSetting = catchErrors(async (req, res) => {
     throw new NotFoundError();
   }
 
-  const i = user.organisationSettings.findIndex(s => s.organisation.toString() === req.params.organisationId);
-  if (i < 0) {
-    throw new NotFoundError(`Duplicated: The user does not have an organisationSettings for the organisation (${req.params.organisationId})`);
-  }
-
   const scopes = req.user.authInfo.token.scopes;
   const isValid = validateUpdatableKeys(req.body, scopes);
   if (!isValid) {
     throw new ClientError('Can not update some fields you are trying to update');
   }
 
-  user.organisationSettings[i] = {
-    ...user.organisationSettings[i].toObject(),
-    ...req.body,
-  };
+  const i = user.organisationSettings.findIndex(s => s.organisation.toString() === req.params.organisationId);
+  if (i < 0) {
+    user.organisationSettings.push({
+      organisation: req.params.organisationId,
+      ...req.body,
+    });
+  } else {
+    user.organisationSettings[i] = {
+      ...user.organisationSettings[i].toObject(),
+      ...req.body,
+    };
+  }
 
   const updatedUser = await user.save();
   const insertedOrganisationSetting = updatedUser.organisationSettings[i];

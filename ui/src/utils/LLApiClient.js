@@ -240,6 +240,28 @@ class _LLApiClient {
     body: { id },
   });
 
+  addOrganisationToUser = ({
+    userId,
+    organisationId,
+  }) => post({
+    url: formatUrl(`${routes.RESTIFY_PREFIX}/users/${userId}/organisations/${organisationId}`),
+    headers: {
+      Authorization: `Bearer ${this.getToken()}`,
+      ContentType: 'application/json'
+    },
+  });
+
+  removeOrganisationFromUser = ({
+    userId,
+    organisationId,
+  }) => del({
+    url: formatUrl(`${routes.RESTIFY_PREFIX}/users/${userId}/organisations/${organisationId}`),
+    headers: {
+      Authorization: `Bearer ${this.getToken()}`,
+      ContentType: 'application/json'
+    },
+  });
+
   updateUserOrganisationSettings = ({
     userId,
     organisationId,
