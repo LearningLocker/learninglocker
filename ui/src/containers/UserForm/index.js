@@ -166,7 +166,7 @@ const changeModelPassword = (
   setPasswordConfirmation('');
 };
 
-const render = ({
+const UserForm = ({
   model = new Map(),
   changePasswordChecked,
   updateModel,
@@ -193,7 +193,7 @@ const render = ({
       isSiteAdmin ||
       model.get('_id') === loggedInUserId
     );
-  const passwordInputsVisible = (!model.get('verified') || canChangePassword);
+  const passwordInputsVisible = isAuthorisedToChangePassword && (!model.get('verified') || canChangePassword);
   const passwordGroupClasses = classNames({
     'form-group': true,
     'has-error': hasPasswordErrors
@@ -247,4 +247,4 @@ export default compose(
     loggedInUserId: loggedInUserIdSelector(state)
   })),
   withModel
-)(render);
+)(UserForm);
