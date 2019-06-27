@@ -47,7 +47,7 @@ export const savingSelector = () => createSelector(
       model.getIn(['requestState'])
     ),
   state => // update UserOrganisationSettings
-    fromJS(state.userOrganisationSettings)
+    fromJS(state.userOrganisationSettings || {})
       .flatMap((v1, k1) => v1.mapKeys(k2 => `${k1}-${k2}`))
       .filter(model => model && model.getIn && !!model.getIn(['requestState']))
       .toList()
