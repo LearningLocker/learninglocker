@@ -95,7 +95,7 @@ const getDefaultOrgSettings = organisationModel =>
     organisation: organisationModel.get('_id'),
     scopes: [],
     filter: {},
-    timezone: organisationModel.get('timezone', 'UTC'),
+    timezone: null,
   });
 
 /**
@@ -212,6 +212,7 @@ class UserOrgForm extends React.Component {
       RESTRICT_CREATE_ORGANISATION
     } = this.props;
     const userOrgSettings = getActiveOrgSettings({ model, organisationModel });
+    console.log(userOrgSettings);
     const roles = userOrgSettings.get('roles', new List());
     const rolesId = uuid.v4();
     const siteRolesId = uuid.v4();
