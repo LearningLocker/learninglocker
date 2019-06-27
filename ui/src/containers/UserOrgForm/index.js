@@ -137,14 +137,9 @@ const enhance = compose(
       /**
        * @params {{ attr: string, value: any }[]} attrValueList
        */
-      updateOrgSettings: (attrValueList) => {
+      updateOrgSettings: (values) => {
         const organisationId = organisationModel.get('_id').toString();
         const userId = model.get('_id').toString();
-        const values = attrValueList.reduce((acc, { attr, value }) => {
-          acc[attr] = value;
-          return acc;
-        }, {});
-
         dispatchUpdateUserOrganisationSetting({ userId, organisationId, values });
       },
     })
@@ -158,24 +153,26 @@ const enhance = compose(
           checked ?
           rolesSet.add(role) :
           rolesSet.delete(role)
-        );
-        updateOrgSettings([{ attr: 'roles', value: newRoles.toList() }]);
+        ).toList();
+        updateOrgSettings({ roles: newRoles });
       },
     handleSiteRolesChange: ({ model, updateModel }) =>
       (role, checked) => {
-        const scopes = model.get('scopes', new List()).toSet();
-        const newScopes = checked ?
-          scopes.add(role) :
-          scopes.delete(role);
-        updateModel({ path: 'scopes', value: newScopes.toList() });
+        const scopesSet = model.get('scopes', new List()).toSet();
+        const newScopes = (
+          checked ?
+          scopesSet.add(role) :
+          scopesSet.delete(role)
+        ).toList();
+        updateModel({ scopes: newScopes });
       },
     handleFilterChange: ({ updateOrgSettings }) =>
       (filter) => {
-        updateOrgSettings([{ attr: 'filter', value: JSON.stringify(filter) }]);
+        updateOrgSettings({ filter: JSON.stringify(filter) });
       },
     handleTimezoneChange: ({ updateOrgSettings }) =>
       (timezone) => {
-        updateOrgSettings([{ attr: 'timezone', value: timezone }]);
+        updateOrgSettings({ timezone });
       },
   })
 );
