@@ -171,7 +171,7 @@ const enhance = compose(
       },
     handleFilterChange: ({ updateOrgSettings }) =>
       (filter) => {
-        updateOrgSettings([{ attr: 'filter', value: filter }]);
+        updateOrgSettings([{ attr: 'filter', value: JSON.stringify(filter) }]);
       },
     handleTimezoneChange: ({ updateOrgSettings }) =>
       (timezone) => {
