@@ -5,12 +5,13 @@ import NoAccessError from 'lib/errors/NoAccessError';
 import parseQuery from 'lib/helpers/parseQuery';
 import Statement from 'lib/models/statement';
 import logger from 'lib/logger';
-import { publish as pubishToQueue } from 'lib/services/queue';
+import { publish as publishToQueue } from 'lib/services/queue';
 import { BATCH_STATEMENT_DELETION_QUEUE } from 'lib/constants/batchDelete';
 import { SITE_SETTINGS_ID } from 'lib/constants/siteSettings';
 import SiteSettings from 'lib/models/siteSettings';
 import Client from 'lib/models/client';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
+import { updateStatementCountsInOrg } from 'lib/services/lrs';
 
 const markDone = async (batchDeleteId, jobDone) => {
   logger.debug(`Removing job for BatchDelete ${batchDeleteId} and marking as done`);
@@ -28,7 +29,7 @@ const markDone = async (batchDeleteId, jobDone) => {
 
 export default async ({
   batchDeleteId,
-  publish = pubishToQueue
+  publish = publishToQueue
 }, jobDone) => {
   if (boolean(get(process.env, 'ENABLE_STATEMENT_DELETION', true)) === false) {
     // Clear the job and don't do anything
@@ -132,6 +133,11 @@ export default async ({
         batchDeleteId
       }
     });
+  }
+
+  if (done) {
+    const organisationId = batchDelete.organisation;
+    await updateStatementCountsInOrg(organisationId);
   }
 
   jobDone();
