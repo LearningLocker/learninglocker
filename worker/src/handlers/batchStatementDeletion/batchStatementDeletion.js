@@ -113,13 +113,7 @@ export default async ({
     }
   }, {});
 
-  let doneUpdate = {};
   const done = get(result, 'deletedCount') === 0;
-  if (done) {
-    doneUpdate = {
-      done: true
-    };
-  }
 
   await BatchDelete.findOneAndUpdate({
     _id: batchDeleteId
@@ -128,7 +122,7 @@ export default async ({
     $inc: {
       deleteCount: get(result, 'deletedCount')
     },
-    ...doneUpdate
+    done,
   });
 
   if (!done) {
