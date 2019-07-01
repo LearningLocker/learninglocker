@@ -9,18 +9,18 @@ import HeaderItem from './HeaderItem';
 import ScrollSnapper from './ScrollSnapper';
 
 export const ColumnHeaderEditor = ({
-  structure,
-  model,
+  model, // personasImports model
   disabled
-}) =>
-  (
+}) => {
+  const structure = model.get('structure', new Map());
+  return (
     <ScrollSnapper>
       {
-        structure.map((columnStructure, name) =>
+        structure.map((columnStructure, columnName) =>
           (
-            <Card key={name} className={styles.card}>
+            <Card key={columnName} className={styles.card}>
               <HeaderItem
-                columnName={name}
+                columnName={columnName}
                 columnStructure={columnStructure}
                 structure={structure}
                 model={model}
@@ -31,6 +31,7 @@ export const ColumnHeaderEditor = ({
       }
     </ScrollSnapper>
   );
+};
 
 export default compose(
   withStyles(styles)

@@ -1,13 +1,7 @@
 import React from 'react';
-import {
-  compose,
-  withHandlers,
-} from 'recompose';
+import { compose, withHandlers } from 'recompose';
 import { connect } from 'react-redux';
-import { fromJS } from 'immutable';
-import { updateModel } from 'ui/redux/modules/models';
 import { COLUMN_TYPES, COLUMN_TYPE_LABELS, COLUMN_ACCOUNT_KEY } from 'lib/constants/personasImport';
-import { map } from 'lodash';
 import {
   hasRelatedField,
   getPossibleRelatedColumns,
@@ -16,6 +10,7 @@ import {
   isColumnOrderable,
   getPrimaryMaxPlusOne
 } from 'lib/services/importPersonas/personasImportHelpers';
+import { updateModel } from 'ui/redux/modules/models';
 
 const schema = 'personasImport';
 
@@ -24,24 +19,16 @@ const headerItemHandlers = withHandlers({
     columnName,
     model,
     updateModel: doUpdateModel,
-    // columnStructure,
+    structure,
   }) => (event) => {
-    const value = event.target.value;
-
-    const resetStructure = resetRelatedStructure({
-      structure: model.get('structure', fromJS({})),
-      columnName
-    });
-
+    const resetStructure = resetRelatedStructure({ structure, columnName });
     const newStructure =
-      resetStructure.setIn([columnName, 'columnType'], value);
+      resetStructure.setIn([columnName, 'columnType'], event.target.value);
 
     const isOrderable = isColumnOrderable({ columnStructure: newStructure.get(columnName).toJS() });
+
     const newStructureOrder = isOrderable ?
-      newStructure.setIn(
-        [columnName, 'primary'],
-        getPrimaryMaxPlusOne({ structure: newStructure })
-      ) :
+      newStructure.setIn([columnName, 'primary'], getPrimaryMaxPlusOne({ structure: newStructure })) :
       newStructure.setIn([columnName, 'primary'], null);
 
     doUpdateModel({
@@ -51,10 +38,12 @@ const headerItemHandlers = withHandlers({
       value: newStructureOrder
     });
   },
+
   onPrimaryChange: ({
     columnName,
     model,
-    updateModel: doUpdateModel
+    updateModel: doUpdateModel,
+    structure,
   }) => (value) => {
     if (!value) {
       doUpdateModel({
@@ -66,9 +55,9 @@ const headerItemHandlers = withHandlers({
       return;
     }
 
-    const maxOrder = model.get('structure')
-        .map(s => s.primary)
-        .reduce((acc, number) => (number > acc ? number : acc), 0);
+    const maxOrder = structure
+      .map(s => s.primary)
+      .reduce((acc, number) => (number > acc ? number : acc), 0);
     const newOrder = maxOrder + 1;
 
     doUpdateModel({
@@ -78,6 +67,7 @@ const headerItemHandlers = withHandlers({
       value: newOrder
     });
   },
+
   onPrimaryOrderChange: ({
     columnName,
     model,
@@ -90,13 +80,15 @@ const headerItemHandlers = withHandlers({
       value: parseInt(event.target.value)
     });
   },
+
   onRelatedColumnChange: ({
     columnName,
     model,
-    updateModel: doUpdateModel
+    updateModel: doUpdateModel,
+    structure,
   }) => (event) => {
     const newStructure = updateRelatedStructure({
-      structure: model.get('structure'),
+      structure,
       columnName,
       relatedColumn: event.target.value
     });
@@ -117,6 +109,7 @@ export const HeaderItemComponent = ({
   onPrimaryOrderChange,
   onRelatedColumnChange,
   model,
+  structure,
   disabled
 }) => {
   const columnType = columnStructure.get('columnType');
@@ -124,16 +117,17 @@ export const HeaderItemComponent = ({
     <div>
       <h3>{columnName}</h3>
 
-      {isColumnOrderable({ columnStructure: columnStructure.toJS() }) && <div className="form-group">
-        <label htmlFor={`${model.get('_id')}-${columnName}-order`}>Order</label>
-        <input
-          className="form-control"
-          id={`${model.get('_id')}-${columnName}-order`}
-          onChange={onPrimaryOrderChange}
-          value={columnStructure.get('primary')}
-          type="number"
-          disabled={disabled} />
-      </div>
+      {isColumnOrderable({ columnStructure: columnStructure.toJS() }) &&
+        <div className="form-group">
+          <label htmlFor={`${model.get('_id')}-${columnName}-order`}>Order</label>
+          <input
+            className="form-control"
+            id={`${model.get('_id')}-${columnName}-order`}
+            onChange={onPrimaryOrderChange}
+            value={columnStructure.get('primary')}
+            type="number"
+            disabled={disabled} />
+        </div>
       }
 
       <div className="form-group">
@@ -170,13 +164,11 @@ export const HeaderItemComponent = ({
 
             <option disabled />
             {
-              map(
-                getPossibleRelatedColumns({
-                  columnType: columnStructure.get('columnType'),
-                  structure: model.get('structure').toJS(),
-                }),
-                relatedColumn =>
-                  (<option key={relatedColumn} value={relatedColumn}>{relatedColumn}</option>)
+              getPossibleRelatedColumns({
+                columnType: columnStructure.get('columnType'),
+                structure: structure.toJS(),
+              }).map(relatedColumn =>
+                (<option key={relatedColumn} value={relatedColumn}>{relatedColumn}</option>)
               )
             }
           </select>

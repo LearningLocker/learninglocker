@@ -7,7 +7,6 @@ import {
 } from 'recompose';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { Map, List } from 'immutable';
 import { modelsSchemaIdSelector } from 'ui/redux/selectors';
 import { withModel } from 'ui/utils/hocs';
 import { importPersonas } from 'ui/redux/modules/persona';
@@ -33,7 +32,7 @@ const handlers = withHandlers({
 
 
 export const ConfigureUploadComponent = ({
-  model,
+  model, // personasImports model
   handleImportPersonas,
   disabled = false,
 }) => {
@@ -46,8 +45,6 @@ export const ConfigureUploadComponent = ({
           'has-error': model.getIn(['errors', 'messages', 'structure'], false)
         })}>
         <ColumnHeaderEditor
-          csvHeaders={model.get('csvHeaders', new List())}
-          structure={model.get('structure', new Map())}
           model={model}
           disabled={disabled} />
 
