@@ -12,7 +12,7 @@ import { modelsSchemaIdSelector } from 'ui/redux/selectors';
 import { withModel } from 'ui/utils/hocs';
 import { importPersonas } from 'ui/redux/modules/persona';
 import ValidationList from 'ui/components/ValidationList';
-import ColumnHeaderEditor from '../ColumnHeaderEditor';
+import ColumnHeaderEditor from './ColumnHeaderEditor';
 
 const schema = 'personasImport';
 
