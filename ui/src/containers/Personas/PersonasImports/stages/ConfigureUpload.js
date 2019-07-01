@@ -5,14 +5,12 @@ import {
   withHandlers,
   withState
 } from 'recompose';
-import { withModel } from 'ui/utils/hocs';
-import { Map, List } from 'immutable';
-import { modelsSchemaIdSelector } from 'ui/redux/selectors';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import {
-  importPersonas
-} from 'ui/redux/modules/persona';
+import { Map, List } from 'immutable';
+import { modelsSchemaIdSelector } from 'ui/redux/selectors';
+import { withModel } from 'ui/utils/hocs';
+import { importPersonas } from 'ui/redux/modules/persona';
 import ValidationList from 'ui/components/ValidationList';
 import ColumnHeaderEditor from '../columnHeaderEditor';
 
