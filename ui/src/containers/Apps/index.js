@@ -26,6 +26,84 @@ const apps = [
     icon: icons.moodle,
     icon2x: icons.moodle2x,
   },
+  {
+    link: 'https://www.ht2labs.com/apps/semantic-analysis/',
+    title: 'Semantic Analysis',
+    description: 'Use our proprietary algorithm to drive insights into the quality of learners\' submissions.',
+    icon: icons.semanticAnalysis,
+  },
+  {
+    link: 'https://www.ht2labs.com/apps/bi-connector/',
+    title: 'BI Connector',
+    description: 'Feed your BI tool with real-time data from Learning Locker®.',
+    icon: icons.biConnector,
+  },
+  {
+    link: 'https://www.ht2labs.com/apps/survey-monkey/',
+    title: 'Survey Monkey',
+    description: 'Input your survey data directly into the Learning Locker',
+    icon: icons.surveyMonkey,
+  },
+  {
+    link: 'https://www.ht2labs.com/apps/getabstract/',
+    title: 'getAbstract',
+    description: 'Summarize text from thousands of sources',
+    icon: icons.getAbstract,
+  },
+  {
+    link: 'https://www.ht2labs.com/apps/degreed/',
+    title: 'Degreed',
+    description: 'API integration with one of the largest off the shelf learning platforms',
+    icon: icons.degreed,
+  },
+  {
+    link: 'https://www.ht2labs.com/apps/cornerstone-on-demand/',
+    title: 'Cornerstone On Demand',
+    description: 'One of the most widely used LMS\'s on the market.',
+    icon: icons.cornerstoneOnDemand,
+  },
+  {
+    link: 'https://www.ht2labs.com/apps/google-forms/',
+    title: 'Google Forms',
+    description: 'Generate xAPI data from your Google forms responses',
+    icon: icons.googleForms,
+  },
+  {
+    link: 'https://www.ht2labs.com/apps/yammer/',
+    title: 'Yammer',
+    description: 'Convert conversation data into xAPI statements',
+    icon: icons.yammer,
+  },
+  {
+    link: 'https://www.ht2labs.com/apps/skillsoft/',
+    title: 'SkillSoft',
+    description: 'One of the most widely used off-the-shelf content providers in the world',
+    icon: icons.skillsoft,
+  },
+  {
+    link: 'https://www.ht2labs.com/apps/url-shortener/',
+    title: 'URL Shortener',
+    description: 'Create simple, shareable URLs',
+    icon: icons.urlShortener,
+  },
+  {
+    link: 'https://www.ht2labs.com/apps/csv-to-xapi/',
+    title: 'CSV to xAPI',
+    description: 'Convert spreadsheet data into xAPI statements',
+    icon: icons.csvToXAPI,
+  },
+  {
+    link: 'https://www.ht2labs.com/apps/launchr/',
+    title: 'Launchr',
+    description: 'Securely launch xAPI content packages',
+    icon: icons.launchr,
+  },
+  {
+    link: 'https://www.ht2labs.com/apps/gdpr/',
+    title: 'GDPR',
+    description: 'A central administration tool for organizations seeking to comply with GDPR',
+    icon: icons.gdpr,
+  },
 ];
 
 const Apps = () => (
