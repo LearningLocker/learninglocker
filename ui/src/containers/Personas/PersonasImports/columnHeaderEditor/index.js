@@ -8,7 +8,7 @@ import styles from './styles.css';
 import HeaderItem from './HeaderItem';
 import ScrollSnapper from './ScrollSnapper';
 
-export const ColumnHeaderEditorComponent = ({
+export const ColumnHeaderEditor = ({
   structure,
   model,
   disabled
@@ -34,4 +34,4 @@ export const ColumnHeaderEditorComponent = ({
 
 export default compose(
   withStyles(styles)
-)(ColumnHeaderEditorComponent);
+)(ColumnHeaderEditor);
