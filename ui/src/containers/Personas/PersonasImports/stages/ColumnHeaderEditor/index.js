@@ -1,37 +1,41 @@
 import React from 'react';
-import {
-  compose,
-} from 'recompose';
+import { compose } from 'recompose';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Card } from 'react-toolbox/lib/card';
 import styles from './styles.css';
-import HeaderItem from './HeaderItem';
-import ScrollSnapper from './ScrollSnapper';
+import InputFields from './InputFields';
 
 export const ColumnHeaderEditor = ({
   model, // personasImports model
   disabled
-}) => {
-  const structure = model.get('structure', new Map());
-  return (
-    <ScrollSnapper>
+}) => (
+  <table className={styles.table}>
+    <thead>
+      <tr className={styles.tr}>
+        <th className={styles.th}>ID Names</th>
+        <th className={styles.th}>Input Fields</th>
+      </tr>
+    </thead>
+
+    <tbody>
       {
-        structure.map((columnStructure, columnName) =>
-          (
-            <Card key={columnName} className={styles.card}>
-              <HeaderItem
-                columnName={columnName}
+        model
+          .get('structure', new Map())
+          .map((columnStructure, columnName) => (
+            <tr key={columnName} className={styles.tr}>
+              <td className={styles.td}>
+                {columnName}
+              </td>
+
+              <InputFields
                 columnStructure={columnStructure}
-                structure={structure}
                 model={model}
                 disabled={disabled} />
-            </Card>
-          )
-        ).toList().toJS()
+            </tr>
+          )).toList().toJS()
       }
-    </ScrollSnapper>
-  );
-};
+    </tbody>
+  </table>
+);
 
 export default compose(
   withStyles(styles)

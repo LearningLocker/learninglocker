@@ -1,23 +1,37 @@
-.content {
+.table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.th {
+  background-color: #525252;
+  color: #FFFFFF;
+  text-align: left;
+  padding: 8px;
+}
+
+.td {
+  text-align: left;
+  padding: 8px;
+}
+
+.tr:nth-child(odd) {
+  background-color: #FAFAFA;
+}
+
+.th:nth-child(1),
+.td:nth-child(1) {
+  width: 180px;
+}
+
+.inputFields {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   overflow-x: auto;
 }
 
-.container {
-  position: relative;
-}
-
-.card {
-  padding: 15px;
-  margin: 15px;
-  min-width: 220px;
-}
-
-.card:first-child {
-  margin-left: 2px;
-}
-
-.card:last-child {
-  margin-right: 2px;  
+.inputField {
+  width: 240px;
+  margin-bottom: 0;
+  margin-right: 12px;
 }
