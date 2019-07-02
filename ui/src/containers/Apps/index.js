@@ -59,7 +59,7 @@ const apps = [
   {
     link: 'https://www.ht2labs.com/apps/cornerstone-on-demand/',
     title: 'Cornerstone On Demand',
-    description: 'One of the most widely used LMS\'s on the market.',
+    description: 'One of the most widely used LMSs on the market.',
     icon: icons.cornerstoneOnDemand,
   },
   {
