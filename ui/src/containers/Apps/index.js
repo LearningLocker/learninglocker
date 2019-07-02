@@ -41,7 +41,7 @@ const apps = [
   {
     link: 'https://www.ht2labs.com/apps/survey-monkey/',
     title: 'Survey Monkey',
-    description: 'Input your survey data directly into the Learning Locker',
+    description: 'Capture learner feedback from outside of the LMS',
     icon: icons.surveyMonkey,
   },
   {
