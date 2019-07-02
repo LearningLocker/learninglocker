@@ -16,7 +16,6 @@ class Editor extends Component {
   static propTypes = {
     model: PropTypes.instanceOf(Map), // visualisation model
     orgTimezone: PropTypes.string.isRequired,
-    exportVisualisation: PropTypes.func,
     updateModel: PropTypes.func,
   }
 
@@ -80,8 +79,7 @@ class Editor extends Component {
     if (this.isSeriesType()) {
       return (
         <SeriesEditor
-          model={this.props.model}
-          exportVisualisation={this.props.exportVisualisation} />
+          model={this.props.model} />
       );
     }
 
@@ -109,8 +107,7 @@ class Editor extends Component {
           <Tab key="series" label={isCounter ? 'Filter' : 'Series'}>
             <SeriesEditor
               model={this.props.model}
-              orgTimezone={this.props.orgTimezone}
-              exportVisualisation={this.props.exportVisualisation} />
+              orgTimezone={this.props.orgTimezone} />
           </Tab>
 
           <Tab key="options" label="Options">
