@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import { connect } from 'react-redux';
 import { updateModel } from 'ui/redux/modules/models';
-import PreviewPeriodPicker from 'ui/containers/Visualisations/components/PreviewPeriodPicker';
 import VisualiseResults from 'ui/containers/VisualiseResults';
 import SourceResults from 'ui/containers/VisualiseResults/SourceResults';
 import Editor from './Editor';
+import PreviewPeriodPicker from './PreviewPeriodPicker';
 
 class StatementsForm extends Component {
   static propTypes = {

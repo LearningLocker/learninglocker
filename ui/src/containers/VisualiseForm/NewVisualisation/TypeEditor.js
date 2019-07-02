@@ -4,7 +4,15 @@ import { withModel } from 'ui/utils/hocs';
 import { withProps, compose } from 'recompose';
 import VisualiseIcon from 'ui/components/VisualiseIcon';
 import VisualiseText from 'ui/components/VisualiseText';
-import { VISUALISATION_TYPES } from 'ui/utils/constants';
+import {
+  LEADERBOARD,
+  XVSY,
+  STATEMENTS,
+  FREQUENCY,
+  COUNTER,
+  PIE,
+} from 'ui/utils/constants';
+import { default as CustomBarChartCard } from 'ui/containers/Visualisations/CustomBarChart/Card';
 
 const schema = 'visualisation';
 
@@ -45,7 +53,12 @@ class TypeEditor extends Component {
   render = () => (
     <div id="new-visualisation-custom">
       <div style={{ maxHeight: '500px', padding: '0px', overflow: 'auto' }}>
-        {VISUALISATION_TYPES.map(this.renderIcon)}
+        <CustomBarChartCard
+          active={this.state.type === LEADERBOARD}
+          onClick={this.onClickType.bind(null, LEADERBOARD)} />
+        {
+          [XVSY, STATEMENTS, FREQUENCY, COUNTER, PIE].map(this.renderIcon)
+        }
       </div>
 
       { this.state.type &&
