@@ -223,6 +223,7 @@ export const HeaderItemComponent = ({
               label="Set value"
               checked={columnStructure.get('useConstant', true)}
               onChange={onUseConstantChange}
+              disabled={disabled}
             />
           }
           {!columnStructure.get('useConstant') && <select
@@ -250,7 +251,8 @@ export const HeaderItemComponent = ({
               type="text"
               className="form-control"
               onChange={onConstantChange}
-              value={columnStructure.get('constant', '')} />
+              value={columnStructure.get('constant', '')}
+              disabled={disabled} />
           }
         </div>
       }
