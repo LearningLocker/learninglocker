@@ -24,6 +24,7 @@ const createVisualisations = async (dispatch) => {
         description: 'How many statements have been stored in the last 7 days?',
         type: COUNTER,
       },
+      isExpanded: false,
     })),
     dispatch(addModel({
       schema: 'visualisation',
@@ -32,6 +33,7 @@ const createVisualisations = async (dispatch) => {
         type: FREQUENCY,
         previewPeriod: LAST_2_MONTHS,
       },
+      isExpanded: false,
     })),
     dispatch(addModel({
       schema: 'visualisation',
@@ -41,6 +43,7 @@ const createVisualisations = async (dispatch) => {
         previewPeriod: LAST_2_MONTHS,
         axesgroup: new Map({ optionKey: 'verb', searchString: 'Verb' }),
       },
+      isExpanded: false,
     })),
     dispatch(addModel({
       schema: 'visualisation',
@@ -50,6 +53,7 @@ const createVisualisations = async (dispatch) => {
         previewPeriod: LAST_2_MONTHS,
         axesgroup: new Map({ optionKey: 'activities', searchString: 'Activity' }),
       },
+      isExpanded: false,
     })),
     dispatch(addModel({
       schema: 'visualisation',
@@ -59,6 +63,7 @@ const createVisualisations = async (dispatch) => {
         previewPeriod: LAST_2_MONTHS,
         axesgroup: new Map({ optionKey: 'people', searchString: 'Person' }),
       },
+      isExpanded: false,
     })),
     dispatch(addModel({
       schema: 'visualisation',
@@ -67,6 +72,7 @@ const createVisualisations = async (dispatch) => {
         type: STATEMENTS,
         axesgroup: new Map({ optionKey: 'weekday', searchString: 'Day' }),
       },
+      isExpanded: false,
     })),
   ]);
 

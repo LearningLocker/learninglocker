@@ -1,0 +1,6 @@
+firstName,lastName,mbox
+firstA,lastA,nameA@example.com
+firstB,lastB,ameB@example.com
+firstC,,nameC@example.com
+,lastD,nameD@example.com
+firstA2,lastA2,nameA@example.com

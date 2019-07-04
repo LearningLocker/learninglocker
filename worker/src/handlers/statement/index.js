@@ -32,7 +32,7 @@ export default (
   handleResponse = defaultHandleResponse,
   statementHandler = defaultStatementHandler,
   statementHandlerEmpty,
-  statementHandlerProccessed
+  statementHandlerProcessed
 }
 ) => {
   const personaService = getPersonaService();
@@ -43,7 +43,7 @@ export default (
     queueName: STATEMENT_QUEUE,
     handler: statementHandler,
     onEmpty: statementHandlerEmpty,
-    onProccessed: statementHandlerProccessed
+    onProcessed: statementHandlerProcessed
   }, handleResponse(STATEMENT_QUEUE));
 
   Queue.subscribe({
