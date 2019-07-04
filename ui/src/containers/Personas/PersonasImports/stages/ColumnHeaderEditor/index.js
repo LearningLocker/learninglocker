@@ -11,7 +11,7 @@ export const ColumnHeaderEditor = ({
   <table className={styles.table}>
     <thead>
       <tr className={styles.tr}>
-        <th className={styles.th}>ID Names</th>
+        <th className={styles.th}>CSV Column Name</th>
         <th className={styles.th}>Input Fields</th>
       </tr>
     </thead>
