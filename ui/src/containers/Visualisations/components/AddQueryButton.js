@@ -22,4 +22,4 @@ AddQueryButton.propTypes = {
   onClick: PropTypes.func.isRequired,
 };
 
-export default AddQueryButton;
+export default React.memo(AddQueryButton);

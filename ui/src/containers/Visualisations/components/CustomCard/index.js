@@ -38,4 +38,4 @@ CustomCard.propTypes = {
   onClick: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles)(CustomCard);
+export default withStyles(styles)(React.memo(CustomCard));

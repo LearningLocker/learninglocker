@@ -22,4 +22,4 @@ Viewer.propTypes = {
   showSourceView: PropTypes.bool.isRequired,
 };
 
-export default Viewer;
+export default React.memo(Viewer);

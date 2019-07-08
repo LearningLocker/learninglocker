@@ -23,4 +23,4 @@ SourceViewForm.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-export default SourceViewForm;
+export default React.memo(SourceViewForm);

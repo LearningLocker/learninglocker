@@ -29,4 +29,4 @@ BarChartGroupingLimit.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-export default BarChartGroupingLimit;
+export default React.memo(BarChartGroupingLimit);

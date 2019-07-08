@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import { Tab } from 'react-toolbox/lib/tabs';
@@ -28,23 +28,87 @@ const Editor = ({
   updateModel,
   setInMetadata,
 }) => {
+  const id = model.get('_id');
   const [tabIndex, setTabIndex] = useState(0);
+
+  const onChangeDescription = useCallback((description) => {
+    updateModel({
+      schema: 'visualisation',
+      id,
+      path: 'description',
+      value: description,
+    });
+  }, [id]);
+
+  const onClickAddQueryButton = useCallback(() => {
+    updateModel({
+      schema: 'visualisation',
+      id,
+      path: 'filters',
+      value: model.get('filters').push(new Map()),
+    });
+  }, [id, model.get('filters').hashCode()]);
+
+  const onChangeStacked = useCallback((stacked) => {
+    updateModel({
+      schema: 'visualisation',
+      id,
+      path: 'stacked',
+      value: stacked,
+    });
+  }, [id]);
+
+  const onChangeSourceView = useCallback((checked) => {
+    updateModel({
+      schema: 'visualisation',
+      id,
+      path: 'sourceView',
+      value: checked,
+    });
+  }, [id]);
+
+  const onChangeBarChartGroupingLimit = useCallback((limit) => {
+    updateModel({
+      schema: 'visualisation',
+      id,
+      path: 'barChartGroupingLimit',
+      value: limit,
+    });
+
+    setInMetadata({
+      schema: 'visualisation',
+      id,
+      path: ['activePage'],
+      value: 0,
+    });
+  }, [id]);
+
+  const onChangeTimezone = useCallback((timezone) => {
+    updateModel({
+      schema: 'visualisation',
+      id,
+      path: 'timezone',
+      value: timezone,
+    });
+  }, [id]);
+
+  const onChangePreviewPeriod = useCallback((previewPeriod) => {
+    updateModel({
+      schema: 'visualisation',
+      id,
+      path: 'previewPeriod',
+      value: previewPeriod,
+    });
+  }, [id]);
 
   return (
     <div className="row">
       <div className="col-md-6 left-border">
         <div>
           <DescriptionForm
-            visualisationId={model.get('_id')}
+            visualisationId={id}
             description={model.get('description', '')}
-            onChange={(description) => {
-              updateModel({
-                schema: 'visualisation',
-                id: model.get('_id'),
-                path: 'description',
-                value: description,
-              });
-            }} />
+            onChange={onChangeDescription} />
 
           <Tabs index={tabIndex} onChange={setTabIndex}>
             <Tab key="axes" label="Axes">
@@ -56,27 +120,13 @@ const Editor = ({
             <Tab key="series" label="Series">
               {model.get('filters').count() < 5 && (
                 <AddQueryButton
-                  onClick={() => {
-                    updateModel({
-                      schema: 'visualisation',
-                      id: model.get('_id'),
-                      path: 'filters',
-                      value: model.get('filters').push(new Map()),
-                    });
-                  }} />
+                  onClick={onClickAddQueryButton} />
               )}
 
               <StackedSwitch
-                visualisationId={model.get('_id')}
+                visualisationId={id}
                 stacked={model.get('stacked', true)}
-                onChange={(stacked) => {
-                  updateModel({
-                    schema: 'visualisation',
-                    id: model.get('_id'),
-                    path: 'stacked',
-                    value: stacked,
-                  });
-                }} />
+                onChange={onChangeStacked} />
 
               <VisualiseFilterForm
                 model={model}
@@ -86,45 +136,17 @@ const Editor = ({
             <Tab key="options" label="Options">
               <SourceViewForm
                 sourceView={model.get('sourceView')}
-                onChange={(checked) => {
-                  updateModel({
-                    schema: 'visualisation',
-                    id: model.get('_id'),
-                    path: 'sourceView',
-                    value: checked,
-                  });
-                }} />
+                onChange={onChangeSourceView} />
 
               <BarChartGroupingLimitForm
                 barChartGroupingLimit={model.get('barChartGroupingLimit')}
-                onChange={(limit) => {
-                  updateModel({
-                    schema: 'visualisation',
-                    id: model.get('_id'),
-                    path: 'barChartGroupingLimit',
-                    value: limit,
-                  });
-
-                  setInMetadata({
-                    schema: 'visualisation',
-                    id: model.get('_id'),
-                    path: ['activePage'],
-                    value: 0,
-                  });
-                }} />
+                onChange={onChangeBarChartGroupingLimit} />
 
               <TimezoneForm
-                visualisationId={model.get('_id')}
+                visualisationId={id}
                 timezone={model.get('timezone', null)}
                 orgTimezone={orgTimezone}
-                onChange={(timezone) => {
-                  updateModel({
-                    schema: 'visualisation',
-                    id: model.get('_id'),
-                    path: 'timezone',
-                    value: timezone,
-                  });
-                }} />
+                onChange={onChangeTimezone} />
             </Tab>
           </Tabs>
         </div>
@@ -133,21 +155,14 @@ const Editor = ({
       <div className="col-md-6">
         <div className="form-group form-inline" style={{ textAlign: 'right' }}>
           <PreviewPeriodPicker
-            visualisationId={model.get('_id')}
+            visualisationId={id}
             previewPeriod={model.get('previewPeriod')}
-            onChange={(previewPeriod) => {
-              updateModel({
-                schema: 'visualisation',
-                id: model.get('_id'),
-                path: 'previewPeriod',
-                value: previewPeriod,
-              });
-            }} />
+            onChange={onChangePreviewPeriod} />
         </div>
 
         <div style={{ height: '400px', paddingTop: 5 }}>
           <Viewer
-            visualisationId={model.get('_id')}
+            visualisationId={id}
             showSourceView={model.get('sourceView')} />
         </div>
       </div>

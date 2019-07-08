@@ -34,4 +34,4 @@ DescriptionForm.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-export default DescriptionForm;
+export default React.memo(DescriptionForm);

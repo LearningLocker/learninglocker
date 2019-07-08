@@ -46,4 +46,4 @@ PreviewPeriodPicker.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-export default PreviewPeriodPicker;
+export default React.memo(PreviewPeriodPicker);

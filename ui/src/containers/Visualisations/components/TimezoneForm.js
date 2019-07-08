@@ -40,4 +40,4 @@ TimezoneForm.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-export default TimezoneForm;
+export default React.memo(TimezoneForm);

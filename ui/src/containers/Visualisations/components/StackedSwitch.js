@@ -34,4 +34,4 @@ StackedSwitch.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-export default StackedSwitch;
+export default React.memo(StackedSwitch);
