@@ -3,7 +3,9 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import passport from 'api/auth/passport';
+console.log('001', process.env.SERVICE_BUS_ENDPOINT);
 import HttpRoutes from 'api/routes/HttpRoutes';
+console.log('002', process.env.SERVICE_BUS_ENDPOINT);
 import logger from 'lib/logger';
 import { install } from 'source-map-support';
 
