@@ -2,12 +2,10 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import passport from 'api/auth/passport'; // eslint-disable-line
-console.log('001', process.env.SERVICE_BUS_ENDPOINT); // eslint-disable-line
-import HttpRoutes from 'api/routes/HttpRoutes'; // eslint-disable-line
-console.log('002', process.env.SERVICE_BUS_ENDPOINT); // eslint-disable-line
-import logger from 'lib/logger'; // eslint-disable-line
-import { install } from 'source-map-support'; // eslint-disable-line
+import passport from 'api/auth/passport';
+import HttpRoutes from 'api/routes/HttpRoutes';
+import logger from 'lib/logger';
+import { install } from 'source-map-support';
 
 install();
 
