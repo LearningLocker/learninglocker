@@ -15,11 +15,11 @@ import {
 import { map } from 'lodash';
 import {
   hasRelatedField,
-  getPossibleRelatedColumns,
   updateRelatedStructure,
   resetRelatedStructure,
   isColumnOrderable,
-  getPrimaryMaxPlusOne
+  getPrimaryMaxPlusOne,
+  getPossibleRelatedAndNothingColumns
 } from 'lib/services/importPersonas/personasImportHelpers';
 import Switch from 'ui/components/Material/Switch';
 
@@ -120,25 +120,23 @@ const headerItemHandlers = withHandlers({
     columnName,
     model,
     updateModel: doUpdateModel
-  }) => (event) => {
+  }) => inverse => (event) => {
     let newStructure = model
       .get('structure')
-      .setIn([columnName, 'useConstant'], event);
-    if (event === true) {
+      .setIn([columnName, 'useConstant'], inverse ? !event : event);
+    if (newStructure.getIn([columnName, 'useConstant']) === true) {
       // deselect any related columns
       newStructure = updateRelatedStructure({
         structure: newStructure,
         columnName,
         relatedColumn: false
       });
-
-      newStructure = newStructure.setIn(
-        [columnName, 'primary'],
-        getPrimaryMaxPlusOne({ structure: newStructure })
-      );
-    } else {
-      newStructure = newStructure.setIn([columnName, 'primary'], null);
     }
+
+    newStructure = newStructure.setIn(
+      [columnName, 'primary'],
+      getPrimaryMaxPlusOne({ structure: newStructure })
+    );
 
     doUpdateModel({
       schema,
@@ -174,6 +172,8 @@ export const HeaderItemComponent = ({
 }) => {
   const columnType = columnStructure.get('columnType');
 
+  const disabledAccountKey = columnTyp => columnTyp === COLUMN_ACCOUNT_KEY;
+
   return (
     <div>
       <h3>{columnName}</h3>
@@ -202,9 +202,11 @@ export const HeaderItemComponent = ({
           disabled={disabled} >
           <option key="" value="">Nothing</option>
           {
-            COLUMN_TYPES.map(type => (
-              <option key={type} value={type}>{COLUMN_TYPE_LABELS[type]}</option>
-            ))
+            COLUMN_TYPES
+              .filter(type => type !== COLUMN_ACCOUNT_KEY || columnType === COLUMN_ACCOUNT_KEY)
+              .map(type => (
+                <option key={type} value={type}>{COLUMN_TYPE_LABELS[type]}</option>
+              ))
           }
         </select>
       </div>
@@ -214,29 +216,37 @@ export const HeaderItemComponent = ({
           <label htmlFor={`${model.get('_id')}-${columnName}-relatedColumn`}>
             {(columnType === COLUMN_ACCOUNT_KEY
               ? 'Account name column'
-              : 'Account home page column'
+              : 'Account home page'
             )}
           </label>
 
           {(columnType === COLUMN_ACCOUNT_VALUE) &&
-            <Switch
-              label="Set value"
-              checked={columnStructure.get('useConstant', true)}
-              onChange={onUseConstantChange}
-              disabled={disabled}
-            />
+            <div>
+              <Switch
+                label="Select column"
+                checked={!columnStructure.get('useConstant', true)}
+                onChange={onUseConstantChange(true)}
+                disabled={disabled}
+              />
+              <Switch
+                label="Set value"
+                checked={columnStructure.get('useConstant', true)}
+                onChange={(onUseConstantChange(false))}
+                disabled={disabled}
+              />
+            </div>
           }
           {!columnStructure.get('useConstant') && <select
             id={`${model.get('_id')}-${columnName}-relatedColumn`}
             className="form-control"
             onChange={onRelatedColumnChange}
             value={columnStructure.get('relatedColumn', '')}
-            disabled={disabled} >
+            disabled={disabled || disabledAccountKey(columnType)} >
 
             <option disabled />
             {
               map(
-                getPossibleRelatedColumns({
+                getPossibleRelatedAndNothingColumns({
                   columnType: columnStructure.get('columnType'),
                   structure: model.get('structure').toJS(),
                 }),
