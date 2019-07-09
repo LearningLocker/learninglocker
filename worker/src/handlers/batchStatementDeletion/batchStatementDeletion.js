@@ -59,7 +59,7 @@ export default async ({
   });
 
   if (!batchDelete) {
-    // Another worker is proccessing this job, or it has finished
+    // Another worker is processing this job, or it has finished
     jobDone();
     return;
   }
