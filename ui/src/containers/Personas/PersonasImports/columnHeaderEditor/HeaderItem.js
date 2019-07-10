@@ -129,14 +129,16 @@ const headerItemHandlers = withHandlers({
       newStructure = updateRelatedStructure({
         structure: newStructure,
         columnName,
-        relatedColumn: false
+        relatedColumn: ''
       });
     }
 
-    newStructure = newStructure.setIn(
-      [columnName, 'primary'],
-      getPrimaryMaxPlusOne({ structure: newStructure })
-    );
+    if (!newStructure.hasIn([columnName, 'primary'])) {
+      newStructure = newStructure.setIn(
+        [columnName, 'primary'],
+        getPrimaryMaxPlusOne({ structure: newStructure })
+      );
+    }
 
     doUpdateModel({
       schema,
