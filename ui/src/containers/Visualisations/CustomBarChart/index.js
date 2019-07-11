@@ -22,4 +22,4 @@ CustomBarChart.propTypes = {
   orgTimezone: PropTypes.string.isRequired,
 };
 
-export default CustomBarChard;
+export default CustomBarChart;
