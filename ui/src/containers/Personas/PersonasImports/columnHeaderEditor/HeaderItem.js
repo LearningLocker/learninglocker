@@ -226,19 +226,19 @@ export const HeaderItemComponent = ({
             <div>
               <Switch
                 label="Select column"
-                checked={!columnStructure.get('useConstant', true)}
+                checked={!columnStructure.get('useConstant', false)}
                 onChange={onUseConstantChange(true)}
                 disabled={disabled}
               />
               <Switch
                 label="Set value"
-                checked={columnStructure.get('useConstant', true)}
+                checked={columnStructure.get('useConstant', false)}
                 onChange={(onUseConstantChange(false))}
                 disabled={disabled}
               />
             </div>
           }
-          {!columnStructure.get('useConstant') && <select
+          {!columnStructure.get('useConstant', false) && <select
             id={`${model.get('_id')}-${columnName}-relatedColumn`}
             className="form-control"
             onChange={onRelatedColumnChange}
