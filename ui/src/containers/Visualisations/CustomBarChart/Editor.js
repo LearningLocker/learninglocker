@@ -5,15 +5,13 @@ import { Tab } from 'react-toolbox/lib/tabs';
 import Tabs from 'ui/components/Material/Tabs';
 import AxesEditor from 'ui/containers/VisualiseForm/StatementsForm/AxesEditor';
 import VisualiseFilterForm from 'ui/containers/VisualiseFilterForm';
-import {
-  AddQueryButton,
-  BarChartGroupingLimitForm,
-  DescriptionForm,
-  PreviewPeriodPicker,
-  SourceViewForm,
-  StackedSwitch,
-  TimezoneForm,
-} from '../components';
+import AddQueryButton from '../components/AddQueryButton';
+import BarChartGroupingLimitForm from '../components/BarChartGroupingLimitForm';
+import DescriptionForm from '../components/DescriptionForm';
+import PreviewPeriodPicker from '../components/PreviewPeriodPicker';
+import SourceViewForm from '../components/SourceViewForm';
+import StackedSwitch from '../components/StackedSwitch';
+import TimezoneForm from '../components/TimezoneForm';
 import Viewer from './Viewer';
 
 /**

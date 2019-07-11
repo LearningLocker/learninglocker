@@ -2,9 +2,7 @@ import React from 'react';
 import {
   LEADERBOARD,
 } from 'ui/utils/constants';
-import {
-  CustomBarChart,
-} from 'ui/containers/Visualisations';
+import CustomBarChart from 'ui/containers/Visualisations/CustomBarChart';
 import StatementsForm from './StatementsForm';
 import NewVisualisation from './NewVisualisation';
 
