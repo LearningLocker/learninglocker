@@ -13,7 +13,7 @@ import PersonasImportForm from './PersonasImportForm';
 const schema = 'personasImport';
 
 const deleteButtonWithDisabled = models => ({ id, ...props }) => {
-  const disabled = models.get(id).get('importStage') === STAGE_PROCESSING;
+  const disabled = models.getIn([id, 'importStage']) === STAGE_PROCESSING;
 
   return (<DeleteButton
     id={id}

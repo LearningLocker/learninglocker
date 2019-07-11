@@ -62,6 +62,8 @@ import personaAttributeRESTHandler from 'api/routes/personas/personaAttributeRES
 import UserOrganisationsRouter from 'api/routes/userOrganisations/router';
 import UserOrganisationSettingsRouter from 'api/routes/userOrganisationSettings/router';
 import BatchDelete from 'lib/models/batchDelete';
+import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
+import { updateStatementCountsInOrg } from 'lib/services/lrs';
 import * as routes from 'lib/constants/routes';
 
 const router = new express.Router();
@@ -335,6 +337,14 @@ restify.serve(router, Statement, {
     return;
   },
   preUpdate: (req, res) => res.sendStatus(405),
+  postDelete: (req, _, next) => {
+    // Update LRS.statementCount
+    const authInfo = getAuthFromRequest(req);
+    const organisationId = getOrgFromAuthInfo(authInfo);
+    updateStatementCountsInOrg(organisationId)
+      .then(() => next())
+      .catch(err => next(err));
+  },
 });
 restify.serve(router, StatementForwarding);
 restify.serve(router, QueryBuilderCache);

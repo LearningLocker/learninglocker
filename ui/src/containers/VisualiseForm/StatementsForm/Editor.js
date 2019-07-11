@@ -48,7 +48,7 @@ class Editor extends Component {
     const paths = ['filters', 'axesxQuery', 'axesyQuery'];
 
     paths.forEach((path) => {
-      const query = this.props.model.get(path, new Map());
+      const query = this.props.model.get(path) || new Map();
       const timezoneUpdated = update$dteTimezone(query, timezone);
 
       // Update visualisation.{path} when timezone offset in the filter query is changed
