@@ -10,7 +10,7 @@ import Editor from './Editor';
  * @param {immutable.Map} props.model - visualisation model
  * @param {string} props.orgTimezone
  */
-const CustomBarChard = compose(
+const CustomBarChart = compose(
   connect(
     () => ({}),
     { updateModel, setInMetadata },
