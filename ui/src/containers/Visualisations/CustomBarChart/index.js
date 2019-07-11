@@ -17,7 +17,7 @@ const CustomBarChard = compose(
   ),
 )(Editor);
 
-CustomBarChard.propTypes = {
+CustomBarChart.propTypes = {
   model: PropTypes.instanceOf(Map).isRequired,
   orgTimezone: PropTypes.string.isRequired,
 };
