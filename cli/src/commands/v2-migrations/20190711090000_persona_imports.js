@@ -1,4 +1,3 @@
-import logger from 'lib/logger';
 import { map as bmap } from 'bluebird';
 import { filter, get, forEach, set, toPairs, unset, cloneDeep } from 'lodash';
 import PersonasImports from 'lib/models/personasImport';
