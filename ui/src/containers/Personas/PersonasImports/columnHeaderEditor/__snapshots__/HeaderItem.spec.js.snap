@@ -61,12 +61,6 @@ exports[`HeaderItem should render 1`] = `
         Identifier open id
       </option>
       <option
-        key="COLUMN_ACCOUNT_KEY"
-        value="COLUMN_ACCOUNT_KEY"
-      >
-        Account home page
-      </option>
-      <option
         key="COLUMN_ACCOUNT_VALUE"
         value="COLUMN_ACCOUNT_VALUE"
       >
@@ -142,12 +136,6 @@ exports[`HeaderItem should render with orderable and related column 1`] = `
         value="COLUMN_OPENID"
       >
         Identifier open id
-      </option>
-      <option
-        key="COLUMN_ACCOUNT_KEY"
-        value="COLUMN_ACCOUNT_KEY"
-      >
-        Account home page
       </option>
       <option
         key="COLUMN_ACCOUNT_VALUE"
@@ -226,12 +214,6 @@ exports[`HeaderItem should render with orderable when disabled 1`] = `
         value="COLUMN_OPENID"
       >
         Identifier open id
-      </option>
-      <option
-        key="COLUMN_ACCOUNT_KEY"
-        value="COLUMN_ACCOUNT_KEY"
-      >
-        Account home page
       </option>
       <option
         key="COLUMN_ACCOUNT_VALUE"
