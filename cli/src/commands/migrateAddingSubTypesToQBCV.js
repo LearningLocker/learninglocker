@@ -22,11 +22,16 @@ export const removeSubTypesFromQBCV = async () => {
  * @return {string[]} subTypes
  */
 const buildSubTypes = (qbcv) => {
+  const path = _.get(qbcv, ['path']);
+  const isVerb = ['statement.verb', 'statement.objectverb'].includes(path);
+  if (isVerb) {
+    return [SUBTYPE_VERB];
+  }
+
   const objectType = _.get(qbcv, ['value', 'objectType']);
 
   switch (objectType) {
     case 'Agent': return [SUBTYPE_AGENT];
-    case 'Verb': return [SUBTYPE_VERB];
     case 'Activity':
       const definitionType = _.get(qbcv, ['value', 'definition', 'type']);
       if (definitionType) {
