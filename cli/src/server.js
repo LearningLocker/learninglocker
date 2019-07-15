@@ -22,6 +22,7 @@ import migrateVisualiseAxes from 'cli/commands/migrateVisualiseAxes';
 import migrateQueryBuilderCachesPath from 'cli/commands/migrateQueryBuilderCachesPath';
 import migrateToInQueries from 'cli/commands/migrateToInQueries';
 import migrateFromInQueries from 'cli/commands/migrateFromInQueries';
+import migrateAddingSubTypesToQBCV from 'cli/commands/migrateAddingSubTypesToQBCV';
 
 import testStatementForwarding from 'cli/commands/testStatementForwarding';
 import testQueryBuilderCache from 'cli/commands/testQueryBuilderCache';
@@ -120,6 +121,9 @@ program.command('migrateToInQueries').action(runThenExit(migrateToInQueries));
 
 program.command('migrateFromInQueries').action(runThenExit(migrateFromInQueries));
 // node cli/dist/server migrateFromInQueries
+
+program.command('migrateAddingSubTypesToQBCV').action(runThenExit(migrateAddingSubTypesToQBCV));
+// node cli/dist/server migrateAddingSubTypesToQBCV
 
 program
   .command('testStatementForwarding [statementId]')
