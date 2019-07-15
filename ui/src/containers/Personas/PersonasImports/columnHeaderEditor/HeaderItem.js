@@ -228,14 +228,12 @@ export const HeaderItemComponent = ({
                 label="Select column"
                 checked={!columnStructure.get('useConstant', false)}
                 onChange={onUseConstantChange(true)}
-                disabled={disabled}
-              />
+                disabled={disabled} />
               <Switch
                 label="Set value"
                 checked={columnStructure.get('useConstant', false)}
                 onChange={(onUseConstantChange(false))}
-                disabled={disabled}
-              />
+                disabled={disabled} />
             </div>
           }
           {!columnStructure.get('useConstant', false) && <select

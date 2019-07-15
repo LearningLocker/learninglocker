@@ -13,6 +13,7 @@ import {
   PIE,
 } from 'ui/utils/constants';
 import { default as CustomBarChartCard } from 'ui/containers/Visualisations/CustomBarChart/Card';
+import { default as CustomColumnChartCard } from 'ui/containers/Visualisations/CustomColumnChart/Card';
 
 const schema = 'visualisation';
 
@@ -61,8 +62,7 @@ class TypeEditor extends Component {
           active={this.state.type === XVSY}
           onClick={this.onClickTypeXVSY} />
 
-        <VisualiseIcon
-          type={STATEMENTS}
+        <CustomColumnChartCard
           active={this.state.type === STATEMENTS}
           onClick={this.onClickTypeSTATEMENTS} />
 
