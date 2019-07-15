@@ -1,36 +1,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
-import { createSelector } from 'reselect';
 import { connect } from 'react-redux';
 import { updateModel } from 'ui/redux/modules/models';
 import VisualiseResults from 'ui/containers/VisualiseResults';
 import SourceResults from 'ui/containers/VisualiseResults/SourceResults';
-import { isContextActivity } from 'ui/utils/visualisations';
-import {
-  getMetadataSelector,
-  setInMetadata
-} from 'ui/redux/modules/metadata';
-
 import Editor from './Editor';
 import PreviewPeriodPicker from './PreviewPeriodPicker';
-
-
-export const toggleSourceSelector = ({ id }) => createSelector(
-  [getMetadataSelector({ schema: 'visualisation', id })],
-  metadata =>
-    metadata.get('source')
-);
 
 class StatementsForm extends Component {
   static propTypes = {
     model: PropTypes.instanceOf(Map),
     orgTimezone: PropTypes.string.isRequired,
-    isLoading: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
-    filter: PropTypes.instanceOf(Map), // eslint-disable-line react/no-unused-prop-types
-    hasMore: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
     updateModel: PropTypes.func,
-    exportVisualisation: PropTypes.func
   }
 
   static defaultProps = {
@@ -38,8 +20,7 @@ class StatementsForm extends Component {
   }
 
   shouldComponentUpdate = nextProps => !(
-    this.props.model.equals(nextProps.model) &&
-      (this.props.source === nextProps.source)
+    this.props.model.equals(nextProps.model)
   )
 
   onChangePreviewPeriod = previewPeriod => this.props.updateModel({
@@ -54,8 +35,7 @@ class StatementsForm extends Component {
       <div className="col-md-6 left-border">
         <Editor
           model={this.props.model}
-          orgTimezone={this.props.orgTimezone}
-          exportVisualisation={this.props.exportVisualisation} />
+          orgTimezone={this.props.orgTimezone} />
       </div>
 
       <div className="col-md-6">
@@ -78,18 +58,6 @@ class StatementsForm extends Component {
 }
 
 export default connect(
-  (state, ownProps) => {
-    const searchString = ownProps.model.getIn(['axesgroup', 'searchString'], '');
-    const filter = isContextActivity(searchString) ?
-      new Map({ path: new Map({ $eq: `${searchString}.definition.type` }) }) :
-      new Map({});
-
-    return {
-      hasMore: ownProps.hasMore,
-      isLoading: ownProps.isLoading,
-      source: toggleSourceSelector({ id: ownProps.model.get('_id') })(state),
-      filter,
-    };
-  },
-  { updateModel, setInMetadata }
+  () => {},
+  { updateModel }
 )(StatementsForm);
