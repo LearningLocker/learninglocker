@@ -1,4 +1,5 @@
 import React from 'react';
+import uuid from 'uuid';
 import { compose } from 'recompose';
 import DebounceInput from 'react-debounce-input';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
@@ -26,6 +27,7 @@ const AccountHomePageForm = ({
   onUseConstantChange,
   onConstantChange,
 }) => {
+  const formId = uuid.v4();
   const options = getAccountHomePageColumns(structure).map(column => (
     <option key={column} value={column}>
       {column}
@@ -34,24 +36,26 @@ const AccountHomePageForm = ({
 
   return (
     <div className={`form-group ${styles.inputField}`}>
-      <label>
+      <label htmlFor={formId}>
         Account home page
       </label>
 
-      <Switch
-        label="Select column"
-        checked={!useConstant}
-        onChange={checked => onUseConstantChange(!checked)}
-        disabled={disabled} />
+      <form id={formId}>
+        <Switch
+          label="Select column"
+          checked={!useConstant}
+          onChange={checked => onUseConstantChange(!checked)}
+          disabled={disabled} />
 
-      <Switch
-        label="Set value"
-        checked={useConstant}
-        onChange={checked => onUseConstantChange(checked)}
-        disabled={disabled} />
+        <Switch
+          label="Set value"
+          checked={useConstant}
+          onChange={checked => onUseConstantChange(checked)}
+          disabled={disabled} />
 
-      {!useConstant && (
+        {!useConstant && (
         <select
+          title="Related Column"
           className="form-control"
           onChange={onRelatedColumnChange}
           value={relatedColumn}
@@ -61,7 +65,7 @@ const AccountHomePageForm = ({
         </select>
       )}
 
-      {useConstant && (
+        {useConstant && (
         <DebounceInput
           className="form-control"
           debounceTimeout={377}
@@ -70,6 +74,8 @@ const AccountHomePageForm = ({
           disabled={disabled}
           placeholder="https://example.com" />
       )}
+
+      </form>
     </div>
   );
 };
