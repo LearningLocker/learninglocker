@@ -20,7 +20,8 @@ import {
   GOOGLE_AUTH_OPTIONS,
   DEFAULT_PASSPORT_OPTIONS,
   RESTIFY_DEFAULTS,
-  setNoCacheHeaders
+  setNoCacheHeaders,
+  checkOrg,
 } from 'lib/constants/auth';
 import { MANAGER_SELECT } from 'lib/services/auth/selects/models/user.js';
 
@@ -285,6 +286,14 @@ restify.serve(router, Download);
 restify.serve(router, Query);
 restify.serve(router, ImportCsv);
 restify.serve(router, User, {
+  preCreate: (req, res, next) => {
+    const authInfo = getAuthFromRequest(req);
+    const scopes = getScopesFromAuthInfo(authInfo);
+    if (!scopes.includes(SITE_ADMIN)) {
+      req.body = pick(req.body, ['name', 'email', 'isExpanded', 'organisations']);
+    }
+    checkOrg(req, res, next);
+  },
   preUpdate: (req, _, next) => {
     const authInfo = getAuthFromRequest(req);
     const scopes = getScopesFromAuthInfo(authInfo);
