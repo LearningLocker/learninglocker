@@ -1,13 +1,14 @@
 import React from 'react';
 import { compose } from 'recompose';
-import NoData from 'ui/components/Graphs/NoData';
 import { Map, OrderedMap } from 'immutable';
 import isString from 'lodash/isString';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { XVSY } from 'lib/constants/visualise';
+import NoData from 'ui/components/Graphs/NoData';
 import { withStatementsVisualisation } from 'ui/utils/hocs';
 import { getAxesString } from 'ui/utils/defaultTitles';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { displayVerb, displayActivity } from 'ui/utils/xapi';
 import styles from './styles.css';
-import { displayVerb, displayActivity } from '../../utils/xapi';
 
 const moreThanOneSeries = tData => tData.first() !== undefined && tData.first().size > 1;
 
@@ -69,14 +70,14 @@ const formatKeyToFriendlyString = (key) => {
 };
 
 const getAxisLabel = (axis, visualisation, type) => {
-  if (type !== 'XVSY') {
+  if (type !== XVSY) {
     return getAxesString(axis, visualisation, type, false);
   }
   return visualisation.getIn(['axesgroup', 'searchString'], 'No value');
 };
 
 const createSelectIfXVSY = (index, visualisation, type, axis) => {
-  if (type !== 'XVSY') {
+  if (type !== XVSY) {
     return getAxisLabel(axis, visualisation, type);
   }
   if (index === 0) {

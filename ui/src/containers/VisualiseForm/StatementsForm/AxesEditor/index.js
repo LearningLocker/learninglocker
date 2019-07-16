@@ -2,24 +2,19 @@ import React from 'react';
 import {
   XVSY,
   STATEMENTS,
-  POPULARACTIVITIES,
-  LEADERBOARD,
   FREQUENCY,
   COUNTER,
   PIE,
-} from 'ui/utils/constants';
-import BarAxesEditor from './BarAxesEditor';
+} from 'lib/constants/visualise';
 import ColumnAxesEditor from './ColumnAxesEditor';
 import LineAxesEditor from './LineAxesEditor';
 import ScatterAxesEditor from './ScatterAxesEditor';
 import CounterAxesEditor from './CounterAxesEditor';
 import PieAxesEditor from './PieAxesEditor';
 
+// [Viz Refactor] TODO: Remove This component and put each OooooAxesEditor directly into Visualisation/.../Editor
 const AxesEditor = ({ model, orgTimezone }) => {
   switch (model.get('type')) {
-    case LEADERBOARD:
-    case POPULARACTIVITIES:
-      return <BarAxesEditor model={model} />;
     case XVSY: return <ScatterAxesEditor model={model} orgTimezone={orgTimezone} />;
     case STATEMENTS: return <ColumnAxesEditor model={model} />;
     case FREQUENCY: return <LineAxesEditor model={model} />;

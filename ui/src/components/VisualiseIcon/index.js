@@ -1,121 +1,138 @@
 /* eslint-disable react/jsx-indent */
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import classNames from 'classnames';
-import styles from './visualiseicon.css';
 import {
   LEADERBOARD,
-  PLATFORMS,
-  QUESTIONANALYSIS,
   XVSY,
-  SESSIONS,
   STATEMENTS,
   FREQUENCY,
   COUNTER,
   PIE,
-  TABLE
-} from '../../utils/constants';
+  TEMPLATE_ACTIVITY_OVER_TIME,
+  TEMPLATE_LAST_7_DAYS_STATEMENTS,
+  TEMPLATE_MOST_ACTIVE_PEOPLE,
+  TEMPLATE_MOST_POPULAR_ACTIVITIES,
+  TEMPLATE_MOST_POPULAR_VERBS,
+  TEMPLATE_WEEKDAYS_ACTIVITY,
+} from 'lib/constants/visualise';
 import {
   COUNTER_IMAGE,
   FREQUENCY_IMAGE,
   LEADERBOARD_IMAGE,
   PIE_IMAGE,
-  SESSIONS_IMAGE,
   STATEMENTS_IMAGE,
   TABLE_IMAGE,
   XVSY_IMAGE,
 } from './assets';
+import styles from './style.css';
 
-const PLATFORMS_IMAGE = SESSIONS_IMAGE;
-const QUESTIONANALYSIS_IMAGE = SESSIONS_IMAGE;
+/**
+ * @param {string} type
+ * @returns {string}
+ */
+const getTitle = (type) => {
+  switch (type) {
+    case LEADERBOARD: return 'Bar';
+    case XVSY: return 'Correlation';
+    case STATEMENTS: return 'Column';
+    case FREQUENCY: return 'Line';
+    case COUNTER: return 'Counter';
+    case PIE: return 'Pie';
+    default: return '';
+  }
+};
 
-class VisualiseIcon extends Component {
-  static propTypes = {
-    type: PropTypes.string,
-    active: PropTypes.bool,
-    onClick: PropTypes.func,
-    isSmall: PropTypes.bool,
+/**
+ * @param {string} type
+ * @param {boolean} sourceView
+ * @returns {string}
+ */
+const getImageSrc = (type, sourceView) => {
+  if (sourceView) {
+    return TABLE_IMAGE;
+  }
+  switch (type) {
+    case LEADERBOARD:
+    case TEMPLATE_MOST_ACTIVE_PEOPLE:
+    case TEMPLATE_MOST_POPULAR_ACTIVITIES:
+    case TEMPLATE_MOST_POPULAR_VERBS:
+      return LEADERBOARD_IMAGE;
+    case XVSY:
+      return XVSY_IMAGE;
+    case STATEMENTS:
+    case TEMPLATE_WEEKDAYS_ACTIVITY:
+      return STATEMENTS_IMAGE;
+    case FREQUENCY:
+    case TEMPLATE_ACTIVITY_OVER_TIME:
+      return FREQUENCY_IMAGE;
+    case COUNTER:
+    case TEMPLATE_LAST_7_DAYS_STATEMENTS:
+      return COUNTER_IMAGE;
+    case PIE:
+      return PIE_IMAGE;
+    default:
+      return '';
+  }
+};
+
+const VisualiseIcon = ({
+  type,
+  sourceView,
+  isSmall = true, // // [Viz Refactor] TODO: Remove this property
+}) => {
+  const src = getImageSrc(type, sourceView);
+  if (src === '') {
+    return null;
   }
 
-  static defaultProps = {
-    active: false,
-    onClick: () => null,
-    isSmall: false,
-  }
+  const classes = classNames({
+    [styles.visualisationSmall]: isSmall,
+  });
 
-  getTitle = (type) => {
-    switch (type) {
-      case LEADERBOARD: return 'Bar';
-      case XVSY: return 'Correlation';
-      case STATEMENTS: return 'Column';
-      case FREQUENCY: return 'Line';
-      case COUNTER: return 'Counter';
-      case PIE: return 'Pie';
-      case SESSIONS: return 'Sessions';
-      case PLATFORMS: return 'Platforms';
-      case QUESTIONANALYSIS: return 'Question analysis';
-      default: return '';
-    }
-  }
+  return (
+    <img
+      className={classes}
+      src={src}
+      alt={getTitle(type)} />
+  );
+};
 
-  getIcon = (type, sourceView) => {
-    if (sourceView) {
-      return TABLE_IMAGE;
-    }
-    switch (type) {
-      case LEADERBOARD: return LEADERBOARD_IMAGE;
-      case XVSY: return XVSY_IMAGE;
-      case STATEMENTS: return STATEMENTS_IMAGE;
-      case FREQUENCY: return FREQUENCY_IMAGE;
-      case COUNTER: return COUNTER_IMAGE;
-      case PIE: return PIE_IMAGE;
-      case SESSIONS: return SESSIONS_IMAGE;
-      case PLATFORMS: return PLATFORMS_IMAGE;
-      case TABLE: return TABLE_IMAGE;
-      case QUESTIONANALYSIS: return QUESTIONANALYSIS_IMAGE;
-      default: return '';
-    }
-  }
+VisualiseIcon.propTypes = {
+  sourceView: PropTypes.bool.isRequired,
+  type: PropTypes.string,
+  isSmall: PropTypes.bool,
+};
 
-  renderIcon = ({ className } = {}) => {
-    const { type, sourceView } = this.props;
-    return (
-      <img
-        className={styles[className]}
-        src={this.getIcon(type, sourceView)}
-        alt={this.getTitle(type)} />
-    );
-  }
+export default withStyles(styles)(React.memo(VisualiseIcon));
 
-  // return type !== 'undefined' ? (
-  //   <img
-  //     className={styles[className]}
-  //     src={this.getIcon(type)}
-  //     alt={this.getTitle(type)} />
-  // ) : <img
-  //   className={styles.visualisationSmall}
-  //   src={this.getIcon(SESSIONS)}
-  //   alt={this.getTitle(SESSIONS)} />;
+// [Viz Refactor] TODO: Remove VisualiseIconWithTitle after every types are refactored in TypeEditor
+const VisualiseIconWithTitle = ({
+  type,
+  active,
+  onClick,
+}) => {
+  const classes = classNames({
+    [styles.visualisationIcon]: true,
+    [styles.active]: active,
+  });
 
-  render = () => {
-    const { type, active, onClick, isSmall, className } = this.props;
-    const classes = classNames({
-      [styles['visualisation-icon']]: true,
-      [styles.active]: active
-    });
+  return (
+    <div className={classes} onClick={onClick} >
+      <VisualiseIcon
+        type={type}
+        sourceView={false}
+        isSmall={false} />
+      <h5>{getTitle(type)}</h5>
+    </div>
+  );
+};
 
-    return (
-      isSmall
-      ? this.renderIcon({ className })
-      : (
-        <div className={classes} onClick={onClick} >
-          { this.renderIcon() }
-          <h5>{this.getTitle(type)}</h5>
-        </div>
-      )
-    );
-  }
-}
+VisualiseIconWithTitle.propTypes = {
+  type: PropTypes.string.isRequired,
+  active: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
+};
 
-export default withStyles(styles)(VisualiseIcon);
+export const StyledVisualiseIconWithTitle = withStyles(styles)(VisualiseIconWithTitle);

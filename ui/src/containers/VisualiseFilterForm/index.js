@@ -1,19 +1,24 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { List, Map, fromJS } from 'immutable';
-import { updateModel } from 'ui/redux/modules/models';
 import { connect } from 'react-redux';
-import TabbedQueriesBuilder from 'ui/components/TabbedQueriesBuilder';
-
 import {
   XVSY,
   STATEMENTS,
-  POPULARACTIVITIES,
   LEADERBOARD,
   FREQUENCY,
-  COUNTER
-} from '../../utils/constants';
+  COUNTER,
+  TEMPLATE_ACTIVITY_OVER_TIME,
+  TEMPLATE_LAST_7_DAYS_STATEMENTS,
+  TEMPLATE_MOST_ACTIVE_PEOPLE,
+  TEMPLATE_MOST_POPULAR_ACTIVITIES,
+  TEMPLATE_MOST_POPULAR_VERBS,
+  TEMPLATE_WEEKDAYS_ACTIVITY,
+} from 'lib/constants/visualise';
+import { updateModel } from 'ui/redux/modules/models';
+import TabbedQueriesBuilder from 'ui/components/TabbedQueriesBuilder';
 
+// [Viz Refactor] TODO: Remove this component
 class VisualiseFilterForm extends Component {
   static propTypes = {
     model: PropTypes.instanceOf(Map), // visualisation
@@ -118,10 +123,7 @@ class VisualiseFilterForm extends Component {
     this.renderTabbedQueryBuilder(false, { verbs: { expanded: true } });
 
   renderCounter = () =>
-  this.renderTabbedQueryBuilder(false, { verbs: { expanded: true } });
-
-  renderPopularActivities = () =>
-    this.renderTabbedQueryBuilder(false, { objects: { expanded: true } });
+    this.renderTabbedQueryBuilder(false, { verbs: { expanded: true } });
 
   renderXvsY = () => this.renderTabbedQueryBuilder();
 
@@ -138,14 +140,18 @@ class VisualiseFilterForm extends Component {
       case XVSY:
         return this.renderXvsY();
       case FREQUENCY:
+      case TEMPLATE_ACTIVITY_OVER_TIME:
         return this.renderFrequency();
       case STATEMENTS:
+      case TEMPLATE_WEEKDAYS_ACTIVITY:
         return this.renderStatements(queries);
       case LEADERBOARD:
+      case TEMPLATE_MOST_ACTIVE_PEOPLE:
+      case TEMPLATE_MOST_POPULAR_ACTIVITIES:
+      case TEMPLATE_MOST_POPULAR_VERBS:
         return this.renderLeaderboard(queries);
-      case POPULARACTIVITIES:
-        return this.renderPopularActivities();
       case COUNTER:
+      case TEMPLATE_LAST_7_DAYS_STATEMENTS:
         return this.renderCounter();
       default:
         return this.renderDefault(queries);

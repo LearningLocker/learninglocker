@@ -1,19 +1,24 @@
 import { Map, fromJS } from 'immutable';
 import { memoize } from 'lodash';
-import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
-import { periodToDate } from 'ui/utils/dates';
-import aggregateChart from 'ui/utils/visualisations/aggregateChart';
-import aggregateCounter from 'ui/utils/visualisations/aggregateCounter';
-import aggregateXvsY from 'ui/utils/visualisations/aggregateXvsY';
 import {
-  POPULARACTIVITIES,
   LEADERBOARD,
   XVSY,
   STATEMENTS,
   FREQUENCY,
   COUNTER,
-  PIE
-} from 'ui/utils/constants';
+  PIE,
+  TEMPLATE_ACTIVITY_OVER_TIME,
+  TEMPLATE_LAST_7_DAYS_STATEMENTS,
+  TEMPLATE_MOST_ACTIVE_PEOPLE,
+  TEMPLATE_MOST_POPULAR_ACTIVITIES,
+  TEMPLATE_MOST_POPULAR_VERBS,
+  TEMPLATE_WEEKDAYS_ACTIVITY,
+} from 'lib/constants/visualise';
+import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
+import { periodToDate } from 'ui/utils/dates';
+import aggregateChart from 'ui/utils/visualisations/aggregateChart';
+import aggregateCounter from 'ui/utils/visualisations/aggregateCounter';
+import aggregateXvsY from 'ui/utils/visualisations/aggregateXvsY';
 
 /**
  * build pipeline from query
@@ -47,15 +52,20 @@ export default memoize((args = new Map()) => {
   const axes = args.get('axes');
 
   switch (type) {
-    case POPULARACTIVITIES:
     case LEADERBOARD:
     case PIE:
     case STATEMENTS:
     case FREQUENCY:
+    case TEMPLATE_ACTIVITY_OVER_TIME:
+    case TEMPLATE_MOST_ACTIVE_PEOPLE:
+    case TEMPLATE_MOST_POPULAR_ACTIVITIES:
+    case TEMPLATE_MOST_POPULAR_VERBS:
+    case TEMPLATE_WEEKDAYS_ACTIVITY:
       return aggregateChart(preReqs, axes, timezone);
     case XVSY:
       return aggregateXvsY(preReqs, axes, timezone);
     case COUNTER:
+    case TEMPLATE_LAST_7_DAYS_STATEMENTS:
       return aggregateCounter(preReqs, axes, timezone);
     default:
       return query;
