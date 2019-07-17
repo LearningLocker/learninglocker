@@ -6,7 +6,6 @@ import Tabs from 'ui/components/Material/Tabs';
 import AxesEditor from 'ui/containers/VisualiseForm/StatementsForm/AxesEditor';
 import VisualiseFilterForm from 'ui/containers/VisualiseFilterForm';
 import AddQueryButton from '../components/AddQueryButton';
-import BarChartGroupingLimitForm from '../components/BarChartGroupingLimitForm';
 import DescriptionForm from '../components/DescriptionForm';
 import PreviewPeriodPicker from '../components/PreviewPeriodPicker';
 import SourceViewForm from '../components/SourceViewForm';
@@ -18,13 +17,11 @@ import Viewer from './Viewer';
  * @param {immutable.Map} props.model - visualisation model
  * @param {string} props.orgTimezone
  * @param {(args: object) => void} props.updateModel
- * @param {(args: object) => void} props.setInMetadata
  */
 const Editor = ({
   model,
   orgTimezone,
   updateModel,
-  setInMetadata,
 }) => {
   const id = model.get('_id');
   const [tabIndex, setTabIndex] = useState(0);
@@ -62,22 +59,6 @@ const Editor = ({
       id,
       path: 'sourceView',
       value: checked,
-    });
-  }, [id]);
-
-  const onChangeBarChartGroupingLimit = useCallback((limit) => {
-    updateModel({
-      schema: 'visualisation',
-      id,
-      path: 'barChartGroupingLimit',
-      value: limit,
-    });
-
-    setInMetadata({
-      schema: 'visualisation',
-      id,
-      path: ['activePage'],
-      value: 0,
     });
   }, [id]);
 
@@ -136,10 +117,6 @@ const Editor = ({
                 sourceView={model.get('sourceView')}
                 onChange={onChangeSourceView} />
 
-              <BarChartGroupingLimitForm
-                barChartGroupingLimit={model.get('barChartGroupingLimit')}
-                onChange={onChangeBarChartGroupingLimit} />
-
               <TimezoneForm
                 visualisationId={id}
                 timezone={model.get('timezone', null)}
@@ -172,7 +149,6 @@ Editor.propTypes = {
   model: PropTypes.instanceOf(Map).isRequired,
   orgTimezone: PropTypes.string.isRequired,
   updateModel: PropTypes.func.isRequired,
-  setInMetadata: PropTypes.func.isRequired,
 };
 
 export default Editor;

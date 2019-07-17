@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import { connect } from 'react-redux';
 import { updateModel } from 'ui/redux/modules/models';
-import { setInMetadata } from 'ui/redux/modules/metadata';
 import Editor from './Editor';
 
 /**
@@ -13,7 +12,7 @@ import Editor from './Editor';
 const CustomColumnChart = compose(
   connect(
     () => ({}),
-    { updateModel, setInMetadata },
+    { updateModel },
   ),
 )(Editor);
 
