@@ -11,7 +11,7 @@ const createOrganisationSetting = catchErrors(async (req, res) => {
     throw new NotFoundError();
   }
 
-  const alreadyExists = user.organisationSettings.includes(s => s.organisation.toString() === req.params.organisationId);
+  const alreadyExists = user.organisationSettings.some(s => s.organisation.toString() === req.params.organisationId);
   if (alreadyExists) {
     throw new ClientError(`Duplicated: The user already has the organisationSettings for the organisation (${req.params.organisationId})`);
   }
