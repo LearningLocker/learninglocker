@@ -124,7 +124,7 @@ export const createDefaultTitle = (model) => {
   }
 };
 
-export const createDefaultTitleWithIcon = (model) => (
+export const createDefaultTitleWithIcon = model => (
   <span>
     <VisualiseIcon
       type={model.get('type')}
