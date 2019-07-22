@@ -10,6 +10,7 @@ import personaAttributesIndexes from './20190212150000_personaAttributes_indexes
 import oauthTokens from './20190131000000_oauth_tokens';
 import migrateToInQueries from './20190307130000_migrate_to_in_queries';
 import migrateResetTokens from './20190509000000_migrate_null_resetTokens';
+import personaImports from './20190711090000_persona_imports';
 
 export default new OrderedMap()
   .set('20171122100800_common_indexes', commonIndexesMigration)
@@ -22,4 +23,5 @@ export default new OrderedMap()
   .set('20190131000000_oauth_tokens', oauthTokens)
   .set('20190212150000_personaAttributes_indexes', personaAttributesIndexes)
   .set('20190307130000_migrate_to_in_queries', migrateToInQueries)
-  .set('20190509000000_migrate_null_resetTokens', migrateResetTokens);
+  .set('20190509000000_migrate_null_resetTokens', migrateResetTokens)
+  .set('20190711090000_persona_imports', personaImports);

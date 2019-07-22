@@ -12,13 +12,13 @@ const defaultHandleResponse = (err) => {
 };
 
 export default ({
-  onProccessed
+  onProcessed
 }) => {
   const personaService = getPersonaService();
 
   Queue.subscribe({
     queueName: PERSONA_IMPORT_QUEUE,
     handler: importPersonaHandler(personaService),
-    onProccessed
+    onProcessed
   }, defaultHandleResponse);
 };
