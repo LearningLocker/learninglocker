@@ -24,7 +24,11 @@ const handlers = {
       columnName,
     });
 
-    const newStructure = resetStructure.setIn([columnName, 'columnType'], event.target.value);
+    let newStructure = resetStructure.setIn([columnName, 'columnType'], event.target.value);
+
+    if (event.target.value === COLUMN_ACCOUNT_VALUE) {
+      newStructure = newStructure.setIn([columnName, 'useConstant'], true);
+    }
 
     const isOrderable = personasImportHelpers.isColumnOrderable({
       columnStructure: newStructure.get(columnName).toJS(),
@@ -34,13 +38,13 @@ const handlers = {
       ? personasImportHelpers.getPrimaryMaxPlusOne({ structure: newStructure })
       : null;
 
-    const newStructureOrder = newStructure.setIn([columnName, 'primary'], newPrimary);
+    newStructure = newStructure.setIn([columnName, 'primary'], newPrimary);
 
     doUpdateModel({
       schema: 'personasImport',
       id: model.get('_id'),
       path: 'structure',
-      value: newStructureOrder,
+      value: newStructure,
     });
   },
 
