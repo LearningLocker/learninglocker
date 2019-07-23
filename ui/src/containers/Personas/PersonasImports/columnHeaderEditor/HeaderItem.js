@@ -6,16 +6,22 @@ import {
 import { connect } from 'react-redux';
 import { fromJS } from 'immutable';
 import { updateModel } from 'ui/redux/modules/models';
-import { COLUMN_TYPES, COLUMN_TYPE_LABELS, COLUMN_ACCOUNT_KEY } from 'lib/constants/personasImport';
+import {
+  COLUMN_TYPES,
+  COLUMN_TYPE_LABELS,
+  COLUMN_ACCOUNT_KEY,
+  COLUMN_ACCOUNT_VALUE
+} from 'lib/constants/personasImport';
 import { map } from 'lodash';
 import {
   hasRelatedField,
-  getPossibleRelatedColumns,
   updateRelatedStructure,
   resetRelatedStructure,
   isColumnOrderable,
-  getPrimaryMaxPlusOne
+  getPrimaryMaxPlusOne,
+  getPossibleRelatedAndNothingColumns
 } from 'lib/services/importPersonas/personasImportHelpers';
+import Switch from 'ui/components/Material/Switch';
 
 const schema = 'personasImport';
 
@@ -24,7 +30,6 @@ const headerItemHandlers = withHandlers({
     columnName,
     model,
     updateModel: doUpdateModel,
-    // columnStructure,
   }) => (event) => {
     const value = event.target.value;
 
@@ -33,9 +38,12 @@ const headerItemHandlers = withHandlers({
       columnName
     });
 
-    const newStructure =
+    let newStructure =
       resetStructure.setIn([columnName, 'columnType'], value);
 
+    if (value === COLUMN_ACCOUNT_VALUE) {
+      newStructure = newStructure.setIn([columnName, 'useConstant'], true);
+    }
     const isOrderable = isColumnOrderable({ columnStructure: newStructure.get(columnName).toJS() });
     const newStructureOrder = isOrderable ?
       newStructure.setIn(
@@ -107,6 +115,49 @@ const headerItemHandlers = withHandlers({
       path: 'structure',
       value: newStructure
     });
+  },
+  onUseConstantChange: ({
+    columnName,
+    model,
+    updateModel: doUpdateModel
+  }) => inverse => (event) => {
+    let newStructure = model
+      .get('structure')
+      .setIn([columnName, 'useConstant'], inverse ? !event : event);
+    if (newStructure.getIn([columnName, 'useConstant']) === true) {
+      // deselect any related columns
+      newStructure = updateRelatedStructure({
+        structure: newStructure,
+        columnName,
+        relatedColumn: ''
+      });
+    }
+
+    if (!newStructure.hasIn([columnName, 'primary'])) {
+      newStructure = newStructure.setIn(
+        [columnName, 'primary'],
+        getPrimaryMaxPlusOne({ structure: newStructure })
+      );
+    }
+
+    doUpdateModel({
+      schema,
+      id: model.get('_id'),
+      path: 'structure',
+      value: newStructure
+    });
+  },
+  onConstantChange: ({
+    columnName,
+    model,
+    updateModel: doUpdateModel
+  }) => (event) => {
+    doUpdateModel({
+      schema,
+      id: model.get('_id'),
+      path: ['structure'],
+      value: model.get('structure').setIn([columnName, 'constant'], event.target.value)
+    });
   }
 });
 
@@ -116,15 +167,22 @@ export const HeaderItemComponent = ({
   onColumnTypeChange,
   onPrimaryOrderChange,
   onRelatedColumnChange,
+  onUseConstantChange,
+  onConstantChange,
   model,
   disabled
 }) => {
   const columnType = columnStructure.get('columnType');
+
+  const disabledAccountKey = columnTyp => columnTyp === COLUMN_ACCOUNT_KEY;
+
   return (
     <div>
       <h3>{columnName}</h3>
 
-      {isColumnOrderable({ columnStructure: columnStructure.toJS() }) && <div className="form-group">
+      {isColumnOrderable({
+        columnStructure: columnStructure.toJS()
+      }) && <div className="form-group">
         <label htmlFor={`${model.get('_id')}-${columnName}-order`}>Order</label>
         <input
           className="form-control"
@@ -146,9 +204,11 @@ export const HeaderItemComponent = ({
           disabled={disabled} >
           <option key="" value="">Nothing</option>
           {
-            COLUMN_TYPES.map(type => (
-              <option key={type} value={type}>{COLUMN_TYPE_LABELS[type]}</option>
-            ))
+            COLUMN_TYPES
+              .filter(type => type !== COLUMN_ACCOUNT_KEY || columnType === COLUMN_ACCOUNT_KEY)
+              .map(type => (
+                <option key={type} value={type}>{COLUMN_TYPE_LABELS[type]}</option>
+              ))
           }
         </select>
       </div>
@@ -158,20 +218,37 @@ export const HeaderItemComponent = ({
           <label htmlFor={`${model.get('_id')}-${columnName}-relatedColumn`}>
             {(columnType === COLUMN_ACCOUNT_KEY
               ? 'Account name column'
-              : 'Account home page column'
+              : 'Account home page'
             )}
           </label>
-          <select
+
+          {(columnType === COLUMN_ACCOUNT_VALUE) &&
+            <div>
+              <Switch
+                label="Select column"
+                checked={!columnStructure.get('useConstant', false)}
+                onChange={onUseConstantChange(true)}
+                disabled={disabled}
+              />
+              <Switch
+                label="Set value"
+                checked={columnStructure.get('useConstant', false)}
+                onChange={(onUseConstantChange(false))}
+                disabled={disabled}
+              />
+            </div>
+          }
+          {!columnStructure.get('useConstant', false) && <select
             id={`${model.get('_id')}-${columnName}-relatedColumn`}
             className="form-control"
             onChange={onRelatedColumnChange}
             value={columnStructure.get('relatedColumn', '')}
-            disabled={disabled} >
+            disabled={disabled || disabledAccountKey(columnType)} >
 
             <option disabled />
             {
               map(
-                getPossibleRelatedColumns({
+                getPossibleRelatedAndNothingColumns({
                   columnType: columnStructure.get('columnType'),
                   structure: model.get('structure').toJS(),
                 }),
@@ -179,7 +256,16 @@ export const HeaderItemComponent = ({
                   (<option key={relatedColumn} value={relatedColumn}>{relatedColumn}</option>)
               )
             }
-          </select>
+          </select>}
+          {columnStructure.get('useConstant') &&
+            <input
+              id={`${model.get('_id')}-${columnName}-relatedColumnConstant`}
+              type="text"
+              className="form-control"
+              onChange={onConstantChange}
+              value={columnStructure.get('constant', '')}
+              disabled={disabled} />
+          }
         </div>
       }
     </div>
