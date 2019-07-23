@@ -48,7 +48,7 @@ exports[`ConfigureUpload should render with disabled 1`] = `
           "test2",
         ]
       }
-      disabled="true"
+      disabled={true}
       model={
         Object {
           "csvHeaders": Array [

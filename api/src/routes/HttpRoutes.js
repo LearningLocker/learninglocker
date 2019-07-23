@@ -60,6 +60,8 @@ import personaRESTHandler from 'api/routes/personas/personaRESTHandler';
 import personaIdentifierRESTHandler from 'api/routes/personas/personaIdentifierRESTHandler';
 import personaAttributeRESTHandler from 'api/routes/personas/personaAttributeRESTHandler';
 import BatchDelete from 'lib/models/batchDelete';
+import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
+import { updateStatementCountsInOrg } from 'lib/services/lrs';
 import * as routes from 'lib/constants/routes';
 
 const router = new express.Router();
@@ -96,6 +98,11 @@ router.post(
   routes.AUTH_JWT_ORGANISATION,
   passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
   AuthController.jwtOrganisation
+);
+
+router.post(
+  routes.AUTH_JWT_REFRESH,
+  AuthController.jwtRefresh,
 );
 
 router.get(
@@ -319,6 +326,14 @@ restify.serve(router, Statement, {
     return;
   },
   preUpdate: (req, res) => res.sendStatus(405),
+  postDelete: (req, _, next) => {
+    // Update LRS.statementCount
+    const authInfo = getAuthFromRequest(req);
+    const organisationId = getOrgFromAuthInfo(authInfo);
+    updateStatementCountsInOrg(organisationId)
+      .then(() => next())
+      .catch(err => next(err));
+  },
 });
 restify.serve(router, StatementForwarding);
 restify.serve(router, QueryBuilderCache);
@@ -371,7 +386,18 @@ const generateIndexesRoute = (model, routeSuffix, authentication) => {
 
 const generateModelRoutes = (model) => {
   const routeSuffix = model.modelName.toLowerCase();
-  const authentication = passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS);
+  const authentication = (req, res, next) => passport.authenticate(
+      ['jwt', 'clientBasic'],
+      DEFAULT_PASSPORT_OPTIONS,
+      (err, user) => {
+        if (err || !user) {
+          res.status(401).set('Content-Type', 'text/plain').send('Unauthorized');
+          return;
+        }
+        req.user = user;
+        next();
+      },
+    )(req, res, next);
   generateConnectionsRoute(model, routeSuffix, authentication);
   generateIndexesRoute(model, routeSuffix, authentication);
 };

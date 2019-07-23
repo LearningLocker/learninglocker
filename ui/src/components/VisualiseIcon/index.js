@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-indent */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import classNames from 'classnames';
 import styles from './visualiseicon.css';
@@ -15,14 +16,16 @@ import {
   PIE,
   TABLE
 } from '../../utils/constants';
-import LEADERBOARD_IMAGE from './assets/ll-icon-bar-graph.svg';
-import XVSY_IMAGE from './assets/ll-icon-correlation.svg';
-import STATEMENTS_IMAGE from './assets/ll-icon-column-graph.svg';
-import FREQUENCY_IMAGE from './assets/ll-icon-frequency.svg';
-import COUNTER_IMAGE from './assets/ll-icon-counter.svg';
-import PIE_IMAGE from './assets/ll-icon-pie-chart.svg';
-import TABLE_IMAGE from './assets/ll-table-icon.svg';
-import SESSIONS_IMAGE from './assets/ll-icon-accumulation.svg';
+import {
+  COUNTER_IMAGE,
+  FREQUENCY_IMAGE,
+  LEADERBOARD_IMAGE,
+  PIE_IMAGE,
+  SESSIONS_IMAGE,
+  STATEMENTS_IMAGE,
+  TABLE_IMAGE,
+  XVSY_IMAGE,
+} from './assets';
 
 const PLATFORMS_IMAGE = SESSIONS_IMAGE;
 const QUESTIONANALYSIS_IMAGE = SESSIONS_IMAGE;

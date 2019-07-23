@@ -1,13 +1,12 @@
 import { createSelector } from 'reselect';
 import { put } from 'redux-saga/effects';
-import createAsyncDuck from 'ui/utils/createAsyncDuck';
 import basicAuth from 'popsicle-basic-auth';
-import * as routes from 'lib/constants/routes';
 import { post } from 'popsicle';
 import { actions as routerActions } from 'redux-router5';
+import * as routes from 'lib/constants/routes';
 import { actions as tokenActions } from 'ui/redux/modules/auth/token';
 import { openPopup, listenForToken } from 'ui/utils/oauth';
-
+import createAsyncDuck from 'ui/utils/createAsyncDuck';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 
 const authSelector = state => state.auth;

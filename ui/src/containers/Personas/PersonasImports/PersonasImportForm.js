@@ -64,7 +64,7 @@ export const PersonasImportFormComponent = ({
         <ConfigureUpload
           className="configureUpload"
           model={model}
-          disabled="true" />
+          disabled />
         <blockquote>
           <h4>Imported on {moment(model.get('importedAt')).format('ddd DD MMM YYYY h:mm:ss')}</h4>
           <p>

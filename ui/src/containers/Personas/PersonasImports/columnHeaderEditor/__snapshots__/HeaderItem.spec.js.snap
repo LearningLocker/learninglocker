@@ -28,7 +28,19 @@ exports[`HeaderItem should render 1`] = `
         key="COLUMN_NAME"
         value="COLUMN_NAME"
       >
-        Persona name
+        Full name
+      </option>
+      <option
+        key="COLUMN_FIRST_NAME"
+        value="COLUMN_FIRST_NAME"
+      >
+        First name
+      </option>
+      <option
+        key="COLUMN_LAST_NAME"
+        value="COLUMN_LAST_NAME"
+      >
+        Last name
       </option>
       <option
         key="COLUMN_MBOX"
@@ -47,12 +59,6 @@ exports[`HeaderItem should render 1`] = `
         value="COLUMN_OPENID"
       >
         Identifier open id
-      </option>
-      <option
-        key="COLUMN_ACCOUNT_KEY"
-        value="COLUMN_ACCOUNT_KEY"
-      >
-        Account home page
       </option>
       <option
         key="COLUMN_ACCOUNT_VALUE"
@@ -99,7 +105,19 @@ exports[`HeaderItem should render with orderable and related column 1`] = `
         key="COLUMN_NAME"
         value="COLUMN_NAME"
       >
-        Persona name
+        Full name
+      </option>
+      <option
+        key="COLUMN_FIRST_NAME"
+        value="COLUMN_FIRST_NAME"
+      >
+        First name
+      </option>
+      <option
+        key="COLUMN_LAST_NAME"
+        value="COLUMN_LAST_NAME"
+      >
+        Last name
       </option>
       <option
         key="COLUMN_MBOX"
@@ -118,12 +136,6 @@ exports[`HeaderItem should render with orderable and related column 1`] = `
         value="COLUMN_OPENID"
       >
         Identifier open id
-      </option>
-      <option
-        key="COLUMN_ACCOUNT_KEY"
-        value="COLUMN_ACCOUNT_KEY"
-      >
-        Account home page
       </option>
       <option
         key="COLUMN_ACCOUNT_VALUE"
@@ -157,7 +169,7 @@ exports[`HeaderItem should render with orderable when disabled 1`] = `
     </label>
     <select
       className="form-control"
-      disabled="true"
+      disabled={true}
       id="1-test1-columnType"
       value=""
     >
@@ -171,7 +183,19 @@ exports[`HeaderItem should render with orderable when disabled 1`] = `
         key="COLUMN_NAME"
         value="COLUMN_NAME"
       >
-        Persona name
+        Full name
+      </option>
+      <option
+        key="COLUMN_FIRST_NAME"
+        value="COLUMN_FIRST_NAME"
+      >
+        First name
+      </option>
+      <option
+        key="COLUMN_LAST_NAME"
+        value="COLUMN_LAST_NAME"
+      >
+        Last name
       </option>
       <option
         key="COLUMN_MBOX"
@@ -190,12 +214,6 @@ exports[`HeaderItem should render with orderable when disabled 1`] = `
         value="COLUMN_OPENID"
       >
         Identifier open id
-      </option>
-      <option
-        key="COLUMN_ACCOUNT_KEY"
-        value="COLUMN_ACCOUNT_KEY"
-      >
-        Account home page
       </option>
       <option
         key="COLUMN_ACCOUNT_VALUE"

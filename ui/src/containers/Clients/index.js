@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { fromJS } from 'immutable';
 import { withProps, compose } from 'recompose';
@@ -90,4 +91,3 @@ export default connect(state => ({
   userId: loggedInUserId(state),
   searchString: modelQueryStringSelector(schema)(state),
 }), { addModel })(Clients);
-

@@ -45,7 +45,7 @@ if (process.env.NODE_ENV !== 'production') {
   }
 }
 
-if (__DEVTOOLS__ && !window.devToolsExtension) {
+if (__DEVTOOLS__ && !window.__REDUX_DEVTOOLS_EXTENSION__) {
   const DevTools = require('./containers/DevTools/DevTools');
 
   ReactDOM.render(

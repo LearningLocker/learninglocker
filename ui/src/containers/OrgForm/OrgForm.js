@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import { connect } from 'react-redux';
 import { updateModel } from 'ui/redux/modules/models';
@@ -33,7 +34,7 @@ class OrgForm extends Component {
             <input
               className="form-control"
               placeholder="Name for this organisation"
-              value={model.get('name')}
+              value={model.get('name', '')}
               onChange={this.onChangeAttr.bind(null, 'name')} />
           </div>
         </div>

@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import validateIri from '@learninglocker/xapi-validation/dist/regexValues/iri';
 import { Map } from 'immutable';
 import classNames from 'classnames';

@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { List, Map } from 'immutable';
 import Tabs from 'ui/components/Material/Tabs';
 import { Tab } from 'react-toolbox/lib/tabs';

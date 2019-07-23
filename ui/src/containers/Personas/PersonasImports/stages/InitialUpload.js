@@ -35,7 +35,7 @@ export const UploadButtonComponent = ({
       return (
         <button
           onClick={onSubmit}
-          disabled="true"
+          disabled
           className="btn btn-primary pull-right">
           <i className="icon animated fadeIn ion-checkmark" />
         </button>
@@ -137,7 +137,7 @@ export const InitialUploadComponent = ({
   </div>
   );
 
-const IntialUploadForm = compose(
+const InitialUploadForm = compose(
   fileState,
   connect(
     state => ({
@@ -149,4 +149,4 @@ const IntialUploadForm = compose(
   handlers,
 )(InitialUploadComponent);
 
-export default IntialUploadForm;
+export default InitialUploadForm;
