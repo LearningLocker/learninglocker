@@ -104,12 +104,6 @@ const apps = [
     description: 'A central administration tool for organizations seeking to comply with GDPR',
     icon: icons.gdpr,
   },
-  {
-    link: 'https://www.ht2labs.com/apps/',
-    title: 'Sales Demo',
-    description: 'Provides example data to demo how Learning Locker works',
-    icon: icons.gdpr,
-  },
 ];
 
 const Apps = () => (
