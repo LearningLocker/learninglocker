@@ -152,6 +152,18 @@ class _LLApiClient {
     },
   })
 
+  aggrigateMapReduce = (pipeline, limit, sinceAt) => get({
+    url: formatUrl(routes.STATEMENTS_MAP_REDUCE),
+    headers: {
+      Authorization: `Bearer ${this.getToken()}`,
+    },
+    query: {
+      pipeline: JSON.stringify(pipeline),
+      skip: limit,
+      sinceAt,
+    },
+  })
+
   uploadLogo = (file, id) => {
     const logoForm = form({
       logo: file
