@@ -11,6 +11,7 @@ import {
   PIE,
 } from 'lib/constants/visualise';
 import { default as CustomBarChartCard } from 'ui/containers/Visualisations/CustomBarChart/Card';
+import { default as CustomColumnChartCard } from 'ui/containers/Visualisations/CustomColumnChart/Card';
 
 const getText = (type) => {
   switch (type) {
@@ -60,8 +61,7 @@ const TypeEditor = ({
           active={typeState === XVSY}
           onClick={setXVSY} />
 
-        <StyledVisualiseIconWithTitle
-          type={STATEMENTS}
+        <CustomColumnChartCard
           active={typeState === STATEMENTS}
           onClick={setSTATEMENTS} />
 

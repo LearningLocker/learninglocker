@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   LEADERBOARD,
+  STATEMENTS,
   TEMPLATE_ACTIVITY_OVER_TIME,
   TEMPLATE_LAST_7_DAYS_STATEMENTS,
   TEMPLATE_MOST_ACTIVE_PEOPLE,
@@ -9,6 +10,7 @@ import {
   TEMPLATE_WEEKDAYS_ACTIVITY,
 } from 'lib/constants/visualise';
 import CustomBarChart from 'ui/containers/Visualisations/CustomBarChart';
+import CustomColumnChart from 'ui/containers/Visualisations/CustomColumnChart';
 import TemplateActivityOverTime from 'ui/containers/Visualisations/TemplateActivityOverTime';
 import TemplateLast7DaysStatements from 'ui/containers/Visualisations/TemplateLast7DaysStatements';
 import TemplateMostActivePeople from 'ui/containers/Visualisations/TemplateMostActivePeople';
@@ -23,6 +25,8 @@ const VisualiseForm = ({ model, orgTimezone }) => {
     switch (model.get('type')) {
       case LEADERBOARD:
         return <CustomBarChart model={model} orgTimezone={orgTimezone} />;
+      case STATEMENTS:
+        return <CustomColumnChart model={model} orgTimezone={orgTimezone} />;
       case TEMPLATE_ACTIVITY_OVER_TIME:
         return <TemplateActivityOverTime model={model} orgTimezone={orgTimezone} />;
       case TEMPLATE_LAST_7_DAYS_STATEMENTS:
