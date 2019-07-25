@@ -62,6 +62,10 @@ const updateOrganisationSetting = catchErrors(async (req, res) => {
     throw new ClientError('Can not update some fields you are trying to update');
   }
 
+  if (req.body.organisation && req.params.organisationId !== req.body.organisation) {
+    throw new ClientError(`Invalid: organisationId in URL path (${req.params.organisationId}) and organisation in body (${req.body.organisation}) are not matched.`);
+  }
+
   const i = user.organisationSettings.findIndex(s => s.organisation.toString() === req.params.organisationId);
   if (i < 0) {
     user.organisationSettings.push({
