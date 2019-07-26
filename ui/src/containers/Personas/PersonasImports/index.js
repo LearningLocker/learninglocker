@@ -60,10 +60,10 @@ export const PersonasImportsComponent = ({
             <button
               className="btn btn-primary btn-sm"
               onClick={doOnAddModel} >
-              <i className="ion ion-plus" /> Import
+              <i className="ion ion-plus" />Import
             </button>
           </span>
-          &nbsp;People - Imports
+          People - Imports
         </div>
       </header>
       <div className="row">

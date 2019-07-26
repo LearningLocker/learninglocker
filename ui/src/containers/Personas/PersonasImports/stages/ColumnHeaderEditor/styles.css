@@ -1,0 +1,37 @@
+.table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.th {
+  background-color: #525252;
+  color: #FFFFFF;
+  text-align: left;
+  padding: 8px;
+}
+
+.td {
+  text-align: left;
+  padding: 8px;
+}
+
+.tr:nth-child(odd) {
+  background-color: #FAFAFA;
+}
+
+.th:nth-child(1),
+.td:nth-child(1) {
+  width: 180px;
+}
+
+.inputFields {
+  display: flex;
+  flex-wrap: wrap;
+  overflow-x: auto;
+}
+
+.inputField {
+  width: 240px;
+  margin-bottom: 0;
+  margin-right: 12px;
+}
