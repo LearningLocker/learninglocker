@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Apps = () => {
+const Demo = () => {
   const out = (
     <div>
       <header id="topbar">
@@ -13,4 +13,4 @@ const Apps = () => {
   return out;
 };
 
-export default Apps;
+export default Demo;
