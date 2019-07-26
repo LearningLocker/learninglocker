@@ -1,8 +1,10 @@
 import React from 'react';
 import {
   LEADERBOARD,
+  STATEMENTS,
 } from 'ui/utils/constants';
 import CustomBarChart from 'ui/containers/Visualisations/CustomBarChart';
+import CustomColumnChart from 'ui/containers/Visualisations/CustomColumnChart';
 import StatementsForm from './StatementsForm';
 import NewVisualisation from './NewVisualisation';
 
@@ -16,6 +18,8 @@ const VisualiseForm = ({ model, orgTimezone }) => {
     switch (model.get('type')) {
       case LEADERBOARD:
         return <CustomBarChart model={model} orgTimezone={orgTimezone} />;
+      case STATEMENTS:
+        return <CustomColumnChart model={model} orgTimezone={orgTimezone} />;
       default:
         return <StatementsForm model={model} orgTimezone={orgTimezone} />;
     }
