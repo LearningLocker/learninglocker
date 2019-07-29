@@ -4,18 +4,19 @@ import Scroll from 'react-scroll';
 import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { actions as routerActions } from 'redux-router5';
-import { withProps, compose, lifecycle } from 'recompose';
+import { withProps, compose, lifecycle, withHandlers } from 'recompose';
 import { Map, List, is } from 'immutable';
-import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import Input from 'ui/components/Material/Input';
-import WidgetVisualiseCreator from 'ui/containers/WidgetVisualiseCreator';
-import { withModel } from 'ui/utils/hocs';
+import Spinner from 'ui/components/Spinner';
 import DashboardGrid from 'ui/containers/DashboardGrid';
+import DashboardSharing from 'ui/containers/DashboardSharing';
 import DeleteButton from 'ui/containers/DeleteButton';
 import Owner from 'ui/containers/Owner';
 import PrivacyToggleButton from 'ui/containers/PrivacyToggleButton';
-import DashboardSharing from 'ui/containers/DashboardSharing';
-import Spinner from 'ui/components/Spinner';
+import WidgetVisualiseCreator from 'ui/containers/WidgetVisualiseCreator';
+import { withModel } from 'ui/utils/hocs';
+import { COPY_DASHBOARD } from 'ui/redux/modules/dashboard/copyDashboard';
+import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import styles from './styles.css';
 
 const schema = 'dashboard';
@@ -23,7 +24,8 @@ const schema = 'dashboard';
 class Dashboard extends Component {
   static propTypes = {
     model: PropTypes.instanceOf(Map),
-    updateModel: PropTypes.func
+    updateModel: PropTypes.func,
+    onClickCopyDashboard: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -120,7 +122,7 @@ class Dashboard extends Component {
   };
 
   render() {
-    const { model, organisationId, navigateTo } = this.props;
+    const { model, organisationId, navigateTo, onClickCopyDashboard } = this.props;
 
     if (!model.get('_id')) {
       return <Spinner />;
@@ -156,9 +158,8 @@ class Dashboard extends Component {
             <button
               className="btn btn-default btn-sm flat-btn flat-white"
               title="Copy"
-              onClick={() => console.log('copy!')}
-              style={{ width: '33px' }}
-              >
+              onClick={onClickCopyDashboard}
+              style={{ width: '33px' }}>
               <i className="icon ion-ios-copy" />
             </button>
 
@@ -233,8 +234,20 @@ export default compose(
     state => ({
       organisationId: activeOrgIdSelector(state)
     }),
-    {
-      navigateTo: routerActions.navigateTo,
-    },
-  )
+    dispatch => ({
+      navigateTo: () => dispatch(routerActions.navigateTo),
+      copyDashboard: ({ dashboard, organisationId }) => dispatch({
+        type: COPY_DASHBOARD,
+        dashboard,
+        organisationId,
+        dispatch,
+      }),
+    }),
+  ),
+  withHandlers({
+    onClickCopyDashboard: ({ model, organisationId, copyDashboard }) => () => copyDashboard({
+      dashboard: model,
+      organisationId,
+    })
+  }),
 )(Dashboard);
