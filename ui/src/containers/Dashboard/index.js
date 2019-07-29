@@ -153,6 +153,15 @@ class Dashboard extends Component {
               id={model.get('_id')}
               schema={schema} />
 
+            <button
+              className="btn btn-default btn-sm flat-btn flat-white"
+              title="Copy"
+              onClick={() => console.log('copy!')}
+              style={{ width: '33px' }}
+              >
+              <i className="icon ion-ios-copy" />
+            </button>
+
             <DeleteButton
               white
               id={model.get('_id')}
