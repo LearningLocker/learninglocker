@@ -1,5 +1,5 @@
 import React from 'react';
-import { XVSY, COUNTER, STATEMENTS, PIE, FREQUENCY } from 'ui/utils/constants';
+import { XVSY, COUNTER, STATEMENTS, PIE, FREQUENCY } from 'lib/constants/visualise';
 import { TimezoneSelector, buildDefaultOptionLabel } from 'ui/components/TimezoneSelector';
 import CounterEditor from './CounterEditor';
 import DefaultEditor from './DefaultEditor';
