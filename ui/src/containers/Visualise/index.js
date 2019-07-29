@@ -17,6 +17,7 @@ import ModelList from 'ui/containers/ModelList';
 import VisualiseForm from 'ui/containers/VisualiseForm';
 import DeleteButton from 'ui/containers/DeleteButton';
 import PrivacyToggleButton from 'ui/containers/PrivacyToggleButton';
+import CopyButton from './CopyButton';
 import styles from './visualise.css';
 
 const schema = 'visualisation';
@@ -95,7 +96,7 @@ class Visualise extends Component {
               id={this.props.visualisationId}
               filter={queryStringToQuery(this.props.searchString, schema)}
               ModelForm={VisualiseForm}
-              buttons={[PrivacyToggleButton, DeleteButton]}
+              buttons={[PrivacyToggleButton, CopyButton, DeleteButton]}
               orgTimezone={orgTimezone}
               getDescription={model => (
                 <span>
