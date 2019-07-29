@@ -1,21 +1,26 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import * as _ from 'lodash';
 import Scroll from 'react-scroll';
 import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { actions as routerActions } from 'redux-router5';
-import { withProps, compose, lifecycle } from 'recompose';
+import { withProps, compose, lifecycle, withHandlers, mapProps } from 'recompose';
 import { Map, List, is } from 'immutable';
-import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import Input from 'ui/components/Material/Input';
-import WidgetVisualiseCreator from 'ui/containers/WidgetVisualiseCreator';
-import { withModel } from 'ui/utils/hocs';
+import ConfirmModal from 'ui/components/Modal/ConfirmModal';
+import Spinner from 'ui/components/Spinner';
 import DashboardGrid from 'ui/containers/DashboardGrid';
+import DashboardSharing from 'ui/containers/DashboardSharing';
 import DeleteButton from 'ui/containers/DeleteButton';
 import Owner from 'ui/containers/Owner';
 import PrivacyToggleButton from 'ui/containers/PrivacyToggleButton';
-import DashboardSharing from 'ui/containers/DashboardSharing';
-import Spinner from 'ui/components/Spinner';
+import WidgetVisualiseCreator from 'ui/containers/WidgetVisualiseCreator';
+import { withModel } from 'ui/utils/hocs';
+import { COPY_DASHBOARD } from 'ui/redux/modules/dashboard/copyDashboard';
+import { getVisualisationsFromDashboard } from 'ui/redux/modules/dashboard/selectors';
+import { loggedInUserId } from 'ui/redux/selectors';
+import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import styles from './styles.css';
 
 const schema = 'dashboard';
@@ -23,7 +28,12 @@ const schema = 'dashboard';
 class Dashboard extends Component {
   static propTypes = {
     model: PropTypes.instanceOf(Map),
-    updateModel: PropTypes.func
+    navigateTo: PropTypes.func,
+    updateModel: PropTypes.func,
+    saveModel: PropTypes.func,
+    setMetadata: PropTypes.func,
+    getMetadata: PropTypes.func,
+    doCopyDashboard: PropTypes.func,
   };
 
   static defaultProps = {
@@ -34,6 +44,7 @@ class Dashboard extends Component {
     super(props);
     this.state = {
       widgetModalOpen: false,
+      isCopyModelOpen: false,
     };
   }
 
@@ -48,10 +59,17 @@ class Dashboard extends Component {
     this.setState({ widgetModalOpen: !this.state.widgetModalOpen });
   }
 
-
   onClickAddWidget = () => {
     this.toggleWidgetModal();
   };
+
+  onClickCopyDashboard = () => this.setState({
+    isCopyModelOpen: true,
+  });
+
+  onCloseCopyDashboard = () => this.setState({
+    isCopyModelOpen: false,
+  });
 
   onTitleChange = (value) => {
     this.props.updateModel({ path: ['title'], value });
@@ -120,7 +138,7 @@ class Dashboard extends Component {
   };
 
   render() {
-    const { model, organisationId, navigateTo } = this.props;
+    const { model, organisationId, navigateTo, doCopyDashboard } = this.props;
 
     if (!model.get('_id')) {
       return <Spinner />;
@@ -152,6 +170,14 @@ class Dashboard extends Component {
               white
               id={model.get('_id')}
               schema={schema} />
+
+            <button
+              className="btn btn-default btn-sm flat-btn flat-white"
+              title="Copy"
+              onClick={this.onClickCopyDashboard}
+              style={{ width: '33px' }}>
+              <i className="icon ion-ios-copy" />
+            </button>
 
             <DeleteButton
               white
@@ -193,6 +219,13 @@ class Dashboard extends Component {
           onClickClose={() => this.toggleWidgetModal()}
           onChangeVisualisation={this.createPopulatedWidget} />
 
+        <ConfirmModal
+          isOpen={this.state.isCopyModelOpen}
+          title="Confirm copy"
+          message={<span>This will copy the dashboard and visualisations. Are you sure?</span>}
+          onConfirm={doCopyDashboard}
+          onCancel={this.onCloseCopyDashboard} />
+
         <DashboardGrid
           widgets={model.get('widgets')}
           onChange={this.onChangeWidgets}
@@ -222,10 +255,29 @@ export default compose(
   }),
   connect(
     state => ({
-      organisationId: activeOrgIdSelector(state)
+      organisationId: activeOrgIdSelector(state),
+      userId: loggedInUserId(state),
+      state,
     }),
-    {
-      navigateTo: routerActions.navigateTo,
-    },
-  )
+    dispatch => ({
+      navigateTo: () => dispatch(routerActions.navigateTo),
+      copyDashboard: ({ dashboard, visualisations, organisationId, userId }) => dispatch({
+        type: COPY_DASHBOARD,
+        dispatch,
+        dashboard,
+        visualisations,
+        organisationId,
+        userId,
+      }),
+    }),
+  ),
+  withHandlers({
+    doCopyDashboard: ({ model, state, organisationId, copyDashboard, userId }) => () => copyDashboard({
+      dashboard: model,
+      visualisations: getVisualisationsFromDashboard(model.get('_id'))(state),
+      organisationId,
+      userId,
+    })
+  }),
+  mapProps(original => _.pick(original, Object.keys(Dashboard.propTypes))),
 )(Dashboard);
