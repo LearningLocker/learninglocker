@@ -6,6 +6,7 @@ import { default as TemplateMostPopularVerbsCard } from 'ui/containers/Visualisa
 import { default as TemplateMostPopularActivitiesCard } from 'ui/containers/Visualisations/TemplateMostPopularActivities/Card';
 import { default as TemplateMostActivePeopleCard } from 'ui/containers/Visualisations/TemplateMostActivePeople/Card';
 import { default as TemplateWeekdaysActivityCard } from 'ui/containers/Visualisations/TemplateWeekdaysActivity/Card';
+import { default as TemplateCuratrInteractionsVsEngagementCard } from 'ui/containers/Visualisations/TemplateCuratrInteractionsVsEngagement/Card';
 import styles from './styles.css';
 
 const TemplateCardList = ({ model, saveModel }) => (
@@ -34,6 +35,10 @@ const TemplateCardList = ({ model, saveModel }) => (
       saveModel={saveModel} />
 
     <TemplateWeekdaysActivityCard
+      model={model}
+      saveModel={saveModel} />
+
+    <TemplateCuratrInteractionsVsEngagementCard
       model={model}
       saveModel={saveModel} />
   </div>

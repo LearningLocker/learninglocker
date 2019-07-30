@@ -14,6 +14,7 @@ import {
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_WEEKDAYS_ACTIVITY,
+  TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT,
 } from 'lib/constants/visualise';
 import { updateModel } from 'ui/redux/modules/models';
 import TabbedQueriesBuilder from 'ui/components/TabbedQueriesBuilder';
@@ -138,6 +139,7 @@ class VisualiseFilterForm extends Component {
 
     switch (type) {
       case XVSY:
+      case TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT:
         return this.renderXvsY();
       case FREQUENCY:
       case TEMPLATE_ACTIVITY_OVER_TIME:

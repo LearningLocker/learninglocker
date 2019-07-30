@@ -13,6 +13,7 @@ import {
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_WEEKDAYS_ACTIVITY,
+  TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT,
 } from 'lib/constants/visualise';
 import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
 import { periodToDate } from 'ui/utils/dates';
@@ -63,6 +64,7 @@ export default memoize((args = new Map()) => {
     case TEMPLATE_WEEKDAYS_ACTIVITY:
       return aggregateChart(preReqs, axes, timezone);
     case XVSY:
+    case TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT:
       return aggregateXvsY(preReqs, axes, timezone);
     case COUNTER:
     case TEMPLATE_LAST_7_DAYS_STATEMENTS:

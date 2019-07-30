@@ -12,6 +12,7 @@ import {
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_WEEKDAYS_ACTIVITY,
+  TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT,
 } from 'lib/constants/visualise';
 
 const createOptionModel = (searchString, optionKey) => new Map({ optionKey, searchString });
@@ -80,6 +81,7 @@ export const getTypeOpts = (type) => {
     case TEMPLATE_MOST_POPULAR_ACTIVITIES:
     case TEMPLATE_MOST_POPULAR_VERBS:
     case TEMPLATE_WEEKDAYS_ACTIVITY:
+    case TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT:
       return OPERATOR_OPTS;
     default:
       return new OrderedMap();
