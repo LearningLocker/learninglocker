@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import { connect } from 'react-redux';
+import { STATEMENTS, COUNTER, LEADERBOARD } from 'lib/constants/visualise';
 import Switch from 'ui/components/Material/Switch';
 import { updateModel } from 'ui/redux/modules/models';
 import VisualiseFilterForm from 'ui/containers/VisualiseFilterForm';
-import { STACKABLE_TYPES } from 'ui/utils/constants';
 
 class SeriesEditor extends Component {
   static propTypes = {
@@ -38,11 +38,11 @@ class SeriesEditor extends Component {
     });
   }
 
-  canStack = type => STACKABLE_TYPES.includes(type)
+  canStack = type => [LEADERBOARD, STATEMENTS].includes(type)
 
   canAddSeries = (type, filters) =>
     filters.count() < 5 &&
-    !['STATEMENT', 'COUNTER'].includes(type)
+    ![STATEMENTS, COUNTER].includes(type)
 
   renderStackToggle = () => (
     <div className="form-group">

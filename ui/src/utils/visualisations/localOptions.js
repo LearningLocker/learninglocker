@@ -2,12 +2,17 @@ import { Map, OrderedMap } from 'immutable';
 import {
   XVSY,
   STATEMENTS,
-  POPULARACTIVITIES,
   LEADERBOARD,
   FREQUENCY,
   COUNTER,
   PIE,
-} from 'ui/utils/constants';
+  TEMPLATE_ACTIVITY_OVER_TIME,
+  TEMPLATE_LAST_7_DAYS_STATEMENTS,
+  TEMPLATE_MOST_ACTIVE_PEOPLE,
+  TEMPLATE_MOST_POPULAR_ACTIVITIES,
+  TEMPLATE_MOST_POPULAR_VERBS,
+  TEMPLATE_WEEKDAYS_ACTIVITY,
+} from 'lib/constants/visualise';
 
 const createOptionModel = (searchString, optionKey) => new Map({ optionKey, searchString });
 
@@ -63,13 +68,18 @@ export const GROUP_OPTS = createOptionModels({
 export const getTypeOpts = (type) => {
   switch (type) {
     case FREQUENCY:
+    case TEMPLATE_ACTIVITY_OVER_TIME:
       return LINE_OPERATOR_OPTS;
     case XVSY:
     case STATEMENTS:
-    case POPULARACTIVITIES:
     case LEADERBOARD:
     case COUNTER:
     case PIE:
+    case TEMPLATE_LAST_7_DAYS_STATEMENTS:
+    case TEMPLATE_MOST_ACTIVE_PEOPLE:
+    case TEMPLATE_MOST_POPULAR_ACTIVITIES:
+    case TEMPLATE_MOST_POPULAR_VERBS:
+    case TEMPLATE_WEEKDAYS_ACTIVITY:
       return OPERATOR_OPTS;
     default:
       return new OrderedMap();

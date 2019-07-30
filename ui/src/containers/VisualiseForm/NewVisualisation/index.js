@@ -15,7 +15,7 @@ const NewVisualisation = ({
       <label htmlFor="new-visualisation-custom" >
         Custom
       </label>
-      <TypeEditor model={model} />
+      <TypeEditor model={model} saveModel={saveModel} />
 
       <label htmlFor="new-visualisation-templates" >
         Templates

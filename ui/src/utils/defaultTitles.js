@@ -1,9 +1,21 @@
 import React from 'react';
-import { OPERATOR_OPTS } from 'ui/utils/visualisations/localOptions';
-import { COMPONENT, TEXT, VISUALISATION_TEMPLATE_TITLES } from 'ui/utils/constants';
-import uuid from 'uuid';
 import { startCase, toLower } from 'lodash';
-import VisualisationTypeIcon from '../containers/Visualise/VisualisationTypeIcon';
+import {
+  LEADERBOARD,
+  XVSY,
+  STATEMENTS,
+  FREQUENCY,
+  COUNTER,
+  PIE,
+  TEMPLATE_ACTIVITY_OVER_TIME,
+  TEMPLATE_LAST_7_DAYS_STATEMENTS,
+  TEMPLATE_MOST_ACTIVE_PEOPLE,
+  TEMPLATE_MOST_POPULAR_ACTIVITIES,
+  TEMPLATE_MOST_POPULAR_VERBS,
+  TEMPLATE_WEEKDAYS_ACTIVITY,
+} from 'lib/constants/visualise';
+import VisualiseIcon from 'ui/components/VisualiseIcon';
+import { OPERATOR_OPTS } from 'ui/utils/visualisations/localOptions';
 import chevronUpIcon from './assets/ll-chevron-up-icon.svg';
 import chevronDownIcon from './assets/ll-chevron-down-icon.svg';
 
@@ -31,6 +43,7 @@ export const shorten = (target, forXAxis) => {
   return target;
 };
 
+// [Viz Refactor] TODO: Remove this function and implement directly axes names into each Visualisation/.../Editor
 export const getAxesString = (key, model, type = null, shortened = true) => {
   const select = (ky, axis) => model.getIn([ky, 'searchString'], axis);
   const x = shortened ? shorten(model.get('axesxLabel', select(axg, 'X-Axis'))) : model.get('axesxLabel', select(axg, 'X-Axis'));
@@ -45,7 +58,7 @@ export const getAxesString = (key, model, type = null, shortened = true) => {
     return defaultLabel;
   };
 
-  if (type === 'LEADERBOARD') {
+  if (type === LEADERBOARD || type === TEMPLATE_ACTIVITY_OVER_TIME) {
     switch (key) {
       case 'x': return y.length ? y : model.getIn(['axesgroup', 'searchString'], 'X-Axis');
       case 'y': return x.length ? x : model.getIn(['axesvalue', 'searchString'], 'Y-Axis');
@@ -53,7 +66,7 @@ export const getAxesString = (key, model, type = null, shortened = true) => {
     }
   }
 
-  if (type !== 'XVSY') {
+  if (type !== XVSY) {
     switch (key) {
       case 'x': return x.length ? x : select(axg, 'yyyy/mm/dd');
       case 'y': return y.length ? y : select(axv, 'Y-Axis');
@@ -63,52 +76,72 @@ export const getAxesString = (key, model, type = null, shortened = true) => {
   return getResultForXY();
 };
 
-const makeOperatorReadable = (model, attribute = 'axesoperator') => {
-  if (model.get(attribute) !== 'uniqueCount') {
-    return `${OPERATOR_OPTS.get(model.get(attribute))} `;
+const makeOperatorReadable = (model, operatorName) => {
+  const operator = model.get(operatorName);
+  if (operator === 'uniqueCount') {
+    return '';
   }
-  return '';
+  return `${OPERATOR_OPTS.get(operator)} `;
 };
 
-const formattedDefault = (model, type) => {
-  const select = key => model.getIn([key, 'searchString'], '');
-  const addXY = (selectedX, selectedY = 'Time') => `X: ${startCase(toLower(selectedX))} Y: ${makeOperatorReadable(model)} ${startCase(toLower(selectedY))}`;
-  const addXVSYXY = (selectedX, selectedY = 'Time') => `X: ${makeOperatorReadable(model, 'axesxOperator')} ${startCase(toLower(selectedX))} Y: ${makeOperatorReadable(model, 'axesyOperator')} ${startCase(toLower(selectedY))}`;
-  const addYX = (selectedX, selectedY = 'Time') => `X: ${startCase(toLower(selectedY))} Y: ${makeOperatorReadable(model)} ${startCase(toLower(selectedX))}`;
+/**
+ * @param {immutable.Map} model - visualisation model
+ * @return {string}
+ */
+export const createDefaultTitle = (model) => {
+  const type = model.get('type', null);
 
-  const templateId = model.get('templateId', null);
-  if (templateId) {
-    return VISUALISATION_TEMPLATE_TITLES[templateId] || 'Empty';
+  if (type === null) {
+    return 'Pick a visualisation';
   }
+
+  const select = key => model.getIn([key, 'searchString'], '');
+  const addXY = (selectedX, selectedY) => `X: ${startCase(toLower(selectedX))} Y: ${makeOperatorReadable(model, 'axesoperator')}${startCase(toLower(selectedY))}`;
+  const addXVSYXY = (selectedX, selectedY) => `X: ${makeOperatorReadable(model, 'axesxOperator')} ${startCase(toLower(selectedX))} Y: ${makeOperatorReadable(model, 'axesyOperator')}${startCase(toLower(selectedY))}`;
+  const addYX = (selectedX, selectedY) => `X: ${startCase(toLower(selectedY))} Y: ${makeOperatorReadable(model, 'axesoperator')}${startCase(toLower(selectedX))}`;
 
   switch (type) {
-    case ('FREQUENCY'): return addYX(select(axv) || select(ayV), 'Time');
-    case ('LEADERBOARD'): return addYX(select(axg), select(axv) || select(ayV));
-    case ('XVSY'): return addXVSYXY(select(axV), select(axv) || select(ayV));
-    case ('COUNTER'): return `${makeOperatorReadable(model)}${select(axv) || select(ayV)}`;
-    case ('PIE'): return `${makeOperatorReadable(model)}${select(axv) || select(ayV)} / ${select(axg)}`;
-    case ('STATEMENTS'): return addXY(select(axg), select(axv) || select(ayV));
-    case ('Unnamed'): return 'Pick a visualisation';
-    default: return 'Empty';
+    case FREQUENCY:
+    case TEMPLATE_ACTIVITY_OVER_TIME:
+      return addYX(select(axv) || select(ayV), 'Time');
+    case LEADERBOARD:
+    case TEMPLATE_MOST_ACTIVE_PEOPLE:
+    case TEMPLATE_MOST_POPULAR_ACTIVITIES:
+    case TEMPLATE_MOST_POPULAR_VERBS:
+      return addYX(select(axg), select(axv) || select(ayV) || 'Time');
+    case XVSY:
+      return addXVSYXY(select(axV), select(axv) || select(ayV) || 'Time');
+    case COUNTER:
+    case TEMPLATE_LAST_7_DAYS_STATEMENTS:
+      return `${makeOperatorReadable(model, 'axesoperator')}${select(axv) || select(ayV)}`;
+    case PIE:
+      return `${makeOperatorReadable(model, 'axesoperator')}${select(axv) || select(ayV)} / ${select(axg)}`;
+    case STATEMENTS:
+    case TEMPLATE_WEEKDAYS_ACTIVITY:
+      return addXY(select(axg), select(axv) || select(ayV) || 'Time');
+    default:
+      return 'Empty';
   }
 };
 
-const formatDefaultComponent = (prefix, formatted) => ([
-  <span key={uuid.v4()}>{prefix}</span>,
-  <span key={uuid.v4()} style={{ color: '#B9B9B9', fontWeight: '100' }}>
-    {` ${formatted}`}
+export const createDefaultTitleWithIcon = model => (
+  <span>
+    <VisualiseIcon
+      type={model.get('type')}
+      sourceView={model.get('sourceView', false)} />
+
+    <span style={{ marginLeft: '3px' }}>
+      {
+        model.get('description') ||
+        (
+          <span style={{ color: '#B9B9B9', fontWeight: '100' }}>
+            {createDefaultTitle(model)}
+          </span>
+        )
+      }
+    </span>
   </span>
-]);
-
-const defaultSelector = (model, type, prefix, format = TEXT) => {
-  const formatted = formattedDefault(model, type);
-  return format === COMPONENT ? formatDefaultComponent(prefix, formatted) : `${prefix} ${formatted}`;
-};
-
-export const createVisualisationName = (model, prefix) => defaultSelector(model, model.get('type', 'Unnamed'), prefix, COMPONENT);
-export const createVisualisationText = (model, prefix = '') => defaultSelector(model, model.get('type', 'Unnamed'), prefix, TEXT);
-export const createDefaultTitleWithIcon = (model, name) => <span><VisualisationTypeIcon id={model.get('_id')} sourceView={model.get('sourceView')} /><span style={{ marginLeft: '3px' }}>{name || createVisualisationName(model)}</span></span>;
-export const createDefaultTitle = (model, prefix) => createVisualisationText(model, prefix);
+);
 
 export const getPercentage = (res1, res2) => {
   const newValue = res1 || 0;

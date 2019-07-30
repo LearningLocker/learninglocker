@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import { Tab } from 'react-toolbox/lib/tabs';
 import Tabs from 'ui/components/Material/Tabs';
-import AxesEditor from 'ui/containers/VisualiseForm/StatementsForm/AxesEditor';
+import ColumnAxesEditor from 'ui/containers/VisualiseForm/StatementsForm/AxesEditor/ColumnAxesEditor';
 import VisualiseFilterForm from 'ui/containers/VisualiseFilterForm';
 import AddQueryButton from '../components/AddQueryButton';
 import DescriptionForm from '../components/DescriptionForm';
@@ -91,9 +91,7 @@ const Editor = ({
 
           <Tabs index={tabIndex} onChange={setTabIndex}>
             <Tab key="axes" label="Axes">
-              <AxesEditor
-                model={model}
-                orgTimezone={orgTimezone} />
+              <ColumnAxesEditor model={model} />
             </Tab>
 
             <Tab key="series" label="Series">

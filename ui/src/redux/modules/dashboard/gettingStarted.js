@@ -2,12 +2,14 @@ import { Map } from 'immutable';
 import { actions as routerActions } from 'redux-router5';
 import { put, call, takeEvery } from 'redux-saga/effects';
 import {
-  LEADERBOARD,
-  STATEMENTS,
-  FREQUENCY,
-  COUNTER,
-  LAST_2_MONTHS,
-} from 'ui/utils/constants';
+  TEMPLATE_ACTIVITY_OVER_TIME,
+  TEMPLATE_LAST_7_DAYS_STATEMENTS,
+  TEMPLATE_MOST_ACTIVE_PEOPLE,
+  TEMPLATE_MOST_POPULAR_ACTIVITIES,
+  TEMPLATE_MOST_POPULAR_VERBS,
+  TEMPLATE_WEEKDAYS_ACTIVITY,
+} from 'lib/constants/visualise';
+import { LAST_2_MONTHS } from 'ui/utils/constants';
 import { addModel } from '../models';
 
 export const CREATE_GETTING_STARTED = 'learninglocker/dashboard/CREATE_GETTING_STARTED';
@@ -22,7 +24,7 @@ const createVisualisations = async (dispatch) => {
       schema: 'visualisation',
       props: {
         description: 'How many statements have been stored in the last 7 days?',
-        type: COUNTER,
+        type: TEMPLATE_LAST_7_DAYS_STATEMENTS,
       },
       isExpanded: false,
     })),
@@ -30,7 +32,7 @@ const createVisualisations = async (dispatch) => {
       schema: 'visualisation',
       props: {
         description: 'How has activity changed over time?',
-        type: FREQUENCY,
+        type: TEMPLATE_ACTIVITY_OVER_TIME,
         previewPeriod: LAST_2_MONTHS,
       },
       isExpanded: false,
@@ -39,7 +41,7 @@ const createVisualisations = async (dispatch) => {
       schema: 'visualisation',
       props: {
         description: 'What are the most popular verbs?',
-        type: LEADERBOARD,
+        type: TEMPLATE_MOST_POPULAR_VERBS,
         previewPeriod: LAST_2_MONTHS,
         axesgroup: new Map({ optionKey: 'verb', searchString: 'Verb' }),
       },
@@ -49,7 +51,7 @@ const createVisualisations = async (dispatch) => {
       schema: 'visualisation',
       props: {
         description: 'What are the most popular activities?',
-        type: LEADERBOARD,
+        type: TEMPLATE_MOST_POPULAR_ACTIVITIES,
         previewPeriod: LAST_2_MONTHS,
         axesgroup: new Map({ optionKey: 'activities', searchString: 'Activity' }),
       },
@@ -58,8 +60,8 @@ const createVisualisations = async (dispatch) => {
     dispatch(addModel({
       schema: 'visualisation',
       props: {
-        description: 'How has activity changed over time?',
-        type: LEADERBOARD,
+        description: 'Who are the most active people?',
+        type: TEMPLATE_MOST_ACTIVE_PEOPLE,
         previewPeriod: LAST_2_MONTHS,
         axesgroup: new Map({ optionKey: 'people', searchString: 'Person' }),
       },
@@ -69,7 +71,7 @@ const createVisualisations = async (dispatch) => {
       schema: 'visualisation',
       props: {
         description: 'How does activity change in a week?',
-        type: STATEMENTS,
+        type: TEMPLATE_WEEKDAYS_ACTIVITY,
         axesgroup: new Map({ optionKey: 'weekday', searchString: 'Day' }),
       },
       isExpanded: false,

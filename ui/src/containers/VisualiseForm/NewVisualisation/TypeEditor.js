@@ -1,9 +1,7 @@
-import React, { Component } from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-import { withModel } from 'ui/utils/hocs';
-import { withProps, compose } from 'recompose';
-import VisualiseIcon from 'ui/components/VisualiseIcon';
-import VisualiseText from 'ui/components/VisualiseText';
+import { Map } from 'immutable';
+import { StyledVisualiseIconWithTitle } from 'ui/components/VisualiseIcon';
 import {
   LEADERBOARD,
   XVSY,
@@ -11,95 +9,100 @@ import {
   FREQUENCY,
   COUNTER,
   PIE,
-} from 'ui/utils/constants';
+} from 'lib/constants/visualise';
 import { default as CustomBarChartCard } from 'ui/containers/Visualisations/CustomBarChart/Card';
 import { default as CustomColumnChartCard } from 'ui/containers/Visualisations/CustomColumnChart/Card';
 
-const schema = 'visualisation';
-
-class TypeEditor extends Component {
-
-  static propTypes = {
-    updateModel: PropTypes.func,
+const getText = (type) => {
+  switch (type) {
+    case LEADERBOARD: return 'Use the bar graph (people) to benchmark your users against each other, answering the question, which users have done the most?';
+    case XVSY: return 'Use the Correlation graph to compare people against two variables. Use it to answer the question, is there any relationship between X and Y?';
+    case STATEMENTS: return 'Use the Column Graph to show statements over time. Use it to answer the question, how much activity has there been?';
+    case FREQUENCY: return 'Use the Frequency graph to show statements over time in multiple series. Up to 5 series can be shown. Use it to answer the question, how does the activity of X compare to the activity of Y?';
+    case COUNTER: return 'Use the Counter visualisation to show a single number (e.g. total number of users)';
+    case PIE: return 'Use the Pie chart to show show how your statements are divided (e.g. number of statements per course)';
+    default: return '';
   }
+};
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      type: props.model.get('type'),
-    };
-  }
+const TypeEditor = ({
+  model,
+  saveModel,
+}) => {
+  const id = model.get('_id');
+  const [typeState, setTypeState] = useState(undefined);
 
-  shouldComponentUpdate = (_, nextState) =>
-    this.state.type !== nextState.type
+  const setLEADERBOARD = useCallback(() => setTypeState(LEADERBOARD), [id]);
+  const setXVSY = useCallback(() => setTypeState(XVSY), [id]);
+  const setSTATEMENTS = useCallback(() => setTypeState(STATEMENTS), [id]);
+  const setFREQUENCY = useCallback(() => setTypeState(FREQUENCY), [id]);
+  const setCOUNTER = useCallback(() => setTypeState(COUNTER), [id]);
+  const setPIE = useCallback(() => setTypeState(PIE), [id]);
 
-  onClickTypeLEADERBOARD = () => this.setState({ type: LEADERBOARD });
-  onClickTypeXVSY = () => this.setState({ type: XVSY });
-  onClickTypeSTATEMENTS = () => this.setState({ type: STATEMENTS });
-  onClickTypeFREQUENCY = () => this.setState({ type: FREQUENCY });
-  onClickTypeCOUNTER = () => this.setState({ type: COUNTER });
-  onClickTypePIE = () => this.setState({ type: PIE });
+  const onSubmit = useCallback(
+    () => saveModel({
+      attrs: model.set('type', typeState),
+    }),
+    [id, typeState]
+  );
 
-  onClickSubmit = () => {
-    this.props.updateModel({
-      path: ['type'],
-      value: this.state.type,
-    });
-  }
-
-  render = () => (
+  return (
     <div id="new-visualisation-custom">
       <div style={{ maxHeight: '500px', padding: '0px', overflow: 'auto' }}>
-        {/* [Refactor] Replace VisualiseIcon with "Card" component
+        {/* [Refactor] Replace StyledVisualiseIconWithTitle with "Card" component
             https://github.com/LearningLocker/enterprise/issues/991
           */}
         <CustomBarChartCard
-          active={this.state.type === LEADERBOARD}
-          onClick={this.onClickTypeLEADERBOARD} />
+          active={typeState === LEADERBOARD}
+          onClick={setLEADERBOARD} />
 
-        <VisualiseIcon
+        <StyledVisualiseIconWithTitle
           type={XVSY}
-          active={this.state.type === XVSY}
-          onClick={this.onClickTypeXVSY} />
+          active={typeState === XVSY}
+          onClick={setXVSY} />
 
         <CustomColumnChartCard
-          active={this.state.type === STATEMENTS}
-          onClick={this.onClickTypeSTATEMENTS} />
+          active={typeState === STATEMENTS}
+          onClick={setSTATEMENTS} />
 
-        <VisualiseIcon
+        <StyledVisualiseIconWithTitle
           type={FREQUENCY}
-          active={this.state.type === FREQUENCY}
-          onClick={this.onClickTypeFREQUENCY} />
+          active={typeState === FREQUENCY}
+          onClick={setFREQUENCY} />
 
-        <VisualiseIcon
+        <StyledVisualiseIconWithTitle
           type={COUNTER}
-          active={this.state.type === COUNTER}
-          onClick={this.onClickTypeCOUNTER} />
+          active={typeState === COUNTER}
+          onClick={setCOUNTER} />
 
-        <VisualiseIcon
+        <StyledVisualiseIconWithTitle
           type={PIE}
-          active={this.state.type === PIE}
-          onClick={this.onClickTypePIE} />
+          active={typeState === PIE}
+          onClick={setPIE} />
       </div>
 
-      {this.state.type &&
+      {typeState && (
         <div className="row">
           <div className="col-xs-10 text-left">
-            <VisualiseText type={this.state.type} />
+            <p>{getText(typeState)}</p>
           </div>
+
           <div className="col-xs-2 text-right">
-            <a onClick={this.onClickSubmit} className="btn btn-primary btn-sm"><i className="icon ion-checkmark" /></a>
+            <a onClick={onSubmit} className="btn btn-primary btn-sm">
+              <i className="icon ion-checkmark" />
+            </a>
           </div>
         </div>
-      }
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default compose(
-  withProps(props => ({
-    schema,
-    id: props.model.get('_id'),
-  })),
-  withModel
-)(TypeEditor);
+TypeEditor.propTypes = {
+  model: PropTypes.instanceOf(Map).isRequired,
+  saveModel: PropTypes.func.isRequired,
+};
+
+const areEqual = (prev, next) => prev.model._id === next.model._id;
+
+export default React.memo(TypeEditor, areEqual);

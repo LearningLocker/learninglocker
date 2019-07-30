@@ -4,6 +4,7 @@ import { Map } from 'immutable';
 import { connect } from 'react-redux';
 import { Tab } from 'react-toolbox/lib/tabs';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { COUNTER } from 'lib/constants/visualise';
 import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
 import { updateModel } from 'ui/redux/modules/models';
 import Tabs from 'ui/components/Material/Tabs';
@@ -12,6 +13,7 @@ import AxesEditor from './AxesEditor';
 import OptionsEditor from './OptionsEditor';
 import styles from './styles.css';
 
+// [Viz Refactor] TODO: Remove this component
 class Editor extends Component {
   static propTypes = {
     model: PropTypes.instanceOf(Map), // visualisation model
@@ -83,7 +85,7 @@ class Editor extends Component {
       );
     }
 
-    const isCounter = (this.props.model.get('type') === 'COUNTER');
+    const isCounter = (this.props.model.get('type') === COUNTER);
 
     return (
       <div className={styles.tab}>

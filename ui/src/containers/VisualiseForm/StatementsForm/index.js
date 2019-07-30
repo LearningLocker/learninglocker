@@ -58,6 +58,6 @@ class StatementsForm extends Component {
 }
 
 export default connect(
-  () => {},
+  () => ({}),
   { updateModel }
 )(StatementsForm);
