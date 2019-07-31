@@ -8,6 +8,7 @@ import {
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_WEEKDAYS_ACTIVITY,
+  TEMPLATE_CURATR_COMMENT_COUNT,
 } from 'lib/constants/visualise';
 import CustomBarChart from 'ui/containers/Visualisations/CustomBarChart';
 import CustomColumnChart from 'ui/containers/Visualisations/CustomColumnChart';
@@ -17,6 +18,7 @@ import TemplateMostActivePeople from 'ui/containers/Visualisations/TemplateMostA
 import TemplateMostPopularActivities from 'ui/containers/Visualisations/TemplateMostPopularActivities';
 import TemplateMostPopularVerbs from 'ui/containers/Visualisations/TemplateMostPopularVerbs';
 import TemplateWeekdaysActivity from 'ui/containers/Visualisations/TemplateWeekdaysActivity';
+import TemplateCuratrCommentCount from 'ui/containers/Visualisations/TemplateCuratrCommentCount';
 import StatementsForm from './StatementsForm';
 import NewVisualisation from './NewVisualisation';
 
@@ -39,6 +41,8 @@ const VisualiseForm = ({ model, orgTimezone }) => {
         return <TemplateMostPopularVerbs model={model} orgTimezone={orgTimezone} />;
       case TEMPLATE_WEEKDAYS_ACTIVITY:
         return <TemplateWeekdaysActivity model={model} orgTimezone={orgTimezone} />;
+      case TEMPLATE_CURATR_COMMENT_COUNT:
+        return <TemplateCuratrCommentCount model={model} orgTimezone={orgTimezone} />;
       default:
         return <StatementsForm model={model} orgTimezone={orgTimezone} />;
     }

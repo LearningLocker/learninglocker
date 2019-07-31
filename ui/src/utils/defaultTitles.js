@@ -13,6 +13,7 @@ import {
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_WEEKDAYS_ACTIVITY,
+  TEMPLATE_CURATR_COMMENT_COUNT,
 } from 'lib/constants/visualise';
 import VisualiseIcon from 'ui/components/VisualiseIcon';
 import { OPERATOR_OPTS } from 'ui/utils/visualisations/localOptions';
@@ -113,6 +114,7 @@ export const createDefaultTitle = (model) => {
       return addXVSYXY(select(axV), select(axv) || select(ayV) || 'Time');
     case COUNTER:
     case TEMPLATE_LAST_7_DAYS_STATEMENTS:
+    case TEMPLATE_CURATR_COMMENT_COUNT:
       return `${makeOperatorReadable(model, 'axesoperator')}${select(axv) || select(ayV)}`;
     case PIE:
       return `${makeOperatorReadable(model, 'axesoperator')}${select(axv) || select(ayV)} / ${select(axg)}`;

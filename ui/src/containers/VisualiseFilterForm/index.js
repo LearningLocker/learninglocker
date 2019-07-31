@@ -14,6 +14,7 @@ import {
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_WEEKDAYS_ACTIVITY,
+  TEMPLATE_CURATR_COMMENT_COUNT,
 } from 'lib/constants/visualise';
 import { updateModel } from 'ui/redux/modules/models';
 import TabbedQueriesBuilder from 'ui/components/TabbedQueriesBuilder';
@@ -152,6 +153,7 @@ class VisualiseFilterForm extends Component {
         return this.renderLeaderboard(queries);
       case COUNTER:
       case TEMPLATE_LAST_7_DAYS_STATEMENTS:
+      case TEMPLATE_CURATR_COMMENT_COUNT:
         return this.renderCounter();
       default:
         return this.renderDefault(queries);

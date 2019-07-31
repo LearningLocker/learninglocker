@@ -15,6 +15,7 @@ import {
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_WEEKDAYS_ACTIVITY,
+  TEMPLATE_CURATR_COMMENT_COUNT,
 } from 'lib/constants/visualise';
 import { withModel } from 'ui/utils/hocs';
 import VisualiseResults from 'ui/containers/VisualiseResults';
@@ -26,6 +27,7 @@ import TemplateMostActivePeople from './TemplateMostActivePeople/Viewer';
 import TemplateMostPopularActivities from './TemplateMostPopularActivities/Viewer';
 import TemplateMostPopularVerbs from './TemplateMostPopularVerbs/Viewer';
 import TemplateWeekdaysActivity from './TemplateWeekdaysActivity/Viewer';
+import TemplateCuratrCommentCount from './TemplateCuratrCommentCount/Viewer';
 
 /**
  * @param {immutable.Map} model - visualisation model
@@ -56,6 +58,8 @@ const VisualisationViewer = ({
       return <TemplateMostPopularVerbs visualisationId={visualisationId} showSourceView={showSourceView} />;
     case TEMPLATE_WEEKDAYS_ACTIVITY:
       return <TemplateWeekdaysActivity visualisationId={visualisationId} showSourceView={showSourceView} />;
+    case TEMPLATE_CURATR_COMMENT_COUNT:
+      return <TemplateCuratrCommentCount visualisationId={visualisationId} showSourceView={showSourceView} />;
     default:
       if (showSourceView) {
         return <SourceResults id={visualisationId} />;

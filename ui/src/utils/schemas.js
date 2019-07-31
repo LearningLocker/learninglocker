@@ -93,9 +93,7 @@ const visualisation = new LLSchema('visualisation', { idAttribute: '_id', sortKe
       .merge(
       model
         .filter((item, key) => key.startsWith('axes') && includes(axesToJsList, key))
-        .map(item =>
-          JSON.stringify(item ? item.toJS() : null)
-        )
+        .map(item => JSON.stringify(item ? item.toJS() : null))
       ),
 
   reviver: (key, value) => {

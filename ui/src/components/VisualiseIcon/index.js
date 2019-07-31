@@ -16,6 +16,7 @@ import {
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_WEEKDAYS_ACTIVITY,
+  TEMPLATE_CURATR_COMMENT_COUNT,
 } from 'lib/constants/visualise';
 import {
   COUNTER_IMAGE,
@@ -69,6 +70,7 @@ const getImageSrc = (type, sourceView) => {
       return FREQUENCY_IMAGE;
     case COUNTER:
     case TEMPLATE_LAST_7_DAYS_STATEMENTS:
+    case TEMPLATE_CURATR_COMMENT_COUNT:
       return COUNTER_IMAGE;
     case PIE:
       return PIE_IMAGE;

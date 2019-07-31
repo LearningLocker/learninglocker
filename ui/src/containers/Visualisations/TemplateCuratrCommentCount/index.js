@@ -9,16 +9,16 @@ import Editor from './Editor';
  * @param {immutable.Map} props.model - visualisation model
  * @param {string} props.orgTimezone
  */
-const TemplateCuratrCommentCount = compose(
+const TemplateLast7DaysStatements = compose(
   connect(
     () => ({}),
     { updateModel },
   ),
 )(Editor);
 
-TemplateCuratrCommentCount.propTypes = {
+TemplateLast7DaysStatements.propTypes = {
   model: PropTypes.instanceOf(Map).isRequired,
   orgTimezone: PropTypes.string.isRequired,
 };
 
-export default TemplateCuratrCommentCount;
+export default TemplateLast7DaysStatements;
