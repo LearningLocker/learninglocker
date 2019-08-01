@@ -15,16 +15,18 @@ import { addModel } from '../models';
 export const CREATE_GETTING_STARTED = 'learninglocker/dashboard/CREATE_GETTING_STARTED';
 
 /**
- * @param {(action: object) => null} dispatch - react-redux dispatch
+ * @param {(action: object) => null} _.dispatch - react-redux dispatch
+ * @param {string} _.userId
  * @returns {Promise<string[]>} - visualisationId list
  */
-const createVisualisations = async (dispatch) => {
+const createVisualisations = async ({ dispatch, userId }) => {
   const results = await Promise.all([
     dispatch(addModel({
       schema: 'visualisation',
       props: {
         description: 'How many statements have been stored in the last 7 days?',
         type: TEMPLATE_LAST_7_DAYS_STATEMENTS,
+        owner: userId,
       },
       isExpanded: false,
     })),
@@ -34,6 +36,7 @@ const createVisualisations = async (dispatch) => {
         description: 'How has activity changed over time?',
         type: TEMPLATE_ACTIVITY_OVER_TIME,
         previewPeriod: LAST_2_MONTHS,
+        owner: userId,
       },
       isExpanded: false,
     })),
@@ -44,6 +47,7 @@ const createVisualisations = async (dispatch) => {
         type: TEMPLATE_MOST_POPULAR_VERBS,
         previewPeriod: LAST_2_MONTHS,
         axesgroup: new Map({ optionKey: 'verb', searchString: 'Verb' }),
+        owner: userId,
       },
       isExpanded: false,
     })),
@@ -54,6 +58,7 @@ const createVisualisations = async (dispatch) => {
         type: TEMPLATE_MOST_POPULAR_ACTIVITIES,
         previewPeriod: LAST_2_MONTHS,
         axesgroup: new Map({ optionKey: 'activities', searchString: 'Activity' }),
+        owner: userId,
       },
       isExpanded: false,
     })),
@@ -64,6 +69,7 @@ const createVisualisations = async (dispatch) => {
         type: TEMPLATE_MOST_ACTIVE_PEOPLE,
         previewPeriod: LAST_2_MONTHS,
         axesgroup: new Map({ optionKey: 'people', searchString: 'Person' }),
+        owner: userId,
       },
       isExpanded: false,
     })),
@@ -73,6 +79,7 @@ const createVisualisations = async (dispatch) => {
         description: 'How does activity change in a week?',
         type: TEMPLATE_WEEKDAYS_ACTIVITY,
         axesgroup: new Map({ optionKey: 'weekday', searchString: 'Day' }),
+        owner: userId,
       },
       isExpanded: false,
     })),
@@ -82,7 +89,7 @@ const createVisualisations = async (dispatch) => {
 };
 
 function* createGettingStarted({ userId, organisationId, dispatch }) {
-  const visualisationIds = yield call(createVisualisations, dispatch);
+  const visualisationIds = yield call(createVisualisations, { dispatch, userId });
 
   const { model } = yield call(dispatch, addModel({
     schema: 'dashboard',
