@@ -22,6 +22,8 @@ import {
   STATEMENT_FORWARDING_DEADLETTER_QUEUE
 } from 'lib/constants/statements';
 
+import { isAllowedWorkerQueue } from './allowedWorkerQueues';
+
 const defaultHandleResponse = queueName => (err) => {
   if (err) logger.error(`ERROR SUBSCRIBING TO QUEUE ${queueName}`, err);
   return err;
@@ -46,20 +48,26 @@ export default (
     onProcessed: statementHandlerProcessed
   }, handleResponse(STATEMENT_QUEUE));
 
-  Queue.subscribe({
-    queueName: STATEMENT_EXTRACT_PERSONAS_QUEUE,
-    handler: extractPersonasHandler(personaService)
-  }, handleResponse(STATEMENT_EXTRACT_PERSONAS_QUEUE));
+  if (isAllowedWorkerQueue(STATEMENT_EXTRACT_PERSONAS_QUEUE)) {
+    Queue.subscribe({
+      queueName: STATEMENT_EXTRACT_PERSONAS_QUEUE,
+      handler: extractPersonasHandler(personaService)
+    }, handleResponse(STATEMENT_EXTRACT_PERSONAS_QUEUE));
+  }
 
-  Queue.subscribe({
-    queueName: STATEMENT_QUERYBUILDERCACHE_QUEUE,
-    handler: queryBuilderCacheHandler
-  }, handleResponse(STATEMENT_QUERYBUILDERCACHE_QUEUE));
+  if (isAllowedWorkerQueue(STATEMENT_QUERYBUILDERCACHE_QUEUE)) {
+    Queue.subscribe({
+      queueName: STATEMENT_QUERYBUILDERCACHE_QUEUE,
+      handler: queryBuilderCacheHandler
+    }, handleResponse(STATEMENT_QUERYBUILDERCACHE_QUEUE));
+  }
 
-  Queue.subscribe({
-    queueName: STATEMENT_FORWARDING_QUEUE,
-    handler: statementForwardingHandler
-  }, handleResponse(STATEMENT_FORWARDING_QUEUE));
+  if (isAllowedWorkerQueue(STATEMENT_FORWARDING_QUEUE)) {
+    Queue.subscribe({
+      queueName: STATEMENT_FORWARDING_QUEUE,
+      handler: statementForwardingHandler
+    }, handleResponse(STATEMENT_FORWARDING_QUEUE));
+  }
 
   const RETRY_DELAY = 900; // 900 (15 minutes, max allowed DelaySeconds: http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SQS.html)
 

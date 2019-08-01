@@ -17,6 +17,7 @@ import {
   STATEMENT_EXTRACT_PERSONAS_QUEUE,
   STATEMENT_FORWARDING_QUEUE
 } from 'lib/constants/statements';
+import { isAllowedWorkerQueue } from './allowedWorkerQueues';
 
 const queueDependencies = {
   [STATEMENT_QUERYBUILDERCACHE_QUEUE]: {
@@ -49,8 +50,10 @@ export const addStatementToPendingQueues = (statement, passedQueues, done) => {
     const queueCompleted = includes(completedQueues, queueName);
     // or is this queue in the queues being processed?
     const queueProcessing = includes(processingQueues, queueName);
+    // or is an allowed queue?
+    const isAllowed = isAllowedWorkerQueue(queueName);
 
-    return !preReqsCompleted || queueCompleted || queueProcessing;
+    return !preReqsCompleted || queueCompleted || queueProcessing || !isAllowed;
   });
 
   return Statement.updateOne(
