@@ -7,7 +7,7 @@ import pipelineFromQuery from './pipelineFromQuery';
  *
  * @param {immutable.List} queries
  * @param {immutable.Map} axes
- * @param {string} type - VISUALISATION_TYPES
+ * @param {string} type
  * @param {string} previewPeriod - See ui/src/utils/constants.js
  * @param {*} id
  * @param {string} timezone

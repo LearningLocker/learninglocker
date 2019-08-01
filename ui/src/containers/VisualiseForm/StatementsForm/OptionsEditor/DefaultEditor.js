@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose, withHandlers } from 'recompose';
+import { PIE } from 'lib/constants/visualise';
 import { updateModel } from 'ui/redux/modules/models';
 import Switch from 'ui/components/Material/Switch';
 
@@ -11,7 +12,7 @@ const DefaultEditorComponent = ({ model, sourceViewHandler, donutHandler }) => (
       id={'DefaultEditorComponent'}
       checked={model.get('sourceView')}
       onChange={sourceViewHandler} />
-    {!model.get('sourceView') && model.get('type') === 'PIE' && <Switch
+    {!model.get('sourceView') && model.get('type') === PIE && <Switch
       label="Donut chart"
       id={'DefaultEditorComponent'}
       checked={model.get('isDonut')}

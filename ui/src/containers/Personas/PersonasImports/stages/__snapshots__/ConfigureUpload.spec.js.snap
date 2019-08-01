@@ -69,7 +69,7 @@ exports[`ConfigureUpload should render with errors 1`] = `
     <span
       className="help-block"
     >
-      <WithStyles(ValidationList)
+      <ValidationList
         errors="Structure is invalid"
       />
     </span>
