@@ -6,6 +6,12 @@ import { default as TemplateMostPopularVerbsCard } from 'ui/containers/Visualisa
 import { default as TemplateMostPopularActivitiesCard } from 'ui/containers/Visualisations/TemplateMostPopularActivities/Card';
 import { default as TemplateMostActivePeopleCard } from 'ui/containers/Visualisations/TemplateMostActivePeople/Card';
 import { default as TemplateWeekdaysActivityCard } from 'ui/containers/Visualisations/TemplateWeekdaysActivity/Card';
+import { default as TemplateCuratrInteractionsVsEngagementCard } from 'ui/containers/Visualisations/TemplateCuratrInteractionsVsEngagement/Card';
+import { default as TemplateCuratrCommentCountCard } from 'ui/containers/Visualisations/TemplateCuratrCommentCount/Card';
+import { default as TemplateCuratrLearnerInteractionsByDateAndVerbCard } from 'ui/containers/Visualisations/TemplateCuratrLearnerInteractionsByDateAndVerb/Card';
+import { default as TemplateCuratrUserEngagementLeaderboardCard } from 'ui/containers/Visualisations/TemplateCuratrUserEngagementLeaderboard/Card';
+import { default as TemplateCuratrProportionOfSocialInteractionsCard } from 'ui/containers/Visualisations/TemplateCuratrProportionOfSocialInteractions/Card';
+import { default as TemplateCuratrActivitiesWithMostCommentsCard } from 'ui/containers/Visualisations/TemplateCuratrActivitiesWithMostComments/Card';
 import styles from './styles.css';
 
 const TemplateCardList = ({ model, saveModel }) => (
@@ -34,6 +40,30 @@ const TemplateCardList = ({ model, saveModel }) => (
       saveModel={saveModel} />
 
     <TemplateWeekdaysActivityCard
+      model={model}
+      saveModel={saveModel} />
+
+    <TemplateCuratrInteractionsVsEngagementCard
+      model={model}
+      saveModel={saveModel} />
+
+    <TemplateCuratrCommentCountCard
+      model={model}
+      saveModel={saveModel} />
+
+    <TemplateCuratrLearnerInteractionsByDateAndVerbCard
+      model={model}
+      saveModel={saveModel} />
+
+    <TemplateCuratrUserEngagementLeaderboardCard
+      model={model}
+      saveModel={saveModel} />
+
+    <TemplateCuratrProportionOfSocialInteractionsCard
+      model={model}
+      saveModel={saveModel} />
+
+    <TemplateCuratrActivitiesWithMostCommentsCard
       model={model}
       saveModel={saveModel} />
   </div>
