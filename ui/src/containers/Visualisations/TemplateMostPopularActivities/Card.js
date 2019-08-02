@@ -24,4 +24,4 @@ Card.propTypes = {
   saveModel: PropTypes.func.isRequired,
 };
 
- export default React.memo(Card);
+export default React.memo(Card);
