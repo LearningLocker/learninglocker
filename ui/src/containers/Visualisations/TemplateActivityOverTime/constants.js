@@ -1,4 +1,3 @@
-
 import { FREQUENCY_IMAGE } from 'ui/components/VisualiseIcon/assets';
 
 export const title = 'How has activity changed over time?';

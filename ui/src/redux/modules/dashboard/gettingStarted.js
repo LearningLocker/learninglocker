@@ -2,13 +2,13 @@ import { Map } from 'immutable';
 import { actions as routerActions } from 'redux-router5';
 import { put, call, takeEvery } from 'redux-saga/effects';
 import {
-  TEMPLATE_LAST_7_DAYS_STATEMENTS,
   TEMPLATE_MOST_ACTIVE_PEOPLE,
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_WEEKDAYS_ACTIVITY,
 } from 'lib/constants/visualise';
 import { LAST_2_MONTHS } from 'ui/utils/constants';
+import buildTemplateLast7DaysStatements from 'ui/containers/Visualisations/TemplateLast7DaysStatements/buildModel';
 import buildTemplateActivityOverTime from 'ui/containers/Visualisations/TemplateActivityOverTime/buildModel';
 import { addModel } from '../models';
 
@@ -23,11 +23,7 @@ const createVisualisations = async ({ dispatch, userId }) => {
   const results = await Promise.all([
     dispatch(addModel({
       schema: 'visualisation',
-      props: {
-        description: 'How many statements have been stored in the last 7 days?',
-        type: TEMPLATE_LAST_7_DAYS_STATEMENTS,
-        owner: userId,
-      },
+      props: buildTemplateLast7DaysStatements(new Map({ owner: userId })),
       isExpanded: false,
     })),
     dispatch(addModel({
