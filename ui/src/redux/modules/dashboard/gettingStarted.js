@@ -2,7 +2,6 @@ import { Map } from 'immutable';
 import { actions as routerActions } from 'redux-router5';
 import { put, call, takeEvery } from 'redux-saga/effects';
 import {
-  TEMPLATE_ACTIVITY_OVER_TIME,
   TEMPLATE_LAST_7_DAYS_STATEMENTS,
   TEMPLATE_MOST_ACTIVE_PEOPLE,
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
@@ -10,6 +9,7 @@ import {
   TEMPLATE_WEEKDAYS_ACTIVITY,
 } from 'lib/constants/visualise';
 import { LAST_2_MONTHS } from 'ui/utils/constants';
+import buildTemplateActivityOverTime from 'ui/containers/Visualisations/TemplateActivityOverTime/buildModel';
 import { addModel } from '../models';
 
 export const CREATE_GETTING_STARTED = 'learninglocker/dashboard/CREATE_GETTING_STARTED';
@@ -32,12 +32,7 @@ const createVisualisations = async ({ dispatch, userId }) => {
     })),
     dispatch(addModel({
       schema: 'visualisation',
-      props: {
-        description: 'How has activity changed over time?',
-        type: TEMPLATE_ACTIVITY_OVER_TIME,
-        previewPeriod: LAST_2_MONTHS,
-        owner: userId,
-      },
+      props: buildTemplateActivityOverTime(new Map({ owner: userId })),
       isExpanded: false,
     })),
     dispatch(addModel({

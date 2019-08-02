@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
-import { TEMPLATE_ACTIVITY_OVER_TIME } from 'lib/constants/visualise';
-import { FREQUENCY_IMAGE } from 'ui/components/VisualiseIcon/assets';
-import { LAST_2_MONTHS } from 'ui/utils/constants';
 import TemplateCard from '../components/TemplateCard';
+import buildModel from './buildModel';
+import { title, image } from './constants';
 
 /**
  * @param {immutable.Map} props.model
@@ -15,16 +14,9 @@ const Card = ({
   saveModel,
 }) => (
   <TemplateCard
-    title="How has activity changed over time?"
-    srcImage={FREQUENCY_IMAGE}
-    onClick={() => {
-      saveModel({
-        attrs: model
-          .set('type', TEMPLATE_ACTIVITY_OVER_TIME)
-          .set('description', 'How has activity changed over time?')
-          .set('previewPeriod', LAST_2_MONTHS),
-      });
-    }} />
+    title={title}
+    srcImage={image}
+    onClick={() => saveModel({ attrs: buildModel(model) })} />
 );
 
 Card.propTypes = {
@@ -32,4 +24,4 @@ Card.propTypes = {
   saveModel: PropTypes.func.isRequired,
 };
 
-export default React.memo(Card);
+ export default React.memo(Card);
