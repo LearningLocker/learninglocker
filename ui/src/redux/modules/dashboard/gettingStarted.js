@@ -2,7 +2,6 @@ import { Map } from 'immutable';
 import { actions as routerActions } from 'redux-router5';
 import { put, call, takeEvery } from 'redux-saga/effects';
 import {
-  TEMPLATE_MOST_ACTIVE_PEOPLE,
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_WEEKDAYS_ACTIVITY,
@@ -10,6 +9,7 @@ import {
 import { LAST_2_MONTHS } from 'ui/utils/constants';
 import buildTemplateLast7DaysStatements from 'ui/containers/Visualisations/TemplateLast7DaysStatements/buildModel';
 import buildTemplateActivityOverTime from 'ui/containers/Visualisations/TemplateActivityOverTime/buildModel';
+import buildTemplateMostActivePeople from 'ui/containers/Visualisations/TemplateMostActivePeople/buildModel';
 import { addModel } from '../models';
 
 export const CREATE_GETTING_STARTED = 'learninglocker/dashboard/CREATE_GETTING_STARTED';
@@ -55,13 +55,7 @@ const createVisualisations = async ({ dispatch, userId }) => {
     })),
     dispatch(addModel({
       schema: 'visualisation',
-      props: {
-        description: 'Who are the most active people?',
-        type: TEMPLATE_MOST_ACTIVE_PEOPLE,
-        previewPeriod: LAST_2_MONTHS,
-        axesgroup: new Map({ optionKey: 'people', searchString: 'Person' }),
-        owner: userId,
-      },
+      props: buildTemplateMostActivePeople(new Map({ owner: userId })),
       isExpanded: false,
     })),
     dispatch(addModel({
