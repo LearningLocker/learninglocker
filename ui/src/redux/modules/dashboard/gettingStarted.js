@@ -2,14 +2,13 @@ import { Map } from 'immutable';
 import { actions as routerActions } from 'redux-router5';
 import { put, call, takeEvery } from 'redux-saga/effects';
 import {
-  TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_WEEKDAYS_ACTIVITY,
 } from 'lib/constants/visualise';
-import { LAST_2_MONTHS } from 'ui/utils/constants';
 import buildTemplateLast7DaysStatements from 'ui/containers/Visualisations/TemplateLast7DaysStatements/buildModel';
 import buildTemplateActivityOverTime from 'ui/containers/Visualisations/TemplateActivityOverTime/buildModel';
 import buildTemplateMostActivePeople from 'ui/containers/Visualisations/TemplateMostActivePeople/buildModel';
 import buildTemplateMostPopularActivities from 'ui/containers/Visualisations/TemplateMostPopularActivities/buildModel';
+import buildTemplateMostPopularVerbs from 'ui/containers/Visualisations/TemplateMostPopularVerbs/buildModel';
 import { addModel } from '../models';
 
 export const CREATE_GETTING_STARTED = 'learninglocker/dashboard/CREATE_GETTING_STARTED';
@@ -33,13 +32,7 @@ const createVisualisations = async ({ dispatch, userId }) => {
     })),
     dispatch(addModel({
       schema: 'visualisation',
-      props: {
-        description: 'What are the most popular verbs?',
-        type: TEMPLATE_MOST_POPULAR_VERBS,
-        previewPeriod: LAST_2_MONTHS,
-        axesgroup: new Map({ optionKey: 'verb', searchString: 'Verb' }),
-        owner: userId,
-      },
+      props: buildTemplateMostPopularVerbs(new Map({ owner: userId })),
       isExpanded: false,
     })),
     dispatch(addModel({
