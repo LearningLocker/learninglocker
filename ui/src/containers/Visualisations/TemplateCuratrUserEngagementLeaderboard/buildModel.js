@@ -1,7 +1,7 @@
 import { Map, fromJS } from 'immutable';
 import { TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD } from 'lib/constants/visualise';
 import { LAST_7_DAYS } from 'ui/utils/constants';
-import { title } from './constants';
+import { description } from './constants';
 
 /**
  * @param {string} label
@@ -47,7 +47,7 @@ const filters = [
 const buildModel = model =>
   model
     .set('type', TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD)
-    .set('description', title)
+    .set('description', description)
     .set('axesgroup', new Map({ optionKey: 'people', searchString: 'Person' }))
     .set('axesoperator', 'uniqueCount')
     .set('axesvalue', new Map({ optionKey: 'statements', searchString: 'Statements' }))

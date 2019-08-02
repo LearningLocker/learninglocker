@@ -1,7 +1,7 @@
 import { Map, fromJS } from 'immutable';
 import { TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB } from 'lib/constants/visualise';
 import { LAST_30_DAYS } from 'ui/utils/constants';
-import { title } from './constants';
+import { description } from './constants';
 
 /**
  * @param {string} label
@@ -48,7 +48,7 @@ const filters = [
 const buildModel = model =>
   model
     .set('type', TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB)
-    .set('description', title)
+    .set('description', description)
     .set('axesgroup', new Map({ optionKey: 'date', searchString: 'Date' }))
     .set('axesoperator', 'uniqueCount')
     .set('axesvalue', new Map({ optionKey: 'statements', searchString: 'Statements' }))

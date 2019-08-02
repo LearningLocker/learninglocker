@@ -1,7 +1,7 @@
 import { Map, fromJS } from 'immutable';
 import { TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS } from 'lib/constants/visualise';
 import { LAST_7_DAYS } from 'ui/utils/constants';
-import { title } from './constants';
+import { description } from './constants';
 
 /**
  * @param {string} label
@@ -40,7 +40,7 @@ const filters = [fromJS({
 const buildModel = model =>
   model
     .set('type', TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS)
-    .set('description', title)
+    .set('description', description)
     .set('axesgroup', new Map({ optionKey: 'verb', searchString: 'Verb' }))
     .set('axesoperator', 'uniqueCount')
     .set('axesvalue', new Map({ optionKey: 'statements', searchString: 'Statements' }))

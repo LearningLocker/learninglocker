@@ -1,7 +1,7 @@
 import { Map, fromJS } from 'immutable';
 import { TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT } from 'lib/constants/visualise';
 import { LAST_7_DAYS } from 'ui/utils/constants';
-import { title } from './constants';
+import { description } from './constants';
 
 const axesxQuery = fromJS({
   $match: {
@@ -63,7 +63,7 @@ const axesyQuery = fromJS({
 const buildModel = model =>
   model
     .set('type', TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT)
-    .set('description', title)
+    .set('description', description)
     .set('axesgroup', new Map({ optionKey: 'people', searchString: 'Person' }))
     .set('axesxLabel', 'Engagement (completed/commented/shared/voted up)')
     .set('axesxOperator', 'uniqueCount')
