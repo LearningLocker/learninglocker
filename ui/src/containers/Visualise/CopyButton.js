@@ -1,44 +1,9 @@
-import React, { useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { compose, withHandlers, mapProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
-import ConfirmModal from 'ui/components/Modal/ConfirmModal';
+import CopyIconButton from 'ui/components/IconButton/CopyIconButton';
 import { loggedInUserId } from 'ui/redux/modules/auth';
 import { COPY_VISUALISATION } from 'ui/redux/modules/visualisation/copyVisualisation';
-
-/**
- * @param {function} _.copyVisualisation
- */
-const CopyIconButton = ({ copyVisualisation }) => {
-  const [isModalOpen, setModalOpen] = useState(false);
-
-  const closeModal = useCallback(() => setModalOpen(false));
-  const openModal = useCallback((e) => {
-    e.stopPropagation();
-    setModalOpen(true);
-  });
-  const onClickConfirm = useCallback(() => {
-    copyVisualisation();
-    setModalOpen(false);
-  });
-
-  return (
-    <button
-      className="btn btn-sm btn-inverse"
-      title="Copy"
-      onClick={openModal}
-      style={{ width: '33px' }}>
-      <i className="icon ion-ios-copy" />
-
-      <ConfirmModal
-        isOpen={isModalOpen}
-        title="Confirm copy"
-        message={<span>This will copy the visualisation. Are you sure?</span>}
-        onConfirm={onClickConfirm}
-        onCancel={closeModal} />
-    </button>
-  );
-};
 
 /**
  * @param {string} _.schema
@@ -67,7 +32,12 @@ const CopyButton = compose(
       });
     }
   }),
-  mapProps(({ copyVisualisation }) => ({ copyVisualisation })),
+  mapProps(
+    ({ copyVisualisation }) => ({
+      message: 'This will copy the visualisation. Are you sure?',
+      onClickConfirm: copyVisualisation,
+    }),
+  ),
 )(CopyIconButton);
 
 export default CopyButton;

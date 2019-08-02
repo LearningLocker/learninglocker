@@ -8,8 +8,8 @@ import { actions as routerActions } from 'redux-router5';
 import { withProps, compose, lifecycle, withHandlers, mapProps } from 'recompose';
 import { Map, List, is } from 'immutable';
 import Input from 'ui/components/Material/Input';
-import ConfirmModal from 'ui/components/Modal/ConfirmModal';
 import Spinner from 'ui/components/Spinner';
+import CopyIconButton from 'ui/components/IconButton/CopyIconButton';
 import DashboardGrid from 'ui/containers/DashboardGrid';
 import DashboardSharing from 'ui/containers/DashboardSharing';
 import DeleteButton from 'ui/containers/DeleteButton';
@@ -44,7 +44,6 @@ class Dashboard extends Component {
     super(props);
     this.state = {
       widgetModalOpen: false,
-      isCopyModelOpen: false,
     };
   }
 
@@ -62,14 +61,6 @@ class Dashboard extends Component {
   onClickAddWidget = () => {
     this.toggleWidgetModal();
   };
-
-  onClickCopyDashboard = () => this.setState({
-    isCopyModelOpen: true,
-  });
-
-  onCloseCopyDashboard = () => this.setState({
-    isCopyModelOpen: false,
-  });
 
   onTitleChange = (value) => {
     this.props.updateModel({ path: ['title'], value });
@@ -171,13 +162,10 @@ class Dashboard extends Component {
               id={model.get('_id')}
               schema={schema} />
 
-            <button
-              className="btn btn-default btn-sm flat-btn flat-white"
-              title="Copy"
-              onClick={this.onClickCopyDashboard}
-              style={{ width: '33px' }}>
-              <i className="icon ion-ios-copy" />
-            </button>
+            <CopyIconButton
+              message="This will copy the dashboard and visualisations. Are you sure?"
+              white
+              onClickConfirm={doCopyDashboard} />
 
             <DeleteButton
               white
@@ -218,13 +206,6 @@ class Dashboard extends Component {
           model={model}
           onClickClose={() => this.toggleWidgetModal()}
           onChangeVisualisation={this.createPopulatedWidget} />
-
-        <ConfirmModal
-          isOpen={this.state.isCopyModelOpen}
-          title="Confirm copy"
-          message={<span>This will copy the dashboard and visualisations. Are you sure?</span>}
-          onConfirm={doCopyDashboard}
-          onCancel={this.onCloseCopyDashboard} />
 
         <DashboardGrid
           widgets={model.get('widgets')}
