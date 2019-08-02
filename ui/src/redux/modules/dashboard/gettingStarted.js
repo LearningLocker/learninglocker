@@ -1,14 +1,12 @@
 import { Map } from 'immutable';
 import { actions as routerActions } from 'redux-router5';
 import { put, call, takeEvery } from 'redux-saga/effects';
-import {
-  TEMPLATE_WEEKDAYS_ACTIVITY,
-} from 'lib/constants/visualise';
 import buildTemplateLast7DaysStatements from 'ui/containers/Visualisations/TemplateLast7DaysStatements/buildModel';
 import buildTemplateActivityOverTime from 'ui/containers/Visualisations/TemplateActivityOverTime/buildModel';
 import buildTemplateMostActivePeople from 'ui/containers/Visualisations/TemplateMostActivePeople/buildModel';
 import buildTemplateMostPopularActivities from 'ui/containers/Visualisations/TemplateMostPopularActivities/buildModel';
 import buildTemplateMostPopularVerbs from 'ui/containers/Visualisations/TemplateMostPopularVerbs/buildModel';
+import buildTemplateWeekdaysActivity from 'ui/containers/Visualisations/TemplateWeekdaysActivity/buildModel';
 import { addModel } from '../models';
 
 export const CREATE_GETTING_STARTED = 'learninglocker/dashboard/CREATE_GETTING_STARTED';
@@ -47,12 +45,7 @@ const createVisualisations = async ({ dispatch, userId }) => {
     })),
     dispatch(addModel({
       schema: 'visualisation',
-      props: {
-        description: 'How does activity change in a week?',
-        type: TEMPLATE_WEEKDAYS_ACTIVITY,
-        axesgroup: new Map({ optionKey: 'weekday', searchString: 'Day' }),
-        owner: userId,
-      },
+      props: buildTemplateWeekdaysActivity(new Map({ owner: userId })),
       isExpanded: false,
     })),
   ]);
