@@ -48,4 +48,4 @@ const getAllowedWorkerQueues = (allowedWorkerQueuesString) => {
 const allowedWorkerQueues = getAllowedWorkerQueues(process.env.ALLOWED_WORKER_QUEUES);
 
 /* eslint-disable import/prefer-default-export*/
-export const isAllowedWorkerQueue = (queueName) => allowedWorkerQueues.includes(queueName);
+export const isAllowedWorkerQueue = queueName => allowedWorkerQueues.includes(queueName);
