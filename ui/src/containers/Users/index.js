@@ -8,6 +8,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { withProps, compose } from 'recompose';
 import { queryStringToQuery, modelQueryStringSelector } from 'ui/redux/modules/search';
 import { clearModelsCache as clearModelsCacheAction } from 'ui/redux/modules/pagination';
+import { deleteUserOrganisation as deleteUserOrganisationAction } from 'ui/redux/modules/userOrganisations';
 import { withModels, withModel } from 'ui/utils/hocs';
 import { addModel } from 'ui/redux/modules/models';
 import UserPicture from 'ui/components/UserPicture';
@@ -21,16 +22,22 @@ import ValidationList from 'ui/components/ValidationList';
 import styles from './users.css';
 
 const UserDeleteButton = compose(
-  connect(state => ({
-    organisationId: activeOrgIdSelector(state)
-  }), { clearModelsCache: clearModelsCacheAction }),
+  connect(
+    state => ({
+      organisationId: activeOrgIdSelector(state)
+    }),
+    {
+      clearModelsCache: clearModelsCacheAction,
+      deleteUserOrganisation: deleteUserOrganisationAction,
+    }
+  ),
   withModel,
-  withProps(({ saveModel, clearModelsCache, model, organisationId }) => ({
+  withProps(({ clearModelsCache, deleteUserOrganisation, model, organisationId }) => ({
     renderMessage: () => 'This will remove the user from this organisation',
     onDelete: () => {
-      const newOrganisations = model.get('organisations').filter(orgId => orgId !== organisationId);
-      saveModel({
-        attrs: { organisations: newOrganisations }
+      deleteUserOrganisation({
+        userId: model.get('_id'),
+        organisationId,
       }).then(() => {
         clearModelsCache({ schema: 'user' });
       });
