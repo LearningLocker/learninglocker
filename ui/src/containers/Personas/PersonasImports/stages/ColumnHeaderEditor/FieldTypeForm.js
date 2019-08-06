@@ -36,9 +36,9 @@ const FieldTypeForm = ({
           COLUMN_TYPES
             .filter(type => type !== COLUMN_ACCOUNT_KEY || columnType === COLUMN_ACCOUNT_KEY)
             .map(type => (
-            <option key={type} value={type}>
-              {COLUMN_TYPE_LABELS[type]}
-            </option>
+              <option key={type} value={type}>
+                {COLUMN_TYPE_LABELS[type]}
+              </option>
           ))
         }
       </select>
