@@ -15,10 +15,11 @@ const enhance = compose(
       organisationId: activeOrgIdSelector(state)
     }),
     dispatch => ({
-      createGettingStarted: args => dispatch({
-        ...args,
+      createGettingStarted: ({ userId, organisationId }) => dispatch({
         dispatch,
         type: CREATE_GETTING_STARTED,
+        userId,
+        organisationId,
       })
     })
   ),

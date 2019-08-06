@@ -18,10 +18,10 @@ exports[`PersonasImports should render the personas imports list with no items 1
           <i
             className="ion ion-plus"
           />
-           Import
+          Import
         </button>
       </span>
-       People - Imports
+      People - Imports
     </div>
   </header>
   <div

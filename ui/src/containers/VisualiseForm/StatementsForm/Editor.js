@@ -4,6 +4,7 @@ import { Map } from 'immutable';
 import { connect } from 'react-redux';
 import { Tab } from 'react-toolbox/lib/tabs';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { COUNTER } from 'lib/constants/visualise';
 import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
 import { updateModel } from 'ui/redux/modules/models';
 import Tabs from 'ui/components/Material/Tabs';
@@ -12,11 +13,11 @@ import AxesEditor from './AxesEditor';
 import OptionsEditor from './OptionsEditor';
 import styles from './styles.css';
 
+// [Viz Refactor] TODO: Remove this component
 class Editor extends Component {
   static propTypes = {
     model: PropTypes.instanceOf(Map), // visualisation model
     orgTimezone: PropTypes.string.isRequired,
-    exportVisualisation: PropTypes.func,
     updateModel: PropTypes.func,
   }
 
@@ -80,12 +81,11 @@ class Editor extends Component {
     if (this.isSeriesType()) {
       return (
         <SeriesEditor
-          model={this.props.model}
-          exportVisualisation={this.props.exportVisualisation} />
+          model={this.props.model} />
       );
     }
 
-    const isCounter = (this.props.model.get('type') === 'COUNTER');
+    const isCounter = (this.props.model.get('type') === COUNTER);
 
     return (
       <div className={styles.tab}>
@@ -109,8 +109,7 @@ class Editor extends Component {
           <Tab key="series" label={isCounter ? 'Filter' : 'Series'}>
             <SeriesEditor
               model={this.props.model}
-              orgTimezone={this.props.orgTimezone}
-              exportVisualisation={this.props.exportVisualisation} />
+              orgTimezone={this.props.orgTimezone} />
           </Tab>
 
           <Tab key="options" label="Options">

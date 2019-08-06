@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { routeNodeSelector } from 'redux-router5';
 import { withProps, compose } from 'recompose';
-import { createVisualisationName } from 'ui/utils/defaultTitles';
+import { createDefaultTitle } from 'ui/utils/defaultTitles';
 import { Map, fromJS } from 'immutable';
 import { queryStringToQuery, modelQueryStringSelector } from 'ui/redux/modules/search';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
@@ -11,14 +11,13 @@ import { withModels, withModel } from 'ui/utils/hocs';
 import { addModel } from 'ui/redux/modules/models';
 import { loggedInUserId } from 'ui/redux/modules/auth';
 import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
+import VisualiseIcon from 'ui/components/VisualiseIcon';
 import SearchBox from 'ui/containers/SearchBox';
 import ModelList from 'ui/containers/ModelList';
 import VisualiseForm from 'ui/containers/VisualiseForm';
 import DeleteButton from 'ui/containers/DeleteButton';
 import PrivacyToggleButton from 'ui/containers/PrivacyToggleButton';
-import VisualisationTypeIcon from './VisualisationTypeIcon';
 import styles from './visualise.css';
-
 
 const schema = 'visualisation';
 
@@ -65,9 +64,9 @@ class Visualise extends Component {
 
   populateTitle = (model) => {
     if (model.get('description')) {
-      return <span style={{ fontWeight: 700 }}>{model.get('description')}</span>;
+      return (<span style={{ fontWeight: 700 }}>{model.get('description')}</span>);
     }
-    return createVisualisationName(model);
+    return (<span style={{ color: '#B9B9B9', fontWeight: '100' }}>{createDefaultTitle(model)}</span>);
   }
 
   render = () => {
@@ -101,7 +100,9 @@ class Visualise extends Component {
               getDescription={model => (
                 <span>
                   <span style={{ paddingRight: 10 }}>
-                    <VisualisationTypeIcon id={model.get('_id')} tableIcon={false} />
+                    <VisualiseIcon
+                      type={model.get('type')}
+                      sourceView={false} />
                   </span>
                   {this.populateTitle(model)}
                 </span>
