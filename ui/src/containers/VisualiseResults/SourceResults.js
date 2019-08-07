@@ -3,10 +3,17 @@ import { compose } from 'recompose';
 import { Map, OrderedMap } from 'immutable';
 import isString from 'lodash/isString';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { XVSY } from 'lib/constants/visualise';
+import {
+  LEADERBOARD,
+  XVSY,
+  FREQUENCY,
+  TEMPLATE_ACTIVITY_OVER_TIME,
+  TEMPLATE_MOST_ACTIVE_PEOPLE,
+  TEMPLATE_MOST_POPULAR_ACTIVITIES,
+  TEMPLATE_MOST_POPULAR_VERBS,
+} from 'lib/constants/visualise';
 import NoData from 'ui/components/Graphs/NoData';
 import { withStatementsVisualisation } from 'ui/utils/hocs';
-import { getAxesString } from 'ui/utils/defaultTitles';
 import { displayVerb, displayActivity } from 'ui/utils/xapi';
 import styles from './styles.css';
 
@@ -69,21 +76,43 @@ const formatKeyToFriendlyString = (key) => {
   return JSON.stringify(key, null, 2);
 };
 
-const getAxisLabel = (axis, visualisation, type) => {
-  if (type !== XVSY) {
-    return getAxesString(axis, visualisation, type, false);
+const getGroupAxisLabel = (visualisation, type) => {
+  switch (type) {
+    // Correlation Chart type
+    case XVSY:
+      return visualisation.getIn(['axesgroup', 'searchString']) || 'Group';
+    // Bar Chart type
+    case LEADERBOARD:
+    case TEMPLATE_MOST_ACTIVE_PEOPLE:
+    case TEMPLATE_MOST_POPULAR_ACTIVITIES:
+    case TEMPLATE_MOST_POPULAR_VERBS:
+      return visualisation.get('axesyLabel') || visualisation.getIn(['axesgroup', 'searchString']) || 'Y Axis';
+    // Line Chart type
+    case FREQUENCY:
+    case TEMPLATE_ACTIVITY_OVER_TIME:
+      return visualisation.get('axesxLabel') || 'yyyy/mm/dd';
+    default:
+      return visualisation.get('axesxLabel') || visualisation.getIn(['axesgroup', 'searchString']) || 'X Axis';
   }
-  return visualisation.getIn(['axesgroup', 'searchString'], 'No value');
 };
 
-const createSelectIfXVSY = (index, visualisation, type, axis) => {
-  if (type !== XVSY) {
-    return getAxisLabel(axis, visualisation, type);
+const getValueAxisLabel = (index, visualisation, type) => {
+  switch (type) {
+    // Correlation Chart type
+    case XVSY:
+      if (index === 0) {
+        return visualisation.get('axesxLabel') || visualisation.getIn(['axesxValue', 'searchString']) || 'X Axis';
+      }
+      return visualisation.get('axesyLabel') || visualisation.getIn(['axesyValue', 'searchString']) || 'Y Axis';
+    // Bar Chart type
+    case LEADERBOARD:
+    case TEMPLATE_MOST_ACTIVE_PEOPLE:
+    case TEMPLATE_MOST_POPULAR_ACTIVITIES:
+    case TEMPLATE_MOST_POPULAR_VERBS:
+      return visualisation.get('axesxLabel') || visualisation.getIn(['axesvalue', 'searchString']) || 'X Axis';
+    default:
+      return visualisation.get('axesyLabel') || visualisation.getIn(['axesvalue', 'searchString']) || 'Y Axis';
   }
-  if (index === 0) {
-    return visualisation.get('axesxLabel', visualisation.getIn(['axesxValue', 'searchString'], 'No value'));
-  }
-  return visualisation.get('axesyLabel', visualisation.getIn(['axesyValue', 'searchString'], 'No value'));
 };
 
 const formatNumber = (selectedAxes) => {
@@ -97,63 +126,68 @@ const formatNumber = (selectedAxes) => {
   return count;
 };
 
-export default compose(
-  withStatementsVisualisation,
-  withStyles(styles),
-)(({
+const SourceResult = ({
   getFormattedResults,
   results,
   labels,
   model,
-  visualisation
+  visualisation,
 }) => {
   const formattedResults = getFormattedResults(results);
   const tLabels = labels.map((label, i) => (label === undefined ? `Series ${i + 1}` : label));
   const tableData = generateTableData(formattedResults, tLabels);
   const subColumnsCount = countSubColumns(tLabels, tableData);
 
-  if (tableData.first()) {
-    return (
-      <div className={styles.sourceResultsContainer}>
-        <table className="table table-bordered table-striped">
-          <tbody>
-            {moreThanOneSeries(tableData) && <tr>
-              <th />
-              {
-                tLabels.map(tLabel => (
-                  <th key={tLabel} colSpan={subColumnsCount}>{tLabel}</th>
-                )).valueSeq()
-              }
-            </tr>}
+  console.log(model.equals(visualisation));
 
-            <tr>
-              <th>{getAxisLabel('x', visualisation, model.get('type'))}</th>
+  if (!tableData.first()) {
+    return <NoData />;
+  }
+
+  return (
+    <div className={styles.sourceResultsContainer}>
+      <table className="table table-bordered table-striped">
+        <tbody>
+          {moreThanOneSeries(tableData) && <tr>
+            <th />
+            {
+              tLabels.map(tLabel => (
+                <th key={tLabel} colSpan={subColumnsCount}>{tLabel}</th>
+              )).valueSeq()
+            }
+          </tr>}
+
+          <tr>
+            <th>{getGroupAxisLabel(visualisation, model.get('type'))}</th>
+            {
+              tLabels.map(tLabel =>
+                [...Array(subColumnsCount).keys()].map(k =>
+                  <th key={`${tLabel}-${k}`}>{getValueAxisLabel(k, visualisation, model.get('type'))}</th>
+                )
+              ).valueSeq()
+            }
+          </tr>
+
+          {tableData.map((row, key) => (
+            <tr key={key}>
+              <td title={key}>{formatKeyToFriendlyString(row.get('model', key))}</td>
               {
                 tLabels.map(tLabel =>
-                  [...Array(subColumnsCount).keys()].map(k =>
-                    <th key={`${tLabel}-${k}`}>{createSelectIfXVSY(k, visualisation, model.get('type'), 'y')}</th>
-                  )
+                  [...Array(subColumnsCount).keys()].map((k) => {
+                    const v = row.getIn(['rowData', tLabel, k], new Map({ count: null }));
+                    return <td key={`${tLabel}-${k}`}>{formatNumber(v)}</td>;
+                  })
                 ).valueSeq()
               }
             </tr>
+          )).valueSeq()}
+        </tbody>
+      </table>
+    </div>
+  );
+};
 
-            {tableData.map((row, key) => (
-              <tr key={key}>
-                <td title={key}>{formatKeyToFriendlyString(row.get('model', key))}</td>
-                {
-                  tLabels.map(tLabel =>
-                    [...Array(subColumnsCount).keys()].map((k) => {
-                      const v = row.getIn(['rowData', tLabel, k], new Map({ count: null }));
-                      return <td key={`${tLabel}-${k}`}>{formatNumber(v)}</td>;
-                    })
-                  ).valueSeq()
-                }
-              </tr>
-            )).valueSeq()}
-          </tbody>
-        </table>
-      </div>
-    );
-  }
-  return (<NoData />);
-});
+export default compose(
+  withStatementsVisualisation,
+  withStyles(styles),
+)(SourceResult);
