@@ -76,8 +76,8 @@ const formatKeyToFriendlyString = (key) => {
   return JSON.stringify(key, null, 2);
 };
 
-const getGroupAxisLabel = (visualisation, type) => {
-  switch (type) {
+const getGroupAxisLabel = (visualisation) => {
+  switch (visualisation.get('type')) {
     // Correlation Chart type
     case XVSY:
       return visualisation.getIn(['axesgroup', 'searchString']) || 'Group';
@@ -96,8 +96,8 @@ const getGroupAxisLabel = (visualisation, type) => {
   }
 };
 
-const getValueAxisLabel = (index, visualisation, type) => {
-  switch (type) {
+const getValueAxisLabel = (index, visualisation) => {
+  switch (visualisation.get('type')) {
     // Correlation Chart type
     case XVSY:
       if (index === 0) {
@@ -130,15 +130,12 @@ const SourceResult = ({
   getFormattedResults,
   results,
   labels,
-  model,
   visualisation,
 }) => {
   const formattedResults = getFormattedResults(results);
   const tLabels = labels.map((label, i) => (label === undefined ? `Series ${i + 1}` : label));
   const tableData = generateTableData(formattedResults, tLabels);
   const subColumnsCount = countSubColumns(tLabels, tableData);
-
-  console.log(model.equals(visualisation));
 
   if (!tableData.first()) {
     return <NoData />;
@@ -158,11 +155,11 @@ const SourceResult = ({
           </tr>}
 
           <tr>
-            <th>{getGroupAxisLabel(visualisation, model.get('type'))}</th>
+            <th>{getGroupAxisLabel(visualisation)}</th>
             {
               tLabels.map(tLabel =>
                 [...Array(subColumnsCount).keys()].map(k =>
-                  <th key={`${tLabel}-${k}`}>{getValueAxisLabel(k, visualisation, model.get('type'))}</th>
+                  <th key={`${tLabel}-${k}`}>{getValueAxisLabel(k, visualisation)}</th>
                 )
               ).valueSeq()
             }
