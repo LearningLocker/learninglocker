@@ -260,5 +260,5 @@ export default compose(
       userId,
     })
   }),
-  mapProps(original => _.pick(original, Object.keys(Dashboard.propTypes))),
+  mapProps(original => _.pick(original, ['model', 'navigateTo', 'updateModel', 'saveModel', 'setMetadata', 'getMetadata', 'doCopyDashboard'])),
 )(Dashboard);
