@@ -49,39 +49,6 @@ export const shorten = (target, forXAxis) => {
   return target;
 };
 
-// [Viz Refactor] TODO: Remove this function and implement directly axes names into each Visualisation/.../Editor
-export const getAxesString = (key, model, type = null, shortened = true) => {
-  const select = (ky, axis) => model.getIn([ky, 'searchString'], axis);
-  const x = shortened ? shorten(model.get('axesxLabel', select(axg, 'X-Axis'))) : model.get('axesxLabel', select(axg, 'X-Axis'));
-  const y = shortened ? shorten(model.get('axesyLabel', select(axv, 'Y-Axis')), false) : model.get('axesyLabel', select(axv, 'Y-Axis'));
-
-  const getResultForXY = () => {
-    const labelString = key === 'x' ? model.axesxLabel : model.axesyLabel;
-    const defaultLabel = key === 'x' ? model.getIn(['axesxValue', 'searchString'], 'X-Axis') : model.getIn(['axesgroup', 'searchString'], 'Y-Axis');
-    if (labelString && labelString.length) {
-      return labelString;
-    }
-    return defaultLabel;
-  };
-
-  if (type === LEADERBOARD || type === TEMPLATE_ACTIVITY_OVER_TIME) {
-    switch (key) {
-      case 'x': return y.length ? y : model.getIn(['axesgroup', 'searchString'], 'X-Axis');
-      case 'y': return x.length ? x : model.getIn(['axesvalue', 'searchString'], 'Y-Axis');
-      default: return null;
-    }
-  }
-
-  if (type !== XVSY) {
-    switch (key) {
-      case 'x': return x.length ? x : select(axg, 'yyyy/mm/dd');
-      case 'y': return y.length ? y : select(axv, 'Y-Axis');
-      default: return null;
-    }
-  }
-  return getResultForXY();
-};
-
 const makeOperatorReadable = (model, operatorName) => {
   const operator = model.get(operatorName);
   if (operator === 'uniqueCount') {
