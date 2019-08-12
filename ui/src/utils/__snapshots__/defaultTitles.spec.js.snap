@@ -3,7 +3,7 @@
 exports[`defaultTitles should create a title with an icon 1`] = `
 <div>
   <span>
-    <Component
+    <WithStyles(Component)
       sourceView={false}
     />
     <span
