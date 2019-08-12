@@ -25,11 +25,11 @@ const enhance = compose(
   withModels
 );
 
-const render = ({ models, user }) => {
+const SiteUserOrgItems = ({ models, user }) => {
   const orgsItems = models
-    .map(org => <SiteUserOrgItem org={org} user={user} />)
+    .map(org => <SiteUserOrgItem key={org.get('_id').toString()} org={org} user={user} />)
     .valueSeq();
   return <ul>{orgsItems}</ul>;
 };
 
-export default enhance(render);
+export default enhance(SiteUserOrgItems);

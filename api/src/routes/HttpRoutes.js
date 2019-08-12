@@ -20,7 +20,8 @@ import {
   GOOGLE_AUTH_OPTIONS,
   DEFAULT_PASSPORT_OPTIONS,
   RESTIFY_DEFAULTS,
-  setNoCacheHeaders
+  setNoCacheHeaders,
+  checkOrg,
 } from 'lib/constants/auth';
 import { MANAGER_SELECT } from 'lib/services/auth/selects/models/user.js';
 
@@ -59,6 +60,8 @@ import SiteSettings from 'lib/models/siteSettings';
 import personaRESTHandler from 'api/routes/personas/personaRESTHandler';
 import personaIdentifierRESTHandler from 'api/routes/personas/personaIdentifierRESTHandler';
 import personaAttributeRESTHandler from 'api/routes/personas/personaAttributeRESTHandler';
+import UserOrganisationsRouter from 'api/routes/userOrganisations/router';
+import UserOrganisationSettingsRouter from 'api/routes/userOrganisationSettings/router';
 import BatchDelete from 'lib/models/batchDelete';
 import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
 import { updateStatementCountsInOrg } from 'lib/services/lrs';
@@ -143,6 +146,16 @@ router.get(
 router.use(personaRESTHandler);
 router.use(personaIdentifierRESTHandler);
 router.use(personaAttributeRESTHandler);
+
+/**
+ * User Organisations
+ */
+router.use(UserOrganisationsRouter);
+
+/**
+ * User OrganisationSettings
+ */
+router.use(UserOrganisationSettingsRouter);
 
 /**
  * UPLOADS
@@ -242,7 +255,6 @@ router.post(
   BatchDeleteController.terminateBatchDelete
 );
 
-
 /**
  * V1 compatability
  */
@@ -274,23 +286,31 @@ restify.serve(router, Download);
 restify.serve(router, Query);
 restify.serve(router, ImportCsv);
 restify.serve(router, User, {
-  preUpdate: (req, res, next) => {
+  preCreate: (req, res, next) => {
     const authInfo = getAuthFromRequest(req);
     const scopes = getScopesFromAuthInfo(authInfo);
-    const tokenType = getTokenTypeFromAuthInfo(authInfo);
+    if (!scopes.includes(SITE_ADMIN)) {
+      req.body = pick(req.body, ['name', 'email', 'isExpanded', 'organisations']);
+    }
+    checkOrg(req, res, next);
+  },
+  preUpdate: (req, _, next) => {
+    const authInfo = getAuthFromRequest(req);
+    const scopes = getScopesFromAuthInfo(authInfo);
 
-    // if site admin, skip over this section
-    if (findIndex(scopes, item => item === SITE_ADMIN) < 0) {
-      // remove scope changes
-      req.body = omit(req.body, 'scopes');
-      if (tokenType === 'user' || tokenType === 'organisation') {
-        if (req.body._id !== getUserIdFromAuthInfo(authInfo).toString()) {
-          // Don't allow changing of passwords
-          req.body = omit(req.body, 'password');
-        }
+    // Site admins can update any fields
+    if (!scopes.includes(SITE_ADMIN)) {
+      const tokenType = getTokenTypeFromAuthInfo(authInfo);
+      const isUpdatingItself =
+        ['user', 'organisation'].includes(tokenType) &&
+        req.body._id === getUserIdFromAuthInfo(authInfo).toString();
+
+      // Non site admin user can update
+      // only name and password of the user itself or only name of other users.
+      if (isUpdatingItself) {
+        req.body = pick(req.body, ['name', 'password']);
       } else {
-        // always strip the password from other token types
-        req.body = omit(req.body, 'password');
+        req.body = pick(req.body, ['name']);
       }
     }
 
