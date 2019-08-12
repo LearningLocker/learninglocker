@@ -3,13 +3,14 @@ import { connect } from 'react-redux';
 import { compose, withHandlers } from 'recompose';
 import { Map } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { COLUMN_ACCOUNT_KEY, COLUMN_ACCOUNT_VALUE } from 'lib/constants/personasImport';
+import { COLUMN_ACCOUNT_KEY, COLUMN_ACCOUNT_VALUE, COLUMN_ATTRIBUTE_DATA } from 'lib/constants/personasImport';
 import * as personasImportHelpers from 'lib/services/importPersonas/personasImportHelpers';
 import { updateModel } from 'ui/redux/modules/models';
 import FieldTypeForm from './FieldTypeForm';
 import PrimaryForm from './PrimaryForm';
 import AccountNameForm from './AccountNameForm';
 import AccountHomePageForm from './AccountHomePageForm';
+import AttributeNameForm from './AttributeNameForm';
 import styles from './styles.css';
 
 const handlers = {
@@ -134,6 +135,25 @@ const handlers = {
       path: 'structure',
       value: newStructure,
     });
+  },
+
+  onAttributeNameChange: ({
+    columnStructure,
+    model,
+    updateModel: doUpdateModel,
+  }) => (attributeName) => {
+    const columnName = columnStructure.get('columnName', '');
+
+    const newStructure = model
+    .get('structure')
+    .setIn([columnName, 'attributeName'], attributeName);
+
+    doUpdateModel({
+      schema: 'personasImport',
+      id: model.get('_id'),
+      path: 'structure',
+      value: newStructure,
+    });
   }
 };
 
@@ -146,6 +166,7 @@ const InputFields = ({
   onRelatedColumnChange,
   onUseConstantChange,
   onConstantChange,
+  onAttributeNameChange,
 }) => {
   const isColumnOrderable = personasImportHelpers.isColumnOrderable({ columnStructure: columnStructure.toJS() });
 
@@ -179,6 +200,13 @@ const InputFields = ({
           onRelatedColumnChange={onRelatedColumnChange}
           onUseConstantChange={onUseConstantChange}
           onConstantChange={onConstantChange} />
+      )}
+
+      {columnStructure.get('columnType') === COLUMN_ATTRIBUTE_DATA && (
+        <AttributeNameForm
+          attributeName={columnStructure.get('attributeName', columnStructure.get('columnName', ''))}
+          disabled={disabled}
+          onChange={onAttributeNameChange} />
       )}
     </td>
   );
