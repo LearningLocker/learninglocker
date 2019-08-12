@@ -13,6 +13,12 @@ import {
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_WEEKDAYS_ACTIVITY,
+  TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT,
+  TEMPLATE_CURATR_COMMENT_COUNT,
+  TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB,
+  TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD,
+  TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS,
+  TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS,
 } from 'lib/constants/visualise';
 import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
 import { periodToDate } from 'ui/utils/dates';
@@ -61,11 +67,17 @@ export default memoize((args = new Map()) => {
     case TEMPLATE_MOST_POPULAR_ACTIVITIES:
     case TEMPLATE_MOST_POPULAR_VERBS:
     case TEMPLATE_WEEKDAYS_ACTIVITY:
+    case TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB:
+    case TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD:
+    case TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS:
+    case TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS:
       return aggregateChart(preReqs, axes, timezone);
     case XVSY:
+    case TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT:
       return aggregateXvsY(preReqs, axes, timezone);
     case COUNTER:
     case TEMPLATE_LAST_7_DAYS_STATEMENTS:
+    case TEMPLATE_CURATR_COMMENT_COUNT:
       return aggregateCounter(preReqs, axes, timezone);
     default:
       return query;
