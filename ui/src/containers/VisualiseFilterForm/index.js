@@ -8,12 +8,19 @@ import {
   LEADERBOARD,
   FREQUENCY,
   COUNTER,
+  PIE,
   TEMPLATE_ACTIVITY_OVER_TIME,
   TEMPLATE_LAST_7_DAYS_STATEMENTS,
   TEMPLATE_MOST_ACTIVE_PEOPLE,
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_WEEKDAYS_ACTIVITY,
+  TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT,
+  TEMPLATE_CURATR_COMMENT_COUNT,
+  TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB,
+  TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD,
+  TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS,
+  TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS,
 } from 'lib/constants/visualise';
 import { updateModel } from 'ui/redux/modules/models';
 import TabbedQueriesBuilder from 'ui/components/TabbedQueriesBuilder';
@@ -138,21 +145,28 @@ class VisualiseFilterForm extends Component {
 
     switch (type) {
       case XVSY:
+      case TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT:
         return this.renderXvsY();
       case FREQUENCY:
       case TEMPLATE_ACTIVITY_OVER_TIME:
         return this.renderFrequency();
       case STATEMENTS:
       case TEMPLATE_WEEKDAYS_ACTIVITY:
+      case TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB:
         return this.renderStatements(queries);
       case LEADERBOARD:
       case TEMPLATE_MOST_ACTIVE_PEOPLE:
       case TEMPLATE_MOST_POPULAR_ACTIVITIES:
       case TEMPLATE_MOST_POPULAR_VERBS:
+      case TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD:
+      case TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS:
         return this.renderLeaderboard(queries);
       case COUNTER:
       case TEMPLATE_LAST_7_DAYS_STATEMENTS:
+      case TEMPLATE_CURATR_COMMENT_COUNT:
         return this.renderCounter();
+      case PIE:
+      case TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS:
       default:
         return this.renderDefault(queries);
     }

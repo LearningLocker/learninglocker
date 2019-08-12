@@ -13,6 +13,12 @@ import {
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_WEEKDAYS_ACTIVITY,
+  TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT,
+  TEMPLATE_CURATR_COMMENT_COUNT,
+  TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB,
+  TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD,
+  TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS,
+  TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS,
 } from 'lib/constants/visualise';
 import VisualiseIcon from 'ui/components/VisualiseIcon';
 import { OPERATOR_OPTS } from 'ui/utils/visualisations/localOptions';
@@ -108,16 +114,22 @@ export const createDefaultTitle = (model) => {
     case TEMPLATE_MOST_ACTIVE_PEOPLE:
     case TEMPLATE_MOST_POPULAR_ACTIVITIES:
     case TEMPLATE_MOST_POPULAR_VERBS:
+    case TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD:
+    case TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS:
       return addYX(select(axg), select(axv) || select(ayV) || 'Time');
     case XVSY:
+    case TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT:
       return addXVSYXY(select(axV), select(axv) || select(ayV) || 'Time');
     case COUNTER:
     case TEMPLATE_LAST_7_DAYS_STATEMENTS:
+    case TEMPLATE_CURATR_COMMENT_COUNT:
       return `${makeOperatorReadable(model, 'axesoperator')}${select(axv) || select(ayV)}`;
     case PIE:
+    case TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS:
       return `${makeOperatorReadable(model, 'axesoperator')}${select(axv) || select(ayV)} / ${select(axg)}`;
     case STATEMENTS:
     case TEMPLATE_WEEKDAYS_ACTIVITY:
+    case TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB:
       return addXY(select(axg), select(axv) || select(ayV) || 'Time');
     default:
       return 'Empty';
