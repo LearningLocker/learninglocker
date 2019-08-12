@@ -1,7 +1,22 @@
-import { Map } from 'immutable';
+import { Map, fromJS } from 'immutable';
 import { TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS } from 'lib/constants/visualise';
 import { LAST_7_DAYS } from 'ui/utils/constants';
 import { description } from './constants';
+
+const filter = fromJS({
+  $match: {
+    $and: [
+      {
+        $comment: '{"criterionLabel":"B","criteriaPath":["statement","context","platform"]}',
+        'statement.context.platform': {
+          $in: [
+            'Curatr',
+          ],
+        },
+      },
+    ],
+  },
+});
 
 /**
  * @param {immutable.Map} model
@@ -11,6 +26,7 @@ const buildModel = model =>
   model
     .set('type', TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS)
     .set('description', description)
+    .set('filters', [filter])
     .set('axesgroup', new Map({ optionKey: 'activities', searchString: 'Activity' }))
     .set('axesoperator', 'uniqueCount')
     .set('axesvalue', new Map({ optionKey: 'statements', searchString: 'Statements' }))
