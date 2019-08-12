@@ -15,6 +15,7 @@ import Checkbox from 'ui/components/Material/Checkbox';
 import { TimezoneSelector, buildDefaultOptionLabel } from 'ui/components/TimezoneSelector';
 import { getAppDataSelector } from 'ui/redux/modules/app';
 import { currentScopesSelector } from 'ui/redux/modules/auth';
+import { updateUserOrganisationSetting } from 'ui/redux/actions';
 
 const ORG_SETTINGS = 'organisationSettings';
 
@@ -94,7 +95,7 @@ const getDefaultOrgSettings = organisationModel =>
     organisation: organisationModel.get('_id'),
     scopes: [],
     filter: {},
-    timezone: organisationModel.get('timezone', 'UTC'),
+    timezone: null,
   });
 
 /**
@@ -117,45 +118,29 @@ const enhance = compose(
   setPropTypes({
     id: PropTypes.string.isRequired,
   }),
-  connect(state => ({
-    organisationModel: activeOrgSelector(state),
-    activeScopes: currentScopesSelector(state),
-    RESTRICT_CREATE_ORGANISATION: getAppDataSelector('RESTRICT_CREATE_ORGANISATION')(state)
-  })),
+  connect(
+    state => ({
+      organisationModel: activeOrgSelector(state),
+      activeScopes: currentScopesSelector(state),
+      RESTRICT_CREATE_ORGANISATION: getAppDataSelector('RESTRICT_CREATE_ORGANISATION')(state)
+    }),
+    dispatch => ({
+      dispatchUpdateUserOrganisationSetting: args => dispatch(updateUserOrganisationSetting(args)),
+    }),
+  ),
   withProps({
     schema: 'user',
   }),
   withModel,
-  withProps(({ model, organisationModel, updateModel }) =>
+  withProps(({ model, organisationModel, dispatchUpdateUserOrganisationSetting }) =>
     ({
       /**
        * @params {{ attr: string, value: any }[]} attrValueList
        */
-      updateOrgSettings: (attrValueList) => {
-        const org = organisationModel.get('_id').toString();
-        const hasExistingSetting = model.get(ORG_SETTINGS).find(orgSettings =>
-          orgSettings.get('organisation').toString() === org
-        );
-
-        let allOrgSettings;
-        if (hasExistingSetting) {
-          allOrgSettings = model.get(ORG_SETTINGS).map((val) => {
-            if (val.get('organisation').toString() === org) {
-              return attrValueList.reduce((acc, { attr, value }) => acc.set(attr, value), val);
-            }
-            return val;
-          });
-        } else {
-          allOrgSettings = model.get(ORG_SETTINGS) || new List();
-          allOrgSettings = allOrgSettings.push(
-            attrValueList.reduce(
-              (acc, { attr, value }) => acc.set(attr, value),
-              getDefaultOrgSettings(organisationModel)
-            )
-          );
-        }
-
-        updateModel({ path: [ORG_SETTINGS], value: allOrgSettings.toList() });
+      updateOrgSettings: (values) => {
+        const organisationId = organisationModel.get('_id').toString();
+        const userId = model.get('_id').toString();
+        dispatchUpdateUserOrganisationSetting({ userId, organisationId, values });
       },
     })
   ),
@@ -168,24 +153,26 @@ const enhance = compose(
           checked ?
           rolesSet.add(role) :
           rolesSet.delete(role)
-        );
-        updateOrgSettings([{ attr: 'roles', value: newRoles.toList() }]);
+        ).toList();
+        updateOrgSettings({ roles: newRoles });
       },
     handleSiteRolesChange: ({ model, updateModel }) =>
       (role, checked) => {
-        const scopes = model.get('scopes', new List()).toSet();
-        const newScopes = checked ?
-          scopes.add(role) :
-          scopes.delete(role);
-        updateModel({ path: 'scopes', value: newScopes.toList() });
+        const scopesSet = model.get('scopes', new List()).toSet();
+        const newScopes = (
+          checked ?
+          scopesSet.add(role) :
+          scopesSet.delete(role)
+        ).toList();
+        updateModel({ scopes: newScopes });
       },
     handleFilterChange: ({ updateOrgSettings }) =>
       (filter) => {
-        updateOrgSettings([{ attr: 'filter', value: filter }]);
+        updateOrgSettings({ filter: JSON.stringify(filter) });
       },
     handleTimezoneChange: ({ updateOrgSettings }) =>
       (timezone) => {
-        updateOrgSettings([{ attr: 'timezone', value: timezone }]);
+        updateOrgSettings({ timezone });
       },
   })
 );
@@ -225,6 +212,7 @@ class UserOrgForm extends React.Component {
       RESTRICT_CREATE_ORGANISATION
     } = this.props;
     const userOrgSettings = getActiveOrgSettings({ model, organisationModel });
+    console.log(userOrgSettings);
     const roles = userOrgSettings.get('roles', new List());
     const rolesId = uuid.v4();
     const siteRolesId = uuid.v4();
@@ -235,6 +223,7 @@ class UserOrgForm extends React.Component {
 
     const canEditOrgRoles = activeScopes.some(s => [SITE_ADMIN, ALL, MANAGE_ALL_USERS].includes(s));
     const canEditSiteRoles = RESTRICT_CREATE_ORGANISATION && activeScopes.includes(SITE_ADMIN);
+    const isSiteAdmin = activeScopes.includes(SITE_ADMIN);
 
     const orgTimezone = organisationModel.get('timezone', 'UTC');
 
@@ -271,6 +260,7 @@ class UserOrgForm extends React.Component {
               <label htmlFor={filterId}>User Filter Timezone</label>
               <TimezoneSelector
                 id={filterId}
+                disabled={!isSiteAdmin}
                 value={userOrgSettings.get('timezone', null)}
                 onChange={handleTimezoneChange}
                 defaultOption={{

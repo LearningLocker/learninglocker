@@ -239,6 +239,30 @@ class _LLApiClient {
     },
     body: { id },
   });
+
+  removeOrganisationFromUser = ({
+    userId,
+    organisationId,
+  }) => del({
+    url: formatUrl(`${routes.RESTIFY_PREFIX}/users/${userId}/organisations/${organisationId}`),
+    headers: {
+      Authorization: `Bearer ${this.getToken()}`,
+      ContentType: 'application/json'
+    },
+  });
+
+  updateUserOrganisationSettings = ({
+    userId,
+    organisationId,
+    values,
+  }) => patch({
+    url: formatUrl(`${routes.RESTIFY_PREFIX}/users/${userId}/organisationSettings/${organisationId}`),
+    headers: {
+      Authorization: `Bearer ${this.getToken()}`,
+      ContentType: 'application/json'
+    },
+    body: values,
+  });
 }
 
 const LLApiClient = _LLApiClient;
