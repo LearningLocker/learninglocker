@@ -7,6 +7,14 @@ const filter = fromJS({
   $match: {
     $and: [
       {
+        $comment: '{"criterionLabel":"A","criteriaPath":["statement","verb"]}',
+        'statement.verb.id': {
+          $in: [
+            'http://adlnet.gov/expapi/verbs/commented',
+          ],
+        },
+      },
+      {
         $comment: '{"criterionLabel":"B","criteriaPath":["statement","context","platform"]}',
         'statement.context.platform': {
           $in: [
