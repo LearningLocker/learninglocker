@@ -21,6 +21,8 @@ import {
   TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD,
   TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS,
   TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS,
+  TEMPLATE_POORLY_PERFORMING_QUESTIONS,
+  TEMPLATE_POORLY_PERFORMING_QUIZZES,
 } from 'lib/constants/visualise';
 import { withModel } from 'ui/utils/hocs';
 import VisualiseResults from 'ui/containers/VisualiseResults';
@@ -38,6 +40,8 @@ import TemplateCuratrLearnerInteractionsByDateAndVerb from './TemplateCuratrLear
 import TemplateCuratrUserEngagementLeaderboard from './TemplateCuratrUserEngagementLeaderboard/Viewer';
 import TemplateCuratrProportionOfSocialInteractions from './TemplateCuratrProportionOfSocialInteractions/Viewer';
 import TemplateCuratrActivitiesWithMostComments from './TemplateCuratrActivitiesWithMostComments/Viewer';
+import TemplatePoorlyPerformingQuestions from './TemplatePoorlyPerformingQuestions/Viewer';
+import TemplatePoorlyPerformingQuizzes from './TemplatePoorlyPerformingQuizzes/Viewer';
 
 /**
  * @param {immutable.Map} model - visualisation model
@@ -80,6 +84,10 @@ const VisualisationViewer = ({
       return <TemplateCuratrProportionOfSocialInteractions visualisationId={visualisationId} showSourceView={showSourceView} />;
     case TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS:
       return <TemplateCuratrActivitiesWithMostComments visualisationId={visualisationId} showSourceView={showSourceView} />;
+    case TEMPLATE_POORLY_PERFORMING_QUESTIONS:
+      return <TemplatePoorlyPerformingQuestions visualisationId={visualisationId} showSourceView={showSourceView} />;
+    case TEMPLATE_POORLY_PERFORMING_QUIZZES:
+      return <TemplatePoorlyPerformingQuizzes visualisationId={visualisationId} showSourceView={showSourceView} />;
     default:
       if (showSourceView) {
         return <SourceResults id={visualisationId} />;

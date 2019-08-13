@@ -12,6 +12,8 @@ import TemplateCuratrLearnerInteractionsByDateAndVerbCard from 'ui/containers/Vi
 import TemplateCuratrUserEngagementLeaderboardCard from 'ui/containers/Visualisations/TemplateCuratrUserEngagementLeaderboard/Card';
 import TemplateCuratrProportionOfSocialInteractionsCard from 'ui/containers/Visualisations/TemplateCuratrProportionOfSocialInteractions/Card';
 import TemplateCuratrActivitiesWithMostCommentsCard from 'ui/containers/Visualisations/TemplateCuratrActivitiesWithMostComments/Card';
+import TemplatePoorlyPerformingQuestionsCard from 'ui/containers/Visualisations/TemplatePoorlyPerformingQuestions/Card';
+import TemplatePoorlyPerformingQuizzesCard from 'ui/containers/Visualisations/TemplatePoorlyPerformingQuizzes/Card';
 import styles from './styles.css';
 
 const TemplateCardList = ({ model, saveModel }) => (
@@ -64,6 +66,14 @@ const TemplateCardList = ({ model, saveModel }) => (
       saveModel={saveModel} />
 
     <TemplateCuratrActivitiesWithMostCommentsCard
+      model={model}
+      saveModel={saveModel} />
+
+    <TemplatePoorlyPerformingQuizzesCard
+      model={model}
+      saveModel={saveModel} />
+
+    <TemplatePoorlyPerformingQuestionsCard
       model={model}
       saveModel={saveModel} />
   </div>

@@ -12,16 +12,16 @@ export default withStatementsVisualisation(({
   axes,
   model
 }) =>
-  (
-    <BarChart
-      results={getFormattedResults(results)}
-      labels={labels}
-      colors={colors}
-      stacked={stacked}
-      model={model}
-      axesLabels={{
-        yLabel: shorten(axes.get('yLabel', axes.getIn(['group', 'searchString'], 'Y-Axis'))),
-        xLabel: shorten(axes.get('xLabel', axes.getIn(['value', 'searchString'], 'X-Axis')))
-      }} />
-  )
-);
+  // console.log(getFormattedResults(results).toJS())
+   (
+     <BarChart
+       results={getFormattedResults(results)}
+       labels={labels}
+       colors={colors}
+       stacked={stacked}
+       model={model}
+       axesLabels={{
+         yLabel: shorten(axes.get('yLabel', axes.getIn(['group', 'searchString'], 'Y-Axis'))),
+         xLabel: shorten(axes.get('xLabel', axes.getIn(['value', 'searchString'], 'X-Axis')))
+       }} />
+  ));

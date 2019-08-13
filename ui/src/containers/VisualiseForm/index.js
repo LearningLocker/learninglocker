@@ -14,6 +14,8 @@ import {
   TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD,
   TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS,
   TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS,
+  TEMPLATE_POORLY_PERFORMING_QUESTIONS,
+  TEMPLATE_POORLY_PERFORMING_QUIZZES,
 } from 'lib/constants/visualise';
 import CustomBarChart from 'ui/containers/Visualisations/CustomBarChart';
 import CustomColumnChart from 'ui/containers/Visualisations/CustomColumnChart';
@@ -29,6 +31,8 @@ import TemplateCuratrLearnerInteractionsByDateAndVerb from 'ui/containers/Visual
 import TemplateCuratrUserEngagementLeaderboard from 'ui/containers/Visualisations/TemplateCuratrUserEngagementLeaderboard';
 import TemplateCuratrProportionOfSocialInteractions from 'ui/containers/Visualisations/TemplateCuratrProportionOfSocialInteractions';
 import TemplateCuratrActivitiesWithMostComments from 'ui/containers/Visualisations/TemplateCuratrActivitiesWithMostComments';
+import TemplatePoorlyPerformingQuestions from 'ui/containers/Visualisations/TemplatePoorlyPerformingQuestions';
+import TemplatePoorlyPerformingQuizzes from 'ui/containers/Visualisations/TemplatePoorlyPerformingQuizzes';
 import StatementsForm from './StatementsForm';
 import NewVisualisation from './NewVisualisation';
 
@@ -63,6 +67,10 @@ const VisualiseForm = ({ model, orgTimezone }) => {
         return <TemplateCuratrProportionOfSocialInteractions model={model} orgTimezone={orgTimezone} />;
       case TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS:
         return <TemplateCuratrActivitiesWithMostComments model={model} orgTimezone={orgTimezone} />;
+      case TEMPLATE_POORLY_PERFORMING_QUESTIONS:
+        return <TemplatePoorlyPerformingQuestions model={model} />;
+      case TEMPLATE_POORLY_PERFORMING_QUIZZES:
+        return <TemplatePoorlyPerformingQuizzes model={model} />;
       default:
         return <StatementsForm model={model} orgTimezone={orgTimezone} />;
     }

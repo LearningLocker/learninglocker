@@ -19,12 +19,16 @@ import {
   TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD,
   TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS,
   TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS,
+  TEMPLATE_POORLY_PERFORMING_QUESTIONS,
+  TEMPLATE_POORLY_PERFORMING_QUIZZES,
 } from 'lib/constants/visualise';
 import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
 import { periodToDate } from 'ui/utils/dates';
 import aggregateChart from 'ui/utils/visualisations/aggregateChart';
 import aggregateCounter from 'ui/utils/visualisations/aggregateCounter';
 import aggregateXvsY from 'ui/utils/visualisations/aggregateXvsY';
+import buildPipelinesForTemplatePoorlyPerformingQuestions from 'ui/containers/Visualisations/TemplatePoorlyPerformingQuestions/buildPipelines';
+import buildPipelinesForTemplatePoorlyPerformingQuizzes from 'ui/containers/Visualisations/TemplatePoorlyPerformingQuizzes/buildPipelines';
 
 /**
  * build pipeline from query
@@ -75,6 +79,10 @@ export default memoize((args = new Map()) => {
     case XVSY:
     case TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT:
       return aggregateXvsY(preReqs, axes, timezone);
+    case TEMPLATE_POORLY_PERFORMING_QUESTIONS:
+      return buildPipelinesForTemplatePoorlyPerformingQuestions(preReqs);
+    case TEMPLATE_POORLY_PERFORMING_QUIZZES:
+      return buildPipelinesForTemplatePoorlyPerformingQuizzes(preReqs);
     case COUNTER:
     case TEMPLATE_LAST_7_DAYS_STATEMENTS:
     case TEMPLATE_CURATR_COMMENT_COUNT:
