@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { compose } from 'recompose';
 import { Map, OrderedMap } from 'immutable';
 import isString from 'lodash/isString';
+import _ from 'lodash';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import {
   LEADERBOARD,
@@ -132,6 +133,19 @@ const SourceResult = ({
   labels,
   visualisation,
 }) => {
+  const firstTrRef = React.createRef();
+  const [firstTrHeight, updateFirstTrHeight] = useState(0);
+  useEffect(() => {
+    if (
+      firstTrRef &&
+      firstTrRef.current &&
+      firstTrRef.current.clientHeight &&
+      _.isNumber(firstTrRef.current.clientHeight)
+    ) {
+      updateFirstTrHeight(firstTrRef.current.clientHeight);
+    }
+  });
+
   const formattedResults = getFormattedResults(results);
   const tLabels = labels.map((label, i) => (label === undefined ? `Series ${i + 1}` : label));
   const tableData = generateTableData(formattedResults, tLabels);
@@ -141,30 +155,63 @@ const SourceResult = ({
     return <NoData />;
   }
 
+  const tableStyle = {
+    borderCollapse: 'separate',
+    margin: 0,
+    border: 0,
+  };
+
+  const firstTrStyle = {
+    position: 'sticky',
+    top: 0,
+  };
+
+  // The second line of headers is not sticky until firstTrRef is set.
+  const secondTrStyle = firstTrRef ? {
+    position: 'sticky',
+    top: moreThanOneSeries(tableData) ? firstTrHeight : 0,
+  } : {};
+  const labelTrStyle = moreThanOneSeries(tableData) ? secondTrStyle : firstTrStyle;
+
   return (
-    <div className={styles.sourceResultsContainer}>
-      <table className="table table-bordered table-striped">
-        <tbody>
-          {moreThanOneSeries(tableData) && <tr>
-            <th />
-            {
-              tLabels.map(tLabel => (
-                <th key={tLabel} colSpan={subColumnsCount}>{tLabel}</th>
-              )).valueSeq()
-            }
-          </tr>}
+    <div className={styles.tableContainer}>
+      <table className={`${styles.table} table table-bordered table-striped`} style={tableStyle}>
+        <thead>
+          {moreThanOneSeries(tableData) && (
+            <tr ref={firstTrRef}>
+              <th style={firstTrStyle} />
+              {
+                tLabels.map(tLabel => (
+                  <th
+                    key={tLabel}
+                    style={firstTrStyle}
+                    colSpan={subColumnsCount}>
+                    {tLabel}
+                  </th>
+                )).valueSeq()
+              }
+            </tr>
+          )}
 
           <tr>
-            <th>{getGroupAxisLabel(visualisation)}</th>
+            <th style={labelTrStyle}>
+              {getGroupAxisLabel(visualisation)}
+            </th>
             {
               tLabels.map(tLabel =>
                 [...Array(subColumnsCount).keys()].map(k =>
-                  <th key={`${tLabel}-${k}`}>{getValueAxisLabel(k, visualisation)}</th>
+                  <th
+                    key={`${tLabel}-${k}`}
+                    style={labelTrStyle}>
+                    {getValueAxisLabel(k, visualisation)}
+                  </th>
                 )
               ).valueSeq()
             }
           </tr>
+        </thead>
 
+        <tbody>
           {tableData.map((row, key) => (
             <tr key={key}>
               <td title={key}>{formatKeyToFriendlyString(row.get('model', key))}</td>
