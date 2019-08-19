@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
-import { TEMPLATE_WEEKDAYS_ACTIVITY } from 'lib/constants/visualise';
-import { STATEMENTS_IMAGE } from 'ui/components/VisualiseIcon/assets';
 import TemplateCard from '../components/TemplateCard';
+import buildModel from './buildModel';
+import { title, image } from './constants';
 
 /**
  * @param {immutable.Map} props.model
@@ -14,16 +14,9 @@ const Card = ({
   saveModel,
 }) => (
   <TemplateCard
-    title="How does activity change in a week?"
-    srcImage={STATEMENTS_IMAGE}
-    onClick={() => {
-      saveModel({
-        attrs: model
-          .set('type', TEMPLATE_WEEKDAYS_ACTIVITY)
-          .set('description', 'How does activity change in a week?')
-          .set('axesgroup', new Map({ optionKey: 'weekday', searchString: 'Day' })),
-      });
-    }} />
+    title={title}
+    srcImage={image}
+    onClick={() => saveModel({ attrs: buildModel(model) })} />
 );
 
 Card.propTypes = {
