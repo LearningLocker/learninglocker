@@ -3,11 +3,13 @@ import { withProps, compose, withHandlers } from 'recompose';
 import { loggedInUserId } from 'ui/redux/modules/auth';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import { CREATE_GETTING_STARTED } from 'ui/redux/modules/dashboard/gettingStarted';
+import iconImage from './assets/getting-started.png';
 import TemplateCard from './TemplateCard';
 
 const enhance = compose(
   withProps({
     title: 'Getting Started',
+    image: iconImage,
   }),
   connect(
     state => ({
