@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { compose } from 'recompose';
+import React from 'react';
 import { Map, OrderedMap } from 'immutable';
-import isString from 'lodash/isString';
 import _ from 'lodash';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import {
   LEADERBOARD,
   XVSY,
@@ -14,9 +11,9 @@ import {
   TEMPLATE_MOST_POPULAR_VERBS,
 } from 'lib/constants/visualise';
 import NoData from 'ui/components/Graphs/NoData';
+import ScrollableTable from 'ui/components/ScrollableTable';
 import { withStatementsVisualisation } from 'ui/utils/hocs';
 import { displayVerb, displayActivity } from 'ui/utils/xapi';
-import styles from './styles.css';
 
 const moreThanOneSeries = tData => tData.first() !== undefined && tData.first().size > 1;
 
@@ -58,7 +55,7 @@ const countSubColumns = (labels, tableData) =>
   );
 
 const formatKeyToFriendlyString = (key) => {
-  if (isString(key)) return key;
+  if (_.isString(key)) return key;
 
   if (Map.isMap(key)) {
     if (key.get('objectType')) {
@@ -163,37 +160,38 @@ export const calcStats = (allResults) =>
     })
   );
 
+const keyLabels = [
+  { key: 'total', label: 'Total' },
+  { key: 'avg', label: 'Average' },
+  { key: 'max', label: 'Max' },
+  { key: 'min', label: 'Min' },
+  { key: 'rowCount', label: 'Row Count' },
+];
+
+const renderStatsTableRows = ({
+  stats,
+  subColumnsCount,
+}) => keyLabels.map(({ key, label }) => (
+  <tr key={key}>
+    <th>{label}</th>
+    {
+      stats.toArray().map((_, sIndex) =>
+        [...Array(subColumnsCount).keys()].map(i =>
+          <th key={`${sIndex}-${i}`}>
+            {stats.getIn([sIndex, i, key])}
+          </th>
+        )
+      ).flat()
+    }
+  </tr>
+));
+
 const SourceResult = ({
   getFormattedResults,
   results,
   labels,
   visualisation,
 }) => {
-  const seriesTrRef = React.createRef();
-  const labelsTrRef = React.createRef();
-  const [seriesTrHeight, updateSeriesTrHeight] = useState(0);
-  const [labelsTrHeight, updateLabelsTrHeight] = useState(0);
-  useEffect(() => {
-    if (
-      seriesTrRef &&
-      seriesTrRef.current &&
-      seriesTrRef.current.clientHeight &&
-      _.isNumber(seriesTrRef.current.clientHeight)
-    ) {
-      updateSeriesTrHeight(seriesTrRef.current.clientHeight);
-    }
-
-    if (
-      labelsTrRef &&
-      labelsTrRef.current &&
-      labelsTrRef.current.clientHeight &&
-      _.isNumber(labelsTrRef.current.clientHeight)
-    ) {
-      window.lll = labelsTrRef.current;
-      updateLabelsTrHeight(labelsTrRef.current.clientHeight);
-    }
-  });
-
   const formattedResults = getFormattedResults(results);
   const tLabels = labels.map((label, i) => (label === undefined ? `Series ${i + 1}` : label));
   const tableData = generateTableData(formattedResults, tLabels);
@@ -204,109 +202,71 @@ const SourceResult = ({
   }
 
   const showStatsAtTop = visualisation.get('showStatsAtTop', true);
+  const showStatsAtBottom = visualisation.get('showStatsAtBottom', true);
+
   const stats = calcStats(formattedResults);
 
-  const tableStyle = {
-    borderCollapse: 'separate',
-    margin: 0,
-    border: 0,
-  };
-
-  const firstTrStyle = {
-    position: 'sticky',
-    top: 0,
-  };
-
-  // The second line of headers is not sticky until seriesTrRef is set.
-  const secondTrStyle = seriesTrRef ? {
-    position: 'sticky',
-    top: moreThanOneSeries(tableData) ? seriesTrHeight : 0,
-  } : {};
-  const labelTrStyle = moreThanOneSeries(tableData) ? secondTrStyle : firstTrStyle;
-
-  const totalTrStyle = seriesTrRef && labelsTrRef ? {
-    position: 'sticky',
-    top: moreThanOneSeries(tableData) ? seriesTrHeight + labelsTrHeight : 0,
-  } : {};
-
   return (
-    <div className={styles.tableContainer}>
-      <table className={`${styles.table} table table-bordered table-striped`} style={tableStyle}>
-        <thead>
-          {moreThanOneSeries(tableData) && (
-            <tr ref={seriesTrRef}>
-              <th style={firstTrStyle} />
-              {
-                tLabels.map(tLabel => (
-                  <th
-                    key={tLabel}
-                    style={firstTrStyle}
-                    colSpan={subColumnsCount}>
-                    {tLabel}
-                  </th>
-                )).valueSeq()
-              }
-            </tr>
-          )}
-
-          <tr ref={labelsTrRef}>
-            <th style={labelTrStyle}>
-              {getGroupAxisLabel(visualisation)}
-            </th>
+    <ScrollableTable>
+      <thead>
+        {moreThanOneSeries(tableData) && (
+          <tr>
+            <th/>
             {
-              tLabels.map(tLabel =>
-                [...Array(subColumnsCount).keys()].map(k =>
-                  <th
-                    key={`${tLabel}-${k}`}
-                    style={labelTrStyle}>
-                    {getValueAxisLabel(k, visualisation)}
-                  </th>
-                )
-              ).valueSeq()
+              tLabels.toArray().map((tLabel, i) => (
+                <th
+                  key={i}
+                  colSpan={subColumnsCount}>
+                  {tLabel}
+                </th>
+              ))
             }
           </tr>
+        )}
 
-          {showStatsAtTop && (
-            <tr>
-              <th style={totalTrStyle}>
-                Total
-              </th>
-              {
-                stats.map((_, sIndex) =>
-                  [...Array(subColumnsCount).keys()].map(k =>
-                    <th
-                      key={`${sIndex}-${k}`}
-                      style={totalTrStyle}>
-                      {stats.getIn([sIndex, k, 'total'])}
-                    </th>
-                  )
-                ).valueSeq()
-              }
-            </tr>
-          )}
-        </thead>
+        <tr>
+          <th>{getGroupAxisLabel(visualisation)}</th>
+          {
+            tLabels.toArray().map((_, i) =>
+              [...Array(subColumnsCount).keys()].map(j =>
+                <th
+                  key={`${i}-${j}`}
+                  >
+                  {getValueAxisLabel(i, visualisation)}
+                </th>
+              )
+            ).flat()
+          }
+        </tr>
 
-        <tbody>
-          {tableData.map((row, key) => (
-            <tr key={key}>
-              <td title={key}>{formatKeyToFriendlyString(row.get('model', key))}</td>
-              {
-                tLabels.map(tLabel =>
-                  [...Array(subColumnsCount).keys()].map((k) => {
-                    const v = row.getIn(['rowData', tLabel, k], new Map({ count: null }));
-                    return <td key={`${tLabel}-${k}`}>{formatNumber(v)}</td>;
-                  })
-                ).valueSeq()
-              }
-            </tr>
-          )).valueSeq()}
-        </tbody>
-      </table>
-    </div>
+        {showStatsAtTop && (
+          renderStatsTableRows({ stats, subColumnsCount })
+        )}
+      </thead>
+
+      <tbody>
+        {tableData.toArray().map((row, key) => (
+          <tr key={key}>
+            <td title={key}>{formatKeyToFriendlyString(row.get('model', key))}</td>
+            {
+              tLabels.toArray().map((tLabel, i) =>
+                [...Array(subColumnsCount).keys()].map((j) => {
+                  const v = row.getIn(['rowData', tLabel, j], new Map({ count: null }));
+                  return <td key={`${i}-${j}`}>{formatNumber(v)}</td>;
+                })
+              ).flat()
+            }
+          </tr>
+        ))}
+      </tbody>
+
+      {showStatsAtBottom && (
+        <tfoot>
+          {renderStatsTableRows({ stats, subColumnsCount })}
+        </tfoot>
+      )}
+    </ScrollableTable>
   );
 };
 
-export default compose(
-  withStatementsVisualisation,
-  withStyles(styles),
-)(SourceResult);
+export default withStatementsVisualisation(SourceResult);

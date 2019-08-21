@@ -9,6 +9,7 @@ import AddQueryButton from '../components/AddQueryButton';
 import BarChartGroupingLimitForm from '../components/BarChartGroupingLimitForm';
 import DescriptionForm from '../components/DescriptionForm';
 import PreviewPeriodPicker from '../components/PreviewPeriodPicker';
+import ShowStatsAtBottomSwitch from '../components/ShowStatsAtBottomSwitch';
 import ShowStatsAtTopSwitch from '../components/ShowStatsAtTopSwitch';
 import SourceViewForm from '../components/SourceViewForm';
 import StackedSwitch from '../components/StackedSwitch';
@@ -71,6 +72,15 @@ const Editor = ({
       schema: 'visualisation',
       id,
       path: 'showStatsAtTop',
+      value: checked,
+    });
+  }, [id]);
+
+  const onChangeShowStatsAtBottomSwitch = useCallback((checked) => {
+    updateModel({
+      schema: 'visualisation',
+      id,
+      path: 'showStatsAtBottom',
       value: checked,
     });
   }, [id]);
@@ -148,6 +158,12 @@ const Editor = ({
                 <ShowStatsAtTopSwitch
                   showStatsAtTop={model.get('showStatsAtTop')}
                   onChange={onChangeShowStatsAtTopSwitch} />
+              )}
+
+              {model.get('sourceView') && (
+                <ShowStatsAtBottomSwitch
+                  showStatsAtBottom={model.get('showStatsAtBottom')}
+                  onChange={onChangeShowStatsAtBottomSwitch}/>
               )}
 
               <BarChartGroupingLimitForm
