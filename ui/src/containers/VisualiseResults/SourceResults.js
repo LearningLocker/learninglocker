@@ -127,22 +127,70 @@ const formatNumber = (selectedAxes) => {
   return count;
 };
 
+/**
+ * @param {immutable.List<immutable.List<immutable.Map<T, immutable.Map<string, any>>>>} allResults
+ * @returns {immutable.List<immutable.List<immutable.Map<T, number|null>>>}
+ */
+export const calcStats = (allResults) =>
+  allResults.map(seriesResult =>
+    seriesResult.map(axisResult => {
+      /**
+       * The format of `axisResult`'s values is expected to be
+       *
+       * immutable.Map({
+       *   _id: any,
+       *   count: number,
+       *   model: any,
+       * })
+       */
+      if (axisResult.size === 0) {
+        return new Map({
+          total: null,
+          avg: null,
+          min: null,
+          max: null,
+          rowCount: 0,
+        });
+      }
+      const total = axisResult.reduce((acc, r) => acc + r.get('count'), 0);
+      return new Map({
+        total,
+        avg: total / axisResult.size,
+        min: axisResult.minBy(r => r.get('count')).get('count'),
+        max: axisResult.maxBy(r => r.get('count')).get('count'),
+        rowCount: axisResult.size,
+      });
+    })
+  );
+
 const SourceResult = ({
   getFormattedResults,
   results,
   labels,
   visualisation,
 }) => {
-  const firstTrRef = React.createRef();
-  const [firstTrHeight, updateFirstTrHeight] = useState(0);
+  const seriesTrRef = React.createRef();
+  const labelsTrRef = React.createRef();
+  const [seriesTrHeight, updateSeriesTrHeight] = useState(0);
+  const [labelsTrHeight, updateLabelsTrHeight] = useState(0);
   useEffect(() => {
     if (
-      firstTrRef &&
-      firstTrRef.current &&
-      firstTrRef.current.clientHeight &&
-      _.isNumber(firstTrRef.current.clientHeight)
+      seriesTrRef &&
+      seriesTrRef.current &&
+      seriesTrRef.current.clientHeight &&
+      _.isNumber(seriesTrRef.current.clientHeight)
     ) {
-      updateFirstTrHeight(firstTrRef.current.clientHeight);
+      updateSeriesTrHeight(seriesTrRef.current.clientHeight);
+    }
+
+    if (
+      labelsTrRef &&
+      labelsTrRef.current &&
+      labelsTrRef.current.clientHeight &&
+      _.isNumber(labelsTrRef.current.clientHeight)
+    ) {
+      window.lll = labelsTrRef.current;
+      updateLabelsTrHeight(labelsTrRef.current.clientHeight);
     }
   });
 
@@ -155,6 +203,9 @@ const SourceResult = ({
     return <NoData />;
   }
 
+  const showStatsAtTop = visualisation.get('showStatsAtTop', true);
+  const stats = calcStats(formattedResults);
+
   const tableStyle = {
     borderCollapse: 'separate',
     margin: 0,
@@ -166,19 +217,24 @@ const SourceResult = ({
     top: 0,
   };
 
-  // The second line of headers is not sticky until firstTrRef is set.
-  const secondTrStyle = firstTrRef ? {
+  // The second line of headers is not sticky until seriesTrRef is set.
+  const secondTrStyle = seriesTrRef ? {
     position: 'sticky',
-    top: moreThanOneSeries(tableData) ? firstTrHeight : 0,
+    top: moreThanOneSeries(tableData) ? seriesTrHeight : 0,
   } : {};
   const labelTrStyle = moreThanOneSeries(tableData) ? secondTrStyle : firstTrStyle;
+
+  const totalTrStyle = seriesTrRef && labelsTrRef ? {
+    position: 'sticky',
+    top: moreThanOneSeries(tableData) ? seriesTrHeight + labelsTrHeight : 0,
+  } : {};
 
   return (
     <div className={styles.tableContainer}>
       <table className={`${styles.table} table table-bordered table-striped`} style={tableStyle}>
         <thead>
           {moreThanOneSeries(tableData) && (
-            <tr ref={firstTrRef}>
+            <tr ref={seriesTrRef}>
               <th style={firstTrStyle} />
               {
                 tLabels.map(tLabel => (
@@ -193,7 +249,7 @@ const SourceResult = ({
             </tr>
           )}
 
-          <tr>
+          <tr ref={labelsTrRef}>
             <th style={labelTrStyle}>
               {getGroupAxisLabel(visualisation)}
             </th>
@@ -209,6 +265,25 @@ const SourceResult = ({
               ).valueSeq()
             }
           </tr>
+
+          {showStatsAtTop && (
+            <tr>
+              <th style={totalTrStyle}>
+                Total
+              </th>
+              {
+                stats.map((_, sIndex) =>
+                  [...Array(subColumnsCount).keys()].map(k =>
+                    <th
+                      key={`${sIndex}-${k}`}
+                      style={totalTrStyle}>
+                      {stats.getIn([sIndex, k, 'total'])}
+                    </th>
+                  )
+                ).valueSeq()
+              }
+            </tr>
+          )}
         </thead>
 
         <tbody>
