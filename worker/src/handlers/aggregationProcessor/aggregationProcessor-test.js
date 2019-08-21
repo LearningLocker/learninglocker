@@ -11,7 +11,7 @@ import aggregationProcessor, { combine } from './aggregationProcessor';
 
 const objectId = mongoose.Types.ObjectId;
 
-describe.only('aggregationProcessor', () => {
+describe('aggregationProcessor', () => {
   describe('unionFirst', () => {
     it('combine', () => {
       const addInput = [{
