@@ -4,12 +4,14 @@ import logger from 'lib/logger';
 import expirationNotification from 'worker/handlers/expirationNotification';
 import orgUsageTracker from 'worker/handlers/orgUsageTracker';
 import batchStatementDeletion from 'worker/handlers/batchStatementDeletion';
+import aggregationProcessor from 'worker/handlers/aggregationProcessor';
 
 statementWorker({});
 expirationNotification();
 importPersonasWorker({});
 orgUsageTracker();
 batchStatementDeletion();
+aggregationProcessor({});
 
 logger.info('STARTED WORKER');
 

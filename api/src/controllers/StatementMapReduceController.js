@@ -2,7 +2,7 @@ import catchErrors from 'api/controllers/utils/catchErrors';
 import Statement from 'lib/models/statement';
 import mongoose from 'mongoose';
 import { getConnection } from 'lib/connections/mongoose';
-import { range, isNull, get } from 'lodash';
+import { range, isNull, get, omit } from 'lodash';
 import moment from 'moment';
 import getOrgFromAuthInfo
   from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
@@ -21,7 +21,7 @@ const schema = new mongoose.Schema({
   })
 });
 export const mapReduceStatementsPerDay =
-  getConnection().model('MapReduceStatementsPerDay', schema, 'mapReduceStatementsPerDay');
+  getConnection().model('MapReduceStatementsPerDay', schema, COLLECITON_NAME);
 
 export const statementsPerDayMapReduce = async ({
   organisation, // string organisation id
@@ -38,15 +38,32 @@ export const statementsPerDayMapReduce = async ({
     const out = (isNull(acc) || item.value.startTimestamp < acc ? item.value.startTimestamp : acc);
     return out;
   }, null);
-  const endDate = previousReduces.reduce((acc, item) =>
-    (isNull(acc) || item.endTimestamp < acc ? item.endTimestamp : acc),
+  const endDate = previousReduces.reduce((acc, item) => {
+    const out = (isNull(acc) || item.value.endTimestamp > acc ? item.value.endTimestamp : acc);
+    return out;
+  },
     null
   );
+
+  const query = [
+    ...((gtDate && startDate) ? [{
+      $and: [
+        {
+          timestamp: { $lte: new Date(gtDate) }
+        }, {
+          timestamp: { $gt: new Date(startDate) }
+        }
+      ]
+    }] : []),
+    {
+      timestamp: { $gt: new Date(endDate || gtDate) }
+    }
+  ];
 
   await Statement.mapReduce({
     map: function map() {
       emit( // eslint-disable-line no-undef
-        `${this.organisation}-windowsize-${this.timestamp.getDay()}`,
+        `${this.organisation}-${this.timestamp.getDay()}`,
         {
           count: 1,
           startTimestamp: this.timestamp,
@@ -73,22 +90,7 @@ export const statementsPerDayMapReduce = async ({
     scope: {
       gtDate
     },
-    query: {
-      $or: [
-        ...((gtDate && startDate) ? [{
-          $and: [
-            {
-              timestamp: { $lte: gtDate }
-            }, {
-              timestamp: { $gt: startDate }
-            }
-          ]
-        }] : []),
-        {
-          timestamp: { $gt: endDate || gtDate }
-        }
-      ]
-    }
+    query
   });
 
   const reduceResult = await mapReduceStatementsPerDay.collection.find({
@@ -103,10 +105,13 @@ export const statementsPerDayMapReduce = async ({
   return out;
 };
 
+// -------------------------------------------------------------------------------------------------
+
+// -------------------------------------------------------------------------------------------------
+
 export const mapReduce = catchErrors(async (req, res) => { // eslint-disable-line import/prefer-default-export
   const authInfo = req.user.authInfo || {};
 
-  console.log('001', req.query.pipeline);
   const pipelineJson = JSON.parse(req.query.pipeline);
 
   const { pipeline } = await addDashboardAuthInfo({
@@ -115,7 +120,6 @@ export const mapReduce = catchErrors(async (req, res) => { // eslint-disable-lin
   });
 
   const organisation = getOrgFromAuthInfo(authInfo);
-  console.log('001.2 pipeline', JSON.stringify(pipeline, null, 2));
 
   const stringDate = get(pipeline, [0, '$match', 'timestamp', '$gte', '$dte']);
 
@@ -124,7 +128,10 @@ export const mapReduce = catchErrors(async (req, res) => { // eslint-disable-lin
     gt: stringDate
   });
 
-  console.log('001.3 result', result);
+  // const result = await statementsAggregationCached({
+  //   pipeline, 
+  //   organisation
+  // });
 
   res.set('Content-Type', 'application/json');
   res.write(JSON.stringify({

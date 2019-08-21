@@ -31,6 +31,10 @@ import DownloadController from 'api/controllers/DownloadController';
 import ExportController from 'api/controllers/ExportController';
 import StatementController from 'api/controllers/StatementController';
 import { mapReduce } from 'api/controllers/StatementMapReduceController';
+import {
+  aggregationProcessorInitialise,
+  aggregationProcessorResults
+} from 'api/controllers/AggregationProcessorController';
 import generateConnectionController from 'api/controllers/ConnectionController';
 import generateIndexesController from 'api/controllers/IndexesController';
 import ImportPersonasController from 'api/controllers/ImportPersonasController';
@@ -48,6 +52,7 @@ import Download from 'lib/models/download';
 import Query from 'lib/models/query';
 import ImportCsv from 'lib/models/importcsv';
 import Statement from 'lib/models/statement';
+import AggregationProcessor from 'lib/models/aggregationProcessor';
 import StatementForwarding from 'lib/models/statementForwarding';
 import Visualisation from 'lib/models/visualisation';
 import Dashboard from 'lib/models/dashboard';
@@ -208,6 +213,13 @@ router.get(
   passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   mapReduce
 );
+
+router.post(
+  routes.STATEMENTS_AGGREGATION_PROCESSOR_INITIALISE,
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  aggregationProcessorInitialise
+);
+
 router.get(
   routes.STATEMENTS_AGGREGATE_ASYNC,
   passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
@@ -340,6 +352,10 @@ restify.serve(router, Statement, {
       .then(() => next())
       .catch(err => next(err));
   },
+});
+restify.serve(router, AggregationProcessor, {
+  preUpdate: (req, res) => res.sendStatus(405),
+  preCreate: (req, res) => res.sendStatus(405)
 });
 restify.serve(router, StatementForwarding);
 restify.serve(router, QueryBuilderCache);

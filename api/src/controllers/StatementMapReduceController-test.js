@@ -6,7 +6,7 @@ import { statementsPerDayMapReduce, mapReduceStatementsPerDay } from './Statemen
 
 const objectId = mongoose.Types.ObjectId;
 
-describe.only('StatementMapReduceController', () => {
+describe('StatementMapReduceController', () => {
   describe('statementsPerDayMapReduce', () => {
     beforeEach(async () => {
       await Statement.deleteMany({});
