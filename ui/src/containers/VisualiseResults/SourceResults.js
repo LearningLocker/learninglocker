@@ -144,7 +144,7 @@ export const calcStats = allResults =>
        *
        * immutable.Map({
        *   _id: any,
-       *   count: number,
+       *   count: number|null,
        *   model: any,
        * })
        */
@@ -157,12 +157,12 @@ export const calcStats = allResults =>
           rowCount: 0,
         });
       }
-      const total = axisResult.reduce((acc, r) => acc + r.get('count'), 0);
+      const total = axisResult.reduce((acc, r) => acc + r.get('count', 0), 0);
       return new Map({
         total,
         avg: total / axisResult.size,
-        min: axisResult.minBy(r => r.get('count')).get('count'),
-        max: axisResult.maxBy(r => r.get('count')).get('count'),
+        min: axisResult.minBy(r => r.get('count')).get('count', null),
+        max: axisResult.maxBy(r => r.get('count')).get('count', null),
         rowCount: axisResult.size,
       });
     })
