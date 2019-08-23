@@ -1,7 +1,8 @@
 import React from 'react';
 import { Map, OrderedMap } from 'immutable';
-import _ from 'lodash';
+import lodash from 'lodash';
 import {
+  // RESPONSE_ROWS_LIMIT,
   LEADERBOARD,
   XVSY,
   FREQUENCY,
@@ -9,6 +10,7 @@ import {
   TEMPLATE_MOST_ACTIVE_PEOPLE,
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
+  TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT,
 } from 'lib/constants/visualise';
 import NoData from 'ui/components/Graphs/NoData';
 import ScrollableTable from 'ui/components/ScrollableTable';
@@ -55,7 +57,7 @@ const countSubColumns = (labels, tableData) =>
   );
 
 const formatKeyToFriendlyString = (key) => {
-  if (_.isString(key)) return key;
+  if (lodash.isString(key)) return key;
 
   if (Map.isMap(key)) {
     if (key.get('objectType')) {
@@ -78,6 +80,7 @@ const getGroupAxisLabel = (visualisation) => {
   switch (visualisation.get('type')) {
     // Correlation Chart type
     case XVSY:
+    case TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT:
       return visualisation.getIn(['axesgroup', 'searchString']) || 'Group';
     // Bar Chart type
     case LEADERBOARD:
@@ -98,6 +101,7 @@ const getValueAxisLabel = (index, visualisation) => {
   switch (visualisation.get('type')) {
     // Correlation Chart type
     case XVSY:
+    case TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT:
       if (index === 0) {
         return visualisation.get('axesxLabel') || visualisation.getIn(['axesxValue', 'searchString']) || 'X Axis';
       }
@@ -113,24 +117,28 @@ const getValueAxisLabel = (index, visualisation) => {
   }
 };
 
-const formatNumber = (selectedAxes) => {
-  const count = selectedAxes.get('count');
+/**
+ *
+ * @param {any} count
+ * @returns {string}
+ */
+const formatNumber = (count) => {
   if (typeof count !== 'number') {
     return '';
   }
   if (count % 1 !== 0) {
     return count.toFixed(2);
   }
-  return count;
+  return count.toString();
 };
 
 /**
  * @param {immutable.List<immutable.List<immutable.Map<T, immutable.Map<string, any>>>>} allResults
  * @returns {immutable.List<immutable.List<immutable.Map<T, number|null>>>}
  */
-export const calcStats = (allResults) =>
+export const calcStats = allResults =>
   allResults.map(seriesResult =>
-    seriesResult.map(axisResult => {
+    seriesResult.map((axisResult) => {
       /**
        * The format of `axisResult`'s values is expected to be
        *
@@ -178,7 +186,7 @@ const renderStatsTableRows = ({
       stats.toArray().map((_, sIndex) =>
         [...Array(subColumnsCount).keys()].map(i =>
           <th key={`${sIndex}-${i}`}>
-            {stats.getIn([sIndex, i, key])}
+            {formatNumber(stats.getIn([sIndex, i, key]))}
           </th>
         )
       ).flat()
@@ -206,12 +214,16 @@ const SourceResult = ({
 
   const stats = calcStats(formattedResults);
 
+  // TODO: Show a message telling that the result might be limited
+  // If result rows is RESPONSE_ROWS_LIMIT, the result might be limited.
+  // const mightBeLimited = stats.some(s => s.some(a => a.get('rowCount') === RESPONSE_ROWS_LIMIT));
+
   return (
     <ScrollableTable>
       <thead>
         {moreThanOneSeries(tableData) && (
           <tr>
-            <th/>
+            <th />
             {
               tLabels.toArray().map((tLabel, i) => (
                 <th
@@ -230,9 +242,8 @@ const SourceResult = ({
             tLabels.toArray().map((_, i) =>
               [...Array(subColumnsCount).keys()].map(j =>
                 <th
-                  key={`${i}-${j}`}
-                  >
-                  {getValueAxisLabel(i, visualisation)}
+                  key={`${i}-${j}`}>
+                  {getValueAxisLabel(j, visualisation)}
                 </th>
               )
             ).flat()
@@ -252,7 +263,7 @@ const SourceResult = ({
               tLabels.toArray().map((tLabel, i) =>
                 [...Array(subColumnsCount).keys()].map((j) => {
                   const v = row.getIn(['rowData', tLabel, j], new Map({ count: null }));
-                  return <td key={`${i}-${j}`}>{formatNumber(v)}</td>;
+                  return <td key={`${i}-${j}`}>{formatNumber(v.get('count'))}</td>;
                 })
               ).flat()
             }

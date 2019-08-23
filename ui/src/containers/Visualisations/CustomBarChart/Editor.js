@@ -163,7 +163,7 @@ const Editor = ({
               {model.get('sourceView') && (
                 <ShowStatsAtBottomSwitch
                   showStatsAtBottom={model.get('showStatsAtBottom')}
-                  onChange={onChangeShowStatsAtBottomSwitch}/>
+                  onChange={onChangeShowStatsAtBottomSwitch} />
               )}
 
               <BarChartGroupingLimitForm

@@ -20,11 +20,12 @@ const refToClientHeight = (ref) => {
  * @returns {boolean}
  */
 const areSameHeights = (hs1, hs2) =>
-  hs1.length === hs2.length && hs1.every((h, i) => h === hs2[i])
+  hs1.length === hs2.length && hs1.every((h, i) => h === hs2[i]);
 
 /**
- *
- * @param {children}
+ * @param {boolean} fixTHead - default is false
+ * @param {boolean} fixTFoot - default is false
+ * @param {array} children
  *   1 or 0 thead
  *   1 or 0 tbody
  *   1 or 0 tfoot
@@ -32,7 +33,11 @@ const areSameHeights = (hs1, hs2) =>
  * Children of <thead/>, <tbody/>, and <tfoot/> should be <tr/> or an array of <tr/>
  * Children of <tr/> should be <th/>, <td/>, or an array of <th/> or <td/>
  */
-const ScrollableTable = ({ children }) => {
+const ScrollableTable = ({
+  fixTHead = false,
+  fixTFoot = false,
+  children = [],
+}) => {
   const tHead = children.find(c => c.type === 'thead');
   const tBody = children.find(c => c.type === 'tbody');
   const tFoot = children.find(c => c.type === 'tfoot');
@@ -86,12 +91,11 @@ const ScrollableTable = ({ children }) => {
           <thead className={tHeadClass}>
             {
               trsInTHead.map((tr, i) => {
-                const childStyle = _.isNumber(tHeadTrsTops[i]) ? { position: 'sticky', top: tHeadTrsTops[i] } : {};
+                const childStyle = (fixTHead && _.isNumber(tHeadTrsTops[i])) ? { position: 'sticky', top: tHeadTrsTops[i] } : {};
                 return (
                   <tr
                     key={tr.key || i}
-                    ref={tHeadTrsRefs[i]}
-                    >
+                    ref={tHeadTrsRefs[i]}>
                     {
                       tr.props.children
                         .flat()
@@ -122,12 +126,11 @@ const ScrollableTable = ({ children }) => {
           <thead className={tFootClass}>
             {
               trsInTFoot.flat().map((tr, i) => {
-                const childStyle = _.isNumber(tFootTrsBottoms[i + 1]) ? { position: 'sticky', bottom: tFootTrsBottoms[i + 1] } : {};
+                const childStyle = (fixTFoot && _.isNumber(tFootTrsBottoms[i + 1])) ? { position: 'sticky', bottom: tFootTrsBottoms[i + 1] } : {};
                 return (
                   <tr
                     key={tr.key || i}
-                    ref={tFootTrsRefs[i]}
-                    >
+                    ref={tFootTrsRefs[i]}>
                     {
                       tr.props.children
                         .flat()
