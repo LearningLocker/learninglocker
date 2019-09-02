@@ -101,7 +101,8 @@ describe('aggregationProcessor', () => {
   const pipelineString = JSON.stringify(pipeline);
   const pipelineHash = sha1(pipelineString);
 
-  it('Should count one statement', async () => {
+  it.only('Should count one statement', async () => {
+    console.log('001');
     // insert a statement
     await Statement.create({
       statement: {},
@@ -110,6 +111,7 @@ describe('aggregationProcessor', () => {
       timestamp: moment().toDate()
     });
 
+    console.log('002');
     const aggregationProcessorModel = await AggregationProcessor.create({
       pipelineString,
       pipelineHash,
@@ -122,9 +124,11 @@ describe('aggregationProcessor', () => {
       done = true;
     };
 
+    console.log('003');
     const result = await aggregationProcessor({
       aggregationProcessorId: aggregationProcessorModel._id
     }, doneFn);
+    console.log('004');
 
     expect(done).to.equal(true);
     expect(result[0].count).to.equal(1);
