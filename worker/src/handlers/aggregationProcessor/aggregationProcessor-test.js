@@ -101,7 +101,7 @@ describe('aggregationProcessor', () => {
   const pipelineString = JSON.stringify(pipeline);
   const pipelineHash = sha1(pipelineString);
 
-  it.only('Should count one statement', async () => {
+  it.only('Should count one statement', async () => { // eslint-disable-line
     console.log('001');
     // insert a statement
     await Statement.create({
