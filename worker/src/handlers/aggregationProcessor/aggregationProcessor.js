@@ -148,8 +148,11 @@ const aggregationProcessor = async ({
     now
   });
 
+  console.log('102.1');
   const addResults = await Statement.aggregate(addPipeline);
+  console.log('102.2');
   const subtractResults = subtractPipeline && await Statement.aggregate(subtractPipeline);
+  console.log('102.3');
 
   let results;
   if (subtractResults) {
