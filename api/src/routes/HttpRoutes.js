@@ -30,10 +30,8 @@ import UploadController from 'api/controllers/UploadController';
 import DownloadController from 'api/controllers/DownloadController';
 import ExportController from 'api/controllers/ExportController';
 import StatementController from 'api/controllers/StatementController';
-import { mapReduce } from 'api/controllers/StatementMapReduceController';
 import {
-  aggregationProcessorInitialise,
-  aggregationProcessorResults
+  aggregationProcessorInitialise
 } from 'api/controllers/AggregationProcessorController';
 import generateConnectionController from 'api/controllers/ConnectionController';
 import generateIndexesController from 'api/controllers/IndexesController';
@@ -207,11 +205,6 @@ router.get(
   routes.STATEMENTS_AGGREGATE,
   passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   StatementController.aggregate
-);
-router.get(
-  routes.STATEMENTS_MAP_REDUCE,
-  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
-  mapReduce
 );
 
 router.post(
