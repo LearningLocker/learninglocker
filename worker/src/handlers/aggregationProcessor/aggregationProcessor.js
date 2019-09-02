@@ -114,6 +114,7 @@ const aggregationProcessor = async ({
   publishQueue = publish,
 }, done) => {
   // Attempt to aquire a lock
+  console.log('101');
   const model = await AggregationProcessor.findOneAndUpdate({
     _id: aggregationProcessorId,
     $or: [
@@ -128,6 +129,7 @@ const aggregationProcessor = async ({
     new: true,
     upsert: false
   });
+  console.log('102');
 
   if (!model) {
     // Probably locked by something else
@@ -199,8 +201,8 @@ const aggregationProcessor = async ({
     $unset: {
       lockedAt: '',
     },
-    fromTimestamp,
-    toTimestamp,
+    fromTimestamp: fromTimestamp.toDate(),
+    toTimestamp: toTimestamp.toDate(),
     results
   }, {
     new: true,
