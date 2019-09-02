@@ -6,11 +6,11 @@ export default (overrides = {}) =>
     owner: testId,
     organisation: testId,
     name: 'Test export',
-    projections: [
-      JSON.stringify({
+    projections: JSON.stringify([
+      {
         _id: 1,
         version: '$statement.version'
-      })
-    ],
+      }
+    ]),
     ...overrides
   });

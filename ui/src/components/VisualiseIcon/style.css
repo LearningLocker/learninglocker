@@ -1,0 +1,27 @@
+.visualisationIcon {
+  text-align: center;
+  vertical-align: top;
+  display: inline-block;
+  margin: 3px;
+  width: 109px;
+}
+
+.visualisationIcon h5 {
+  text-align: center;
+  padding: 0px 4px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: 0;
+}
+
+.visualisationIcon.active {
+  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.visualisationIcon img {
+  width: 100%;
+}
+
+.visualisationSmall {
+  height: 30px;
+}

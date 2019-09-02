@@ -3,8 +3,8 @@
 exports[`defaultTitles should create a title with an icon 1`] = `
 <div>
   <span>
-    <withProps(Connect(WithModel))
-      id="1111"
+    <WithStyles(Component)
+      sourceView={false}
     />
     <span
       style={
