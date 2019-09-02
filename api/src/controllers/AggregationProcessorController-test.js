@@ -24,6 +24,6 @@ describe('AggregationProcessorController', () => {
 
     expect(model.organisation.toString()).to.equal(TEST_ID);
     expect(model.windowSize).to.equal(7);
-    expect(model.blockSize).to.equal(604800);
+    expect(model.blockSizeSeconds).to.equal(604800);
   });
 });
