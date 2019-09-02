@@ -194,7 +194,7 @@ const aggregationProcessor = async ({
   const fromTimestamp = getFromTimestamp({ model, now });
   const toTimestamp = getAddToTimestamp({ model, now });
 
-  // TODO: write the results
+  console.log('103');
   const newModel = await AggregationProcessor.findOneAndUpdate({
     _id: aggregationProcessorId
   }, {
@@ -208,6 +208,7 @@ const aggregationProcessor = async ({
     new: true,
     upsert: false
   });
+  console.log('104');
 
   if (!hasReachedEnd({ model: newModel, now })) {
     publishQueue({
