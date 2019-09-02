@@ -1,12 +1,11 @@
 import { expect } from 'chai';
 import sha1 from 'sha1';
 import TEST_ID from 'api/routes/tests/utils/testId';
-import { findOrCreateAggregationProcessor } from './AggregationProcessorController';
 import AggregationProcessor from 'lib/models/aggregationProcessor';
+import { findOrCreateAggregationProcessor } from './AggregationProcessorController';
 
 
 describe('AggregationProcessorController', () => {
-
   beforeEach(async () => {
     await AggregationProcessor.deleteMany({});
   });

@@ -3,6 +3,7 @@ import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAu
 import AggregationProcessor from 'lib/models/aggregationProcessor';
 import { publish } from 'lib/services/queue';
 import sha1 from 'sha1';
+import { get } from 'lodash';
 import { AGGREGATION_PROCESSOR_QUEUE } from 'lib/constants/aggregationProcessor';
 
 // const LOCK_TIMEOUT_MINUTES = 10;
@@ -12,19 +13,15 @@ export const findOrCreateAggregationProcessor = async ({
   pipelineHash,
   windowSize,
   windowSizeUnits,
-  organisation
+  organisation,
+  lrs_id
 }) => {
   const model = await AggregationProcessor.findOneAndUpdate({
     organisation,
+    lrs_id,
     pipelineHash,
     windowSize,
     windowSizeUnits
-    // $or: [
-    //   { lockedAt: null },
-    //   { lockedAt: {
-    //     $gte: moment().subtract(LOCK_TIMEOUT_MINUTES, 'minutes').toDate()
-    //   } }
-    // ]
   }, {
     pipelineString
   }, {
@@ -34,9 +31,6 @@ export const findOrCreateAggregationProcessor = async ({
 
   return model;
 };
-
-// timeIntervalSinceToday
-// timeIntervalUnits
 
 export const aggregationProcessorInitialise = catchErrors(async (req, res) => {
   const authInfo = req.user.authInfo || {};
@@ -49,12 +43,12 @@ export const aggregationProcessorInitialise = catchErrors(async (req, res) => {
   const pipelineString = JSON.stringify(pipeline);
   const hash = pipelineString.length > 40 ? sha1(pipelineString) : pipelineString;
 
-  // const windowSize = moment().diff(gtDate, 'days');
   const windowSize = req.query.timeIntervalSinceToday;
   const windowSizeUnits = req.query.timeIntervalUnits;
 
   const model = await findOrCreateAggregationProcessor({
     organisation,
+    lrs_id: get(authInfo, ['client', 'lrs_id']),
     pipelineHash: hash,
     pipelineString: pipelineKeyString,
     windowSize,
