@@ -21,22 +21,92 @@ export const combine = (as, bs, keyFn, mergeFn) => {
   );
 };
 
-export const hasReachedEnd = (model) => {
-  if (moment(model.fromTimestamp).isSameOrBefore(moment(model.gtDate))) {
+export const hasReachedEnd = ({ model, now }) => {
+  if (
+    moment(model.fromTimestamp).isSameOrBefore(moment(model.gtDate)) &&
+    moment(model.toTimestamp).isSame(now)
+  ) {
     return true;
   }
   return false;
 };
 
-export const getFromTimestamp = (model) => {
-  const blockSize = moment().subtract(model.blockSize, 'seconds');
-  const windowSize = moment().subtract(model.windowSize, model.windowSizeUnits);
+export const getFromTimestamp = ({ model, now }) => {
+  const blockSizeSeconds = moment(now).subtract(model.blockSizeSeconds, 'seconds');
+  const windowSize = moment(now).subtract(model.windowSize, model.windowSizeUnits);
 
-  if (blockSize.isAfter(windowSize)) {
-    return blockSize;
+  if (blockSizeSeconds.isAfter(windowSize)) {
+    return blockSizeSeconds;
   }
 
   return windowSize;
+};
+
+export const getAddFromTimestamp = ({ model, now }) => {
+  if (model.toTimestamp) {
+    return moment(model.toTimestamp);
+  }
+
+  return getFromTimestamp({ model, now });
+};
+
+/*
+  returns undefined from to now is less than the window size
+*/
+export const getAddToTimestamp = ({
+  model,
+  now
+}) => {
+  const addFrom = getAddFromTimestamp({ model, now });
+  const nextAddFrom = addFrom.add(model.blockSizeSeconds, 'seconds');
+
+  if (nextAddFrom.isSameOrAfter(now)) {
+    return now;
+  }
+  return nextAddFrom;
+};
+
+const getAddPipeline = ({
+  model,
+  now
+}) => {
+  const addPipeline = [
+    { $match: {
+      timestamp: {
+        $gt: getAddFromTimestamp({ model, now }).toDate(),
+        $lte: getAddToTimestamp({ model, now }).toDate()
+      }
+    } },
+    ...(JSON.parse(model.pipelineString))
+  ];
+
+  return addPipeline;
+};
+
+const getSubtractPipeline = ({
+  model,
+  now
+}) => {
+  const hasSubtraction = model.fromTimestamp || model.toTimestamp;
+  if (!hasSubtraction) {
+    return;
+  }
+
+  const fromTimestamp = getFromTimestamp({ model, now });
+
+  const subtractPipeline = [
+    {
+      $match: {
+        timestamp: {
+          $gte: fromTimestamp.toDate(),
+          $lt: moment(model.fromTimestamp).toDate()
+        }
+      }
+    },
+    ...(JSON.parse(model.pipelineString))
+  ];
+
+  return subtractPipeline;
 };
 
 const aggregationProcessor = async ({
@@ -64,45 +134,17 @@ const aggregationProcessor = async ({
     done();
     return;
   }
+  const now = moment();
 
-  const pipeline = JSON.parse(model.pipelineString);
-  let addPipeline;
-  let subtractPipeline;
+  const addPipeline = getAddPipeline({
+    model,
+    now
+  });
 
-  const fromTimestamp = getFromTimestamp(model);
-  const toTimestamp = moment(); // To now
-
-  if (!model.fromTimestamp && !model.toTimestamp) {
-    addPipeline = [
-      { $match: {
-        timestamp: {
-          $gt: fromTimestamp.toDate()
-        }
-      } },
-      ...pipeline
-    ];
-  } else {
-    addPipeline = [
-      { $match: {
-        timestamp: {
-          $gte: moment(model.toTimestamp).toDate()
-        }
-      } },
-      ...pipeline
-    ];
-
-    subtractPipeline = [
-      {
-        $match: {
-          timestamp: {
-            $gt: fromTimestamp.toDate(),
-            $lt: moment(model.fromTimestamp).toDate()
-          }
-        }
-      },
-      ...pipeline
-    ];
-  }
+  const subtractPipeline = getSubtractPipeline({
+    model,
+    now
+  });
 
   const addResults = await Statement.aggregate(addPipeline);
   const subtractResults = subtractPipeline && await Statement.aggregate(subtractPipeline);
@@ -147,6 +189,9 @@ const aggregationProcessor = async ({
     );
   }
 
+  const fromTimestamp = getFromTimestamp({ model, now });
+  const toTimestamp = getAddToTimestamp({ model, now });
+
   // TODO: write the results
   const newModel = await AggregationProcessor.findOneAndUpdate({
     _id: aggregationProcessorId
@@ -162,7 +207,7 @@ const aggregationProcessor = async ({
     upsert: false
   });
 
-  if (!hasReachedEnd(newModel)) {
+  if (!hasReachedEnd({ model: newModel, now })) {
     publishQueue({
       queueName: AGGREGATION_PROCESSOR_QUEUE,
       payload: {
