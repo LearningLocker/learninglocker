@@ -2,7 +2,7 @@ import React from 'react';
 import { Map, OrderedMap } from 'immutable';
 import lodash from 'lodash';
 import {
-  // RESPONSE_ROWS_LIMIT,
+  RESPONSE_ROWS_LIMIT,
   LEADERBOARD,
   XVSY,
   FREQUENCY,
@@ -214,69 +214,78 @@ const SourceResult = ({
 
   const stats = calcStats(formattedResults);
 
-  // TODO: Show a message telling that the result might be limited
   // If result rows is RESPONSE_ROWS_LIMIT, the result might be limited.
-  // const mightBeLimited = stats.some(s => s.some(a => a.get('rowCount') === RESPONSE_ROWS_LIMIT));
+  const mightBeLimited = stats.some(s => s.some(a => a.get('rowCount') === RESPONSE_ROWS_LIMIT));
 
   return (
-    <ScrollableTable>
-      <thead>
-        {moreThanOneSeries(tableData) && (
-          <tr>
-            <th />
-            {
-              tLabels.toArray().map((tLabel, i) => (
-                <th
-                  key={i}
-                  colSpan={subColumnsCount}>
-                  {tLabel}
-                </th>
-              ))
-            }
-          </tr>
-        )}
+    <div style={{ height: '100%' }}>
+      <div style={{ height: mightBeLimited ? 'calc(100% - 20px)' : '100%' }}>
+        <ScrollableTable>
+          <thead>
+            {moreThanOneSeries(tableData) && (
+              <tr>
+                <th />
+                {
+                  tLabels.toArray().map((tLabel, i) => (
+                    <th
+                      key={i}
+                      colSpan={subColumnsCount}>
+                      {tLabel}
+                    </th>
+                  ))
+                }
+              </tr>
+            )}
 
-        <tr>
-          <th>{getGroupAxisLabel(visualisation)}</th>
-          {
-            tLabels.toArray().map((_, i) =>
-              [...Array(subColumnsCount).keys()].map(j =>
-                <th
-                  key={`${i}-${j}`}>
-                  {getValueAxisLabel(j, visualisation)}
-                </th>
-              )
-            ).flat()
-          }
-        </tr>
+            <tr>
+              <th>{getGroupAxisLabel(visualisation)}</th>
+              {
+                tLabels.toArray().map((_, i) =>
+                  [...Array(subColumnsCount).keys()].map(j =>
+                    <th
+                      key={`${i}-${j}`}>
+                      {getValueAxisLabel(j, visualisation)}
+                    </th>
+                  )
+                ).flat()
+              }
+            </tr>
 
-        {showStatsAtTop && (
-          renderStatsTableRows({ stats, subColumnsCount })
-        )}
-      </thead>
+            {showStatsAtTop && (
+              renderStatsTableRows({ stats, subColumnsCount })
+            )}
+          </thead>
 
-      <tbody>
-        {tableData.toArray().map((row, key) => (
-          <tr key={key}>
-            <td title={key}>{formatKeyToFriendlyString(row.get('model', key))}</td>
-            {
-              tLabels.toArray().map((tLabel, i) =>
-                [...Array(subColumnsCount).keys()].map((j) => {
-                  const v = row.getIn(['rowData', tLabel, j], new Map({ count: null }));
-                  return <td key={`${i}-${j}`}>{formatNumber(v.get('count'))}</td>;
-                })
-              ).flat()
-            }
-          </tr>
-        ))}
-      </tbody>
+          <tbody>
+            {tableData.toArray().map((row, key) => (
+              <tr key={key}>
+                <td title={key}>{formatKeyToFriendlyString(row.get('model', key))}</td>
+                {
+                  tLabels.toArray().map((tLabel, i) =>
+                    [...Array(subColumnsCount).keys()].map((j) => {
+                      const v = row.getIn(['rowData', tLabel, j], new Map({ count: null }));
+                      return <td key={`${i}-${j}`}>{formatNumber(v.get('count'))}</td>;
+                    })
+                  ).flat()
+                }
+              </tr>
+            ))}
+          </tbody>
 
-      {showStatsAtBottom && (
-        <tfoot>
-          {renderStatsTableRows({ stats, subColumnsCount })}
-        </tfoot>
+          {showStatsAtBottom && (
+            <tfoot>
+              {renderStatsTableRows({ stats, subColumnsCount })}
+            </tfoot>
+          )}
+        </ScrollableTable>
+      </div>
+
+      {mightBeLimited && (
+        <div style={{ marginTop: '8px' }}>
+          <span>Totals calculated from the first {RESPONSE_ROWS_LIMIT.toLocaleString('en')} records</span>
+        </div>
       )}
-    </ScrollableTable>
+    </div>
   );
 };
 
