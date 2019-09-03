@@ -70,11 +70,13 @@ const getAddPipeline = ({
   model,
   now
 }) => {
+  console.log('301.1', getAddFromTimestamp({ model, now }).toDate());
+  console.log('301.2', getAddToTimestamp({ model, now }).toDate());
   const addPipeline = [
     { $match: {
       timestamp: {
         $gt: getAddFromTimestamp({ model, now }).toDate(),
-        $lte: getAddToTimestamp({ model, now }).toDate()
+        // $lte: getAddToTimestamp({ model, now }).toDate()
       }
     } },
     ...(JSON.parse(model.pipelineString))
