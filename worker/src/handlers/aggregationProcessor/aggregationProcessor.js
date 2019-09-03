@@ -70,13 +70,11 @@ const getAddPipeline = ({
   model,
   now
 }) => {
-  console.log('301.1', getAddFromTimestamp({ model, now }).toDate());
-  console.log('301.2', getAddToTimestamp({ model, now }).toDate());
   const addPipeline = [
     { $match: {
       timestamp: {
         $gt: getAddFromTimestamp({ model, now }).toDate(),
-        // $lte: getAddToTimestamp({ model, now }).toDate()
+        $lte: getAddToTimestamp({ model, now }).toDate()
       }
     } },
     ...(JSON.parse(model.pipelineString))
@@ -116,7 +114,6 @@ const aggregationProcessor = async ({
   publishQueue = publish,
 }, done) => {
   // Attempt to aquire a lock
-  console.log('101');
   const model = await AggregationProcessor.findOneAndUpdate({
     _id: aggregationProcessorId,
     $or: [
@@ -131,7 +128,6 @@ const aggregationProcessor = async ({
     new: true,
     upsert: false
   });
-  console.log('102');
 
   if (!model) {
     // Probably locked by something else
@@ -150,11 +146,8 @@ const aggregationProcessor = async ({
     now
   });
 
-  console.log('102.1');
   const addResults = await Statement.aggregate(addPipeline);
-  console.log('102.2');
   const subtractResults = subtractPipeline && await Statement.aggregate(subtractPipeline);
-  console.log('102.3');
 
   let results;
   if (subtractResults) {
@@ -199,7 +192,6 @@ const aggregationProcessor = async ({
   const fromTimestamp = getFromTimestamp({ model, now });
   const toTimestamp = getAddToTimestamp({ model, now });
 
-  console.log('103');
   const newModel = await AggregationProcessor.findOneAndUpdate({
     _id: aggregationProcessorId
   }, {
@@ -213,7 +205,6 @@ const aggregationProcessor = async ({
     new: true,
     upsert: false
   });
-  console.log('104');
 
   if (!hasReachedEnd({ model: newModel, now })) {
     publishQueue({
