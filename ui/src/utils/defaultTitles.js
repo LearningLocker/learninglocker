@@ -13,6 +13,12 @@ import {
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_WEEKDAYS_ACTIVITY,
+  TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT,
+  TEMPLATE_CURATR_COMMENT_COUNT,
+  TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB,
+  TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD,
+  TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS,
+  TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS,
 } from 'lib/constants/visualise';
 import VisualiseIcon from 'ui/components/VisualiseIcon';
 import { OPERATOR_OPTS } from 'ui/utils/visualisations/localOptions';
@@ -41,39 +47,6 @@ export const shorten = (target, forXAxis) => {
     return target.substring(0, 46);
   }
   return target;
-};
-
-// [Viz Refactor] TODO: Remove this function and implement directly axes names into each Visualisation/.../Editor
-export const getAxesString = (key, model, type = null, shortened = true) => {
-  const select = (ky, axis) => model.getIn([ky, 'searchString'], axis);
-  const x = shortened ? shorten(model.get('axesxLabel', select(axg, 'X-Axis'))) : model.get('axesxLabel', select(axg, 'X-Axis'));
-  const y = shortened ? shorten(model.get('axesyLabel', select(axv, 'Y-Axis')), false) : model.get('axesyLabel', select(axv, 'Y-Axis'));
-
-  const getResultForXY = () => {
-    const labelString = key === 'x' ? model.axesxLabel : model.axesyLabel;
-    const defaultLabel = key === 'x' ? model.getIn(['axesxValue', 'searchString'], 'X-Axis') : model.getIn(['axesgroup', 'searchString'], 'Y-Axis');
-    if (labelString && labelString.length) {
-      return labelString;
-    }
-    return defaultLabel;
-  };
-
-  if (type === LEADERBOARD || type === TEMPLATE_ACTIVITY_OVER_TIME) {
-    switch (key) {
-      case 'x': return y.length ? y : model.getIn(['axesgroup', 'searchString'], 'X-Axis');
-      case 'y': return x.length ? x : model.getIn(['axesvalue', 'searchString'], 'Y-Axis');
-      default: return null;
-    }
-  }
-
-  if (type !== XVSY) {
-    switch (key) {
-      case 'x': return x.length ? x : select(axg, 'yyyy/mm/dd');
-      case 'y': return y.length ? y : select(axv, 'Y-Axis');
-      default: return null;
-    }
-  }
-  return getResultForXY();
 };
 
 const makeOperatorReadable = (model, operatorName) => {
@@ -108,16 +81,22 @@ export const createDefaultTitle = (model) => {
     case TEMPLATE_MOST_ACTIVE_PEOPLE:
     case TEMPLATE_MOST_POPULAR_ACTIVITIES:
     case TEMPLATE_MOST_POPULAR_VERBS:
+    case TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD:
+    case TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS:
       return addYX(select(axg), select(axv) || select(ayV) || 'Time');
     case XVSY:
+    case TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT:
       return addXVSYXY(select(axV), select(axv) || select(ayV) || 'Time');
     case COUNTER:
     case TEMPLATE_LAST_7_DAYS_STATEMENTS:
+    case TEMPLATE_CURATR_COMMENT_COUNT:
       return `${makeOperatorReadable(model, 'axesoperator')}${select(axv) || select(ayV)}`;
     case PIE:
+    case TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS:
       return `${makeOperatorReadable(model, 'axesoperator')}${select(axv) || select(ayV)} / ${select(axg)}`;
     case STATEMENTS:
     case TEMPLATE_WEEKDAYS_ACTIVITY:
+    case TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB:
       return addXY(select(axg), select(axv) || select(ayV) || 'Time');
     default:
       return 'Empty';
