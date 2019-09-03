@@ -209,8 +209,9 @@ const SourceResult = ({
     return <NoData />;
   }
 
-  const showStatsAtTop = visualisation.get('showStatsAtTop', true);
-  const showStatsAtBottom = visualisation.get('showStatsAtBottom', true);
+  const showStats = visualisation.get('showStats', true);
+  const showStatsAtTop = showStats && !visualisation.get('statsAtBottom', true);
+  const statsAtBottom = showStats && visualisation.get('statsAtBottom', true);
 
   const stats = calcStats(formattedResults);
 
@@ -272,7 +273,7 @@ const SourceResult = ({
             ))}
           </tbody>
 
-          {showStatsAtBottom && (
+          {statsAtBottom && (
             <tfoot>
               {renderStatsTableRows({ stats, subColumnsCount })}
             </tfoot>

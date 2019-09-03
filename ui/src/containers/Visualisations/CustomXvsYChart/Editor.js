@@ -8,8 +8,8 @@ import VisualiseFilterForm from 'ui/containers/VisualiseFilterForm';
 import AddQueryButton from '../components/AddQueryButton';
 import DescriptionForm from '../components/DescriptionForm';
 import PreviewPeriodPicker from '../components/PreviewPeriodPicker';
-import ShowStatsAtBottomSwitch from '../components/ShowStatsAtBottomSwitch';
-import ShowStatsAtTopSwitch from '../components/ShowStatsAtTopSwitch';
+import StatsTopOrBottomSwitch from '../components/StatsTopOrBottomSwitch';
+import ShowStatsSwitch from '../components/ShowStatsSwitch';
 import SourceViewForm from '../components/SourceViewForm';
 import TimezoneForm from '../components/TimezoneForm';
 import TrendLinesSwitch from '../components/TrendLinesSwitch';
@@ -55,20 +55,20 @@ const Editor = ({
     });
   }, [id]);
 
-  const onChangeShowStatsAtTopSwitch = useCallback((checked) => {
+  const onChangeShowStats = useCallback((checked) => {
     updateModel({
       schema: 'visualisation',
       id,
-      path: 'showStatsAtTop',
+      path: 'showStats',
       value: checked,
     });
   }, [id]);
 
-  const onChangeShowStatsAtBottomSwitch = useCallback((checked) => {
+  const onChangeStatsAtBottom = useCallback((checked) => {
     updateModel({
       schema: 'visualisation',
       id,
-      path: 'showStatsAtBottom',
+      path: 'statsAtBottom',
       value: checked,
     });
   }, [id]);
@@ -132,15 +132,15 @@ const Editor = ({
                 onChange={onChangeSourceView} />
 
               {model.get('sourceView') && (
-                <ShowStatsAtTopSwitch
-                  showStatsAtTop={model.get('showStatsAtTop')}
-                  onChange={onChangeShowStatsAtTopSwitch} />
+                <ShowStatsSwitch
+                  showStats={model.get('showStats')}
+                  onChange={onChangeShowStats} />
               )}
 
-              {model.get('sourceView') && (
-                <ShowStatsAtBottomSwitch
-                  showStatsAtBottom={model.get('showStatsAtBottom')}
-                  onChange={onChangeShowStatsAtBottomSwitch} />
+              {model.get('sourceView') && model.get('showStats') && (
+                <StatsTopOrBottomSwitch
+                  statsAtBottom={model.get('statsAtBottom')}
+                  onChange={onChangeStatsAtBottom} />
               )}
 
               {
