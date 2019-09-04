@@ -41,7 +41,7 @@ const enhance = compose(
   })
 );
 
-const render = ({ handleJoin, handleLeave, model, userOrgs }) => {
+const OrgMemberButton = ({ handleJoin, handleLeave, model, userOrgs }) => {
   const hasOrg = userOrgs.includes(model.get('_id'));
   return hasOrg
     ? <button
@@ -60,4 +60,4 @@ const render = ({ handleJoin, handleLeave, model, userOrgs }) => {
     </button>;
 };
 
-export default enhance(render);
+export default enhance(OrgMemberButton);
