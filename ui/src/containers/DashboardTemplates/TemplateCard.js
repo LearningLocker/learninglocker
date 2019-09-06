@@ -1,12 +1,15 @@
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { PIE_IMAGE } from 'ui/components/VisualiseIcon/assets';
 import styles from './styles.css';
 
-const TemplateCard = ({ title, onSelect }) => (
+const TemplateCard = ({
+  title,
+  image,
+  onSelect,
+}) => (
   <div className={styles.card} onClick={onSelect}>
     <img
-      src={PIE_IMAGE}
+      src={image}
       alt={title} />
     <p>{title}</p>
   </div>
