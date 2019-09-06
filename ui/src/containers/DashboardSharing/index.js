@@ -350,11 +350,11 @@ const ModelFormComponent = ({
 */
 const ModelForm = compose(
   withStyles(styles),
-  utilHandlers,
-  handlers,
   connect(state => (
     { organisationModel: activeOrgSelector(state) }
   )),
+  utilHandlers,
+  handlers,
 )(ModelFormComponent);
 
 const deleteButton = ({ parentModel }) => compose(
