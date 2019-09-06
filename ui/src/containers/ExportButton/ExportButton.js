@@ -1,15 +1,17 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { List } from 'immutable';
+import classNames from 'classnames';
+import { STATEMENTS } from 'lib/constants/visualise';
+import { SmallSpinner } from 'ui/components';
+import { ExportModal } from 'ui/containers';
 import {
   exportSetModalState,
   exportKeyPathSelector,
   exportFetchStateSelector,
   IN_PROGRESS, SUCCESS, FAILED
 } from 'ui/redux/modules/exports';
-import { List } from 'immutable';
-import classNames from 'classnames';
-import { SmallSpinner } from 'ui/components';
-import { ExportModal } from 'ui/containers';
 
 class ExportButton extends Component {
   static propTypes = {
@@ -22,7 +24,7 @@ class ExportButton extends Component {
   }
   static defaultProps = {
     derivedPipelines: new List(),
-    type: 'STATEMENTS'
+    type: STATEMENTS,
   }
   constructor(props) {
     super(props);

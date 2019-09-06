@@ -1,10 +1,14 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Map, Set, List } from 'immutable';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import QueryBuilderAutoComplete from
   'ui/components/AutoComplete2/QueryBuilderAutoComplete';
 import Operator from '../Operator';
+import styles from '../styles.css';
+import { opToString, stringToOp, Operators } from './helpers';
+
 
 class Criterion extends Component {
   static propTypes = {
@@ -19,19 +23,17 @@ class Criterion extends Component {
     filter: new Map(),
   }
 
-  state = {
-    tempOperator: 'In'
-  }
-
-  shouldComponentUpdate = ({ section, criterion, filter }, { tempOperator }) => !(
+  shouldComponentUpdate = ({ section, criterion, filter }) => !(
     this.props.section.equals(section) &&
     this.props.criterion.equals(criterion) &&
-    this.props.filter.equals(filter) &&
-    this.state.tempOperator === tempOperator
+    this.props.filter.equals(filter)
   );
 
-  canDeleteCriterion = () =>
-    this.props.onDeleteCriterion !== undefined
+  /**
+   * @returns {string}
+   */
+  getQueryKey = () =>
+    this.props.section.get('getQueryKey', '')
 
   getSearchStringToFilter = () =>
     this.props.section.get('searchStringToFilter')
@@ -48,85 +50,83 @@ class Criterion extends Component {
   getQueryOption = query =>
     this.props.section.get('getQueryModel')(query)
 
-  getCriterionQuery = (operator, criterion) => {
-    switch (operator) {
-      case 'Out': return new Map({ $nor: criterion });
-      default: return new Map({ $or: criterion });
-    }
-  }
-
-  getValues = () => {
-    if (!this.canDeleteCriterion()) return new List();
-    const operator = this.getOperator();
-    if (operator === 'Out') return this.props.criterion.get('$nor', new List());
-    return this.props.criterion.get('$or', new List());
-  }
-
+  /**
+   * @returns {Operators}
+   */
   getOperator = () => {
-    if (!this.canDeleteCriterion()) return this.state.tempOperator;
-    if (this.props.criterion.has('$nor')) return 'Out';
-    return 'In';
+    const key = this.getQueryKey();
+    const subQuery = this.props.criterion.get(key, new Map());
+    return subQuery.has(Operators.IN) ? Operators.IN : Operators.NIN;
   }
 
-  changeCriterion = (operator, values) =>
+  /**
+   * @returns {immutable.Set}
+   */
+  getValues = () => {
+    const key = this.getQueryKey();
+    const subQuery = this.props.criterion.get(key, new Map());
+    const operator = this.getOperator();
+    return subQuery.get(operator, new List()).toSet();
+  }
+
+  /**
+   * @param {Operators} operator
+   * @param {immutable.Set} values
+   * @returns {void}
+   */
+  onChangeCriterion = (operator, values) => {
+    const key = this.getQueryKey();
     this.props.onCriterionChange(new Map({
       $comment: this.props.criterion.get('$comment'),
-    }).merge(this.getCriterionQuery(operator, values)))
-
-  changeValues = (values) => {
-    const canDeleteCriterion = values.size === 0 && this.canDeleteCriterion();
-    if (canDeleteCriterion) {
-      return this.props.onDeleteCriterion();
-    }
-    return this.changeCriterion(this.getOperator(), values);
+      [key]: new Map({
+        [operator]: values.toList()
+      })
+    }));
   }
 
   onAddOption = (model) => {
-    if (!model.isEmpty()) {
-      const values = this.getValues();
-      const newValue = this.getOptionQuery(model);
-      this.changeValues(values.push(newValue));
+    if (model.isEmpty()) {
+      return;
     }
+    const newValue = this.getOptionQuery(model);
+    const values = this.getValues();
+    const added = values.add(newValue);
+    this.onChangeCriterion(this.getOperator(), added);
   }
 
   onRemoveOption = (model) => {
     const values = this.getValues();
-    const newValue = this.getOptionQuery(model);
+    const removingValue = this.getOptionQuery(model);
+    const removed = values.remove(removingValue);
 
-    this.changeValues(
-      values.filter(value => !value.equals(newValue))
-    );
-  }
-
-  changeOperator = (operator) => {
-    if (!this.canDeleteCriterion()) {
-      return this.setState({ tempOperator: operator });
+    if (removed.size === 0) {
+      this.props.onDeleteCriterion();
+      return;
     }
-    return this.changeCriterion(operator, this.getValues());
+
+    this.onChangeCriterion(this.getOperator(), removed);
   }
+
+  onChangeOperator = operator =>
+    this.onChangeCriterion(operator, this.getValues());
 
   render = () => {
-    const styles = require('../styles.css');
-
-    const canDeleteCriterion = false && !!this.props.onDeleteCriterion;
-
     const criterionClasses = classNames(
       styles.criterionValue,
-      { [styles.noCriteria]: !canDeleteCriterion }
+      styles.noCriteria
     );
-    const deleteBtnClasses = classNames(styles.criterionButton, 'btn btn-default btn-xs');
 
     return (
       <div className={styles.criterion}>
         <div className={styles.criterionOperator}>
           <Operator
             operators={new Set(['In', 'Out'])}
-            operator={this.getOperator()}
-            onOperatorChange={this.changeOperator} />
+            operator={opToString(this.getOperator())}
+            onOperatorChange={str => this.onChangeOperator(stringToOp(str))} />
         </div>
         <div className={criterionClasses} >
           <QueryBuilderAutoComplete
-            values={this.getValues().map(this.getQueryOption)}
+            values={this.getValues().toList().map(this.getQueryOption)}
             filter={this.props.filter}
             schema={this.props.schema}
             selectOption={this.onAddOption}
@@ -135,19 +135,12 @@ class Criterion extends Component {
             searchStringToFilter={this.getSearchStringToFilter()}
             parseOptionTooltip={this.getOptionIdentifier} />
         </div>
-        {(canDeleteCriterion &&
-          <button
-            onClick={this.props.onDeleteCriterion}
-            className={deleteBtnClasses}>
-            <i className="ion-minus-round" />
-          </button>
-        )}
       </div>
     );
   }
 }
 
-export default connect((state, ownProps) => {
+export default connect((_, ownProps) => {
   if (ownProps.section.has('sourceSchema')) {
     const schema = ownProps.section.get('sourceSchema');
     return { schema };

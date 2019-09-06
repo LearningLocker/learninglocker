@@ -5,10 +5,17 @@ import map from 'lodash/map';
 import reject from 'lodash/reject';
 import isEmpty from 'lodash/isEmpty';
 import toString from 'lodash/toString';
+import { JWT_ACCESS_TOKEN_EXPIRATION, JWT_REFRESH_TOKEN_EXPIRATION } from 'lib/constants/auth';
 import { VIEW_SHAREABLE_DASHBOARD } from 'lib/constants/scopes';
 import Role from 'lib/models/role';
+import Organisation from 'lib/models/organisation';
 import getActiveOrgSettings from 'api/utils/getActiveOrgSettings';
 
+/**
+ * @param {string | object | Buffer}
+ * @param {jwt.Secret}
+ * @returns {Promise<any>}
+ */
 const sign = Promise.promisify(jwt.sign);
 
 const getUserScopes = user =>
@@ -22,6 +29,11 @@ const getVisualisationIdsFromDashboard = (dashboard) => {
   visualisationIds = reject(visualisationIds, isEmpty);
   visualisationIds = map(visualisationIds, toString);
   return visualisationIds;
+};
+
+const getOrgTimezoneFromDashboard = async (dashboard) => {
+  const org = await Organisation.findOne({ _id: dashboard.organisation });
+  return org && org.timezone ? org.timezone : null;
 };
 
 const payloadDefaults = ({
@@ -38,6 +50,11 @@ const payloadDefaults = ({
   ...others
 });
 
+/**
+ * @param {*} - payload
+ * @param {*} opts - (optional)
+ * @returns {Promise<any>}
+ */
 const createJWT = ({
   userId,
   provider,
@@ -49,7 +66,7 @@ const createJWT = ({
   extensions,
   organisation = null
 }, opts = {
-  expiresIn: '7d'
+  expiresIn: '1h'
 }) => sign(
   { userId, provider, scopes, tokenType, tokenId, shareableId, extensions, filter, organisation },
   process.env.APP_SECRET,
@@ -64,8 +81,35 @@ const createUserTokenPayload = (user, provider) => payloadDefaults({
   tokenId: String(user._id),
 });
 
+/**
+ * @param {*} user
+ * @param {*} provider
+ * @returns {Promise<any>}
+ */
 const createUserJWT = (user, provider) =>
-  createJWT(createUserTokenPayload(user, provider));
+  createJWT(
+    createUserTokenPayload(user, provider),
+    { expiresIn: JWT_ACCESS_TOKEN_EXPIRATION },
+  );
+
+const createUserRefreshTokenPayload = (user, provider) => payloadDefaults({
+  userId: String(user._id),
+  provider,
+  scopes: ['refresh_token_user'],
+  tokenType: 'user_refresh',
+  tokenId: String(user._id),
+});
+
+/**
+ * @param {*} user
+ * @param {*} provider
+ * @returns {Promise<any>}
+ */
+const createUserRefreshJWT = (user, provider) =>
+  createJWT(
+    createUserRefreshTokenPayload(user, provider),
+    { expiresIn: JWT_REFRESH_TOKEN_EXPIRATION },
+  );
 
 const createOrgTokenPayload = async (user, orgId, provider) => {
   const activeOrgSettings = getActiveOrgSettings(user, orgId);
@@ -88,8 +132,32 @@ const createOrgTokenPayload = async (user, orgId, provider) => {
 };
 const createOrgJWT = async (user, organisationId, provider) => {
   const orgTokenPayload = await createOrgTokenPayload(user, organisationId, provider);
-  return createJWT(orgTokenPayload);
+  return createJWT(
+    orgTokenPayload,
+    { expiresIn: JWT_ACCESS_TOKEN_EXPIRATION },
+  );
 };
+
+const createOrgRefreshTokenPayload = (user, organisationId, provider) => payloadDefaults({
+  userId: String(user._id),
+  provider,
+  scopes: ['refresh_token_organisation'],
+  tokenType: 'organisation_refresh',
+  tokenId: organisationId,
+});
+
+/**
+ * @param {*} user
+ * @param {*} organisationId
+ * @param {*} provider
+ * @returns {Promise<any>}
+ */
+const createOrgRefreshJWT = (user, organisationId, provider) =>
+  createJWT(
+    createOrgRefreshTokenPayload(user, organisationId, provider),
+    { expiresIn: JWT_REFRESH_TOKEN_EXPIRATION },
+  );
+
 
 const createDashboardTokenPayload = async (dashboard, shareableId, provider) => {
   if (!shareableId && dashboard.shareable.length > 0) {
@@ -97,6 +165,9 @@ const createDashboardTokenPayload = async (dashboard, shareableId, provider) => 
   }
 
   const visualisationIds = getVisualisationIdsFromDashboard(dashboard);
+
+  const orgTimezone = await getOrgTimezoneFromDashboard(dashboard);
+
   return payloadDefaults({
     provider,
     scopes: getDashboardScopes(dashboard),
@@ -107,21 +178,29 @@ const createDashboardTokenPayload = async (dashboard, shareableId, provider) => 
     filter: {},
     extensions: {
       visualisationIds,
+      orgTimezone,
     }
   });
 };
 
 const createDashboardJWT = async (dashboard, shareableId, provider) => {
   const dashboardPayload = await createDashboardTokenPayload(dashboard, shareableId, provider);
-  return createJWT(dashboardPayload);
+  return createJWT(
+    dashboardPayload,
+    { expiresIn: JWT_ACCESS_TOKEN_EXPIRATION },
+  );
 };
 
 export {
   createJWT,
   createUserTokenPayload,
   createUserJWT,
+  createUserRefreshTokenPayload,
+  createUserRefreshJWT,
   createOrgTokenPayload,
   createOrgJWT,
+  createOrgRefreshTokenPayload,
+  createOrgRefreshJWT,
   createDashboardTokenPayload,
-  createDashboardJWT
+  createDashboardJWT,
 };

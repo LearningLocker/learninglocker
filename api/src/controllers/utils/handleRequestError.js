@@ -9,7 +9,7 @@ import defaultTo from 'lodash/defaultTo';
 import { v4 as uuid } from 'uuid';
 import PersonaConflict from '@learninglocker/persona-service/dist/errors/Conflict';
 import NoModel from 'jscommons/dist/errors/NoModel';
-import AllreadyProcessingError from 'lib/errors/AllreadyProcessingError';
+import AlreadyProcessingError from 'lib/errors/AlreadyProcessingError';
 import PersonaNoModelWithId from '@learninglocker/persona-service/dist/errors/NoModelWithId';
 
 export const unawaitedErrorHandler = (err) => {
@@ -17,7 +17,7 @@ export const unawaitedErrorHandler = (err) => {
   logger.error(errorId, err);
 };
 
-export default (res, err) => {
+const handleRequestError = (res, err) => {
   const errorId = uuid();
 
   // persona errors
@@ -75,7 +75,7 @@ export default (res, err) => {
   }
 
   if (
-    err instanceof AllreadyProcessingError
+    err instanceof AlreadyProcessingError
   ) {
     return res.status(409).send({
       errorId,
@@ -109,3 +109,5 @@ export default (res, err) => {
     message: 'Error'
   });
 };
+
+export default handleRequestError;

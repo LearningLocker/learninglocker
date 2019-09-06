@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { List, Map } from 'immutable';
 import {
   compose,
@@ -81,7 +82,7 @@ const getLayout = widgets =>
     };
   });
 
-const render = ({
+const DashboardGrid = ({
   containerWidth,
   widgets,
   editable,
@@ -121,4 +122,4 @@ const render = ({
   );
 };
 
-export default enhance(render);
+export default enhance(DashboardGrid);

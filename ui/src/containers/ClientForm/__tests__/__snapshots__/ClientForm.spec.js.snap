@@ -458,7 +458,35 @@ exports[`ClientForm renders correctly 1`] = `
           className={undefined}
           data-react-toolbox="label"
         >
-          All
+          API All
+        </span>
+      </label>
+      <label
+        className=""
+        data-react-toolbox="checkbox"
+        onMouseEnter={undefined}
+        onMouseLeave={undefined}
+      >
+        <input
+          checked={false}
+          className={undefined}
+          disabled={false}
+          name={undefined}
+          onChange={[Function]}
+          onClick={[Function]}
+          type="checkbox"
+        />
+        <div
+          className=""
+          data-react-toolbox="check"
+          onMouseDown={[Function]}
+          style={undefined}
+        />
+        <span
+          className={undefined}
+          data-react-toolbox="label"
+        >
+          Delete statements (not covered by All scope)
         </span>
       </label>
     </div>
@@ -478,7 +506,7 @@ exports[`ClientForm renders correctly 1`] = `
           data-react-toolbox="dropdown"
           onBlur={[Function]}
           onFocus={[Function]}
-          tabIndex="0"
+          tabIndex="-1"
         >
           <div
             className=""
@@ -486,6 +514,7 @@ exports[`ClientForm renders correctly 1`] = `
           >
             <input
               className=""
+              defaultValue={undefined}
               disabled={false}
               id="lrsInput"
               maxLength={undefined}
@@ -496,7 +525,7 @@ exports[`ClientForm renders correctly 1`] = `
               readOnly={true}
               required={false}
               role="input"
-              tabIndex="-1"
+              tabIndex="0"
               type={null}
               value=""
             />
@@ -514,7 +543,7 @@ exports[`ClientForm renders correctly 1`] = `
           >
             <li
               className="undefined"
-              onClick={null}
+              onMouseDown={false}
             >
               No LRSs available
             </li>

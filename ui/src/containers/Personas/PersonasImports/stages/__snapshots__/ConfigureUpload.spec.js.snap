@@ -5,13 +5,7 @@ exports[`ConfigureUpload should render 1`] = `
   <div
     className="form-group"
   >
-    <WithStyles(ColumnHeaderEditorComponent)
-      csvHeaders={
-        Array [
-          "test1",
-          "test2",
-        ]
-      }
+    <WithStyles(ColumnHeaderEditor)
       disabled={false}
       model={
         Object {
@@ -21,7 +15,6 @@ exports[`ConfigureUpload should render 1`] = `
           ],
         }
       }
-      structure={Object {}}
     />
   </div>
   <div
@@ -41,14 +34,8 @@ exports[`ConfigureUpload should render with disabled 1`] = `
   <div
     className="form-group"
   >
-    <WithStyles(ColumnHeaderEditorComponent)
-      csvHeaders={
-        Array [
-          "test1",
-          "test2",
-        ]
-      }
-      disabled="true"
+    <WithStyles(ColumnHeaderEditor)
+      disabled={true}
       model={
         Object {
           "csvHeaders": Array [
@@ -57,7 +44,6 @@ exports[`ConfigureUpload should render with disabled 1`] = `
           ],
         }
       }
-      structure={Object {}}
     />
   </div>
 </div>
@@ -68,8 +54,7 @@ exports[`ConfigureUpload should render with errors 1`] = `
   <div
     className="form-group has-error"
   >
-    <WithStyles(ColumnHeaderEditorComponent)
-      csvHeaders={Array []}
+    <WithStyles(ColumnHeaderEditor)
       disabled={false}
       model={
         Object {
@@ -80,12 +65,11 @@ exports[`ConfigureUpload should render with errors 1`] = `
           },
         }
       }
-      structure={Object {}}
     />
     <span
       className="help-block"
     >
-      <WithStyles(ValidationList)
+      <ValidationList
         errors="Structure is invalid"
       />
     </span>

@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
@@ -61,7 +62,7 @@ class ForgotPassword extends Component {
 
   renderSuccess = () => (
     <Card style={{ padding: '10px 20px', textAlign: 'center' }}>
-      Instructions to reset your password have been sent to your email.
+      Instructions to reset your password have been sent to your email, if it exists in the system.
     </Card>
   );
 

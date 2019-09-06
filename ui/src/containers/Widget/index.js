@@ -1,9 +1,14 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Map } from 'immutable';
 import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose } from 'recompose';
+import {
+  COUNTER,
+  PIE,
+} from 'lib/constants/visualise';
 import { fetchModels } from 'ui/redux/modules/pagination';
 import { updateModel, modelsSchemaIdSelector } from 'ui/redux/modules/models';
 import { setModelQuery } from 'ui/redux/modules/search';
@@ -11,12 +16,10 @@ import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import Link from 'ui/containers/Link';
 import DropDownMenu from 'ui/components/DropDownMenu';
 import WidgetVisualisePicker from 'ui/containers/WidgetVisualisePicker';
-import VisualiseResults from 'ui/containers/VisualiseResults';
-import SourceResults from 'ui/containers/VisualiseResults/SourceResults';
+import VisualisationViewer from 'ui/containers/Visualisations/VisualisationViewer';
 import DeleteConfirm from 'ui/containers/DeleteConfirm';
 import { createDefaultTitle } from 'ui/utils/defaultTitles';
 import styles from './widget.css';
-import { COUNTER, PIE } from '../../utils/constants';
 
 const schema = 'widget';
 const VISUALISATION = 'stages/VISUALISATION';
@@ -114,7 +117,14 @@ class Widget extends Component {
     return 'Enable donut';
   }
 
-  getTitle = model => model.get('title') || <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>{createDefaultTitle(this.props.visualisation, '')}</span>;
+  getTitle = (model, props) =>
+    model.get('title') ||
+    props.visualisation.get('description') ||
+    (
+      <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>
+        {createDefaultTitle(this.props.visualisation)}
+      </span>
+    );
 
   toggleEditingTitle = () => {
   }
@@ -130,7 +140,26 @@ class Widget extends Component {
   }
 
   renderMenu = () => {
-    const { model, organisationId } = this.props;
+    const { model, organisationId, visualisation } = this.props;
+
+    const shouldShowTableModeToggle = (
+      visualisation.size > 0 &&
+      visualisation.get('type') &&
+      visualisation.get('type') !== COUNTER &&
+      model.has('visualisation')
+    );
+
+    const shouldShowDonutModeToggle = (
+      visualisation.size > 0 &&
+      visualisation.get('type') === PIE &&
+      !visualisation.get('sourceView') &&
+      model.has('visualisation')
+    );
+
+    const shouldShowGoVisualisation = (
+      model.has('visualisation') &&
+      visualisation.size > 0
+    );
 
     return (
       <DropDownMenu
@@ -139,7 +168,7 @@ class Widget extends Component {
             <i className="ion ion-navicon-round" />
           </a>
         }>
-        { this.props.visualisation.size > 0 && this.props.visualisation.get('type') !== COUNTER && model.has('visualisation') &&
+        { shouldShowTableModeToggle &&
           <a
             onClick={this.toggleSourceView}
             title="Table mode"
@@ -147,10 +176,8 @@ class Widget extends Component {
             <i className={`ion ${styles.marginRight} ion-edit grey`} />{this.getSourceView()}
           </a>
         }
-        { this.props.visualisation.size > 0
-          && this.props.visualisation.get('type') === PIE
-          && !this.props.visualisation.get('sourceView')
-          && model.has('visualisation') &&
+
+        { shouldShowDonutModeToggle &&
           <a
             onClick={this.toggleDonutView}
             title="Donut mode"
@@ -158,25 +185,31 @@ class Widget extends Component {
             <i className={`ion ${styles.marginRight} ion-edit grey`} />{this.getDonutView()}
           </a>
         }
-        { model.has('visualisation') && this.props.visualisation.size > 0 &&
+
+        { shouldShowGoVisualisation &&
           <Link
             routeName={'organisation.data.visualise.visualisation'}
-            routeParams={{ organisationId, visualisationId: this.props.visualisation.get('_id') }} >
+            routeParams={{ organisationId, visualisationId: visualisation.get('_id') }} >
             <i className={`ion ${styles.marginRight} ion-edit grey`} />
             Go to visualisation
           </Link>
         }
-        <a onClick={this.openModal.bind(null, VISUALISATION)} title="Widget settings">
+
+        <a
+          onClick={this.openModal.bind(null, VISUALISATION)}
+          title="Edit widget visualisation or title">
           <i className={`ion ${styles.marginRight} ion-gear-b grey`} />
-          Settings
+          Edit Widget
         </a>
+
         { this.props.editable &&
           <a
             onClick={this.openDeleteModal}
             title="Delete Widget">
-            <i className={`ion ${styles.marginRight}  ion-close-round grey`} />Delete
+            <i className={`ion ${styles.marginRight}  ion-close-round grey`} />
+            Delete
           </a>
-                    }
+        }
       </DropDownMenu>
     );
   }
@@ -196,7 +229,6 @@ class Widget extends Component {
       [styles.title]: true,
       [styles.draggableTitle]: this.props.editable,
     });
-
     return (
       <div className={`panel panel-default animated fadeIn ${styles.widget}`} >
         <div className={styles.widgetContent}>
@@ -210,15 +242,15 @@ class Widget extends Component {
           </div>
           {
             <div className={`panel-body ${styles.body}`}>
-              {!this.props.visualisation.get('sourceView') && model.has('visualisation') && <VisualiseResults id={model.get('visualisation')} />}
-              {this.props.visualisation.get('sourceView') && <SourceResults id={model.get('visualisation')} />
-              }
+              {model.has('visualisation') && (
+                <VisualisationViewer id={model.get('visualisation')} />
+              )}
             </div>
           }
           {
-            isModalOpen &&
+            (isModalOpen) &&
               <WidgetVisualisePicker
-                isOpened={isModalOpen}
+                isOpened={isModalOpen || this.props.widgetModalOpen}
                 model={model}
                 onClickClose={this.closeModal}
                 onChangeTitle={this.props.onChangeTitle}

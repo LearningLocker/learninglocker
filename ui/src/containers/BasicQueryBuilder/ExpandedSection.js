@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose, withProps } from 'recompose';
 import { Map, List } from 'immutable';
@@ -8,6 +9,7 @@ import { operators, getAvailableSection } from 'ui/redux/modules/queryBuilder';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { withModels } from 'ui/utils/hocs';
 import DiscreteCriteria from './Discrete/Criteria';
+import ActorDiscreteCriteria from './ActorDiscrete/Criteria';
 import ContinuousCriteria from './Continuous/Criteria';
 import RangeCriteria from './Range/Criteria';
 import BooleanCriteria from './Boolean/Criteria';
@@ -57,6 +59,8 @@ const withQueryBuilderCacheProps = withProps(
 
 class ExpandedSection extends Component {
   static propTypes = {
+    timezone: PropTypes.string,
+    orgTimezone: PropTypes.string.isRequired,
     section: PropTypes.instanceOf(Map),
     sectionCriteria: PropTypes.instanceOf(Map),
     criteria: PropTypes.instanceOf(Map),
@@ -64,11 +68,13 @@ class ExpandedSection extends Component {
     onDeleteCriterion: PropTypes.func,
     onCollapse: PropTypes.func,
     onChildrenChange: PropTypes.func,
-    onAddCriterion: PropTypes.func
+    onAddCriterion: PropTypes.func,
   }
 
   shouldComponentUpdate = (nextProps) => {
     const out = !(
+      this.props.timezone === nextProps.timezone &&
+      this.props.orgTimezone === nextProps.orgTimezone &&
       this.props.section.equals(nextProps.section) &&
       this.props.criteria.equals(nextProps.criteria) &&
       this.props.models.equals(nextProps.models)
@@ -84,6 +90,8 @@ class ExpandedSection extends Component {
 
   renderContinuousCriteria = () => (
     <ContinuousCriteria
+      timezone={this.props.timezone}
+      orgTimezone={this.props.orgTimezone}
       section={this.props.section}
       criteria={this.props.sectionCriteria}
       onCriteriaChange={this.props.onCriteriaChange}
@@ -114,17 +122,21 @@ class ExpandedSection extends Component {
     onDeleteCriterion={this.props.onDeleteCriterion} />
     )
 
-  renderDiscreteCriteria = () => {
-    const out = (
-      <DiscreteCriteria
-        section={this.props.section}
-        criteria={this.props.sectionCriteria}
-        onCriteriaChange={this.props.onCriteriaChange}
-        onAddCriterion={this.props.onAddCriterion}
-        onDeleteCriterion={this.props.onDeleteCriterion} />
-    );
-    return out;
-  };
+  renderDiscreteCriteria = () => (<DiscreteCriteria
+    section={this.props.section}
+    criteria={this.props.sectionCriteria}
+    onCriteriaChange={this.props.onCriteriaChange}
+    onAddCriterion={this.props.onAddCriterion}
+    onDeleteCriterion={this.props.onDeleteCriterion} />
+    )
+
+  renderActorDiscreteCriteria = () => (<ActorDiscreteCriteria
+    section={this.props.section}
+    criteria={this.props.sectionCriteria}
+    onCriteriaChange={this.props.onCriteriaChange}
+    onAddCriterion={this.props.onAddCriterion}
+    onDeleteCriterion={this.props.onDeleteCriterion} />
+    )
 
   renderCriteria = () => {
     const ops = this.props.section.get('operators');
@@ -140,6 +152,7 @@ class ExpandedSection extends Component {
         );
       case operators.BOOLEAN: return this.renderBooleanCriteria();
       case operators.STRING_MATCHES: return this.renderStringMatchesCriteria();
+      case operators.OR_DISCRETE: return this.renderActorDiscreteCriteria();
       default: return this.renderDiscreteCriteria();
     }
   };
@@ -162,6 +175,8 @@ class ExpandedSection extends Component {
         </div>}
         {children.size > 0 &&
           <Sections
+            timezone={this.props.timezone}
+            orgTimezone={this.props.orgTimezone}
             className={styles.expandedChildren}
             sections={children}
             criteria={this.props.criteria}

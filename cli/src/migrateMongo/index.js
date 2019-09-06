@@ -170,14 +170,18 @@ const displayInfo = async ({ info, migrations }) => {
   }
 };
 
-export default async function ({ down, up, info, migrations = v2Migrations }, next = null) {
+export default async function ({ down, up, info, migrations = v2Migrations, dontExit = false }, next = null) {
   try {
     if (info) {
       await displayInfo({ info, migrations });
     } else {
       await doMigrations({ down, up, migrations });
     }
-    process.exit();
+    if (dontExit) {
+      next();
+    } else {
+      process.exit();
+    }
   } catch (err) {
     if (next) {
       next(err);
@@ -185,7 +189,9 @@ export default async function ({ down, up, info, migrations = v2Migrations }, ne
       if (err) {
         console.error(err);
       }
-      process.exit();
+      if (!dontExit) {
+        process.exit();
+      }
     }
   }
 }

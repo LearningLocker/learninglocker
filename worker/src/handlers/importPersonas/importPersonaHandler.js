@@ -41,7 +41,6 @@ export default personaService => async ({
       organisation,
       personaService
     })(data, index);
-
     if (totalCount && processedCount >= totalCount) {
       await finishedProcessing({ personaImportId });
     }

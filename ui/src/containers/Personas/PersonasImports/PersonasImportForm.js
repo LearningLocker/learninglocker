@@ -5,7 +5,7 @@ import {
   withModel,
   withPolling
 } from 'ui/utils/hocs';
-import IntialUploadForm from 'ui/containers/Personas/PersonasImports/stages/InitialUpload';
+import InitialUploadForm from 'ui/containers/Personas/PersonasImports/stages/InitialUpload';
 import ConfigureUpload from 'ui/containers/Personas/PersonasImports/stages/ConfigureUpload';
 import { List } from 'immutable';
 import { formatUrl } from 'ui/utils/LLApiClient';
@@ -50,7 +50,7 @@ export const PersonasImportFormComponent = ({
         onChange={changeTitle} />
     </div>
 
-    {model.get('importStage') === STAGE_UPLOAD && <IntialUploadForm
+    {model.get('importStage') === STAGE_UPLOAD && <InitialUploadForm
       className="initialUpload"
       model={model} />
     }
@@ -64,7 +64,7 @@ export const PersonasImportFormComponent = ({
         <ConfigureUpload
           className="configureUpload"
           model={model}
-          disabled="true" />
+          disabled />
         <blockquote>
           <h4>Imported on {moment(model.get('importedAt')).format('ddd DD MMM YYYY h:mm:ss')}</h4>
           <p>

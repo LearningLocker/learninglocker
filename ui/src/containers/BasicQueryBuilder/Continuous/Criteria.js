@@ -1,10 +1,14 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Map } from 'immutable';
-import classNames from 'classnames';
+import styles from '../styles.css';
 import Criterion from './Criterion';
+import TempCriterion from './TempCriterion';
 
 export default class Criteria extends Component {
   static propTypes = {
+    timezone: PropTypes.string,
+    orgTimezone: PropTypes.string.isRequired,
     section: PropTypes.instanceOf(Map),
     criteria: PropTypes.instanceOf(Map),
     onCriteriaChange: PropTypes.func,
@@ -13,20 +17,14 @@ export default class Criteria extends Component {
   }
 
   shouldComponentUpdate = nextProps => !(
+    this.props.timezone === nextProps.timezone &&
+    this.props.orgTimezone === nextProps.orgTimezone &&
     this.props.section.equals(nextProps.section) &&
     this.props.criteria.equals(nextProps.criteria)
   );
 
   changeCriteria = (key, criterion) => {
     this.props.onCriteriaChange(this.props.criteria.set(key, criterion));
-  }
-
-  getEmptyQuery = () => this.props.section.get('getEmptyQuery')();
-
-  addCriterion = () => {
-    this.props.onAddCriterion(new Map({
-      $gt: this.getEmptyQuery(),
-    }), this.props.section);
   }
 
   createCriterion = (criterion) => {
@@ -39,6 +37,8 @@ export default class Criteria extends Component {
 
   renderCriterion = (criterion, key) => (
     <Criterion
+      timezone={this.props.timezone}
+      orgTimezone={this.props.orgTimezone}
       section={this.props.section}
       criterion={criterion}
       onCriterionChange={this.changeCriteria.bind(this, key)}
@@ -52,45 +52,23 @@ export default class Criteria extends Component {
     </div>
   );
 
-  renderEmptyCriteria = () => {
-    const criterion = new Map({
-      $gt: this.getEmptyQuery(),
-      $comment: JSON.stringify({
-        criteriaPath: this.props.section.get('keyPath'),
-        criterionLabel: 'FAKE_LABEL',
-      }),
-    });
-    return (
-      <Criterion
-        section={this.props.section}
-        criterion={criterion}
-        onCriterionChange={this.createCriterion} />
-    );
-  }
+  renderEmptyCriteria = () => (
+    <TempCriterion
+      timezone={this.props.timezone}
+      orgTimezone={this.props.orgTimezone}
+      section={this.props.section}
+      onCriterionChange={this.createCriterion} />
+  );
 
-  render = () => {
-    const styles = require('../styles.css');
-
-    const addBtnClasses = classNames(styles.criterionButton, 'btn btn-default btn-xs');
-    return (
-      <div>
-        <div className={styles.criteria}>
-          {(
-            this.props.criteria.count() > 0 ?
-            this.renderCriteria() :
-            this.renderEmptyCriteria()
-          )}
-        </div>
-        { false && this.props.criteria.count() > 0 &&
-          <div className="text-right">
-            <button
-              className={addBtnClasses}
-              onClick={this.addCriterion}>
-              <i className="ion-plus-round" />
-            </button>
-          </div>
+  render = () => (
+    <div>
+      <div className={styles.criteria}>
+        {
+          this.props.criteria.count() > 0 ?
+          this.renderCriteria() :
+          this.renderEmptyCriteria()
         }
       </div>
-    );
-  }
+    </div>
+  );
 }

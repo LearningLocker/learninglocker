@@ -1,8 +1,8 @@
+import buildPeriodGroupKey from 'ui/utils/visualisations/helpers/buildPeriodGroupKey';
 import firstValuesOf from 'ui/utils/visualisations/helpers/firstValuesOf';
-import period from 'ui/utils/visualisations/projections/period';
 
 // Combination: B C/D G.
-export default ({ groupType, operator, projections = {} }) => [
+export default ({ groupType, operator, projections = {}, timezone = 'UTC' }) => [
   {
     $group: {
       _id: {
@@ -23,7 +23,7 @@ export default ({ groupType, operator, projections = {} }) => [
   },
   {
     $group: {
-      _id: period(groupType),
+      _id: buildPeriodGroupKey(groupType, timezone),
       count: {
         [operator]: '$count',
       },

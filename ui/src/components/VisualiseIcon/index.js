@@ -1,118 +1,174 @@
 /* eslint-disable react/jsx-indent */
-import React, { Component, PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import classNames from 'classnames';
-import styles from './visualiseicon.css';
 import {
   LEADERBOARD,
-  PLATFORMS,
-  QUESTIONANALYSIS,
   XVSY,
-  SESSIONS,
   STATEMENTS,
   FREQUENCY,
   COUNTER,
   PIE,
-  TABLE
-} from '../../utils/constants';
-import LEADERBOARD_IMAGE from './assets/ll-icon-bar-graph.svg';
-import XVSY_IMAGE from './assets/ll-icon-correlation.svg';
-import STATEMENTS_IMAGE from './assets/ll-icon-column-graph.svg';
-import FREQUENCY_IMAGE from './assets/ll-icon-frequency.svg';
-import COUNTER_IMAGE from './assets/ll-icon-counter.svg';
-import PIE_IMAGE from './assets/ll-icon-pie-chart.svg';
-import TABLE_IMAGE from './assets/ll-table-icon.svg';
-import SESSIONS_IMAGE from './assets/ll-icon-accumulation.svg';
+  TEMPLATE_ACTIVITY_OVER_TIME,
+  TEMPLATE_LAST_7_DAYS_STATEMENTS,
+  TEMPLATE_MOST_ACTIVE_PEOPLE,
+  TEMPLATE_MOST_POPULAR_ACTIVITIES,
+  TEMPLATE_MOST_POPULAR_VERBS,
+  TEMPLATE_WEEKDAYS_ACTIVITY,
+  TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT,
+  TEMPLATE_CURATR_COMMENT_COUNT,
+  TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB,
+  TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD,
+  TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS,
+  TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS,
+} from 'lib/constants/visualise';
+import {
+  LEADERBOARD_GREY_IMAGE,
+  LEADERBOARD_IMAGE,
+  STATEMENTS_GREY_IMAGE,
+  STATEMENTS_IMAGE,
+  XVSY_GREY_IMAGE,
+  XVSY_IMAGE,
+  COUNTER_GREY_IMAGE,
+  COUNTER_IMAGE,
+  FREQUENCY_GREY_IMAGE,
+  FREQUENCY_IMAGE,
+  PIE_GREY_IMAGE,
+  PIE_IMAGE,
+  TABLE_GREY_IMAGE,
+  TABLE_IMAGE,
+} from './assets';
+import styles from './style.css';
 
-const PLATFORMS_IMAGE = SESSIONS_IMAGE;
-const QUESTIONANALYSIS_IMAGE = SESSIONS_IMAGE;
-
-class VisualiseIcon extends Component {
-  static propTypes = {
-    type: PropTypes.string,
-    active: PropTypes.bool,
-    onClick: PropTypes.func,
-    isSmall: PropTypes.bool,
+/**
+ * @param {string} type
+ * @returns {string}
+ */
+const getTitle = (type) => {
+  switch (type) {
+    case LEADERBOARD: return 'Bar';
+    case XVSY: return 'Correlation';
+    case STATEMENTS: return 'Column';
+    case FREQUENCY: return 'Line';
+    case COUNTER: return 'Counter';
+    case PIE: return 'Pie';
+    default: return '';
   }
+};
 
-  static defaultProps = {
-    active: false,
-    onClick: () => null,
-    isSmall: false,
-  }
-
-  getTitle = (type) => {
+/**
+ * @param {string} type
+ * @param {boolean} sourceView
+ * @returns {string}
+ */
+const getImageSrc = (type, sourceView) => {
+  if (sourceView) {
     switch (type) {
-      case LEADERBOARD: return 'Bar';
-      case XVSY: return 'Correlation';
-      case STATEMENTS: return 'Column';
-      case FREQUENCY: return 'Line';
-      case COUNTER: return 'Counter';
-      case PIE: return 'Pie';
-      case SESSIONS: return 'Sessions';
-      case PLATFORMS: return 'Platforms';
-      case QUESTIONANALYSIS: return 'Question analysis';
-      default: return '';
+      case LEADERBOARD:
+      case XVSY:
+      case STATEMENTS:
+      case FREQUENCY:
+      case COUNTER:
+      case PIE:
+        return TABLE_IMAGE;
+      default:
+        return TABLE_GREY_IMAGE;
     }
   }
 
-  getIcon = (type, sourceView) => {
-    if (sourceView) {
-      return TABLE_IMAGE;
-    }
-    switch (type) {
-      case LEADERBOARD: return LEADERBOARD_IMAGE;
-      case XVSY: return XVSY_IMAGE;
-      case STATEMENTS: return STATEMENTS_IMAGE;
-      case FREQUENCY: return FREQUENCY_IMAGE;
-      case COUNTER: return COUNTER_IMAGE;
-      case PIE: return PIE_IMAGE;
-      case SESSIONS: return SESSIONS_IMAGE;
-      case PLATFORMS: return PLATFORMS_IMAGE;
-      case TABLE: return TABLE_IMAGE;
-      case QUESTIONANALYSIS: return QUESTIONANALYSIS_IMAGE;
-      default: return '';
-    }
+  switch (type) {
+    case LEADERBOARD:
+      return LEADERBOARD_IMAGE;
+    case TEMPLATE_MOST_ACTIVE_PEOPLE:
+    case TEMPLATE_MOST_POPULAR_ACTIVITIES:
+    case TEMPLATE_MOST_POPULAR_VERBS:
+    case TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD:
+    case TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS:
+      return LEADERBOARD_GREY_IMAGE;
+    case XVSY:
+      return XVSY_IMAGE;
+    case TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT:
+      return XVSY_GREY_IMAGE;
+    case STATEMENTS:
+      return STATEMENTS_IMAGE;
+    case TEMPLATE_WEEKDAYS_ACTIVITY:
+    case TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB:
+      return STATEMENTS_GREY_IMAGE;
+    case FREQUENCY:
+      return FREQUENCY_IMAGE;
+    case TEMPLATE_ACTIVITY_OVER_TIME:
+      return FREQUENCY_GREY_IMAGE;
+    case COUNTER:
+      return COUNTER_IMAGE;
+    case TEMPLATE_LAST_7_DAYS_STATEMENTS:
+    case TEMPLATE_CURATR_COMMENT_COUNT:
+      return COUNTER_GREY_IMAGE;
+    case PIE:
+      return PIE_IMAGE;
+    case TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS:
+      return PIE_GREY_IMAGE;
+    default:
+      return '';
+  }
+};
+
+const VisualiseIcon = ({
+  type,
+  sourceView,
+  isSmall = true, // // [Viz Refactor] TODO: Remove this property
+}) => {
+  const src = getImageSrc(type, sourceView);
+  if (src === '') {
+    return null;
   }
 
-  renderIcon = ({ className } = {}) => {
-    const { type, sourceView } = this.props;
-    return (
-      <img
-        className={styles[className]}
-        src={this.getIcon(type, sourceView)}
-        alt={this.getTitle(type)} />
-    );
-  }
+  const classes = classNames({
+    [styles.visualisationSmall]: isSmall,
+  });
 
-  // return type !== 'undefined' ? (
-  //   <img
-  //     className={styles[className]}
-  //     src={this.getIcon(type)}
-  //     alt={this.getTitle(type)} />
-  // ) : <img
-  //   className={styles.visualisationSmall}
-  //   src={this.getIcon(SESSIONS)}
-  //   alt={this.getTitle(SESSIONS)} />;
+  return (
+    <img
+      className={classes}
+      src={src}
+      alt={getTitle(type)} />
+  );
+};
 
-  render = () => {
-    const { type, active, onClick, isSmall, className } = this.props;
-    const classes = classNames({
-      [styles['visualisation-icon']]: true,
-      [styles.active]: active
-    });
+VisualiseIcon.propTypes = {
+  sourceView: PropTypes.bool.isRequired,
+  type: PropTypes.string,
+  isSmall: PropTypes.bool,
+};
 
-    return (
-      isSmall
-      ? this.renderIcon({ className })
-      : (
-        <div className={classes} onClick={onClick} >
-          { this.renderIcon() }
-          <h5>{this.getTitle(type)}</h5>
-        </div>
-      )
-    );
-  }
-}
+export default withStyles(styles)(React.memo(VisualiseIcon));
 
-export default withStyles(styles)(VisualiseIcon);
+// [Viz Refactor] TODO: Remove VisualiseIconWithTitle after every types are refactored in TypeEditor
+const VisualiseIconWithTitle = ({
+  type,
+  active,
+  onClick,
+}) => {
+  const classes = classNames({
+    [styles.visualisationIcon]: true,
+    [styles.active]: active,
+  });
+
+  return (
+    <div className={classes} onClick={onClick} >
+      <VisualiseIcon
+        type={type}
+        sourceView={false}
+        isSmall={false} />
+      <h5>{getTitle(type)}</h5>
+    </div>
+  );
+};
+
+VisualiseIconWithTitle.propTypes = {
+  type: PropTypes.string.isRequired,
+  active: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
+};
+
+export const StyledVisualiseIconWithTitle = withStyles(styles)(VisualiseIconWithTitle);

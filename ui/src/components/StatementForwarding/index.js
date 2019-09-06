@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { fromJS } from 'immutable';
 import SearchBox from 'ui/containers/SearchBox';
@@ -35,7 +36,8 @@ class StatementForwarding extends Component {
       schema,
       props: {
         owner: this.props.userId,
-        isExpanded: true
+        isExpanded: true,
+        timezone: null,
       }
     });
   }
@@ -73,5 +75,5 @@ class StatementForwarding extends Component {
 
 export default connect(state => ({
   userId: loggedInUserId(state),
-  searchString: modelQueryStringSelector(schema)(state)
+  searchString: modelQueryStringSelector(schema)(state),
 }), { addModel })(StatementForwarding);

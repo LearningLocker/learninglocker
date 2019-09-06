@@ -13,42 +13,51 @@ import {
 import { loggedInUserId } from 'ui/redux/modules/auth';
 import Spinner from 'ui/components/Spinner';
 import Dashboard from 'ui/containers/Dashboard';
+import DashboardTemplates from 'ui/containers/DashboardTemplates';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
 
-const renderSpinner = () => (
+const ADD_ROUTE = 'add';
+
+const StyledSpinner = () => (
   <div style={{ height: '60vh', display: 'flex' }}>
     <Spinner />
   </div>
 );
 
+const NoDashboards = () => (
+  <div>
+    <h3>{"You don't have any dashboards yet! Add one to get started."}</h3>
+    <DashboardTemplates />
+  </div>
+);
+
 const renderDashboard = params => (model, index) => (
-  <Tab key={index} label={model.get('title', `Dashboard ${index + 1}`)}>
+  <Tab key={index} label={model.get('title', `Dashboard ${index + 1}`, '')}>
     <Dashboard id={model.get('_id')} params={params} />
   </Tab>
 );
 
+
 const enhance = compose(
   connect(
-    state =>
-      ({
-        isLoading: isLoadingSelector('dashboard', new Map())(state),
-        userId: loggedInUserId(state),
-        params: routeNodeSelector('organisation.dashboards')(state).route.params,
-        first: 300,
-        organisation: activeOrgIdSelector(state)
-      })
-    ,
+    state => ({
+      isLoading: isLoadingSelector('dashboard', new Map())(state),
+      userId: loggedInUserId(state),
+      route: routeNodeSelector('organisation.dashboards')(state).route,
+      organisation: activeOrgIdSelector(state)
+    }),
     { navigateTo: actions.navigateTo }
   ),
-  withProps({ schema: 'dashboard', filter: new Map() }),
+  withProps({
+    schema: 'dashboard',
+    filter: new Map(),
+    first: 300,
+  }),
   withModels,
   withProps(
-    ({
-      params
-    }) =>
-      ({
-        id: params.dashboardId
-      })
+    ({ route }) => ({
+      id: route.name === 'organisation.data.dashboards.add' ? undefined : route.params.dashboardId
+    })
   ),
   withModel,
   withProps(
@@ -69,77 +78,53 @@ const enhance = compose(
     }
   ),
   withHandlers({
-    pushRoute: ({ navigateTo, params: { organisationId } }) => (dashboardId) => {
-      navigateTo('organisation.data.dashboards.id', {
-        organisationId,
-        dashboardId
-      });
-    }
-  }),
-  withHandlers({
-    handleAddDashboard: ({ userId, addModel, pushRoute }) => async () => {
-      const { model } = await addModel({
-        props: {
-          owner: userId,
-          title: 'New dash',
-          isExpanded: true
-        }
-      });
-      pushRoute(model.get('_id'));
-    },
-    handleDashboardSwitch: ({ modelsWithModel, pushRoute }) => (tab) => {
-      const selectedDashboard = modelsWithModel.toList().get(tab);
-      pushRoute(selectedDashboard.get('_id'));
-    }
-  }),
-  withHandlers({
     handleTabChange: ({
       models,
-      handleAddDashboard,
-      handleDashboardSwitch
-    }) => (tab) => {
-      if (tab === models.size) return handleAddDashboard();
-      return handleDashboardSwitch(tab);
+      modelsWithModel,
+      navigateTo,
+      route,
+    }) => (tabIndex) => {
+      const organisationId = route.params.organisationId;
+      if (tabIndex === models.size) {
+        navigateTo('organisation.data.dashboards.add', { organisationId });
+        return;
+      }
+      const selectedDashboard = modelsWithModel.toList().get(tabIndex);
+      navigateTo('organisation.data.dashboards.id', {
+        organisationId,
+        dashboardId: selectedDashboard.get('_id'),
+      });
     }
-  })
+  }),
 );
 
-const render = ({
+const Dashboards = ({
   handleTabChange,
-  handleAddDashboard,
   isLoading,
-  // models,
-  params,
-  // id,
-  // model,
-  modelsWithModel
+  modelsWithModel,
+  models,
+  route,
 }) => {
   if (isLoading) {
-    return renderSpinner();
+    return <StyledSpinner />;
   }
 
-  // Render no dashboards.
   if (modelsWithModel.size === 0) {
-    return (
-      <h3>
-        {"You don't have any dashboards yet! Add one to get started. "}
-        <a className="addnew" onClick={handleAddDashboard}>
-          <i className="ion ion-plus-circled" />
-        </a>
-      </h3>
-    );
+    return <NoDashboards />;
   }
 
-  // Render dashboards.
-  const { dashboardId } = params;
-  const activeTab = modelsWithModel.toList().keyOf(modelsWithModel.get(dashboardId));
+  const activeTab = (route.name === 'organisation.data.dashboards.add') ?
+    models.size :
+    modelsWithModel.toList().keyOf(modelsWithModel.get(route.params.dashboardId));
 
   return (
     <Tabs index={activeTab} onChange={handleTabChange}>
-      {modelsWithModel.map(renderDashboard(params)).valueSeq()}
-      <Tab label="Add" />
+      {modelsWithModel.map(renderDashboard(route.params)).valueSeq()}
+      <Tab label={ADD_ROUTE} >
+        <DashboardTemplates />
+      </Tab>
     </Tabs>
   );
 };
 
-export default enhance(render);
+export default enhance(Dashboards);

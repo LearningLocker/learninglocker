@@ -23,12 +23,15 @@ export default async (req, res, next) => {
 
     data.state = {
       app: {
-        RESTRICT_CREATE_ORGANISATION: boolean(defaultTo(process.env.RESTRICT_CREATE_ORGANISATION, true))
+        RESTRICT_CREATE_ORGANISATION: boolean(defaultTo(process.env.RESTRICT_CREATE_ORGANISATION, true)),
+        ENABLE_STATEMENT_DELETION: boolean(defaultTo(process.env.ENABLE_STATEMENT_DELETION, true))
       }
     };
 
     const html = renderToString(<Html {...data} />);
     global.navigator = { userAgent: req.headers['user-agent'] };
+    res.set('X-XSS-Protection', '1; mode=block');
+    res.set('X-Content-Type-Options', 'nosniff');
     res.status(200);
     res.send(`<!doctype html>${html}`);
   } catch (err) {

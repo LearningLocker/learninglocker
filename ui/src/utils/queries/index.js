@@ -21,6 +21,11 @@ const getNextLabel = (criteria) => {
   return incrementLabel(lastLabel);
 };
 
+/**
+ * @param {immutable.Map} map
+ * @param {immutable.Map} criteria
+ * @returns {immutable.Map}
+ */
 const getCriterionFromOldComment = (map, criteria) => {
   const comment = map.get('$comment');
   const criteriaKey = new Map({
@@ -31,6 +36,11 @@ const getCriterionFromOldComment = (map, criteria) => {
   return criteria.set(criteriaKey, criteriaMap);
 };
 
+/**
+ * @param {immutable.Map} map
+ * @param {immutable.Map} criteria
+ * @returns {immutable.Map}
+ */
 const getCriterionFromNewComment = (map, criteria) => {
   const comment = JSON.parse(map.get('$comment'));
   const criteriaKey = new Map({
@@ -40,6 +50,11 @@ const getCriterionFromNewComment = (map, criteria) => {
   return criteria.set(criteriaKey, map);
 };
 
+/**
+ * @param {immutable.Map} map
+ * @param {immutable.Map} criteria
+ * @returns {immutable.Map}
+ */
 const getCriterionFromComment = (map, criteria) => {
   const comment = map.get('$comment');
   if (comment[0] !== '{') {
@@ -63,6 +78,13 @@ const getCriteriaFromMap = (map, criteria) => {
   ), criteria);
 };
 
+/**
+ * @param {immutable.Map} args - {
+ *   query: immutable.Map|immutable.List|immutable.Set|any
+ *   criteria: immutable.Map
+ * }
+ * @returns {immutable.Map}
+ */
 const getMemoizedCriteria = memoize((args) => {
   const query = args.get('query');
   const criteria = args.get('criteria');
@@ -85,8 +107,17 @@ const getMemoizedCriteria = memoize((args) => {
   iterable.toJS()
 );
 
+/**
+ * @param {immutable.Map|immutable.List|immutable.Set|any} query
+ * @param {immutable.Map} criteria
+ * @returns {immutable.Map}
+ */
 const getCriteriaFromQuery = (query, criteria) => getMemoizedCriteria(new Map({ query, criteria }));
 
+/**
+ * @param {immutable.Map|immutable.List|immutable.Set|any} query
+ * @returns {immutable.Map}
+ */
 export const getCriteria = query =>
   getCriteriaFromQuery(query, new Map());
 
@@ -102,28 +133,75 @@ export const deleteCriterion = (criteria, key) => changeCriteria(criteria.delete
 const changeCriterion = (criteria, criterionKey, newCriterion) =>
   changeCriteria(criteria.set(criterionKey, newCriterion));
 
+/**
+ * Judge whether the keyPath should use $in criterion
+ *
+ * false means should use $or criterion
+ *
+ * @param {immutable.List} keyPath
+ * @return {boolean}
+ */
+const shouldUseInCriterion = keyPath =>
+  keyPath.equals(new List(['person'])) ||
+  keyPath.equals(new List(['statement', 'verb'])) ||
+  keyPath.equals(new List(['statement', 'object']));
+
+/**
+ * @param {immutable.Map} query
+ * @param {immutable.List} keyPath
+ * @param {immutable.Map} token
+ * @return {immutable.Map}
+ */
 export const addTokenToQuery = (query, keyPath, token) => {
   const criteria = getCriteria(query);
   const filteredCriteria = criteria.filter(criterion =>
     new List(JSON.parse(criterion.get('$comment')).criteriaPath).equals(keyPath)
   );
 
+  if (shouldUseInCriterion(keyPath)) {
+    const [tokenKey, tokenValue] = token.entrySeq().first();
+
+    // Add new $in criterion
+    if (filteredCriteria.size === 0) {
+      return addCriterion(query, keyPath, new Map({
+        [tokenKey]: new Map({
+          $in: new List([tokenValue]),
+        }),
+      }));
+    }
+
+    // Add tokenValue to exiting $in criterion
+    const op = filteredCriteria.first().get(tokenKey).has('$in') ? '$in' : '$nin';
+    const inCriterionKey = filteredCriteria.keyOf(filteredCriteria.first());
+    const tokenValues = filteredCriteria.first().getIn([tokenKey, op]);
+    const newTokenValues = tokenValues.has(tokenValue) ? tokenValues : tokenValues.push(tokenValue);
+    const newInCriterion = filteredCriteria.first().setIn([tokenKey, op], newTokenValues);
+    return changeCriterion(criteria, inCriterionKey, newInCriterion);
+  }
+
+  // Add new $or criterion
   if (filteredCriteria.size === 0) {
     return addCriterion(query, keyPath, new Map({
-      $or: new List([token])
+      $or: new List([token]),
     }));
   }
 
+  // Add token to exiting $or criterion
   const criterion = filteredCriteria.first();
   const criterionKey = filteredCriteria.keyOf(criterion);
-  const operator = getOperatorFromCriterion(criterion);
+  const operator = getOperatorFrom$orCriterion(criterion);
   const tokens = criterion.get(operator, new List());
-  const tokenExists = tokens.filter(t => token.equals(t)).size !== 0;
-  const newTokens = tokenExists ? tokens : tokens.push(token);
-  const newCriterion = criterion.set(operator, newTokens);
-  return changeCriterion(criteria, criterionKey, newCriterion);
+  const newTokens = tokens.has(token) ? tokens : tokens.push(token);
+  const new$orCriterion = criterion.set(operator, newTokens);
+  return changeCriterion(criteria, criterionKey, new$orCriterion);
 };
 
+/**
+ * @param {immutable.Map} query
+ * @param {immutable.List} keyPath
+ * @param {immutable.Map} criterion
+ * @return {immutable.Map}
+ */
 const addCriterion = (query, keyPath, criterion) => {
   const criteria = getCriteria(query);
   const criterionKey = new Map({
@@ -139,63 +217,43 @@ const addCriterion = (query, keyPath, criterion) => {
 export const addCriterionFromSection = (query, criterion, section) =>
   addCriterion(query, section.get('keyPath', new List()), criterion);
 
-const getOperatorFromCriterion = criterion => (criterion.has('$nor') ? '$nor' : '$or');
-
-const getValueFromCriterion = criterion => criterion.get(getOperatorFromCriterion(criterion), new List());
-
 /**
- * finds all criteria matching keyPath and operator in criteria
+ * returns whether the criterion is $or / $nor type criterion
+ *
+ * @param {immutable.Map} criterion
+ * @returns {boolean}
  */
-const findMatchingCriteria = (criteria, keyPath, operator) =>
-  criteria.filter((criterion, criterionKey) => {
-    const criterionKeyPath = criterionKey.get('criteriaPath');
-    const criterionOperator = getOperatorFromCriterion(criterion);
-    return criterionKeyPath.equals(keyPath) && operator === criterionOperator;
-  });
+const is$orCriterion = criterion => Map.isMap(criterion) && (criterion.has('$nor') || criterion.has('$or'));
 
-const mergeCriterion = (criterionA, criterionB) => {
-  if (!criterionA) return criterionB;
-  if (!criterionB) return criterionA;
-
-  const operatorA = getOperatorFromCriterion(criterionA);
-  const operatorB = getOperatorFromCriterion(criterionB);
-
-  const valueA = criterionA.get(operatorA);
-  const valueB = criterionB.get(operatorB);
-  const newValue = new Set(valueA.concat(valueB)).toList();
-
-  return criterionA.set(operatorA, newValue);
+const is$inCriterion = (criterion) => {
+  const queryKey = criterion.keySeq().last();
+  const query = criterion.get(queryKey);
+  return Map.isMap(criterion) && Map.isMap(query) && (query.has('$nin') || query.has('$in'));
 };
 
+const isDiscreteCriterion = criterion => is$orCriterion(criterion) || is$inCriterion(criterion);
+
 /**
- * Merges two queries
- * @param {Map} query1
- * @param {Map} query2
+ * @param {immutable.Map} criterion
+ * @returns {string} - '$or'|'$nor'
  */
-export const mergeQueries = (query1, query2) => {
-  // extract all criteria from each query
-  const criteria1 = getCriteria(query1);
-  const criteria2 = getCriteria(query2);
+const getOperatorFrom$orCriterion = criterion => (criterion.has('$nor') ? '$nor' : '$or');
 
-  const merged = criteria2.reduce(
-    (allCriteria, criterion, criterionKey) => {
-      const keyPath = criterionKey.get('criteriaPath');
-      const operator = getOperatorFromCriterion(criterion);
+/**
+ * @param {immutable.Map} criterion
+ * @returns {string} - '$nin'|'$in'
+ */
+const getOperatorFrom$inCriterion = (criterion) => {
+  const queryKey = criterion.keySeq().last();
+  return criterion.hasIn([queryKey, '$nin']) ? '$nin' : '$in';
+};
 
-      const matchingCriteria = findMatchingCriteria(allCriteria, keyPath, operator);
-      const matchingCriterion = matchingCriteria.first();
-      const matchingCriterionKey = matchingCriteria.keySeq().first();
-      const newCriterion = mergeCriterion(matchingCriterion, criterion);
-      const newCriterionKey = matchingCriterionKey || criterionKey;
+const getValueFrom$orCriterion = criterion => criterion.get(getOperatorFrom$orCriterion(criterion), new List());
 
-      return allCriteria.set(newCriterionKey, newCriterion);
-    },
-    criteria1
-  );
-
-  // create a new query by merging in the remainer of each original query
-  // apply the fields from each query
-  return changeCriteria(merged);
+const getValueFrom$inCriterion = (criterion) => {
+  const queryKey = criterion.keySeq().last();
+  const op = getOperatorFrom$inCriterion(criterion);
+  return criterion.getIn([queryKey, op], new List());
 };
 
 const plural = (size) => {
@@ -205,22 +263,38 @@ const plural = (size) => {
   return 's';
 };
 
-const criterionToString = (criterion, criterionKey) =>
-  `${criterionKey.get('criteriaPath').join('.')} (${getValueFromCriterion(criterion).size} item${plural(getValueFromCriterion(criterion).size)})`;
+const countValues = (criterion) => {
+  if (is$orCriterion(criterion)) {
+    return getValueFrom$orCriterion(criterion).size;
+  }
+  return getValueFrom$inCriterion(criterion).size;
+};
+
+/**
+ * @param {} criterion
+ * @param {} criterionKey
+ * @returns {string}
+ */
+const criterionToString = (criterion, criterionKey) => {
+  const criteriaPathString = criterionKey.get('criteriaPath').join('.');
+
+  if (isDiscreteCriterion(criterion)) {
+    const size = countValues(criterion);
+    return `${criteriaPathString} (${size} item${plural(size)})`;
+  }
+
+  return criteriaPathString;
+};
 
 /**
  * Returns a human readable representation of a query
- * @param {Map} query
+ * @param {immutable.Map} query
+ * @returns {immutable.List<string>}
  */
-export const queryToString = (query, {
-  join = true
-}) => {
+export const queryToStringList = (query) => {
   const criteria = getCriteria(query);
   const output = criteria.reduce((description, criterion, criterionKey) =>
     description.push(criterionToString(criterion, criterionKey))
   , new List());
-  if (join) {
-    return output.join(' - ');
-  }
   return output;
 };

@@ -1,15 +1,38 @@
 import passport from 'passport';
+import jsonwebtoken from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
+import ms from 'ms';
+import logger from 'lib/logger';
 import User from 'lib/models/user';
 import OAuthToken from 'lib/models/oAuthToken';
 import { sendResetPasswordToken } from 'lib/helpers/email';
-import { AUTH_JWT_SUCCESS } from 'lib/constants/routes';
+import { AUTH_JWT_SUCCESS, AUTH_JWT_REFRESH } from 'lib/constants/routes';
 import {
   ACCESS_TOKEN_VALIDITY_PERIOD_SEC,
+  JWT_REFRESH_TOKEN_EXPIRATION,
   DEFAULT_PASSPORT_OPTIONS
 } from 'lib/constants/auth';
-import { createOrgJWT, createUserJWT } from 'api/auth/jwt';
+import Unauthorized from 'lib/errors/Unauthorised';
+import { createOrgJWT, createOrgRefreshJWT, createUserJWT, createUserRefreshJWT } from 'api/auth/jwt';
 import { AUTH_FAILURE } from 'api/auth/utils';
+import catchErrors from 'api/controllers/utils/catchErrors';
+
+const buildRefreshCookieOption = (protocol) => {
+  const validPeriodMsec = ms(JWT_REFRESH_TOKEN_EXPIRATION);
+
+  const cookieOption = {
+    path: `/api${AUTH_JWT_REFRESH}`,
+    expires: new Date(Date.now() + validPeriodMsec),
+    maxAge: validPeriodMsec,
+    httpOnly: true,
+    sameSite: 'Strict',
+  };
+
+  if (protocol === 'https') {
+    return { ...cookieOption, secure: true };
+  }
+  return cookieOption;
+};
 
 /**
  * Generate and email a password reset token to a user through their email
@@ -26,14 +49,15 @@ const resetPasswordRequest = (req, res, next) => {
     }
 
     if (!user) {
-      return res.status(404).send({ message: `No user found for ${email}` });
+      return res.status(204).send();
     }
 
     return user.createResetToken((token) => {
       user.resetTokens.push(token);
       user.save((err) => {
         if (err) {
-          return res.status(500).send({ message: 'Could not save resetToken onto user' });
+          logger.error('Password reset error', err);
+          return res.status(500).send({ message: 'There was an issue. Please try again' });
         }
 
         // @TODO: send status based on outcome of send!!
@@ -64,16 +88,8 @@ const resetPassword = (req, res, next) => {
   return User.findOne(
     {
       email,
-      $or: [
-        {
-          'resetTokens.token': token,
-          'resetTokens.expires': { $gt: now }
-        },
-        {
-          'resetTokens.token': token,
-          'resetTokens.expires': null
-        }
-      ],
+      'resetTokens.token': token,
+      'resetTokens.expires': { $gt: now }
     },
     (err, user) => {
       if (err) {
@@ -81,10 +97,10 @@ const resetPassword = (req, res, next) => {
       }
 
       if (!user) {
-        return res.status(404).send({ message: 'Password request has expired or has been used. Please submit a new request' });
+        return res.status(404).send({ message: 'Invalid password reset token. Please submit a new request' });
       }
 
-      // clear the reset tokens and save the password
+      // clear the reset tokens, any lockouts and save the password
       // (hashing and validation will need to take place)
       user.resetTokens = [];
       user.password = password;
@@ -121,10 +137,8 @@ const jwt = (req, res, next) => {
       switch (reason) {
         case AUTH_FAILURE.USER_NOT_FOUND:
         case AUTH_FAILURE.PASSWORD_INCORRECT:
-          message = 'Incorrect login details';
-          break;
         case AUTH_FAILURE.LOCKED_OUT:
-          message = 'Too many incorrect attempts. Account locked';
+          message = 'Incorrect login details';
           break;
         default:
           message = `There was an error (code: ${reason})`;
@@ -169,12 +183,53 @@ const jwt = (req, res, next) => {
     user.authFailedAttempts = 0;
     user.authLastAttempt = new Date();
     return user.save(() =>
-       createUserJWT(user).then()
-          .then(token => res.send(token))
-          .catch(authFailure)
+      Promise.all([createUserJWT(user), createUserRefreshJWT(user)])
+        .then(
+          ([accessToken, refreshToken]) =>
+            res
+              .cookie(
+                `refresh_token_user_${user._id}`,
+                refreshToken,
+                buildRefreshCookieOption(req.protocol),
+              )
+              .set('Content-Type', 'text/plain')
+              .send(accessToken)
+          )
+        .catch(authFailure)
     );
   })(req, res, next);
 };
+
+const jwtRefresh = catchErrors(async (req, res) => {
+  try {
+    const refreshToken = req.cookies[`refresh_token_${req.body.tokenType}_${req.body.id}`];
+    const decodedToken = await jsonwebtoken.verify(refreshToken, process.env.APP_SECRET);
+
+    const { tokenId, tokenType, userId, provider } = decodedToken;
+
+    const user = await User.findOne({ _id: userId });
+
+    if (!user) {
+      throw new Unauthorized();
+    }
+
+    if (tokenType === 'user_refresh') {
+      const newUserToken = await createUserJWT(user, provider);
+      res.status(200).set('Content-Type', 'text/plain').send(newUserToken);
+    } else if (tokenType === 'organisation_refresh') {
+      const newOrgToken = await createOrgJWT(user, tokenId, provider);
+      res.status(200).set('Content-Type', 'text/plain').send(newOrgToken);
+    } else {
+      throw new Unauthorized();
+    }
+  } catch (err) {
+    if (['JsonWebTokenError', 'TokenExpiredError'].includes(err.name)) {
+      throw new Unauthorized();
+    }
+    throw err;
+  }
+});
+
 
 const includes = (organisations, orgId) =>
   organisations.filter(organisationId =>
@@ -184,12 +239,23 @@ const includes = (organisations, orgId) =>
 const jwtOrganisation = (req, res) => {
   const organisationId = req.body.organisation;
   const { user } = req;
-  const { token } = req.user.authInfo;
+  const userAccessToken = req.user.authInfo.token;
   // check that the user exists in this organisation
   if (includes(user.organisations, organisationId)) {
-    createOrgJWT(user, organisationId, token.provider)
-      .then(newToken => res.send(newToken))
-      .catch(err => res.status(500).send(err));
+    Promise.all([
+      createOrgJWT(user, organisationId, userAccessToken.provider),
+      createOrgRefreshJWT(user, organisationId, userAccessToken.provider),
+    ]).then(
+      ([orgAccessToken, orgRefreshToken]) =>
+        res
+          .cookie(
+            `refresh_token_organisation_${organisationId}`,
+            orgRefreshToken,
+            buildRefreshCookieOption(req.protocol),
+          )
+          .set('Content-Type', 'text/plain')
+          .send(orgAccessToken)
+    ).catch(err => res.status(500).send(err));
   } else {
     res.status(401).send('User does not have access to this organisation.');
   }
@@ -264,6 +330,7 @@ export default {
   resetPasswordRequest,
   resetPassword,
   jwt,
+  jwtRefresh,
   jwtOrganisation,
   googleSuccess,
   success,

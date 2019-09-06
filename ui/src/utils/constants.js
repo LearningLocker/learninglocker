@@ -1,21 +1,6 @@
 import { STAGE_PROCESSING } from 'lib/constants/personasImport';
 
-export const LEADERBOARD = 'LEADERBOARD';
-export const POPULARACTIVITIES = 'POPULARACTIVITIES';
-export const PLATFORMS = 'PLATFORMS';
-export const QUESTIONANALYSIS = 'QUESTIONANALYSIS';
-export const XVSY = 'XVSY';
-export const SESSIONS = 'SESSIONS';
-export const STATEMENTS = 'STATEMENTS';
-export const FREQUENCY = 'FREQUENCY';
-export const COUNTER = 'COUNTER';
-export const PIE = 'PIE';
-export const LINE = 'LINE';
-export const COLUMN = 'COLUMN';
-export const COMPONENT = 'COMPONENT';
-export const TABLE = 'TABLE';
-export const TEXT = 'TEXT';
-
+// Preview Period
 export const TODAY = 'TODAY';
 export const LAST_7_DAYS = 'LAST_7_DAYS';
 export const LAST_30_DAYS = 'LAST_30_DAYS';
@@ -23,10 +8,12 @@ export const LAST_2_MONTHS = 'LAST_2_MONTHS';
 export const LAST_6_MONTHS = 'LAST_6_MONTHS';
 export const LAST_24_HOURS = 'LAST_24_HOURS';
 export const LAST_1_YEAR = 'LAST_1_YEAR';
-export const LAST_2_YEARS = 'LAST_1_YEARS';
+export const LAST_2_YEARS = 'LAST_2_YEARS';
+
 export const TYPES = 'stages/TYPES';
 export const STORES = 'stages/STORES';
 export const NONE = 'stages/NONE';
+
 export const FIVE = 5;
 export const TEN = 10;
 export const FIFTEEN = 15;
@@ -68,11 +55,5 @@ export const PROGRESS_MODELS = {
     getProcessedCount: model => model.get('processedCount')
   }
 };
-
-export const STACKED_TYPES = [LEADERBOARD, POPULARACTIVITIES, STATEMENTS];
-
-export const VISUALISATION_TYPES = [
-  LEADERBOARD, XVSY, STATEMENTS, FREQUENCY, COUNTER, PIE
-];
 
 export const VISUALISATION_COLORS = ['#F5AB36', '#DB0A5B', '#36D7B7', '#9B59B6', '#F77F3F', '#1E8BC3', '#ED4444'];

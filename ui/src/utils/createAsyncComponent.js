@@ -6,12 +6,10 @@ Promise.config({ cancellation: true });
 export default ({ loader, preview = null }) => class asyncComponent extends Component {
   constructor() {
     super();
-    this.state = {
-      preview
-    };
+    this.state = {};
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     this.blueBirdLoader = Promise.resolve(loader);
     this.blueBirdLoader.then((loadedComponent) => {
       this.setState({ component: loadedComponent.default || loadedComponent });
@@ -26,6 +24,6 @@ export default ({ loader, preview = null }) => class asyncComponent extends Comp
     if (this.state.component) {
       return <this.state.component {...this.props} />;
     }
-    return this.state.preview;
+    return preview;
   }
 };

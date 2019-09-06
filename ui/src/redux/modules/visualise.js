@@ -2,19 +2,14 @@ import { List, Map, fromJS } from 'immutable';
 import { createSelector } from 'reselect';
 import { take, takeEvery, put, fork, select } from 'redux-saga/effects';
 import { identity, get } from 'lodash';
-import moment from 'moment';
 import {
   fetchAggregation,
   aggregationShouldFetchSelector,
   aggregationResultsSelector,
-  aggregationRequestStateSelector,
-  IN_PROGRESS,
-  SUCCESS,
-  FAILED,
+  aggregationHasResultSelector,
 } from 'ui/redux/modules/aggregation';
 import {
   shouldFetchSelector,
-  requestStateSelector,
   fetchModels,
   fetchModelsCount,
   countSelector
@@ -24,6 +19,8 @@ import {
   modelsByFilterSelector,
   updateModel
 } from 'ui/redux/modules/models';
+import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
+import { orgTimezoneFromTokenSelector } from 'ui/redux/modules/auth';
 import { metadataSelector } from 'ui/redux/modules/metadata';
 import { modelsSelector } from 'ui/redux/modules/models/selectors';
 import { UPDATE_MODEL } from 'ui/redux/modules/models/updateModel';
@@ -33,9 +30,8 @@ import {
   JOURNEY,
   JOURNEY_PROGRESS,
 } from 'ui/utils/constants';
-import { pipelinesFromQueries, getJourney } from 'ui/utils/visualisations';
+import { pipelinesFromQueries } from 'ui/utils/visualisations';
 import { unflattenAxes } from 'lib/helpers/visualisation';
-import { periodToDate } from 'ui/utils/dates';
 import { OFF, ANY } from 'lib/constants/dashboard';
 
 export const FETCH_VISUALISATION = 'learninglocker/models/learninglocker/visualise/FETCH_VISUALISATION';
@@ -103,7 +99,7 @@ const shareableDashboardFilterSelector = () => createSelector(
   ],
   (metadata, models, routeShareableId, routeDashboardId, routeName, filter) => {
     const viewingDashboardExternally = (routeName && routeName.indexOf('embedded-dashboard') !== -1);
-    const dashboards = models.get('dashboard', new Map());
+    const dashboards = models.get('dashboard', new Map()).filter(d => Map.isMap(d));
 
     // if we are viewing a shared dashboard externally
     if (viewingDashboardExternally) {
@@ -178,17 +174,28 @@ const shareableDashboardFilterSelector = () => createSelector(
   }
 );
 
-export const visualisationPiplelinesSelector = (
+/**
+ * @param {string} id - visualisation._id
+ * @param {(queries: immutable.List) => immutableList} cb - queries to pipelines
+ * @return {(state: any) => immutable.List} - selector. Select pipelines from state
+ */
+export const visualisationPipelinesSelector = (
   id,
   cb = pipelinesFromQueries // whilst waiting for https://github.com/facebook/jest/issues/3608
 ) => createSelector(
-  [modelsSchemaIdSelector('visualisation', id), shareableDashboardFilterSelector()],
-  (visualisation, filter) => {
+  [
+    modelsSchemaIdSelector('visualisation', id),
+    shareableDashboardFilterSelector(),
+    activeOrgSelector,
+    orgTimezoneFromTokenSelector,
+  ],
+  (visualisation, filter, organisationModel, orgTimezoneFromToken) => {
     if (!visualisation) return new List();
     const type = visualisation.get('type');
     const journey = visualisation.get('journey');
     const previewPeriod = visualisation.get('previewPeriod');
     const benchmarkingEnabled = visualisation.get('benchmarkingEnabled', false);
+    const timezone = visualisation.get('timezone') || orgTimezoneFromToken || organisationModel.get('timezone', 'UTC');
     const queries = visualisation.get('filters', new List()).map((vFilter) => {
       if (!filter) {
         return vFilter;
@@ -207,7 +214,7 @@ export const visualisationPiplelinesSelector = (
     });
 
     const axes = unflattenAxes(visualisation);
-    return cb(queries, axes, type, previewPeriod, journey, benchmarkingEnabled);
+    return cb(queries, axes, type, previewPeriod, journey, timezone, benchmarkingEnabled);
   }
 );
 
@@ -251,7 +258,7 @@ const shouldFetchJourney = (pipelines, state) =>
  */
 export const visualisationShouldFetchSelector = visualisationId => createSelector([
   identity,
-  visualisationPiplelinesSelector(visualisationId),
+  visualisationPipelinesSelector(visualisationId),
   modelsSchemaIdSelector('visualisation', visualisationId)
 ], (state, pipelines, visualisation) => {
   switch (visualisation.get('type')) {
@@ -280,14 +287,23 @@ const getJourneyResults = (visualisation, filter, state) => {
   return journeyProgressResultsSelector(journey, filter)(state);
 };
 
+/**
+ * @param {*} state
+ * @returns {(pipelines: immutable.List) => immutable.List}
+ */
 const getPipelinesResults = state => pipelines => pipelines.map(pipeline => (
   aggregationResultsSelector(pipeline)(state) || new Map()
 ));
 
+/**
+ *
+ * @param {string} visualisationId
+ * @param {*} state
+ * @return {immutable.List}
+ */
 const getSeriesResults = (visualisationId, state) => {
-  const series = visualisationPiplelinesSelector(visualisationId)(state);
-  const out = series.map(getPipelinesResults(state));
-  return out;
+  const series = visualisationPipelinesSelector(visualisationId)(state);
+  return series.map(getPipelinesResults(state));
 };
 
 /**
@@ -301,62 +317,25 @@ export const visualisationResultsSelector = (visualisationId, filter) => createS
 ], (state, visualisation) => {
   switch (visualisation.get('type')) {
     case JOURNEY_PROGRESS:
-      return getJourneyResults(visualisation, filter)(state);
+      return getJourneyResults(visualisation, filter, state);
     default:
       return getSeriesResults(visualisationId, state);
   }
 });
 
-const getWaypointFetchStates = (visualisation, pipelines, state) => {
-  const journeyId = visualisation.get('journey');
-  return pipelines.map(() => {
-    const waypoint = getJourney(journeyId, 'waypoint');
-    return requestStateSelector('journeyProgress', waypoint)(state);
-  });
-};
-
-const getPipelinesFetchStates = (pipelines, state) => pipelines.map(pipeline => (
-  aggregationRequestStateSelector(pipeline)(state)
-));
-
-const getSeriesFetchStates = (series, state) =>
-  series.reduce((fetchStates, pipelines) => {
-    const states = getPipelinesFetchStates(pipelines, state);
-    return fetchStates.concat(states);
-  }, new List());
-
-const getVisualisationFetchStates = (id, state) => {
-  const visualisation = modelsSchemaIdSelector('visualisation', id)(state);
-  const pipelines = visualisationPiplelinesSelector(id)(state);
-  switch (visualisation.get('type')) {
-    case JOURNEY_PROGRESS:
-      return getWaypointFetchStates(visualisation, pipelines, state);
-    default:
-      return getSeriesFetchStates(pipelines, state);
-  }
-};
-
-const getOverallFetchState = (fetchStates) => {
-  const potentialStates = new List([IN_PROGRESS, SUCCESS, FAILED]);
-  return fetchStates.reduce((reduction, requestState) => {
-    const reductionPriority = potentialStates.indexOf(reduction);
-    const requestStatePriority = potentialStates.indexOf(requestState);
-    return reductionPriority > requestStatePriority ? reduction : requestState;
-  });
-};
-
-/**
- * Takes a visualisation id and returns the fetching state of its queries
- * where the fetch states are different between queries the highest priorty state will be returned
- * priority order lw to high = [COMPLETED, IN_PROGRESS, FAILED]
- * @param  {visualisationId} id of the visualisation to check
- * @return {Immutable.List}
- */
-export const visualisationFetchStateSelector =
-  visualisationId => createSelector([identity], (state) => {
-    const fetchStates = getVisualisationFetchStates(visualisationId, state);
-    return getOverallFetchState(fetchStates);
-  });
+export const visualisationAllAggregationsHaveResultSelector = visualisationId => createSelector([
+  identity,
+], (state) => {
+  const series = visualisationPipelinesSelector(visualisationId)(state);
+  return series.reduce(
+    (acc1, pipelines) =>
+      acc1 && pipelines.reduce(
+        (acc2, pipeline) => acc2 && aggregationHasResultSelector(pipeline)(state),
+        true
+      ),
+    true
+  );
+});
 
 function* handleVisualisation(action) {
   const { keyPath, silent } = action;
@@ -386,7 +365,7 @@ export function* fetchVisualisationSaga(state, id) {
   const visualisation = modelsSchemaIdSelector('visualisation', id)(state);
 
   if (visualisation.get('type') === JOURNEY_PROGRESS) {
-    const pipelines = visualisationPiplelinesSelector(id)(state);
+    const pipelines = visualisationPipelinesSelector(id)(state);
     for (let i = 0; i < pipelines.size; i += 1) {
       const journeyId = visualisation.get('journey');
       const filter = new Map({ journey: journeyId });
@@ -394,7 +373,7 @@ export function* fetchVisualisationSaga(state, id) {
       yield put(fetchModels('journey', new Map({ _id: journeyId })));
     }
   } else {
-    const series = visualisationPiplelinesSelector(id)(state);
+    const series = visualisationPipelinesSelector(id)(state);
     for (let s = 0; s < series.size; s += 1) {
       const pipelines = series.get(s);
       for (let p = 0; p < pipelines.size; p += 1) {
@@ -417,39 +396,6 @@ export function* watchFetchVisualisation() {
 }
 
 export const sagas = [watchUpdateVisualisation, watchFetchVisualisation];
-
-export const getEndDate = (dateStart, period) => {
-  const dateEnd = moment(dateStart); // Clones the date so it's not mutated.
-  return periodToDate(period, dateEnd);
-};
-
-export const getDates = (dateStart, dateEnd) => {
-  const values = [];
-  while (dateStart.isAfter(dateEnd, 'day')) {
-    values.push({ x: dateEnd.format('YYYY-MM-DD'), s1: 0, s2: 0, s3: 0 });
-    dateEnd.add(1, 'day');
-  }
-  values.push({ x: dateStart.format('YYYY-MM-DD'), s1: 0, s2: 0, s3: 0 });
-  return values;
-};
-
-export const getHours = (dateStart, dateEnd) => {
-  const values = [];
-  while (dateStart.isAfter(dateEnd, 'hours')) {
-    values.push({ x: dateEnd.format('HH'), y: 0 });
-    dateEnd.add(1, 'hours');
-  }
-  return values;
-};
-
-export const getDateRange = (period) => {
-  const dateStart = moment();
-  const dateEnd = getEndDate(dateStart, period);
-  switch (period) {
-    case 'LAST_24_HOURS': return getHours(dateStart, dateEnd);
-    default: return getDates(dateStart, dateEnd);
-  }
-};
 
 const MAX_NAME_LENGTH = 17;
 export const trimName = (name, length = MAX_NAME_LENGTH) => {

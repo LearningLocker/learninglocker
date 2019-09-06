@@ -9,7 +9,7 @@ test('It should generate initial Criterion', () => {
   });
   testCriteria.renderCriterion = jest.fn();
 
-  testCriteria.renderCriteria();
+  testCriteria.render();
 
   expect(testCriteria.renderCriterion.mock.calls.length).toEqual(1);
   expect(testCriteria.renderCriterion.mock.calls[0][0].get('statement.result.success')).toEqual(undefined);

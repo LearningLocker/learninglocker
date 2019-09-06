@@ -13,7 +13,7 @@ import PersonasImportForm from './PersonasImportForm';
 const schema = 'personasImport';
 
 const deleteButtonWithDisabled = models => ({ id, ...props }) => {
-  const disabled = models.get(id).get('importStage') === STAGE_PROCESSING;
+  const disabled = models.getIn([id, 'importStage']) === STAGE_PROCESSING;
 
   return (<DeleteButton
     id={id}
@@ -60,10 +60,10 @@ export const PersonasImportsComponent = ({
             <button
               className="btn btn-primary btn-sm"
               onClick={doOnAddModel} >
-              <i className="ion ion-plus" /> Import
+              <i className="ion ion-plus" />Import
             </button>
           </span>
-          &nbsp;People - Imports
+          People - Imports
         </div>
       </header>
       <div className="row">

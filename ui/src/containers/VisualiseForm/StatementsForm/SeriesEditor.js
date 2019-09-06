@@ -1,21 +1,17 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Map } from 'immutable';
+import { connect } from 'react-redux';
+import { STATEMENTS, COUNTER, LEADERBOARD } from 'lib/constants/visualise';
 import Switch from 'ui/components/Material/Switch';
 import { updateModel } from 'ui/redux/modules/models';
-import { connect } from 'react-redux';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import VisualiseFilterForm from 'ui/containers/VisualiseFilterForm';
-import { STACKED_TYPES } from 'ui/utils/constants';
-import styles from '../visualiseform.css';
 
 class SeriesEditor extends Component {
   static propTypes = {
-    model: PropTypes.instanceOf(Map),
+    orgTimezone: PropTypes.string.isRequired,
+    model: PropTypes.instanceOf(Map), // visualisation
     updateModel: PropTypes.func
-  }
-
-  state = {
-    openModalStep: null,
   }
 
   shouldComponentUpdate = nextProps => !(
@@ -23,85 +19,76 @@ class SeriesEditor extends Component {
   )
 
   onAddQuery = () => {
-    const { model } = this.props;
-    const queries = model.get('filters');
-    const modelId = model.get('_id');
-    const newQueries = queries.push(new Map());
     this.props.updateModel({
       schema: 'visualisation',
-      id: modelId,
+      id: this.props.model.get('_id'),
       path: 'filters',
-      value: newQueries
+      value: this.props.model.get('filters').push(new Map()),
     });
   }
 
-  getAttr = attr => defaultValue =>
-    this.props.model.get(attr, defaultValue)
+  getStacked = () => this.props.model.get('stacked', true)
 
-  getStacked = () =>
-    this.getAttr('stacked')(true)
-
-  onChangeAttr = attr => event =>
-    this.changeAttr(attr)(event.target.value)
-
-  getModelId = () =>
-    this.props.model.get('_id')
-
-  changeAttr = attr => newValue =>
+  onChangeStackToggle = () => {
     this.props.updateModel({
       schema: 'visualisation',
-      id: this.getModelId(),
-      path: attr,
-      value: newValue
-    })
+      id: this.props.model.get('_id'),
+      path: 'stacked',
+      value: !this.getStacked(),
+    });
+  }
 
-  toggleStacked = () =>
-    this.changeAttr('stacked')(!this.getStacked())
+  canStack = type => [LEADERBOARD, STATEMENTS].includes(type)
 
-  canStack = type =>
-    STACKED_TYPES.indexOf(type) !== -1
-
-  canAddSeries = () => filters => filters.count() < 5 && this.props.model.get('type') !== 'STATEMENT' && this.props.model.get('type') !== 'COUNTER'
+  canAddSeries = (type, filters) =>
+    filters.count() < 5 &&
+    ![STATEMENTS, COUNTER].includes(type)
 
   renderStackToggle = () => (
     <div className="form-group">
-      <label htmlFor="toggleInput">Stacked/Grouped</label>
+      <label htmlFor="toggleInput">
+        Stacked/Grouped
+      </label>
+
       <div id="toggleInput">
         <Switch
           checked={!this.getStacked()}
-          onChange={this.toggleStacked} />
+          onChange={this.onChangeStackToggle} />
       </div>
     </div>
   )
 
-  renderSeriesAdder = () => (
+  renderAddQueryButton = () => (
     <div className="form-group">
       <button
         className="btn btn-primary btn-sm"
         onClick={this.onAddQuery}>
-        <i className="ion ion-plus" /> Add query
+        <i className="ion ion-plus" />
+        Add query
       </button>
     </div>
   )
 
   render = () => {
-    const { model } = this.props;
+    const { model, orgTimezone } = this.props;
 
     return (
       <div>
         {
-          this.canAddSeries(model.get('type'))(model.get('filters')) &&
-          this.renderSeriesAdder()
+          this.canAddSeries(model.get('type'), model.get('filters')) &&
+          this.renderAddQueryButton()
         }
 
         {
           this.canStack(model.get('type')) &&
           this.renderStackToggle()
         }
-        <VisualiseFilterForm model={model} />
+        <VisualiseFilterForm
+          model={model}
+          orgTimezone={orgTimezone} />
       </div>
     );
   }
 }
 
-export default withStyles(styles)(connect(() => ({}), { updateModel })(SeriesEditor));
+export default connect(() => ({}), { updateModel })(SeriesEditor);

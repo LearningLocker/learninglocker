@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import DebounceInput from 'react-debounce-input';
 import { Map } from 'immutable';
 import { compose, setPropTypes, shouldUpdate, withHandlers } from 'recompose';

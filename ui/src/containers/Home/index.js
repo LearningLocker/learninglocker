@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-indent */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import DebounceInput from 'react-debounce-input';
 import { connect } from 'react-redux';
@@ -10,6 +11,7 @@ import { Map, List as ImmutList, fromJS } from 'immutable';
 import { AutoSizer, List as VirtualList, InfiniteLoader } from 'react-virtualized';
 import { withProps, compose, withState } from 'recompose';
 import { actions as routerActions } from 'redux-router5';
+import moment from 'moment';
 import { isSiteAdminSelector, authenticationSelector, logout, orgLoginStart, loggedInUserSelector } from 'ui/redux/modules/auth';
 import { queryStringToQuery } from 'ui/redux/modules/search';
 import { withSchema } from 'ui/utils/hocs';
@@ -18,7 +20,7 @@ import FullPageBackground from 'ui/components/FullPageBackground';
 import AuthContainer from 'ui/containers/AuthContainer';
 import smallLogo from 'ui/static/smallLogo.png';
 import Register from 'ui/containers/Register';
-import moment from 'moment';
+import OrgMemberButton from 'ui/containers/OrgMemberButton';
 import styles from './styles.css';
 
 class Home extends Component {
@@ -83,7 +85,7 @@ class Home extends Component {
   }
 
   renderOrg = ({ key, style, index }) => {
-    const { models } = this.props;
+    const { models, isSiteAdmin } = this.props;
     if (models.has(index)) {
       const organisation = models.get(index);
 
@@ -91,7 +93,21 @@ class Home extends Component {
 
       const rightActions = [];
       if (organisation.get('expiration') && moment(organisation.get('expiration')).isBefore(moment())) {
-        rightActions.push(<span style={{ color: 'red' }}>Expired</span>);
+        rightActions.push(
+          <span
+            key="expired"
+            style={{ color: 'red' }}>
+            Expired
+          </span>
+        );
+      }
+      if (isSiteAdmin) {
+        rightActions.push(
+          <OrgMemberButton
+            key="member"
+            schema="organisation"
+            id={organisation.get('_id')} />
+        );
       }
 
       return (

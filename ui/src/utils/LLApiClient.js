@@ -140,6 +140,18 @@ class _LLApiClient {
     }
   })
 
+  aggregateAsync = (pipeline, limit, sinceAt) => get({
+    url: formatUrl(routes.STATEMENTS_AGGREGATE_ASYNC),
+    headers: {
+      Authorization: `Bearer ${this.getToken()}`,
+    },
+    query: {
+      pipeline: JSON.stringify(pipeline),
+      skip: limit,
+      sinceAt,
+    },
+  })
+
   uploadLogo = (file, id) => {
     const logoForm = form({
       logo: file
@@ -226,6 +238,30 @@ class _LLApiClient {
       ContentType: 'application/json'
     },
     body: { id },
+  });
+
+  removeOrganisationFromUser = ({
+    userId,
+    organisationId,
+  }) => del({
+    url: formatUrl(`${routes.RESTIFY_PREFIX}/users/${userId}/organisations/${organisationId}`),
+    headers: {
+      Authorization: `Bearer ${this.getToken()}`,
+      ContentType: 'application/json'
+    },
+  });
+
+  updateUserOrganisationSettings = ({
+    userId,
+    organisationId,
+    values,
+  }) => patch({
+    url: formatUrl(`${routes.RESTIFY_PREFIX}/users/${userId}/organisationSettings/${organisationId}`),
+    headers: {
+      Authorization: `Bearer ${this.getToken()}`,
+      ContentType: 'application/json'
+    },
+    body: values,
   });
 }
 

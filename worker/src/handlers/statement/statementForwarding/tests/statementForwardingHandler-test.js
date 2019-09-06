@@ -129,13 +129,13 @@ describe('Statement Forwarding handler', () => {
     });
 
     const statementWorkerDonePromise = new Promise((resolve) => {
-      const statementHandlerProccessed = (message) => {
+      const statementHandlerProcessed = (message) => {
         expect(JSON.parse(message.Body).statementId).to.equal(statementId);
         resolve();
       };
 
       statementWorker({
-        statementHandlerProccessed
+        statementHandlerProcessed
       });
     });
 
