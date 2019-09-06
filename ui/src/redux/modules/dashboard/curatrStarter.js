@@ -7,6 +7,7 @@ import buildTemplateCuratrProportionOfSocialInteractions from 'ui/containers/Vis
 import buildTemplateCuratrCommentCount from 'ui/containers/Visualisations/TemplateCuratrCommentCount/buildModel';
 import buildTemplateCuratrLearnerInteractionsByDateAndVerb from 'ui/containers/Visualisations/TemplateCuratrLearnerInteractionsByDateAndVerb/buildModel';
 import buildTemplateCuratrUserEngagementLeaderboard from 'ui/containers/Visualisations/TemplateCuratrUserEngagementLeaderboard/buildModel';
+import buildTemplateLast7DaysStatements from 'ui/containers/Visualisations/TemplateLast7DaysStatements/buildModel';
 import { addModel } from '../models';
 
 export const CREATE_CURATR_STARTER = 'learninglocker/dashboard/CREATE_CURATR_STARTER';
@@ -48,6 +49,11 @@ const createVisualisations = async ({ dispatch, userId }) => {
       props: buildTemplateCuratrActivitiesWithMostComments(new Map({ owner: userId })),
       isExpanded: false,
     })),
+    dispatch(addModel({
+      schema: 'visualisation',
+      props: buildTemplateLast7DaysStatements(new Map({ owner: userId })),
+      isExpanded: false,
+    }))
   ]);
 
   return results.map(r => r.model.get('_id'));
@@ -64,7 +70,8 @@ function* createCuratrStarter({ userId, organisationId, dispatch }) {
       isExpanded: true,
       widgets: [
         { x: 0, y: 0, w: 6, h: 8, visualisation: visualisationIds[0] },
-        { x: 6, y: 0, w: 6, h: 8, visualisation: visualisationIds[1] },
+        { x: 6, y: 0, w: 3, h: 8, visualisation: visualisationIds[1] },
+        { x: 9, y: 0, w: 3, h: 8, visualisation: visualisationIds[6] },
         { x: 0, y: 8, w: 6, h: 9, visualisation: visualisationIds[2] },
         { x: 6, y: 8, w: 6, h: 9, visualisation: visualisationIds[3] },
         { x: 0, y: 17, w: 6, h: 9, visualisation: visualisationIds[4] },
