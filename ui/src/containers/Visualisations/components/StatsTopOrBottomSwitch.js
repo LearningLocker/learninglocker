@@ -12,7 +12,7 @@ const StatsTopOrBottomSwitch = ({
 }) => (
   <div className="form-group">
     <Switch
-      label="top / bottom"
+      label="Top / Bottom"
       checked={statsAtBottom}
       onChange={onChange} />
   </div>
