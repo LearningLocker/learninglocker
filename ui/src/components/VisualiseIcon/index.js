@@ -127,6 +127,7 @@ const VisualiseIcon = ({
     [styles.visualisationSmall]: isSmall,
   });
 
+  // TODO: alt should be mapped from image src, not type
   return (
     <img
       className={classes}
@@ -142,33 +143,3 @@ VisualiseIcon.propTypes = {
 };
 
 export default withStyles(styles)(React.memo(VisualiseIcon));
-
-// [Viz Refactor] TODO: Remove VisualiseIconWithTitle after every types are refactored in TypeEditor
-const VisualiseIconWithTitle = ({
-  type,
-  active,
-  onClick,
-}) => {
-  const classes = classNames({
-    [styles.visualisationIcon]: true,
-    [styles.active]: active,
-  });
-
-  return (
-    <div className={classes} onClick={onClick} >
-      <VisualiseIcon
-        type={type}
-        sourceView={false}
-        isSmall={false} />
-      <h5>{getTitle(type)}</h5>
-    </div>
-  );
-};
-
-VisualiseIconWithTitle.propTypes = {
-  type: PropTypes.string.isRequired,
-  active: PropTypes.bool.isRequired,
-  onClick: PropTypes.func.isRequired,
-};
-
-export const StyledVisualiseIconWithTitle = withStyles(styles)(VisualiseIconWithTitle);
