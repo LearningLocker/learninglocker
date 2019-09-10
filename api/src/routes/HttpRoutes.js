@@ -35,6 +35,7 @@ import generateIndexesController from 'api/controllers/IndexesController';
 import ImportPersonasController from 'api/controllers/ImportPersonasController';
 import StatementMetadataController from 'api/controllers/StatementMetadataController';
 import BatchDeleteController from 'api/controllers/BatchDeleteController';
+import SalesEmailEnquiryController from 'api/controllers/SalesEmailEnquiryController';
 
 // REST
 import LRS from 'lib/models/lrs';
@@ -114,6 +115,11 @@ router.get(
 router.post(
   routes.OAUTH2_TOKEN,
   AuthController.issueOAuth2AccessToken
+);
+
+router.post(
+  routes.SALES_EMAIL_ENQUIRY,
+  SalesEmailEnquiryController.sendEmail,
 );
 
 /**

@@ -1,24 +1,29 @@
 import React, { useState } from 'react';
 import Checkbox from 'ui/components/Material/Checkbox';
-// import sendUpgradeCustomerForm from 'lib/helpers/email';
+import { salesEmailEnquiry } from 'ui/redux/modules/salesEmailEnquiry';
+import { connect } from 'react-redux';
 
-const Demo = () => {
+const Demo = ({ salesEmailEnquiryAction }) => {
   const [fullName, setFullName] = useState('');
   const [company, setCompany] = useState('');
   const [email, setEmail] = useState('');
   const [privacyPolicy, setPrivacyPolicy] = useState(true);
   const [mailingList, setMailingList] = useState(false);
-  const [submitDisabled, setDisabled] = useState(false);
+  const [userMessage, setUserMessage] = useState('');
+
+  const signUpToMailingList = (signUpEmail) => {
+    // Hubspot signup
+  };
 
   const handleSubmit = (event) => {
     if (event) event.preventDefault();
-    console.log('Full name: ', fullName,
-                ' Company: ', company,
-                ' Email: ', email,
-                ' Privacy Policy: ', privacyPolicy,
-                ' Mailing List: ', mailingList
-    );
-    // sendUpgradeCustomerForm({ fullName, company, email, privacyPolicy, mailingList });
+    if (email !== '' && privacyPolicy) {
+      salesEmailEnquiryAction({ fullName, company, email, mailingList, privacyPolicy });
+      setUserMessage('Thank you, we\'ll be in touch');
+    }
+    if (mailingList) {
+      signUpToMailingList(email);
+    }
   };
 
   const handleFullNameChange = (event) => {
@@ -34,17 +39,17 @@ const Demo = () => {
   };
 
   const handlePrivacyPolicyChange = (event) => {
+    event === false ? setUserMessage('Please agree to the privacy policy') : setUserMessage('');
     setPrivacyPolicy(event);
-    event = setDisabled(!event);
   };
 
   const handleMailingListChange = (event) => {
     setMailingList(event);
   };
 
-  const label = (
-    <div>I consent to storage of my data according to the <a href="https://www.ht2labs.com/privacy-policy/" target="blank">Privacy Policy</a> *required</div>
-    );
+  const privacyPolicyLabel = (
+    <div>*I consent to storage of my data according to the <a href="https://www.ht2labs.com/privacy-policy/" target="blank">Privacy Policy</a></div>
+  );
 
   return (
     <div>
@@ -54,8 +59,7 @@ const Demo = () => {
         </div>
       </header>
       <div className="box">
-        <form>
-          {/* <form onSubmit={handleSubmit}> */}
+        <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="fullName">Full name</label>
             <input
@@ -64,8 +68,7 @@ const Demo = () => {
               placeholder="Your first name"
               type="text"
               value={fullName}
-              onChange={handleFullNameChange}
-              required />
+              onChange={handleFullNameChange} />
           </div>
           <div className="form-group">
             <label htmlFor="companyInput">Company</label>
@@ -78,21 +81,20 @@ const Demo = () => {
               onChange={handleCompanyChange} />
           </div>
           <div className="form-group">
-            <label htmlFor="emailInput">Email</label>
+            <label htmlFor="emailInput">*Email</label>
             <input
               id="email"
               className="form-control"
               placeholder="Your email address"
-              type="text"
+              type="email"
               value={email}
               onChange={handleEmailChange}
               required />
           </div>
           <div className="form-group">
             <Checkbox
-              label={label}
+              label={privacyPolicyLabel}
               id="privacyPolicy"
-              required
               checked={privacyPolicy}
               onChange={handlePrivacyPolicyChange} />
           </div>
@@ -106,15 +108,15 @@ const Demo = () => {
           <div className="form-group">
             <button
               className="btn btn-primary btn-sm"
-              onClick={handleSubmit}
-              disabled={submitDisabled}>
+              onClick={handleSubmit}>
               Submit
           </button>
           </div>
+          <div>{userMessage}</div>
         </form>
       </div>
     </div>
   );
 };
 
-export default Demo;
+export default connect(state => ({}), { salesEmailEnquiryAction: salesEmailEnquiry })(Demo);
