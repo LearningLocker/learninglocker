@@ -1,5 +1,5 @@
 import User from 'lib/models/user';
-import { SITE_ADMIN } from 'lib/constants/scopes';
+import { SITE_ADMIN, ALL } from 'lib/constants/scopes';
 import { MANAGE_ALL_USERS } from 'lib/constants/orgScopes';
 import NotFoundError from 'lib/errors/NotFoundError';
 import ClientError from 'lib/errors/ClientError';
@@ -43,7 +43,7 @@ const validateUpdatableKeys = (body, scopes) => {
 
   const updatingKeys = Object.keys(body);
 
-  if (scopes.includes(MANAGE_ALL_USERS)) {
+  if (scopes.some(s => [MANAGE_ALL_USERS, ALL].includes(s))) {
     return updatingKeys.every(key => ['filter', 'roles', 'scopes'].includes(key));
   }
 
