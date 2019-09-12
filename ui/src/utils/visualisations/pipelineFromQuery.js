@@ -36,15 +36,18 @@ export default memoize((args = new Map()) => {
   const timezone = args.get('timezone');
   const currentMoment = args.get('currentMoment');
 
-  let previewPeriodMatch = [{ $match: {
-    timestamp: { $gte: { $dte: periodToDate(previewPeriod, timezone, currentMoment).toISOString() } }
-  } }];
-
-  if (args.get('benchmarkingEnabled')) {
-    const previousStartDate = periodToDate(previewPeriod, timezone, currentMoment, 2).toISOString();
+  let previewPeriodMatch;
+  if (previewPeriod) {
     previewPeriodMatch = [{ $match: {
-      timestamp: { $gte: { $dte: previousStartDate }, $lte: { $dte: periodToDate(previewPeriod, timezone, currentMoment).toISOString() } }
+      timestamp: { $gte: { $dte: periodToDate(previewPeriod, timezone, currentMoment).toISOString() } }
     } }];
+
+    if (args.get('benchmarkingEnabled')) {
+      const previousStartDate = periodToDate(previewPeriod, timezone, currentMoment, 2).toISOString();
+      previewPeriodMatch = [{ $match: {
+        timestamp: { $gte: { $dte: previousStartDate }, $lte: { $dte: periodToDate(previewPeriod, timezone, currentMoment).toISOString() } }
+      } }];
+    }
   }
 
   const query = args.getIn(['query', '$match'], new Map());
@@ -52,7 +55,7 @@ export default memoize((args = new Map()) => {
   const offsetFixedQuery = update$dteTimezone(query, timezone);
   const queryMatch = offsetFixedQuery.size === 0 ? [] : [{ $match: offsetFixedQuery }];
 
-  const preReqs = fromJS(previewPeriodMatch.concat(queryMatch));
+  const preReqs = previewPeriodMatch ? fromJS(previewPeriodMatch.concat(queryMatch)) : fromJS(queryMatch);
 
   const type = args.get('type');
   const axes = args.get('axes');

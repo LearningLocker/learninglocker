@@ -6,6 +6,7 @@ import auth, { LOGOUT, ORG_LOGOUT } from 'ui/redux/modules/auth';
 import pagination from 'ui/redux/modules/pagination';
 import models from 'ui/redux/modules/models';
 import aggregation from 'ui/redux/modules/aggregation';
+import aggregationWs from 'ui/redux/modules/aggregationWs';
 import statements from 'ui/redux/modules/statements';
 import search from 'ui/redux/modules/search';
 import uploadpeople from 'ui/redux/modules/people';
@@ -25,6 +26,7 @@ export default combineReducers({
   auth: recycleState(auth, [LOGOUT]),
   pagination: recycleState(pagination, [LOGOUT, ORG_LOGOUT]),
   aggregation: recycleState(aggregation, [LOGOUT, ORG_LOGOUT]),
+  aggregationWs: recycleState(aggregationWs, [LOGOUT, ORG_LOGOUT]),
   models: recycleState(models, [LOGOUT, ORG_LOGOUT]),
   mergePersona: recycleState(uploadpeople, [LOGOUT, ORG_LOGOUT]),
   exports: recycleState(exportsReducer, [LOGOUT, ORG_LOGOUT]),

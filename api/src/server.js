@@ -6,6 +6,8 @@ import passport from 'api/auth/passport';
 import HttpRoutes from 'api/routes/HttpRoutes';
 import logger from 'lib/logger';
 import { install } from 'source-map-support';
+import WebSocket from 'ws';
+import websockets from 'api/websockets';
 
 install();
 
@@ -24,7 +26,7 @@ app.use(passport.initialize());
 app.use(HttpRoutes);
 
 if (process.env.API_PORT) {
-  app.listen(process.env.API_PORT, (err) => {
+  const server = app.listen(process.env.API_PORT, (err) => {
     if (err) {
       logger.error(err);
     }
@@ -37,6 +39,13 @@ if (process.env.API_PORT) {
       '--- \n'
     );
     if (process.send) process.send('ready');
+  });
+
+  const wss = new WebSocket.Server({
+    server
+  });
+  wss.on('connection', (ws) => {
+    websockets.add(ws);
   });
 } else {
   logger.error(

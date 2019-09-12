@@ -1,16 +1,17 @@
 import { OrderedMap, Map, fromJS } from 'immutable';
 import { createSelector } from 'reselect';
 import moment from 'moment';
-import { call, put, takeEvery } from 'redux-saga/effects';
-import { delay } from 'bluebird';
+import { call, put, takeEvery, select } from 'redux-saga/effects';
 import createAsyncDuck from 'ui/utils/createAsyncDuck';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
+import { getAppDataSelector } from 'ui/redux/modules/app';
+import Cookies from 'js-cookie';
+import { pickBy } from 'lodash';
+import { testCookieName } from 'ui/utils/auth';
 
 export function defaultMapping(body) {
   return new Map({
     result: body.result && new OrderedMap(body.result.map(v => fromJS([v._id, v]))),
-    startedAt: body.status.startedAt,
-    completedAt: body.status.completedAt,
   });
 }
 
@@ -63,7 +64,7 @@ const aggregationShouldRecallSelector = pipeline => createSelector(
 );
 
 const fetchAggregation = createAsyncDuck({
-  actionName: 'learninglocker/aggregation/FETCH_AGGREGATION',
+  actionName: 'learninglocker/aggregation/FETCH_AGGREGATION_WS',
   failureDelay: 2000,
 
   reduceStart: (state, { pipeline }) => state
@@ -71,9 +72,7 @@ const fetchAggregation = createAsyncDuck({
 
   reduceSuccess: (state, { pipeline, result }) => {
     const x = state
-      .setIn([pipeline, 'requestState'], COMPLETED)
-      .setIn([pipeline, 'startedAt'], result.get('startedAt'))
-      .setIn([pipeline, 'completedAt'], result.get('completedAt'));
+      .setIn([pipeline, 'requestState'], COMPLETED);
 
     if (result.get('result') === null) {
       return x;
@@ -89,7 +88,20 @@ const fetchAggregation = createAsyncDuck({
   reduceComplete: (state, { pipeline }) => state
     .setIn([pipeline, 'requestState'], COMPLETED),
 
-  startAction: ({ pipeline, mapping = defaultMapping, sinceAt }) => ({ pipeline, mapping, sinceAt }),
+  startAction: ({
+    pipeline,
+    mapping = defaultMapping,
+    timeIntervalSinceToday,
+    timeIntervalUnits
+  }) => {
+    const out = ({
+      pipeline,
+      mapping,
+      timeIntervalSinceToday,
+      timeIntervalUnits
+    });
+    return out;
+  },
 
   successAction: ({ pipeline, result, sinceAt }) => ({ pipeline, result, sinceAt }),
 
@@ -103,41 +115,51 @@ const fetchAggregation = createAsyncDuck({
     return shouldFetch || shouldRecall;
   },
 
-  doAction: function* fetchAggregationSaga({ pipeline, mapping, llClient, sinceAt }) {
-    const { body } = yield call(llClient.aggregateAsync, pipeline, undefined, sinceAt);
-    // const { body } = yield call(llClient.aggrigateMapReduce, pipeline, undefined, sinceAt); // DEBUG ONLY
-    const result = mapping(body);
+  doAction: function* fetchAggregationSaga({
+    pipeline,
+    llClient,
+    timeIntervalSinceToday,
+    timeIntervalUnits,
+  }) {
+    // const pipelineWithoutTime = pipeline.shift(); // DEBUG ONLY, the pipeline should be correct when it comes in.
+    const { body } = yield call(llClient.aggregateWs, pipeline, timeIntervalSinceToday, timeIntervalUnits);
 
-    return yield { pipeline, result, sinceAt };
+    const id = body._id;
+
+    const state = yield select();
+    const wsUrl = getAppDataSelector('WS_URL')(state);
+
+    const websocket = new WebSocket(`${wsUrl}/websocket`);
+
+    yield new Promise((resolve) => {
+      websocket.addEventListener('open', () => {
+        resolve();
+      });
+    });
+
+    // handle responses
+
+    // Send the auth details
+    const cookies = Cookies.get();
+    const filteredCookies = pickBy(cookies, (value, cookieName) => testCookieName(cookieName));
+
+    websocket.send(JSON.stringify({
+      type: 'AGGREGATION_PROCESSOR_REGISTER',
+      auth: filteredCookies,
+      organisationId: state.router.route.params.organisationId,
+      aggregationProcessorId: id
+    }));
+
+
+    yield new Promise(() => {
+      websocket.addEventListener('message', (message) => {
+        console.log('002 message', message);
+      });
+    }); // TODO: close ws, hadle cleanup
+
+    return yield { pipeline, result };
   }
 });
-
-function* recallAggregationIfRequired(args) {
-  const pipeline = args.pipeline;
-  const sinceAt = args.sinceAt;
-  const result = args.result.get('result');
-  const startedAt = args.result.get('startedAt');
-  const completedAt = args.result.get('completedAt');
-
-  // Cached and is running
-  const cachedAndIsRunning = startedAt && completedAt && moment(completedAt).isBefore(moment(startedAt));
-  if (cachedAndIsRunning) {
-    yield call(delay, 1000);
-    yield put(fetchAggregation.actions.start({ pipeline, sinceAt: completedAt }));
-    return;
-  }
-
-  // No cache
-  if (result === null) {
-    yield call(delay, 1000);
-    yield put(fetchAggregation.actions.start({ pipeline, sinceAt }));
-    return;
-  }
-}
-
-function* watchAggregationSuccess() {
-  if (__CLIENT__) yield takeEvery(fetchAggregation.constants.success, recallAggregationIfRequired);
-}
 
 export const selectors = {
   aggregationRequestStateSelector,
@@ -146,4 +168,4 @@ export const selectors = {
 
 export const reducers = fetchAggregation.reducers;
 export const actions = fetchAggregation.actions;
-export const sagas = [...fetchAggregation.sagas, watchAggregationSuccess];
+export const sagas = [...fetchAggregation.sagas];

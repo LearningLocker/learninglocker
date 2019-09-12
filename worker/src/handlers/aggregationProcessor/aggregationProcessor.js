@@ -4,6 +4,7 @@ import AggregationProcessor from 'lib/models/aggregationProcessor';
 import Statement from 'lib/models/statement';
 import { get } from 'lodash';
 import { publish } from 'lib/services/queue';
+import { delay } from 'bluebird';
 
 export const combine = (as, bs, keyFn, mergeFn) => {
   const groupedAs = as.reduce((result, a) => {
@@ -23,7 +24,7 @@ export const combine = (as, bs, keyFn, mergeFn) => {
 
 export const hasReachedEnd = ({ model, now }) => {
   if (
-    moment(model.fromTimestamp).isSameOrBefore(moment(model.gtDate)) &&
+    moment(model.fromTimestamp).isSame(moment(model.gtDate)) &&
     moment(model.toTimestamp).isSame(now)
   ) {
     return true;
@@ -32,14 +33,23 @@ export const hasReachedEnd = ({ model, now }) => {
 };
 
 export const getFromTimestamp = ({ model, now }) => {
-  const blockSizeSeconds = moment(now).subtract(model.blockSizeSeconds, 'seconds');
-  const windowSize = moment(now).subtract(model.windowSize, model.windowSizeUnits);
+  if (!model.fromTimestamp || moment(model.fromTimestamp).isAfter(moment(model.gtDate))) {
+    const blockSizeSeconds = moment(model.fromTimestamp || now).subtract(model.blockSizeSeconds, 'seconds');
 
-  if (blockSizeSeconds.isAfter(windowSize)) {
-    return blockSizeSeconds;
+    if (blockSizeSeconds.isAfter(moment(model.gtDate))) {
+      return blockSizeSeconds;
+    }
+
+    return moment(model.gtDate);
+  } else if (moment(model.fromTimestamp).isBefore(moment(model.gtDate))) {
+    const blockSizeSeconds = moment(model.fromTimestamp || now).add(model.blockSizeSeconds, 'seconds');
+    if (blockSizeSeconds.isBefore(moment(model.gtDate))) {
+      return blockSizeSeconds;
+    }
+
+    return moment(model.gtDate);
   }
-
-  return windowSize;
+  return moment(model.gtDate);
 };
 
 export const getAddFromTimestamp = ({ model, now }) => {
@@ -70,12 +80,26 @@ const getAddPipeline = ({
   model,
   now
 }) => {
+  const addToFrontPipeline =
+    {
+      $gt: getAddFromTimestamp({ model, now }).toDate(),
+      $lte: getAddToTimestamp({ model, now }).toDate()
+    };
+
+  let addToEnd = {};
+  if (moment(model.fromTimestamp).isAfter(moment(model.gtDate))) {
+    addToEnd = {
+      $gte: moment(getFromTimestamp({ model, now })).toDate(),
+      $lt: moment(model.fromTimestamp).toDate()
+    };
+  }
+
   const addPipeline = [
     { $match: {
-      timestamp: {
-        $gt: getAddFromTimestamp({ model, now }).toDate(),
-        $lte: getAddToTimestamp({ model, now }).toDate()
-      }
+      $or: [
+        { timestamp: addToFrontPipeline },
+        { timestamp: addToEnd }
+      ]
     } },
     ...(JSON.parse(model.pipelineString))
   ];
@@ -87,7 +111,9 @@ const getSubtractPipeline = ({
   model,
   now
 }) => {
-  const hasSubtraction = model.fromTimestamp || model.toTimestamp;
+  const hasSubtraction = model.fromTimestamp || model.toTimestamp &&
+    moment(model.fromTimestamp).isAfter(moment(model.gtDate));
+
   if (!hasSubtraction) {
     return;
   }
@@ -98,8 +124,8 @@ const getSubtractPipeline = ({
     {
       $match: {
         timestamp: {
-          $gte: fromTimestamp.toDate(),
-          $lt: moment(model.fromTimestamp).toDate()
+          $gte: moment(model.fromTimestamp).toDate(),
+          $lt: fromTimestamp.toDate()
         }
       }
     },
@@ -135,6 +161,7 @@ const aggregationProcessor = async ({
     return;
   }
   const now = moment();
+  model.gtDate = moment(now).subtract(model.windowSize, model.windowSizeUnits);
 
   const addPipeline = getAddPipeline({
     model,
@@ -192,6 +219,8 @@ const aggregationProcessor = async ({
   const fromTimestamp = getFromTimestamp({ model, now });
   const toTimestamp = getAddToTimestamp({ model, now });
 
+  await delay(2000); // DEBUG ONLY, remove
+
   const newModel = await AggregationProcessor.findOneAndUpdate({
     _id: aggregationProcessorId
   }, {
@@ -200,6 +229,7 @@ const aggregationProcessor = async ({
     },
     fromTimestamp: fromTimestamp.toDate(),
     toTimestamp: toTimestamp.toDate(),
+    gtDate: model.gtDate,
     results
   }, {
     new: true,

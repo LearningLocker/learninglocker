@@ -24,7 +24,8 @@ export default async (req, res, next) => {
     data.state = {
       app: {
         RESTRICT_CREATE_ORGANISATION: boolean(defaultTo(process.env.RESTRICT_CREATE_ORGANISATION, true)),
-        ENABLE_STATEMENT_DELETION: boolean(defaultTo(process.env.ENABLE_STATEMENT_DELETION, true))
+        ENABLE_STATEMENT_DELETION: boolean(defaultTo(process.env.ENABLE_STATEMENT_DELETION, true)),
+        WS_URL: defaultTo(process.env.WS_URL, process.env.SITE_URL.replace(/^http/, 'ws'))
       }
     };
 

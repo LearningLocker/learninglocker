@@ -152,6 +152,20 @@ class _LLApiClient {
     },
   })
 
+  aggregateWs = (pipeline, timeIntervalSinceToday, timeIntervalUnits) => post({
+    url: formatUrl(routes.STATEMENTS_AGGREGATION_PROCESSOR_INITIALISE),
+    headers: {
+      Authorization: `Bearer ${this.getToken()}`,
+    },
+    query: {
+      timeIntervalSinceToday,
+      timeIntervalUnits,
+    },
+    body: {
+      pipeline
+    }
+  });
+
   aggrigateMapReduce = (pipeline, limit, sinceAt) => get({
     url: formatUrl(routes.STATEMENTS_MAP_REDUCE),
     headers: {

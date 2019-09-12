@@ -3,11 +3,14 @@ import { createSelector } from 'reselect';
 import { take, takeEvery, put, fork, select } from 'redux-saga/effects';
 import { identity, get } from 'lodash';
 import {
-  fetchAggregation,
+  // fetchAggregation,
   aggregationShouldFetchSelector,
   aggregationResultsSelector,
   aggregationHasResultSelector,
 } from 'ui/redux/modules/aggregation';
+import {
+  fetchAggregation
+} from 'ui/redux/modules/aggregationWs';
 import {
   shouldFetchSelector,
   fetchModels,
@@ -33,6 +36,7 @@ import {
 import { pipelinesFromQueries } from 'ui/utils/visualisations';
 import { unflattenAxes } from 'lib/helpers/visualisation';
 import { OFF, ANY } from 'lib/constants/dashboard';
+import { previewPeriodToInterval } from 'ui/utils/dates';
 
 export const FETCH_VISUALISATION = 'learninglocker/models/learninglocker/visualise/FETCH_VISUALISATION';
 
@@ -219,6 +223,55 @@ export const visualisationPipelinesSelector = (
 );
 
 /**
+ * @param {string} id - visualisation._id
+ * @param {(queries: immutable.List) => immutableList} cb - queries to pipelines
+ * @return {(state: any) => immutable.List} - selector. Select pipelines from state
+ */
+export const visualisationWsPipelinesSelector = (
+  id,
+  cb = pipelinesFromQueries // whilst waiting for https://github.com/facebook/jest/issues/3608
+) => createSelector(
+  [
+    modelsSchemaIdSelector('visualisation', id),
+    shareableDashboardFilterSelector(),
+    activeOrgSelector,
+    orgTimezoneFromTokenSelector,
+  ],
+  (visualisation, filter, organisationModel, orgTimezoneFromToken) => {
+    if (!visualisation) return new List();
+    const type = visualisation.get('type');
+    const journey = visualisation.get('journey');
+    const previewPeriod = visualisation.get('previewPeriod');
+    const benchmarkingEnabled = visualisation.get('benchmarkingEnabled', false);
+    const timezone = visualisation.get('timezone') || orgTimezoneFromToken || organisationModel.get('timezone', 'UTC');
+    const queries = visualisation.get('filters', new List()).map((vFilter) => {
+      if (!filter) {
+        return vFilter;
+      }
+
+      const out = new Map({
+        $match: new Map({
+          $and: new List([
+            vFilter.get('$match', new Map()),
+            ...filter,
+          ])
+        })
+      });
+
+      return out;
+    });
+
+    const axes = unflattenAxes(visualisation);
+    const series = cb(queries, axes, type, undefined, journey, timezone, benchmarkingEnabled);
+
+    return {
+      series,
+      ...previewPeriodToInterval(previewPeriod)
+    };
+  }
+);
+
+/**
  * Takes a visualisation object and suggests a wizard step to be completed
  * e.g. visualisation.type is not completed, a popup for choosing a type is suggested
  * @param  {Object} visualisation Plain JS object representing a visualisation
@@ -373,12 +426,18 @@ export function* fetchVisualisationSaga(state, id) {
       yield put(fetchModels('journey', new Map({ _id: journeyId })));
     }
   } else {
-    const series = visualisationPipelinesSelector(id)(state);
+    const { series, timeIntervalSinceToday, timeIntervalUnits } = visualisationWsPipelinesSelector(id)(state);
     for (let s = 0; s < series.size; s += 1) {
       const pipelines = series.get(s);
       for (let p = 0; p < pipelines.size; p += 1) {
         const shouldFetch = shouldFetchPipeline(pipelines.get(p), state);
-        if (shouldFetch) yield put(fetchAggregation({ pipeline: pipelines.get(p) }));
+        if (shouldFetch) {
+          yield put(fetchAggregation({
+            pipeline: pipelines.get(p),
+            timeIntervalSinceToday,
+            timeIntervalUnits,
+          }));
+        }
       }
     }
   }

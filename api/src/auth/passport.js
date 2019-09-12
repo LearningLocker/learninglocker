@@ -69,7 +69,7 @@ const createPayloadFromPayload = (payload) => {
   });
 };
 
-async function verifyToken(token, done) {
+export async function verifyToken(token, done = () => {}) {
   try {
     const decodedToken = await verifyPromise(token, process.env.APP_SECRET);
 

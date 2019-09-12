@@ -35,4 +35,41 @@ export const periodToDate = (period, timezone, currentMoment, benchmark = 1) => 
   }
 };
 
+export const previewPeriodToInterval = (period) => {
+  switch (period) {
+    case TODAY: return {
+      timeIntervalSinceToday: 1,
+      timeIntervalUnits: 'days'
+    };
+    case LAST_24_HOURS: return {
+      timeIntervalSinceToday: 24,
+      timeIntervalUnits: 'hours'
+    };
+    case LAST_7_DAYS: return {
+      timeIntervalSinceToday: 7,
+      timeIntervalUnits: 'days'
+    };
+    case LAST_30_DAYS: return {
+      timeIntervalSinceToday: 30,
+      timeIntervalUnits: 'days'
+    };
+    case LAST_2_MONTHS: return {
+      timeIntervalSinceToday: 2,
+      timeIntervalUnits: 'months'
+    };
+    case LAST_6_MONTHS: return {
+      timeIntervalSinceToday: 6,
+      timeIntervalUnits: 'months'
+    };
+    case LAST_1_YEAR: return {
+      timeIntervalSinceToday: 1,
+      timeIntervalUnits: 'years'
+    };
+    case LAST_2_YEARS: return {
+      timeIntervalSinceToday: 2,
+      timeIntervalUnits: 'years'
+    };
+  }
+};
+
 export default {};

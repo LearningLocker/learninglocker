@@ -6,6 +6,7 @@ import { sagas as dashboardSagas } from './dashboard';
 import { sagas as paginationSagas } from './pagination';
 import { sagas as modelSagas } from './models';
 import { sagas as aggregationSagas } from './aggregation';
+import { sagas as aggregationWsSagas } from './aggregationWs';
 import { sagas as visualiseSagas } from './visualise';
 import { sagas as uploadPeopleSagas } from './people';
 import { sagas as exportSagas } from './exports';
@@ -28,6 +29,7 @@ export default function* rootSaga() {
     ...map(dashboardSagas, runSaga),
     ...map(paginationSagas, runSaga),
     ...map(aggregationSagas, runSaga),
+    ...map(aggregationWsSagas, runSaga),
     ...map(visualiseSagas, runSaga),
     ...map(uploadPeopleSagas, runSaga),
     ...map(exportSagas, runSaga),

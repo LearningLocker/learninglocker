@@ -13,6 +13,7 @@ import FileStreamRotator from 'file-stream-rotator';
 import config from 'ui/config';
 import renderApp from 'ui/controllers/renderApp';
 import renderDashboard from 'ui/controllers/renderDashboard';
+import proxyMiddleware from 'http-proxy-middleware';
 
 process.on('SIGINT', () => {
   process.exit(0);
@@ -65,6 +66,14 @@ app.use(Express.static(path.join(__dirname, '..', 'public'), {
 app.use('/api', (req, res) => {
   proxy.web(req, res, { target: targetUrl });
 });
+
+const wsProxy = proxyMiddleware('/websocket', {
+  target: `ws://${config.apiHost}:${config.apiPort}`,
+  ws: true,
+  changeOrigin: true
+});
+app.use(wsProxy);
+server.on('upgrade', wsProxy.upgrade);
 
 // added the error handling to avoid https://github.com/nodejitsu/node-http-proxy/issues/527
 proxy.on('error', (error, req, res) => {
