@@ -164,7 +164,7 @@ const enhance = compose(
           scopesSet.add(role) :
           scopesSet.delete(role)
         ).toList();
-        updateModel({ scopes: newScopes });
+        updateModel({ path: 'scopes', value: newScopes });
       },
     handleFilterChange: ({ updateOrgSettings }) =>
       (filter) => {
