@@ -8,6 +8,8 @@ import VisualiseFilterForm from 'ui/containers/VisualiseFilterForm';
 import AddQueryButton from '../components/AddQueryButton';
 import DescriptionForm from '../components/DescriptionForm';
 import PreviewPeriodPicker from '../components/PreviewPeriodPicker';
+import StatsTopOrBottomSwitch from '../components/StatsTopOrBottomSwitch';
+import ShowStatsSwitch from '../components/ShowStatsSwitch';
 import SourceViewForm from '../components/SourceViewForm';
 import StackedSwitch from '../components/StackedSwitch';
 import TimezoneForm from '../components/TimezoneForm';
@@ -58,6 +60,24 @@ const Editor = ({
       schema: 'visualisation',
       id,
       path: 'sourceView',
+      value: checked,
+    });
+  }, [id]);
+
+  const onChangeShowStats = useCallback((checked) => {
+    updateModel({
+      schema: 'visualisation',
+      id,
+      path: 'showStats',
+      value: checked,
+    });
+  }, [id]);
+
+  const onChangeStatsAtBottom = useCallback((checked) => {
+    updateModel({
+      schema: 'visualisation',
+      id,
+      path: 'statsAtBottom',
       value: checked,
     });
   }, [id]);
@@ -114,6 +134,18 @@ const Editor = ({
               <SourceViewForm
                 sourceView={model.get('sourceView')}
                 onChange={onChangeSourceView} />
+
+              {model.get('sourceView') && (
+                <ShowStatsSwitch
+                  showStats={model.get('showStats')}
+                  onChange={onChangeShowStats} />
+              )}
+
+              {model.get('sourceView') && model.get('showStats') && (
+                <StatsTopOrBottomSwitch
+                  statsAtBottom={model.get('statsAtBottom')}
+                  onChange={onChangeStatsAtBottom} />
+              )}
 
               <TimezoneForm
                 visualisationId={id}

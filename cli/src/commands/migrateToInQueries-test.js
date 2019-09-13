@@ -1,12 +1,12 @@
 import { expect } from 'chai';
-import { buildNewFilter } from './migrateToInQueries';
+import { buildNewQuery } from './migrateToInQueries';
 
 describe('migrateToInQueries', () => {
-  describe('buildNewFilters', () => {
+  describe('buildNewQuery', () => {
     it('should not change when $match.$and does not exist', async () => {
       const input = JSON.stringify({ $match: {} });
       const expected = JSON.stringify({ $match: {} });
-      const actual = buildNewFilter(input);
+      const actual = buildNewQuery(input);
       expect(actual).to.equal(expected);
     });
 
@@ -96,7 +96,7 @@ describe('migrateToInQueries', () => {
         }
       });
 
-      const actual = buildNewFilter(input);
+      const actual = buildNewQuery(input);
       expect(actual).to.equal(expected);
     });
 
@@ -173,7 +173,7 @@ describe('migrateToInQueries', () => {
         }
       });
 
-      const actual = buildNewFilter(input);
+      const actual = buildNewQuery(input);
       expect(actual).to.equal(expected);
     });
   });

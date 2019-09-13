@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
-import { StyledVisualiseIconWithTitle } from 'ui/components/VisualiseIcon';
 import {
   LEADERBOARD,
   XVSY,
@@ -10,8 +9,12 @@ import {
   COUNTER,
   PIE,
 } from 'lib/constants/visualise';
-import { default as CustomBarChartCard } from 'ui/containers/Visualisations/CustomBarChart/Card';
-import { default as CustomColumnChartCard } from 'ui/containers/Visualisations/CustomColumnChart/Card';
+import CustomBarChartCard from 'ui/containers/Visualisations/CustomBarChart/Card';
+import CustomColumnChartCard from 'ui/containers/Visualisations/CustomColumnChart/Card';
+import CustomCounterCard from 'ui/containers/Visualisations/CustomCounter/Card';
+import CustomLineChartCard from 'ui/containers/Visualisations/CustomLineChart/Card';
+import CustomPieChartCard from 'ui/containers/Visualisations/CustomPieChart/Card';
+import CustomXvsYChartCard from 'ui/containers/Visualisations/CustomXvsYChart/Card';
 
 const getText = (type) => {
   switch (type) {
@@ -49,15 +52,11 @@ const TypeEditor = ({
   return (
     <div id="new-visualisation-custom">
       <div style={{ maxHeight: '500px', padding: '0px', overflow: 'auto' }}>
-        {/* [Refactor] Replace StyledVisualiseIconWithTitle with "Card" component
-            https://github.com/LearningLocker/enterprise/issues/991
-          */}
         <CustomBarChartCard
           active={typeState === LEADERBOARD}
           onClick={setLEADERBOARD} />
 
-        <StyledVisualiseIconWithTitle
-          type={XVSY}
+        <CustomXvsYChartCard
           active={typeState === XVSY}
           onClick={setXVSY} />
 
@@ -65,18 +64,15 @@ const TypeEditor = ({
           active={typeState === STATEMENTS}
           onClick={setSTATEMENTS} />
 
-        <StyledVisualiseIconWithTitle
-          type={FREQUENCY}
+        <CustomLineChartCard
           active={typeState === FREQUENCY}
           onClick={setFREQUENCY} />
 
-        <StyledVisualiseIconWithTitle
-          type={COUNTER}
+        <CustomCounterCard
           active={typeState === COUNTER}
           onClick={setCOUNTER} />
 
-        <StyledVisualiseIconWithTitle
-          type={PIE}
+        <CustomPieChartCard
           active={typeState === PIE}
           onClick={setPIE} />
       </div>
