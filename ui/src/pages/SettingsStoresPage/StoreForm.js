@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 const schema = 'lrs';
 
-class LRSForm extends Component {
+class StoreForm extends Component {
   static propTypes = {
     model: PropTypes.instanceOf(Map),
     updateModel: PropTypes.func
@@ -54,4 +54,4 @@ class LRSForm extends Component {
   }
 }
 
-export default connect(() => ({}), { updateModel })(LRSForm);
+export default connect(() => ({}), { updateModel })(StoreForm);

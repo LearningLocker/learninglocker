@@ -55,7 +55,7 @@ const renderPage = (routeName) => {
 
   if (testRoute('organisation.settings.stores')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/Stores')
+      loader: System.import('ui/pages/SettingsStoresPage')
     }));
   }
 

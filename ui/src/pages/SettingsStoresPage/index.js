@@ -10,7 +10,7 @@ import { loggedInUserId } from 'ui/redux/modules/auth';
 import { clearModelsCache } from 'ui/redux/modules/pagination';
 import SearchBox from 'ui/containers/SearchBox';
 import ModelList from 'ui/containers/ModelList';
-import LrsForm from 'ui/containers/LrsForm';
+import StoreForm from './StoreForm';
 
 const schema = 'lrs';
 const StoreList = compose(
@@ -41,11 +41,11 @@ class Stores extends Component {
         isExpanded: true
       }
     })
-    .then(() => {
-      // when we add a new store we also create a new client
-      this.props.clearModelsCache({ schema: 'client' });
-    })
-    .catch((err) => { console.error(err); });
+      .then(() => {
+        // when we add a new store we also create a new client
+        this.props.clearModelsCache({ schema: 'client' });
+      })
+      .catch((err) => { console.error(err); });
   }
 
   render = () => (
@@ -71,7 +71,7 @@ class Stores extends Component {
           <StoreList
             filter={queryStringToQuery(this.props.searchString, schema)}
             getDescription={model => `${model.get('title', '')} ( ${model.get('statementCount')} )`}
-            ModelForm={LrsForm} />
+            ModelForm={StoreForm} />
         </div>
       </div>
     </div>
