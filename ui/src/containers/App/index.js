@@ -21,7 +21,7 @@ const renderPage = (routeName) => {
   }
   if (testRoute('home')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/Home')
+      loader: System.import('ui/pages/HomePage')
     }));
   }
   if (testRoute('organisation')) {

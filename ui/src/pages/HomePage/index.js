@@ -19,8 +19,8 @@ import Spinner from 'ui/components/Spinner';
 import FullPageBackground from 'ui/components/FullPageBackground';
 import AuthContainer from 'ui/containers/AuthContainer';
 import smallLogo from 'ui/static/smallLogo.png';
-import Register from 'ui/containers/Register';
 import OrgMemberButton from 'ui/containers/OrgMemberButton';
+import Register from './Register';
 import styles from './styles.css';
 
 class Home extends Component {
@@ -193,7 +193,7 @@ class Home extends Component {
           <Card>
             <CardText>
               <Helmet title=" - Choose an organisation" />
-              { isSiteAdmin && (
+              {isSiteAdmin && (
                 <div>
                   <h4>Site Administration</h4>
                   <List selectable ripple>
@@ -209,28 +209,28 @@ class Home extends Component {
                       flat />
                   </List>
                 </div>
-              ) }
+              )}
 
               {
                 models.isEmpty() && orgSearch === '' ? (
                   this.renderNoUserOrgs()
                 ) : (
-                  <div>
                     <div>
-                      <h4>Your Organisations</h4>
-                      {
-                        orgSearch !== '' || models.size > 5 ? (
-                          <DebounceInput
-                            className="form-control"
-                            debounceTimeout={377}
-                            value={orgSearch}
-                            onChange={this.onOrgSearch} />
-                        ) : <noscript />
-                      }
-                      { models.isEmpty() ? this.renderEmptySearch() : this.renderOrgList() }
+                      <div>
+                        <h4>Your Organisations</h4>
+                        {
+                          orgSearch !== '' || models.size > 5 ? (
+                            <DebounceInput
+                              className="form-control"
+                              debounceTimeout={377}
+                              value={orgSearch}
+                              onChange={this.onOrgSearch} />
+                          ) : <noscript />
+                        }
+                        {models.isEmpty() ? this.renderEmptySearch() : this.renderOrgList()}
+                      </div>
                     </div>
-                  </div>
-                )
+                  )
               }
               {error &&
                 <div className="alert alert-danger" role="alert">
