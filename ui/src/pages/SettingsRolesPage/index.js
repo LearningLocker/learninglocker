@@ -7,10 +7,10 @@ import { queryStringToQuery, modelQueryStringSelector } from 'ui/redux/modules/s
 import { withModels, withModel } from 'ui/utils/hocs';
 import { addModel } from 'ui/redux/modules/models';
 import { clearModelsCache } from 'ui/redux/modules/pagination';
-import RoleForm from 'ui/containers/RoleForm';
 import SearchBox from 'ui/containers/SearchBox';
 import ModelList from 'ui/containers/ModelList';
 import DeleteButton from 'ui/containers/DeleteButton';
+import RoleForm from './RoleForm';
 
 // @todo Need to check that no users are using the role before it can be deleted
 const RoleDeleteButton = compose(
@@ -71,7 +71,7 @@ const render = ({ searchString, handleAddClick }) =>
           <span className="pull-right open_panel_btn" style={{ width: '25%' }}>
             <SearchBox schema={schema} />
           </span>
-            Roles
+          Roles
         </div>
       </header>
       <div className="row">

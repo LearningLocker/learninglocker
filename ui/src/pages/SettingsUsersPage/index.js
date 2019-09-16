@@ -12,13 +12,13 @@ import { deleteUserOrganisation as deleteUserOrganisationAction } from 'ui/redux
 import { withModels, withModel } from 'ui/utils/hocs';
 import { addModel } from 'ui/redux/modules/models';
 import UserPicture from 'ui/components/UserPicture';
-import UserOrgForm from 'ui/containers/UserOrgForm';
 import SearchBox from 'ui/containers/SearchBox';
 import ModelList from 'ui/containers/ModelList';
 import DeleteButton from 'ui/containers/DeleteButton';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import classNames from 'classnames';
 import ValidationList from 'ui/components/ValidationList';
+import UserOrgForm from './UserOrgForm';
 import styles from './users.css';
 
 const UserDeleteButton = compose(
@@ -173,8 +173,8 @@ class Users extends Component {
           <span className="pull-right open_panel_btn" style={{ width: '25%' }}>
             <SearchBox schema={schema} />
           </span>
-          { this.renderInviteModal() }
-            Users
+          {this.renderInviteModal()}
+          Users
         </div>
       </header>
       <div className="row">
@@ -193,6 +193,6 @@ export default compose(
   withStyles(styles),
   connect(
     state => ({ searchString: modelQueryStringSelector(schema)(state) }),
-  { addModel }
+    { addModel }
   )
 )(Users);

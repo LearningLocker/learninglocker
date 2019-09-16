@@ -9,7 +9,7 @@ import SearchBox from 'ui/containers/SearchBox';
 import { expandModel } from 'ui/redux/modules/models';
 import ModelList from 'ui/containers/ModelList';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from 'ui/containers/Users/users.css';
+import styles from 'ui/pages/SettingsUsersPage/users.css'; // @TODO: Don't import this from another page.
 import { routeNodeSelector } from 'redux-router5';
 import SiteUserItem from './SiteUserItem';
 

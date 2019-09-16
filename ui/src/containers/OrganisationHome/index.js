@@ -61,13 +61,13 @@ const renderPage = (routeName) => {
 
   if (testRoute('organisation.settings.users')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/Users')
+      loader: System.import('ui/pages/SettingsUsersPage')
     }));
   }
 
   if (testRoute('organisation.settings.roles')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/Roles')
+      loader: System.import('ui/pages/SettingsRolesPage')
     }));
   }
 
