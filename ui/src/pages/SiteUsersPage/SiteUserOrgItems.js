@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import { compose, withProps, setPropTypes } from 'recompose';
 import { withModels } from 'ui/utils/hocs';
-import SiteUserOrgItem from 'ui/containers/SiteUsers/SiteUserOrgItem';
+import SiteUserOrgItem from './SiteUserOrgItem';
 
 const enhance = compose(
   setPropTypes({

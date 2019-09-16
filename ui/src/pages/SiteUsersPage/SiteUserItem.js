@@ -5,7 +5,7 @@ import { withModel } from 'ui/utils/hocs';
 import UserForm from 'ui/containers/UserForm';
 import { SITE_SCOPES } from 'lib/constants/scopes';
 import Checkbox from 'ui/components/Material/Checkbox';
-import SiteUserOrgItems from 'ui/containers/SiteUsers/SiteUserOrgItems';
+import SiteUserOrgItems from './SiteUserOrgItems';
 import map from 'lodash/map';
 import uuid from 'uuid';
 

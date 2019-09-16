@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import { setPropTypes } from 'recompose';
-import SiteOrgLink from 'ui/components/Site/SiteOrgLink';
+import SiteOrgLink from './SiteOrgLink';
 
 const enhance = setPropTypes({
   org: PropTypes.instanceOf(Map).isRequired,

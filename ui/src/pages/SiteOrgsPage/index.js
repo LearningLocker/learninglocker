@@ -8,7 +8,6 @@ import {
 } from 'ui/redux/modules/search';
 import SearchBox from 'ui/containers/SearchBox';
 import { withModels, withModel } from 'ui/utils/hocs';
-import SiteOrgItem from 'ui/containers/SiteOrgs/SiteOrgItem';
 import { addModel as addModelAction } from 'ui/redux/modules/models';
 import { loggedInUserSelector, currentScopesSelector } from 'ui/redux/modules/auth';
 import ModelList from 'ui/containers/ModelList';
@@ -17,6 +16,7 @@ import OrgMemberButton from 'ui/containers/OrgMemberButton';
 import canCreateOrganisationsFn from 'lib/services/auth/canCreateOrganisations';
 import { getAppDataSelector } from 'ui/redux/modules/app';
 import { routeNodeSelector } from 'redux-router5';
+import SiteOrgItem from './SiteOrgItem';
 
 const schema = 'organisation';
 const OrgList = compose(

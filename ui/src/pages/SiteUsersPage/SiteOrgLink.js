@@ -21,7 +21,7 @@ export default class OrganisationLink extends Component {
         style={style}
         routeName="admin.organisations.id"
         routeParams={{ organisationId: model.get('_id') }}>
-        { model.get('name') }
+        {model.get('name')}
       </Link>
     );
   }

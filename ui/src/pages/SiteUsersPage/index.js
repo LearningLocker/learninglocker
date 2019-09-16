@@ -6,12 +6,12 @@ import { withModels, withModel } from 'ui/utils/hocs';
 import UserPicture from 'ui/components/UserPicture';
 import { queryStringToQuery, modelQueryStringSelector } from 'ui/redux/modules/search';
 import SearchBox from 'ui/containers/SearchBox';
-import SiteUserItem from 'ui/containers/SiteUsers/SiteUserItem';
 import { expandModel } from 'ui/redux/modules/models';
 import ModelList from 'ui/containers/ModelList';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import styles from 'ui/containers/Users/users.css';
 import { routeNodeSelector } from 'redux-router5';
+import SiteUserItem from './SiteUserItem';
 
 const schema = 'user';
 const UserList = compose(

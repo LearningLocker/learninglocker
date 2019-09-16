@@ -13,14 +13,14 @@ const renderPage = (routeName) => {
 
   if (testRoute('admin.users')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/SiteUsers')
+      loader: System.import('ui/pages/SiteUsersPage')
     }));
   }
 
 
   if (testRoute('admin.organisations')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/SiteOrgs')
+      loader: System.import('ui/pages/SiteOrgsPage')
     }));
   }
 };
@@ -42,7 +42,7 @@ const render = ({ route }) => {
           }}>
           <AdminSideNav />
           <div className="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            { renderPage(name) }
+            {renderPage(name)}
           </div>
         </div>
       </AuthContainer>
