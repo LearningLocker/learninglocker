@@ -135,18 +135,18 @@ class ExportForm extends Component {
                 rawMode />
             </div>
           ) : [
-              <div className={`col-md-6 col-xs-12 ${styles.projectionInput}`} key="export-projection">
-                <ProjectionInput
-                  projection={activeProjection}
-                  onChange={this.onChangeProjection} />
-              </div>,
-              <div className={`col-md-6 ${styles.exportOutputPreview}`} key="export-preview">
-                <ExportOutputPreview
-                  filter={pipelines.getIn([activeIndex, 0, '$match'], new Map())}
-                  project={activeProjection}
-                  className={styles.rightPane} />
-              </div>
-            ]}
+            <div className={`col-md-6 col-xs-12 ${styles.projectionInput}`} key="export-projection">
+              <ProjectionInput
+                projection={activeProjection}
+                onChange={this.onChangeProjection} />
+            </div>,
+            <div className={`col-md-6 ${styles.exportOutputPreview}`} key="export-preview">
+              <ExportOutputPreview
+                filter={pipelines.getIn([activeIndex, 0, '$match'], new Map())}
+                project={activeProjection}
+                className={styles.rightPane} />
+            </div>
+          ]}
         </div>
         <button className="btn btn-default" onClick={this.toggleRaw}><i className="ion ion-code" /></button>
         {this.renderDownloadButton()}

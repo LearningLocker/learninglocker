@@ -9,15 +9,14 @@ import { List } from 'immutable';
 import moment from 'moment';
 import { formatUrl } from 'ui/utils/LLApiClient';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
-import InitialUploadForm from './stages/InitialUpload';
-import ConfigureUpload from './stages/ConfigureUpload';
-
 import {
   STAGE_UPLOAD,
   STAGE_CONFIGURE_FIELDS,
   STAGE_IMPORTED,
   STAGE_PROCESSING
 } from 'lib/constants/personasImport';
+import ConfigureUpload from './stages/ConfigureUpload';
+import InitialUploadForm from './stages/InitialUpload';
 
 const schema = 'personasImport';
 
