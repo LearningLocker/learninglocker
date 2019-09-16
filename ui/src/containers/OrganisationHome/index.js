@@ -73,7 +73,7 @@ const renderPage = (routeName) => {
 
   if (testRoute('organisation.settings.suborgs')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/SubOrgs')
+      loader: System.import('ui/pages/SettingsOrganisationsPage')
     }));
   }
 

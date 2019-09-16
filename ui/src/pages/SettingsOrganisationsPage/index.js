@@ -23,7 +23,7 @@ const OrgList = compose(
   withModels
 )(ModelList);
 
-class SubOrgs extends Component {
+class SettingsOrganisationsPage extends Component {
   static propTypes = {
     userId: PropTypes.string,
     organisationId: PropTypes.string,
@@ -54,11 +54,11 @@ class SubOrgs extends Component {
       <div>
         <header id="topbar">
           <div className="heading heading-light">
-            { canCreateOrg && <span className="pull-right open_panel_btn">
+            {canCreateOrg && <span className="pull-right open_panel_btn">
               <button className="btn btn-primary btn-sm" ref={(ref) => { this.addButton = ref; }} onClick={this.onClickAdd}>
                 <i className="ion ion-plus" /> Add new
               </button>
-            </span> }
+            </span>}
             <span className="pull-right open_panel_btn" style={{ width: '25%' }}>
               <SearchBox schema={schema} />
             </span>
@@ -88,4 +88,4 @@ export default connect((state) => {
     activeScopes: currentScopesSelector(state),
     RESTRICT_CREATE_ORGANISATION: getAppDataSelector('RESTRICT_CREATE_ORGANISATION')(state)
   };
-}, { addModel })(SubOrgs);
+}, { addModel })(SettingsOrganisationsPage);
