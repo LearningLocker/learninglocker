@@ -79,7 +79,7 @@ const renderPage = (routeName) => {
 
   if (testRoute('organisation.settings.clients')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/Clients')
+      loader: System.import('ui/pages/SettingsClientsPage')
     }));
   }
 

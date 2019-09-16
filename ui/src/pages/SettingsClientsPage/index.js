@@ -10,7 +10,7 @@ import { loggedInUserId } from 'ui/redux/modules/auth';
 import getRouteUrl from 'ui/utils/getRouteUrl';
 import SearchBox from 'ui/containers/SearchBox';
 import ModelList from 'ui/containers/ModelList';
-import ClientForm from 'ui/containers/ClientForm';
+import ClientForm from './ClientForm';
 
 const schema = 'client';
 const ClientList = compose(
@@ -70,7 +70,7 @@ class Clients extends Component {
         <div className="row">
           <div className="col-md-12">
             <div className="alert alert-warning">
-              <strong>xAPI Endpoint:</strong> <a href={xAPIEndpoint}>{ xAPIEndpoint }</a>
+              <strong>xAPI Endpoint:</strong> <a href={xAPIEndpoint}>{xAPIEndpoint}</a>
             </div>
           </div>
         </div>
