@@ -33,7 +33,7 @@ const renderPage = (routeName) => {
 
   if (testRoute('organisation.data.statementForwarding')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/components/StatementForwarding')
+      loader: System.import('ui/pages/DataStatementForwardingPage')
     }));
   }
 
