@@ -41,13 +41,13 @@ const renderPage = (routeName) => {
 
   if (testRoute('organisation.people.imports')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/Personas/PersonasImports')
+      loader: System.import('ui/pages/PeopleImportPage')
     }));
   }
 
   if (testRoute('organisation.people.manage')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/Personas/PersonaManage')
+      loader: System.import('ui/pages/PeopleManagePage')
     }));
   }
 

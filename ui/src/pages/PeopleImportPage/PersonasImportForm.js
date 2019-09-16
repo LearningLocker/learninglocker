@@ -5,12 +5,12 @@ import {
   withModel,
   withPolling
 } from 'ui/utils/hocs';
-import InitialUploadForm from 'ui/containers/Personas/PersonasImports/stages/InitialUpload';
-import ConfigureUpload from 'ui/containers/Personas/PersonasImports/stages/ConfigureUpload';
 import { List } from 'immutable';
-import { formatUrl } from 'ui/utils/LLApiClient';
 import moment from 'moment';
+import { formatUrl } from 'ui/utils/LLApiClient';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
+import InitialUploadForm from './stages/InitialUpload';
+import ConfigureUpload from './stages/ConfigureUpload';
 
 import {
   STAGE_UPLOAD,
