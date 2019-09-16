@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import { withProps, compose } from 'recompose';
 import Spinner from 'ui/components/Spinner';
-import DownloadListItem from 'ui/components/DownloadListItem';
 import { withSchema } from 'ui/utils/hocs';
+import DownloadListItem from './DownloadListItem';
 
 class ExportDownloadManager extends Component {
   static propTypes = {
@@ -21,9 +21,9 @@ class ExportDownloadManager extends Component {
 
     return (
       <div>
-        { models.map((model, id) =>
+        {models.map((model, id) =>
           <DownloadListItem key={id} model={model} deleteModel={this.props.deleteModel} />
-        ).valueSeq() }
+        ).valueSeq()}
       </div>
     );
   }

@@ -14,14 +14,14 @@ import {
 } from 'ui/redux/selectors';
 import { updateStatementQuery } from 'ui/redux/actions';
 import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
-import Statement from 'ui/components/Statement';
 import QueryBuilder from 'ui/containers/QueryBuilder';
-import StatementForm from 'ui/containers/StatementForm';
 import ModelList from 'ui/containers/ModelList';
-import ExportManager from 'ui/containers/ExportManager';
 import { addTokenToQuery } from 'ui/utils/queries';
 import { valueToCriteria } from 'ui/redux/modules/queryBuilder';
 import { withModels } from 'ui/utils/hocs';
+import Statement from './Statement';
+import StatementForm from './StatementForm';
+import ExportManager from './ExportManager';
 
 import styles from './styles.css';
 
@@ -112,7 +112,7 @@ class Source extends PureComponent {
         <VelocityTransitionGroup
           component="div"
           leave={{ animation: 'slideUp', duration: 350 }}>
-          { this.state.isExporting &&
+          {this.state.isExporting &&
             <div className="row">
               <div className="col-md-12">
                 <div className="panel panel-default">

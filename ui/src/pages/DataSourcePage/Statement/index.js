@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import moment from 'moment';
-import AutoUpdate from 'ui/components/AutoUpdate';
-import { displayActor, displayVerb, displayActivity } from '../../utils/xapi';
+import { displayActor, displayVerb, displayActivity } from '../../../utils/xapi';
+import AutoUpdate from './AutoUpdate';
 import styles from './styles.css';
 
 class Statement extends Component {

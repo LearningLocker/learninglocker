@@ -5,10 +5,10 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { withProps, withState, compose } from 'recompose';
 import { connect } from 'react-redux';
 import { getDefaultProjectionFromType } from 'ui/redux/modules/exports';
-import ProjectionInput from 'ui/containers/ProjectionInput';
-import ExportOutputPreview from 'ui/containers/ExportOutputPreview';
 import { withModel } from 'ui/utils/hocs';
 import { downloadExport } from 'ui/redux/actions';
+import ProjectionInput from './ProjectionInput';
+import ExportOutputPreview from './ExportOutputPreview';
 import styles from './styles.css';
 
 const downloadRequestStates = {
@@ -68,12 +68,12 @@ class ExportForm extends Component {
   postDownloadExport = () => {
     this.props.setDownloadRequestStates(downloadRequestStates.waiting);
     this.props.downloadExport({ exportId: this.props.id, pipelines: [this.getCompletePipeline()] })
-    .then(() => {
-      this.props.setDownloadRequestStates(downloadRequestStates.inqueue);
-      setTimeout(() => {
-        this.props.setDownloadRequestStates(downloadRequestStates.default);
-      }, 3000);
-    });
+      .then(() => {
+        this.props.setDownloadRequestStates(downloadRequestStates.inqueue);
+        setTimeout(() => {
+          this.props.setDownloadRequestStates(downloadRequestStates.default);
+        }, 3000);
+      });
   }
 
   getActiveProjection = () => {
@@ -135,21 +135,21 @@ class ExportForm extends Component {
                 rawMode />
             </div>
           ) : [
-            <div className={`col-md-6 col-xs-12 ${styles.projectionInput}`} key="export-projection">
-              <ProjectionInput
-                projection={activeProjection}
-                onChange={this.onChangeProjection} />
-            </div>,
-            <div className={`col-md-6 ${styles.exportOutputPreview}`} key="export-preview">
-              <ExportOutputPreview
-                filter={pipelines.getIn([activeIndex, 0, '$match'], new Map())}
-                project={activeProjection}
-                className={styles.rightPane} />
-            </div>
-          ]}
+              <div className={`col-md-6 col-xs-12 ${styles.projectionInput}`} key="export-projection">
+                <ProjectionInput
+                  projection={activeProjection}
+                  onChange={this.onChangeProjection} />
+              </div>,
+              <div className={`col-md-6 ${styles.exportOutputPreview}`} key="export-preview">
+                <ExportOutputPreview
+                  filter={pipelines.getIn([activeIndex, 0, '$match'], new Map())}
+                  project={activeProjection}
+                  className={styles.rightPane} />
+              </div>
+            ]}
         </div>
         <button className="btn btn-default" onClick={this.toggleRaw}><i className="ion ion-code" /></button>
-        { this.renderDownloadButton() }
+        {this.renderDownloadButton()}
       </div>
     );
   }

@@ -27,7 +27,7 @@ const renderPage = (routeName) => {
 
   if (testRoute('organisation.data.source')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/Source')
+      loader: System.import('ui/pages/DataSourcePage')
     }));
   }
 

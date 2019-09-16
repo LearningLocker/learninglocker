@@ -6,13 +6,13 @@ import Tabs from 'ui/components/Material/Tabs';
 import { Tab } from 'react-toolbox/lib/tabs';
 import { connect } from 'react-redux';
 import { compose, withState, withHandlers, setPropTypes, withProps } from 'recompose';
-import AddModelPrompt from 'ui/components/AddModelPrompt';
-import ExportForm from 'ui/components/ExportForm';
 import ModelAutoComplete from 'ui/containers/ModelAutoComplete';
-import ExportDownloadManager from 'ui/containers/ExportDownloadManager';
 import Spinner from 'ui/components/Spinner';
 import { loggedInUserId } from 'ui/redux/modules/auth';
 import { withSchema } from 'ui/utils/hocs';
+import AddModelPrompt from './AddModelPrompt';
+import ExportDownloadManager from './ExportDownloadManager';
+import ExportForm from './ExportForm';
 import styles from './styles.css';
 
 const schema = 'export';
@@ -103,16 +103,16 @@ const render = ({
   activeTab,
   setActiveTab,
 }) => (
-  <Tabs index={activeTab} onChange={setActiveTab}>
-    <Tab label="Manage">
-      <div>
-        { renderExports({ isLoading, models, pipelines, selectedExportId, setSelectedExport, onAddExport }) }
-      </div>
-    </Tab>
-    <Tab label="Downloads">
-      <ExportDownloadManager />
-    </Tab>
-  </Tabs>
-);
+    <Tabs index={activeTab} onChange={setActiveTab}>
+      <Tab label="Manage">
+        <div>
+          {renderExports({ isLoading, models, pipelines, selectedExportId, setSelectedExport, onAddExport })}
+        </div>
+      </Tab>
+      <Tab label="Downloads">
+        <ExportDownloadManager />
+      </Tab>
+    </Tabs>
+  );
 
 export default enhance(render);
