@@ -16,7 +16,7 @@ const renderPage = (routeName) => {
 
   if (testRoute('login')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/Login')
+      loader: System.import('ui/pages/LoginPage')
     }));
   }
   if (testRoute('home')) {
