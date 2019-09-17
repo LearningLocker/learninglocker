@@ -96,13 +96,13 @@ class _LLApiClient {
     }
   });
 
-  salesEmailEnquiry = ({ fullName, company, email, mailingList, privacyPolicy }) => post({
-    url: formatUrl(routes.SALES_EMAIL_ENQUIRY),
+  requestAppAccess = ({ privacyPolicy, appName }) => post({
+    url: formatUrl(routes.REQUEST_APP_ACCESS),
     headers: {
       Authorization: `Bearer ${this.getToken()}`,
       ContentType: 'application/json'
     },
-    body: { fullName, company, email, mailingList, privacyPolicy },
+    body: { privacyPolicy, appName },
   });
 
   getConnection = ({ schema, filter, sort, cursor, first, last }) => {

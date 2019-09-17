@@ -35,7 +35,7 @@ import generateIndexesController from 'api/controllers/IndexesController';
 import ImportPersonasController from 'api/controllers/ImportPersonasController';
 import StatementMetadataController from 'api/controllers/StatementMetadataController';
 import BatchDeleteController from 'api/controllers/BatchDeleteController';
-import SalesEmailEnquiryController from 'api/controllers/SalesEmailEnquiryController';
+import RequestAppAccessController from 'api/controllers/RequestAppAccessController';
 
 // REST
 import LRS from 'lib/models/lrs';
@@ -118,8 +118,9 @@ router.post(
 );
 
 router.post(
-  routes.SALES_EMAIL_ENQUIRY,
-  SalesEmailEnquiryController.sendEmail,
+  routes.REQUEST_APP_ACCESS,
+  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  RequestAppAccessController.requestAppAccess,
 );
 
 /**

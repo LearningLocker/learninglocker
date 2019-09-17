@@ -1,50 +1,30 @@
 import React, { useState } from 'react';
 import Checkbox from 'ui/components/Material/Checkbox';
-import { salesEmailEnquiry } from 'ui/redux/modules/salesEmailEnquiry';
+import { requestAppAccess } from 'ui/redux/modules/requestAppAccess';
 import { connect } from 'react-redux';
 
-const Demo = ({ salesEmailEnquiryAction }) => {
-  const [fullName, setFullName] = useState('');
-  const [company, setCompany] = useState('');
-  const [email, setEmail] = useState('');
-  const [privacyPolicy, setPrivacyPolicy] = useState(true);
-  const [mailingList, setMailingList] = useState(false);
-  const [userMessage, setUserMessage] = useState('');
 
-  const signUpToMailingList = (signUpEmail) => {
-    // Hubspot signup
-  };
+const Demo = ({ requestAppAccessAction }) => {
+  const [privacyPolicy, setPrivacyPolicy] = useState(true);
+  const [userMessage, setUserMessage] = useState('');
+  const [formDisplay, setFormDisplay] = useState('initial');
+
+  const appName = 'Sales Demo App';
 
   const handleSubmit = (event) => {
     if (event) event.preventDefault();
-    if (email !== '' && privacyPolicy) {
-      salesEmailEnquiryAction({ fullName, company, email, mailingList, privacyPolicy });
-      setUserMessage('Thank you, we\'ll be in touch');
-    }
-    if (mailingList) {
-      signUpToMailingList(email);
-    }
-  };
-
-  const handleFullNameChange = (event) => {
-    setFullName(event.target.value);
-  };
-
-  const handleCompanyChange = (event) => {
-    setCompany(event.target.value);
-  };
-
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
+    requestAppAccessAction({ privacyPolicy, appName });
+    setUserMessage('Thank you, we\'ll be in touch');
+    setFormDisplay('none');
   };
 
   const handlePrivacyPolicyChange = (event) => {
-    event === false ? setUserMessage('Please agree to the privacy policy') : setUserMessage('');
+    if (event === false) {
+      setUserMessage('Please agree to the privacy policy');
+    } else {
+      setUserMessage('');
+    }
     setPrivacyPolicy(event);
-  };
-
-  const handleMailingListChange = (event) => {
-    setMailingList(event);
   };
 
   const privacyPolicyLabel = (
@@ -55,68 +35,37 @@ const Demo = ({ salesEmailEnquiryAction }) => {
     <div>
       <header id="topbar">
         <div className="heading heading-light">
-          Get in touch to find out how to access this app
+          Sales Demo App
         </div>
       </header>
-      <div className="box">
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="fullName">Full name</label>
-            <input
-              id="fullName"
-              className="form-control"
-              placeholder="Your first name"
-              type="text"
-              value={fullName}
-              onChange={handleFullNameChange} />
+
+      <div className="panel panel-default">
+        <div className="panel-heading">
+          <div className="panel-title">
+            Get in touch to find out how to access this app
           </div>
-          <div className="form-group">
-            <label htmlFor="companyInput">Company</label>
-            <input
-              id="company"
-              className="form-control"
-              placeholder="Your company"
-              type="text"
-              value={company}
-              onChange={handleCompanyChange} />
-          </div>
-          <div className="form-group">
-            <label htmlFor="emailInput">*Email</label>
-            <input
-              id="email"
-              className="form-control"
-              placeholder="Your email address"
-              type="email"
-              value={email}
-              onChange={handleEmailChange}
-              required />
-          </div>
-          <div className="form-group">
-            <Checkbox
-              label={privacyPolicyLabel}
-              id="privacyPolicy"
-              checked={privacyPolicy}
-              onChange={handlePrivacyPolicyChange} />
-          </div>
-          <div className="form-group">
-            <Checkbox
-              id="mailingList"
-              label="Please subscribe me to the 'Friends of HT2 Labs' Mailing List"
-              checked={mailingList}
-              onChange={handleMailingListChange} />
-          </div>
-          <div className="form-group">
-            <button
-              className="btn btn-primary btn-sm"
-              onClick={handleSubmit}>
-              Submit
-          </button>
-          </div>
+        </div>
+        <div className="box">
+          <form onSubmit={handleSubmit} style={{ display: formDisplay }}>
+            <div className="form-group">
+              <Checkbox
+                label={privacyPolicyLabel}
+                id="privacyPolicy"
+                checked={privacyPolicy}
+                onChange={handlePrivacyPolicyChange} />
+            </div>
+            <div className="form-group">
+              <input
+                disabled={!privacyPolicy}
+                type="submit"
+                className="btn btn-primary btn-sm" />
+            </div>
+          </form>
           <div>{userMessage}</div>
-        </form>
+        </div>
       </div>
     </div>
   );
 };
 
-export default connect(state => ({}), { salesEmailEnquiryAction: salesEmailEnquiry })(Demo);
+export default connect(() => ({}), { requestAppAccessAction: requestAppAccess })(Demo);
