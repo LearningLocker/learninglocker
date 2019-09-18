@@ -67,6 +67,18 @@ export const aggregationWsResultsSelector = (pipeline, timeInterval) => {
   return out;
 };
 
+export const aggregationWsHasResultSelector = (
+  pipeline,
+  timeInterval
+) => createSelector(
+  aggregationSelector,
+  aggregations => OrderedMap.isOrderedMap(aggregations.getIn([new Map({
+    pipeline,
+    timeIntervalSinceToday: get(timeInterval, 'timeIntervalSinceToday'),
+    timeIntervalUnits: get(timeInterval, 'timeIntervalUnits')
+  }), 'result']))
+);
+
 /*
  * Sagas
  */

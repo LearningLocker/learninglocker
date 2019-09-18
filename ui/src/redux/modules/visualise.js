@@ -10,7 +10,8 @@ import {
 } from 'ui/redux/modules/aggregation';
 import {
   fetchAggregation,
-  aggregationWsResultsSelector
+  aggregationWsResultsSelector,
+  aggregationWsHasResultSelector
 } from 'ui/redux/modules/aggregationWs';
 import {
   shouldFetchSelector,
@@ -407,13 +408,18 @@ export const visualisationWsResultsSelector = (visualisationId, filter) => creat
 export const visualisationAllAggregationsHaveResultSelector = visualisationId => createSelector([
   identity,
 ], (state) => {
-  const series = visualisationPipelinesSelector(visualisationId)(state);
+  const { series, timeIntervalSinceToday, timeIntervalUnits } = visualisationWsPipelinesSelector(visualisationId)(state);
+  // const series = visualisationPipelinesSelector(visualisationId)(state);
   return series.reduce(
-    (acc1, pipelines) =>
-      acc1 && pipelines.reduce(
-        (acc2, pipeline) => acc2 && aggregationHasResultSelector(pipeline)(state),
+    (acc1, pipelines) => {
+      const out = acc1 && pipelines.reduce(
+        (acc2, pipeline) => acc2 && aggregationWsHasResultSelector(pipeline, {
+          timeIntervalSinceToday, timeIntervalUnits
+        })(state),
         true
-      ),
+      );
+      return out;
+    },
     true
   );
 });
