@@ -124,8 +124,8 @@ const getSubtractPipeline = ({
     {
       $match: {
         timestamp: {
-          $gte: moment(model.fromTimestamp).toDate(),
-          $lt: fromTimestamp.toDate()
+          $gte: fromTimestamp.toDate(),
+          $lt: moment(model.fromTimestamp).toDate()
         }
       }
     },
@@ -228,7 +228,7 @@ const aggregationProcessor = async ({
   const fromTimestamp = getFromTimestamp({ model, now });
   const toTimestamp = getAddToTimestamp({ model, now });
 
-  await delay(2000); // DEBUG ONLY, remove
+  // await delay(2000); // DEBUG ONLY, remove
 
   const newModel = await AggregationProcessor.findOneAndUpdate({
     _id: aggregationProcessorId

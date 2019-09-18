@@ -12,7 +12,7 @@ import aggregationProcessor, { combine } from './aggregationProcessor';
 const objectId = mongoose.Types.ObjectId;
 
 describe('aggregationProcessor', () => {
-  describe.only('unionFirst', () => {
+  describe('unionFirst', () => {
     it('combine', () => {
       const addInput = [{
         _id: 1,
@@ -137,7 +137,7 @@ describe('aggregationProcessor', () => {
 
     expect(done).to.equal(true);
     expect(result[0].count).to.equal(1);
-    expect(result[0].model).to.equal((moment().toDate().getDay() + 1).toString());
+    expect(result[0].model).to.equal((moment().toDate().getDay() + 1));
   });
 
   it('Should add to aggrigation for new statements', async () => {
@@ -178,7 +178,7 @@ describe('aggregationProcessor', () => {
 
     expect(doneCount).to.equal(2);
     expect(result[0].count).to.equal(2);
-    expect(result[0].model).to.equal((moment().toDate().getDay() + 1).toString());
+    expect(result[0].model).to.equal((moment().toDate().getDay() + 1));
   });
 
   it('should subtract results outside the window', async () => {
@@ -208,7 +208,7 @@ describe('aggregationProcessor', () => {
     await AggregationProcessor.findOneAndUpdate({
       _id: aggregationProcessorId
     }, {
-      fromTimestamp: moment().toDate()
+      fromTimestamp: moment().toDate(),
     }, {
       upsert: false,
       new: true
@@ -231,8 +231,8 @@ describe('aggregationProcessor', () => {
 
     expect(doneCount).to.equal(2);
 
-    expect(result[0].count).to.equal(0);
-    expect(result[0].model).to.equal((moment().toDate().getDay() + 1).toString());
-    expect(pulbishQueueCalls).to.equal(1);
+    expect(result[0].count).to.equal(1); // 1 becouse it'll be added again, due to 'now'.
+    expect(result[0].model).to.equal((moment().toDate().getDay() + 1));
+    expect(pulbishQueueCalls).to.equal(0);
   });
 });
