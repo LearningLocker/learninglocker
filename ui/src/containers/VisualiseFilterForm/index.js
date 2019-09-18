@@ -88,15 +88,6 @@ class VisualiseFilterForm extends Component {
     });
   }
 
-  onChangeTimezone = (value) => {
-    this.props.updateModel({
-      schema: 'visualisation',
-      id: this.props.model.get('_id'),
-      path: ['timezone'],
-      value
-    });
-  }
-
   renderTabbedQueryBuilder = (labelled = true, defaults = {}, text = 'Build your query') => {
     const queries = this.props.model.get('filters', new List());
 
@@ -117,7 +108,6 @@ class VisualiseFilterForm extends Component {
           onChangeLabel={this.onChangeLabel}
           onDeleteQuery={this.onDeleteQuery}
           onChangeColor={this.onChangeColor}
-          onChangeTimezone={this.onChangeTimezone}
           defaults={fromJS(defaults)} />
       </div>
     );
