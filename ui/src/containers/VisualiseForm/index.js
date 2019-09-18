@@ -2,6 +2,10 @@ import React from 'react';
 import {
   LEADERBOARD,
   STATEMENTS,
+  COUNTER,
+  XVSY,
+  FREQUENCY,
+  PIE,
   TEMPLATE_ACTIVITY_OVER_TIME,
   TEMPLATE_LAST_7_DAYS_STATEMENTS,
   TEMPLATE_MOST_ACTIVE_PEOPLE,
@@ -17,6 +21,10 @@ import {
 } from 'lib/constants/visualise';
 import CustomBarChart from 'ui/containers/Visualisations/CustomBarChart';
 import CustomColumnChart from 'ui/containers/Visualisations/CustomColumnChart';
+import CustomCounter from 'ui/containers/Visualisations/CustomCounter';
+import CustomXvsYChart from 'ui/containers/Visualisations/CustomXvsYChart';
+import CustomLineChart from 'ui/containers/Visualisations/CustomLineChart';
+import CustomPieChart from 'ui/containers/Visualisations/CustomPieChart';
 import TemplateActivityOverTime from 'ui/containers/Visualisations/TemplateActivityOverTime';
 import TemplateLast7DaysStatements from 'ui/containers/Visualisations/TemplateLast7DaysStatements';
 import TemplateMostActivePeople from 'ui/containers/Visualisations/TemplateMostActivePeople';
@@ -29,7 +37,6 @@ import TemplateCuratrLearnerInteractionsByDateAndVerb from 'ui/containers/Visual
 import TemplateCuratrUserEngagementLeaderboard from 'ui/containers/Visualisations/TemplateCuratrUserEngagementLeaderboard';
 import TemplateCuratrProportionOfSocialInteractions from 'ui/containers/Visualisations/TemplateCuratrProportionOfSocialInteractions';
 import TemplateCuratrActivitiesWithMostComments from 'ui/containers/Visualisations/TemplateCuratrActivitiesWithMostComments';
-import StatementsForm from './StatementsForm';
 import NewVisualisation from './NewVisualisation';
 
 const VisualiseForm = ({ model, orgTimezone }) => {
@@ -39,6 +46,14 @@ const VisualiseForm = ({ model, orgTimezone }) => {
         return <CustomBarChart model={model} orgTimezone={orgTimezone} />;
       case STATEMENTS:
         return <CustomColumnChart model={model} orgTimezone={orgTimezone} />;
+      case COUNTER:
+        return <CustomCounter model={model} orgTimezone={orgTimezone} />;
+      case XVSY:
+        return <CustomXvsYChart model={model} orgTimezone={orgTimezone} />;
+      case FREQUENCY:
+        return <CustomLineChart model={model} orgTimezone={orgTimezone} />;
+      case PIE:
+        return <CustomPieChart model={model} orgTimezone={orgTimezone} />;
       case TEMPLATE_ACTIVITY_OVER_TIME:
         return <TemplateActivityOverTime model={model} orgTimezone={orgTimezone} />;
       case TEMPLATE_LAST_7_DAYS_STATEMENTS:
@@ -64,7 +79,8 @@ const VisualiseForm = ({ model, orgTimezone }) => {
       case TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS:
         return <TemplateCuratrActivitiesWithMostComments model={model} orgTimezone={orgTimezone} />;
       default:
-        return <StatementsForm model={model} orgTimezone={orgTimezone} />;
+        console.error(`VisualiseForm/index.js does not support type ${model.get('type')}`)
+        return `type "${model.get('type')}" is not supported.`;
     }
   }
 

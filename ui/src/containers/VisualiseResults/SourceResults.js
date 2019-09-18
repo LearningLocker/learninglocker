@@ -1,9 +1,8 @@
 import React from 'react';
-import { compose } from 'recompose';
 import { Map, OrderedMap } from 'immutable';
-import isString from 'lodash/isString';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import lodash from 'lodash';
 import {
+  RESPONSE_ROWS_LIMIT,
   LEADERBOARD,
   XVSY,
   FREQUENCY,
@@ -11,11 +10,12 @@ import {
   TEMPLATE_MOST_ACTIVE_PEOPLE,
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
+  TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT,
 } from 'lib/constants/visualise';
 import NoData from 'ui/components/Graphs/NoData';
+import ScrollableTable from 'ui/components/ScrollableTable';
 import { withStatementsVisualisation } from 'ui/utils/hocs';
 import { displayVerb, displayActivity } from 'ui/utils/xapi';
-import styles from './styles.css';
 
 const moreThanOneSeries = tData => tData.first() !== undefined && tData.first().size > 1;
 
@@ -57,7 +57,7 @@ const countSubColumns = (labels, tableData) =>
   );
 
 const formatKeyToFriendlyString = (key) => {
-  if (isString(key)) return key;
+  if (lodash.isString(key)) return key;
 
   if (Map.isMap(key)) {
     if (key.get('objectType')) {
@@ -80,6 +80,7 @@ const getGroupAxisLabel = (visualisation) => {
   switch (visualisation.get('type')) {
     // Correlation Chart type
     case XVSY:
+    case TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT:
       return visualisation.getIn(['axesgroup', 'searchString']) || 'Group';
     // Bar Chart type
     case LEADERBOARD:
@@ -100,6 +101,7 @@ const getValueAxisLabel = (index, visualisation) => {
   switch (visualisation.get('type')) {
     // Correlation Chart type
     case XVSY:
+    case TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT:
       if (index === 0) {
         return visualisation.get('axesxLabel') || visualisation.getIn(['axesxValue', 'searchString']) || 'X Axis';
       }
@@ -115,16 +117,82 @@ const getValueAxisLabel = (index, visualisation) => {
   }
 };
 
-const formatNumber = (selectedAxes) => {
-  const count = selectedAxes.get('count');
+/**
+ *
+ * @param {any} count
+ * @returns {string}
+ */
+const formatNumber = (count) => {
   if (typeof count !== 'number') {
     return '';
   }
   if (count % 1 !== 0) {
     return count.toFixed(2);
   }
-  return count;
+  return count.toString();
 };
+
+/**
+ * @param {immutable.List<immutable.List<immutable.Map<T, immutable.Map<string, any>>>>} allResults
+ * @returns {immutable.List<immutable.List<immutable.Map<T, number|null>>>}
+ */
+export const calcStats = allResults =>
+  allResults.map(seriesResult =>
+    seriesResult.map((axisResult) => {
+      /**
+       * The format of `axisResult`'s values is expected to be
+       *
+       * immutable.Map({
+       *   _id: any,
+       *   count: number|null,
+       *   model: any,
+       * })
+       */
+      if (axisResult.size === 0) {
+        return new Map({
+          total: null,
+          avg: null,
+          min: null,
+          max: null,
+          rowCount: 0,
+        });
+      }
+      const total = axisResult.reduce((acc, r) => acc + r.get('count', 0), 0);
+      return new Map({
+        total,
+        avg: total / axisResult.size,
+        min: axisResult.minBy(r => r.get('count')).get('count', null),
+        max: axisResult.maxBy(r => r.get('count')).get('count', null),
+        rowCount: axisResult.size,
+      });
+    })
+  );
+
+const keyLabels = [
+  { key: 'total', label: 'Total' },
+  { key: 'avg', label: 'Average' },
+  { key: 'max', label: 'Max' },
+  { key: 'min', label: 'Min' },
+  { key: 'rowCount', label: 'Row Count' },
+];
+
+const renderStatsTableRows = ({
+  stats,
+  subColumnsCount,
+}) => keyLabels.map(({ key, label }) => (
+  <tr key={key}>
+    <th>{label}</th>
+    {
+      stats.toArray().map((_, sIndex) =>
+        [...Array(subColumnsCount).keys()].map(i =>
+          <th key={`${sIndex}-${i}`}>
+            {formatNumber(stats.getIn([sIndex, i, key]))}
+          </th>
+        )
+      ).flat()
+    }
+  </tr>
+));
 
 const SourceResult = ({
   getFormattedResults,
@@ -141,50 +209,85 @@ const SourceResult = ({
     return <NoData />;
   }
 
+  const showStats = visualisation.get('showStats', true);
+  const showStatsAtTop = showStats && !visualisation.get('statsAtBottom', true);
+  const statsAtBottom = showStats && visualisation.get('statsAtBottom', true);
+
+  const stats = calcStats(formattedResults);
+
+  // If result rows is RESPONSE_ROWS_LIMIT, the result might be limited.
+  const mightBeLimited = stats.some(s => s.some(a => a.get('rowCount') === RESPONSE_ROWS_LIMIT));
+
   return (
-    <div className={styles.sourceResultsContainer}>
-      <table className="table table-bordered table-striped">
-        <tbody>
-          {moreThanOneSeries(tableData) && <tr>
-            <th />
-            {
-              tLabels.map(tLabel => (
-                <th key={tLabel} colSpan={subColumnsCount}>{tLabel}</th>
-              )).valueSeq()
-            }
-          </tr>}
+    <div style={{ height: '100%' }}>
+      <div style={{ height: mightBeLimited ? 'calc(100% - 20px)' : '100%' }}>
+        <ScrollableTable>
+          <thead>
+            {moreThanOneSeries(tableData) && (
+              <tr>
+                <th />
+                {
+                  tLabels.toArray().map((tLabel, i) => (
+                    <th
+                      key={i}
+                      colSpan={subColumnsCount}>
+                      {tLabel}
+                    </th>
+                  ))
+                }
+              </tr>
+            )}
 
-          <tr>
-            <th>{getGroupAxisLabel(visualisation)}</th>
-            {
-              tLabels.map(tLabel =>
-                [...Array(subColumnsCount).keys()].map(k =>
-                  <th key={`${tLabel}-${k}`}>{getValueAxisLabel(k, visualisation)}</th>
-                )
-              ).valueSeq()
-            }
-          </tr>
-
-          {tableData.map((row, key) => (
-            <tr key={key}>
-              <td title={key}>{formatKeyToFriendlyString(row.get('model', key))}</td>
+            <tr>
+              <th>{getGroupAxisLabel(visualisation)}</th>
               {
-                tLabels.map(tLabel =>
-                  [...Array(subColumnsCount).keys()].map((k) => {
-                    const v = row.getIn(['rowData', tLabel, k], new Map({ count: null }));
-                    return <td key={`${tLabel}-${k}`}>{formatNumber(v)}</td>;
-                  })
-                ).valueSeq()
+                tLabels.toArray().map((_, i) =>
+                  [...Array(subColumnsCount).keys()].map(j =>
+                    <th
+                      key={`${i}-${j}`}>
+                      {getValueAxisLabel(j, visualisation)}
+                    </th>
+                  )
+                ).flat()
               }
             </tr>
-          )).valueSeq()}
-        </tbody>
-      </table>
+
+            {showStatsAtTop && (
+              renderStatsTableRows({ stats, subColumnsCount })
+            )}
+          </thead>
+
+          <tbody>
+            {tableData.toArray().map((row, key) => (
+              <tr key={key}>
+                <td title={key}>{formatKeyToFriendlyString(row.get('model', key))}</td>
+                {
+                  tLabels.toArray().map((tLabel, i) =>
+                    [...Array(subColumnsCount).keys()].map((j) => {
+                      const v = row.getIn(['rowData', tLabel, j], new Map({ count: null }));
+                      return <td key={`${i}-${j}`}>{formatNumber(v.get('count'))}</td>;
+                    })
+                  ).flat()
+                }
+              </tr>
+            ))}
+          </tbody>
+
+          {statsAtBottom && (
+            <tfoot>
+              {renderStatsTableRows({ stats, subColumnsCount })}
+            </tfoot>
+          )}
+        </ScrollableTable>
+      </div>
+
+      {mightBeLimited && (
+        <div style={{ marginTop: '8px' }}>
+          <span>Totals calculated from the first {RESPONSE_ROWS_LIMIT.toLocaleString('en')} records</span>
+        </div>
+      )}
     </div>
   );
 };
 
-export default compose(
-  withStatementsVisualisation,
-  withStyles(styles),
-)(SourceResult);
+export default withStatementsVisualisation(SourceResult);

@@ -3,19 +3,15 @@ import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import { Tab } from 'react-toolbox/lib/tabs';
 import Tabs from 'ui/components/Material/Tabs';
-import ColumnAxesEditor from 'ui/containers/VisualiseForm/StatementsForm/AxesEditor/ColumnAxesEditor';
+import CounterAxesEditor from 'ui/containers/VisualiseForm/StatementsForm/AxesEditor/CounterAxesEditor';
 import VisualiseFilterForm from 'ui/containers/VisualiseFilterForm';
-import AddQueryButton from '../components/AddQueryButton';
+import BenchmarkingEnabledSwitch from '../components/BenchmarkingEnabledSwitch';
 import DescriptionForm from '../components/DescriptionForm';
 import PreviewPeriodPicker from '../components/PreviewPeriodPicker';
-import StatsTopOrBottomSwitch from '../components/StatsTopOrBottomSwitch';
-import ShowStatsSwitch from '../components/ShowStatsSwitch';
-import SourceViewForm from '../components/SourceViewForm';
-import StackedSwitch from '../components/StackedSwitch';
 import TimezoneForm from '../components/TimezoneForm';
 import Viewer from './Viewer';
 
- /**
+/**
  * @param {immutable.Map} props.model - visualisation model
  * @param {string} props.orgTimezone
  * @param {(args: object) => void} props.updateModel
@@ -37,51 +33,6 @@ const Editor = ({
     });
   }, [id]);
 
-  const onClickAddQueryButton = useCallback(() => {
-    updateModel({
-      schema: 'visualisation',
-      id,
-      path: 'filters',
-      value: model.get('filters').push(new Map()),
-    });
-  }, [id, model.get('filters').hashCode()]);
-
-  const onChangeStacked = useCallback((stacked) => {
-    updateModel({
-      schema: 'visualisation',
-      id,
-      path: 'stacked',
-      value: stacked,
-    });
-  }, [id]);
-
-  const onChangeSourceView = useCallback((checked) => {
-    updateModel({
-      schema: 'visualisation',
-      id,
-      path: 'sourceView',
-      value: checked,
-    });
-  }, [id]);
-
-  const onChangeShowStats = useCallback((checked) => {
-    updateModel({
-      schema: 'visualisation',
-      id,
-      path: 'showStats',
-      value: checked,
-    });
-  }, [id]);
-
-  const onChangeStatsAtBottom = useCallback((checked) => {
-    updateModel({
-      schema: 'visualisation',
-      id,
-      path: 'statsAtBottom',
-      value: checked,
-    });
-  }, [id]);
-
   const onChangeTimezone = useCallback((timezone) => {
     updateModel({
       schema: 'visualisation',
@@ -100,6 +51,15 @@ const Editor = ({
     });
   }, [id]);
 
+  const onChangeBenchmarkingEnabled = useCallback((benchmarkingEnabled) => {
+    updateModel({
+      schema: 'visualisation',
+      id,
+      path: 'benchmarkingEnabled',
+      value: benchmarkingEnabled,
+    });
+  }, [id]);
+
   return (
     <div className="row">
       <div className="col-md-6 left-border">
@@ -111,41 +71,20 @@ const Editor = ({
 
           <Tabs index={tabIndex} onChange={setTabIndex}>
             <Tab key="axes" label="Axes">
-              <ColumnAxesEditor model={model} />
+              <CounterAxesEditor model={model} />
             </Tab>
 
             <Tab key="series" label="Series">
-              {model.get('filters').count() < 5 && (
-              <AddQueryButton
-                onClick={onClickAddQueryButton} />
-              )}
-
-              <StackedSwitch
-                visualisationId={id}
-                stacked={model.get('stacked', true)}
-                onChange={onChangeStacked} />
-
               <VisualiseFilterForm
                 model={model}
                 orgTimezone={orgTimezone} />
             </Tab>
 
             <Tab key="options" label="Options">
-              <SourceViewForm
-                sourceView={model.get('sourceView')}
-                onChange={onChangeSourceView} />
-
-              {model.get('sourceView') && (
-                <ShowStatsSwitch
-                  showStats={model.get('showStats')}
-                  onChange={onChangeShowStats} />
-              )}
-
-              {model.get('sourceView') && model.get('showStats') && (
-                <StatsTopOrBottomSwitch
-                  statsAtBottom={model.get('statsAtBottom')}
-                  onChange={onChangeStatsAtBottom} />
-              )}
+              <BenchmarkingEnabledSwitch
+                visualisationId={id}
+                benchmarkingEnabled={model.get('benchmarkingEnabled')}
+                onChange={onChangeBenchmarkingEnabled} />
 
               <TimezoneForm
                 visualisationId={id}
@@ -167,8 +106,7 @@ const Editor = ({
 
         <div style={{ height: '400px', paddingTop: 5 }}>
           <Viewer
-            visualisationId={id}
-            showSourceView={model.get('sourceView')} />
+            visualisationId={id} />
         </div>
       </div>
     </div>

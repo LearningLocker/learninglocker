@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import { Map, List, fromJS } from 'immutable';
 import uuid from 'uuid';
 import { compose, setPropTypes, withProps, withHandlers } from 'recompose';
-import { SITE_ADMIN, SITE_CAN_CREATE_ORG, SITE_SCOPES } from 'lib/constants/scopes';
-import { MANAGE_ALL_USERS, ALL } from 'lib/constants/orgScopes';
+import { SITE_ADMIN, SITE_CAN_CREATE_ORG, SITE_SCOPES, ALL } from 'lib/constants/scopes';
+import { MANAGE_ALL_USERS } from 'lib/constants/orgScopes';
 import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
 import { withSchema, withModel } from 'ui/utils/hocs';
 import QueryBuilder from 'ui/containers/QueryBuilder';
@@ -164,7 +164,7 @@ const enhance = compose(
           scopesSet.add(role) :
           scopesSet.delete(role)
         ).toList();
-        updateModel({ scopes: newScopes });
+        updateModel({ path: 'scopes', value: newScopes });
       },
     handleFilterChange: ({ updateOrgSettings }) =>
       (filter) => {
