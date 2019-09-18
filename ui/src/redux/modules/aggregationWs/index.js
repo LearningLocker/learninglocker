@@ -3,6 +3,7 @@ import { createSelector } from 'reselect';
 import { handleActions } from 'redux-actions';
 import { SETIN_AGGREGATION_RESULT } from 'ui/redux/modules/aggregation';
 import * as fetchAggregationDuck from 'ui/redux/modules/aggregationWs/fetchAggregation';
+import { get } from 'lodash';
 
 /*
  * Reducers
@@ -35,7 +36,7 @@ export const fetchAggregation = fetchAggregationDuck.actions.start;
 /*
  * Selectors
  */
-export const aggregationSelector = state => state.aggregation;
+export const aggregationSelector = state => state.aggregationWs;
 export const aggregationRequestStateSelector = fetchAggregationDuck.selectors.aggregationRequestStateSelector;
 export const aggregationShouldFetchSelector = fetchAggregationDuck.selectors.aggregationShouldFetchSelector;
 export const aggregationResultsSelector = pipeline => createSelector(
@@ -47,6 +48,24 @@ export const aggregationHasResultSelector = pipeline => createSelector(
   aggregationSelector,
   aggregations => OrderedMap.isOrderedMap(aggregations.getIn([pipeline, 'result']))
 );
+
+export const aggregationWsResultsSelector = (pipeline, timeInterval) => {
+  const out = createSelector(
+    aggregationSelector,
+    (aggregations) => {
+      const ou = aggregations.getIn([
+        new Map({
+          pipeline,
+          timeIntervalSinceToday: get(timeInterval, 'timeIntervalSinceToday'),
+          timeIntervalUnits: get(timeInterval, 'timeIntervalUnits')
+        }),
+        'result'
+      ]);
+      return ou;
+    }
+  );
+  return out;
+};
 
 /*
  * Sagas

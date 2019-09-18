@@ -73,7 +73,10 @@ export default function createAsyncDuck({
   // CREATE SAGAS
   function* doActionSaga(args) {
     try {
-      const result = yield call(doAction, args);
+      const result = yield call(doAction, {
+        ...args,
+        successAction: actions.success
+      });
       yield put(actions.success(result));
       args.resolve(result);
 

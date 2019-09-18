@@ -1,7 +1,8 @@
 import { OrderedMap, Map, fromJS } from 'immutable';
 import { createSelector } from 'reselect';
 import moment from 'moment';
-import { call, put, takeEvery, select } from 'redux-saga/effects';
+import { call, put, takeEvery, select, take, fork } from 'redux-saga/effects';
+import { eventChannel } from 'redux-saga';
 import createAsyncDuck from 'ui/utils/createAsyncDuck';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 import { getAppDataSelector } from 'ui/redux/modules/app';
@@ -9,10 +10,11 @@ import Cookies from 'js-cookie';
 import { pickBy } from 'lodash';
 import { testCookieName } from 'ui/utils/auth';
 
-export function defaultMapping(body) {
-  return new Map({
-    result: body.result && new OrderedMap(body.result.map(v => fromJS([v._id, v]))),
+export function defaultMapping(results) {
+  const out = new Map({
+    result: results && new OrderedMap(results.map(v => fromJS([v._id, v]))),
   });
+  return out;
 }
 
 const aggregationSelector = state => state.aggregation;
@@ -67,18 +69,37 @@ const fetchAggregation = createAsyncDuck({
   actionName: 'learninglocker/aggregation/FETCH_AGGREGATION_WS',
   failureDelay: 2000,
 
-  reduceStart: (state, { pipeline }) => state
-    .setIn([pipeline, 'requestState'], IN_PROGRESS),
+  reduceStart: (state, { pipeline, timeIntervalSinceToday, timeIntervalUnits }) => state
+    .setIn([new Map({
+      pipeline,
+      timeIntervalSinceToday,
+      timeIntervalUnits
+    }), 'requestState'], IN_PROGRESS),
 
-  reduceSuccess: (state, { pipeline, result }) => {
+  reduceSuccess: (state, {
+    pipeline,
+    timeIntervalSinceToday,
+    timeIntervalUnits,
+    result
+  }) => {
     const x = state
-      .setIn([pipeline, 'requestState'], COMPLETED);
+      .setIn([new Map({
+        pipeline,
+        timeIntervalSinceToday,
+        timeIntervalUnits,
+      }), 'requestState'], COMPLETED);
 
     if (result.get('result') === null) {
       return x;
     }
 
-    return x.setIn([pipeline, 'result'], result.get('result'));
+    const out = x.setIn([new Map({
+      pipeline,
+      timeIntervalSinceToday,
+      timeIntervalUnits,
+    }), 'result'], result.getIn(['result']));
+
+    return out;
   },
 
   reduceFailure: (state, { pipeline, err }) => state
@@ -103,7 +124,10 @@ const fetchAggregation = createAsyncDuck({
     return out;
   },
 
-  successAction: ({ pipeline, result, sinceAt }) => ({ pipeline, result, sinceAt }),
+  successAction: ({ pipeline, timeIntervalSinceToday, timeIntervalUnits, result, sinceAt }) => {
+    const out = ({ pipeline, timeIntervalSinceToday, timeIntervalUnits, result, sinceAt });
+    return out;
+  },
 
   failureAction: ({ pipeline, err }) => ({ pipeline, err }),
 
@@ -120,9 +144,16 @@ const fetchAggregation = createAsyncDuck({
     llClient,
     timeIntervalSinceToday,
     timeIntervalUnits,
+    successAction,
+    mapping
   }) {
     // const pipelineWithoutTime = pipeline.shift(); // DEBUG ONLY, the pipeline should be correct when it comes in.
     const { body } = yield call(llClient.aggregateWs, pipeline, timeIntervalSinceToday, timeIntervalUnits);
+    yield put(successAction({ pipeline,
+      timeIntervalSinceToday,
+      timeIntervalUnits,
+      result: mapping(body.results)
+    }));
 
     const id = body._id;
 
@@ -150,14 +181,34 @@ const fetchAggregation = createAsyncDuck({
       aggregationProcessorId: id
     }));
 
-
-    yield new Promise(() => {
+    const createChannel = () => eventChannel((emitter) => {
       websocket.addEventListener('message', (message) => {
-        console.log('002 message', message);
-      });
-    }); // TODO: close ws, hadle cleanup
+        const data = JSON.parse(message.data);
+        const result = mapping(data.results);
 
-    return yield { pipeline, result };
+        // put into the state
+        emitter(successAction({
+          pipeline,
+          timeIntervalSinceToday,
+          timeIntervalUnits,
+          result
+        }));
+      });
+      return () => {
+        // reset the stuff
+      };
+    });
+
+    function* listenToWs() {
+      const channel = yield call(createChannel);
+      while (true) {
+        const action = yield take(channel);
+        yield put(action);
+      }
+    }
+    yield fork(listenToWs);
+
+    return;
   }
 });
 

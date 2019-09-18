@@ -9,7 +9,8 @@ import {
   aggregationHasResultSelector,
 } from 'ui/redux/modules/aggregation';
 import {
-  fetchAggregation
+  fetchAggregation,
+  aggregationWsResultsSelector
 } from 'ui/redux/modules/aggregationWs';
 import {
   shouldFetchSelector,
@@ -264,10 +265,12 @@ export const visualisationWsPipelinesSelector = (
     const axes = unflattenAxes(visualisation);
     const series = cb(queries, axes, type, undefined, journey, timezone, benchmarkingEnabled);
 
-    return {
+    const out = {
       series,
       ...previewPeriodToInterval(previewPeriod)
     };
+
+    return out;
   }
 );
 
@@ -348,6 +351,10 @@ const getPipelinesResults = state => pipelines => pipelines.map(pipeline => (
   aggregationResultsSelector(pipeline)(state) || new Map()
 ));
 
+const getWsPipelinesResults = (state, timeInterval) => pipelines => pipelines.map(pipeline => (
+  aggregationWsResultsSelector(pipeline, timeInterval)(state) || new Map()
+));
+
 /**
  *
  * @param {string} visualisationId
@@ -357,6 +364,15 @@ const getPipelinesResults = state => pipelines => pipelines.map(pipeline => (
 const getSeriesResults = (visualisationId, state) => {
   const series = visualisationPipelinesSelector(visualisationId)(state);
   return series.map(getPipelinesResults(state));
+};
+
+const getWsSeriesResults = (visualisationId, state) => {
+  const {
+    series,
+    timeIntervalSinceToday,
+    timeIntervalUnits
+  } = visualisationWsPipelinesSelector(visualisationId)(state);
+  return series.map(getWsPipelinesResults(state, { timeIntervalSinceToday, timeIntervalUnits }));
 };
 
 /**
@@ -373,6 +389,18 @@ export const visualisationResultsSelector = (visualisationId, filter) => createS
       return getJourneyResults(visualisation, filter, state);
     default:
       return getSeriesResults(visualisationId, state);
+  }
+});
+
+export const visualisationWsResultsSelector = (visualisationId, filter) => createSelector([
+  identity,
+  modelsSchemaIdSelector('visualisation', visualisationId)
+], (state, visualisation) => {
+  switch (visualisation.get('type')) {
+    case JOURNEY_PROGRESS:
+      return getJourneyResults(visualisation, filter, state);
+    default:
+      return getWsSeriesResults(visualisationId, state);
   }
 });
 

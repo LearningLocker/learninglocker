@@ -8,8 +8,8 @@ const monthMap = new List([
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
 ]);
 
-const seriesFormatter = (results, formatMap, offset = 0) =>
-  results.map(series =>
+const seriesFormatter = (results, formatMap, offset = 0) => {
+  const out = results.map(series =>
     series.map(entries =>
       formatMap.map((model, _id) =>
         new Map({
@@ -20,6 +20,8 @@ const seriesFormatter = (results, formatMap, offset = 0) =>
       ).toMap().mapKeys(k => k.toString())
     )
   );
+  return out;
+};
 
 const getDateRange = (results) => {
   let minDate = null;

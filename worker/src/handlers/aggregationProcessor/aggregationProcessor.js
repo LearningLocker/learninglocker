@@ -2,23 +2,23 @@ import { LOCK_TIMEOUT_MINUTES, AGGREGATION_PROCESSOR_QUEUE } from 'lib/constants
 import moment from 'moment';
 import AggregationProcessor from 'lib/models/aggregationProcessor';
 import Statement from 'lib/models/statement';
-import { get } from 'lodash';
+import { get, omit } from 'lodash';
 import { publish } from 'lib/services/queue';
 import { delay } from 'bluebird';
 
 export const combine = (as, bs, keyFn, mergeFn) => {
   const groupedAs = as.reduce((result, a) => {
     const key = keyFn(a);
-    result[key] = { a };
+    result[key] = { key, a };
     return result;
   }, {});
   const groupedResults = bs.reduce((result, b) => {
     const key = keyFn(b);
-    result[key] = { ...result[key], b };
+    result[key] = { ...result[key], b, key };
     return result;
   }, groupedAs);
-  return Object.entries(groupedResults).map(([model, results]) =>
-    mergeFn(model, results.a, results.b)
+  return Object.entries(groupedResults).map(([, results]) =>
+    mergeFn(results.key, results.a, results.b)
   );
 };
 
@@ -183,8 +183,11 @@ const aggregationProcessor = async ({
         const countA = get(a, 'count', 0);
         const countB = get(b, 'count', 0);
         const count = countA - countB;
+        const extraA = omit(a, 'count');
+        const extraB = omit(b, 'count');
         return {
-          model: resultModel,
+          ...extraA,
+          ...extraB,
           count
         };
       }
@@ -195,8 +198,11 @@ const aggregationProcessor = async ({
         const countA = get(a, 'count', 0);
         const countB = get(b, 'count', 0);
         const count = countA + countB;
+        const extraA = omit(a, 'count');
+        const extraB = omit(b, 'count');
         return {
-          model: resultModel,
+          ...extraA,
+          ...extraB,
           count
         };
       }
@@ -208,8 +214,11 @@ const aggregationProcessor = async ({
         const countA = get(a, 'count', 0);
         const countB = get(b, 'count', 0);
         const count = countA + countB;
+        const extraA = omit(a, 'count');
+        const extraB = omit(b, 'count');
         return {
-          model: resultModel,
+          ...extraA,
+          ...extraB,
           count
         };
       }

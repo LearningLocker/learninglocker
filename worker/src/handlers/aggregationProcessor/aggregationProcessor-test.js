@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { get } from 'lodash';
+import { get, omit } from 'lodash';
 import AggregationProcessor from 'lib/models/aggregationProcessor';
 import { AGGREGATION_PROCESSOR_QUEUE } from 'lib/constants/aggregationProcessor';
 import Statement from 'lib/models/statement';
@@ -12,20 +12,24 @@ import aggregationProcessor, { combine } from './aggregationProcessor';
 const objectId = mongoose.Types.ObjectId;
 
 describe('aggregationProcessor', () => {
-  describe('unionFirst', () => {
+  describe.only('unionFirst', () => {
     it('combine', () => {
       const addInput = [{
+        _id: 1,
         model: 1,
         count: 1
       }, {
+        _id: 2,
         model: 2,
         count: 1
       }];
 
       const subtractInput = [{
+        _id: 2,
         model: 2,
         count: 1
       }, {
+        _id: 3,
         model: 3,
         count: 1
       }];
@@ -34,14 +38,19 @@ describe('aggregationProcessor', () => {
         const countA = get(a, 'count', 0);
         const countB = get(b, 'count', 0);
         const count = countA - countB;
-        return { model, count };
+        const extraA = omit(a, 'count');
+        const extraB = omit(b, 'count');
+        return { ...extraA, ...extraB, count };
       });
 
-      expect(res[0].model).to.equal('1');
+      expect(res[0]._id).to.equal(1);
+      expect(res[0].model).to.equal(1);
       expect(res[0].count).to.equal(1);
-      expect(res[1].model).to.equal('2');
+      expect(res[1]._id).to.equal(2);
+      expect(res[1].model).to.equal(2);
       expect(res[1].count).to.equal(0);
-      expect(res[2].model).to.equal('3');
+      expect(res[2]._id).to.equal(3);
+      expect(res[2].model).to.equal(3);
       expect(res[2].count).to.equal(-1);
     });
   });
