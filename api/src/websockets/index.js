@@ -41,7 +41,6 @@ const messageManager = ws => async (message) => {
       ws.close();
       break;
   }
-
 };
 
 const add = (ws) => {

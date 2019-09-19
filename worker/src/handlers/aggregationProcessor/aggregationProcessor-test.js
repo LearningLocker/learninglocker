@@ -205,15 +205,6 @@ describe('aggregationProcessor', () => {
       aggregationProcessorId
     }, doneFn);
 
-    await AggregationProcessor.findOneAndUpdate({
-      _id: aggregationProcessorId
-    }, {
-      fromTimestamp: moment().toDate(),
-    }, {
-      upsert: false,
-      new: true
-    });
-
     let pulbishQueueCalls = 0;
     const mockPublishQueue = ({
       queueName,
@@ -224,14 +215,17 @@ describe('aggregationProcessor', () => {
       expect(payload.aggregationProcessorId).to.equal(aggregationProcessorId);
     };
 
+    // To test
+
     const result = await aggregationProcessor({
       aggregationProcessorId,
-      publishQueue: mockPublishQueue
+      publishQueue: mockPublishQueue,
+      now: moment().add(1, 'day')
     }, doneFn);
 
     expect(doneCount).to.equal(2);
 
-    expect(result[0].count).to.equal(1); // 1 becouse it'll be added again, due to 'now'.
+    expect(result[0].count).to.equal(0);
     expect(result[0].model).to.equal((moment().toDate().getDay() + 1));
     expect(pulbishQueueCalls).to.equal(0);
   });

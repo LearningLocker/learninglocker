@@ -112,7 +112,7 @@ const getSubtractPipeline = ({
   now
 }) => {
   const hasSubtraction = model.fromTimestamp || model.toTimestamp &&
-    moment(model.fromTimestamp).isAfter(moment(model.gtDate));
+    moment(model.fromTimestamp).isBefore(moment(model.gtDate));
 
   if (!hasSubtraction) {
     return;
@@ -124,8 +124,8 @@ const getSubtractPipeline = ({
     {
       $match: {
         timestamp: {
-          $gte: fromTimestamp.toDate(),
-          $lt: moment(model.fromTimestamp).toDate()
+          $gte: moment(model.fromTimestamp).toDate(),
+          $lt: fromTimestamp.toDate()
         }
       }
     },
@@ -138,6 +138,7 @@ const getSubtractPipeline = ({
 const aggregationProcessor = async ({
   aggregationProcessorId,
   publishQueue = publish,
+  now = moment()
 }, done) => {
   // Attempt to aquire a lock
   const model = await AggregationProcessor.findOneAndUpdate({
@@ -160,7 +161,7 @@ const aggregationProcessor = async ({
     done();
     return;
   }
-  const now = moment();
+
   model.gtDate = moment(now).subtract(model.windowSize, model.windowSizeUnits);
 
   const addPipeline = getAddPipeline({

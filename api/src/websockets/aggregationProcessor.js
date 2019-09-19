@@ -1,6 +1,7 @@
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import AggregationProcessor from 'lib/models/aggregationProcessor';
 import mongoose from 'mongoose';
+import moment from 'moment';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -26,10 +27,18 @@ const aggregationProcessor = async ({
   );
 
   changeStream.on('change', (next) => {
-    console.log('SHOULD BE HAPPENING');
     ws.send(JSON.stringify(next));
 
-    // TODO: when we have reached the end, close the ws and clean up. Maybe also add a timeout.
+    if (moment(next.fromTimestamp).isSame(moment(next.gtDate)) &&
+      moment(next.toTimestamp).isAfter(moment().subtract(10, 'minutes'))
+      // TODO, if it's a benchmark.
+    ) {
+      // The end
+      ws.close();
+      changeStream.close();
+    }
+
+    // TODO: Maybe also add a timeout.
   });
 
   const currentAggregationProcessor = await AggregationProcessor.findOne({
