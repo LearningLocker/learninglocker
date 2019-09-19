@@ -7,7 +7,7 @@ import createAsyncDuck from 'ui/utils/createAsyncDuck';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 import { getAppDataSelector } from 'ui/redux/modules/app';
 import Cookies from 'js-cookie';
-import { pickBy } from 'lodash';
+import { pickBy, get } from 'lodash';
 import { testCookieName } from 'ui/utils/auth';
 
 export function defaultMapping(results) {
@@ -17,20 +17,30 @@ export function defaultMapping(results) {
   return out;
 }
 
-const aggregationSelector = state => state.aggregation;
+const aggregationSelector = state => state.aggregationWs;
 
-const aggregationRequestStateSelector = pipeline => createSelector(
+const aggregationRequestStateSelector = (pipeline, timeInterval) => createSelector(
   aggregationSelector,
-  aggregations => aggregations.getIn([pipeline, 'requestState'])
+  (aggregations) => {
+    const out = aggregations.getIn([new Map({
+      pipeline,
+      timeIntervalSinceToday: get(timeInterval, 'timeIntervalSinceToday'),
+      timeIntervalUnits: get(timeInterval, 'timeIntervalUnits')
+    }), 'requestState']);
+    return out;
+  }
 );
 
-const aggregationShouldFetchSelector = pipeline => createSelector(
-  aggregationRequestStateSelector(pipeline),
-  requestState => (
+const aggregationShouldFetchSelector = (pipeline, timeIntetrval) => createSelector(
+  aggregationRequestStateSelector(pipeline, timeIntetrval),
+  (requestState) => {
+    const out = (
       requestState !== IN_PROGRESS &&
       requestState !== COMPLETED &&
       requestState !== FAILED
-    )
+    );
+    return out;
+  }
 );
 
 const aggregationShouldRecallSelector = pipeline => createSelector(
@@ -69,12 +79,15 @@ const fetchAggregation = createAsyncDuck({
   actionName: 'learninglocker/aggregation/FETCH_AGGREGATION_WS',
   failureDelay: 2000,
 
-  reduceStart: (state, { pipeline, timeIntervalSinceToday, timeIntervalUnits }) => state
+  reduceStart: (state, { pipeline, timeIntervalSinceToday, timeIntervalUnits }) => {
+    const out = state
     .setIn([new Map({
       pipeline,
       timeIntervalSinceToday,
       timeIntervalUnits
-    }), 'requestState'], IN_PROGRESS),
+    }), 'requestState'], IN_PROGRESS);
+    return out;
+  },
 
   reduceSuccess: (state, {
     pipeline,
@@ -133,8 +146,15 @@ const fetchAggregation = createAsyncDuck({
 
   completeAction: ({ pipeline }) => ({ pipeline }),
 
-  checkShouldFire: ({ pipeline }, state) => {
-    const shouldFetch = aggregationShouldFetchSelector(pipeline)(state);
+  checkShouldFire: ({
+    pipeline,
+    timeIntervalSinceToday,
+    timeIntervalUnits
+  }, state) => {
+    const shouldFetch = aggregationShouldFetchSelector(pipeline, {
+      timeIntervalSinceToday,
+      timeIntervalUnits
+    })(state);
     const shouldRecall = aggregationShouldRecallSelector(pipeline)(state);
     return shouldFetch || shouldRecall;
   },
