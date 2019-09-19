@@ -91,7 +91,7 @@ const renderPage = (routeName) => {
 
   if (testRoute('organisation.demoSalesData')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/DemoPage'),
+      loader: System.import('ui/pages/DemoSalesAppPage'),
     }));
   }
 
