@@ -2,7 +2,7 @@ import { OrderedMap, Map, fromJS } from 'immutable';
 import { createSelector } from 'reselect';
 import moment from 'moment';
 import { call, put, takeEvery, select, take, fork } from 'redux-saga/effects';
-import { eventChannel } from 'redux-saga';
+import { eventChannel, END } from 'redux-saga';
 import createAsyncDuck from 'ui/utils/createAsyncDuck';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 import { getAppDataSelector } from 'ui/redux/modules/app';
@@ -95,6 +95,10 @@ const fetchAggregation = createAsyncDuck({
     timeIntervalUnits,
     result
   }) => {
+    if (!pipeline) {
+      return state;
+    }
+
     const x = state
       .setIn([new Map({
         pipeline,
@@ -137,7 +141,11 @@ const fetchAggregation = createAsyncDuck({
     return out;
   },
 
-  successAction: ({ pipeline, timeIntervalSinceToday, timeIntervalUnits, result, sinceAt }) => {
+  successAction: (args) => {
+    if (!args) {
+      return {};
+    }
+    const { pipeline, timeIntervalSinceToday, timeIntervalUnits, result, sinceAt } = args;
     const out = ({ pipeline, timeIntervalSinceToday, timeIntervalUnits, result, sinceAt });
     return out;
   },
@@ -214,8 +222,17 @@ const fetchAggregation = createAsyncDuck({
           result
         }));
       });
+
+      websocket.addEventListener('close', () => {
+        emitter(END);
+      });
+
+      websocket.addEventListener('error', () => {
+        emitter(END);
+      });
+
       return () => {
-        // reset the stuff
+        websocket.close();
       };
     });
 
