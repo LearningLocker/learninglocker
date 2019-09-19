@@ -89,6 +89,12 @@ const renderPage = (routeName) => {
     }));
   }
 
+  if (testRoute('organisation.demoSalesData')) {
+    return React.createElement(createAsyncComponent({
+      loader: System.import('ui/containers/DemoPage'),
+    }));
+  }
+
   return <NotFound />;
 };
 

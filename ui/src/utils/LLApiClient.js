@@ -96,6 +96,15 @@ class _LLApiClient {
     }
   });
 
+  requestAppAccess = ({ privacyPolicy, appName }) => post({
+    url: formatUrl(routes.REQUEST_APP_ACCESS),
+    headers: {
+      Authorization: `Bearer ${this.getToken()}`,
+      ContentType: 'application/json'
+    },
+    body: { privacyPolicy, appName },
+  });
+
   getConnection = ({ schema, filter, sort, cursor, first, last }) => {
     const queryParams = {
       filter: JSON.stringify(filter),

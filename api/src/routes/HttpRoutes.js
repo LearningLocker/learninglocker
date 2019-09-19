@@ -36,6 +36,7 @@ import generateIndexesController from 'api/controllers/IndexesController';
 import ImportPersonasController from 'api/controllers/ImportPersonasController';
 import StatementMetadataController from 'api/controllers/StatementMetadataController';
 import BatchDeleteController from 'api/controllers/BatchDeleteController';
+import RequestAppAccessController from 'api/controllers/RequestAppAccessController';
 
 // REST
 import LRS from 'lib/models/lrs';
@@ -117,6 +118,12 @@ router.get(
 router.post(
   routes.OAUTH2_TOKEN,
   AuthController.issueOAuth2AccessToken
+);
+
+router.post(
+  routes.REQUEST_APP_ACCESS,
+  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  RequestAppAccessController.requestAppAccess,
 );
 
 /**
