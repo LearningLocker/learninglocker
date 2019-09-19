@@ -16,12 +16,12 @@ const renderPage = (routeName) => {
 
   if (testRoute('login')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/Login')
+      loader: System.import('ui/pages/LoginPage')
     }));
   }
   if (testRoute('home')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/Home')
+      loader: System.import('ui/pages/HomePage')
     }));
   }
   if (testRoute('organisation')) {
@@ -36,12 +36,12 @@ const renderPage = (routeName) => {
   }
   if (testRoute('forgot')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/ForgotPassword')
+      loader: System.import('ui/pages/ForgotPasswordPage')
     }));
   }
   if (testRoute('reset')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/ResetPassword')
+      loader: System.import('ui/pages/ResetPasswordPage')
     }));
   }
   if (
@@ -60,7 +60,7 @@ const component = ({ route }) => {
   return (
     <div>
       <Helmet {...config.app.head} />
-      { renderPage(name) }
+      {renderPage(name)}
       <Toasts />
     </div>
   );
