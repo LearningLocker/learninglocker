@@ -21,13 +21,15 @@ export const buildDefaultOptionLabel = orgTimezone =>
  *     label: PropTypes.string,
  *     value: PropTypes.any,
  *   },
+ *   disabled: PropTypes.boolean,
  * }
  */
-export const TimezoneSelector = ({ id, value, onChange, defaultOption }) => (
+export const TimezoneSelector = ({ id, value, onChange, defaultOption, disabled }) => (
   <select
     id={id || 'timezone-selector'}
     className="form-control"
     value={value === null ? DEFAULT : value}
+    disabled={disabled}
     onChange={(e) => {
       const tz = e.target.value === DEFAULT ? null : e.target.value;
       onChange(tz);

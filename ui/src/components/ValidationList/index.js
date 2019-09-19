@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { List } from 'immutable';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from './validationlist.css';
 
 class ValidationList extends Component {
   static propTypes = {
@@ -17,7 +15,7 @@ class ValidationList extends Component {
     const { errors } = this.props;
 
     return (
-      <div className={styles.validationlist}>
+      <div>
         <ul>
           { errors.map((error, index) =>
             <li key={index}>{error}</li>
@@ -29,4 +27,4 @@ class ValidationList extends Component {
   }
 }
 
-export default withStyles(styles)(ValidationList);
+export default ValidationList;

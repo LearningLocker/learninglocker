@@ -1,19 +1,31 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { List, Map, fromJS } from 'immutable';
-import { updateModel } from 'ui/redux/modules/models';
 import { connect } from 'react-redux';
-import TabbedQueriesBuilder from 'ui/components/TabbedQueriesBuilder';
-
 import {
   XVSY,
   STATEMENTS,
-  POPULARACTIVITIES,
   LEADERBOARD,
   FREQUENCY,
-  COUNTER
-} from '../../utils/constants';
+  COUNTER,
+  PIE,
+  TEMPLATE_ACTIVITY_OVER_TIME,
+  TEMPLATE_LAST_7_DAYS_STATEMENTS,
+  TEMPLATE_MOST_ACTIVE_PEOPLE,
+  TEMPLATE_MOST_POPULAR_ACTIVITIES,
+  TEMPLATE_MOST_POPULAR_VERBS,
+  TEMPLATE_WEEKDAYS_ACTIVITY,
+  TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT,
+  TEMPLATE_CURATR_COMMENT_COUNT,
+  TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB,
+  TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD,
+  TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS,
+  TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS,
+} from 'lib/constants/visualise';
+import { updateModel } from 'ui/redux/modules/models';
+import TabbedQueriesBuilder from 'ui/components/TabbedQueriesBuilder';
 
+// [Viz Refactor] TODO: Remove this component
 class VisualiseFilterForm extends Component {
   static propTypes = {
     model: PropTypes.instanceOf(Map), // visualisation
@@ -118,10 +130,7 @@ class VisualiseFilterForm extends Component {
     this.renderTabbedQueryBuilder(false, { verbs: { expanded: true } });
 
   renderCounter = () =>
-  this.renderTabbedQueryBuilder(false, { verbs: { expanded: true } });
-
-  renderPopularActivities = () =>
-    this.renderTabbedQueryBuilder(false, { objects: { expanded: true } });
+    this.renderTabbedQueryBuilder(false, { verbs: { expanded: true } });
 
   renderXvsY = () => this.renderTabbedQueryBuilder();
 
@@ -136,17 +145,28 @@ class VisualiseFilterForm extends Component {
 
     switch (type) {
       case XVSY:
+      case TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT:
         return this.renderXvsY();
       case FREQUENCY:
+      case TEMPLATE_ACTIVITY_OVER_TIME:
         return this.renderFrequency();
       case STATEMENTS:
+      case TEMPLATE_WEEKDAYS_ACTIVITY:
+      case TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB:
         return this.renderStatements(queries);
       case LEADERBOARD:
+      case TEMPLATE_MOST_ACTIVE_PEOPLE:
+      case TEMPLATE_MOST_POPULAR_ACTIVITIES:
+      case TEMPLATE_MOST_POPULAR_VERBS:
+      case TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD:
+      case TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS:
         return this.renderLeaderboard(queries);
-      case POPULARACTIVITIES:
-        return this.renderPopularActivities();
       case COUNTER:
+      case TEMPLATE_LAST_7_DAYS_STATEMENTS:
+      case TEMPLATE_CURATR_COMMENT_COUNT:
         return this.renderCounter();
+      case PIE:
+      case TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS:
       default:
         return this.renderDefault(queries);
     }

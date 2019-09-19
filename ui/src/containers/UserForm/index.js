@@ -60,7 +60,7 @@ const renderName = (model, onChangeAttr) => {
   );
 };
 
-const renderEmail = (model, onChangeAttr) => {
+const renderEmail = (model, onChangeAttr, isSiteAdmin) => {
   const emailId = uuid.v4();
   return (
     <div
@@ -72,7 +72,7 @@ const renderEmail = (model, onChangeAttr) => {
       <input
         id={emailId}
         className="form-control"
-        disabled={model.has('googleId')}
+        disabled={model.has('googleId') || !isSiteAdmin}
         placeholder="E-Mail"
         value={model.get('email', '')}
         onChange={onChangeAttr('email')} />
@@ -166,7 +166,7 @@ const changeModelPassword = (
   setPasswordConfirmation('');
 };
 
-const render = ({
+const UserForm = ({
   model = new Map(),
   changePasswordChecked,
   updateModel,
@@ -193,7 +193,7 @@ const render = ({
       isSiteAdmin ||
       model.get('_id') === loggedInUserId
     );
-  const passwordInputsVisible = (!model.get('verified') || canChangePassword);
+  const passwordInputsVisible = isAuthorisedToChangePassword && (!model.get('verified') || canChangePassword);
   const passwordGroupClasses = classNames({
     'form-group': true,
     'has-error': hasPasswordErrors
@@ -207,7 +207,7 @@ const render = ({
 
         {renderVerified(model, styles)}
         {renderName(model, onChangeAttr)}
-        {renderEmail(model, onChangeAttr)}
+        {renderEmail(model, onChangeAttr, isSiteAdmin)}
         {isAuthorisedToChangePassword && renderPasswordChanges(model, onPasswordCheckboxChange(updateModel, model, setChangePasswordChecked), canChangePassword)}
 
         {passwordInputsVisible && (
@@ -247,4 +247,4 @@ export default compose(
     loggedInUserId: loggedInUserIdSelector(state)
   })),
   withModel
-)(render);
+)(UserForm);

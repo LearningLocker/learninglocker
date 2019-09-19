@@ -27,13 +27,13 @@ const renderPage = (routeName) => {
 
   if (testRoute('organisation.data.source')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/Source')
+      loader: System.import('ui/pages/DataSourcePage')
     }));
   }
 
   if (testRoute('organisation.data.statementForwarding')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/components/StatementForwarding')
+      loader: System.import('ui/pages/DataStatementForwardingPage')
     }));
   }
 
@@ -41,13 +41,13 @@ const renderPage = (routeName) => {
 
   if (testRoute('organisation.people.imports')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/Personas/PersonasImports')
+      loader: System.import('ui/pages/PeopleImportPage')
     }));
   }
 
   if (testRoute('organisation.people.manage')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/Personas/PersonaManage')
+      loader: System.import('ui/pages/PeopleManagePage')
     }));
   }
 
@@ -55,37 +55,37 @@ const renderPage = (routeName) => {
 
   if (testRoute('organisation.settings.stores')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/Stores')
+      loader: System.import('ui/pages/SettingsStoresPage')
     }));
   }
 
   if (testRoute('organisation.settings.users')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/Users')
+      loader: System.import('ui/pages/SettingsUsersPage')
     }));
   }
 
   if (testRoute('organisation.settings.roles')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/Roles')
+      loader: System.import('ui/pages/SettingsRolesPage')
     }));
   }
 
   if (testRoute('organisation.settings.suborgs')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/SubOrgs')
+      loader: System.import('ui/pages/SettingsOrganisationsPage')
     }));
   }
 
   if (testRoute('organisation.settings.clients')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/Clients')
+      loader: System.import('ui/pages/SettingsClientsPage')
     }));
   }
 
   if (testRoute('organisation.settings.apps')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/containers/Apps')
+      loader: System.import('ui/pages/SettingsAppsPage')
     }));
   }
 

@@ -1,77 +1,51 @@
 import { Map } from 'immutable';
 import { actions as routerActions } from 'redux-router5';
 import { put, call, takeEvery } from 'redux-saga/effects';
-import {
-  LEADERBOARD,
-  STATEMENTS,
-  FREQUENCY,
-  COUNTER,
-  LAST_2_MONTHS,
-} from 'ui/utils/constants';
+import buildTemplateLast7DaysStatements from 'ui/containers/Visualisations/TemplateLast7DaysStatements/buildModel';
+import buildTemplateActivityOverTime from 'ui/containers/Visualisations/TemplateActivityOverTime/buildModel';
+import buildTemplateMostActivePeople from 'ui/containers/Visualisations/TemplateMostActivePeople/buildModel';
+import buildTemplateMostPopularActivities from 'ui/containers/Visualisations/TemplateMostPopularActivities/buildModel';
+import buildTemplateMostPopularVerbs from 'ui/containers/Visualisations/TemplateMostPopularVerbs/buildModel';
+import buildTemplateWeekdaysActivity from 'ui/containers/Visualisations/TemplateWeekdaysActivity/buildModel';
 import { addModel } from '../models';
 
 export const CREATE_GETTING_STARTED = 'learninglocker/dashboard/CREATE_GETTING_STARTED';
 
 /**
- * @param {(action: object) => null} dispatch - react-redux dispatch
+ * @param {(action: object) => null} _.dispatch - react-redux dispatch
+ * @param {string} _.userId
  * @returns {Promise<string[]>} - visualisationId list
  */
-const createVisualisations = async (dispatch) => {
+const createVisualisations = async ({ dispatch, userId }) => {
   const results = await Promise.all([
     dispatch(addModel({
       schema: 'visualisation',
-      props: {
-        description: 'How many statements have been stored in the last 7 days?',
-        type: COUNTER,
-      },
+      props: buildTemplateLast7DaysStatements(new Map({ owner: userId })),
       isExpanded: false,
     })),
     dispatch(addModel({
       schema: 'visualisation',
-      props: {
-        description: 'How has activity changed over time?',
-        type: FREQUENCY,
-        previewPeriod: LAST_2_MONTHS,
-      },
+      props: buildTemplateActivityOverTime(new Map({ owner: userId })),
       isExpanded: false,
     })),
     dispatch(addModel({
       schema: 'visualisation',
-      props: {
-        description: 'What are the most popular verbs?',
-        type: LEADERBOARD,
-        previewPeriod: LAST_2_MONTHS,
-        axesgroup: new Map({ optionKey: 'verb', searchString: 'Verb' }),
-      },
+      props: buildTemplateMostPopularVerbs(new Map({ owner: userId })),
       isExpanded: false,
     })),
     dispatch(addModel({
       schema: 'visualisation',
-      props: {
-        description: 'What are the most popular activities?',
-        type: LEADERBOARD,
-        previewPeriod: LAST_2_MONTHS,
-        axesgroup: new Map({ optionKey: 'activities', searchString: 'Activity' }),
-      },
+      props: buildTemplateMostPopularActivities(new Map({ owner: userId })),
       isExpanded: false,
     })),
     dispatch(addModel({
       schema: 'visualisation',
-      props: {
-        description: 'How has activity changed over time?',
-        type: LEADERBOARD,
-        previewPeriod: LAST_2_MONTHS,
-        axesgroup: new Map({ optionKey: 'people', searchString: 'Person' }),
-      },
+      props: buildTemplateMostActivePeople(new Map({ owner: userId })),
       isExpanded: false,
     })),
     dispatch(addModel({
       schema: 'visualisation',
-      props: {
-        description: 'How does activity change in a week?',
-        type: STATEMENTS,
-        axesgroup: new Map({ optionKey: 'weekday', searchString: 'Day' }),
-      },
+      props: buildTemplateWeekdaysActivity(new Map({ owner: userId })),
       isExpanded: false,
     })),
   ]);
@@ -80,7 +54,7 @@ const createVisualisations = async (dispatch) => {
 };
 
 function* createGettingStarted({ userId, organisationId, dispatch }) {
-  const visualisationIds = yield call(createVisualisations, dispatch);
+  const visualisationIds = yield call(createVisualisations, { dispatch, userId });
 
   const { model } = yield call(dispatch, addModel({
     schema: 'dashboard',

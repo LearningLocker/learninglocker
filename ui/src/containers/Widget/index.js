@@ -5,6 +5,10 @@ import { Map } from 'immutable';
 import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose } from 'recompose';
+import {
+  COUNTER,
+  PIE,
+} from 'lib/constants/visualise';
 import { fetchModels } from 'ui/redux/modules/pagination';
 import { updateModel, modelsSchemaIdSelector } from 'ui/redux/modules/models';
 import { setModelQuery } from 'ui/redux/modules/search';
@@ -12,12 +16,10 @@ import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import Link from 'ui/containers/Link';
 import DropDownMenu from 'ui/components/DropDownMenu';
 import WidgetVisualisePicker from 'ui/containers/WidgetVisualisePicker';
-import VisualiseResults from 'ui/containers/VisualiseResults';
-import SourceResults from 'ui/containers/VisualiseResults/SourceResults';
+import VisualisationViewer from 'ui/containers/Visualisations/VisualisationViewer';
 import DeleteConfirm from 'ui/containers/DeleteConfirm';
 import { createDefaultTitle } from 'ui/utils/defaultTitles';
 import styles from './widget.css';
-import { COUNTER, PIE } from '../../utils/constants';
 
 const schema = 'widget';
 const VISUALISATION = 'stages/VISUALISATION';
@@ -115,7 +117,14 @@ class Widget extends Component {
     return 'Enable donut';
   }
 
-  getTitle = (model, props) => model.get('title') || props.visualisation.get('description') || <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>{createDefaultTitle(this.props.visualisation, '')}</span>;
+  getTitle = (model, props) =>
+    model.get('title') ||
+    props.visualisation.get('description') ||
+    (
+      <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>
+        {createDefaultTitle(this.props.visualisation)}
+      </span>
+    );
 
   toggleEditingTitle = () => {
   }
@@ -206,7 +215,7 @@ class Widget extends Component {
   }
 
   render = () => {
-    const { model, visualisation } = this.props;
+    const { model } = this.props;
     const delPopupProps = {
       schema,
       onClickClose: this.closeDeleteModal,
@@ -233,9 +242,9 @@ class Widget extends Component {
           </div>
           {
             <div className={`panel-body ${styles.body}`}>
-              {!visualisation.get('sourceView') && model.has('visualisation') && <VisualiseResults id={model.get('visualisation')} />}
-              {visualisation.get('sourceView') && <SourceResults id={model.get('visualisation')} />
-              }
+              {model.has('visualisation') && (
+                <VisualisationViewer id={model.get('visualisation')} />
+              )}
             </div>
           }
           {
