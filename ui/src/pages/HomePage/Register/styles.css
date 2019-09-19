@@ -1,0 +1,55 @@
+
+.container {
+  color: white;
+  background-color: #f5aa34;
+  background-image: url("../../../assets/geometric-pattern.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  text-align: center;
+}
+
+.logo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.registerText {
+  margin-top: 20px;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.divider {
+  background-color: #CB7128;
+  height: 2px;
+  border: none;
+}
+
+.benefits {
+  font-size: 16px;
+}
+
+.buttons {
+  margin-top: 20px;
+}
+
+.register {
+  display: block;
+  background: #276CDA !important;
+  width: 80px;
+  margin-left: 12px;
+}
+
+.dontShowAgain {
+  color: #8d5e28;
+  margin-top: 12px;
+  cursor: pointer;
+}
+
+.dontShowAgain:hover {
+  color: #8d5e28;
+  text-decoration: underline;
+  margin-top: 12px;
+}

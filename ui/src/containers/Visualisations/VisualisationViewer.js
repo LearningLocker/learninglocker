@@ -94,7 +94,7 @@ const VisualisationViewer = ({
     case TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS:
       return <TemplateCuratrActivitiesWithMostComments visualisationId={visualisationId} showSourceView={showSourceView} />;
     default:
-      console.error(`VisualisationViewer.js does not support type "${type}"`)
+      console.error(`VisualisationViewer.js does not support type "${type}"`);
       return `Type "${type}" is not supported`;
   }
 };
