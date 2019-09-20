@@ -34,13 +34,15 @@ class ExportForm extends Component {
   }
 
   componentDidMount = () => {
-    this.state.projectionString = this.getActiveProjection();
+    this.setState((state, props) => {
+      return { projectionString: this.getActiveProjection(state, props) };
+    });
   }
 
   componentDidUpdate = () => {
     if (this.state.download === true) {
       this.postDownloadExport();
-      this.state.download = false;
+      this.setState({ download: false });
     }
   };
 
@@ -49,13 +51,13 @@ class ExportForm extends Component {
   }
 
   onUpdateProjection = (projection) => {
-    this.state.projectionString = projection;
+    this.setState({ projectionString: projection });
   }
 
   onDownloadExport = () => {
     if (this.props.model.get('rawMode')) {
       this.onChangeProjection(this.state.projectionString);
-      this.state.download = true;
+      this.setState({ download: true });
     } else {
       this.postDownloadExport();
     }
@@ -76,19 +78,17 @@ class ExportForm extends Component {
       });
   }
 
-  getActiveProjection = () => {
-    const { model } = this.props;
-    const { activeIndex } = this.state;
+  getActiveProjection = (state, props) => {
     return model.getIn(
-      ['projections', activeIndex],
-      getDefaultProjectionFromType(model.get('type'))
+      ['projections', state.activeIndex],
+      getDefaultProjectionFromType(props.model.get('type'))
     );
   }
 
   getCompletePipeline = () => {
     const { pipelines } = this.props;
     const { activeIndex } = this.state;
-    const activeProjection = this.getActiveProjection();
+    const activeProjection = this.getActiveProjection(this.state, this.props);
     const activePipeline = pipelines.get(activeIndex, new List());
     return activePipeline
       .push(new Map({ $sort: { timestamp: -1, _id: 1 } }))
@@ -122,7 +122,7 @@ class ExportForm extends Component {
     const { model, pipelines } = this.props;
     const rawMode = model.get('rawMode');
     const { activeIndex } = this.state;
-    const activeProjection = this.getActiveProjection();
+    const activeProjection = this.getActiveProjection(this.state, this.props);
 
     return (
       <div>
@@ -135,18 +135,18 @@ class ExportForm extends Component {
                 rawMode />
             </div>
           ) : [
-            <div className={`col-md-6 col-xs-12 ${styles.projectionInput}`} key="export-projection">
-              <ProjectionInput
-                projection={activeProjection}
-                onChange={this.onChangeProjection} />
-            </div>,
-            <div className={`col-md-6 ${styles.exportOutputPreview}`} key="export-preview">
-              <ExportOutputPreview
-                filter={pipelines.getIn([activeIndex, 0, '$match'], new Map())}
-                project={activeProjection}
-                className={styles.rightPane} />
-            </div>
-          ]}
+              <div className={`col-md-6 col-xs-12 ${styles.projectionInput}`} key="export-projection">
+                <ProjectionInput
+                  projection={activeProjection}
+                  onChange={this.onChangeProjection} />
+              </div>,
+              <div className={`col-md-6 ${styles.exportOutputPreview}`} key="export-preview">
+                <ExportOutputPreview
+                  filter={pipelines.getIn([activeIndex, 0, '$match'], new Map())}
+                  project={activeProjection}
+                  className={styles.rightPane} />
+              </div>
+            ]}
         </div>
         <button className="btn btn-default" onClick={this.toggleRaw}><i className="ion ion-code" /></button>
         {this.renderDownloadButton()}

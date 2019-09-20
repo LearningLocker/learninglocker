@@ -49,8 +49,7 @@ class Widget extends Component {
     super(props);
     this.state = {
       isDeleteOpen: null,
-      openModalStep: null,
-      editingTitle: false
+      openModalStep: null
     };
   }
 
@@ -126,19 +125,6 @@ class Widget extends Component {
       </span>
     );
 
-  toggleEditingTitle = () => {
-  }
-
-  renderTitle = () => {
-    const { model } = this.props;
-    const isEditingTitle = true;
-    return isEditingTitle ? (
-      <span>{model.get('title')}</span>
-    ) : (
-      null
-    );
-  }
-
   renderMenu = () => {
     const { model, organisationId, visualisation } = this.props;
 
@@ -168,7 +154,7 @@ class Widget extends Component {
             <i className="ion ion-navicon-round" />
           </a>
         }>
-        { shouldShowTableModeToggle &&
+        {shouldShowTableModeToggle &&
           <a
             onClick={this.toggleSourceView}
             title="Table mode"
@@ -177,7 +163,7 @@ class Widget extends Component {
           </a>
         }
 
-        { shouldShowDonutModeToggle &&
+        {shouldShowDonutModeToggle &&
           <a
             onClick={this.toggleDonutView}
             title="Donut mode"
@@ -186,7 +172,7 @@ class Widget extends Component {
           </a>
         }
 
-        { shouldShowGoVisualisation &&
+        {shouldShowGoVisualisation &&
           <Link
             routeName={'organisation.data.visualise.visualisation'}
             routeParams={{ organisationId, visualisationId: visualisation.get('_id') }} >
@@ -202,7 +188,7 @@ class Widget extends Component {
           Edit Widget
         </a>
 
-        { this.props.editable &&
+        {this.props.editable &&
           <a
             onClick={this.openDeleteModal}
             title="Delete Widget">
@@ -233,10 +219,9 @@ class Widget extends Component {
       <div className={`panel panel-default animated fadeIn ${styles.widget}`} >
         <div className={styles.widgetContent}>
           <div
-            className={`panel-heading ${styles.heading}`}
-            onDoubleClick={this.toggleEditingTitle}>
+            className={`panel-heading ${styles.heading}`}>
             <div className={`panel-title ${titleStyles} react-drag-handle`}>
-              { this.props.editable && this.renderMenu(styles) }
+              {this.props.editable && this.renderMenu(styles)}
               <span style={{ cursor: 'initial' }}>{this.getTitle(model, this.props)}</span>
             </div>
           </div>
@@ -249,12 +234,12 @@ class Widget extends Component {
           }
           {
             (isModalOpen) &&
-              <WidgetVisualisePicker
-                isOpened={isModalOpen || this.props.widgetModalOpen}
-                model={model}
-                onClickClose={this.closeModal}
-                onChangeTitle={this.props.onChangeTitle}
-                onChangeVisualisation={this.props.onChangeVisualisation} />
+            <WidgetVisualisePicker
+              isOpened={isModalOpen || this.props.widgetModalOpen}
+              model={model}
+              onClickClose={this.closeModal}
+              onChangeTitle={this.props.onChangeTitle}
+              onChangeVisualisation={this.props.onChangeVisualisation} />
           }
           <DeleteConfirm isOpened={isDeleteOpen} {...delPopupProps} />
         </div>
