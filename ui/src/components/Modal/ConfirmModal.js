@@ -42,4 +42,11 @@ const renderConfirmModal = ({ isOpen, title, message, onConfirm, onCancel }) => 
   </Modal>
 );
 
+/**
+ * @param {boolean} _.isOpen
+ * @param {string} _.title
+ * @param {React.element} _.message
+ * @param {() => void} _.onConfirm
+ * @param {() => void} _.onCancel
+ */
 export default enhanceConfirmModal(renderConfirmModal);

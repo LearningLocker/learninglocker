@@ -1,8 +1,9 @@
 import { fromJS } from 'immutable';
 import { put, take, select } from 'redux-saga/effects';
+import isArray from 'lodash/isArray';
 import * as schemas from 'ui/utils/schemas';
 import { modelsSchemaIdSelector } from 'ui/redux/modules/models/selectors';
-import isArray from 'lodash/isArray';
+import { clearModelsCache } from 'ui/redux/modules/pagination';
 
 export const UPDATE_MODEL =
   'learninglocker/models/learninglocker/models/UPDATE_MODEL';
@@ -21,8 +22,10 @@ const reduceUpdateModel = (state, { schema, id, path, value }) => {
   return out;
 };
 
-const reduceUpdateModelErrors = (state, { schema, id, errors }) =>
-  state.setIn([schema, id, 'localCache', 'unsaved', 'errors'], errors);
+const reduceUpdateModelErrors = (state, { schema, id, errors }) => {
+  const out = state.setIn([schema, id, 'localCache', 'unsaved', 'errors'], errors);
+  return out;
+};
 
 const reduceMakePending = (state, { schema, id }) => {
   const unsavedState = state.getIn([schema, id, 'localCache', 'unsaved']);
@@ -66,6 +69,14 @@ const clearPending = (schema, id) => ({
 });
 
 /**
+ * Client should clear the models stored in Redux
+ * because when organisation.timezone is updated,
+ * dashboard, user, statementForward, and visualisation models are updated by API server.
+ */
+const requiresClearingModels = (schema, path) =>
+  schema === 'organisation' && isArray(path) && path[0] === 'timezone';
+
+/**
  * SAGAS
  */
 /**
@@ -75,7 +86,13 @@ const clearPending = (schema, id) => ({
  */
 function* watchUpdateModelSaga() {
   while (__CLIENT__) {
-    const { schema, id } = yield take(UPDATE_MODEL);
+    const { schema, id, path } = yield take(UPDATE_MODEL);
+    if (requiresClearingModels(schema, path)) {
+      yield put(clearModelsCache({ schema: 'dashboard' }));
+      yield put(clearModelsCache({ schema: 'user' }));
+      yield put(clearModelsCache({ schema: 'statementForward' }));
+      yield put(clearModelsCache({ schema: 'visualisation' }));
+    }
     const model = yield select(state =>
       modelsSchemaIdSelector(schema, id)(state)
     );

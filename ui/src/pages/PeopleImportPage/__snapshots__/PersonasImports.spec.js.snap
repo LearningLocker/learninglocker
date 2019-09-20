@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PersonasImports should render the personas imports list with no items 1`] = `
+<div>
+  <header
+    id="topbar"
+  >
+    <div
+      className="heading heading-light"
+    >
+      <span
+        className="pull-right open_panel_btn"
+      >
+        <button
+          className="btn btn-primary btn-sm"
+          onClick={[Function]}
+        >
+          <i
+            className="ion ion-plus"
+          />
+          Import
+        </button>
+      </span>
+      People - Imports
+    </div>
+  </header>
+  <div
+    className="row"
+  >
+    <div
+      className="col-md-12"
+    >
+      <div
+        className="row"
+      >
+        <div
+          className="col-md-12"
+        >
+          <h4>
+            No items.
+          </h4>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

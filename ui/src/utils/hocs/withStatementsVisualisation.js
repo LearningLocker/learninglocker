@@ -45,6 +45,8 @@ const withStatementsVisualisation = (WrappedComponent) => {
       this.props.model.get('isDonut') === model.get('isDonut') &&
       this.props.model.get('barChartGroupingLimit') === model.get('barChartGroupingLimit') &&
       this.props.model.get('filters').equals(model.get('filters')) &&
+      this.props.model.get('showStats') === model.get('showStats') &&
+      this.props.model.get('statsAtBottom') === model.get('statsAtBottom') &&
       this.props.model.get('trendLines') === model.get('trendLines')
     );
 

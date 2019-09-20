@@ -1,5 +1,6 @@
-import keyExists from 'ui/utils/visualisations/helpers/keyExists';
 import { fromJS } from 'immutable';
+import { RESPONSE_ROWS_LIMIT } from 'lib/constants/visualise';
+import keyExists from 'ui/utils/visualisations/helpers/keyExists';
 import createStagePipeline from 'ui/utils/visualisations/helpers/createStagePipeline';
 import { VALUE_OP_CASE, getValueOpCase } from 'ui/utils/visualisations/helpers/valueOpCase';
 import group from 'ui/utils/visualisations/projections/group';
@@ -117,7 +118,7 @@ const createPersonaAttributeStages = ({ groupType }) => {
 
 const getPostReqs = () => {
   const sort = { $sort: { count: -1 } };
-  const limit = { $limit: 10000 };
+  const limit = { $limit: RESPONSE_ROWS_LIMIT };
   const finalProject = { $project: { _id: 1, count: 1, model: 1 } };
   return [sort, limit, finalProject];
 };

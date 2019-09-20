@@ -84,9 +84,9 @@ class WidgetVisualiseCreator extends Component {
             schema={schema}
             id={this.getVisualisationId()}
             displayCount={3}
-            parseOption={model => createDefaultTitleWithIcon(model, model.get('description'))}
-            parseOptionString={model => model.get('description', createDefaultTitle(model))}
-            parseOptionTooltip={model => model.get('description', createDefaultTitle(model))}
+            parseOption={model => createDefaultTitleWithIcon(model)}
+            parseOptionString={model => model.get('description') || createDefaultTitle(model)}
+            parseOptionTooltip={model => model.get('description') || createDefaultTitle(model)}
             onChange={this.onClickVisualisation}
             searchStringToFilter={this.searchStringToFilter}
             canEdit={() => false}

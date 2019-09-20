@@ -1,4 +1,6 @@
 import boolean from 'boolean';
+import { get, isEmpty } from 'lodash';
+import mongoose from 'mongoose';
 import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
 import catchErrors from 'api/controllers/utils/catchErrors';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
@@ -9,8 +11,7 @@ import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAu
 import parseQuery from 'lib/helpers/parseQuery';
 import { BATCH_STATEMENT_DELETION_QUEUE } from 'lib/constants/batchDelete';
 import { publish } from 'lib/services/queue';
-import { get, isEmpty } from 'lodash';
-import mongoose from 'mongoose';
+import { updateStatementCountsInOrg } from 'lib/services/lrs';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -73,7 +74,7 @@ const terminateBatchDelete = catchErrors(async (req, res) => {
   checkDeletionsEnabled();
 
   // Authenticate
-  const { scopeFilter } = await authenticate(req, 'batchdelete');
+  const { authInfo, scopeFilter } = await authenticate(req, 'batchdelete');
   const filter = {
     ...scopeFilter,
     _id: objectId(req.params.id)
@@ -86,19 +87,28 @@ const terminateBatchDelete = catchErrors(async (req, res) => {
 
   batchDelete.done = true;
   await batchDelete.save();
-  return res.status(204).send();
+
+  // Update LRS.statementCount
+  const organisationId = getOrgFromAuthInfo(authInfo);
+  await updateStatementCountsInOrg(organisationId);
+
+  res.status(204).send();
 });
 
 const terminateAllBatchDeletes = catchErrors(async (req, res) => {
   checkDeletionsEnabled();
 
   // Authenticate
-  const { scopeFilter } = await authenticate(req, 'batchdelete');
+  const { authInfo, scopeFilter } = await authenticate(req, 'batchdelete');
   await BatchDelete.updateMany(scopeFilter, {
     done: true
   });
 
-  return res.status(204).send();
+  // Update LRS.statementCount
+  const organisationId = getOrgFromAuthInfo(authInfo);
+  await updateStatementCountsInOrg(organisationId);
+
+  res.status(204).send();
 });
 
 export default {

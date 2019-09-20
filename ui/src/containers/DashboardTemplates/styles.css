@@ -26,7 +26,11 @@
 }
 
 .card img {
-  height: 100px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  height: 120px;
+  width: 120px
 }
 
 .card p {
