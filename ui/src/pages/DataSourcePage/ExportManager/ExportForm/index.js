@@ -79,7 +79,7 @@ class ExportForm extends Component {
   }
 
   getActiveProjection = (state, props) => {
-    return model.getIn(
+    return props.model.getIn(
       ['projections', state.activeIndex],
       getDefaultProjectionFromType(props.model.get('type'))
     );
