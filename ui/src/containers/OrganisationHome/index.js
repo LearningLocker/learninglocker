@@ -89,9 +89,15 @@ const renderPage = (routeName) => {
     }));
   }
 
-  if (testRoute('organisation.demoSalesData')) {
+  if (testRoute('organisation.apps.demoSalesData')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/pages/DemoSalesAppPage'),
+      loader: System.import('ui/pages/SettingsAppsPage/subpages/DemoSalesAppPage'),
+    }));
+  }
+
+  if (testRoute('organisation.apps')) {
+    return React.createElement(createAsyncComponent({
+      loader: System.import('ui/pages/SettingsAppsPage')
     }));
   }
 

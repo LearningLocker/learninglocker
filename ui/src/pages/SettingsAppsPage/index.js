@@ -117,7 +117,7 @@ const Apps = ({ organisationId }) => (
         icon={icons.gdpr} />
       <LinkAppCard
         organisationId={{ organisationId }}
-        routeName="organisation.demoSalesData"
+        routeName="organisation.apps.demoSalesData"
         title="Demo Sales Data"
         description="Provides sample data to demonstrate Learning Locker"
         icon={icons.gdpr} />

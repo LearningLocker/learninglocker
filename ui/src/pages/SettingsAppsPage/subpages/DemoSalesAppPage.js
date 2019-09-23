@@ -1,6 +1,6 @@
 import React from 'react';
-import RequestAppAccessForm from 'ui/containers/RequestAppAccessForm';
 import { requestAppAccess } from 'ui/redux/modules/requestAppAccess';
+import RequestAppAccessForm from '../RequestAppAccessForm';
 
 const Demo = () => {
   const appName = 'Demo Sales Data';
