@@ -90,7 +90,7 @@ const getAddPipeline = ({
   if (moment(model.fromTimestamp).isAfter(moment(model.gtDate))) {
     addToEnd = {
       $gte: moment(getFromTimestamp({ model, now })).toDate(),
-      $lt: moment(model.fromTimestamp).toDate()
+      $lt: moment(model.fromTimestamp || now).toDate()
     };
   }
 
@@ -135,10 +135,17 @@ const getSubtractPipeline = ({
   return subtractPipeline;
 };
 
+const getWindowSize = (model) => {
+  if (model.previousWindowSize) {
+    return model.previousWindowSize;
+  }
+  return model.windowSize;
+};
+
 const aggregationProcessor = async ({
   aggregationProcessorId,
   publishQueue = publish,
-  now = moment()
+  now
 }, done) => {
   // Attempt to aquire a lock
   const model = await AggregationProcessor.findOneAndUpdate({
@@ -162,7 +169,15 @@ const aggregationProcessor = async ({
     return;
   }
 
-  model.gtDate = moment(now).subtract(model.windowSize, model.windowSizeUnits);
+  if (!now) {
+    if (!model.previousWindowSize) {
+      now = moment();
+    } else if (model.previousWindowSize) {
+      now = moment().subtract(model.windowSize, model.windowSizeUnits);
+    }
+  }
+
+  model.gtDate = moment(now).subtract(getWindowSize(model), model.windowSizeUnits);
 
   const addPipeline = getAddPipeline({
     model,

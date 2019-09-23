@@ -45,6 +45,7 @@ export const aggregationProcessorInitialise = catchErrors(async (req, res) => {
 
   const windowSize = req.query.timeIntervalSinceToday;
   const windowSizeUnits = req.query.timeIntervalUnits;
+  const previousWindowSize = req.query.timeIntevalSincePreviousTimeInteval;
 
   const model = await findOrCreateAggregationProcessor({
     organisation,
@@ -52,7 +53,8 @@ export const aggregationProcessorInitialise = catchErrors(async (req, res) => {
     pipelineHash: hash,
     pipelineString: pipelineKeyString,
     windowSize,
-    windowSizeUnits
+    windowSizeUnits,
+    previousWindowSize
   });
 
   // Send it to the queue

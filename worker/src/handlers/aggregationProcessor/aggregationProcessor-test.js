@@ -229,4 +229,32 @@ describe('aggregationProcessor', () => {
     expect(result[0].model).to.equal((moment().toDate().getDay() + 1));
     expect(pulbishQueueCalls).to.equal(0);
   });
+
+  it('benchmarking', async () => {
+    await Statement.create({
+      statement: {},
+      organisation: objectId(TEST_ID),
+      hash: '123456',
+      timestamp: moment().subtract(32, 'days').toDate()
+    });
+
+    const aggregationProcessorModel = await AggregationProcessor.create({
+      pipelineString,
+      pipelineHash,
+      windowSize: 30,
+      previousWindowSize: 30,
+    });
+
+    let done = false;
+    const doneFn = () => {
+      done = true;
+    };
+
+    const result = await aggregationProcessor({
+      aggregationProcessorId: aggregationProcessorModel._id
+    }, doneFn);
+
+    expect(done).to.equal(true);
+    expect(result[0].count).to.equal(1);
+  });
 });
