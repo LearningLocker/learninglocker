@@ -1,5 +1,4 @@
 import React from 'react';
-import { requestAppAccess } from 'ui/redux/modules/requestAppAccess';
 import RequestAppAccessForm from '../RequestAppAccessForm';
 
 const Demo = () => {
@@ -12,8 +11,7 @@ const Demo = () => {
         </div>
       </header>
       <RequestAppAccessForm
-        appName={appName}
-        requestAppAccessAction={{ requestAppAccess }} />
+        appName={appName} />
     </div>
   );
 };

@@ -33,7 +33,7 @@ function* requestAppAccessSaga() {
     if (status > 200) {
       yield put(requestAppAccessFailure({ body }));
       yield put(alert({
-        message: body
+        message: 'Access request failed, check email configuration'
       }));
     } else {
       yield put(requestAppAccessSuccess({ body }));

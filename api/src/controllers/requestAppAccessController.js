@@ -1,12 +1,15 @@
 import fs from 'fs';
 import htmlToText from 'html-to-text';
-import { defaultMailOptions, sendHandler } from 'lib/helpers/email';
+import { defaultMailOptions } from 'lib/helpers/email';
 import transporter from 'lib/connections/nodemailer';
 import _ from 'lodash';
 import { promisify } from 'bluebird';
+import RequestAppAccessError from 'lib/errors/RequestAppAccessError';
 import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
+import logger from 'lib/logger';
+import catchErrors from './utils/catchErrors';
 
-export const requestAppAccess = async (request, response) => {
+export const requestAppAccess = catchErrors(async (request, response) => {
   const authInfo = getAuthFromRequest(request);
 
   const subject = 'Upgrade to enterprise enquiry';
@@ -35,9 +38,17 @@ export const requestAppAccess = async (request, response) => {
     text,
   }, defaultMailOptions);
 
-
-  await transporter.sendMail(mailOptions, sendHandler);
+  await new Promise((resolve, reject) => {
+    transporter.sendMail(mailOptions, (err) => {
+      if (err !== null && err !== undefined) {
+        logger.error('Error sending email', err);
+        reject(new RequestAppAccessError());
+        return;
+      }
+      resolve();
+    });
+  });
   response.send();
-};
+});
 
 export default { requestAppAccess };

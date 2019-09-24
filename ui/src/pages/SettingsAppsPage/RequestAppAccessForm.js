@@ -10,9 +10,9 @@ const RequestAppAccessForm = (props) => {
 
   const handleSubmit = (event) => {
     if (event) { event.preventDefault(); }
+    setFormDisplay('none');
     props.requestAppAccessAction({ privacyPolicy, appName: props.appName });
     setUserMessage('Thank you, we\'ll be in touch');
-    setFormDisplay('none');
   };
 
   const handlePrivacyPolicyChange = (event) => {
