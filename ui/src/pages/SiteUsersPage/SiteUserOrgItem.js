@@ -1,24 +1,29 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
-import { setPropTypes } from 'recompose';
 import SiteOrgLink from './SiteOrgLink';
 
-const enhance = setPropTypes({
-  org: PropTypes.instanceOf(Map).isRequired,
-  user: PropTypes.instanceOf(Map).isRequired
-});
-
-const render = ({ org, user }) => {
-  const isOwnerOrg = org.get('_id') === user.get('ownerOrganisation');
+/**
+ * @param {{
+ *  org: Map;
+ *  user: Map;
+ * }} props
+ */
+function SiteUserOrgItem(props) {
+  const isOwnerOrg = props.org.get('_id') === props.user.get('ownerOrganisation');
   const style = {
     fontWeight: isOwnerOrg ? 'bold' : 'normal'
   };
   return (
-    <li key={org.get('_id')}>
-      <SiteOrgLink model={org} style={style} />
+    <li key={props.org.get('_id')}>
+      <SiteOrgLink model={props.org} style={style} />
     </li>
   );
 };
 
-export default enhance(render);
+SiteUserOrgItem.propTypes = {
+  org: PropTypes.instanceOf(Map).isRequired,
+  user: PropTypes.instanceOf(Map).isRequired,
+};
+
+export default React.memo(SiteUserOrgItem);
