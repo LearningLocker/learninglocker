@@ -57,7 +57,11 @@ export const aggregationWsResultsSelector = (pipeline, timeInterval) => {
         new Map({
           pipeline,
           timeIntervalSinceToday: get(timeInterval, 'timeIntervalSinceToday'),
-          timeIntervalUnits: get(timeInterval, 'timeIntervalUnits')
+          timeIntervalUnits: get(timeInterval, 'timeIntervalUnits'),
+          ...(get(timeInterval, 'timeIntervalSincePreviousTimeInterval') ?
+            { timeIntervalSincePreviousTimeInterval: get(timeInterval, 'timeIntervalSincePreviousTimeInterval') } :
+            {}
+          )
         }),
         'result'
       ]);

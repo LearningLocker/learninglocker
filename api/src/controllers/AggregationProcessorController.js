@@ -13,6 +13,7 @@ export const findOrCreateAggregationProcessor = async ({
   pipelineHash,
   windowSize,
   windowSizeUnits,
+  previousWindowSize,
   organisation,
   lrs_id
 }) => {
@@ -21,7 +22,8 @@ export const findOrCreateAggregationProcessor = async ({
     lrs_id,
     pipelineHash,
     windowSize,
-    windowSizeUnits
+    windowSizeUnits,
+    previousWindowSize
   }, {
     pipelineString
   }, {
@@ -45,7 +47,7 @@ export const aggregationProcessorInitialise = catchErrors(async (req, res) => {
 
   const windowSize = req.query.timeIntervalSinceToday;
   const windowSizeUnits = req.query.timeIntervalUnits;
-  const previousWindowSize = req.query.timeIntevalSincePreviousTimeInteval;
+  const previousWindowSize = req.query.timeIntervalSincePreviousTimeInterval;
 
   const model = await findOrCreateAggregationProcessor({
     organisation,

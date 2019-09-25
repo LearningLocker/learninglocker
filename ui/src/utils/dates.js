@@ -35,39 +35,47 @@ export const periodToDate = (period, timezone, currentMoment, benchmark = 1) => 
   }
 };
 
-export const previewPeriodToInterval = (period) => {
+export const previewPeriodToInterval = (period, benchmarking) => {
   switch (period) {
     case TODAY: return {
       timeIntervalSinceToday: 1,
-      timeIntervalUnits: 'days'
+      timeIntervalUnits: 'days',
+      ...(benchmarking ? { timeIntervalSincePreviousTimeInterval: 1 } : {})
     };
     case LAST_24_HOURS: return {
       timeIntervalSinceToday: 24,
-      timeIntervalUnits: 'hours'
+      timeIntervalUnits: 'hours',
+      ...(benchmarking ? { timeIntervalSincePreviousTimeInterval: 24 } : {})
     };
     case LAST_7_DAYS: return {
       timeIntervalSinceToday: 7,
-      timeIntervalUnits: 'days'
+      timeIntervalUnits: 'days',
+      ...(benchmarking ? { timeIntervalSincePreviousTimeInterval: 7 } : {})
     };
     case LAST_30_DAYS: return {
       timeIntervalSinceToday: 30,
-      timeIntervalUnits: 'days'
+      timeIntervalUnits: 'days',
+      ...(benchmarking ? { timeIntervalSincePreviousTimeInterval: 30 } : {})
     };
     case LAST_2_MONTHS: return {
       timeIntervalSinceToday: 2,
-      timeIntervalUnits: 'months'
+      timeIntervalUnits: 'months',
+      ...(benchmarking ? { timeIntervalSincePreviousTimeInterval: 2 } : {})
     };
     case LAST_6_MONTHS: return {
       timeIntervalSinceToday: 6,
-      timeIntervalUnits: 'months'
+      timeIntervalUnits: 'months',
+      ...(benchmarking ? { timeIntervalSincePreviousTimeInterval: 6 } : {})
     };
     case LAST_1_YEAR: return {
       timeIntervalSinceToday: 1,
-      timeIntervalUnits: 'years'
+      timeIntervalUnits: 'years',
+      ...(benchmarking ? { timeIntervalSincePreviousTimeInterval: 1 } : {})
     };
     case LAST_2_YEARS: return {
       timeIntervalSinceToday: 2,
-      timeIntervalUnits: 'years'
+      timeIntervalUnits: 'years',
+      ...(benchmarking ? { timeIntervalSincePreviousTimeInterval: 2 } : {})
     };
   }
 };

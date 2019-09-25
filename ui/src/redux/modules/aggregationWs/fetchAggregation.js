@@ -1,7 +1,7 @@
 import { OrderedMap, Map, fromJS } from 'immutable';
 import { createSelector } from 'reselect';
 import moment from 'moment';
-import { call, put, takeEvery, select, take, fork } from 'redux-saga/effects';
+import { call, put, select, take, fork } from 'redux-saga/effects';
 import { eventChannel, END } from 'redux-saga';
 import createAsyncDuck from 'ui/utils/createAsyncDuck';
 import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
@@ -25,7 +25,11 @@ const aggregationRequestStateSelector = (pipeline, timeInterval) => createSelect
     const out = aggregations.getIn([new Map({
       pipeline,
       timeIntervalSinceToday: get(timeInterval, 'timeIntervalSinceToday'),
-      timeIntervalUnits: get(timeInterval, 'timeIntervalUnits')
+      timeIntervalUnits: get(timeInterval, 'timeIntervalUnits'),
+      ...(get(timeInterval, 'timeIntervalSincePreviousTimeInterval') ?
+        { timeIntervalSincePreviousTimeInterval: get(timeInterval, 'timeIntervalSincePreviousTimeInterval') } :
+        {}
+      )
     }), 'requestState']);
     return out;
   }
@@ -79,12 +83,13 @@ const fetchAggregation = createAsyncDuck({
   actionName: 'learninglocker/aggregation/FETCH_AGGREGATION_WS',
   failureDelay: 2000,
 
-  reduceStart: (state, { pipeline, timeIntervalSinceToday, timeIntervalUnits }) => {
+  reduceStart: (state, { pipeline, timeIntervalSinceToday, timeIntervalUnits, timeIntervalSincePreviousTimeInterval }) => {
     const out = state
     .setIn([new Map({
       pipeline,
       timeIntervalSinceToday,
-      timeIntervalUnits
+      timeIntervalUnits,
+      ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {})
     }), 'requestState'], IN_PROGRESS);
     return out;
   },
@@ -93,6 +98,7 @@ const fetchAggregation = createAsyncDuck({
     pipeline,
     timeIntervalSinceToday,
     timeIntervalUnits,
+    timeIntervalSincePreviousTimeInterval,
     result
   }) => {
     if (!pipeline) {
@@ -104,6 +110,7 @@ const fetchAggregation = createAsyncDuck({
         pipeline,
         timeIntervalSinceToday,
         timeIntervalUnits,
+        ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {})
       }), 'requestState'], COMPLETED);
 
     if (result.get('result') === null) {
@@ -114,29 +121,61 @@ const fetchAggregation = createAsyncDuck({
       pipeline,
       timeIntervalSinceToday,
       timeIntervalUnits,
+      ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {})
     }), 'result'], result.getIn(['result']));
 
     return out;
   },
 
-  reduceFailure: (state, { pipeline, err }) => state
-    .setIn([pipeline, 'requestState'], FAILED)
-    .setIn([pipeline, 'error'], err),
+  reduceFailure: (state, {
+    pipeline,
+    timeIntervalSinceToday,
+    timeIntervalUnits,
+    timeIntervalSincePreviousTimeInterval,
+    err
+  }) => state
+    .setIn([new Map({
+      pipeline,
+      timeIntervalSinceToday,
+      timeIntervalUnits,
+      ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {})
+    }), 'requestState'], FAILED)
+    .setIn([new Map({
+      pipeline,
+      timeIntervalSinceToday,
+      timeIntervalUnits,
+      ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {})
+    }), 'error'], err),
 
-  reduceComplete: (state, { pipeline }) => state
-    .setIn([pipeline, 'requestState'], COMPLETED),
+  reduceComplete: (state, {
+    pipeline,
+    timeIntervalSinceToday,
+    timeIntervalUnits,
+    timeIntervalSincePreviousTimeInterval
+  }) => {
+    const out = state
+    .setIn([new Map({
+      pipeline,
+      timeIntervalSinceToday,
+      timeIntervalUnits,
+      ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {})
+    }), 'requestState'], COMPLETED);
+    return out;
+  },
 
   startAction: ({
     pipeline,
     mapping = defaultMapping,
     timeIntervalSinceToday,
-    timeIntervalUnits
+    timeIntervalUnits,
+    timeIntervalSincePreviousTimeInterval
   }) => {
     const out = ({
       pipeline,
       mapping,
       timeIntervalSinceToday,
-      timeIntervalUnits
+      timeIntervalUnits,
+      timeIntervalSincePreviousTimeInterval
     });
     return out;
   },
@@ -145,23 +184,25 @@ const fetchAggregation = createAsyncDuck({
     if (!args) {
       return {};
     }
-    const { pipeline, timeIntervalSinceToday, timeIntervalUnits, result, sinceAt } = args;
-    const out = ({ pipeline, timeIntervalSinceToday, timeIntervalUnits, result, sinceAt });
+    const { pipeline, timeIntervalSinceToday, timeIntervalUnits, timeIntervalSincePreviousTimeInterval, result, sinceAt } = args;
+    const out = ({ pipeline, timeIntervalSinceToday, timeIntervalUnits, timeIntervalSincePreviousTimeInterval, result, sinceAt });
     return out;
   },
 
-  failureAction: ({ pipeline, err }) => ({ pipeline, err }),
+  failureAction: args => args,
 
-  completeAction: ({ pipeline }) => ({ pipeline }),
+  completeAction: args => args,
 
   checkShouldFire: ({
     pipeline,
     timeIntervalSinceToday,
-    timeIntervalUnits
+    timeIntervalUnits,
+    timeIntervalSincePreviousTimeInterval
   }, state) => {
     const shouldFetch = aggregationShouldFetchSelector(pipeline, {
       timeIntervalSinceToday,
-      timeIntervalUnits
+      timeIntervalUnits,
+      timeIntervalSincePreviousTimeInterval
     })(state);
     const shouldRecall = aggregationShouldRecallSelector(pipeline)(state);
     return shouldFetch || shouldRecall;
@@ -172,14 +213,22 @@ const fetchAggregation = createAsyncDuck({
     llClient,
     timeIntervalSinceToday,
     timeIntervalUnits,
+    timeIntervalSincePreviousTimeInterval,
     successAction,
     mapping
   }) {
     // const pipelineWithoutTime = pipeline.shift(); // DEBUG ONLY, the pipeline should be correct when it comes in.
-    const { body } = yield call(llClient.aggregateWs, pipeline, timeIntervalSinceToday, timeIntervalUnits);
+    const { body } = yield call(
+      llClient.aggregateWs,
+      pipeline,
+      timeIntervalSinceToday,
+      timeIntervalUnits,
+      timeIntervalSincePreviousTimeInterval
+    );
     yield put(successAction({ pipeline,
       timeIntervalSinceToday,
       timeIntervalUnits,
+      timeIntervalSincePreviousTimeInterval,
       result: mapping(body.results)
     }));
 
@@ -219,6 +268,7 @@ const fetchAggregation = createAsyncDuck({
           pipeline,
           timeIntervalSinceToday,
           timeIntervalUnits,
+          timeIntervalSincePreviousTimeInterval,
           result
         }));
       });

@@ -152,7 +152,7 @@ class _LLApiClient {
     },
   })
 
-  aggregateWs = (pipeline, timeIntervalSinceToday, timeIntervalUnits) => post({
+  aggregateWs = (pipeline, timeIntervalSinceToday, timeIntervalUnits, timeIntervalSincePreviousTimeInterval) => post({
     url: formatUrl(routes.STATEMENTS_AGGREGATION_PROCESSOR_INITIALISE),
     headers: {
       Authorization: `Bearer ${this.getToken()}`,
@@ -160,6 +160,7 @@ class _LLApiClient {
     query: {
       timeIntervalSinceToday,
       timeIntervalUnits,
+      timeIntervalSincePreviousTimeInterval
     },
     body: {
       pipeline

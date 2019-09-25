@@ -3,14 +3,12 @@ import { createSelector } from 'reselect';
 import { take, takeEvery, put, fork, select } from 'redux-saga/effects';
 import { identity, get } from 'lodash';
 import {
-  // fetchAggregation,
-  aggregationShouldFetchSelector,
   aggregationResultsSelector,
-  aggregationHasResultSelector,
 } from 'ui/redux/modules/aggregation';
 import {
   fetchAggregation,
   aggregationWsResultsSelector,
+  aggregationShouldFetchSelector,
   aggregationWsHasResultSelector
 } from 'ui/redux/modules/aggregationWs';
 import {
@@ -246,6 +244,7 @@ export const visualisationWsPipelinesSelector = (
     const previewPeriod = visualisation.get('previewPeriod');
     const benchmarkingEnabled = visualisation.get('benchmarkingEnabled', false);
     const timezone = visualisation.get('timezone') || orgTimezoneFromToken || organisationModel.get('timezone', 'UTC');
+
     const queries = visualisation.get('filters', new List()).map((vFilter) => {
       if (!filter) {
         return vFilter;
@@ -264,11 +263,11 @@ export const visualisationWsPipelinesSelector = (
     });
 
     const axes = unflattenAxes(visualisation);
-    const series = cb(queries, axes, type, undefined, journey, timezone, benchmarkingEnabled);
+    const series = cb(queries, axes, type, undefined, journey, timezone, false);
 
     const out = {
       series,
-      ...previewPeriodToInterval(previewPeriod)
+      ...previewPeriodToInterval(previewPeriod, benchmarkingEnabled)
     };
 
     return out;
@@ -291,7 +290,7 @@ export const suggestedStepSelector = (visualisation) => {
   return NONE;
 };
 
-const shouldFetchPipeline = (pipeline, state) => aggregationShouldFetchSelector(pipeline)(state);
+const shouldFetchPipeline = (pipeline, state, timeInterval) => aggregationShouldFetchSelector(pipeline, timeInterval)(state);
 
 const shouldFetchPipelines = (pipelines, state) =>
   pipelines.reduce((reduction, pipeline) => (
@@ -371,9 +370,27 @@ const getWsSeriesResults = (visualisationId, state) => {
   const {
     series,
     timeIntervalSinceToday,
-    timeIntervalUnits
+    timeIntervalUnits,
+    timeIntervalSincePreviousTimeInterval
   } = visualisationWsPipelinesSelector(visualisationId)(state);
-  return series.map(getWsPipelinesResults(state, { timeIntervalSinceToday, timeIntervalUnits }));
+
+  if (!timeIntervalSincePreviousTimeInterval) {
+    return series.map(getWsPipelinesResults(state, {
+      timeIntervalSinceToday,
+      timeIntervalUnits
+    }));
+  }
+
+  const seriesOne = series.map(getWsPipelinesResults(state, {
+    timeIntervalSinceToday,
+    timeIntervalUnits
+  }));
+  const seriesTwo = series.map(getWsPipelinesResults(state, {
+    timeIntervalSinceToday,
+    timeIntervalUnits,
+    timeIntervalSincePreviousTimeInterval
+  }));
+  return seriesOne.concat(seriesTwo);
 };
 
 /**
@@ -460,17 +477,34 @@ export function* fetchVisualisationSaga(state, id) {
       yield put(fetchModels('journey', new Map({ _id: journeyId })));
     }
   } else {
-    const { series, timeIntervalSinceToday, timeIntervalUnits } = visualisationWsPipelinesSelector(id)(state);
+    const {
+      series,
+      timeIntervalSinceToday,
+      timeIntervalUnits,
+      timeIntervalSincePreviousTimeInterval
+    } = visualisationWsPipelinesSelector(id)(state);
     for (let s = 0; s < series.size; s += 1) {
       const pipelines = series.get(s);
       for (let p = 0; p < pipelines.size; p += 1) {
-        const shouldFetch = shouldFetchPipeline(pipelines.get(p), state);
+        const shouldFetch = shouldFetchPipeline(pipelines.get(p), state, {
+          timeIntervalSinceToday,
+          timeIntervalUnits
+        });
         if (shouldFetch) {
           yield put(fetchAggregation({
             pipeline: pipelines.get(p),
             timeIntervalSinceToday,
-            timeIntervalUnits,
+            timeIntervalUnits
           }));
+
+          if (timeIntervalSincePreviousTimeInterval) {
+            yield put(fetchAggregation({
+              pipeline: pipelines.get(p),
+              timeIntervalSinceToday,
+              timeIntervalUnits,
+              timeIntervalSincePreviousTimeInterval
+            }));
+          }
         }
       }
     }
