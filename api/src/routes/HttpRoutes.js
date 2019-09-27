@@ -54,7 +54,7 @@ import Dashboard from 'lib/models/dashboard';
 import QueryBuilderCache from 'lib/models/querybuildercache';
 import QueryBuilderCacheValue from 'lib/models/querybuildercachevalue';
 import Role from 'lib/models/role';
-import PersonaAttribute from 'lib/models/PersonaAttribute';
+import PersonaAttribute from 'lib/models/personaAttribute';
 import PersonasImport from 'lib/models/personasImport';
 import PersonasImportTemplate from 'lib/models/personasImportTemplate';
 import SiteSettings from 'lib/models/siteSettings';
