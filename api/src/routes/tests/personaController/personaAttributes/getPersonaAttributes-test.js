@@ -13,7 +13,7 @@ describe('getPresonaAttributes', () => {
   let attribute;
   let persona;
 
-  before(async () => {
+  beforeEach(async () => {
     await personaService.clearService();
 
     token = await createOrgToken();
@@ -66,10 +66,11 @@ describe('getPresonaAttributes', () => {
     const result = await apiApp.get(routes.PERSONA_ATTRIBUTE)
       .set('Authorization', `Bearer ${token}`)
       .query({
-        filter: JSON.stringify({ personaId: persona.id })
+        query: JSON.stringify({ personaId: persona.id })
       })
       .expect(200);
 
+    console.log(result.body);
     expect(result.body.length).to.equal(1);
   });
 });
