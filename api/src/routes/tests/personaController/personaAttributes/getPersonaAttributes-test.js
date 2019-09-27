@@ -13,7 +13,7 @@ describe('getPresonaAttributes', () => {
   let attribute;
   let persona;
 
-  beforeEach(async () => {
+  before(async () => {
     await personaService.clearService();
 
     token = await createOrgToken();
