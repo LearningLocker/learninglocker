@@ -70,7 +70,6 @@ describe('getPresonaAttributes', () => {
       })
       .expect(200);
 
-    console.log(result.body);
     expect(result.body.length).to.equal(1);
   });
 });
