@@ -13,7 +13,7 @@ export const requestAppAccess = catchErrors(async (request, response) => {
   const authInfo = getAuthFromRequest(request);
 
   const subject = 'Upgrade to enterprise enquiry';
-  const recipient = 'Lydia Ross <lydia.ross@learningpool.com>'; // TODO: hello@learninglocker.net
+  const recipient = 'Learning Locker <hello@learninglocker.net>';
 
   const globalTemplate = await promisify(fs.readFile)('./lib/templates/emails/body.html');
   const compiledWrapper = _.template(globalTemplate);
