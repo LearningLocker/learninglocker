@@ -1,28 +1,28 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import Link from 'ui/containers/Link';
 import { Map } from 'immutable';
 
-export default class OrganisationLink extends Component {
-  static propTypes = {
-    model: PropTypes.instanceOf(Map),
-    style: PropTypes.object,
-  }
-
-  static defaultProps = {
-    model: new Map(),
-    style: {}
-  }
-
-  render = () => {
-    const { model, style } = this.props;
-    return (
-      <Link
-        style={style}
-        routeName="admin.organisations.id"
-        routeParams={{ organisationId: model.get('_id') }}>
-        {model.get('name')}
-      </Link>
-    );
-  }
+/**
+ * @param {{
+ *  model: Map;
+ *  style: object;
+ * }} props
+ */
+function OrganisationLink(props) {
+  return (
+    <Link
+      style={props.style}
+      routeName="admin.organisations.id"
+      routeParams={{ organisationId: props.model.get('_id') }}>
+      {props.model.get('name')}
+    </Link>
+  );
 }
+
+OrganisationLink.propTypes = {
+  model: PropTypes.instanceOf(Map),
+  style: PropTypes.object,
+};
+
+export default React.memo(OrganisationLink);
