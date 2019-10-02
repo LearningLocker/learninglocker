@@ -4,11 +4,21 @@
     "baseUrl": ".",
     // Relative to "baseUrl"
     "paths": {
-      "api": "api/src",
-      "ui": "ui/src",
-      "worker": "worker/src",
-      "cli": "cli/src",
-      "lib": "lib/src"
+      "api": [
+        "api/src"
+      ],
+      "ui": [
+        "ui/src"
+      ],
+      "worker": [
+        "worker/src"
+      ],
+      "cli": [
+        "cli/src"
+      ],
+      "lib": [
+        "lib/src"
+      ]
     }
   },
   "include": [
