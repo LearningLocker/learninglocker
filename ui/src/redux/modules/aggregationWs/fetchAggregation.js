@@ -47,50 +47,19 @@ const aggregationShouldFetchSelector = (pipeline, timeIntetrval) => createSelect
   }
 );
 
-const aggregationShouldRecallSelector = pipeline => createSelector(
-  aggregationSelector,
-  (aggregations) => {
-    const requestState = aggregations.getIn([pipeline, 'requestState']);
-    if (requestState === IN_PROGRESS) {
-      return false;
-    }
-
-    const result = aggregations.getIn([pipeline, 'result']);
-    const startedAt = aggregations.getIn([pipeline, 'startedAt']);
-    const completedAt = aggregations.getIn([pipeline, 'completedAt']);
-
-    // Cached and is running
-    const cachedAndIsRunning = startedAt && completedAt && moment(completedAt).isBefore(moment(startedAt));
-    if (cachedAndIsRunning) {
-      return true;
-    }
-
-    // No cache in redux
-    if (!OrderedMap.isOrderedMap(result)) {
-      return true;
-    }
-
-    // Redux has result, but completedAt is null
-    if (completedAt === null) {
-      return true;
-    }
-
-    return false;
-  }
-);
-
 const fetchAggregation = createAsyncDuck({
   actionName: 'learninglocker/aggregation/FETCH_AGGREGATION_WS',
   failureDelay: 2000,
 
   reduceStart: (state, { pipeline, timeIntervalSinceToday, timeIntervalUnits, timeIntervalSincePreviousTimeInterval }) => {
+    console.log('reduceStart SHOULD HAPPEN');
     const out = state
-    .setIn([new Map({
-      pipeline,
-      timeIntervalSinceToday,
-      timeIntervalUnits,
-      ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {})
-    }), 'requestState'], IN_PROGRESS);
+      .setIn([new Map({
+        pipeline,
+        timeIntervalSinceToday,
+        timeIntervalUnits,
+        ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {})
+      }), 'requestState'], IN_PROGRESS);
     return out;
   },
 
@@ -204,8 +173,7 @@ const fetchAggregation = createAsyncDuck({
       timeIntervalUnits,
       timeIntervalSincePreviousTimeInterval
     })(state);
-    const shouldRecall = aggregationShouldRecallSelector(pipeline)(state);
-    return shouldFetch || shouldRecall;
+    return shouldFetch;
   },
 
   doAction: function* fetchAggregationSaga({
@@ -217,7 +185,6 @@ const fetchAggregation = createAsyncDuck({
     successAction,
     mapping
   }) {
-    // const pipelineWithoutTime = pipeline.shift(); // DEBUG ONLY, the pipeline should be correct when it comes in.
     const { body } = yield call(
       llClient.aggregateWs,
       pipeline,

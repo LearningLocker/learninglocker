@@ -111,7 +111,7 @@ const getSubtractPipeline = ({
   model,
   now
 }) => {
-  const hasSubtraction = model.fromTimestamp || model.toTimestamp &&
+  const hasSubtraction = (model.fromTimestamp || model.toTimestamp) &&
     moment(model.fromTimestamp).isBefore(moment(model.gtDate));
 
   if (!hasSubtraction) {
@@ -132,6 +132,7 @@ const getSubtractPipeline = ({
     ...(JSON.parse(model.pipelineString))
   ];
 
+  console.log('201.2');
   return subtractPipeline;
 };
 
@@ -147,6 +148,8 @@ const aggregationProcessor = async ({
   publishQueue = publish,
   now
 }, done) => {
+  const start = new Date().getTime();
+  console.log('001');
   // Attempt to aquire a lock
   const model = await AggregationProcessor.findOneAndUpdate({
     _id: aggregationProcessorId,

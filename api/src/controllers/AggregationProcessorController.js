@@ -5,6 +5,7 @@ import { publish } from 'lib/services/queue';
 import sha1 from 'sha1';
 import { get } from 'lodash';
 import { AGGREGATION_PROCESSOR_QUEUE } from 'lib/constants/aggregationProcessor';
+import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 
 // const LOCK_TIMEOUT_MINUTES = 10;
 
@@ -39,6 +40,16 @@ export const aggregationProcessorInitialise = catchErrors(async (req, res) => {
   const organisation = getOrgFromAuthInfo(authInfo);
 
   const pipeline = req.body.pipeline;
+
+  const scopedFilter = await getScopeFilter({
+    modelName: 'aggregationProcessor',
+    actionName: 'view',
+    authInfo,
+    allowDashboardAccess: true
+  });
+  pipeline.unshift({
+    $match: scopedFilter
+  });
 
   const pipelineKeyString = JSON.stringify(pipeline);
 
