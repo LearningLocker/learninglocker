@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from './statementform.css';
 
 class StatementForm extends Component {
 
@@ -25,4 +23,4 @@ class StatementForm extends Component {
   }
 }
 
-export default withStyles(styles)(StatementForm);
+export default StatementForm;

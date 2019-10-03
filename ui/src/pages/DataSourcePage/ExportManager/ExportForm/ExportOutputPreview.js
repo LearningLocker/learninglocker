@@ -1,16 +1,36 @@
 /* eslint-disable react/jsx-indent */
 import { isString } from 'lodash';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import React from 'react';
+import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import { withProps, compose, setPropTypes, shouldUpdate, defaultProps } from 'recompose';
 import { MultiGrid, AutoSizer } from 'react-virtualized';
 import { withModels } from 'ui/utils/hocs';
-import styles from './styles.css';
+
+const Cell = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: baseline;
+  text-align: left;
+  padding: 0 1em 0 0;
+  white-space: nowrap;
+`;
+
+const CellWrapper = styled.div`
+  overflow: hidden;
+  width: 100%;
+`;
+
+const HeaderCell = styled(Cell)`
+  border-bottom: 2px solid #ddd;
+  font-weight: bold;
+`;
 
 const enhance = compose(
-  withStyles(styles),
   setPropTypes({
     filter: PropTypes.instanceOf(Map).isRequired,
     project: PropTypes.instanceOf(Map).isRequired,
@@ -29,8 +49,8 @@ const enhance = compose(
     const results = models.map(model =>
       project.map((value, key) => (
         isString(value) ?
-        model.getIn(value.replace('$', '').split('.')) :
-        model.getIn(key.split('.'))
+          model.getIn(value.replace('$', '').split('.')) :
+          model.getIn(key.split('.'))
       ))
     ).toList();
     const headings = project.keySeq();
@@ -53,9 +73,9 @@ const renderHeading = headings =>
   ({ columnIndex, style, key }) => {
     const heading = headings.get(columnIndex);
     return (
-      <div className={`${styles.cell} ${styles.header}`} style={style} key={key}>
-        { heading }
-      </div>
+      <HeaderCell style={style} key={key}>
+        {heading}
+      </HeaderCell>
     );
   };
 
@@ -67,11 +87,11 @@ const renderResultContent = (results, headings) =>
     const display = value && value.toJS ? JSON.stringify(value.toJS()) : value;
 
     return (
-      <div className={styles.cell} key={key} style={style}>
-        <div className={styles.cellWrapper} title={display}>
+      <Cell key={key} style={style}>
+        <CellWrapper title={display}>
           {display}
-        </div>
-      </div>
+        </CellWrapper>
+      </Cell>
     );
   };
 
@@ -81,8 +101,8 @@ const renderCell = (results, headings) => {
   return ({ columnIndex, rowIndex, key, style }) =>
     (
       rowIndex === 0
-      ? renderHeadingCell({ columnIndex, style, key })
-      : renderResultContentCell({ columnIndex, rowIndex: rowIndex - 1, style, key })
+        ? renderHeadingCell({ columnIndex, style, key })
+        : renderResultContentCell({ columnIndex, rowIndex: rowIndex - 1, style, key })
     );
 };
 

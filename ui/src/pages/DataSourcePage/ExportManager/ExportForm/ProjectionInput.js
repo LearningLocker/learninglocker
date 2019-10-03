@@ -1,12 +1,10 @@
 /* eslint-disable react/jsx-indent */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Map } from 'immutable';
 import JsonTextArea from 'ui/components/JsonTextArea';
 import toString from 'lodash/toString';
 import TableInput from 'ui/components/TableInput';
-import styles from './projectionbuilder.css';
 import CacheKeysAutoComplete from './CacheKeysAutoComplete';
 
 const stripDollar = string => string.replace(/^(\$)/, '');
@@ -52,20 +50,20 @@ class ProjectionInput extends Component {
 
     return (
       <div style={{ marginTop: '10px' }} >
-        { rawMode ? (
+        {rawMode ? (
           <span>
             <JsonTextArea value={projection} onChange={onChange} setReviver={setReviver} />
           </span>
         ) : (
-          <TableInput
-            values={projection}
-            onChange={this.onChange}
-            onValueChange={this.onEditFieldVal}
-            inputComponent={this.renderInputComponent} />
-        )}
+            <TableInput
+              values={projection}
+              onChange={this.onChange}
+              onValueChange={this.onEditFieldVal}
+              inputComponent={this.renderInputComponent} />
+          )}
       </div>
     );
   }
 }
 
-export default withStyles(styles)(ProjectionInput);
+export default ProjectionInput;

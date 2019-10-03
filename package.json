@@ -158,6 +158,7 @@
     "source-map-support": "^0.4.10",
     "sqs-consumer": "^3.6.1",
     "stats-webpack-plugin": "^0.4.3",
+    "styled-components": "^4.4.0",
     "supertest": "^1.2.0",
     "tincanjs": "^0.41.1",
     "url-loader": "^0.5.7",

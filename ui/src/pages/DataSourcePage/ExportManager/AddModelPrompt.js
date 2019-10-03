@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from './styles.css';
 
 class AddModelPrompt extends Component {
   static propTypes = {
@@ -10,7 +8,7 @@ class AddModelPrompt extends Component {
   }
 
   static defaultProps = {
-    onAdd: () => {}
+    onAdd: () => { }
   }
 
   render = () => {
@@ -18,11 +16,13 @@ class AddModelPrompt extends Component {
 
     return (
       <h4>
-        { message }
-        <a className={styles.addNew} onClick={this.props.onAdd}><i className="ion ion-plus-circled" /></a>
+        {message}
+        <a style={{ marginLeft: 8 }} onClick={this.props.onAdd}>
+          <i className="ion ion-plus-circled" />
+        </a>
       </h4>
     );
   }
 }
 
-export default withStyles(styles)(AddModelPrompt);
+export default AddModelPrompt;
