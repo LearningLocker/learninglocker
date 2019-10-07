@@ -1,16 +1,13 @@
 import React from 'react';
-import classNames from 'classnames';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import EditIconButton from 'ui/components/IconButton/EditIconButton';
 import DeleteIconButton from 'ui/components/IconButton/DeleteIconButton';
-import styles from './styles.css';
+import { TableActionsData, TableData } from './tableComponents';
 
 const enhance = compose(
   withProps({ schema: 'personaAttribute' }),
-  withModel,
-  withStyles(styles)
+  withModel
 );
 
 const render = ({ model, setMetadata, deleteModel }) => {
@@ -21,12 +18,12 @@ const render = ({ model, setMetadata, deleteModel }) => {
   };
   return (
     <tr>
-      <td className={styles.td}>{key}</td>
-      <td className={styles.td}>{value}</td>
-      <td className={classNames(styles.td, styles.actions)}>
+      <TableData>{key}</TableData>
+      <TableData>{value}</TableData>
+      <TableActionsData>
         <EditIconButton onClick={handleEdit} />
         <DeleteIconButton onConfirm={deleteModel} target="attribute" />
-      </td>
+      </TableActionsData>
     </tr>
   );
 };

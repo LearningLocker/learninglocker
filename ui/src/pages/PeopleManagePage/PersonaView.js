@@ -7,9 +7,9 @@ import Tabs from 'ui/components/Material/Tabs';
 import { Tab } from 'react-toolbox/lib/tabs';
 import { withModel } from 'ui/utils/hocs';
 import LabelledInput from 'ui/components/Input/LabelledInput';
-import MergeForm from '../MergeForm';
-import IdentifiersEditor from '../IdentifiersEditor';
-import AttributesEditor from '../AttributesEditor';
+import MergeForm from './MergeForm';
+import IdentifiersEditor from './IdentifiersEditor';
+import AttributesEditor from './AttributesEditor';
 
 const enhance = compose(
   setPropTypes({
