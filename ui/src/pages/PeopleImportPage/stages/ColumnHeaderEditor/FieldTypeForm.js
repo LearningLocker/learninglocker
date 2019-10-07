@@ -1,13 +1,11 @@
 import React from 'react';
 import uuid from 'uuid';
-import { compose } from 'recompose';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import {
   COLUMN_TYPES,
   COLUMN_TYPE_LABELS,
   COLUMN_ACCOUNT_KEY
 } from 'lib/constants/personasImport';
-import styles from './styles.css';
+import { InputField } from './InputField';
 
 const FieldTypeForm = ({
   columnType,
@@ -16,7 +14,7 @@ const FieldTypeForm = ({
 }) => {
   const formId = uuid.v4();
   return (
-    <div className={`form-group ${styles.inputField}`}>
+    <InputField className="form-group">
       <label htmlFor={formId}>
         Field type
       </label>
@@ -39,13 +37,11 @@ const FieldTypeForm = ({
               <option key={type} value={type}>
                 {COLUMN_TYPE_LABELS[type]}
               </option>
-          ))
+            ))
         }
       </select>
-    </div>
+    </InputField>
   );
 };
 
-export default compose(
-  withStyles(styles)
-)(FieldTypeForm);
+export default FieldTypeForm;

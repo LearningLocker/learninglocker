@@ -1,42 +1,50 @@
 import React from 'react';
-import { compose } from 'recompose';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from './styles.css';
+import styled from 'styled-components';
 import InputFields from './InputFields';
+import { TableData } from './TableData';
+
+const TableHeader = styled.th`
+  background-color: #525252;
+  color: #FFFFFF;
+  text-align: left;
+  padding: 8px;
+`;
+
+const Table = styled.table`
+  tbody tr:nth-child(odd) {
+    background-color: #FAFAFA;
+  }
+`;
 
 export const ColumnHeaderEditor = ({
   model, // personasImports model
   disabled
 }) => (
-  <table className={styles.table}>
-    <thead>
-      <tr className={styles.tr}>
-        <th className={styles.th}>CSV Column Name</th>
-        <th className={styles.th}>Persona Field</th>
-      </tr>
-    </thead>
+    <Table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <thead>
+        <tr>
+          <TableHeader>CSV Column Name</TableHeader>
+          <TableHeader>Persona Field</TableHeader>
+        </tr>
+      </thead>
 
-    <tbody>
-      {
-        model
-          .get('structure', new Map())
-          .map((columnStructure, columnName) => (
-            <tr key={columnName} className={styles.tr}>
-              <td className={styles.td}>
-                {columnName}
-              </td>
+      <tbody>
+        {
+          model
+            .get('structure', new Map())
+            .map((columnStructure, columnName) => (
+              <tr key={columnName}>
+                <TableData>{columnName}</TableData>
 
-              <InputFields
-                columnStructure={columnStructure}
-                model={model}
-                disabled={disabled} />
-            </tr>
-          )).toList().toJS()
-      }
-    </tbody>
-  </table>
-);
+                <InputFields
+                  columnStructure={columnStructure}
+                  model={model}
+                  disabled={disabled} />
+              </tr>
+            )).toList().toJS()
+        }
+      </tbody>
+    </Table>
+  );
 
-export default compose(
-  withStyles(styles)
-)(ColumnHeaderEditor);
+export default ColumnHeaderEditor;
