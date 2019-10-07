@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import moment from 'moment';
-import AutoUpdate from './AutoUpdate';
 import styled from 'styled-components';
 import { ActivityPart } from './ActivityPart';
 import { ActorPart } from './ActorPart';
+import AutoUpdate from './AutoUpdate';
 import { VerbPart } from './VerbPart';
 
 const Timestamp = styled.a`
@@ -32,14 +32,14 @@ class Statement extends Component {
     );
   }
 
-  renderVerb = path => {
+  renderVerb = (path) => {
     const value = this.getInStatement(path);
     return (
       <VerbPart value={value} onSetFilter={() => this.props.setFilterAt(path, value)} />
     );
   }
 
-  renderActivity = path => {
+  renderActivity = (path) => {
     const value = this.getInStatement(path);
     return (
       <ActivityPart value={value} onSetFilter={() => this.props.setFilterAt(path, value)} />

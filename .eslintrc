@@ -8,6 +8,7 @@
   },
   "parser": "babel-eslint",
   "rules": {
+    "import/prefer-default-export": 0,
     "max-len": 0,
     "linebreak-style": 0,
     "array-callback-return": 0,

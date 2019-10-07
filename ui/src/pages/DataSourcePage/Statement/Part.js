@@ -9,11 +9,12 @@ import React from 'react';
  */
 export function Part(props) {
   return (
-    <span onClick={(event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      props.onSetFilter();
-    }} title={JSON.stringify(props.value.toJS(), null, 2)}>
+    <span
+      onClick={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        props.onSetFilter();
+      }} title={JSON.stringify(props.value.toJS(), null, 2)}>
       {props.children}
     </span>
   );

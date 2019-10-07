@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from 'styled-components';
 import { displayActor } from '../../../utils/xapi';
 import { Part } from './Part';

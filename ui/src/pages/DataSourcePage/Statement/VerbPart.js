@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from 'styled-components';
 import { displayVerb } from '../../../utils/xapi';
 import { Part } from './Part';

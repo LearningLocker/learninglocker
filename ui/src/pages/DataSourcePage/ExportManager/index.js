@@ -100,16 +100,16 @@ const render = ({
   activeTab,
   setActiveTab,
 }) => (
-    <Tabs index={activeTab} onChange={setActiveTab}>
-      <Tab label="Manage">
-        <div>
-          {renderExports({ isLoading, models, pipelines, selectedExportId, setSelectedExport, onAddExport })}
-        </div>
-      </Tab>
-      <Tab label="Downloads">
-        <ExportDownloadManager />
-      </Tab>
-    </Tabs>
+  <Tabs index={activeTab} onChange={setActiveTab}>
+    <Tab label="Manage">
+      <div>
+        {renderExports({ isLoading, models, pipelines, selectedExportId, setSelectedExport, onAddExport })}
+      </div>
+    </Tab>
+    <Tab label="Downloads">
+      <ExportDownloadManager />
+    </Tab>
+  </Tabs>
   );
 
 export default enhance(render);
