@@ -34,7 +34,7 @@ describe('updatePersonaAttribute', () => {
         value: 'testvalue',
         personaId: persona.id
       })
-      .expect(200);
+      .expect(201);
 
     expect(result.body.key).to.equal('testkey');
     expect(result.body.value).to.equal('testvalue');
