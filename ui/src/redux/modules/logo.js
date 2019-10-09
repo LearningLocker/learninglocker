@@ -105,7 +105,7 @@ function* uploadLogoSaga() {
       yield call(delay, 2000); // shows success state for 2 seconds
       yield put(uploadLogoDone(schema, id));
     } else {
-      yield put(uploadLogoSuccess(schema, id, body));
+      yield put(uploadLogoSuccess(schema, id));
 
       yield put(updateModel({
         schema: 'organisation',

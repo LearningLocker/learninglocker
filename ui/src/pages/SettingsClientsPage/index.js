@@ -29,13 +29,6 @@ class Clients extends Component {
     searchString: PropTypes.string,
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      criteria: ''
-    };
-  }
-
   onClickAdd = () => {
     this.addButton.blur();
     this.props.addModel({

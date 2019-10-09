@@ -47,13 +47,15 @@ class ExportForm extends Component {
   }
 
   componentDidMount = () => {
-    this.state.projectionString = this.getActiveProjection();
+    this.setState((state, props) => {
+      return { projectionString: this.getActiveProjection(state, props) };
+    });
   }
 
   componentDidUpdate = () => {
     if (this.state.download === true) {
       this.postDownloadExport();
-      this.state.download = false;
+      this.setState({ download: false });
     }
   };
 
@@ -62,13 +64,13 @@ class ExportForm extends Component {
   }
 
   onUpdateProjection = (projection) => {
-    this.state.projectionString = projection;
+    this.setState({ projectionString: projection });
   }
 
   onDownloadExport = () => {
     if (this.props.model.get('rawMode')) {
       this.onChangeProjection(this.state.projectionString);
-      this.state.download = true;
+      this.setState({ download: true });
     } else {
       this.postDownloadExport();
     }
@@ -89,19 +91,17 @@ class ExportForm extends Component {
       });
   }
 
-  getActiveProjection = () => {
-    const { model } = this.props;
-    const { activeIndex } = this.state;
-    return model.getIn(
-      ['projections', activeIndex],
-      getDefaultProjectionFromType(model.get('type'))
+  getActiveProjection = (state, props) => {
+    return props.model.getIn(
+      ['projections', state.activeIndex],
+      getDefaultProjectionFromType(props.model.get('type'))
     );
   }
 
   getCompletePipeline = () => {
     const { pipelines } = this.props;
     const { activeIndex } = this.state;
-    const activeProjection = this.getActiveProjection();
+    const activeProjection = this.getActiveProjection(this.state, this.props);
     const activePipeline = pipelines.get(activeIndex, new List());
     return activePipeline
       .push(new Map({ $sort: { timestamp: -1, _id: 1 } }))
@@ -135,7 +135,7 @@ class ExportForm extends Component {
     const { model, pipelines } = this.props;
     const rawMode = model.get('rawMode');
     const { activeIndex } = this.state;
-    const activeProjection = this.getActiveProjection();
+    const activeProjection = this.getActiveProjection(this.state, this.props);
 
     return (
       <div>
