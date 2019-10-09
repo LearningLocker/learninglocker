@@ -32,7 +32,7 @@ describe('personaController postAttribute', () => {
         value: 'brown',
         personaId: persona.id
       })
-      .expect(200);
+      .expect(201);
 
     expect(result.body.value).to.equal('brown');
     expect(result.body.key).to.equal('hair');
