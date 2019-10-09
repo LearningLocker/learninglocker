@@ -19,9 +19,6 @@ import {
   getScopeDependencies,
   getScopeDependents,
 } from 'lib/helpers/scopes';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from './styles.css';
-
 
 export const generateNewScopes = (oldScopes, scope, checked) => {
   let newScopes;
@@ -67,7 +64,6 @@ const enhance = compose(
     schema: 'role',
   }),
   withModel,
-  withStyles(styles),
   withHandlers({
     handleAttrChange: ({ updateModel }) =>
       (attr, { target: { value } }) => {
@@ -103,7 +99,7 @@ export const getLabel = (key) => {
   switch (key2) {
     case 'view':
       return 'View';
-    case 'edit' :
+    case 'edit':
       return 'Edit';
     default:
       return startCase(lowerCase(key2));
@@ -121,7 +117,7 @@ const renderScopeTableRow = ({
     {map(scopes, scope =>
       (<td key={`${scope}_td`} colSpan={(scopes.length === 1 ? 2 : 1)}>
         <Checkbox
-          className={styles.checkbox}
+          style={{ marginTop: '0.8rem', marginBottom: '0.8rem' }}
           key={scope}
           label={getLabel(scope)}
           checked={isChecked(scope, model)}
@@ -156,17 +152,18 @@ const RoleForm = ({ model, handleAttrChange, handleScopeChange }) => {
       <div className="form-group">
         <label htmlFor={`${model.get('_id')}scopes`}>Organisation Scopes</label>
         <div id={`${model.get('_id')}scopes`}>
-          <table
-            className={styles.table} ><tbody>{
-            map(groupedOrgScopes, (scopes, key) =>
-              (renderScopeTableRow({
-                scopes,
-                key,
-                handleScopeChange,
-                model
-              }))
-            )
-          }</tbody></table>
+          <table style={{ width: '100%', color: 'black', fontWeight: 'bold' }}>
+            <tbody>
+              {map(groupedOrgScopes, (scopes, key) =>
+                (renderScopeTableRow({
+                  scopes,
+                  key,
+                  handleScopeChange,
+                  model
+                }))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

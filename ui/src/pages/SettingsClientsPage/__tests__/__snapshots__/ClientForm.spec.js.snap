@@ -419,7 +419,12 @@ exports[`ClientForm renders correctly 1`] = `
          header for requests
       </label>
       <p
-        className="help-block strongwrap"
+        className="help-block"
+        style={
+          Object {
+            "wordWrap": "break-word",
+          }
+        }
       >
         Basic 
         Og==

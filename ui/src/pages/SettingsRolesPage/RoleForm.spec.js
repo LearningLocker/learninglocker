@@ -6,7 +6,7 @@ import scopes, {
   EDIT_PUBLIC_VISUALISATIONS,
   VIEW_PUBLIC_VISUALISATIONS,
 } from 'lib/constants/orgScopes';
-import { groupScopes, generateNewScopes } from './index';
+import { groupScopes, generateNewScopes } from './RoleForm';
 
 describe('RoleForm', () => {
   it('Should group roles', () => {
