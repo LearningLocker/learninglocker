@@ -45,7 +45,7 @@ const render = ({ models }) => {
           </tr>
         </thead>
         <tbody>
-          {models.map(model => {
+          {models.map((model) => {
             const key = model.get('key', '');
             const value = model.get('value', '');
             return (

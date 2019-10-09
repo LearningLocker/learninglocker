@@ -1,5 +1,4 @@
-import { css } from 'styled-components';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const actionsStyle = css`
   text-align: right;
