@@ -38,8 +38,8 @@ const renderVerified = (model) => {
       <label htmlFor={verifiedId} className="control-label">Verified:</label>
       <span id={verifiedId}>
         {model.get('verified')
-        ? <i className={`icon ion-checkmark ${styles.green}`} />
-        : <i className={`icon ion-close ${styles.red}`} /> }
+          ? <i className={`icon ion-checkmark ${styles.green}`} />
+          : <i className={`icon ion-close ${styles.red}`} />}
       </span>
     </div>
   );
@@ -76,7 +76,7 @@ const renderEmail = (model, onChangeAttr, isSiteAdmin) => {
         placeholder="E-Mail"
         value={model.get('email', '')}
         onChange={onChangeAttr('email')} />
-      { model.getIn(['errors', 'messages', 'email'], false) &&
+      {model.getIn(['errors', 'messages', 'email'], false) &&
         (<span className="help-block">
           <ValidationList errors={model.getIn(['errors', 'messages', 'email'])} />
         </span>)
@@ -98,8 +98,8 @@ const renderPasswordChanges = (model, onCheck, changePasswordChecked) => {
             label="Change password"
             onChange={onCheck} />
         ) : (
-          <p className="help-block">Set a valid password in order to verify this user</p>
-        )}
+            <p className="help-block">Set a valid password in order to verify this user</p>
+          )}
       </div>
     </div>
   );
@@ -190,9 +190,9 @@ const UserForm = ({
   const canChangePassword =
     (changePasswordChecked || hasPasswordErrors);
   const isAuthorisedToChangePassword = (
-      isSiteAdmin ||
-      model.get('_id') === loggedInUserId
-    );
+    isSiteAdmin ||
+    model.get('_id') === loggedInUserId
+  );
   const passwordInputsVisible = isAuthorisedToChangePassword && (!model.get('verified') || canChangePassword);
   const passwordGroupClasses = classNames({
     'form-group': true,
@@ -205,7 +205,7 @@ const UserForm = ({
     <div className="row">
       <div className="col-md-12" >
 
-        {renderVerified(model, styles)}
+        {renderVerified(model)}
         {renderName(model, onChangeAttr)}
         {renderEmail(model, onChangeAttr, isSiteAdmin)}
         {isAuthorisedToChangePassword && renderPasswordChanges(model, onPasswordCheckboxChange(updateModel, model, setChangePasswordChecked), canChangePassword)}

@@ -63,7 +63,6 @@ class Users extends Component {
 
   state = {
     isModalOpen: false,
-    criteria: '',
     error: false
   }
 

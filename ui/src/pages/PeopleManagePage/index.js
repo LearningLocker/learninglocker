@@ -30,14 +30,6 @@ class PersonaManage extends Component {
     personaId: PropTypes.string // optional
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      openModal: null,
-      criteria: ''
-    };
-  }
-
   getPersonaName = person => person.get('name');
 
   onClickAdd = () => {

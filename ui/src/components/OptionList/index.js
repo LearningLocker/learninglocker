@@ -52,16 +52,16 @@ class OptionList extends Component {
     }
   }
 
-  getHighLighted = () => {
-    if (!this.props.options.size) {
+  getHighLighted = (props, state) => {
+    if (!props.options.size) {
       return 0;
     }
 
-    if (this.props.options.size <= this.state.highlighted) {
-      return this.props.options.size - 1;
+    if (props.options.size <= state.highlighted) {
+      return props.options.size - 1;
     }
 
-    return this.state.highlighted;
+    return state.highlighted;
   }
 
   onKeyDown = (e) => {
@@ -77,7 +77,7 @@ class OptionList extends Component {
         break;
       }
       case keyCodes.ENTER: {
-        const option = this.props.options.get(this.getHighLighted());
+        const option = this.props.options.get(this.getHighLighted(this.props, this.state));
         if (option) {
           this.props.handleAddSelected(option);
         }
@@ -89,20 +89,24 @@ class OptionList extends Component {
   }
 
   selectPrev = () => {
-    const currentHighlighted = this.getHighLighted();
-    this.setState({
-      highlighted: !currentHighlighted
-        ? this.props.options.size - 1
-        : currentHighlighted - 1
+    this.setState((state, props) => {
+      const currentHighlighted = this.getHighLighted(props, state);
+      return {
+        highlighted: !currentHighlighted
+          ? this.props.options.size - 1
+          : currentHighlighted - 1
+      };
     });
   }
 
   selectNext = () => {
-    const currentHighlighted = this.getHighLighted();
-    this.setState({
-      highlighted: currentHighlighted === this.props.options.size - 1
-        ? 0
-        : currentHighlighted + 1
+    this.setState((state, props) => {
+      const currentHighlighted = this.getHighLighted(props, state);
+      return {
+        highlighted: currentHighlighted === this.props.options.size - 1
+          ? 0
+          : currentHighlighted + 1
+      };
     });
   }
 
@@ -116,7 +120,7 @@ class OptionList extends Component {
     const rowCount = this.props.rowCount || this.props.options.size;
     const rowHeight = 36;
 
-    const highlighted = this.getHighLighted();
+    const highlighted = this.getHighLighted(this.props, this.state);
     return (
       <AutoSizer disableHeight>
         {({ width }) => (
@@ -135,7 +139,7 @@ class OptionList extends Component {
                 rowHeight={rowHeight}
                 scrollToIndex={highlighted}
                 rowRenderer={this.renderRow} />
-              )}
+            )}
           </InfiniteLoader>
         )}
       </AutoSizer>
@@ -149,7 +153,7 @@ class OptionList extends Component {
       index={index}
       onClick={this.props.handleAddSelected}
       handleSelect={this.handleSelect}
-      highlighted={index === this.getHighLighted()}
+      highlighted={index === this.getHighLighted(this.props, this.state)}
       value={value}>
       {this.props.renderOption(value)}
     </OptionListItemWrapper>
@@ -175,13 +179,13 @@ class OptionList extends Component {
     return (
       <div className={styles.wrapper} >
         <div>
-          {displayEmptyInfo ? this.renderEmptyInfo(styles) : this.renderOptions(styles) }
-          { children ? (
+          {displayEmptyInfo ? this.renderEmptyInfo(styles) : this.renderOptions(styles)}
+          {children ? (
             <div>
               <div className={styles.divider} />
-              { children }
+              {children}
             </div>
-          ) : null }
+          ) : null}
         </div>
       </div>
     );
