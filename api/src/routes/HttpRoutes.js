@@ -54,12 +54,12 @@ import Dashboard from 'lib/models/dashboard';
 import QueryBuilderCache from 'lib/models/querybuildercache';
 import QueryBuilderCacheValue from 'lib/models/querybuildercachevalue';
 import Role from 'lib/models/role';
+import PersonaAttribute from 'lib/models/personaAttribute';
 import PersonasImport from 'lib/models/personasImport';
 import PersonasImportTemplate from 'lib/models/personasImportTemplate';
 import SiteSettings from 'lib/models/siteSettings';
 import personaRESTHandler from 'api/routes/personas/personaRESTHandler';
 import personaIdentifierRESTHandler from 'api/routes/personas/personaIdentifierRESTHandler';
-import personaAttributeRESTHandler from 'api/routes/personas/personaAttributeRESTHandler';
 import UserOrganisationsRouter from 'api/routes/userOrganisations/router';
 import UserOrganisationSettingsRouter from 'api/routes/userOrganisationSettings/router';
 import BatchDelete from 'lib/models/batchDelete';
@@ -78,10 +78,10 @@ router.get(routes.VERSION, (req, res) => {
     new Promise(resolve => git.branch(resolve)),
     new Promise(resolve => git.tag(resolve))
   ])
-  .then(([short, long, branch, tag]) => {
-    jsonSuccess(res)({ short, long, branch, tag });
-  })
-  .catch(serverError(res));
+    .then(([short, long, branch, tag]) => {
+      jsonSuccess(res)({ short, long, branch, tag });
+    })
+    .catch(serverError(res));
 });
 router.get(routes.GOOGLE_AUTH, (req, res) => {
   const enabled = boolean(process.env.GOOGLE_ENABLED);
@@ -145,7 +145,6 @@ router.get(
  */
 router.use(personaRESTHandler);
 router.use(personaIdentifierRESTHandler);
-router.use(personaAttributeRESTHandler);
 
 /**
  * User Organisations
@@ -359,6 +358,11 @@ restify.serve(router, StatementForwarding);
 restify.serve(router, QueryBuilderCache);
 restify.serve(router, QueryBuilderCacheValue);
 restify.serve(router, Role);
+restify.serve(router, PersonaAttribute, {
+  preDelete: async (req, res, next) => {
+    return next();
+  },
+});
 restify.serve(router, PersonasImport);
 restify.serve(router, PersonasImportTemplate);
 restify.serve(router, SiteSettings);
@@ -387,6 +391,7 @@ const generatedRouteModels = [
   Download,
   ImportCsv,
   Role,
+  PersonaAttribute,
   PersonasImport,
   PersonasImportTemplate,
   BatchDelete
@@ -407,17 +412,17 @@ const generateIndexesRoute = (model, routeSuffix, authentication) => {
 const generateModelRoutes = (model) => {
   const routeSuffix = model.modelName.toLowerCase();
   const authentication = (req, res, next) => passport.authenticate(
-      ['jwt', 'clientBasic'],
-      DEFAULT_PASSPORT_OPTIONS,
-      (err, user) => {
-        if (err || !user) {
-          res.status(401).set('Content-Type', 'text/plain').send('Unauthorized');
-          return;
-        }
-        req.user = user;
-        next();
-      },
-    )(req, res, next);
+    ['jwt', 'clientBasic'],
+    DEFAULT_PASSPORT_OPTIONS,
+    (err, user) => {
+      if (err || !user) {
+        res.status(401).set('Content-Type', 'text/plain').send('Unauthorized');
+        return;
+      }
+      req.user = user;
+      next();
+    },
+  )(req, res, next);
   generateConnectionsRoute(model, routeSuffix, authentication);
   generateIndexesRoute(model, routeSuffix, authentication);
 };
