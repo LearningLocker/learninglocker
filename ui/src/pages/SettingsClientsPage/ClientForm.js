@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Map, List } from 'immutable';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withProps, withHandlers, setPropTypes } from 'recompose';
 import { map } from 'lodash';
 import btoa from 'btoa';
@@ -13,7 +12,6 @@ import { API_SCOPES, getXapiScopes } from 'lib/constants/scopes';
 import ValidationList from 'ui/components/ValidationList';
 import { getAppDataSelector } from 'ui/redux/modules/app';
 import AuthorityEditor from './AuthorityEditor';
-import styles from './styles.css';
 
 const renderNoStore = () => [{ value: 'No LRSs available', label: 'No LRSs available', disabled: true }];
 
@@ -69,7 +67,6 @@ const renderScopes = (setScopes, onChangeScopes, selectedScopes) =>
   ));
 
 const enhance = compose(
-  withStyles(styles),
   connect(state => ({
     enableSingleStatementDeletion: getAppDataSelector('ENABLE_SINGLE_STATEMENT_DELETION')(state)
   }), {}),
@@ -150,7 +147,7 @@ export const render = ({
           <label htmlFor="basicAuth">
             Use this Basic Auth value in your <code>Authorization</code> header for requests
           </label>
-          <p className={`help-block ${styles.strongwrap}`}>
+          <p className="help-block" style={{ wordWrap: 'break-word' }}>
             Basic {btoa(`${basicKey}:${basicSecret}`)}
           </p>
         </div>

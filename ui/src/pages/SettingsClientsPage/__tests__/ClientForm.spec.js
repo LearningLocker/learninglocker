@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import configureMockStore from 'redux-mock-store';
 import thunkMiddleware from 'redux-thunk';
 import { withInsertCSS } from 'ui/utils/hocs';
-import ClientForm from '../index';
+import ClientForm from '../ClientForm';
 import AuthorityEditor from '../AuthorityEditor';
 
 global.__DEVELOPMENT__ = true;
@@ -37,7 +37,7 @@ test('AuthorityEditor renders correctly with mbox', () => {
   });
   const tree = ReactTestRenderer.create(
     <Provider store={store}>
-      <WrappedAuthorityEditor authority={authority} onAuthorityChange={() => {}} />
+      <WrappedAuthorityEditor authority={authority} onAuthorityChange={() => { }} />
     </Provider>
   ).toJSON();
   expect(tree).toMatchSnapshot();
@@ -53,7 +53,7 @@ test('AuthorityEditor renders correctly with account', () => {
   });
   const tree = ReactTestRenderer.create(
     <Provider store={store}>
-      <WrappedAuthorityEditor authority={authority} onAuthorityChange={() => {}} />
+      <WrappedAuthorityEditor authority={authority} onAuthorityChange={() => { }} />
     </Provider>
   ).toJSON();
   expect(tree).toMatchSnapshot();
@@ -66,7 +66,7 @@ test('AuthorityEditor renders correctly with openid', () => {
   });
   const tree = ReactTestRenderer.create(
     <Provider store={store}>
-      <WrappedAuthorityEditor authority={authority} onAuthorityChange={() => {}} />
+      <WrappedAuthorityEditor authority={authority} onAuthorityChange={() => { }} />
     </Provider>
   ).toJSON();
   expect(tree).toMatchSnapshot();
@@ -79,7 +79,7 @@ test('AuthorityEditor renders correctly with mboxsha1sum', () => {
   });
   const mboxSha1SumTree = ReactTestRenderer.create(
     <Provider store={store}>
-      <WrappedAuthorityEditor authority={mboxSha1SumAuthority} onAuthorityChange={() => {}} />
+      <WrappedAuthorityEditor authority={mboxSha1SumAuthority} onAuthorityChange={() => { }} />
     </Provider>
   ).toJSON();
   expect(mboxSha1SumTree).toMatchSnapshot();
