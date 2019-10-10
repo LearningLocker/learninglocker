@@ -43,8 +43,7 @@ class SubOrgForm extends Component {
 
     this.state = {
       fileName: '',
-      fileHandle: null,
-      filePath: this.props.model.get('logoPath')
+      fileHandle: null
     };
   }
 
@@ -375,8 +374,7 @@ class SubOrgForm extends Component {
               <br />
               <a
                 onClick={this.handleSubmit}
-                className="btn btn-primary btn-inverse btn-sm"
-                style={{ display: this.state.showUpload }}>
+                className="btn btn-primary btn-inverse btn-sm">
                 {this.renderButtonContent()}
               </a>
             </div>
