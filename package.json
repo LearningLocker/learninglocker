@@ -41,10 +41,7 @@
     "test-lib": "mocha-webpack --exit --webpack-config \"api/testConfig.js\" \"lib/**/*-test.js\"",
     "test-cli": "mocha-webpack --exit --webpack-config \"cli/testConfig.js\" \"cli/**/*-test.js\" --include lib/models",
     "test-ui": "jest --config ui/jest.config.json --env node",
-    "ci-test-integrations": "npm install -g pm2 && yarn build-all && yarn start-test && yarn test-integration-run --config videoRecording=false && yarn stop-test",
     "test": "yarn test-api && yarn test-lib && yarn test-worker && yarn test-ui && yarn test-cli",
-    "test-integration": "cypress open",
-    "test-integration-run": "cypress run",
     "migrate": "node cli/dist/server migrateMongo --up",
     "rollback": "node cli/dist/server migrateMongo --down last",
     "semantic-release": "ht2-release-private-circleci"
@@ -199,7 +196,6 @@
     "chai-as-promised": "^7.1.1",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.23.1",
-    "cypress": "^1.0.2",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.12.1",
     "eslint": "^3.6.1",

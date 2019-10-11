@@ -47,10 +47,6 @@ class Visualise extends Component {
     organisationModel: new Map(),
   }
 
-  state = {
-    criteria: ''
-  };
-
   onClickAdd = () => {
     this.addButton.blur();
     this.props.addModel({

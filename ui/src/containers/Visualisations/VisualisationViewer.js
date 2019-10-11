@@ -52,7 +52,7 @@ const VisualisationViewer = ({
   const type = model.get('type');
   const showSourceView = model.get('sourceView');
 
-  if (type === null) {
+  if (type === null || type === undefined) {
     return null;
   }
 
