@@ -69,6 +69,7 @@ const FilterForm = ({
       <div className="form-group">
         <ColorPicker
           color={filter.get('color', VISUALISATION_COLORS[index])}
+          onChangeHashToForceRender={filter.hashCode()}
           onChange={color => onChange(filter.set('color', color.hex))} />
       </div>
     </div>
