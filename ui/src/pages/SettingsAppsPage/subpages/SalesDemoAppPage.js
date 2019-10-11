@@ -1,8 +1,8 @@
 import React from 'react';
 import RequestAppAccessForm from '../RequestAppAccessForm';
 
-const Demo = () => {
-  const appName = 'Demo Sales Data';
+const SalesDemo = () => {
+  const appName = 'Sales Demo';
   return (
     <div>
       <header id="topbar">
@@ -16,4 +16,4 @@ const Demo = () => {
   );
 };
 
-export default Demo;
+export default SalesDemo;

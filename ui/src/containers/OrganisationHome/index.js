@@ -89,9 +89,9 @@ const renderPage = (routeName) => {
     }));
   }
 
-  if (testRoute('organisation.apps.demoSalesData')) {
+  if (testRoute('organisation.apps.salesDemo')) {
     return React.createElement(createAsyncComponent({
-      loader: System.import('ui/pages/SettingsAppsPage/subpages/DemoSalesAppPage'),
+      loader: System.import('ui/pages/SettingsAppsPage/subpages/SalesDemoAppPage'),
     }));
   }
 

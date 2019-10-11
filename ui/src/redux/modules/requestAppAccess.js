@@ -40,18 +40,18 @@ export const requestAppAccessFailure = () =>
 function* requestAppAccessSaga() {
   while (true) {
     const { privacyPolicy, appName, llClient } = yield take(REQUEST_APP_ACCESS);
-    const { body, status } = yield call(llClient.requestAppAccess, {
+    const { status } = yield call(llClient.requestAppAccess, {
       privacyPolicy,
       appName
     });
 
     if (status >= 300) {
-      yield put(requestAppAccessFailure({ body }));
+      yield put(requestAppAccessFailure());
       yield put(alert({
         message: 'Access request failed, check email configuration'
       }));
     } else {
-      yield put(requestAppAccessSuccess({ body }));
+      yield put(requestAppAccessSuccess());
     }
   }
 }
