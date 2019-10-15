@@ -9,6 +9,10 @@ import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import PersonasImport from 'lib/models/personasImport';
 import mongoose from 'mongoose';
 
+import persistJsonPersonas from 'lib/services/importPersonas/persistJsonPersonas';
+import { IMPORT_JSON } from 'lib/constants/personasImport';
+import importJsonPersonasService from 'lib/services/importPersonas/importPersonasJson';
+
 const objectId = mongoose.Types.ObjectId;
 
 const uploadPersonas = catchErrors(async (req, res) => {
@@ -61,8 +65,44 @@ const importPersonasError = catchErrors(async (req, res) => {
   return downloadToStream(csvHandle)(res);
 });
 
+const immportPersonasJson = catchErrors(async (req, res) => {
+  const authInfo = getAuthFromRequest(req);
+
+  const { file } = await getFileAndFieldsFromRequest(req);
+
+  const personaImport = await PersonasImport.create({
+    importType: IMPORT_JSON
+  });
+
+  const {
+    jsonHandle,
+    jsonErrorHandle
+  } = await persistJsonPersonas({
+    authInfo,
+    file,
+    id: personaImport._id
+  });
+
+  await personaImport.updateOne({
+    _id: personaImport._id
+  }, {
+    jsonHandle,
+    jsonErrorHandle,
+    title: !personaImport.title ? file.originalFilename : personaImport.title,
+  });
+
+  await importJsonPersonasService({
+    id: personaImport._id,
+    personaService: getPersonaService(),
+    authInfo,
+  });
+
+  return res.status(200).json(personaImport);
+});
+
 export default {
   uploadPersonas,
   importPersonas,
-  importPersonasError
+  importPersonasError,
+  immportPersonasJson
 };
