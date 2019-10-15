@@ -14,22 +14,27 @@ const Table = styled.table`
   tbody tr:nth-child(odd) {
     background-color: #FAFAFA;
   }
+
+  th:nth-child(1),
+  td:nth-child(1) {
+    width: 180px;
+  }
 `;
 
 export const ColumnHeaderEditor = ({
   model, // personasImports model
   disabled
 }) => (
-  <Table style={{ width: '100%', borderCollapse: 'collapse' }}>
-    <thead>
-      <tr>
-        <TableHeader>CSV Column Name</TableHeader>
-        <TableHeader>Persona Field</TableHeader>
-      </tr>
-    </thead>
+    <Table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <thead>
+        <tr>
+          <TableHeader>CSV Column Name</TableHeader>
+          <TableHeader>Persona Field</TableHeader>
+        </tr>
+      </thead>
 
-    <tbody>
-      {
+      <tbody>
+        {
           model
             .get('structure', new Map())
             .map((columnStructure, columnName) => (
@@ -43,8 +48,8 @@ export const ColumnHeaderEditor = ({
               </tr>
             )).toList().toJS()
         }
-    </tbody>
-  </Table>
+      </tbody>
+    </Table>
   );
 
 export default ColumnHeaderEditor;
