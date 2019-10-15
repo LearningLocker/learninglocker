@@ -12,7 +12,6 @@ import getTokenTypeFromAuthInfo from 'lib/services/auth/authInfoSelectors/getTok
 import getScopesFromAuthInfo from 'lib/services/auth/authInfoSelectors/getScopesFromAuthInfo';
 import getUserIdFromAuthInfo from 'lib/services/auth/authInfoSelectors/getUserIdFromAuthInfo';
 import { SITE_ADMIN } from 'lib/constants/scopes';
-import { jsonSuccess } from 'api/utils/responses';
 import passport from 'api/auth/passport';
 import {
   GOOGLE_AUTH_OPTIONS,
@@ -64,6 +63,7 @@ import BatchDelete from 'lib/models/batchDelete';
 import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
 import { updateStatementCountsInOrg } from 'lib/services/lrs';
 import * as routes from 'lib/constants/routes';
+import { getGoogleAuthConfig } from '../requestHandlers/getGoogleAuthConfig';
 import { getVersion } from '../requestHandlers/getVersion';
 
 const router = new express.Router();
@@ -71,10 +71,7 @@ router.use(setNoCacheHeaders);
 
 router.get('', (req, res) => res.status(200).send('OK'));
 router.get(routes.VERSION, getVersion);
-router.get(routes.GOOGLE_AUTH, (req, res) => {
-  const enabled = boolean(process.env.GOOGLE_ENABLED);
-  jsonSuccess(res)({ enabled });
-});
+router.get(routes.GOOGLE_AUTH, getGoogleAuthConfig);
 
 /**
  * AUTHORIZATION
