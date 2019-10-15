@@ -136,7 +136,7 @@ const Table = styled.table`
   color: black;
   font-weight: bold;
 
-  tbody tr:nth-child(odd) {
+  tbody tr:nth-child(even) {
     background-color: #FAFAFA;
   }
 
