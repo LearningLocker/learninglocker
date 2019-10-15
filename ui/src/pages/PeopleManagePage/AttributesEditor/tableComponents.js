@@ -2,13 +2,13 @@ import styled, { css } from 'styled-components';
 
 export const actionsStyle = css`
   text-align: right;
-  width: 30%;
+  width: 14%;
 `;
 
 export const tableDataStyle = css`
   padding: 8px;
   border: solid rgb(238, 238, 238) 1px;
-  width: 35%;
+  width: 43%;
 `;
 
 export const TableHeader = styled.th`${tableDataStyle}`;
