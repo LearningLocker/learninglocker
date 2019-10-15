@@ -2,10 +2,8 @@ import passport from 'passport';
 import jsonwebtoken from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
 import ms from 'ms';
-import logger from 'lib/logger';
 import User from 'lib/models/user';
 import OAuthToken from 'lib/models/oAuthToken';
-import { sendResetPasswordToken } from 'lib/helpers/email';
 import { AUTH_JWT_SUCCESS, AUTH_JWT_REFRESH } from 'lib/constants/routes';
 import {
   ACCESS_TOKEN_VALIDITY_PERIOD_SEC,
@@ -32,42 +30,6 @@ const buildRefreshCookieOption = (protocol) => {
     return { ...cookieOption, secure: true };
   }
   return cookieOption;
-};
-
-/**
- * Generate and email a password reset token to a user through their email
- * @param  {Object}   req  The request
- * @param  {Object}   res  The response object
- * @param  {Function} next
- * @return HTTP 204 No Content on success
- */
-const resetPasswordRequest = (req, res, next) => {
-  const { email } = req.body;
-  User.findOne({ email }, (findErr, user) => {
-    if (findErr) {
-      return next(findErr);
-    }
-
-    if (!user) {
-      return res.status(204).send();
-    }
-
-    return user.createResetToken((token) => {
-      user.resetTokens.push(token);
-      user.save((err) => {
-        if (err) {
-          logger.error('Password reset error', err);
-          return res.status(500).send({ message: 'There was an issue. Please try again' });
-        }
-
-        // @TODO: send status based on outcome of send!!
-        sendResetPasswordToken(user, token);
-
-        return res.status(204).send();
-      });
-    });
-    // create a reset token and insert it onto the user
-  });
 };
 
 /**
@@ -172,7 +134,7 @@ const jwt = (req, res, next) => {
         }
         user.authLastAttempt = new Date();
         return user.save(() =>
-           authFailure(data.reason)
+          authFailure(data.reason)
         );
       }
       return authFailure(data.reason);
@@ -194,7 +156,7 @@ const jwt = (req, res, next) => {
               )
               .set('Content-Type', 'text/plain')
               .send(accessToken)
-          )
+        )
         .catch(authFailure)
     );
   })(req, res, next);
@@ -327,7 +289,6 @@ const issueOAuth2AccessToken = (req, res) => {
 
 export default {
   clientInfo,
-  resetPasswordRequest,
   resetPassword,
   jwt,
   jwtRefresh,

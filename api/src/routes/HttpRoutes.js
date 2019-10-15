@@ -65,6 +65,7 @@ import { updateStatementCountsInOrg } from 'lib/services/lrs';
 import * as routes from 'lib/constants/routes';
 import { getGoogleAuthConfig } from '../requestHandlers/getGoogleAuthConfig';
 import { getVersion } from '../requestHandlers/getVersion';
+import { postPasswordResetRequest } from '../requestHandlers/postPasswordResetRequest';
 
 const router = new express.Router();
 router.use(setNoCacheHeaders);
@@ -76,10 +77,7 @@ router.get(routes.GOOGLE_AUTH, getGoogleAuthConfig);
 /**
  * AUTHORIZATION
  */
-router.post(
-  routes.AUTH_RESETPASSWORD_REQUEST,
-  AuthController.resetPasswordRequest
-);
+router.post(routes.AUTH_RESETPASSWORD_REQUEST, postPasswordResetRequest);
 router.post(routes.AUTH_RESETPASSWORD_RESET, AuthController.resetPassword);
 router.post(routes.AUTH_JWT_PASSWORD, AuthController.jwt);
 router.post(
