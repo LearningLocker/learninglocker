@@ -47,7 +47,7 @@
     "semantic-release": "ht2-release-private-circleci"
   },
   "dependencies": {
-    "@azure/service-bus": "^1.0.2",
+    "@azure/service-bus": "^1.1.0",
     "@azure/storage-blob": "^10.3.0",
     "@google-cloud/pubsub": "^0.16.1",
     "@google-cloud/storage": "^1.5.2",

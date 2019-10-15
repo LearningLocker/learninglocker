@@ -1,8 +1,6 @@
 import boolean from 'boolean';
 import express from 'express';
 import restify from 'express-restify-mongoose';
-import git from 'git-rev';
-import Promise from 'bluebird';
 import {
   omit,
   findIndex,
@@ -14,7 +12,7 @@ import getTokenTypeFromAuthInfo from 'lib/services/auth/authInfoSelectors/getTok
 import getScopesFromAuthInfo from 'lib/services/auth/authInfoSelectors/getScopesFromAuthInfo';
 import getUserIdFromAuthInfo from 'lib/services/auth/authInfoSelectors/getUserIdFromAuthInfo';
 import { SITE_ADMIN } from 'lib/constants/scopes';
-import { jsonSuccess, serverError } from 'api/utils/responses';
+import { jsonSuccess } from 'api/utils/responses';
 import passport from 'api/auth/passport';
 import {
   GOOGLE_AUTH_OPTIONS,
@@ -66,23 +64,13 @@ import BatchDelete from 'lib/models/batchDelete';
 import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
 import { updateStatementCountsInOrg } from 'lib/services/lrs';
 import * as routes from 'lib/constants/routes';
+import { getVersion } from '../requestHandlers/getVersion';
 
 const router = new express.Router();
 router.use(setNoCacheHeaders);
 
 router.get('', (req, res) => res.status(200).send('OK'));
-router.get(routes.VERSION, (req, res) => {
-  Promise.all([
-    new Promise(resolve => git.short(resolve)),
-    new Promise(resolve => git.long(resolve)),
-    new Promise(resolve => git.branch(resolve)),
-    new Promise(resolve => git.tag(resolve))
-  ])
-    .then(([short, long, branch, tag]) => {
-      jsonSuccess(res)({ short, long, branch, tag });
-    })
-    .catch(serverError(res));
-});
+router.get(routes.VERSION, getVersion);
 router.get(routes.GOOGLE_AUTH, (req, res) => {
   const enabled = boolean(process.env.GOOGLE_ENABLED);
   jsonSuccess(res)({ enabled });

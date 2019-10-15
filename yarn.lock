@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@azure/amqp-common@^1.0.0-preview.5":
-  version "1.0.0-preview.5"
-  resolved "https://registry.yarnpkg.com/@azure/amqp-common/-/amqp-common-1.0.0-preview.5.tgz#cd51bd5fbe2c32d59a23b932d3c2c7b9c90e0684"
+"@azure/amqp-common@1.0.0-preview.6":
+  version "1.0.0-preview.6"
+  resolved "https://registry.yarnpkg.com/@azure/amqp-common/-/amqp-common-1.0.0-preview.6.tgz#c2bf0e29725f4548f0a8fdd3a8525d72c1ed4dfe"
   dependencies:
     "@azure/ms-rest-nodeauth" "^0.9.2"
     "@types/async-lock" "^1.1.0"
@@ -57,16 +57,19 @@
     "@azure/ms-rest-js" "^1.8.1"
     adal-node "^0.1.22"
 
-"@azure/service-bus@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@azure/service-bus/-/service-bus-1.0.2.tgz#a60fb9d405db9e5e0be2459838e9fc05bd20239a"
+"@azure/service-bus@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@azure/service-bus/-/service-bus-1.1.0.tgz#42638442a5d00f2d078471a05f9e306ab690c55f"
   dependencies:
-    "@azure/amqp-common" "^1.0.0-preview.5"
+    "@azure/amqp-common" "1.0.0-preview.6"
     "@azure/ms-rest-nodeauth" "^0.9.2"
+    "@types/is-buffer" "^2.0.0"
     "@types/long" "^4.0.0"
-    debug "^3.1.0"
+    buffer "^5.2.1"
+    debug "^4.1.1"
     is-buffer "^2.0.3"
     long "^4.0.0"
+    process "^0.11.10"
     rhea "^1.0.4"
     rhea-promise "^0.1.15"
     tslib "^1.9.3"
