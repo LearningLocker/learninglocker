@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { compose, setPropTypes, withProps, withHandlers } from 'recompose';
+import styled from 'styled-components';
 import { List, Set } from 'immutable';
 import {
   chain,
@@ -106,6 +107,11 @@ export const getLabel = (key) => {
   }
 };
 
+const StyledCheckbox = styled(Checkbox)`
+  margin-bottom: 0px;
+  margin-top: 0px;
+`;
+
 const renderScopeTableRow = ({
   key,
   scopes,
@@ -116,8 +122,7 @@ const renderScopeTableRow = ({
     <td key={`${key}_td`}>{getRowLabel(key)}</td>
     {map(scopes, scope =>
       (<td key={`${scope}_td`} colSpan={(scopes.length === 1 ? 2 : 1)}>
-        <Checkbox
-          style={{ marginTop: '0.8rem', marginBottom: '0.8rem' }}
+        <StyledCheckbox
           key={scope}
           label={getLabel(scope)}
           checked={isChecked(scope, model)}
@@ -125,6 +130,21 @@ const renderScopeTableRow = ({
       </td>)
     )}
   </tr>);
+
+const Table = styled.table`
+  width: 100%;
+  color: black;
+  font-weight: bold;
+
+  tbody tr:nth-child(odd) {
+    background-color: #FAFAFA;
+  }
+
+  td {
+    padding-bottom: 8px;
+    padding-top: 8px;
+  }
+`;
 
 const RoleForm = ({ model, handleAttrChange, handleScopeChange }) => {
   const groupedOrgScopes = groupScopes(orgScopes);
@@ -152,7 +172,7 @@ const RoleForm = ({ model, handleAttrChange, handleScopeChange }) => {
       <div className="form-group">
         <label htmlFor={`${model.get('_id')}scopes`}>Organisation Scopes</label>
         <div id={`${model.get('_id')}scopes`}>
-          <table style={{ width: '100%', color: 'black', fontWeight: 'bold' }}>
+          <Table>
             <tbody>
               {map(groupedOrgScopes, (scopes, key) =>
                 (renderScopeTableRow({
@@ -163,7 +183,7 @@ const RoleForm = ({ model, handleAttrChange, handleScopeChange }) => {
                 }))
               )}
             </tbody>
-          </table>
+          </Table>
         </div>
       </div>
     </div>
