@@ -11,7 +11,7 @@ import mongoose from 'mongoose';
 
 import persistJsonPersonas from 'lib/services/importPersonas/persistJsonPersonas';
 import { IMPORT_JSON } from 'lib/constants/personasImport';
-import importJsonPersonasService from 'lib/services/importPersonas/importPersonasJson';
+import importJsonPersonasService from 'lib/services/importPersonas/importJsonPersonas';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -65,7 +65,7 @@ const importPersonasError = catchErrors(async (req, res) => {
   return downloadToStream(csvHandle)(res);
 });
 
-const immportPersonasJson = catchErrors(async (req, res) => {
+const uploadJsonPersonas = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
   const { file } = await getFileAndFieldsFromRequest(req);
@@ -104,5 +104,5 @@ export default {
   uploadPersonas,
   importPersonas,
   importPersonasError,
-  immportPersonasJson
+  uploadJsonPersonas
 };
