@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardText } from 'react-toolbox/lib/card';
+import { Card } from 'react-toolbox/lib/card';
 import { withModel } from 'ui/utils/hocs';
 import {
   compose,
@@ -8,9 +8,13 @@ import {
   withState
 } from 'recompose';
 import { SITE_SETTINGS_ID } from 'lib/constants/siteSettings';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import registerLogo from 'ui/static/register-logo.png';
-import styles from './styles.css';
+import { CardContainer } from './CardContainer';
+import { Divider } from './Divider';
+import { DontShowAgainText } from './DontShowAgainText';
+import { RegistrationLink } from './RegistrationLink';
+import { RegistrationLogo } from './RegistrationLogo';
+import { RegistrationText } from './RegistrationText';
 
 const Register = ({
   model,
@@ -22,28 +26,34 @@ const Register = ({
   }
 
   return (<Card>
-    <CardText className={styles.container}>
-      <div >
-        <img className={styles.logo} role="presentation" src={registerLogo} />
-        <div className={styles.registerText}>REGISTER YOUR LOCKER</div>
-        <hr className={styles.divider} />
-        <div className={styles.benefits}>Get helpdesk access and help promote the Open Source project</div>
+    <CardContainer>
+      <div>
+        <RegistrationLogo role="presentation" src={registerLogo} />
+        <RegistrationText>REGISTER YOUR LOCKER</RegistrationText>
+        <Divider />
+        <div style={{ fontSize: 16 }}>
+          Get helpdesk access and help promote the Open Source project
+        </div>
 
-        <div className={styles.buttons}>
-          <a
-            className={`btn btn-primary pull-right ${styles.register}`}
+        <div style={{ marginTop: 20 }}>
+          <RegistrationLink
+            className="btn btn-primary pull-right"
             href="https://www.ht2labs.com/learning-locker/register-installation/#register"
             target="_blank"
             onClick={setRegistered}
-            rel="noopener noreferrer">Register</a>
+            rel="noopener noreferrer">
+            Register
+          </RegistrationLink>
 
-          <span
-            className={`pull-left ${styles.dontShowAgain}`}
-            onClick={setRegistered}>Don&#39;t show again</span>
+          <DontShowAgainText
+            className="pull-left"
+            onClick={setRegistered}>
+            Don&#39;t show again
+          </DontShowAgainText>
 
         </div>
       </div>
-    </CardText>
+    </CardContainer>
   </Card>);
 };
 
@@ -59,6 +69,5 @@ export default compose(
       value: true
     })
   }),
-  withState('ok', 'setOk', false),
-  withStyles(styles)
+  withState('ok', 'setOk', false)
 )(Register);

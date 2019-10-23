@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withContext, lifecycle } from 'recompose';
 import { Card, CardText } from 'react-toolbox/lib/card';
 import {
@@ -15,10 +14,8 @@ import Helmet from 'react-helmet';
 import Link from 'ui/containers/Link';
 import FullPageBackground from 'ui/components/FullPageBackground';
 import { IN_PROGRESS } from 'ui/utils/constants';
-import styles from './styles.css';
 
 const enhance = compose(
-  withStyles(styles),
   withContext({
     router: PropTypes.any,
   }, () => ({})),
@@ -66,7 +63,7 @@ const render = ({
 
   return (
     <FullPageBackground width={400}>
-      <div className={styles.loginWrapper}>
+      <div>
         <Helmet title="- Login" />
         <h3>Welcome</h3>
         <form>
@@ -95,20 +92,20 @@ const render = ({
             </CardText>
           </Card>
           {!inProgress &&
-            <div className={styles.buttons}>
-              <div className={styles.loginButtons}>
+            <div>
+              <div style={{ marginTop: 20, textAlign: 'center' }}>
                 <button type="submit" className="btn btn-primary" onClick={onClickLogin} >
                   <i className="ion-log-in" /> Login
               </button>
                 {googleAuthEnabled &&
                   <button
                     onClick={onClickOAuthLogin}
-                    className={`btn btn-primary ${styles.last}`} >
+                    className="btn btn-primary">
                     <i className="icon ion-social-googleplus" /> Google
                 </button>
                 }
               </div>
-              <div className={styles.otherButtons}>
+              <div style={{ textAlign: 'center', marginTop: 10 }}>
                 <Link className="btn btn-primary" routeName={'forgot'}>
                   <i className="ion-key" /> Reset password
               </Link>
