@@ -184,9 +184,9 @@ router.get(
 );
 
 router.post(
-  routes.UPLOADJSONPERSONAS,
+  routes.UPLOADJSONPERSONA,
   passport.authenticate(['jwt', 'jwt-cookie', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
-  ImportPersonasController.uploadJsonPersonas
+  ImportPersonasController.uploadJsonPersona
 );
 
 /**

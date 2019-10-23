@@ -9,9 +9,22 @@ import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import PersonasImport from 'lib/models/personasImport';
 import mongoose from 'mongoose';
 
-import persistJsonPersonas from 'lib/services/importPersonas/persistJsonPersonas';
-import { IMPORT_JSON } from 'lib/constants/personasImport';
-import importJsonPersonasService from 'lib/services/importPersonas/importJsonPersonas';
+import {
+  get,
+  has,
+  head,
+  tail,
+  isString,
+  filter,
+  isObject,
+  flatten,
+  find
+} from 'lodash';
+import { map } from 'bluebird';
+import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
+import reasignPersonaStatements from 'lib/services/persona/reasignPersonaStatements';
+import updateQueryBuilderCache from 'lib/services/importPersonas/updateQueryBuilderCache';
+import { validateIfi } from 'lib/services/persona/validateIfi';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -48,7 +61,7 @@ const importPersonasError = catchErrors(async (req, res) => {
 
   const id = req.params.id;
 
-  const filter = await getScopeFilter({
+  const scopeFilter = await getScopeFilter({
     modelName: 'personasImport',
     actionName: 'view',
     authInfo
@@ -56,7 +69,7 @@ const importPersonasError = catchErrors(async (req, res) => {
 
   const personaImport = await PersonasImport.findOne({
     _id: objectId(id),
-    ...filter
+    ...scopeFilter
   });
 
   const csvHandle = personaImport.csvErrorHandle || personaImport.csvHandle;
@@ -65,44 +78,128 @@ const importPersonasError = catchErrors(async (req, res) => {
   return downloadToStream(csvHandle)(res);
 });
 
-const uploadJsonPersonas = catchErrors(async (req, res) => {
+/**
+ * body
+ * {
+ *    personaName:
+ *    ifi: {
+ *      key: 'mbox' || 'mbox_sha1sum' || 'openid' || 'account'
+ *      value: string || {
+ *        homePage: string,
+ *        name: string
+ *      }
+ *    },
+ *    ifis: [
+ *      {
+ *        key: 'mbox' || 'mbox_sha1sum' || 'openid' || 'account'
+ *        value: string || {
+ *          homePage: string,
+ *          name: string
+ *        }
+ *      },
+ *    ],
+ *    attrbutes: [
+ *      {
+ *      }
+ *    ]
+ * }
+ */
+const uploadJsonPersona = catchErrors(async (req, res) => {
   const authInfo = getAuthFromRequest(req);
 
-  const { file } = await getFileAndFieldsFromRequest(req);
+  const personaService = getPersonaService();
+  const organisation = getOrgFromAuthInfo(authInfo);
 
-  const personaImport = await PersonasImport.create({
-    importType: IMPORT_JSON
+  const ifis = filter([req.body.ifi, ...req.body.ifis], isObject);
+
+  const erroringIfis = ifis.filter(ifi => validateIfi(ifi, ['ifi']).length > 0);
+  if (erroringIfis.length > 0) {
+    const errors = erroringIfis.map(ifi =>
+      validateIfi(ifi, ['ifi'])
+    );
+    const flattenedErrors = flatten(errors);
+    res.status(400).send(flattenedErrors);
+    return;
+  }
+
+  const personaName = req.body.personaName;
+
+  const personaIdentifiers = await map(ifis, (ifi) => {
+    return personaService.createUpdateIdentifierPersona({
+      organisation,
+      personaName,
+      ifi
+    });
   });
 
-  const {
-    jsonHandle,
-    jsonErrorHandle
-  } = await persistJsonPersonas({
-    authInfo,
-    file,
-    id: personaImport._id
+  const merged = !find(personaIdentifiers, ({ wasCreated }) => wasCreated);
+
+  const personaIds = await map(personaIdentifiers, ({ personaId }) => personaId);
+  const toPersonaId = head(personaIds);
+  const fromPersonaIds = tail(personaIds);
+  if (personaName && isString(personaName) && personaName.length > 0) {
+    // update the persona to have the new name
+    // upsert to ensure that the persona is made if has been removed since
+    await personaService.updatePersona({
+      organisation,
+      personaId: toPersonaId,
+      name: personaName,
+      upsert: true
+    });
+  }
+
+  // Merge personas
+  await map(fromPersonaIds, (fromPersonaId) => {
+    if (toPersonaId === fromPersonaId) {
+      // Do nothing, as the ifi already points to this persona.
+      return;
+    }
+
+    return Promise.all([
+      personaService.mergePersona({
+        organisation,
+        toPersonaId,
+        fromPersonaId
+      }),
+      reasignPersonaStatements({
+        organisation,
+        fromId: fromPersonaId,
+        toId: toPersonaId
+      })
+    ]);
   });
 
-  await personaImport.updateOne({
-    _id: personaImport._id
-  }, {
-    jsonHandle,
-    jsonErrorHandle,
-    title: !personaImport.title ? file.originalFilename : personaImport.title,
+  const inputAttributes = filter([req.body.attribute, ...(req.body.attributes || [])], isObject);
+
+  const attributes = filter(inputAttributes, (inputAttribute) => {
+    return has(inputAttribute, 'key') && has(inputAttribute, 'value');
   });
 
-  await importJsonPersonasService({
-    id: personaImport._id,
-    personaService: getPersonaService(),
-    authInfo,
+  await map(attributes, (attribute) => {
+    if (!has(attribute, 'key') || !has(attribute, 'value')) {
+      return;
+    }
+    return personaService.overwritePersonaAttribute({
+      personaId: toPersonaId,
+      organisation,
+      key: get(attribute, 'key'),
+      value: get(attribute, 'value')
+    });
   });
 
-  return res.status(200).json(personaImport);
+  await updateQueryBuilderCache({
+    attributes,
+    organisation
+  });
+
+  return res.status(200).json({
+    merged
+  });
 });
 
 export default {
   uploadPersonas,
   importPersonas,
   importPersonasError,
-  uploadJsonPersonas
+  uploadJsonPersona
 };
