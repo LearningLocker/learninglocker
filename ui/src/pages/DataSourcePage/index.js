@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import tooltipFactory from 'react-toolbox/lib/tooltip';
 import { IconButton } from 'react-toolbox/lib/button';
+import styled from 'styled-components';
 import { withProps, compose } from 'recompose';
 import { Map, fromJS, List } from 'immutable';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { VelocityTransitionGroup } from 'velocity-react';
 import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
 import {
@@ -23,7 +23,19 @@ import Statement from './Statement';
 import StatementForm from './StatementForm';
 import ExportManager from './ExportManager';
 
-import styles from './styles.css';
+const Heading = styled.div`
+  display: flex;
+  align-items: baseline;
+`;
+
+const HeadingButtons = styled.div`
+  margin-left: auto;
+`;
+
+const HeadingIcon = styled.i`
+  font-size: 24px;
+  color: #929292;
+`;
 
 const withStatements = compose(
   withProps({ schema: 'statement', displayOwner: false }),
@@ -97,17 +109,17 @@ class Source extends PureComponent {
     return (
       <div>
         <header id="topbar">
-          <div className={styles.heading}>
+          <Heading>
             Statements
-            <div className={styles.buttons}>
+            <HeadingButtons>
               <TooltipIconButton
                 tooltip="Open export panel"
                 tooltipPosition="left"
                 onClick={this.toggleIsExporting} >
-                <i className="ion-android-download" />
+                <HeadingIcon className="ion-android-download" />
               </TooltipIconButton>
-            </div>
-          </div>
+            </HeadingButtons>
+          </Heading>
         </header>
         <VelocityTransitionGroup
           component="div"
@@ -156,7 +168,6 @@ class Source extends PureComponent {
 }
 
 export default compose(
-  withStyles(styles),
   connect(state => ({
     query: statementQuerySelector(state),
     timezone: statementTimezoneSelector(state),

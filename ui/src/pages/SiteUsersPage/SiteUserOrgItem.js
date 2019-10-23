@@ -19,7 +19,7 @@ function SiteUserOrgItem(props) {
       <SiteOrgLink model={props.org} style={style} />
     </li>
   );
-};
+}
 
 SiteUserOrgItem.propTypes = {
   org: PropTypes.instanceOf(Map).isRequired,

@@ -1,18 +1,19 @@
 import React from 'react';
 import { compose, withProps } from 'recompose';
-import classNames from 'classnames';
 import { withModel } from 'ui/utils/hocs';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import styled from 'styled-components';
 import IdentifiersViewer from '../IdentifiersViewer';
 import AttributesViewer from '../AttributesViewer';
 import PersonaAutoComplete from '../PersonaAutoComplete';
 import MergeButton from './MergeButton';
-import styles from './styles.css';
+
+const Section = styled.div`
+  margin-top: 15px;
+`;
 
 const enhance = compose(
   withProps({ schema: 'persona' }),
-  withModel,
-  withStyles(styles)
+  withModel
 );
 
 const renderTarget = ({ hasTarget, mergeTargetId }) => {
@@ -22,14 +23,14 @@ const renderTarget = ({ hasTarget, mergeTargetId }) => {
 
   return (
     <div>
-      <div className={styles.section}>
+      <Section>
         <h4>Identifiers</h4>
         <IdentifiersViewer personaId={mergeTargetId} />
-      </div>
-      <div className={styles.section}>
+      </Section>
+      <Section>
         <h4>Attributes</h4>
         <AttributesViewer personaId={mergeTargetId} />
-      </div>
+      </Section>
     </div>
   );
 };
@@ -43,18 +44,18 @@ const MergeForm = ({ id, hasMetadata, getMetadata, setMetadata }) => {
 
   return (
     <div>
-      <div className={classNames('form-group', styles.section)}>
-        <div className={styles.label}>
+      <Section className="form-group">
+        <div style={{ fontWeight: 'bold', marginBottom: 5 }}>
           Merge identifiers and attributes from
         </div>
         <PersonaAutoComplete
           selectedPersonaId={mergeTargetId}
           currentPersonaId={id}
           onChange={handleMergeTargetChange} />
-        <div className={styles.section}>
+        <Section>
           <MergeButton id={id} disabled={!hasTarget} />
-        </div>
-      </div>
+        </Section>
+      </Section>
       {renderTarget({ hasTarget, mergeTargetId })}
     </div>
   );

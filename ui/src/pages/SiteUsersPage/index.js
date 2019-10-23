@@ -8,8 +8,6 @@ import { queryStringToQuery, modelQueryStringSelector } from 'ui/redux/modules/s
 import SearchBox from 'ui/containers/SearchBox';
 import { expandModel } from 'ui/redux/modules/models';
 import ModelList from 'ui/containers/ModelList';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from 'ui/pages/SettingsUsersPage/users.css'; // @TODO: Don't import this from another page.
 import { routeNodeSelector } from 'redux-router5';
 import SiteUserItem from './SiteUserItem';
 
@@ -31,7 +29,11 @@ class SiteUsers extends Component {
       <span>
         <UserPicture model={model} className="pull-left" />
         {name}
-        {model.has('googleId') && <i className={`ion ion-social-googleplus ${styles.marginLeft}`} />}
+        {model.has('googleId') && (
+          <i
+            className="ion ion-social-googleplus"
+            style={{ marginLeft: '1em', fontWeight: 'bold' }} />
+        )}
       </span>
     );
   }
@@ -60,13 +62,10 @@ class SiteUsers extends Component {
   );
 }
 
-export default compose(
-  withStyles(styles),
-  connect(
-    state => ({
-      searchString: modelQueryStringSelector(schema)(state),
-      userId: routeNodeSelector('admin.users.id')(state).route.params.userId
-    }),
-    { expandModel }
-  )
+export default connect(
+  state => ({
+    searchString: modelQueryStringSelector(schema)(state),
+    userId: routeNodeSelector('admin.users.id')(state).route.params.userId
+  }),
+  { expandModel }
 )(SiteUsers);
