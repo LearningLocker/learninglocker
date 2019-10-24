@@ -24,8 +24,7 @@ import { map } from 'bluebird';
 import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
 import reasignPersonaStatements from 'lib/services/persona/reasignPersonaStatements';
 import updateQueryBuilderCache from 'lib/services/importPersonas/updateQueryBuilderCache';
-import { validateIfi } from 'lib/services/persona/validateIfi';
-import IfisError from 'lib/errors/IfisError';
+import { validateIfis } from 'lib/services/persona/validateIfi';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -113,19 +112,7 @@ const uploadJsonPersona = catchErrors(async (req, res) => {
 
   const ifis = filter([req.body.ifi, ...req.body.ifis], isObject);
 
-  const erroringIfis = ifis.filter(ifi => validateIfi(ifi, ['ifi']).length > 0);
-  if (erroringIfis.length > 0) {
-    const errors = erroringIfis.map((ifi, k) =>
-      ({
-        index: k,
-        errors: validateIfi(ifi, ['ifi'])
-      })
-    );
-    const flattenedErrors = flatten(errors);
-    throw new IfisError(
-      flattenedErrors
-    );
-  }
+  validateIfis(ifis, ['ifi']);
 
   const personaName = req.body.personaName;
 
