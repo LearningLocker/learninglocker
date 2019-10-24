@@ -11,6 +11,7 @@ import PersonaConflict from '@learninglocker/persona-service/dist/errors/Conflic
 import NoModel from 'jscommons/dist/errors/NoModel';
 import AlreadyProcessingError from 'lib/errors/AlreadyProcessingError';
 import PersonaNoModelWithId from '@learninglocker/persona-service/dist/errors/NoModelWithId';
+import IfisError from 'lib/errors/IfisError';
 
 export const unawaitedErrorHandler = (err) => {
   const errorId = uuid();
@@ -38,6 +39,13 @@ const handleRequestError = (res, err) => {
       errorId,
       message: 'This model already exists'
     });
+  }
+  if (err instanceof IfisError) {
+    return res.status(400).send({
+      errorId,
+      message: 'Invalid Ifis',
+      errors: err.message
+    })
   }
 
   // app errors
