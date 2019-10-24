@@ -1,15 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { Map } from 'immutable';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withProps, setPropTypes, withState } from 'recompose';
+import styled from 'styled-components';
 import { withModels } from 'ui/utils/hocs';
 import AddTextIconButton from 'ui/components/TextIconButton/AddTextIconButton';
 import createPersonaIdentFilter from '../createPersonaIdentFilter';
 import NewRow from './NewRow';
 import SavedRow from './SavedRow';
-import styles from './styles.css';
+import { actionsStyle } from './actionsStyle';
+import { tableDataStyle } from './tableDataStyle';
+
+const TableHeader = styled.th`${tableDataStyle}`;
+const TableActionsHeader = styled(TableHeader)`${actionsStyle}`;
 
 const enhance = compose(
   setPropTypes({
@@ -22,8 +25,7 @@ const enhance = compose(
     sort: new Map({ _id: -1 }),
   })),
   withModels,
-  withState('isNewIdentifierVisible', 'changeNewIdentifierVisibility', false),
-  withStyles(styles)
+  withState('isNewIdentifierVisible', 'changeNewIdentifierVisibility', false)
 );
 
 const render = ({
@@ -45,17 +47,17 @@ const render = ({
   };
   return (
     <div>
-      <div className={styles.buttons}>
+      <div style={{ textAlign: 'right', marginBottom: '8px' }}>
         <AddTextIconButton
           text="Add Identifier"
           onClick={() => changeNewIdentifierVisibility(true)} />
       </div>
-      <table className={styles.table}>
+      <table style={{ width: '100%' }}>
         <thead>
           <tr>
-            <th className={styles.td}>Type</th>
-            <th className={styles.td}>Value</th>
-            <th className={classNames(styles.td, styles.actions)}>Actions</th>
+            <TableHeader>Type</TableHeader>
+            <TableHeader>Value</TableHeader>
+            <TableActionsHeader>Actions</TableActionsHeader>
           </tr>
         </thead>
         <tbody>

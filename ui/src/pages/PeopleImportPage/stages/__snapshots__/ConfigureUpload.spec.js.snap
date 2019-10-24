@@ -5,7 +5,7 @@ exports[`ConfigureUpload should render 1`] = `
   <div
     className="form-group"
   >
-    <WithStyles(ColumnHeaderEditor)
+    <ColumnHeaderEditor
       disabled={false}
       model={
         Object {
@@ -34,7 +34,7 @@ exports[`ConfigureUpload should render with disabled 1`] = `
   <div
     className="form-group"
   >
-    <WithStyles(ColumnHeaderEditor)
+    <ColumnHeaderEditor
       disabled={true}
       model={
         Object {
@@ -54,7 +54,7 @@ exports[`ConfigureUpload should render with errors 1`] = `
   <div
     className="form-group has-error"
   >
-    <WithStyles(ColumnHeaderEditor)
+    <ColumnHeaderEditor
       disabled={false}
       model={
         Object {

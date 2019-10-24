@@ -1,21 +1,34 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Map, List, fromJS } from 'immutable';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { withProps, withState, compose } from 'recompose';
 import { connect } from 'react-redux';
+import styled from 'styled-components';
 import { getDefaultProjectionFromType } from 'ui/redux/modules/exports';
 import { withModel } from 'ui/utils/hocs';
 import { downloadExport } from 'ui/redux/actions';
 import ProjectionInput from './ProjectionInput';
 import ExportOutputPreview from './ExportOutputPreview';
-import styles from './styles.css';
 
 const downloadRequestStates = {
   default: 0,
   waiting: 1,
   inqueue: 2
 };
+
+const ExportOutputPreviewSection = styled.div`
+  margin-top: 11px;
+
+  @media (max-width: 991px) {
+    display: none;
+  }
+`;
+
+const ProjectionInputSection = styled.div`
+  @media (max-width: 991px) {
+    margin-right: 0px;
+  }
+`;
 
 class ExportForm extends Component {
   static propTypes = {
@@ -126,7 +139,9 @@ class ExportForm extends Component {
 
     return (
       <div>
-        <div className={`${styles.exportForm} row rowadding`}>
+        <div
+          className="row rowadding"
+          style={{ margin: '10px 0', display: 'flex' }}>
           {rawMode ? (
             <div className="col-xs-12">
               <ProjectionInput
@@ -135,18 +150,24 @@ class ExportForm extends Component {
                 rawMode />
             </div>
           ) : [
-              <div className={`col-md-6 col-xs-12 ${styles.projectionInput}`} key="export-projection">
-                <ProjectionInput
-                  projection={activeProjection}
-                  onChange={this.onChangeProjection} />
-              </div>,
-              <div className={`col-md-6 ${styles.exportOutputPreview}`} key="export-preview">
-                <ExportOutputPreview
-                  filter={pipelines.getIn([activeIndex, 0, '$match'], new Map())}
-                  project={activeProjection}
-                  className={styles.rightPane} />
-              </div>
-            ]}
+            <ProjectionInputSection className="col-md-6 col-xs-12" key="export-projection">
+              <ProjectionInput
+                projection={activeProjection}
+                onChange={this.onChangeProjection} />
+            </ProjectionInputSection>,
+            <ExportOutputPreviewSection className="col-md-6" key="export-preview">
+              <ExportOutputPreview
+                style={{
+                  flexGrow: 1,
+                  marginLeft: 20,
+                  paddingLeft: 20,
+                  marginTop: 10,
+                  borderLeft: '1px solid #eee',
+                }}
+                filter={pipelines.getIn([activeIndex, 0, '$match'], new Map())}
+                project={activeProjection} />
+            </ExportOutputPreviewSection>
+          ]}
         </div>
         <button className="btn btn-default" onClick={this.toggleRaw}><i className="ion ion-code" /></button>
         {this.renderDownloadButton()}
@@ -156,7 +177,6 @@ class ExportForm extends Component {
 }
 
 export default compose(
-  withStyles(styles),
   withProps({ schema: 'export' }),
   withState('downloadRequestState', 'setDownloadRequestStates', downloadRequestStates.default),
   withModel,

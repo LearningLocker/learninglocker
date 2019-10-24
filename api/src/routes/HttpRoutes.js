@@ -365,9 +365,7 @@ restify.serve(router, QueryBuilderCache);
 restify.serve(router, QueryBuilderCacheValue);
 restify.serve(router, Role);
 restify.serve(router, PersonaAttribute, {
-  preDelete: async (req, res, next) => {
-    return next();
-  },
+  preDelete: async (req, res, next) => next(),
 });
 restify.serve(router, PersonasImport);
 restify.serve(router, PersonasImportTemplate);
