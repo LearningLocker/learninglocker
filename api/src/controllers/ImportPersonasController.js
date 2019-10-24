@@ -1,3 +1,15 @@
+import mongoose from 'mongoose';
+import {
+  get,
+  has,
+  head,
+  tail,
+  isString,
+  filter,
+  isObject,
+  find
+} from 'lodash';
+import { map } from 'bluebird';
 import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
 import catchErrors from 'api/controllers/utils/catchErrors';
 import getFileAndFieldsFromRequest from 'api/controllers/utils/getFileAndFieldsFromRequest';
@@ -7,20 +19,6 @@ import importPersonasService from 'lib/services/importPersonas/importPersonas';
 import { downloadToStream } from 'lib/services/files';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import PersonasImport from 'lib/models/personasImport';
-import mongoose from 'mongoose';
-
-import {
-  get,
-  has,
-  head,
-  tail,
-  isString,
-  filter,
-  isObject,
-  flatten,
-  find
-} from 'lodash';
-import { map } from 'bluebird';
 import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
 import reasignPersonaStatements from 'lib/services/persona/reasignPersonaStatements';
 import updateQueryBuilderCache from 'lib/services/importPersonas/updateQueryBuilderCache';
