@@ -130,11 +130,12 @@ const uploadJsonPersona = catchErrors(async (req, res) => {
   const personaName = req.body.personaName;
 
   const personaIdentifiers = await map(ifis, (ifi) => {
-    return personaService.createUpdateIdentifierPersona({
+    const out = personaService.createUpdateIdentifierPersona({
       organisation,
       personaName,
       ifi
     });
+    return out;
   });
 
   const personaIds = await map(personaIdentifiers, ({ personaId }) => personaId);
