@@ -1,39 +1,5 @@
-import jsonwebtoken from 'jsonwebtoken';
-import User from 'lib/models/user';
 import { AUTH_JWT_SUCCESS } from 'lib/constants/routes';
-import Unauthorized from 'lib/errors/Unauthorised';
-import { createOrgJWT, createUserJWT } from 'api/auth/jwt';
-import catchErrors from 'api/controllers/utils/catchErrors';
-
-const jwtRefresh = catchErrors(async (req, res) => {
-  try {
-    const refreshToken = req.cookies[`refresh_token_${req.body.tokenType}_${req.body.id}`];
-    const decodedToken = await jsonwebtoken.verify(refreshToken, process.env.APP_SECRET);
-
-    const { tokenId, tokenType, userId, provider } = decodedToken;
-
-    const user = await User.findOne({ _id: userId });
-
-    if (!user) {
-      throw new Unauthorized();
-    }
-
-    if (tokenType === 'user_refresh') {
-      const newUserToken = await createUserJWT(user, provider);
-      res.status(200).set('Content-Type', 'text/plain').send(newUserToken);
-    } else if (tokenType === 'organisation_refresh') {
-      const newOrgToken = await createOrgJWT(user, tokenId, provider);
-      res.status(200).set('Content-Type', 'text/plain').send(newOrgToken);
-    } else {
-      throw new Unauthorized();
-    }
-  } catch (err) {
-    if (['JsonWebTokenError', 'TokenExpiredError'].includes(err.name)) {
-      throw new Unauthorized();
-    }
-    throw err;
-  }
-});
+import { createUserJWT } from 'api/auth/jwt';
 
 const googleSuccess = (req, res) => {
   // we have successfully signed into google
@@ -48,7 +14,6 @@ const success = (req, res) => {
 };
 
 export default {
-  jwtRefresh,
   googleSuccess,
   success,
 };

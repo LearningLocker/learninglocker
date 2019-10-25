@@ -67,6 +67,7 @@ import { getGoogleAuthConfig } from '../requestHandlers/getGoogleAuthConfig';
 import { getClientInfo } from '../requestHandlers/getClientInfo';
 import { getVersion } from '../requestHandlers/getVersion';
 import { postJwtLoginRequest } from '../requestHandlers/postJwtLoginRequest';
+import { postJwtRefreshRequest } from '../requestHandlers/postJwtRefreshRequest';
 import { postJwtOrganisationRequest } from '../requestHandlers/postJwtOrganisationRequest';
 import { postOAuth2TokenRequest } from '../requestHandlers/postOAuth2TokenRequest';
 import { postPasswordReset } from '../requestHandlers/postPasswordReset';
@@ -91,10 +92,7 @@ router.post(
   postJwtOrganisationRequest
 );
 
-router.post(
-  routes.AUTH_JWT_REFRESH,
-  AuthController.jwtRefresh,
-);
+router.post(routes.AUTH_JWT_REFRESH, postJwtRefreshRequest);
 
 router.get(
   routes.AUTH_CLIENT_INFO,
