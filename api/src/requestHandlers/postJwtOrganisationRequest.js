@@ -32,7 +32,7 @@ export async function postJwtOrganisationRequest(req, res) {
         .set('Content-Type', 'text/plain')
         .send(orgAccessToken);
     } catch (err) {
-      res.status(500).send(err)
+      res.status(500).send(err);
     }
   } else {
     res.status(401).send('User does not have access to this organisation.');

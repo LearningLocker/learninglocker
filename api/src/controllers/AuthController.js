@@ -1,112 +1,16 @@
 import passport from 'passport';
 import jsonwebtoken from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
-import ms from 'ms';
 import User from 'lib/models/user';
 import OAuthToken from 'lib/models/oAuthToken';
-import { AUTH_JWT_SUCCESS, AUTH_JWT_REFRESH } from 'lib/constants/routes';
+import { AUTH_JWT_SUCCESS } from 'lib/constants/routes';
 import {
   ACCESS_TOKEN_VALIDITY_PERIOD_SEC,
-  JWT_REFRESH_TOKEN_EXPIRATION,
   DEFAULT_PASSPORT_OPTIONS
 } from 'lib/constants/auth';
 import Unauthorized from 'lib/errors/Unauthorised';
-import { createOrgJWT, createUserJWT, createUserRefreshJWT } from 'api/auth/jwt';
-import { AUTH_FAILURE } from 'api/auth/utils';
+import { createOrgJWT, createUserJWT } from 'api/auth/jwt';
 import catchErrors from 'api/controllers/utils/catchErrors';
-
-const buildRefreshCookieOption = (protocol) => {
-  const validPeriodMsec = ms(JWT_REFRESH_TOKEN_EXPIRATION);
-
-  const cookieOption = {
-    path: `/api${AUTH_JWT_REFRESH}`,
-    expires: new Date(Date.now() + validPeriodMsec),
-    maxAge: validPeriodMsec,
-    httpOnly: true,
-    sameSite: 'Strict',
-  };
-
-  if (protocol === 'https') {
-    return { ...cookieOption, secure: true };
-  }
-  return cookieOption;
-};
-
-const jwt = (req, res, next) => {
-  passport.authenticate('userBasic', { session: false }, (err, data) => {
-    if (err) {
-      return next(err); // will generate a 500 error
-    }
-
-    // return method for failed authentication
-    const authFailure = (reason, statusCode = 401) => {
-      res.removeHeader('WWW-Authenticate');
-      let message;
-      switch (reason) {
-        case AUTH_FAILURE.USER_NOT_FOUND:
-        case AUTH_FAILURE.PASSWORD_INCORRECT:
-        case AUTH_FAILURE.LOCKED_OUT:
-          message = 'Incorrect login details';
-          break;
-        default:
-          message = `There was an error (code: ${reason})`;
-          break;
-      }
-      res.status(statusCode).send({ success: false, message });
-    };
-
-    // retrieve the user
-    const user = data.user;
-
-    // if login was not a success then add a failed attempt
-    if (!data.success || !user) {
-      // check if we should flush the expiry and attempts first
-      // (might be our first attempt since being locked out..)
-      if (user) {
-        if (data.clearLockout) {
-          user.authLockoutExpiry = null;
-          user.authFailedAttempts = 0;
-        }
-
-        // increment the failed attempts
-        user.authFailedAttempts += 1;
-
-        // if we are not already locked out, check if we have hit our limit of allowed attempts
-        if (
-          !user.authLockoutExpiry &&
-          user.authFailedAttempts >= user.ownerOrganisationSettings.LOCKOUT_ATTEMPS
-        ) {
-          user.authLockoutExpiry = new Date();
-        }
-        user.authLastAttempt = new Date();
-        return user.save(() =>
-          authFailure(data.reason)
-        );
-      }
-      return authFailure(data.reason);
-    }
-
-    // if the login is good to go, then clear the attempts and any expiry that might still be hanging around
-    user.authLockoutExpiry = null;
-    user.authFailedAttempts = 0;
-    user.authLastAttempt = new Date();
-    return user.save(() =>
-      Promise.all([createUserJWT(user), createUserRefreshJWT(user)])
-        .then(
-          ([accessToken, refreshToken]) =>
-            res
-              .cookie(
-                `refresh_token_user_${user._id}`,
-                refreshToken,
-                buildRefreshCookieOption(req.protocol),
-              )
-              .set('Content-Type', 'text/plain')
-              .send(accessToken)
-        )
-        .catch(authFailure)
-    );
-  })(req, res, next);
-};
 
 const jwtRefresh = catchErrors(async (req, res) => {
   try {
@@ -204,7 +108,6 @@ const issueOAuth2AccessToken = (req, res) => {
 
 export default {
   clientInfo,
-  jwt,
   jwtRefresh,
   googleSuccess,
   success,
