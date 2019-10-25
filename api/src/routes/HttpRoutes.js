@@ -64,6 +64,7 @@ import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAu
 import { updateStatementCountsInOrg } from 'lib/services/lrs';
 import * as routes from 'lib/constants/routes';
 import { getGoogleAuthConfig } from '../requestHandlers/getGoogleAuthConfig';
+import { getClientInfo } from '../requestHandlers/getClientInfo';
 import { getVersion } from '../requestHandlers/getVersion';
 import { postJwtLoginRequest } from '../requestHandlers/postJwtLoginRequest';
 import { postJwtOrganisationRequest } from '../requestHandlers/postJwtOrganisationRequest';
@@ -98,7 +99,7 @@ router.post(
 router.get(
   routes.AUTH_CLIENT_INFO,
   passport.authenticate('clientBasic', DEFAULT_PASSPORT_OPTIONS),
-  AuthController.clientInfo
+  getClientInfo
 );
 
 router.post(routes.OAUTH2_TOKEN, postOAuth2TokenRequest);

@@ -43,25 +43,11 @@ const googleSuccess = (req, res) => {
     .catch(err => res.status(500).send(err));
 };
 
-const clientInfo = (req, res) => {
-  const authInfo = req.user.authInfo || {};
-  const { title, lrs_id, organisation, scopes } = authInfo.client;
-
-  const response = {
-    title,
-    organisation,
-    lrs_id,
-    scopes
-  };
-  res.status(200).send(response);
-};
-
 const success = (req, res) => {
   res.send('Login success!');
 };
 
 export default {
-  clientInfo,
   jwtRefresh,
   googleSuccess,
   success,

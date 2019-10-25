@@ -2,7 +2,6 @@ import git from 'git-rev';
 
 export async function getVersion(req, res) {
   try {
-    console.log('here');
     const [short, long, branch, tag] = await Promise.all([
       new Promise(resolve => git.short(resolve)),
       new Promise(resolve => git.long(resolve)),
