@@ -67,6 +67,7 @@ import { getGoogleAuthConfig } from '../requestHandlers/getGoogleAuthConfig';
 import { getVersion } from '../requestHandlers/getVersion';
 import { postJwtLoginRequest } from '../requestHandlers/postJwtLoginRequest';
 import { postJwtOrganisationRequest } from '../requestHandlers/postJwtOrganisationRequest';
+import { postOAuth2TokenRequest } from '../requestHandlers/postOAuth2TokenRequest';
 import { postPasswordReset } from '../requestHandlers/postPasswordReset';
 import { postPasswordResetRequest } from '../requestHandlers/postPasswordResetRequest';
 
@@ -100,10 +101,7 @@ router.get(
   AuthController.clientInfo
 );
 
-router.post(
-  routes.OAUTH2_TOKEN,
-  AuthController.issueOAuth2AccessToken
-);
+router.post(routes.OAUTH2_TOKEN, postOAuth2TokenRequest);
 
 /**
  * TWO FACTOR / GOOGLE
