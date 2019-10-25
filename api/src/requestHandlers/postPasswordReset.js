@@ -1,5 +1,4 @@
 import User from 'lib/models/user';
-import { sendResetPasswordToken } from 'lib/helpers/email';
 
 /**
  * Reset a users password with a valid password reset token

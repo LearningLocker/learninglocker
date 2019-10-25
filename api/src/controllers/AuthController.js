@@ -11,7 +11,7 @@ import {
   DEFAULT_PASSPORT_OPTIONS
 } from 'lib/constants/auth';
 import Unauthorized from 'lib/errors/Unauthorised';
-import { createOrgJWT, createOrgRefreshJWT, createUserJWT, createUserRefreshJWT } from 'api/auth/jwt';
+import { createOrgJWT, createUserJWT, createUserRefreshJWT } from 'api/auth/jwt';
 import { AUTH_FAILURE } from 'api/auth/utils';
 import catchErrors from 'api/controllers/utils/catchErrors';
 
@@ -138,37 +138,6 @@ const jwtRefresh = catchErrors(async (req, res) => {
   }
 });
 
-
-const includes = (organisations, orgId) =>
-  organisations.filter(organisationId =>
-    String(organisationId) === orgId
-  ).length !== 0;
-
-const jwtOrganisation = (req, res) => {
-  const organisationId = req.body.organisation;
-  const { user } = req;
-  const userAccessToken = req.user.authInfo.token;
-  // check that the user exists in this organisation
-  if (includes(user.organisations, organisationId)) {
-    Promise.all([
-      createOrgJWT(user, organisationId, userAccessToken.provider),
-      createOrgRefreshJWT(user, organisationId, userAccessToken.provider),
-    ]).then(
-      ([orgAccessToken, orgRefreshToken]) =>
-        res
-          .cookie(
-            `refresh_token_organisation_${organisationId}`,
-            orgRefreshToken,
-            buildRefreshCookieOption(req.protocol),
-          )
-          .set('Content-Type', 'text/plain')
-          .send(orgAccessToken)
-    ).catch(err => res.status(500).send(err));
-  } else {
-    res.status(401).send('User does not have access to this organisation.');
-  }
-};
-
 const googleSuccess = (req, res) => {
   // we have successfully signed into google
   // create a JWT and set it in the query params (only way to return it with a redirect)
@@ -237,7 +206,6 @@ export default {
   clientInfo,
   jwt,
   jwtRefresh,
-  jwtOrganisation,
   googleSuccess,
   success,
   issueOAuth2AccessToken,

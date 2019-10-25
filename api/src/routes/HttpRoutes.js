@@ -65,6 +65,7 @@ import { updateStatementCountsInOrg } from 'lib/services/lrs';
 import * as routes from 'lib/constants/routes';
 import { getGoogleAuthConfig } from '../requestHandlers/getGoogleAuthConfig';
 import { getVersion } from '../requestHandlers/getVersion';
+import { postJwtOrganisationRequest } from '../requestHandlers/postJwtOrganisationRequest';
 import { postPasswordReset } from '../requestHandlers/postPasswordReset';
 import { postPasswordResetRequest } from '../requestHandlers/postPasswordResetRequest';
 
@@ -84,7 +85,7 @@ router.post(routes.AUTH_JWT_PASSWORD, AuthController.jwt);
 router.post(
   routes.AUTH_JWT_ORGANISATION,
   passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
-  AuthController.jwtOrganisation
+  postJwtOrganisationRequest
 );
 
 router.post(
