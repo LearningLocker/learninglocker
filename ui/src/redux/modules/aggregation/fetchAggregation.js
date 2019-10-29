@@ -105,7 +105,6 @@ const fetchAggregation = createAsyncDuck({
 
   doAction: function* fetchAggregationSaga({ pipeline, mapping, llClient, sinceAt }) {
     const { body } = yield call(llClient.aggregateAsync, pipeline, undefined, sinceAt);
-    // const { body } = yield call(llClient.aggrigateMapReduce, pipeline, undefined, sinceAt); // DEBUG ONLY
     const result = mapping(body);
 
     return yield { pipeline, result, sinceAt };

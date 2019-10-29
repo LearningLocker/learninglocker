@@ -132,7 +132,6 @@ const getSubtractPipeline = ({
     ...(JSON.parse(model.pipelineString))
   ];
 
-  console.log('201.2');
   return subtractPipeline;
 };
 
@@ -148,8 +147,6 @@ const aggregationProcessor = async ({
   publishQueue = publish,
   now
 }, done) => {
-  const start = new Date().getTime();
-  console.log('001');
   // Attempt to aquire a lock
   const model = await AggregationProcessor.findOneAndUpdate({
     _id: aggregationProcessorId,

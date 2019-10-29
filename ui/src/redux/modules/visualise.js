@@ -86,12 +86,6 @@ const routeNameSelector = (state) => {
 
 const routeFilterSelector = state => get(state, ['router', 'route', 'params', 'filter']);
 
- /**
- * gets the visualisation pipeline associated with the provided ID
- * @param  {String}          id  id of visualisation
- * @return {Immutable.Map}       Map of pipeline
- */
-
 const shareableDashboardFilterSelector = () => createSelector(
   [
     metadataSelector,

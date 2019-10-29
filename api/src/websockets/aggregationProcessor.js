@@ -29,16 +29,13 @@ const aggregationProcessor = async ({
   changeStream.on('change', (next) => {
     ws.send(JSON.stringify(next));
 
-    if (moment(next.fromTimestamp).isSame(moment(next.gtDate)) &&
+    if (
+      moment(next.fromTimestamp).isSame(moment(next.gtDate)) &&
       moment(next.toTimestamp).isAfter(moment().subtract(10, 'minutes'))
-      // TODO, if it's a benchmark.
     ) {
-      // The end
       ws.close();
       changeStream.close();
     }
-
-    // TODO: Maybe also add a timeout.
   });
 
   const currentAggregationProcessor = await AggregationProcessor.findOne({

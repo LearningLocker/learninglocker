@@ -7,8 +7,6 @@ import { get } from 'lodash';
 import { AGGREGATION_PROCESSOR_QUEUE } from 'lib/constants/aggregationProcessor';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 
-// const LOCK_TIMEOUT_MINUTES = 10;
-
 export const findOrCreateAggregationProcessor = async ({
   pipelineString,
   pipelineHash,

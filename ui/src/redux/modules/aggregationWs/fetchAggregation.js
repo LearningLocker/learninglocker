@@ -52,7 +52,6 @@ const fetchAggregation = createAsyncDuck({
   failureDelay: 2000,
 
   reduceStart: (state, { pipeline, timeIntervalSinceToday, timeIntervalUnits, timeIntervalSincePreviousTimeInterval }) => {
-    console.log('reduceStart SHOULD HAPPEN');
     const out = state
       .setIn([new Map({
         pipeline,
@@ -211,8 +210,6 @@ const fetchAggregation = createAsyncDuck({
         resolve();
       });
     });
-
-    // handle responses
 
     // Send the auth details
     const cookies = Cookies.get();
