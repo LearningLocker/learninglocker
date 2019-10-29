@@ -1,14 +1,16 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Map } from 'immutable';
+import { Map, List } from 'immutable';
 import { Tab } from 'react-toolbox/lib/tabs';
 import Tabs from 'ui/components/Material/Tabs';
 import BarAxesEditor from 'ui/containers/VisualiseForm/StatementsForm/AxesEditor/BarAxesEditor';
-import VisualiseFilterForm from 'ui/containers/VisualiseFilterForm';
 import AddQueryButton from '../components/AddQueryButton';
 import BarChartGroupingLimitForm from '../components/BarChartGroupingLimitForm';
 import DescriptionForm from '../components/DescriptionForm';
+import FiltersForm from '../components/FiltersForm';
 import PreviewPeriodPicker from '../components/PreviewPeriodPicker';
+import StatsTopOrBottomSwitch from '../components/StatsTopOrBottomSwitch';
+import ShowStatsSwitch from '../components/ShowStatsSwitch';
 import SourceViewForm from '../components/SourceViewForm';
 import StackedSwitch from '../components/StackedSwitch';
 import TimezoneForm from '../components/TimezoneForm';
@@ -65,6 +67,24 @@ const Editor = ({
     });
   }, [id]);
 
+  const onChangeShowStats = useCallback((checked) => {
+    updateModel({
+      schema: 'visualisation',
+      id,
+      path: 'showStats',
+      value: checked,
+    });
+  }, [id]);
+
+  const onChangeStatsAtBottom = useCallback((checked) => {
+    updateModel({
+      schema: 'visualisation',
+      id,
+      path: 'statsAtBottom',
+      value: checked,
+    });
+  }, [id]);
+
   const onChangeBarChartGroupingLimit = useCallback((limit) => {
     updateModel({
       schema: 'visualisation',
@@ -78,6 +98,15 @@ const Editor = ({
       id,
       path: ['activePage'],
       value: 0,
+    });
+  }, [id]);
+
+  const onChangeFilters = useCallback((filters) => {
+    updateModel({
+      schema: 'visualisation',
+      id,
+      path: 'filters',
+      value: filters,
     });
   }, [id]);
 
@@ -126,15 +155,31 @@ const Editor = ({
                 stacked={model.get('stacked', true)}
                 onChange={onChangeStacked} />
 
-              <VisualiseFilterForm
-                model={model}
-                orgTimezone={orgTimezone} />
+              <FiltersForm
+                visualisationId={id}
+                filters={model.get('filters', new List())}
+                canEditLabel={false}
+                timezone={model.get('timezone')}
+                orgTimezone={orgTimezone}
+                onChange={onChangeFilters} />
             </Tab>
 
             <Tab key="options" label="Options">
               <SourceViewForm
                 sourceView={model.get('sourceView')}
                 onChange={onChangeSourceView} />
+
+              {model.get('sourceView') && (
+                <ShowStatsSwitch
+                  showStats={model.get('showStats')}
+                  onChange={onChangeShowStats} />
+              )}
+
+              {model.get('sourceView') && model.get('showStats') && (
+                <StatsTopOrBottomSwitch
+                  statsAtBottom={model.get('statsAtBottom')}
+                  onChange={onChangeStatsAtBottom} />
+              )}
 
               <BarChartGroupingLimitForm
                 barChartGroupingLimit={model.get('barChartGroupingLimit')}

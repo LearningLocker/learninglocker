@@ -1,4 +1,5 @@
-{ "extends": "eslint-config-airbnb",
+{
+  "extends": "eslint-config-airbnb",
   "env": {
     "browser": true,
     "node": true,
@@ -7,6 +8,7 @@
   },
   "parser": "babel-eslint",
   "rules": {
+    "import/prefer-default-export": 0,
     "max-len": 0,
     "linebreak-style": 0,
     "array-callback-return": 0,
@@ -14,19 +16,22 @@
     "no-mixed-operators": 0,
     "react/no-multi-comp": 0,
     "react/prop-types": 0, // doesn't really work with functional components and HOCs
-    "react/sort-comp": [1, {
-      "order": [
-        'lifecycle',
-        'everything-else',
-        'rendering',
-      ],
-      groups: {
-        rendering: [
-          '/^render.+$/',
-          'render'
-        ]
+    "react/sort-comp": [
+      1,
+      {
+        "order": [
+          "lifecycle",
+          "everything-else",
+          "rendering",
+        ],
+        "groups": {
+          "rendering": [
+            "/^render.+$/",
+            "render"
+          ]
+        }
       }
-    }],
+    ],
     "id-length": 0,
     "import/default": 0,
     "import/no-duplicates": 0,
@@ -36,19 +41,58 @@
     "import/no-named-as-default": 0,
     "import/extensions": 0,
     "import/no-extraneous-dependencies": 0,
-    "react/forbid-prop-types": [1, { "forbid": ['any', 'array'] }],
+    "react/forbid-prop-types": [
+      1,
+      {
+        "forbid": [
+          "any",
+          "array"
+        ]
+      }
+    ],
     "jsx-a11y/no-static-element-interactions": 0, // stops you having onClick on a div
-    "react/jsx-closing-bracket-location": [1, 'after-props'],
+    "react/jsx-closing-bracket-location": [
+      1,
+      "after-props"
+    ],
     "react/jsx-no-bind": 0, // it's actually pretty useful to bind and the only workaround is to make an entirely new component
-    "react/no-unused-prop-types": [2, { skipShapeProps: true }],
-    "no-shadow": [2, { "builtinGlobals": false, "hoist": "functions", "allow": ['err'] }],
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-    "comma-dangle": 0,  // not sure why airbnb turned this on. gross!
+    "react/no-unused-prop-types": [
+      2,
+      {
+        "skipShapeProps": true
+      }
+    ],
+    "no-shadow": [
+      2,
+      {
+        "builtinGlobals": false,
+        "hoist": "functions",
+        "allow": [
+          "err"
+        ]
+      }
+    ],
+    "react/jsx-filename-extension": [
+      1,
+      {
+        "extensions": [
+          ".js",
+          ".jsx"
+        ]
+      }
+    ],
+    "comma-dangle": 0, // not sure why airbnb turned this on. gross!
     "no-underscore-dangle": 0,
     "consistent-return": 0,
     "no-param-reassign": 0,
     "global-require": 0,
-    "indent": [2, 2, {"SwitchCase": 1}],
+    "indent": [
+      2,
+      2,
+      {
+        "SwitchCase": 1
+      }
+    ],
     "no-console": 0,
     "no-alert": 0,
     "radix": 0,
@@ -65,7 +109,10 @@
   "settings": {
     "import/parser": "babel-eslint",
     "import/resolve": {
-      moduleDirectory: ["node_modules", "src"]
+      "moduleDirectory": [
+        "node_modules",
+        "src"
+      ]
     }
   },
   "globals": {
@@ -78,7 +125,6 @@
     "__GOOGLE_ENABLED__": true,
     "socket": true,
     "webpackIsomorphicTools": true,
-    "cy": true,
-    "Cypress": true
+    "cy": true
   }
 }

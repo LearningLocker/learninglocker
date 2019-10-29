@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import BlankDashboard from './BlankDashboard';
+import CuratrStarter from './CuratrStarter';
 import GettingStarted from './GettingStarted';
 import styles from './styles.css';
 
@@ -18,6 +19,7 @@ const DashboardTemplates = () => (
 
       <BlankDashboard />
       <GettingStarted />
+      <CuratrStarter />
     </div>
   </div>
 );

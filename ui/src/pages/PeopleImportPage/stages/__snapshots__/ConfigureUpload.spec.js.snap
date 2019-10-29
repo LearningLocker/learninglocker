@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConfigureUpload should render 1`] = `
+<div>
+  <div
+    className="form-group"
+  >
+    <ColumnHeaderEditor
+      disabled={false}
+      model={
+        Object {
+          "csvHeaders": Array [
+            "test1",
+            "test2",
+          ],
+        }
+      }
+    />
+  </div>
+  <div
+    className="form-group"
+  >
+    <button
+      className="btn btn-primary pull-right"
+    >
+      Import Personas
+    </button>
+  </div>
+</div>
+`;
+
+exports[`ConfigureUpload should render with disabled 1`] = `
+<div>
+  <div
+    className="form-group"
+  >
+    <ColumnHeaderEditor
+      disabled={true}
+      model={
+        Object {
+          "csvHeaders": Array [
+            "test1",
+            "test2",
+          ],
+        }
+      }
+    />
+  </div>
+</div>
+`;
+
+exports[`ConfigureUpload should render with errors 1`] = `
+<div>
+  <div
+    className="form-group has-error"
+  >
+    <ColumnHeaderEditor
+      disabled={false}
+      model={
+        Object {
+          "errors": Object {
+            "messages": Object {
+              "structure": "Structure is invalid",
+            },
+          },
+        }
+      }
+    />
+    <span
+      className="help-block"
+    >
+      <ValidationList
+        errors="Structure is invalid"
+      />
+    </span>
+  </div>
+  <div
+    className="form-group"
+  >
+    <button
+      className="btn btn-primary pull-right"
+    >
+      Import Personas
+    </button>
+  </div>
+</div>
+`;
