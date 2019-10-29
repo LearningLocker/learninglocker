@@ -4,7 +4,6 @@ import AggregationProcessor from 'lib/models/aggregationProcessor';
 import Statement from 'lib/models/statement';
 import { get, omit } from 'lodash';
 import { publish } from 'lib/services/queue';
-import { delay } from 'bluebird';
 
 export const combine = (as, bs, keyFn, mergeFn) => {
   const groupedAs = as.reduce((result, a) => {

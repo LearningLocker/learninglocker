@@ -77,6 +77,11 @@ export const previewPeriodToInterval = (period, benchmarking) => {
       timeIntervalUnits: 'years',
       ...(benchmarking ? { timeIntervalSincePreviousTimeInterval: 2 } : {})
     };
+    default: return {
+      timeIntervalSinceToday: 7,
+      timeIntervalUnits: 'days',
+      ...(benchmarking ? { timeIntervalSincePreviousTimeInterval: 7 } : {})
+    };
   }
 };
 

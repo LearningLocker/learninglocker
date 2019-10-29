@@ -1,6 +1,5 @@
 import { OrderedMap, Map, fromJS } from 'immutable';
 import { createSelector } from 'reselect';
-import moment from 'moment';
 import { call, put, select, take, fork } from 'redux-saga/effects';
 import { eventChannel, END } from 'redux-saga';
 import createAsyncDuck from 'ui/utils/createAsyncDuck';
