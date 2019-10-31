@@ -1,12 +1,13 @@
 import logger from 'lib/logger';
 import migration from 'cli/migrateMongo/models/migration';
-import { isBoolean, isString, map } from 'lodash';
+import { isBoolean, isString, map, find } from 'lodash';
 import v2Migrations from 'cli/commands/v2-migrations';
 import { OrderedMap, List } from 'immutable';
+import { map as bmap } from 'bluebird';
 import migrate from './migrate';
 
 const getOutstandingMigrations = async ({ down, up, migrations }) => {
-  const lastMigration = await migration.findOne({}).sort({ updatedAt: -1 });
+  const lastMigration = await migration.findOne({}).sort({ order: -1, updatedAt: -1 });
 
   const lastKey = lastMigration ? lastMigration.key : null;
   if (down) {
@@ -80,8 +81,32 @@ const getOutstandingMigrations = async ({ down, up, migrations }) => {
   return outstandingMigrations;
 };
 
+export const fixOrderFn = async ({ migrations }) => {
+  const dbMigrations = await migration.find({}).sort({ order: 1 });
+  let toSave = [];
+
+  let inc = 1;
+  for (const migratio of migrations.keySeq().toJS()) {
+    // eslint-disable-next-line no-loop-func
+    const dbMigration = find(dbMigrations, dbMigratio => migratio === dbMigratio.key);
+    if (!dbMigration) {
+      break;
+    }
+
+    dbMigration.order = inc;
+    toSave = [dbMigration, ...toSave];
+
+    inc += 1;
+  }
+
+  await bmap(toSave, (toSav) => {
+    const out = toSav.save();
+    return out;
+  });
+};
+
 const checkRunMigrations = async ({ migrations }) => {
-  const dbMigrations = new List(await migration.find({}));
+  const dbMigrations = new List(await migration.find({}).sort({ order: 1 }));
   const actualMigrations = new List(migrations);
   const allMigrations = dbMigrations.zip(actualMigrations);
 
@@ -138,7 +163,7 @@ const displayInfo = async ({ info, migrations }) => {
   const verbose = info === 'v' || info === 'verbose';
 
   if (!verbose) {
-    const lastRunMigration = await migration.findOne().sort({ updatedAt: -1 });
+    const lastRunMigration = await migration.findOne().sort({ order: -1, updatedAt: -1 });
 
     if (!lastRunMigration) {
       logger.info('No migrations have been run');
@@ -146,7 +171,7 @@ const displayInfo = async ({ info, migrations }) => {
       logger.info('Last run migration: ', lastRunMigration.key);
     }
   } else {
-    const runMigrations = await migration.find().sort({ updatedAt: 1 });
+    const runMigrations = await migration.find().sort({ order: 1, updatedAt: 1 });
 
     const output = map(runMigrations, item => item.key);
 
@@ -170,10 +195,12 @@ const displayInfo = async ({ info, migrations }) => {
   }
 };
 
-export default async function ({ down, up, info, migrations = v2Migrations, dontExit = false }, next = null) {
+export default async function ({ down, up, info, migrations = v2Migrations, dontExit = false, fixOrder = false }, next = null) {
   try {
     if (info) {
       await displayInfo({ info, migrations });
+    } else if (fixOrder) {
+      await fixOrderFn({ migrations });
     } else {
       await doMigrations({ down, up, migrations });
     }

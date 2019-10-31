@@ -232,4 +232,73 @@ describe('migrateMongo', () => {
       await expect(result).to.eventually.be.rejectedWith(Error);
     });
   });
+  describe('fix order', () => {
+    it('should set the order', async () => {
+      await promisify(migrator)({
+        migrations,
+        dontExit: true
+      });
+
+      const dbRunMigrations = await migration.find({
+        key: { $in: ['001-test', '002-test'] }
+      });
+      expect(dbRunMigrations.length).to.equal(2);
+      expect(dbRunMigrations[0].order).to.equal(1);
+      expect(dbRunMigrations[1].order).to.equal(2);
+    });
+
+    it('should reorder', async () => {
+      await promisify(migrator)({
+        migrations,
+        dontExit: true
+      });
+
+      const dbRunMigrations = await migration.find({
+        key: { $in: ['001-test', '002-test'] }
+      });
+      dbRunMigrations[0].order = 2;
+      await dbRunMigrations[0].save();
+
+      dbRunMigrations[1].order = 1;
+      await dbRunMigrations[1].save();
+
+      await promisify(migrator)({
+        migrations,
+        dontExit: true,
+        fixOrder: true
+      });
+
+      const dbRunMigrations2 = await migration.find({
+        key: { $in: ['001-test', '002-test'] }
+      });
+
+      expect(dbRunMigrations2[0].order).to.equal(1);
+      expect(dbRunMigrations2[1].order).to.equal(2);
+    });
+
+    it('should migrate if first items have no order', async () => {
+      await promisify(migrator)({
+        migrations,
+        dontExit: true
+      });
+
+      const dbRunMigrations = await migration.find({
+        key: { $in: ['001-test', '002-test'] }
+      });
+      dbRunMigrations[0].order = null;
+      await dbRunMigrations[0].save();
+
+      await promisify(migrator)({
+        migrations,
+        dontExit: true
+      });
+
+      const dbRunMigrations2 = await migration.find({
+        key: { $in: ['001-test', '002-test'] }
+      });
+
+      expect(dbRunMigrations2[0].order).to.equal(null);
+      expect(dbRunMigrations2[1].order).to.equal(2);
+    });
+  });
 });

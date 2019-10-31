@@ -164,7 +164,8 @@ program
     '-d, --down <down>',
     "Optional, runs down migration down to [down file name], also accepts ['last']"
   )
-  .option('-i, --info [info]', "Display the state of the migrations, optional ['v'|'verbose']");
+  .option('-i, --info [info]', "Display the state of the migrations, optional ['v'|'verbose']")
+  .option('-f, --fixOrder [fixOrder]', 'Resolves the migration order conflicts');
 // node cli/dist/server migrateMongo
 
 program
