@@ -274,6 +274,17 @@ describe('migrateMongo', () => {
 
       expect(dbRunMigrations2[0].order).to.equal(1);
       expect(dbRunMigrations2[1].order).to.equal(2);
+
+      let errored = false;
+      try {
+        await promisify(migrator)({
+          migrations,
+          dontExit: true,
+        });
+      } catch (err) {
+        errored = true;
+      }
+      expect(errored).to.equal(false);
     });
 
     it('should migrate if first items have no order', async () => {

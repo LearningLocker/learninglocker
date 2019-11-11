@@ -81,7 +81,7 @@ const getOutstandingMigrations = async ({ down, up, migrations }) => {
   return outstandingMigrations;
 };
 
-export const fixOrderFn = async ({ migrations }) => {
+export const fixDbMigrationOrder = async ({ migrations }) => {
   const dbMigrations = await migration.find({}).sort({ order: 1 });
   let toSave = [];
 
@@ -200,7 +200,7 @@ export default async function ({ down, up, info, migrations = v2Migrations, dont
     if (info) {
       await displayInfo({ info, migrations });
     } else if (fixOrder) {
-      await fixOrderFn({ migrations });
+      await fixDbMigrationOrder({ migrations });
     } else {
       await doMigrations({ down, up, migrations });
     }
