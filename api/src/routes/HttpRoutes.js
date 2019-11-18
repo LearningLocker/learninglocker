@@ -183,6 +183,12 @@ router.get(
   ImportPersonasController.importPersonasError
 );
 
+router.post(
+  routes.UPLOADJSONPERSONA,
+  passport.authenticate(['jwt', 'jwt-cookie', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  ImportPersonasController.uploadJsonPersona
+);
+
 /**
  * DOWNLOADS
  */
