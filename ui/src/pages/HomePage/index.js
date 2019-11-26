@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import DebounceInput from 'react-debounce-input';
 import { connect } from 'react-redux';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Card, CardText } from 'react-toolbox/lib/card';
 import { List, ListItem } from 'react-toolbox/lib/list';
 import { Map, List as ImmutList, fromJS } from 'immutable';
@@ -21,7 +20,6 @@ import AuthContainer from 'ui/containers/AuthContainer';
 import smallLogo from 'ui/static/smallLogo.png';
 import OrgMemberButton from 'ui/containers/OrgMemberButton';
 import Register from './Register';
-import styles from './styles.css';
 
 class Home extends Component {
   static propTypes = {
@@ -240,7 +238,7 @@ class Home extends Component {
             </CardText>
           </Card>
 
-          <div className={styles.loginButtons}>
+          <div style={{ marginTop: 20, textAlign: 'center' }}>
             <button className="btn btn-danger" onClick={this.onClickLogout}>
               <i className="ion ion-log-out" /> Log Out
             </button>
@@ -252,7 +250,6 @@ class Home extends Component {
 }
 
 export default compose(
-  withStyles(styles),
   connect(state => ({
     auth: authenticationSelector(state),
     authUser: loggedInUserSelector(state),
