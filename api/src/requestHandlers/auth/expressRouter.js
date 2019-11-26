@@ -1,5 +1,5 @@
 import express from 'express';
-import passport from 'passport';
+import passport from 'api/auth/passport';
 import { GOOGLE_AUTH_OPTIONS, DEFAULT_PASSPORT_OPTIONS } from 'lib/constants/auth';
 import * as routes from 'lib/constants/routes';
 import getClientInfo from './getClientInfo';
