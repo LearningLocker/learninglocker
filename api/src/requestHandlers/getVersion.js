@@ -1,4 +1,5 @@
 import git from 'git-rev';
+import logger from 'lib/logger';
 
 export default async function getVersion(req, res) {
   try {
@@ -10,6 +11,7 @@ export default async function getVersion(req, res) {
     ]);
     res.status(200).json({ short, long, branch, tag });
   } catch (err) {
-    res.status(500).send(err);
+    logger.error(err);
+    res.status(500).send();
   }
 }

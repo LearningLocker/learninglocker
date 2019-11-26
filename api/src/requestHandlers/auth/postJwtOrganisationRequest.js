@@ -1,4 +1,5 @@
 import { createOrgJWT, createOrgRefreshJWT } from 'api/auth/jwt';
+import logger from 'lib/logger';
 import buildRefreshCookieOption from '../utils/buildRefreshCookieOption';
 
 /**
@@ -30,7 +31,8 @@ export default async function postJwtOrganisationRequest(req, res) {
         .set('Content-Type', 'text/plain')
         .send(orgAccessToken);
     } catch (err) {
-      res.status(500).send(err);
+      logger.error(err);
+      res.status(500).send();
     }
   } else {
     res.status(401).send('User does not have access to this organisation.');
