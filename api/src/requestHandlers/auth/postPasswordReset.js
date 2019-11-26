@@ -7,7 +7,7 @@ import User from 'lib/models/user';
  * @param {Function} next
  * @return {Promise<void>} HTTP 200 OK on success
  */
-export async function postPasswordReset(req, res, next) {
+export default async function postPasswordReset(req, res, next) {
   const { email, token, password } = req.body;
   const now = new Date();
 

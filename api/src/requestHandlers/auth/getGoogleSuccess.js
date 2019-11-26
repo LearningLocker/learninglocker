@@ -7,11 +7,11 @@ import { createUserJWT } from 'api/auth/jwt';
  * @param {Express.Response} res The response object
  * @return {Promise<void>} HTTP 200 OK on success
  */
-export async function getGoogleSuccess(req, res) {
+export default async function getGoogleSuccess(req, res) {
   try {
     const token = await createUserJWT(req.user, 'google');
     res.redirect(`/api${AUTH_JWT_SUCCESS}?access_token=${token}`);
   } catch (err) {
     res.status(500).send(err);
   }
-};
+}

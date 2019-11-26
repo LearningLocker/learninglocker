@@ -1,3 +1,4 @@
+import logger from 'lib/logger';
 import User from 'lib/models/user';
 import { sendResetPasswordToken } from 'lib/helpers/email';
 
@@ -8,7 +9,7 @@ import { sendResetPasswordToken } from 'lib/helpers/email';
  * @param {Function} next
  * @return {Promise<void>} HTTP 204 No Content on success
  */
-export async function postPasswordResetRequest(req, res, next) {
+export default async function postPasswordResetRequest(req, res, next) {
   const { email } = req.body;
   User.findOne({ email }, (findErr, user) => {
     if (findErr) {

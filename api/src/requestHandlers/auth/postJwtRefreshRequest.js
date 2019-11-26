@@ -2,7 +2,7 @@ import jsonwebtoken from 'jsonwebtoken';
 import User from 'lib/models/user';
 import Unauthorized from 'lib/errors/Unauthorised';
 import { createOrgJWT, createUserJWT } from 'api/auth/jwt';
-import { catchErrorsInResponse } from '../utils/catchErrorsInResponse';
+import catchErrorsInResponse from '../utils/catchErrorsInResponse';
 
 /**
  * Requests a JWT token to provide a user with access to the application.
@@ -10,7 +10,7 @@ import { catchErrorsInResponse } from '../utils/catchErrorsInResponse';
  * @param {Express.Response} res  The response object
  * @return {Promise<void>} HTTP 200 OK on success
  */
-export function postJwtRefreshRequest(req, res) {
+export default function postJwtRefreshRequest(req, res) {
   catchErrorsInResponse(res, async () => {
     try {
       const refreshToken = req.cookies[`refresh_token_${req.body.tokenType}_${req.body.id}`];
@@ -40,4 +40,4 @@ export function postJwtRefreshRequest(req, res) {
       throw err;
     }
   });
-};
+}

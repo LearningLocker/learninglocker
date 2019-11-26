@@ -1,13 +1,17 @@
-import { getGoogleAuthConfig } from './getGoogleAuthConfig';
-import { getGoogleSuccess } from './getGoogleSuccess';
-import { getLoginSuccess } from './getLoginSuccess';
-import { getClientInfo } from './getClientInfo';
-import { postJwtLoginRequest } from './postJwtLoginRequest';
-import { postJwtRefreshRequest } from './postJwtRefreshRequest';
-import { postJwtOrganisationRequest } from './postJwtOrganisationRequest';
-import { postOAuth2TokenRequest } from './postOAuth2TokenRequest';
-import { postPasswordReset } from './postPasswordReset';
-import { postPasswordResetRequest } from './postPasswordResetRequest';
+import express from 'express';
+import passport from 'passport';
+import { GOOGLE_AUTH_OPTIONS, DEFAULT_PASSPORT_OPTIONS } from 'lib/constants/auth';
+import * as routes from 'lib/constants/routes';
+import getClientInfo from './getClientInfo';
+import getGoogleAuthConfig from './getGoogleAuthConfig';
+import getGoogleSuccess from './getGoogleSuccess';
+import getLoginSuccess from './getLoginSuccess';
+import postJwtLoginRequest from './postJwtLoginRequest';
+import postJwtOrganisationRequest from './postJwtOrganisationRequest';
+import postJwtRefreshRequest from './postJwtRefreshRequest';
+import postOAuth2TokenRequest from './postOAuth2TokenRequest';
+import postPasswordReset from './postPasswordReset';
+import postPasswordResetRequest from './postPasswordResetRequest';
 
 const router = new express.Router();
 

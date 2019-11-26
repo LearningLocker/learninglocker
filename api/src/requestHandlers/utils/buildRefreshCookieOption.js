@@ -1,6 +1,8 @@
 import ms from 'ms';
+import { JWT_REFRESH_TOKEN_EXPIRATION } from 'lib/constants/auth';
+import { AUTH_JWT_REFRESH } from 'lib/constants/routes';
 
-export function buildRefreshCookieOption(protocol) {
+export default function buildRefreshCookieOption(protocol) {
   const validPeriodMsec = ms(JWT_REFRESH_TOKEN_EXPIRATION);
 
   const cookieOption = {
@@ -15,4 +17,4 @@ export function buildRefreshCookieOption(protocol) {
     return { ...cookieOption, secure: true };
   }
   return cookieOption;
-};
+}

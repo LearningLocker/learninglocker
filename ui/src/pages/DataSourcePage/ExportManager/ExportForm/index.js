@@ -34,9 +34,7 @@ class ExportForm extends Component {
   }
 
   componentDidMount = () => {
-    this.setState((state, props) => {
-      return { projectionString: this.getActiveProjection(state, props) };
-    });
+    this.setState((state, props) => ({ projectionString: this.getActiveProjection(state, props) }));
   }
 
   componentDidUpdate = () => {
@@ -78,12 +76,10 @@ class ExportForm extends Component {
       });
   }
 
-  getActiveProjection = (state, props) => {
-    return props.model.getIn(
+  getActiveProjection = (state, props) => props.model.getIn(
       ['projections', state.activeIndex],
       getDefaultProjectionFromType(props.model.get('type'))
-    );
-  }
+    )
 
   getCompletePipeline = () => {
     const { pipelines } = this.props;
@@ -135,18 +131,18 @@ class ExportForm extends Component {
                 rawMode />
             </div>
           ) : [
-              <div className={`col-md-6 col-xs-12 ${styles.projectionInput}`} key="export-projection">
-                <ProjectionInput
-                  projection={activeProjection}
-                  onChange={this.onChangeProjection} />
-              </div>,
-              <div className={`col-md-6 ${styles.exportOutputPreview}`} key="export-preview">
-                <ExportOutputPreview
-                  filter={pipelines.getIn([activeIndex, 0, '$match'], new Map())}
-                  project={activeProjection}
-                  className={styles.rightPane} />
-              </div>
-            ]}
+            <div className={`col-md-6 col-xs-12 ${styles.projectionInput}`} key="export-projection">
+              <ProjectionInput
+                projection={activeProjection}
+                onChange={this.onChangeProjection} />
+            </div>,
+            <div className={`col-md-6 ${styles.exportOutputPreview}`} key="export-preview">
+              <ExportOutputPreview
+                filter={pipelines.getIn([activeIndex, 0, '$match'], new Map())}
+                project={activeProjection}
+                className={styles.rightPane} />
+            </div>
+          ]}
         </div>
         <button className="btn btn-default" onClick={this.toggleRaw}><i className="ion ion-code" /></button>
         {this.renderDownloadButton()}

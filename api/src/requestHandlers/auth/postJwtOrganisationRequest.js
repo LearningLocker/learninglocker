@@ -1,5 +1,5 @@
 import { createOrgJWT, createOrgRefreshJWT } from 'api/auth/jwt';
-import { buildRefreshCookieOption } from '../utils/buildRefreshCookieOption';
+import buildRefreshCookieOption from '../utils/buildRefreshCookieOption';
 
 /**
  * Requests a JWT token to provide a user with access to a given organisation.
@@ -7,15 +7,13 @@ import { buildRefreshCookieOption } from '../utils/buildRefreshCookieOption';
  * @param {Express.Response} res  The response object
  * @return {Promise<void>} HTTP 200 OK on success
  */
-export async function postJwtOrganisationRequest(req, res) {
+export default async function postJwtOrganisationRequest(req, res) {
   const organisationId = req.body.organisation;
   const { user } = req;
   const userAccessToken = req.user.authInfo.token;
 
   // Check that the user exists in this organisation.
-  const isUserInOrg = organisations.filter((organisationId) => {
-    return String(organisationId) === orgId;
-  }).length !== 0;
+  const isUserInOrg = user.organisations.filter(orgId => String(orgId) === organisationId).length !== 0;
 
   if (isUserInOrg) {
     try {

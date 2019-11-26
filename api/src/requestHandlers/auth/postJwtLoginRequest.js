@@ -1,7 +1,7 @@
-import passport from 'passport';
+import passport from 'api/auth/passport';
 import { createUserJWT, createUserRefreshJWT } from 'api/auth/jwt';
 import { AUTH_FAILURE } from 'api/auth/utils';
-import { buildRefreshCookieOption } from '../utils/buildRefreshCookieOption';
+import buildRefreshCookieOption from '../utils/buildRefreshCookieOption';
 
 /**
  * Requests a JWT token to provide a user with access to the application.
@@ -10,7 +10,7 @@ import { buildRefreshCookieOption } from '../utils/buildRefreshCookieOption';
  * @param {Function} next
  * @return {Promise<void>} HTTP 200 OK on success
  */
-export async function postJwtLoginRequest(req, res, next) {
+export default async function postJwtLoginRequest(req, res, next) {
   passport.authenticate('userBasic', { session: false }, (err, data) => {
     if (err) {
       return next(err); // will generate a 500 error
@@ -68,7 +68,7 @@ export async function postJwtLoginRequest(req, res, next) {
     user.authLockoutExpiry = null;
     user.authFailedAttempts = 0;
     user.authLastAttempt = new Date();
-    return user.save(() => {
+    return user.save(async () => {
       try {
         const [accessToken, refreshToken] = await Promise.all([
           createUserJWT(user),
@@ -81,7 +81,7 @@ export async function postJwtLoginRequest(req, res, next) {
             buildRefreshCookieOption(req.protocol),
           )
           .set('Content-Type', 'text/plain')
-          .send(accessToken)
+          .send(accessToken);
       } catch (err) {
         authFailure(err);
       }

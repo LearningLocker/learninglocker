@@ -4,6 +4,6 @@
  * @param {Express.Response} res The response object
  * @return {Promise<void>} HTTP 200 OK on success
  */
-export async function getLoginSuccess(req, res) {
+export default async function getLoginSuccess(req, res) {
   res.send('Login success!');
-};
+}

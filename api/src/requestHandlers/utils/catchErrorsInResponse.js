@@ -5,7 +5,7 @@ import handleRequestError from 'api/controllers/utils/handleRequestError';
  * @param {() => Promise<void>} handler
  * @return {Promise<void>}
  */
-export async function catchErrorsInResponse(res, handler) {
+export default async function catchErrorsInResponse(res, handler) {
   try {
     await handler();
   } catch (err) {

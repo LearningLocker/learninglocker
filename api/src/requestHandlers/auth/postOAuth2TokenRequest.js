@@ -1,4 +1,4 @@
-import passport from 'passport';
+import passport from 'api/auth/passport';
 import { v4 as uuid } from 'uuid';
 import OAuthToken from 'lib/models/oAuthToken';
 import { ACCESS_TOKEN_VALIDITY_PERIOD_SEC, DEFAULT_PASSPORT_OPTIONS } from 'lib/constants/auth';
@@ -10,7 +10,7 @@ import { ACCESS_TOKEN_VALIDITY_PERIOD_SEC, DEFAULT_PASSPORT_OPTIONS } from 'lib/
  * @param {Function} next
  * @return {Promise<void>} HTTP 200 OK on success
  */
-export async function postOAuth2TokenRequest(req, res) {
+export default async function postOAuth2TokenRequest(req, res) {
   passport.authenticate('OAuth2_Authorization', DEFAULT_PASSPORT_OPTIONS, (err, client) => {
     if (err) {
       if (err.isClientError) {
@@ -47,4 +47,4 @@ export async function postOAuth2TokenRequest(req, res) {
       });
     });
   })(req, res);
-};
+}

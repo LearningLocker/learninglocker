@@ -14,7 +14,6 @@ import getUserIdFromAuthInfo from 'lib/services/auth/authInfoSelectors/getUserId
 import { SITE_ADMIN } from 'lib/constants/scopes';
 import passport from 'api/auth/passport';
 import {
-  GOOGLE_AUTH_OPTIONS,
   DEFAULT_PASSPORT_OPTIONS,
   RESTIFY_DEFAULTS,
   setNoCacheHeaders,
@@ -62,7 +61,7 @@ import BatchDelete from 'lib/models/batchDelete';
 import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
 import { updateStatementCountsInOrg } from 'lib/services/lrs';
 import * as routes from 'lib/constants/routes';
-import { getVersion } from '../requestHandlers/getVersion';
+import getVersion from '../requestHandlers/getVersion';
 import authRouter from '../requestHandlers/auth/expressRouter';
 
 const router = new express.Router();
@@ -291,9 +290,7 @@ restify.serve(router, QueryBuilderCache);
 restify.serve(router, QueryBuilderCacheValue);
 restify.serve(router, Role);
 restify.serve(router, PersonaAttribute, {
-  preDelete: async (req, res, next) => {
-    return next();
-  },
+  preDelete: async (req, res, next) => next(),
 });
 restify.serve(router, PersonasImport);
 restify.serve(router, PersonasImportTemplate);
