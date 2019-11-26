@@ -1,4 +1,4 @@
-import passport from 'api/auth/passport';
+import passport from 'passport';
 import logger from 'lib/logger';
 import { BasicStrategy } from 'passport-http';
 import { Strategy as BearerStrategy } from 'passport-http-bearer';
