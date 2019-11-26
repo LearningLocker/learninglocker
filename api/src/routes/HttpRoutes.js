@@ -23,7 +23,6 @@ import {
 import { MANAGER_SELECT } from 'lib/services/auth/selects/models/user.js';
 
 // CONTROLLERS
-import AuthController from 'api/controllers/AuthController';
 import UploadController from 'api/controllers/UploadController';
 import DownloadController from 'api/controllers/DownloadController';
 import ExportController from 'api/controllers/ExportController';
@@ -63,65 +62,15 @@ import BatchDelete from 'lib/models/batchDelete';
 import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
 import { updateStatementCountsInOrg } from 'lib/services/lrs';
 import * as routes from 'lib/constants/routes';
-import { getGoogleAuthConfig } from '../requestHandlers/getGoogleAuthConfig';
-import { getClientInfo } from '../requestHandlers/getClientInfo';
 import { getVersion } from '../requestHandlers/getVersion';
-import { postJwtLoginRequest } from '../requestHandlers/postJwtLoginRequest';
-import { postJwtRefreshRequest } from '../requestHandlers/postJwtRefreshRequest';
-import { postJwtOrganisationRequest } from '../requestHandlers/postJwtOrganisationRequest';
-import { postOAuth2TokenRequest } from '../requestHandlers/postOAuth2TokenRequest';
-import { postPasswordReset } from '../requestHandlers/postPasswordReset';
-import { postPasswordResetRequest } from '../requestHandlers/postPasswordResetRequest';
+import authRouter from '../requestHandlers/auth/expressRouter';
 
 const router = new express.Router();
 router.use(setNoCacheHeaders);
 
 router.get('', (req, res) => res.status(200).send('OK'));
 router.get(routes.VERSION, getVersion);
-router.get(routes.GOOGLE_AUTH, getGoogleAuthConfig);
-
-/**
- * AUTHORIZATION
- */
-router.post(routes.AUTH_RESETPASSWORD_REQUEST, postPasswordResetRequest);
-router.post(routes.AUTH_RESETPASSWORD_RESET, postPasswordReset);
-router.post(routes.AUTH_JWT_PASSWORD, postJwtLoginRequest);
-router.post(
-  routes.AUTH_JWT_ORGANISATION,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
-  postJwtOrganisationRequest
-);
-
-router.post(routes.AUTH_JWT_REFRESH, postJwtRefreshRequest);
-
-router.get(
-  routes.AUTH_CLIENT_INFO,
-  passport.authenticate('clientBasic', DEFAULT_PASSPORT_OPTIONS),
-  getClientInfo
-);
-
-router.post(routes.OAUTH2_TOKEN, postOAuth2TokenRequest);
-
-/**
- * TWO FACTOR / GOOGLE
- */
-if (process.env.GOOGLE_ENABLED) {
-  router.get(
-    routes.AUTH_JWT_GOOGLE,
-    passport.authenticate('google', GOOGLE_AUTH_OPTIONS)
-  );
-  router.get(
-    routes.AUTH_JWT_GOOGLE_CALLBACK,
-    passport.authenticate('google', DEFAULT_PASSPORT_OPTIONS),
-    AuthController.googleSuccess
-  );
-}
-
-router.get(
-  routes.AUTH_JWT_SUCCESS,
-  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
-  AuthController.success
-);
+router.use(authRouter);
 
 /**
  * Personas

@@ -2,7 +2,7 @@ import jsonwebtoken from 'jsonwebtoken';
 import User from 'lib/models/user';
 import Unauthorized from 'lib/errors/Unauthorised';
 import { createOrgJWT, createUserJWT } from 'api/auth/jwt';
-import { catchErrorsInResponse } from './utils/catchErrorsInResponse';
+import { catchErrorsInResponse } from '../utils/catchErrorsInResponse';
 
 /**
  * Requests a JWT token to provide a user with access to the application.

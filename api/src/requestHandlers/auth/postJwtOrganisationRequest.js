@@ -1,5 +1,5 @@
 import { createOrgJWT, createOrgRefreshJWT } from 'api/auth/jwt';
-import { buildRefreshCookieOption } from './utils/buildRefreshCookieOption';
+import { buildRefreshCookieOption } from '../utils/buildRefreshCookieOption';
 
 /**
  * Requests a JWT token to provide a user with access to a given organisation.

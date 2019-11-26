@@ -1,7 +1,7 @@
 import passport from 'passport';
 import { createUserJWT, createUserRefreshJWT } from 'api/auth/jwt';
 import { AUTH_FAILURE } from 'api/auth/utils';
-import { buildRefreshCookieOption } from './utils/buildRefreshCookieOption';
+import { buildRefreshCookieOption } from '../utils/buildRefreshCookieOption';
 
 /**
  * Requests a JWT token to provide a user with access to the application.
