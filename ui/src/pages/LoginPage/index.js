@@ -94,11 +94,16 @@ const render = ({
           {!inProgress &&
             <div>
               <div style={{ marginTop: 20, textAlign: 'center' }}>
-                <button type="submit" className="btn btn-primary" onClick={onClickLogin} >
+                <button
+                  style={{ marginLeft: 1, marginRight: 1 }}
+                  type="submit"
+                  className="btn btn-primary"
+                  onClick={onClickLogin} >
                   <i className="ion-log-in" /> Login
-              </button>
+                </button>
                 {googleAuthEnabled &&
                   <button
+                    style={{ marginLeft: 1, marginRight: 1 }}
                     onClick={onClickOAuthLogin}
                     className="btn btn-primary">
                     <i className="icon ion-social-googleplus" /> Google
