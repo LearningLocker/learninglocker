@@ -103,7 +103,7 @@ const render = ({
                 </button>
                 {googleAuthEnabled &&
                   <button
-                    style={{ marginLeft: 1, marginRight: 1 }}
+                    style={{ margin: "0 5px" }}
                     onClick={onClickOAuthLogin}
                     className="btn btn-primary">
                     <i className="icon ion-social-googleplus" /> Google
