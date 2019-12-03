@@ -1,32 +1,26 @@
-import React from 'react';
-import { compose, withState } from 'recompose';
+import React, { useState } from 'react';
 import FocusGroup from 'ui/components/FocusGroup/FocusGroup';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from './styles.css';
 
 /**
  * renders an autocomplete component with an input and suggestions
  */
 const AutoComplete = ({
   // renderers
-  renderOptions = () => {},
-  renderInput = () => {},
+  renderOptions = () => { },
+  renderInput = () => { },
 
   // event handlers
   onKeyPress,
-
-  // local state
-  hasInputFocus,
-  setInputFocus,
 }) => {
+  const [hasInputFocus, setInputFocus] = useState(false);
   const onBlurInput = () => {
     setInputFocus(false);
   };
 
   return (
-    <div onKeyPress={onKeyPress} className={styles.wrapper}>
+    <div onKeyPress={onKeyPress} style={{ position: 'relative', flexGrow: 1 }}>
       <FocusGroup
-        onFocus={() => {}}
+        onFocus={() => { }}
         onBlur={onBlurInput}
         hasFocus={hasInputFocus} >
         {renderInput({
@@ -34,7 +28,7 @@ const AutoComplete = ({
           hasFocus: hasInputFocus
         })}
         <div
-          className={styles.optionsWrapper}>
+          style={{ position: 'absolute', zIndex: 1, width: '100%' }}>
           {hasInputFocus &&
             renderOptions({ onKeyPress, onBlur: onBlurInput })
           }
@@ -44,11 +38,4 @@ const AutoComplete = ({
   );
 };
 
-const inputFocusState = withState('hasInputFocus', 'setInputFocus', false);
-const optionsFocusState = withState('hasOptionFocus', 'setOptionFocus', false);
-const focusState = compose(inputFocusState, optionsFocusState);
-
-export default compose(
-  withStyles(styles),
-  focusState
-)(AutoComplete);
+export default AutoComplete;

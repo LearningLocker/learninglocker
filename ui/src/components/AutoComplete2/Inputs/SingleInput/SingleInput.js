@@ -1,10 +1,9 @@
 import React from 'react';
 import DebounceInput from 'react-debounce-input';
 import classNames from 'classnames';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withHandlers, withState } from 'recompose';
 import { componentDidUpdate } from 'react-functional-lifecycle';
-import styles from '../styles.css';
+import InputWrapper from '../InputWrapper';
 
 const withFocusState = withState('inputFocused', 'setInputFocused', false);
 const withFocusStateHandlers = withHandlers({
@@ -43,17 +42,13 @@ const SingleInput = ({
   hasFocus,
   renderOption,
   parseOption = option => option,
-  onChangeSearchString = () => {},
+  onChangeSearchString = () => { },
   inputFocused,
   setInputFocusedFalse,
   setInputFocusedTrue
 }) => {
   const shouldRenderSearch = hasFocus || !selectedOption;
-
-  const wrapperClasses = classNames({
-    [styles.inputWrapper]: true,
-    [styles.open]: hasFocus
-  });
+  const wrapperClasses = classNames({ open: hasFocus });
 
   let value;
   if (inputFocused) {
@@ -63,8 +58,8 @@ const SingleInput = ({
   }
 
   return (
-    <div className={wrapperClasses}>
-      { shouldRenderSearch &&
+    <InputWrapper className={wrapperClasses}>
+      {shouldRenderSearch &&
         <DebounceInput
           debounceTimeout={377}
           value={value}
@@ -73,10 +68,10 @@ const SingleInput = ({
           onBlur={setInputFocusedFalse}
           onFocus={setInputFocusedTrue} />
       }
-      { !shouldRenderSearch &&
+      {!shouldRenderSearch &&
         renderOption({ option: selectedOption })
       }
-    </div>
+    </InputWrapper>
   );
 };
 
@@ -84,7 +79,6 @@ const enhanced = compose(
   withFocusState,
   withFocusStateHandlers,
   checkInputFocus,
-  withStyles(styles)
 );
 
 export default enhanced(SingleInput);

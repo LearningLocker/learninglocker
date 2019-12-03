@@ -2,8 +2,7 @@ import React from 'react';
 import { Map } from 'immutable';
 import classNames from 'classnames';
 import DebounceInput from 'react-debounce-input';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from '../styles.css';
+import InputWrapper from '../InputWrapper';
 
 /**
  * An autocomplete component that can take a multiple selected options and display them
@@ -15,14 +14,11 @@ const MultiInput = ({
   renderOption,
   hasFocus,
   onFocus,
-  onChangeSearchString = () => {},
+  onChangeSearchString = () => { },
 }) => {
-  const wrapperClasses = classNames({
-    [styles.inputWrapper]: true,
-    [styles.open]: hasFocus
-  });
+  const wrapperClasses = classNames({ open: hasFocus });
   return (
-    <div className={wrapperClasses}>
+    <InputWrapper className={wrapperClasses}>
       {selectedOptions.map((option, key) =>
         renderOption({ option, key })
       ).valueSeq()}
@@ -31,8 +27,8 @@ const MultiInput = ({
         value={searchString}
         onChange={onChangeSearchString}
         onFocus={onFocus} />
-    </div>
+    </InputWrapper>
   );
 };
 
-export default withStyles(styles)(MultiInput);
+export default MultiInput;
