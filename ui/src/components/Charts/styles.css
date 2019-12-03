@@ -47,14 +47,6 @@
   margin-top: -4px;
 }
 
-.prevButton {
-  align-self: flex-start;
-  margin-left: 10px; }
-
-.nextButton {
-  margin-right: 10px;
-  margin-left: auto; }
-
 .xAxis {
   display: inline-block;
   white-space: nowrap; }

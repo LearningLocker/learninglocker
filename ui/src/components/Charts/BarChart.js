@@ -72,7 +72,7 @@ class BarChart extends Component {
   )
 
   renderPrevButton = () => (
-    <span className={styles.prevButton}>
+    <span style={{ alignSelf: 'flex-start', marginLeft: 10 }}>
       <Button
         raised
         label="Previous"
@@ -83,7 +83,7 @@ class BarChart extends Component {
   )
 
   renderNextButton = () => (
-    <span className={styles.nextButton}>
+    <span style={{ marginRight: 10, marginLeft: 'auto' }}>
       <Button
         raised
         label="Next"
@@ -99,7 +99,8 @@ class BarChart extends Component {
     return (
       <div>
         <style
-          dangerouslySetInnerHTML={{ __html: `
+          dangerouslySetInnerHTML={{
+            __html: `
             .grid-${chartUuid} .recharts-cartesian-grid-horizontal {
               background-color: 'yellow';
               visibility: hidden !important;
@@ -160,8 +161,8 @@ class BarChart extends Component {
     const { results, labels, stacked, colors, model } = this.props;
     return (
       hasData(this.props.results)
-      ? this.renderResults(model)(results)(colors)(labels)(stacked)
-      : <NoData />
+        ? this.renderResults(model)(results)(colors)(labels)(stacked)
+        : <NoData />
     );
   }
 }
