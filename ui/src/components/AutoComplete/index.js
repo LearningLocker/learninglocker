@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Map, List } from 'immutable';
 import { noop, identity, debounce, isNull } from 'lodash';
 import OptionList from 'ui/components/OptionList';
@@ -9,7 +8,9 @@ import OptionListItem from 'ui/components/OptionListItem';
 import areEqualProps from 'ui/utils/hocs/areEqualProps';
 import keyCodes from 'lib/constants/keyCodes';
 import Token from './token/Token';
-import styles from './autocomplete.css';
+import Input from './Input';
+import InputWrapper from './InputWrapper';
+import Spinner from './Spinner';
 
 class AutoComplete extends Component {
 
@@ -44,7 +45,7 @@ class AutoComplete extends Component {
     // initial state
     options: new List(),
     isLoading: false,
-    fetchMore: () => {},
+    fetchMore: () => { },
 
     values: new Map(),
     placeholder: 'Type to limit suggestions',
@@ -251,7 +252,7 @@ class AutoComplete extends Component {
     return null;
   }
 
-  renderStatus = () => (this.props.isLoading ? <div className={styles.isLoading} /> : null);
+  renderStatus = () => (this.props.isLoading ? <Spinner /> : null);
 
   renderSingleValue = (value) => {
     const { renderSingleValue } = this.props;
@@ -271,8 +272,7 @@ class AutoComplete extends Component {
     const placeholder = hasSingleValue ? '' : this.props.placeholder;
     const inputValue = this.getInputValue();
     return (
-      <input
-        className={styles.input}
+      <Input
         onFocus={this.focus}
         onChange={this.onChangeFilter}
         value={inputValue}
@@ -295,7 +295,7 @@ class AutoComplete extends Component {
           parse={parseOption}
           parseTooltip={parseOptionTooltip}
           handleRemove={this.deleteValue.bind(this, key)} />
-        ).valueSeq();
+      ).valueSeq();
     }
     return hasSingleValue && inputValue === '' &&
       this.renderSingleValue(values.first());
@@ -303,22 +303,23 @@ class AutoComplete extends Component {
 
   render() {
     const wrapperClasses = classNames({
-      [styles.inputWrapper]: true,
-      [styles.open]: this.state.focused,
-      [styles.noBorder]: !this.state.focused && this.props.noBorder
+      'open': this.state.focused,
+      'noBorder': !this.state.focused && this.props.noBorder
     });
 
     return (
-      <div ref={(ref) => { this.wrapper = ref; }} className={styles.wrapper}>
-        <div onClick={this.focus} className={wrapperClasses}>
+      <div
+        ref={(ref) => { this.wrapper = ref; }}
+        style={{ position: 'relative', height: '100%' }}>
+        <InputWrapper onClick={this.focus} className={wrapperClasses}>
           {this.renderValues()}
           {this.renderInput()}
           {this.renderStatus()}
-        </div>
+        </InputWrapper>
         {this.renderOptionsDropdown()}
       </div>
     );
   }
 }
 
-export default withStyles(styles)(AutoComplete);
+export default AutoComplete;
