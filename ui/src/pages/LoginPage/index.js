@@ -95,7 +95,7 @@ const render = ({
             <div>
               <div style={{ marginTop: 20, textAlign: 'center' }}>
                 <button
-                  style={{ margin: "0 5px" }}
+                  style={{ margin: '0 5px' }}
                   type="submit"
                   className="btn btn-primary"
                   onClick={onClickLogin} >
@@ -103,7 +103,7 @@ const render = ({
                 </button>
                 {googleAuthEnabled &&
                   <button
-                    style={{ margin: "0 5px" }}
+                    style={{ margin: '0 5px' }}
                     onClick={onClickOAuthLogin}
                     className="btn btn-primary">
                     <i className="icon ion-social-googleplus" /> Google
