@@ -95,7 +95,7 @@ const render = ({
             <div>
               <div style={{ marginTop: 20, textAlign: 'center' }}>
                 <button
-                  style={{ marginLeft: 1, marginRight: 1 }}
+                  style={{ margin: "0 5px" }}
                   type="submit"
                   className="btn btn-primary"
                   onClick={onClickLogin} >
