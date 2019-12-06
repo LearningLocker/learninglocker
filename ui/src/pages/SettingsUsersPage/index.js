@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import Portal from 'react-portal';
 import uuid from 'uuid';
 import { fromJS } from 'immutable';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { withProps, compose } from 'recompose';
 import { queryStringToQuery, modelQueryStringSelector } from 'ui/redux/modules/search';
 import { clearModelsCache as clearModelsCacheAction } from 'ui/redux/modules/pagination';
@@ -19,7 +18,6 @@ import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import classNames from 'classnames';
 import ValidationList from 'ui/components/ValidationList';
 import UserOrgForm from './UserOrgForm';
-import styles from './users.css';
 
 const UserDeleteButton = compose(
   connect(
@@ -63,7 +61,6 @@ class Users extends Component {
 
   state = {
     isModalOpen: false,
-    criteria: '',
     error: false
   }
 
@@ -101,7 +98,9 @@ class Users extends Component {
         <UserPicture model={model} className="pull-left" />
         {name}
         {model.has('googleId') &&
-          <i className={`ion ion-social-googleplus ${styles.marginLeft}`} />
+          <i
+            className="ion ion-social-googleplus"
+            style={{ marginLeft: '1em', fontWeight: 'bold' }} />
         }
       </span>
     );
@@ -189,10 +188,7 @@ class Users extends Component {
     </div>);
 }
 
-export default compose(
-  withStyles(styles),
-  connect(
-    state => ({ searchString: modelQueryStringSelector(schema)(state) }),
-    { addModel }
-  )
+export default connect(
+  state => ({ searchString: modelQueryStringSelector(schema)(state) }),
+  { addModel }
 )(Users);

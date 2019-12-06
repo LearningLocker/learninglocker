@@ -1,11 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import styled, { css } from 'styled-components';
 import { compose, withProps, setPropTypes } from 'recompose';
 import { withModels } from 'ui/utils/hocs';
-import SavedRow from './SavedRow';
-import styles from './styles.css';
+
+const tableDataStyles = css`
+  padding: 8px;
+  border: solid rgb(238, 238, 238) 1px;
+  width: 50%;
+`;
+
+const TableData = styled.td`${tableDataStyles}`;
+const TableHeader = styled.th`${tableDataStyles}`;
 
 const enhance = compose(
   setPropTypes({
@@ -17,8 +24,7 @@ const enhance = compose(
     first: 100,
     sort: new Map({ _id: -1 }),
   })),
-  withModels,
-  withStyles(styles)
+  withModels
 );
 
 const render = ({ models }) => {
@@ -31,15 +37,24 @@ const render = ({ models }) => {
   }
   return (
     <div>
-      <table className={styles.table}>
+      <table style={{ width: '100%' }}>
         <thead>
           <tr>
-            <th className={styles.td}>Name</th>
-            <th className={styles.td}>Value</th>
+            <TableHeader>Name</TableHeader>
+            <TableHeader>Value</TableHeader>
           </tr>
         </thead>
         <tbody>
-          {models.map(model => <SavedRow id={model.get('_id')} />).valueSeq()}
+          {models.map((model) => {
+            const key = model.get('key', '');
+            const value = model.get('value', '');
+            return (
+              <tr key={model.get('_id')}>
+                <TableData>{key}</TableData>
+                <TableData>{value}</TableData>
+              </tr>
+            );
+          }).valueSeq()}
         </tbody>
       </table>
     </div>

@@ -37,6 +37,6 @@ describe('deletePresonaAttribute', () => {
     await apiApp.delete(
       routes.PERSONA_ATTRIBUTE_ID.replace(':personaAttributeId', attribute.id)
     ).set('Authorization', `Bearer ${token}`)
-      .expect(200);
+      .expect(204);
   }).timeout(5000);
 });

@@ -1,13 +1,13 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Map } from 'immutable';
+import { Map, List } from 'immutable';
 import { Tab } from 'react-toolbox/lib/tabs';
 import Tabs from 'ui/components/Material/Tabs';
 import BarAxesEditor from 'ui/containers/VisualiseForm/StatementsForm/AxesEditor/BarAxesEditor';
-import VisualiseFilterForm from 'ui/containers/VisualiseFilterForm';
 import AddQueryButton from '../components/AddQueryButton';
 import BarChartGroupingLimitForm from '../components/BarChartGroupingLimitForm';
 import DescriptionForm from '../components/DescriptionForm';
+import FiltersForm from '../components/FiltersForm';
 import PreviewPeriodPicker from '../components/PreviewPeriodPicker';
 import StatsTopOrBottomSwitch from '../components/StatsTopOrBottomSwitch';
 import ShowStatsSwitch from '../components/ShowStatsSwitch';
@@ -101,6 +101,15 @@ const Editor = ({
     });
   }, [id]);
 
+  const onChangeFilters = useCallback((filters) => {
+    updateModel({
+      schema: 'visualisation',
+      id,
+      path: 'filters',
+      value: filters,
+    });
+  }, [id]);
+
   const onChangeTimezone = useCallback((timezone) => {
     updateModel({
       schema: 'visualisation',
@@ -146,9 +155,13 @@ const Editor = ({
                 stacked={model.get('stacked', true)}
                 onChange={onChangeStacked} />
 
-              <VisualiseFilterForm
-                model={model}
-                orgTimezone={orgTimezone} />
+              <FiltersForm
+                visualisationId={id}
+                filters={model.get('filters', new List())}
+                canEditLabel={false}
+                timezone={model.get('timezone')}
+                orgTimezone={orgTimezone}
+                onChange={onChangeFilters} />
             </Tab>
 
             <Tab key="options" label="Options">

@@ -1,13 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, setPropTypes, withState } from 'recompose';
 import AddIconButton from 'ui/components/IconButton/AddIconButton';
 import CancelIconButton from 'ui/components/IconButton/CancelIconButton';
 import Input from 'ui/components/Input/Input';
 import TypedInput from 'ui/components/Input/TypedInput';
-import styles from './styles.css';
+import { TableActionsData, TableData } from './tableComponents';
 
 const enhance = compose(
   setPropTypes({
@@ -15,8 +13,7 @@ const enhance = compose(
     onCancel: PropTypes.func.isRequired,
   }),
   withState('attributeKey', 'setAttributeKey', ''),
-  withState('attributeValue', 'setAttributeValue', ''),
-  withStyles(styles)
+  withState('attributeValue', 'setAttributeValue', '')
 );
 
 const render = ({
@@ -36,7 +33,7 @@ const render = ({
   };
   return (
     <tr>
-      <td className={styles.td}>
+      <TableData>
         <Input
           value={attributeKey}
           placeholder="Attribute Name"
@@ -45,18 +42,18 @@ const render = ({
           inputRef={(input) => {
             keyRef = input;
           }} />
-      </td>
-      <td className={styles.td}>
+      </TableData>
+      <TableData>
         <TypedInput
           value={attributeValue}
           placeholder="Attribute Value"
           onChange={setAttributeValue}
           onSubmit={handleAdd} />
-      </td>
-      <td className={classNames(styles.td, styles.actions)}>
+      </TableData>
+      <TableActionsData>
         <AddIconButton onClick={handleAdd} />
         <CancelIconButton onClick={onCancel} />
-      </td>
+      </TableActionsData>
     </tr>
   );
 };

@@ -1,9 +1,7 @@
 import React from 'react';
 import DebounceInput from 'react-debounce-input';
 import uuid from 'uuid';
-import { compose } from 'recompose';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from './styles.css';
+import { InputField } from './InputField';
 
 const AttributeNameForm = ({
   attributeName,
@@ -13,7 +11,7 @@ const AttributeNameForm = ({
   const formId = uuid.v4();
 
   return (
-    <div className={`form-group ${styles.inputField}`}>
+    <InputField className="form-group">
       <label htmlFor={formId}>
         Attribute Name
       </label>
@@ -27,10 +25,8 @@ const AttributeNameForm = ({
           disabled={disabled}
           placeholder="Attribute Name" />
       </form>
-    </div>
+    </InputField>
   );
 };
 
-export default compose(
-  withStyles(styles)
-)(AttributeNameForm);
+export default AttributeNameForm;
