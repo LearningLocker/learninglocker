@@ -6,6 +6,7 @@ import { BarChart as Chart, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { compose } from 'recompose';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import NoData from 'ui/components/Graphs/NoData';
+import { shorten } from 'ui/utils/defaultTitles';
 import { Button } from 'react-toolbox/lib/button';
 import uuid from 'uuid';
 import { connect } from 'react-redux';
@@ -99,7 +100,8 @@ class BarChart extends Component {
     return (
       <div>
         <style
-          dangerouslySetInnerHTML={{ __html: `
+          dangerouslySetInnerHTML={{
+            __html: `
             .grid-${chartUuid} .recharts-cartesian-grid-horizontal {
               background-color: 'yellow';
               visibility: hidden !important;
@@ -141,7 +143,7 @@ class BarChart extends Component {
         <div className={`${styles.withPrevNext} clearfix`} />
         <div className={`${styles.barContainer}`}>
           <span className={styles.yAxis}>
-            {this.props.model.get('axesyLabel') || this.props.model.getIn(['axesgroup', 'searchString'], 'Y-Axis')}
+            {this.props.model.get('axesyLabel') || shorten(this.props.model.getIn(['axesgroup', 'searchString'], 'Y-Axis'))}
           </span>
           <div className={styles.chartWrapper}>
             {this.props.chartWrapperFn((this.renderBarChart(model)(colors)(labels)(data)(stacked)(activePage)))}
@@ -160,8 +162,8 @@ class BarChart extends Component {
     const { results, labels, stacked, colors, model } = this.props;
     return (
       hasData(this.props.results)
-      ? this.renderResults(model)(results)(colors)(labels)(stacked)
-      : <NoData />
+        ? this.renderResults(model)(results)(colors)(labels)(stacked)
+        : <NoData />
     );
   }
 }
