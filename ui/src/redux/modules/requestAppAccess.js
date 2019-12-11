@@ -20,11 +20,10 @@ export const requestStateSelector = () => createSelector(
     state.getIn(['requestState'])
 );
 
-export const requestAppAccess = ({ privacyPolicy, appName }) =>
+export const requestAppAccess = ({ appConfig }) =>
   ({
     type: REQUEST_APP_ACCESS,
-    privacyPolicy,
-    appName,
+    appConfig,
   });
 
 export const requestAppAccessSuccess = () =>
@@ -39,10 +38,9 @@ export const requestAppAccessFailure = () =>
 
 function* requestAppAccessSaga() {
   while (true) {
-    const { privacyPolicy, appName, llClient } = yield take(REQUEST_APP_ACCESS);
+    const { appConfig, llClient } = yield take(REQUEST_APP_ACCESS);
     const { status } = yield call(llClient.requestAppAccess, {
-      privacyPolicy,
-      appName
+      appConfig
     });
 
     if (status >= 300) {

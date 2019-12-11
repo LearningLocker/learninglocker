@@ -96,13 +96,13 @@ class _LLApiClient {
     }
   });
 
-  requestAppAccess = ({ privacyPolicy, appName }) => post({
+  requestAppAccess = ({ appConfig }) => post({
     url: formatUrl(routes.REQUEST_APP_ACCESS),
     headers: {
       Authorization: `Bearer ${this.getToken()}`,
       ContentType: 'application/json'
     },
-    body: { privacyPolicy, appName },
+    body: { appConfig },
   });
 
   getConnection = ({ schema, filter, sort, cursor, first, last }) => {

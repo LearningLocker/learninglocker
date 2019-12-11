@@ -24,8 +24,7 @@ export const requestAppAccess = catchErrors(async (request, response) => {
     email: authInfo.user.email,
     orgId: authInfo.token.tokenId,
     llHost: request.headers.host,
-    appName: request.body.appName,
-    privacyPolicy: request.body.privacyPolicy
+    appConfig: JSON.stringify(request.body.appConfig),
   });
 
   const htmlEmail = compiledWrapper({ title: subject, body: content, siteUrl: process.env.SITE_URL });

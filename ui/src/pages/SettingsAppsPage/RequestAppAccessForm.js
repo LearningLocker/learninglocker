@@ -1,48 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Checkbox from 'ui/components/Material/Checkbox';
 import {
   requestAppAccess,
   requestStateSelector
 } from 'ui/redux/modules/requestAppAccess';
 import { connect } from 'react-redux';
-import {
-  compose,
-  withHandlers,
-  withState,
-} from 'recompose';
+import { compose } from 'recompose';
 
-const formDisplayState = withState('formDisplay', 'setFormDisplay', 'initial');
-const privacyPolicyState = withState('privacyPolicy', 'setPrivacyPolicy', true);
-const userMessageState = withState('userMessage', 'setUserMessage');
+const RequestAppAccessForm = (props) => {
+  const [privacyPolicy, setPrivacyPolicy] = useState(true);
+  const [formDisplay, setFormDisplay] = useState('initial');
+  const [userMessage, setUserMessage] = useState();
 
-const handlers = withHandlers({
-  onSubmit: ({
-    requestAppAccess: requestAppAccessAction,
-    privacyPolicy,
-    setFormDisplay,
-    appName
-  }) => (event) => {
+  const handleSubmit = (event) => {
     if (event) event.preventDefault();
-    requestAppAccessAction({
-      privacyPolicy,
-      appName
+    props.requestAppAccess({
+      appConfig: {
+        privacyPolicy,
+        appName: props.appName,
+      }
     });
     setFormDisplay('none');
-  },
-  handlePrivacyPolicyChange: ({
-    setPrivacyPolicy,
-    setUserMessage,
-  }) => (event) => {
+  };
+
+  const handlePrivacyPolicyChange = (event) => {
     if (event === false) {
       setUserMessage('Please agree to the privacy policy');
     } else {
       setUserMessage('');
     }
     setPrivacyPolicy(event);
-  }
-});
+  };
 
-const RequestAppAccessForm = (props) => {
   const privacyPolicyLabel = (<div>*I consent to storage of my data according to the <a href="https://www.ht2labs.com/privacy-policy/" target="blank">Privacy Policy</a></div>);
 
   return (
@@ -54,15 +43,15 @@ const RequestAppAccessForm = (props) => {
           </div>
         </div>
         <div className="box">
-          <form onSubmit={props.onSubmit} style={{ display: props.formDisplay }}>
+          <form onSubmit={handleSubmit} style={{ display: formDisplay }}>
             <div className="form-group">
-              <Checkbox label={privacyPolicyLabel} id="privacyPolicy" checked={props.privacyPolicy} onChange={props.handlePrivacyPolicyChange} />
+              <Checkbox label={privacyPolicyLabel} id="privacyPolicy" checked={privacyPolicy} onChange={handlePrivacyPolicyChange} />
             </div>
             <div className="form-group">
-              <input disabled={!props.privacyPolicy} type="submit" className="btn btn-primary btn-sm" />
+              <input disabled={!privacyPolicy} type="submit" className="btn btn-primary btn-sm" />
             </div>
           </form>
-          <div>{props.userMessage}</div>
+          <div>{userMessage}</div>
           {props.requestState === 'COMPLETED' && <span>Thank you, we will be in touch</span>}
           {props.requestState === 'FAILED' && <span>Access request failed, check email configuration</span>}
         </div>
@@ -76,9 +65,5 @@ export default compose(
       requestState: requestStateSelector()(state),
     }),
     { requestAppAccess }
-    ),
-  formDisplayState,
-  privacyPolicyState,
-  userMessageState,
-  handlers,
+  ),
 )(RequestAppAccessForm);
