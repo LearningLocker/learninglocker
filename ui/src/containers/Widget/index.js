@@ -131,12 +131,6 @@ class Widget extends Component {
     return type === COUNTER || type === TEMPLATE_LAST_7_DAYS_STATEMENTS || type === TEMPLATE_CURATR_COMMENT_COUNT;
   }  
 
-  getVisualisation = () => {
-    const { visualisation } = this.props;
-
-    return visualisation.get('type');
-  }  
-
   renderMenu = () => {
     const { model, organisationId, visualisation } = this.props;
 
@@ -228,7 +222,7 @@ class Widget extends Component {
       [styles.draggableTitle]: this.props.editable,
     });
     return (
-      <div className={`panel panel-default animated fadeIn ${styles.widget}`} alt={this.getVisualisation()}>
+      <div className={`panel panel-default animated fadeIn ${styles.widget}`}>
         <div className={styles.widgetContent}>
           <div
             className={`panel-heading ${styles.heading}`}>
