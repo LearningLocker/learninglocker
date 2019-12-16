@@ -8,6 +8,8 @@ import { compose } from 'recompose';
 import {
   COUNTER,
   PIE,
+  TEMPLATE_LAST_7_DAYS_STATEMENTS,
+  TEMPLATE_CURATR_COMMENT_COUNT
 } from 'lib/constants/visualise';
 import { fetchModels } from 'ui/redux/modules/pagination';
 import { updateModel, modelsSchemaIdSelector } from 'ui/redux/modules/models';
@@ -125,13 +127,23 @@ class Widget extends Component {
       </span>
     );
 
+  isCounter = (type) => {
+    return type === COUNTER || type === TEMPLATE_LAST_7_DAYS_STATEMENTS || type === TEMPLATE_CURATR_COMMENT_COUNT;
+  }  
+
+  getVisualisation = () => {
+    const { visualisation } = this.props;
+
+    return visualisation.get('type');
+  }  
+
   renderMenu = () => {
     const { model, organisationId, visualisation } = this.props;
 
     const shouldShowTableModeToggle = (
       visualisation.size > 0 &&
       visualisation.get('type') &&
-      visualisation.get('type') !== COUNTER &&
+      !this.isCounter(visualisation.get('type')) &&
       model.has('visualisation')
     );
 
@@ -216,7 +228,7 @@ class Widget extends Component {
       [styles.draggableTitle]: this.props.editable,
     });
     return (
-      <div className={`panel panel-default animated fadeIn ${styles.widget}`} >
+      <div className={`panel panel-default animated fadeIn ${styles.widget}`} alt={this.getVisualisation()}>
         <div className={styles.widgetContent}>
           <div
             className={`panel-heading ${styles.heading}`}>
