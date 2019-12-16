@@ -228,7 +228,7 @@ class Widget extends Component {
       [styles.draggableTitle]: this.props.editable,
     });
     return (
-      <div className={`panel panel-default animated fadeIn ${styles.widget}`} alt={this.getVisualisation()}>
+      <div className={`panel panel-default animated fadeIn ${styles.widget}`}>
         <div className={styles.widgetContent}>
           <div
             className={`panel-heading ${styles.heading}`}>
