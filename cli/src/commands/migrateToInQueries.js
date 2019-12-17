@@ -13,8 +13,8 @@ import Query from 'lib/models/query';
  */
 const isActor = criteriaPath =>
   criteriaPath.length === 2
-    && criteriaPath[0] === 'statement'
-    && criteriaPath[1] === 'actor';
+  && criteriaPath[0] === 'statement'
+  && criteriaPath[1] === 'actor';
 
 /**
  * @param {immutable.List} criteriaPath
@@ -22,8 +22,8 @@ const isActor = criteriaPath =>
  */
 const isPersonaId = criteriaPath =>
   criteriaPath.length > 2
-    && criteriaPath[0] === 'persona'
-    && criteriaPath[1] === 'import';
+  && criteriaPath[0] === 'persona'
+  && criteriaPath[1] === 'import';
 
 /**
  * @param {immutable.List} criteriaPath
@@ -31,9 +31,9 @@ const isPersonaId = criteriaPath =>
  */
 const isContextInstructor = criteriaPath =>
   criteriaPath.length === 3
-    && criteriaPath[0] === 'statement'
-    && criteriaPath[1] === 'context'
-    && criteriaPath[2] === 'instructor';
+  && criteriaPath[0] === 'statement'
+  && criteriaPath[1] === 'context'
+  && criteriaPath[2] === 'instructor';
 
 /**
  * @param {immutable.Map} condition
@@ -101,9 +101,6 @@ const _buildNewQuery = (oldQuery) => {
 
 /**
  * Convert query strings
- *
- * https://ht2labs.myjetbrains.com/youtrack/issue/LL-595
- *
  * @param {string} oldQuery
  * @returns {string}
  */
