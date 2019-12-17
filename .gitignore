@@ -27,3 +27,4 @@ bootstrap.sh
 .tmp
 yarn-error.log
 debug/*
+package-lock.json
