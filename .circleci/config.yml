@@ -29,7 +29,7 @@ jobs:
             - v3-cache
       - run:
           name: Installing Dependencies
-          command: yarn install --ignore-engines
+          command: yarn --build-from-source --ignore-engines
       - run:
           name: Create empty .env
           command: touch .env
