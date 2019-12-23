@@ -11,6 +11,7 @@ import Unauthorised from 'lib/errors/Unauthorised';
 import UnauthorisedQueryError from 'lib/errors/UnauthorisedQueryError';
 import BaseError from 'lib/errors/BaseError';
 import ClientError from 'lib/errors/ClientError';
+import RequestAppAccessError from 'lib/errors/RequestAppAccessError';
 import logger from 'lib/logger';
 import AlreadyProcessingError from 'lib/errors/AlreadyProcessingError';
 import { constructMessageFromRulrWarning } from './constructMessageFromRulrWarning';
@@ -91,6 +92,15 @@ const handleRequestError = (res, err) => {
     err instanceof AlreadyProcessingError
   ) {
     return res.status(409).send({
+      errorId,
+      message: err.message
+    });
+  }
+
+  if (
+    err instanceof RequestAppAccessError
+  ) {
+    return res.status(500).send({
       errorId,
       message: err.message
     });

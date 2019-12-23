@@ -15,25 +15,21 @@ import styles from './styles.css';
  *                          }
  */
 const AppCard = ({
-  link,
   title,
   description,
   icon,
   icon2x,
 }) => (
-  <a className={styles.cardA} href={link} target="_blank" rel="noopener noreferrer" >
-    <div className={classNames(styles.card, 'panel panel-default')}>
+  <div className={classNames(styles.card, 'panel panel-default')}>
+    <img
+      className={styles.cardIcon}
+      src={icon}
+      srcSet={`${icon} 1x, ${icon2x || icon} 2x`}
+      alt={title} />
 
-      <img
-        className={styles.cardIcon}
-        src={icon}
-        srcSet={`${icon} 1x, ${icon2x || icon} 2x`}
-        alt={title} />
-
-      <h1 className={styles.cardTitle} >{title}</h1>
-      <p >{description}</p>
-    </div>
-  </a>
-  );
+    <h1 className={styles.cardTitle} >{title}</h1>
+    <p>{description}</p>
+  </div>
+);
 
 export default withStyles(styles)(AppCard);

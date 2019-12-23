@@ -10,6 +10,7 @@ import googleForms from './googleForms.png';
 import launchr from './launchr.png';
 import moodle from './moodle.png';
 import moodle2x from './moodle@2x.png';
+import salesDemo from './salesDemo.png';
 import semanticAnalysis from './semanticAnalysis.png';
 import skillsoft from './skillsoft.png';
 import sparks from './sparks.png';
@@ -31,6 +32,7 @@ export default {
   launchr,
   moodle,
   moodle2x,
+  salesDemo,
   semanticAnalysis,
   skillsoft,
   sparks,
