@@ -51,7 +51,7 @@ const render = ({
           onSubmit={handleAdd} />
       </TableData>
       <TableActionsData>
-        <AddIconButton onClick={handleAdd} />
+        <AddIconButton onClick={handleAdd} disabled={!(attributeKey.length && attributeValue.length)} />
         <CancelIconButton onClick={onCancel} />
       </TableActionsData>
     </tr>

@@ -1,5 +1,6 @@
 import PersonaConflict from '@learninglocker/persona-service/dist/errors/Conflict';
 import PersonaNoModelWithId from '@learninglocker/persona-service/dist/errors/NoModelWithId';
+import PersonaHasIdentsError from '@learninglocker/persona-service/dist/errors/PersonaHasIdentsError';
 import NoModel from 'jscommons/dist/errors/NoModel';
 import defaultTo from 'lodash/defaultTo';
 import { v4 as uuid } from 'uuid';
@@ -29,6 +30,16 @@ const handleRequestError = (res, err) => {
       message: `No model found for ${err.modelName} with id ${err.id}`,
     });
   }
+
+  if (err instanceof PersonaHasIdentsError) {
+    return res
+      .status(400)
+      .send({
+        errorId,
+        message: 'Persona cannot be deleted whilst it still has identifiers'
+      });
+  }
+
   if (err instanceof NoModel) {
     return res.status(404).send({
       errorId,
