@@ -40,18 +40,17 @@ const uploadPersonas = catchErrors(async (req, res) => {
 });
 
 const importPersonas = catchErrors(async (req, res) => {
-  const authInfo = getAuthFromRequest(req);
-
   const { id } = req.body;
-
+  const authInfo = getAuthFromRequest(req);
   const personaService = getPersonaService();
+
   const { personaImport } = await importPersonasService({
     id,
     authInfo,
     personaService,
   });
 
-  return res.status(200).json(personaImport);
+  res.status(200).json(personaImport);
 });
 
 const importPersonasError = catchErrors(async (req, res) => {
