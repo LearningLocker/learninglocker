@@ -13,16 +13,8 @@ import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
 import getTokenTypeFromAuthInfo from 'lib/services/auth/authInfoSelectors/getTokenTypeFromAuthInfo';
 import getScopesFromAuthInfo from 'lib/services/auth/authInfoSelectors/getScopesFromAuthInfo';
 import getUserIdFromAuthInfo from 'lib/services/auth/authInfoSelectors/getUserIdFromAuthInfo';
-import { SITE_ADMIN } from 'lib/constants/scopes';
 import { jsonSuccess, serverError } from 'api/utils/responses';
 import passport from 'api/auth/passport';
-import {
-  GOOGLE_AUTH_OPTIONS,
-  DEFAULT_PASSPORT_OPTIONS,
-  RESTIFY_DEFAULTS,
-  setNoCacheHeaders,
-  checkOrg,
-} from 'lib/constants/auth';
 import { MANAGER_SELECT } from 'lib/services/auth/selects/models/user.js';
 
 // CONTROLLERS
@@ -38,7 +30,7 @@ import StatementMetadataController from 'api/controllers/StatementMetadataContro
 import BatchDeleteController from 'api/controllers/BatchDeleteController';
 import RequestAppAccessController from 'api/controllers/RequestAppAccessController';
 
-// REST
+// MODELS
 import LRS from 'lib/models/lrs';
 import Client from 'lib/models/client';
 import User from 'lib/models/user';
@@ -59,14 +51,26 @@ import PersonaAttribute from 'lib/models/personaAttribute';
 import PersonasImport from 'lib/models/personasImport';
 import PersonasImportTemplate from 'lib/models/personasImportTemplate';
 import SiteSettings from 'lib/models/siteSettings';
+import BatchDelete from 'lib/models/batchDelete';
+
+// REST
 import personaRESTHandler from 'api/routes/personas/personaRESTHandler';
 import personaIdentifierRESTHandler from 'api/routes/personas/personaIdentifierRESTHandler';
 import UserOrganisationsRouter from 'api/routes/userOrganisations/router';
 import UserOrganisationSettingsRouter from 'api/routes/userOrganisationSettings/router';
-import BatchDelete from 'lib/models/batchDelete';
 import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
 import { updateStatementCountsInOrg } from 'lib/services/lrs';
+
+// CONSTANTS
 import * as routes from 'lib/constants/routes';
+import { SITE_ADMIN } from 'lib/constants/scopes';
+import {
+  GOOGLE_AUTH_OPTIONS,
+  DEFAULT_PASSPORT_OPTIONS,
+  RESTIFY_DEFAULTS,
+  setNoCacheHeaders,
+  checkOrg,
+} from 'lib/constants/auth';
 
 const router = new express.Router();
 router.use(setNoCacheHeaders);
