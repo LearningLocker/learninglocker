@@ -173,6 +173,8 @@
     "winston-aws-cloudwatch": "^1.5.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^8.2.0",
+    "@commitlint/config-conventional": "^8.2.0",
     "@ht2-labs/semantic-release": "^1.1.59",
     "assets-webpack-plugin": "^3.5.0",
     "axios-mock-adapter": "^1.16.0",
@@ -196,6 +198,7 @@
     "babel-preset-stage-0": "6.22.0",
     "chai": "^3.3.0",
     "chai-as-promised": "^7.1.1",
+    "commitlint": "^8.2.0",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.23.1",
     "enzyme": "^3.9.0",
@@ -247,7 +250,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "yarn lint-ci"
+      "pre-push": "yarn lint-ci",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   }
 }
