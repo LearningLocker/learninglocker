@@ -36,6 +36,7 @@
     "stop-dev": "pm2 delete pm2/dev-all.json",
     "stop-test": "pm2 delete pm2/test-all.json",
     "lint": "eslint -c .eslintrc --fix ui/src api/src cli/src worker/src lib",
+    "lint-ci": "eslint -c .eslintrc ui/src api/src cli/src worker/src lib",
     "test-api": "mocha-webpack --exit --webpack-config \"api/testConfig.js\" \"api/src/**/*-test.js\"",
     "test-worker": "mocha-webpack --exit --webpack-config \"worker/testConfig.js\" \"worker/src/**/*-test.js\"",
     "test-lib": "mocha-webpack --exit --webpack-config \"api/testConfig.js\" \"lib/**/*-test.js\"",

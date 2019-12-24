@@ -47,7 +47,7 @@ jobs:
             - ~/.cache/yarn
       - run:
           name: Run linter
-          command: yarn run lint
+          command: yarn run lint-ci
       - run:
           name: Run tests
           command: yarn run test
