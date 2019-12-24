@@ -25,9 +25,7 @@ class ColorPicker extends React.PureComponent {
   }
 
   onClickEdit = () => {
-    this.setState((prevState) => {
-      return { isOpen: !prevState.isOpen };
-    });
+    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   }
 
   /**
