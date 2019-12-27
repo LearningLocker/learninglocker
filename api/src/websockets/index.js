@@ -3,12 +3,14 @@ import {
   getCookieNameStartsWith
 } from 'ui/utils/auth';
 import { verifyToken } from 'api/auth/passport';
+import Unauthorized from 'lib/errors/Unauthorised';
+import { AGGREGATION_PROCESSOR_REGISTER } from 'lib/constants/aggregationProcessor';
 import aggregationProcessor from './aggregationProcessor';
 
 const messageManager = ws => async (message) => {
   const jsonMessage = JSON.parse(message);
   switch (jsonMessage.type) {
-    case 'AGGREGATION_PROCESSOR_REGISTER': {
+    case AGGREGATION_PROCESSOR_REGISTER: {
       let cookieName;
       if (jsonMessage.organisationId) {
         cookieName = getCookieName({
@@ -24,17 +26,18 @@ const messageManager = ws => async (message) => {
       let authInfo;
       try {
         authInfo = (await verifyToken(token)).authInfo;
+        aggregationProcessor({
+          ws,
+          authInfo,
+          aggregationProcessorId: jsonMessage.aggregationProcessorId
+        });
       } catch (err) {
+        if (err instanceof Unauthorized) {
+          ws.close();
+        }
+
         ws.close();
-        break;
       }
-
-      aggregationProcessor({
-        ws,
-        authInfo,
-        aggregationProcessorId: jsonMessage.aggregationProcessorId
-      });
-
       break;
     }
     default:
@@ -44,8 +47,7 @@ const messageManager = ws => async (message) => {
 };
 
 const add = (ws) => {
-  const state = {};
-  ws.on('message', messageManager(ws, state));
+  ws.on('message', messageManager(ws));
 };
 
 export default {

@@ -5,6 +5,7 @@ import PrettyError from 'pretty-error';
 import { renderToString } from 'react-dom/server';
 import boolean from 'boolean';
 import defaultTo from 'lodash/defaultTo';
+import { getWsUrl } from 'ui/config';
 
 // this is the assets manifest for the client build
 // it describes the location of all the compiled assets (js, css)
@@ -25,7 +26,7 @@ export default async (req, res, next) => {
       app: {
         RESTRICT_CREATE_ORGANISATION: boolean(defaultTo(process.env.RESTRICT_CREATE_ORGANISATION, true)),
         ENABLE_STATEMENT_DELETION: boolean(defaultTo(process.env.ENABLE_STATEMENT_DELETION, true)),
-        WS_URL: defaultTo(process.env.WS_URL, process.env.SITE_URL.replace(/^http/, 'ws'))
+        WS_URL: getWsUrl()
       }
     };
 

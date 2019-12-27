@@ -375,6 +375,7 @@ const getWsSeriesResults = (visualisationId, state) => {
     }));
   }
 
+  // There are two series, for benchmarking.
   const seriesOne = series.map(getWsPipelinesResults(state, {
     timeIntervalSinceToday,
     timeIntervalUnits
@@ -420,7 +421,6 @@ export const visualisationAllAggregationsHaveResultSelector = visualisationId =>
   identity,
 ], (state) => {
   const { series, timeIntervalSinceToday, timeIntervalUnits } = visualisationWsPipelinesSelector(visualisationId)(state);
-  // const series = visualisationPipelinesSelector(visualisationId)(state);
   return series.reduce(
     (acc1, pipelines) => {
       const out = acc1 && pipelines.reduce(

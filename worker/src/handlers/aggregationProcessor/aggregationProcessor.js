@@ -22,13 +22,10 @@ export const combine = (as, bs, keyFn, mergeFn) => {
 };
 
 export const hasReachedEnd = ({ model, now }) => {
-  if (
+  return (
     moment(model.fromTimestamp).isSame(moment(model.gtDate)) &&
     moment(model.toTimestamp).isSame(now)
-  ) {
-    return true;
-  }
-  return false;
+  );
 };
 
 export const getFromTimestamp = ({ model, now }) => {
@@ -45,8 +42,6 @@ export const getFromTimestamp = ({ model, now }) => {
     if (blockSizeSeconds.isBefore(moment(model.gtDate))) {
       return blockSizeSeconds;
     }
-
-    return moment(model.gtDate);
   }
   return moment(model.gtDate);
 };
@@ -117,14 +112,14 @@ const getSubtractPipeline = ({
     return;
   }
 
-  const fromTimestamp = getFromTimestamp({ model, now });
+  const newFromTimestamp = getFromTimestamp({ model, now });
 
   const subtractPipeline = [
     {
       $match: {
         timestamp: {
           $gte: moment(model.fromTimestamp).toDate(),
-          $lt: fromTimestamp.toDate()
+          $lt: newFromTimestamp.toDate()
         }
       }
     },
@@ -188,8 +183,10 @@ const aggregationProcessor = async ({
     now
   });
 
-  const addResults = await Statement.aggregate(addPipeline);
-  const subtractResults = subtractPipeline && await Statement.aggregate(subtractPipeline);
+  const addResultsPromise = Statement.aggregate(addPipeline);
+  const subtractResultsPromise = subtractPipeline && Statement.aggregate(subtractPipeline);
+
+  const [addResults, subtractResults] = await Promise.all([addResultsPromise, subtractResultsPromise]);
 
   let results;
   if (subtractResults) {

@@ -49,8 +49,6 @@ export const aggregationProcessorInitialise = catchErrors(async (req, res) => {
     $match: scopedFilter
   });
 
-  const pipelineKeyString = JSON.stringify(pipeline);
-
   const pipelineString = JSON.stringify(pipeline);
   const hash = pipelineString.length > 40 ? sha1(pipelineString) : pipelineString;
 
@@ -62,7 +60,7 @@ export const aggregationProcessorInitialise = catchErrors(async (req, res) => {
     organisation,
     lrs_id: get(authInfo, ['client', 'lrs_id']),
     pipelineHash: hash,
-    pipelineString: pipelineKeyString,
+    pipelineString,
     windowSize,
     windowSizeUnits,
     previousWindowSize

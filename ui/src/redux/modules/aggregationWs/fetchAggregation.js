@@ -8,6 +8,7 @@ import { getAppDataSelector } from 'ui/redux/modules/app';
 import Cookies from 'js-cookie';
 import { pickBy, get } from 'lodash';
 import { testCookieName } from 'ui/utils/auth';
+import { AGGREGATION_PROCESSOR_REGISTER } from 'lib/constants/aggregationProcessor';
 
 export function defaultMapping(results) {
   const out = new Map({
@@ -215,7 +216,7 @@ const fetchAggregation = createAsyncDuck({
     const filteredCookies = pickBy(cookies, (value, cookieName) => testCookieName(cookieName));
 
     websocket.send(JSON.stringify({
-      type: 'AGGREGATION_PROCESSOR_REGISTER',
+      type: AGGREGATION_PROCESSOR_REGISTER,
       auth: filteredCookies,
       organisationId: state.router.route.params.organisationId,
       aggregationProcessorId: id
@@ -240,7 +241,8 @@ const fetchAggregation = createAsyncDuck({
         emitter(END);
       });
 
-      websocket.addEventListener('error', () => {
+      websocket.addEventListener('error', (err) => {
+        console.error('Websocket error', err);
         emitter(END);
       });
 
