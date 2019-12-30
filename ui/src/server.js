@@ -10,7 +10,7 @@ import fs from 'fs';
 import morgan from 'morgan';
 import mkdirp from 'mkdirp';
 import FileStreamRotator from 'file-stream-rotator';
-import config, { getWsUrl } from 'ui/config';
+import config from 'ui/config';
 import renderApp from 'ui/controllers/renderApp';
 import renderDashboard from 'ui/controllers/renderDashboard';
 import proxyMiddleware from 'http-proxy-middleware';
@@ -68,7 +68,7 @@ app.use('/api', (req, res) => {
 });
 
 const wsProxy = proxyMiddleware('/websocket', {
-  target: getWsUrl(),
+  target: `ws://${config.apiHost}:${config.apiPort}`,
   ws: true,
   changeOrigin: true
 });
