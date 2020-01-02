@@ -18,7 +18,14 @@ const aggregationProcessor = async ({
 
   const changeStream = AggregationProcessor.watch(
     [
-      { $match: { 'documentKey._id': objectId(aggregationProcessorId) } },
+      {
+        $match: {
+          'documentKey._id': objectId(aggregationProcessorId),
+          fullDocument: { // Might be a delete operation, then fullDocument wont exist.
+            $exists: true
+          }
+        }
+      },
       { $replaceRoot: { newRoot: '$fullDocument' } },
       { $match: scopeFilter }
     ], {
