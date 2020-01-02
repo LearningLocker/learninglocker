@@ -127,9 +127,7 @@ class Widget extends Component {
       </span>
     );
 
-  isCounter = (type) => {
-    return type === COUNTER || type === TEMPLATE_LAST_7_DAYS_STATEMENTS || type === TEMPLATE_CURATR_COMMENT_COUNT;
-  }  
+  isCounter = type => type === COUNTER || type === TEMPLATE_LAST_7_DAYS_STATEMENTS || type === TEMPLATE_CURATR_COMMENT_COUNT
 
   renderMenu = () => {
     const { model, organisationId, visualisation } = this.props;
