@@ -4,6 +4,7 @@ import AggregationProcessor from 'lib/models/aggregationProcessor';
 import Statement from 'lib/models/statement';
 import { get, omit } from 'lodash';
 import { publish } from 'lib/services/queue';
+import convert$oid from 'lib/helpers/convert$oid';
 
 export const combine = (as, bs, keyFn, mergeFn) => {
   const groupedAs = as.reduce((result, a) => {
@@ -70,6 +71,11 @@ export const getAddToTimestamp = ({
   return nextAddFrom;
 };
 
+const parsePipelineString = (pipelineString) => {
+  const pipeline = JSON.parse(pipelineString);
+  return convert$oid(pipeline);
+};
+
 const getAddPipeline = ({
   model,
   now
@@ -95,7 +101,7 @@ const getAddPipeline = ({
         { timestamp: addToEnd }
       ]
     } },
-    ...(JSON.parse(model.pipelineString))
+    ...(parsePipelineString(model.pipelineString))
   ];
 
   return addPipeline;
@@ -123,7 +129,7 @@ const getSubtractPipeline = ({
         }
       }
     },
-    ...(JSON.parse(model.pipelineString))
+    ...(parsePipelineString(model.pipelineString))
   ];
 
   return subtractPipeline;
@@ -186,7 +192,9 @@ const aggregationProcessor = async ({
   const addResultsPromise = Statement.aggregate(addPipeline);
   const subtractResultsPromise = subtractPipeline && Statement.aggregate(subtractPipeline);
 
-  const [addResults, subtractResults] = await Promise.all([addResultsPromise, subtractResultsPromise]);
+
+  const [addResults, subtractResults] =
+    await Promise.all([addResultsPromise, subtractResultsPromise]);
 
   let results;
   if (subtractResults) {

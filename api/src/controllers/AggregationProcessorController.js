@@ -6,6 +6,7 @@ import sha1 from 'sha1';
 import { get } from 'lodash';
 import { AGGREGATION_PROCESSOR_QUEUE } from 'lib/constants/aggregationProcessor';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
+import encode$oid from 'lib/helpers/encode$oid';
 
 export const findOrCreateAggregationProcessor = async ({
   pipelineString,
@@ -34,6 +35,7 @@ export const findOrCreateAggregationProcessor = async ({
 };
 
 export const aggregationProcessorInitialise = catchErrors(async (req, res) => {
+  console.log('001');
   const authInfo = req.user.authInfo || {};
   const organisation = getOrgFromAuthInfo(authInfo);
 
@@ -46,8 +48,10 @@ export const aggregationProcessorInitialise = catchErrors(async (req, res) => {
     allowDashboardAccess: true
   });
   pipeline.unshift({
-    $match: scopedFilter
+    $match: encode$oid(scopedFilter)
   });
+
+  console.log('101 pipeline', pipeline);
 
   const pipelineString = JSON.stringify(pipeline);
   const hash = pipelineString.length > 40 ? sha1(pipelineString) : pipelineString;
@@ -74,5 +78,6 @@ export const aggregationProcessorInitialise = catchErrors(async (req, res) => {
     }
   });
 
+  console.log('002');
   res.status(200).send(model);
 });
