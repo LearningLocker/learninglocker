@@ -20,6 +20,7 @@ import app from 'ui/redux/modules/app';
 import alerts from 'ui/redux/modules/alerts';
 import userOrganisations from 'ui/redux/modules/userOrganisations';
 import userOrganisationSettings from 'ui/redux/modules/userOrganisationSettings';
+import requestAppAccess from 'ui/redux/modules/requestAppAccess';
 
 export default combineReducers({
   auth: recycleState(auth, [LOGOUT]),
@@ -39,6 +40,7 @@ export default combineReducers({
   alerts: recycleState(alerts, [LOGOUT, ORG_LOGOUT]),
   userOrganisations: recycleState(userOrganisations, [LOGOUT, ORG_LOGOUT]),
   userOrganisationSettings: recycleState(userOrganisationSettings, [LOGOUT, ORG_LOGOUT]),
+  requestAppAccess: recycleState(requestAppAccess, [LOGOUT, ORG_LOGOUT]),
   app,
   router: router5Reducer
 });

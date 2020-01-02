@@ -1,5 +1,6 @@
 import PersonaConflict from '@learninglocker/persona-service/dist/errors/Conflict';
 import PersonaNoModelWithId from '@learninglocker/persona-service/dist/errors/NoModelWithId';
+import PersonaHasIdentsError from '@learninglocker/persona-service/dist/errors/PersonaHasIdentsError';
 import NoModel from 'jscommons/dist/errors/NoModel';
 import defaultTo from 'lodash/defaultTo';
 import { v4 as uuid } from 'uuid';
@@ -10,6 +11,7 @@ import Unauthorised from 'lib/errors/Unauthorised';
 import UnauthorisedQueryError from 'lib/errors/UnauthorisedQueryError';
 import BaseError from 'lib/errors/BaseError';
 import ClientError from 'lib/errors/ClientError';
+import RequestAppAccessError from 'lib/errors/RequestAppAccessError';
 import logger from 'lib/logger';
 import AlreadyProcessingError from 'lib/errors/AlreadyProcessingError';
 import { constructMessageFromRulrWarning } from './constructMessageFromRulrWarning';
@@ -29,6 +31,16 @@ const handleRequestError = (res, err) => {
       message: `No model found for ${err.modelName} with id ${err.id}`,
     });
   }
+
+  if (err instanceof PersonaHasIdentsError) {
+    return res
+      .status(400)
+      .send({
+        errorId,
+        message: 'Persona cannot be deleted whilst it still has identifiers'
+      });
+  }
+
   if (err instanceof NoModel) {
     return res.status(404).send({
       errorId,
@@ -80,6 +92,15 @@ const handleRequestError = (res, err) => {
     err instanceof AlreadyProcessingError
   ) {
     return res.status(409).send({
+      errorId,
+      message: err.message
+    });
+  }
+
+  if (
+    err instanceof RequestAppAccessError
+  ) {
+    return res.status(500).send({
       errorId,
       message: err.message
     });
