@@ -1,14 +1,17 @@
 import { List, Map, fromJS } from 'immutable';
 import { createSelector } from 'reselect';
 import { take, takeEvery, put, fork, select } from 'redux-saga/effects';
-import { identity, get } from 'lodash';
-import {
-  aggregationResultsSelector,
-} from 'ui/redux/modules/aggregation';
+import { identity, get, isUndefined } from 'lodash';
 import {
   fetchAggregation,
-  aggregationWsResultsSelector,
+  aggregationResultsSelector,
   aggregationShouldFetchSelector,
+  aggregationHasResultSelector
+} from 'ui/redux/modules/aggregation';
+import {
+  fetchAggregation as fetchWsAggregation,
+  aggregationWsResultsSelector,
+  aggregationShouldFetchSelector as aggregationShouldFetchWsSelector,
   aggregationWsHasResultSelector
 } from 'ui/redux/modules/aggregationWs';
 import {
@@ -284,11 +287,12 @@ export const suggestedStepSelector = (visualisation) => {
   return NONE;
 };
 
+const shouldFetchWsPipeline = (pipeline, state, timeInterval) => aggregationShouldFetchWsSelector(pipeline, timeInterval)(state);
 const shouldFetchPipeline = (pipeline, state, timeInterval) => aggregationShouldFetchSelector(pipeline, timeInterval)(state);
 
 const shouldFetchPipelines = (pipelines, state) =>
   pipelines.reduce((reduction, pipeline) => (
-    reduction || shouldFetchPipeline(pipeline, state)
+    reduction || shouldFetchWsPipeline(pipeline, state)
   ), false);
 
 const shouldFetchSeries = (series, state) =>
@@ -405,34 +409,64 @@ export const visualisationResultsSelector = (visualisationId, filter) => createS
   }
 });
 
+const shouldUseWs = visualisationId => (state) => {
+  const series = visualisationPipelinesSelector(visualisationId)(state);
+  return !isUndefined(series.find((axis) => {
+    const out = axis.find((query) => {
+      const ou = !isUndefined(query.getIn([2, '$group', 'count', '$sum']));
+      return ou;
+    });
+    return out;
+  }));
+};
+
 export const visualisationWsResultsSelector = (visualisationId, filter) => createSelector([
   identity,
   modelsSchemaIdSelector('visualisation', visualisationId)
 ], (state, visualisation) => {
+  const useWs = shouldUseWs(visualisationId)(state);
+
   switch (visualisation.get('type')) {
     case JOURNEY_PROGRESS:
       return getJourneyResults(visualisation, filter, state);
     default:
-      return getWsSeriesResults(visualisationId, state);
+      if (useWs) {
+        return getWsSeriesResults(visualisationId, state);
+      }
+      return getSeriesResults(visualisationId, state);
   }
 });
 
 export const visualisationAllAggregationsHaveResultSelector = visualisationId => createSelector([
   identity,
 ], (state) => {
-  const { series, timeIntervalSinceToday, timeIntervalUnits } = visualisationWsPipelinesSelector(visualisationId)(state);
-  return series.reduce(
-    (acc1, pipelines) => {
-      const out = acc1 && pipelines.reduce(
-        (acc2, pipeline) => acc2 && aggregationWsHasResultSelector(pipeline, {
-          timeIntervalSinceToday, timeIntervalUnits
-        })(state),
-        true
-      );
-      return out;
-    },
-    true
-  );
+  const useWs = shouldUseWs(visualisationId)(state);
+  if (useWs) {
+    const { series, timeIntervalSinceToday, timeIntervalUnits } = visualisationWsPipelinesSelector(visualisationId)(state);
+    return series.reduce(
+      (acc1, pipelines) => {
+        const out = acc1 && pipelines.reduce(
+          (acc2, pipeline) => acc2 && aggregationWsHasResultSelector(pipeline, {
+            timeIntervalSinceToday, timeIntervalUnits
+          })(state),
+          true
+        );
+        return out;
+      },
+      true
+    );
+  // eslint-disable-next-line no-else-return
+  } else {
+    const series = visualisationPipelinesSelector(visualisationId)(state);
+    return series.reduce(
+      (acc1, pipelines) =>
+        acc1 && pipelines.reduce(
+          (acc2, pipeline) => acc2 && aggregationHasResultSelector(pipeline)(state),
+          true
+        ),
+      true
+    );
+  }
 });
 
 function* handleVisualisation(action) {
@@ -477,28 +511,42 @@ export function* fetchVisualisationSaga(state, id) {
       timeIntervalUnits,
       timeIntervalSincePreviousTimeInterval
     } = visualisationWsPipelinesSelector(id)(state);
-    for (let s = 0; s < series.size; s += 1) {
-      const pipelines = series.get(s);
-      for (let p = 0; p < pipelines.size; p += 1) {
-        const shouldFetch = shouldFetchPipeline(pipelines.get(p), state, {
-          timeIntervalSinceToday,
-          timeIntervalUnits
-        });
-        if (shouldFetch) {
-          yield put(fetchAggregation({
-            pipeline: pipelines.get(p),
+    const useWs = shouldUseWs(id)(state);
+
+    if (useWs) {
+      for (let s = 0; s < series.size; s += 1) {
+        const pipelines = series.get(s);
+        for (let p = 0; p < pipelines.size; p += 1) {
+          const shouldFetch = shouldFetchWsPipeline(pipelines.get(p), state, {
             timeIntervalSinceToday,
             timeIntervalUnits
-          }));
-
-          if (timeIntervalSincePreviousTimeInterval) {
-            yield put(fetchAggregation({
+          });
+          if (shouldFetch) {
+            yield put(fetchWsAggregation({
               pipeline: pipelines.get(p),
               timeIntervalSinceToday,
-              timeIntervalUnits,
-              timeIntervalSincePreviousTimeInterval
+              timeIntervalUnits
             }));
+
+            if (timeIntervalSincePreviousTimeInterval) {
+              yield put(fetchWsAggregation({
+                pipeline: pipelines.get(p),
+                timeIntervalSinceToday,
+                timeIntervalUnits,
+                timeIntervalSincePreviousTimeInterval
+              }));
+            }
           }
+        }
+      }
+    } else {
+      const nonWsSeries = visualisationPipelinesSelector(id)(state);
+
+      for (let s = 0; s < nonWsSeries.size; s += 1) {
+        const pipelines = nonWsSeries.get(s);
+        for (let p = 0; p < pipelines.size; p += 1) {
+          const shouldFetch = shouldFetchPipeline(pipelines.get(p), state);
+          if (shouldFetch) yield put(fetchAggregation({ pipeline: pipelines.get(p) }));
         }
       }
     }
