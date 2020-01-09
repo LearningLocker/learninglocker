@@ -160,9 +160,7 @@ const uploadJsonPersona = catchErrors(async (req, res) => {
 
   const inputAttributes = filter([req.body.attribute, ...(req.body.attributes || [])], isObject);
 
-  const attributes = filter(inputAttributes, (inputAttribute) => {
-    return has(inputAttribute, 'key') && has(inputAttribute, 'value');
-  });
+  const attributes = filter(inputAttributes, inputAttribute => has(inputAttribute, 'key') && has(inputAttribute, 'value'));
 
   await map(attributes, (attribute) => {
     if (!has(attribute, 'key') || !has(attribute, 'value')) {
