@@ -4,6 +4,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose } from 'recompose';
 import Link from 'ui/containers/Link';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
+import { CURATR_NAME } from 'lib/constants/siteSettings';
 import AppCard from './AppCard';
 import styles from './styles.css';
 import icons from './icons';
@@ -40,10 +41,10 @@ const Apps = ({ organisationId }) => (
         icon2x={icons.sparks2x} />
       <HrefAppCard
         hrefLink="https://ht2ltd.zendesk.com/hc/en-us/articles/208166165-xAPI-in-Curatr"
-        title="Curatr LXP"
+        title={`${CURATR_NAME}`}
         description="Cutting edge Learning experience platform that is designed to work hand-in-hand with Learning Locker."
-        icon={icons.curatr}
-        icon2x={icons.curatr2x} />
+        icon={icons.stream}
+        icon2x={icons.stream2x} />
       <HrefAppCard
         hrefLink="https://github.com/xAPI-vle/moodle-logstore_xapi"
         title="Moodle"
