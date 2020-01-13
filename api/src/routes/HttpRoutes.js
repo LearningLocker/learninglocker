@@ -36,6 +36,7 @@ import generateIndexesController from 'api/controllers/IndexesController';
 import ImportPersonasController from 'api/controllers/ImportPersonasController';
 import StatementMetadataController from 'api/controllers/StatementMetadataController';
 import BatchDeleteController from 'api/controllers/BatchDeleteController';
+import RequestAppAccessController from 'api/controllers/RequestAppAccessController';
 
 // REST
 import LRS from 'lib/models/lrs';
@@ -119,6 +120,12 @@ router.post(
   AuthController.issueOAuth2AccessToken
 );
 
+router.post(
+  routes.REQUEST_APP_ACCESS,
+  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  RequestAppAccessController.requestAppAccess,
+);
+
 /**
  * TWO FACTOR / GOOGLE
  */
@@ -181,6 +188,12 @@ router.get(
   routes.IMPORTPERSONASERROR,
   passport.authenticate(['jwt', 'jwt-cookie', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   ImportPersonasController.importPersonasError
+);
+
+router.post(
+  routes.UPLOADJSONPERSONA,
+  passport.authenticate(['jwt', 'jwt-cookie', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  ImportPersonasController.uploadJsonPersona
 );
 
 /**
