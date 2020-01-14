@@ -81,6 +81,7 @@ export const createDefaultTitle = (model) => {
     case TEMPLATE_MOST_ACTIVE_PEOPLE:
     case TEMPLATE_MOST_POPULAR_ACTIVITIES:
     case TEMPLATE_MOST_POPULAR_VERBS:
+    case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
     case TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD:
     case TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS:
       return addYX(select(axg), select(axv) || select(ayV) || 'Time');

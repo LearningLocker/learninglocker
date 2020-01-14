@@ -18,6 +18,7 @@ import {
   TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD,
   TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS,
   TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS,
+  TEMPLATE_LEARNING_EXPERIENCE_TYPE,
 } from 'lib/constants/visualise';
 import CustomBarChart from 'ui/containers/Visualisations/CustomBarChart';
 import CustomColumnChart from 'ui/containers/Visualisations/CustomColumnChart';
@@ -37,6 +38,7 @@ import TemplateCuratrLearnerInteractionsByDateAndVerb from 'ui/containers/Visual
 import TemplateCuratrUserEngagementLeaderboard from 'ui/containers/Visualisations/TemplateCuratrUserEngagementLeaderboard';
 import TemplateCuratrProportionOfSocialInteractions from 'ui/containers/Visualisations/TemplateCuratrProportionOfSocialInteractions';
 import TemplateCuratrActivitiesWithMostComments from 'ui/containers/Visualisations/TemplateCuratrActivitiesWithMostComments';
+import TemplateLearningExperienceType from 'ui/containers/Visualisations/TemplateLearningExperienceType';
 import NewVisualisation from './NewVisualisation';
 
 const VisualiseForm = ({ model, orgTimezone }) => {
@@ -78,6 +80,8 @@ const VisualiseForm = ({ model, orgTimezone }) => {
         return <TemplateCuratrProportionOfSocialInteractions model={model} orgTimezone={orgTimezone} />;
       case TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS:
         return <TemplateCuratrActivitiesWithMostComments model={model} orgTimezone={orgTimezone} />;
+      case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
+         return <TemplateLearningExperienceType model={model} orgTimezone={orgTimezone} />;
       default:
         console.error(`VisualiseForm/index.js does not support type ${model.get('type')}`);
         return `type "${model.get('type')}" is not supported.`;
