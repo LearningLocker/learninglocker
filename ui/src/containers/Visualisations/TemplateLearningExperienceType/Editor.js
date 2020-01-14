@@ -68,9 +68,7 @@ const Editor = ({
 
 Editor.propTypes = {
   model: PropTypes.instanceOf(Map).isRequired,
-  orgTimezone: PropTypes.string.isRequired,
   updateModel: PropTypes.func.isRequired,
-  setInMetadata: PropTypes.func.isRequired,
 };
 
 export default Editor;
