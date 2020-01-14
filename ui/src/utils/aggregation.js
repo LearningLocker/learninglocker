@@ -103,24 +103,24 @@ const experienceType = [
   { $match: { 'statement.context.contextActivities.grouping': { $exists: true } } },
   { $unwind: '$statement.context.contextActivities.grouping' },
   { $match: { 'statement.context.contextActivities.grouping.definition.type': 'https://curatrlxp.com/activitytype/learning-experience-type' } },
-  { $project: { 
+  { $project: {
     group: '$statement.context.contextActivities.grouping',
     model: '$statement.context.contextActivities.grouping'
   } },
   { $group: {
     _id: '$group',
     count: { $sum: 1 },
-    group:{ $first: '$group' },
-    model:{ $first: '$model' }
+    group: { $first: '$group' },
+    model: { $first: '$model' }
   } },
   { $sort: { count: -1 } },
   { $limit: 10000 },
-  { $project:{
-      _id: 1,
-      count: 1,
-      model: 1
+  { $project: {
+    _id: 1,
+    count: 1,
+    model: 1
   } }
-]
+];
 
 
 export {

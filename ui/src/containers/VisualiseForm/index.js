@@ -81,7 +81,7 @@ const VisualiseForm = ({ model, orgTimezone }) => {
       case TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS:
         return <TemplateCuratrActivitiesWithMostComments model={model} orgTimezone={orgTimezone} />;
       case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
-         return <TemplateLearningExperienceType model={model} orgTimezone={orgTimezone} />;
+        return <TemplateLearningExperienceType model={model} orgTimezone={orgTimezone} />;
       default:
         console.error(`VisualiseForm/index.js does not support type ${model.get('type')}`);
         return `type "${model.get('type')}" is not supported.`;

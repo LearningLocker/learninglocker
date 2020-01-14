@@ -88,7 +88,7 @@ const getGroupAxisLabel = (visualisation) => {
     case TEMPLATE_MOST_ACTIVE_PEOPLE:
     case TEMPLATE_MOST_POPULAR_ACTIVITIES:
     case TEMPLATE_MOST_POPULAR_VERBS:
-    case TEMPLATE_LEARNING_EXPERIENCE_TYPE:  
+    case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
       return visualisation.get('axesyLabel') || visualisation.getIn(['axesgroup', 'searchString']) || 'Y Axis';
     // Line Chart type
     case FREQUENCY:
@@ -113,7 +113,7 @@ const getValueAxisLabel = (index, visualisation) => {
     case TEMPLATE_MOST_ACTIVE_PEOPLE:
     case TEMPLATE_MOST_POPULAR_ACTIVITIES:
     case TEMPLATE_MOST_POPULAR_VERBS:
-    case TEMPLATE_LEARNING_EXPERIENCE_TYPE:  
+    case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
       return visualisation.get('axesxLabel') || visualisation.getIn(['axesxValue', 'searchString']) || 'X Axis';
     default:
       return visualisation.get('axesyLabel') || visualisation.getIn(['axesvalue', 'searchString']) || 'Y Axis';

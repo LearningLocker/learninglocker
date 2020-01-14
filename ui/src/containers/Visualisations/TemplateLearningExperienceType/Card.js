@@ -12,14 +12,12 @@ import { title, image } from './constants';
 const Card = ({
   model,
   saveModel,
-}) => {
-  return (
-    <TemplateCard
-      title={title}
-      srcImage={image}
-      onClick={() => saveModel({ attrs: buildModel(model) })} />
-  )
-};
+}) => (
+  <TemplateCard
+    title={title}
+    srcImage={image}
+    onClick={() => saveModel({ attrs: buildModel(model) })} />
+  );
 
 Card.propTypes = {
   model: PropTypes.instanceOf(Map).isRequired,
