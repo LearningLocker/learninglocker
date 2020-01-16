@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, setPropTypes, defaultProps } from 'recompose';
-import styles from './styles.css';
+import styled from 'styled-components';
 
 const enhanceTextIconButton = compose(
   setPropTypes({
@@ -15,16 +14,19 @@ const enhanceTextIconButton = compose(
   defaultProps({
     disabled: false,
   }),
-  withStyles(styles),
 );
 
+const Button = styled.button`
+  margin: 0 1px;
+`;
+
 const renderTextIconButton = ({ text, onClick, disabled, icon }) => (
-  <button
-    className={classNames('btn btn-primary btn-sm', styles.textButton)}
+  <Button
+    className={classNames('btn btn-primary btn-sm')}
     onClick={onClick}
-    disabled={disabled}>
+    disabled={disabled} >
     <span><i className={icon} /></span> {text}
-  </button>
+  </Button>
 );
 
 export default enhanceTextIconButton(renderTextIconButton);
