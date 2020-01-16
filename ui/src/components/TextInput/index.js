@@ -1,7 +1,41 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from './styles.css';
+import styled from 'styled-components';
+
+const FormGroup = styled.div`
+  margin-bottom: 0;
+  flex-grow: 1;
+`;
+
+const Label = styled.label`
+  font-weight: bold;
+  margin-bottom: 0;
+`;
+
+const Input = styled.input`
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid #CCC;
+  outline: none;
+  box-shadow: none;
+  flex-grow: 1;
+
+  &:focus {
+    box-shadow: none;
+  }
+`;
+
+const InputWrapper = styled.div`
+  padding: 0 8px 0 0;
+  display: flex !important;
+  align-items: center;
+  border-radius: 2px;
+  overflow: hidden;
+  min-height: 36px;
+  border: none;
+  box-shadow: none;
+`;
 
 // Uncontrolled input component to edit a string
 class TextInput extends Component {
@@ -51,9 +85,10 @@ class TextInput extends Component {
     }
 
     return (
-      <label htmlFor={label} className={styles.label}>
+      <Label
+        htmlFor={label} >
         {label}
-      </label>
+      </Label>
     );
   }
 
@@ -62,10 +97,10 @@ class TextInput extends Component {
     const { value } = this.state;
 
     return (
-      <div className={`form-group ${styles.group}`}>
+      <FormGroup className={'form-group'} >
         {this.renderLabel()}
-        <div className={`form-control ${styles.input}`}>
-          <input
+        <InputWrapper className={'form-control'}>
+          <Input
             autoFocus={autoFocus}
             type="text"
             label={label}
@@ -76,10 +111,10 @@ class TextInput extends Component {
             defaultValue={value}
             name={label || name}
             onFocus={onFocus} />
-        </div>
-      </div>
+        </InputWrapper>
+      </FormGroup>
     );
   }
 }
 
-export default withStyles(styles)(TextInput);
+export default TextInput;
