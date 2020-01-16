@@ -31,11 +31,11 @@ class PieTooltip extends Component {
   render = () => {
     const { display, active } = this.props;
     if (active) {
-      const { payload, labels, grouping } = this.props;
+      const { payload, labels } = this.props;
       const entry = payload[0];
       return (
         <div className={styles.customTooltip}>
-          <p className={styles.label}>{`${grouping}: ${display(entry.payload.id)}`}</p>
+          <p className={styles.label}>{`${display(entry.payload.id)}`}</p>
           <div className={styles.value}>
             {labels.map(this.renderLabel(entry))}
           </div>

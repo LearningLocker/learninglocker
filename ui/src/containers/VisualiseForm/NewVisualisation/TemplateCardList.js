@@ -1,16 +1,17 @@
 import React from 'react';
-import { Map } from 'immutable';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { TEMPLATE_STAGE_COMPLETED } from 'lib/constants/visualise';
-import {
-  LEADERBOARD,
-  STATEMENTS,
-  FREQUENCY,
-  COUNTER,
-  LAST_2_MONTHS,
-  VISUALISATION_TEMPLATE_TITLES,
-} from 'ui/utils/constants';
-import TemplateCard from './TemplateCard';
+import TemplateActivityOverTimeCard from 'ui/containers/Visualisations/TemplateActivityOverTime/Card';
+import TemplateLast7DaysStatementsCard from 'ui/containers/Visualisations/TemplateLast7DaysStatements/Card';
+import TemplateMostPopularVerbsCard from 'ui/containers/Visualisations/TemplateMostPopularVerbs/Card';
+import TemplateMostPopularActivitiesCard from 'ui/containers/Visualisations/TemplateMostPopularActivities/Card';
+import TemplateMostActivePeopleCard from 'ui/containers/Visualisations/TemplateMostActivePeople/Card';
+import TemplateWeekdaysActivityCard from 'ui/containers/Visualisations/TemplateWeekdaysActivity/Card';
+import TemplateCuratrInteractionsVsEngagementCard from 'ui/containers/Visualisations/TemplateCuratrInteractionsVsEngagement/Card';
+import TemplateCuratrCommentCountCard from 'ui/containers/Visualisations/TemplateCuratrCommentCount/Card';
+import TemplateCuratrLearnerInteractionsByDateAndVerbCard from 'ui/containers/Visualisations/TemplateCuratrLearnerInteractionsByDateAndVerb/Card';
+import TemplateCuratrUserEngagementLeaderboardCard from 'ui/containers/Visualisations/TemplateCuratrUserEngagementLeaderboard/Card';
+import TemplateCuratrProportionOfSocialInteractionsCard from 'ui/containers/Visualisations/TemplateCuratrProportionOfSocialInteractions/Card';
+import TemplateCuratrActivitiesWithMostCommentsCard from 'ui/containers/Visualisations/TemplateCuratrActivitiesWithMostComments/Card';
 import styles from './styles.css';
 
 const TemplateCardList = ({ model, saveModel }) => (
@@ -18,86 +19,53 @@ const TemplateCardList = ({ model, saveModel }) => (
     id="new-visualisation-templates"
     className={styles.cardList}>
 
-    <TemplateCard
-      title={VISUALISATION_TEMPLATE_TITLES['1']}
-      type={COUNTER}
-      onSelect={() => {
-        saveModel({
-          attrs: model
-            .set('type', COUNTER)
-            .set('templateId', '1')
-            .set('templateStage', TEMPLATE_STAGE_COMPLETED),
-        });
-      }} />
+    <TemplateLast7DaysStatementsCard
+      model={model}
+      saveModel={saveModel} />
 
-    <TemplateCard
-      title={VISUALISATION_TEMPLATE_TITLES['2']}
-      type={FREQUENCY}
-      onSelect={() => {
-        saveModel({
-          attrs: model
-            .set('type', FREQUENCY)
-            .set('templateId', '2')
-            .set('templateStage', TEMPLATE_STAGE_COMPLETED)
-            .set('previewPeriod', LAST_2_MONTHS),
-        });
-      }} />
+    <TemplateActivityOverTimeCard
+      model={model}
+      saveModel={saveModel} />
 
-    <TemplateCard
-      title={VISUALISATION_TEMPLATE_TITLES['3']}
-      type={LEADERBOARD}
-      onSelect={() => {
-        saveModel({
-          attrs: model
-            .set('type', LEADERBOARD)
-            .set('templateId', '3')
-            .set('templateStage', TEMPLATE_STAGE_COMPLETED)
-            .set('previewPeriod', LAST_2_MONTHS)
-            .set('axesgroup', new Map({ optionKey: 'verb', searchString: 'Verb' })),
-        });
-      }} />
+    <TemplateMostPopularVerbsCard
+      model={model}
+      saveModel={saveModel} />
 
-    <TemplateCard
-      title={VISUALISATION_TEMPLATE_TITLES['4']}
-      type={LEADERBOARD}
-      onSelect={() => {
-        saveModel({
-          attrs: model
-            .set('type', LEADERBOARD)
-            .set('templateId', '4')
-            .set('templateStage', TEMPLATE_STAGE_COMPLETED)
-            .set('previewPeriod', LAST_2_MONTHS)
-            .set('axesgroup', new Map({ optionKey: 'activities', searchString: 'Activity' })),
-        });
-      }} />
+    <TemplateMostPopularActivitiesCard
+      model={model}
+      saveModel={saveModel} />
 
-    <TemplateCard
-      title={VISUALISATION_TEMPLATE_TITLES['5']}
-      type={LEADERBOARD}
-      onSelect={() => {
-        saveModel({
-          attrs: model
-            .set('type', LEADERBOARD)
-            .set('templateId', '5')
-            .set('templateStage', TEMPLATE_STAGE_COMPLETED)
-            .set('previewPeriod', LAST_2_MONTHS)
-            .set('axesgroup', new Map({ optionKey: 'people', searchString: 'Person' })),
-        });
-      }} />
+    <TemplateMostActivePeopleCard
+      model={model}
+      saveModel={saveModel} />
 
-    <TemplateCard
-      title={VISUALISATION_TEMPLATE_TITLES['6']}
-      type={STATEMENTS}
-      onSelect={() => {
-        saveModel({
-          attrs: model
-            .set('type', STATEMENTS)
-            .set('templateId', '6')
-            .set('templateStage', TEMPLATE_STAGE_COMPLETED)
-            .set('axesgroup', new Map({ optionKey: 'weekday', searchString: 'Day' })),
-        });
-      }} />
+    <TemplateWeekdaysActivityCard
+      model={model}
+      saveModel={saveModel} />
 
+    <TemplateCuratrInteractionsVsEngagementCard
+      model={model}
+      saveModel={saveModel} />
+
+    <TemplateCuratrCommentCountCard
+      model={model}
+      saveModel={saveModel} />
+
+    <TemplateCuratrLearnerInteractionsByDateAndVerbCard
+      model={model}
+      saveModel={saveModel} />
+
+    <TemplateCuratrUserEngagementLeaderboardCard
+      model={model}
+      saveModel={saveModel} />
+
+    <TemplateCuratrProportionOfSocialInteractionsCard
+      model={model}
+      saveModel={saveModel} />
+
+    <TemplateCuratrActivitiesWithMostCommentsCard
+      model={model}
+      saveModel={saveModel} />
   </div>
 );
 

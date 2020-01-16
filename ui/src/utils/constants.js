@@ -1,21 +1,5 @@
 import { STAGE_PROCESSING } from 'lib/constants/personasImport';
 
-export const LEADERBOARD = 'LEADERBOARD';
-export const POPULARACTIVITIES = 'POPULARACTIVITIES';
-export const PLATFORMS = 'PLATFORMS';
-export const QUESTIONANALYSIS = 'QUESTIONANALYSIS';
-export const XVSY = 'XVSY';
-export const SESSIONS = 'SESSIONS';
-export const STATEMENTS = 'STATEMENTS';
-export const FREQUENCY = 'FREQUENCY';
-export const COUNTER = 'COUNTER';
-export const PIE = 'PIE';
-export const LINE = 'LINE';
-export const COLUMN = 'COLUMN';
-export const COMPONENT = 'COMPONENT';
-export const TABLE = 'TABLE';
-export const TEXT = 'TEXT';
-
 // Preview Period
 export const TODAY = 'TODAY';
 export const LAST_7_DAYS = 'LAST_7_DAYS';
@@ -72,19 +56,4 @@ export const PROGRESS_MODELS = {
   }
 };
 
-export const STACKABLE_TYPES = [LEADERBOARD, POPULARACTIVITIES, STATEMENTS];
-
-export const VISUALISATION_TYPES = [
-  LEADERBOARD, XVSY, STATEMENTS, FREQUENCY, COUNTER, PIE
-];
-
 export const VISUALISATION_COLORS = ['#F5AB36', '#DB0A5B', '#36D7B7', '#9B59B6', '#F77F3F', '#1E8BC3', '#ED4444'];
-
-export const VISUALISATION_TEMPLATE_TITLES = {
-  1: 'How many statements have been stored in the last 7 days?',
-  2: 'How has activity changed over time?',
-  3: 'What are the most popular verbs?',
-  4: 'What are the most popular activities?',
-  5: 'Who are the most active people?',
-  6: 'How does activity change in a week?',
-};

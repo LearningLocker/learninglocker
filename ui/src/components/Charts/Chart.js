@@ -27,7 +27,7 @@ export const getLabel = (entryId) => {
   if (!entryId) {
     return '';
   }
-  if (!entryId || !entryId.map) {
+  if (!entryId.map) {
     return JSON.stringify(entryId);
   }
   if (entryId.get('name')) {
@@ -159,7 +159,7 @@ export const renderLegend = (labels, toggleHiddenSeries) => (labels.size > 1 ?
     verticalAlign={'top'}
     align="center"
     onClick={toggleHiddenSeries ? onLegendClick(toggleHiddenSeries) : null} /> : <noscript />
-  );
+);
 
 export const renderTooltips = (data, hiddenSeries, colors = ['grey']) =>
   <Tooltip cursor={{ fill: colors[0], fillOpacity: 0.1 }} content={<CustomTooltip display={getLongModel(data, hiddenSeries)} />} />;

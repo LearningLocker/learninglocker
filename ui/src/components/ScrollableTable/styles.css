@@ -1,0 +1,79 @@
+.tableContainer {
+  height: 100%;
+  overflow-x: scroll;
+  overflow-y: scroll;
+}
+
+.table {
+  border-collapse: separate;
+  margin: 0;
+  border: 0;
+}
+
+/**
+ * core.css defines the color of odd-number-th lines
+ *
+ * .table-striped > tbody > tr:nth-of-type(odd) {
+ *   background-color: #f9f9f9;
+ * }
+ */
+.greyStartingStripe > tr:nth-child(even) > th,
+.greyStartingStripe > tr:nth-child(even) > td,
+.whiteStartingStripe > tr:nth-child(odd) > th,
+.whiteStartingStripe > tr:nth-child(odd) > td {
+  background-color: #ffffff;
+}
+
+.greyStartingStripe > tr:nth-child(odd) > th,
+.greyStartingStripe > tr:nth-child(odd) > td,
+.whiteStartingStripe > tr:nth-child(even) > th,
+.whiteStartingStripe > tr:nth-child(even) > td {
+  background-color: #f9f9f9;
+}
+
+.table > thead > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > th,
+.table > tbody > tr > td,
+.table > tfoot > tr > th,
+.table > tfoot > tr > td {
+  border: 0;
+}
+
+.table > thead > tr > th,
+.table > thead > tr > td,
+.table > tfoot > tr > th,
+.table > tfoot > tr > td {
+  border-top: 1px solid #ddd !important;
+  border-left: 1px solid #ddd !important;
+}
+
+.table > thead > tr:last-child > th,
+.table > thead > tr:last-child > td,
+.table > tfoot > tr:last-child > th,
+.table > tfoot > tr:last-child > td {
+  border-bottom: 1px solid #ddd !important;
+}
+
+.table > thead > tr > th:last-child,
+.table > thead > tr > td:last-child,
+.table > tfoot > tr > th:last-child,
+.table > tfoot > tr > td:last-child {
+  border-right: 1px solid #ddd !important;
+}
+
+.table > tbody > tr > th,
+.table > tbody > tr > td {
+  border-left: 1px solid #ddd !important;
+  border-bottom: 1px solid #ddd !important;
+}
+
+.table > tbody > tr:last-child > th,
+.table > tbody > tr:last-child > td {
+  border-left: 1px solid #ddd !important;
+}
+
+.table > tbody > tr > th:last-child,
+.table > tbody > tr > td:last-child {
+  border-right: 1px solid #ddd !important;
+}

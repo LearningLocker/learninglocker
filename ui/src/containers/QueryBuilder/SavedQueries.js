@@ -11,7 +11,7 @@ import styles from './savedqueries.css'; // 'ui/containers/QueryBuilder/savedque
 
 const getConditions = (query) => {
   if (!query) return new Map();
-  const conditions = query && query.get('conditions', new Map());
+  const conditions = query.get('conditions', new Map());
 
   try {
     if (isString(conditions)) return fromJS(JSON.parse(conditions));

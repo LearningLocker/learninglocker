@@ -9,9 +9,8 @@ describe('VisualiseIcon', () => {
   it('should render small icon with class visualisationSmall', () => {
     const result = ReactTestRenderer.create(
       <VisualiseIconWrapper
-        className="visualisationSmall"
-        isSmall
-        type="XVSY" />
+        type="XVSY"
+        sourceView={false} />
     ).toJSON();
 
     expect(result).toMatchSnapshot();

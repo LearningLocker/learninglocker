@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PersonasImports with items should render 1`] = `
+<div>
+  <header
+    id="topbar"
+  >
+    <div
+      className="heading heading-light"
+    >
+      <span
+        className="pull-right open_panel_btn"
+      >
+        <button
+          className="btn btn-primary btn-sm"
+          onClick={[Function]}
+        >
+          <i
+            className="ion ion-plus"
+          />
+          Import
+        </button>
+      </span>
+      People - Imports
+    </div>
+  </header>
+  <div
+    className="row"
+  >
+    <div
+      className="col-md-12"
+    >
+      <withProps(Connect(WithModels))
+        ModelForm={[Function]}
+        filter={Object {}}
+        getDescription={[Function]}
+      />
+    </div>
+  </div>
+</div>
+`;

@@ -1,3 +1,4 @@
+import { LEADERBOARD } from 'lib/constants/visualise';
 import Visualisation from 'lib/models/visualisation';
 import testId from 'api/routes/tests/utils/testId';
 
@@ -8,10 +9,9 @@ export default (isPublic = false, owner = testId, organisation = testId) =>
     organisation,
     previewPeriod: 'LAST_7_DAYS',
     filters: [],
-    chart: 'LINE',
     stacked: true,
     __v: 0,
-    type: 'LEADERBOARD',
+    type: LEADERBOARD,
     description: 'Hello',
     isPublic
   });

@@ -38,8 +38,8 @@ const renderVerified = (model) => {
       <label htmlFor={verifiedId} className="control-label">Verified:</label>
       <span id={verifiedId}>
         {model.get('verified')
-        ? <i className={`icon ion-checkmark ${styles.green}`} />
-        : <i className={`icon ion-close ${styles.red}`} /> }
+          ? <i className={`icon ion-checkmark ${styles.green}`} />
+          : <i className={`icon ion-close ${styles.red}`} />}
       </span>
     </div>
   );
@@ -60,7 +60,7 @@ const renderName = (model, onChangeAttr) => {
   );
 };
 
-const renderEmail = (model, onChangeAttr) => {
+const renderEmail = (model, onChangeAttr, isSiteAdmin) => {
   const emailId = uuid.v4();
   return (
     <div
@@ -72,11 +72,11 @@ const renderEmail = (model, onChangeAttr) => {
       <input
         id={emailId}
         className="form-control"
-        disabled={model.has('googleId')}
+        disabled={model.has('googleId') || !isSiteAdmin}
         placeholder="E-Mail"
         value={model.get('email', '')}
         onChange={onChangeAttr('email')} />
-      { model.getIn(['errors', 'messages', 'email'], false) &&
+      {model.getIn(['errors', 'messages', 'email'], false) &&
         (<span className="help-block">
           <ValidationList errors={model.getIn(['errors', 'messages', 'email'])} />
         </span>)
@@ -98,8 +98,8 @@ const renderPasswordChanges = (model, onCheck, changePasswordChecked) => {
             label="Change password"
             onChange={onCheck} />
         ) : (
-          <p className="help-block">Set a valid password in order to verify this user</p>
-        )}
+            <p className="help-block">Set a valid password in order to verify this user</p>
+          )}
       </div>
     </div>
   );
@@ -166,7 +166,7 @@ const changeModelPassword = (
   setPasswordConfirmation('');
 };
 
-const render = ({
+const UserForm = ({
   model = new Map(),
   changePasswordChecked,
   updateModel,
@@ -190,10 +190,10 @@ const render = ({
   const canChangePassword =
     (changePasswordChecked || hasPasswordErrors);
   const isAuthorisedToChangePassword = (
-      isSiteAdmin ||
-      model.get('_id') === loggedInUserId
-    );
-  const passwordInputsVisible = (!model.get('verified') || canChangePassword);
+    isSiteAdmin ||
+    model.get('_id') === loggedInUserId
+  );
+  const passwordInputsVisible = isAuthorisedToChangePassword && (!model.get('verified') || canChangePassword);
   const passwordGroupClasses = classNames({
     'form-group': true,
     'has-error': hasPasswordErrors
@@ -205,9 +205,9 @@ const render = ({
     <div className="row">
       <div className="col-md-12" >
 
-        {renderVerified(model, styles)}
+        {renderVerified(model)}
         {renderName(model, onChangeAttr)}
-        {renderEmail(model, onChangeAttr)}
+        {renderEmail(model, onChangeAttr, isSiteAdmin)}
         {isAuthorisedToChangePassword && renderPasswordChanges(model, onPasswordCheckboxChange(updateModel, model, setChangePasswordChecked), canChangePassword)}
 
         {passwordInputsVisible && (
@@ -247,4 +247,4 @@ export default compose(
     loggedInUserId: loggedInUserIdSelector(state)
   })),
   withModel
-)(render);
+)(UserForm);

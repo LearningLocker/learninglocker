@@ -5,6 +5,12 @@ import { Map } from 'immutable';
 import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose } from 'recompose';
+import {
+  COUNTER,
+  PIE,
+  TEMPLATE_LAST_7_DAYS_STATEMENTS,
+  TEMPLATE_CURATR_COMMENT_COUNT
+} from 'lib/constants/visualise';
 import { fetchModels } from 'ui/redux/modules/pagination';
 import { updateModel, modelsSchemaIdSelector } from 'ui/redux/modules/models';
 import { setModelQuery } from 'ui/redux/modules/search';
@@ -12,12 +18,10 @@ import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import Link from 'ui/containers/Link';
 import DropDownMenu from 'ui/components/DropDownMenu';
 import WidgetVisualisePicker from 'ui/containers/WidgetVisualisePicker';
-import VisualiseResults from 'ui/containers/VisualiseResults';
-import SourceResults from 'ui/containers/VisualiseResults/SourceResults';
+import VisualisationViewer from 'ui/containers/Visualisations/VisualisationViewer';
 import DeleteConfirm from 'ui/containers/DeleteConfirm';
 import { createDefaultTitle } from 'ui/utils/defaultTitles';
 import styles from './widget.css';
-import { COUNTER, PIE } from '../../utils/constants';
 
 const schema = 'widget';
 const VISUALISATION = 'stages/VISUALISATION';
@@ -47,8 +51,7 @@ class Widget extends Component {
     super(props);
     this.state = {
       isDeleteOpen: null,
-      openModalStep: null,
-      editingTitle: false
+      openModalStep: null
     };
   }
 
@@ -115,20 +118,16 @@ class Widget extends Component {
     return 'Enable donut';
   }
 
-  getTitle = (model, props) => model.get('title') || props.visualisation.get('description') || <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>{createDefaultTitle(this.props.visualisation, '')}</span>;
-
-  toggleEditingTitle = () => {
-  }
-
-  renderTitle = () => {
-    const { model } = this.props;
-    const isEditingTitle = true;
-    return isEditingTitle ? (
-      <span>{model.get('title')}</span>
-    ) : (
-      null
+  getTitle = (model, props) =>
+    model.get('title') ||
+    props.visualisation.get('description') ||
+    (
+      <span style={{ color: '#BFC7CD', fontWeight: '100', fontSize: '0.9em' }}>
+        {createDefaultTitle(this.props.visualisation)}
+      </span>
     );
-  }
+
+  isCounter = type => type === COUNTER || type === TEMPLATE_LAST_7_DAYS_STATEMENTS || type === TEMPLATE_CURATR_COMMENT_COUNT
 
   renderMenu = () => {
     const { model, organisationId, visualisation } = this.props;
@@ -136,7 +135,7 @@ class Widget extends Component {
     const shouldShowTableModeToggle = (
       visualisation.size > 0 &&
       visualisation.get('type') &&
-      visualisation.get('type') !== COUNTER &&
+      !this.isCounter(visualisation.get('type')) &&
       model.has('visualisation')
     );
 
@@ -159,7 +158,7 @@ class Widget extends Component {
             <i className="ion ion-navicon-round" />
           </a>
         }>
-        { shouldShowTableModeToggle &&
+        {shouldShowTableModeToggle &&
           <a
             onClick={this.toggleSourceView}
             title="Table mode"
@@ -168,7 +167,7 @@ class Widget extends Component {
           </a>
         }
 
-        { shouldShowDonutModeToggle &&
+        {shouldShowDonutModeToggle &&
           <a
             onClick={this.toggleDonutView}
             title="Donut mode"
@@ -177,7 +176,7 @@ class Widget extends Component {
           </a>
         }
 
-        { shouldShowGoVisualisation &&
+        {shouldShowGoVisualisation &&
           <Link
             routeName={'organisation.data.visualise.visualisation'}
             routeParams={{ organisationId, visualisationId: visualisation.get('_id') }} >
@@ -193,7 +192,7 @@ class Widget extends Component {
           Edit Widget
         </a>
 
-        { this.props.editable &&
+        {this.props.editable &&
           <a
             onClick={this.openDeleteModal}
             title="Delete Widget">
@@ -206,7 +205,7 @@ class Widget extends Component {
   }
 
   render = () => {
-    const { model, visualisation } = this.props;
+    const { model } = this.props;
     const delPopupProps = {
       schema,
       onClickClose: this.closeDeleteModal,
@@ -221,31 +220,30 @@ class Widget extends Component {
       [styles.draggableTitle]: this.props.editable,
     });
     return (
-      <div className={`panel panel-default animated fadeIn ${styles.widget}`} >
+      <div className={`panel panel-default animated fadeIn ${styles.widget}`}>
         <div className={styles.widgetContent}>
           <div
-            className={`panel-heading ${styles.heading}`}
-            onDoubleClick={this.toggleEditingTitle}>
+            className={`panel-heading ${styles.heading}`}>
             <div className={`panel-title ${titleStyles} react-drag-handle`}>
-              { this.props.editable && this.renderMenu(styles) }
+              {this.props.editable && this.renderMenu(styles)}
               <span style={{ cursor: 'initial' }}>{this.getTitle(model, this.props)}</span>
             </div>
           </div>
           {
             <div className={`panel-body ${styles.body}`}>
-              {!visualisation.get('sourceView') && model.has('visualisation') && <VisualiseResults id={model.get('visualisation')} />}
-              {visualisation.get('sourceView') && <SourceResults id={model.get('visualisation')} />
-              }
+              {model.has('visualisation') && (
+                <VisualisationViewer id={model.get('visualisation')} />
+              )}
             </div>
           }
           {
             (isModalOpen) &&
-              <WidgetVisualisePicker
-                isOpened={isModalOpen || this.props.widgetModalOpen}
-                model={model}
-                onClickClose={this.closeModal}
-                onChangeTitle={this.props.onChangeTitle}
-                onChangeVisualisation={this.props.onChangeVisualisation} />
+            <WidgetVisualisePicker
+              isOpened={isModalOpen || this.props.widgetModalOpen}
+              model={model}
+              onClickClose={this.closeModal}
+              onChangeTitle={this.props.onChangeTitle}
+              onChangeVisualisation={this.props.onChangeVisualisation} />
           }
           <DeleteConfirm isOpened={isDeleteOpen} {...delPopupProps} />
         </div>

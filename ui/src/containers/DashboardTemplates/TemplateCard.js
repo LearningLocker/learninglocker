@@ -1,13 +1,18 @@
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import VisualiseIcon from 'ui/components/VisualiseIcon'; // TODO: Replace img
 import styles from './styles.css';
 
-const TemplateCard = ({ title, onSelect }) => (
+const TemplateCard = ({
+  title,
+  image,
+  onSelect,
+}) => (
   <div className={styles.card} onClick={onSelect}>
-    <VisualiseIcon type={'PIE'} isSmall />
+    <img
+      src={image}
+      alt={title} />
     <p>{title}</p>
   </div>
 );
 
-export default withStyles(styles)(TemplateCard);
+export default withStyles(styles)(React.memo(TemplateCard));

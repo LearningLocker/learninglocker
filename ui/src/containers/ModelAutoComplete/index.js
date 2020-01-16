@@ -27,11 +27,7 @@ const withSearchFilter = compose(
   }))
 );
 
-export default compose(
-  // withEditableFields,
-  withSelectedOption,
-  withSearchFilter
-)(({
+const ModelAutoComplete = ({
   schema,
   filter,
   sort,
@@ -63,7 +59,7 @@ export default compose(
           placeholder={placeholder}
           fields={fields}
           defaultValues={defaultValues}
-          parseOption={option => (option ? (parseOptionString && parseOptionString(option)) || parseOption(option) : '')}
+          parseOption={option => (option ? ((parseOptionString && parseOptionString(option)) || parseOption(option)) : '')}
           parseOptionTooltip={option => (option ? parseOptionTooltip(option) : '')}
           schema={schema}
           id={id || selectedId}
@@ -90,4 +86,9 @@ export default compose(
           canEdit={canEdit} />
       )} />
   );
-});
+};
+
+export default compose(
+  withSelectedOption,
+  withSearchFilter
+)(ModelAutoComplete);

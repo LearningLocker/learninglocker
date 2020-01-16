@@ -24,7 +24,8 @@ const createMockStore = ({
     }),
     uploadPersonas: fromJS({}),
     mergePersona: fromJS({}),
-    alerts: new List()
+    alerts: new List(),
+    userOrganisationSettings: {},
   };
 
   const mockStore =

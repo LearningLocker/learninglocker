@@ -20,7 +20,8 @@ import {
   GOOGLE_AUTH_OPTIONS,
   DEFAULT_PASSPORT_OPTIONS,
   RESTIFY_DEFAULTS,
-  setNoCacheHeaders
+  setNoCacheHeaders,
+  checkOrg,
 } from 'lib/constants/auth';
 import { MANAGER_SELECT } from 'lib/services/auth/selects/models/user.js';
 
@@ -35,6 +36,7 @@ import generateIndexesController from 'api/controllers/IndexesController';
 import ImportPersonasController from 'api/controllers/ImportPersonasController';
 import StatementMetadataController from 'api/controllers/StatementMetadataController';
 import BatchDeleteController from 'api/controllers/BatchDeleteController';
+import RequestAppAccessController from 'api/controllers/RequestAppAccessController';
 
 // REST
 import LRS from 'lib/models/lrs';
@@ -53,12 +55,14 @@ import Dashboard from 'lib/models/dashboard';
 import QueryBuilderCache from 'lib/models/querybuildercache';
 import QueryBuilderCacheValue from 'lib/models/querybuildercachevalue';
 import Role from 'lib/models/role';
+import PersonaAttribute from 'lib/models/personaAttribute';
 import PersonasImport from 'lib/models/personasImport';
 import PersonasImportTemplate from 'lib/models/personasImportTemplate';
 import SiteSettings from 'lib/models/siteSettings';
 import personaRESTHandler from 'api/routes/personas/personaRESTHandler';
 import personaIdentifierRESTHandler from 'api/routes/personas/personaIdentifierRESTHandler';
-import personaAttributeRESTHandler from 'api/routes/personas/personaAttributeRESTHandler';
+import UserOrganisationsRouter from 'api/routes/userOrganisations/router';
+import UserOrganisationSettingsRouter from 'api/routes/userOrganisationSettings/router';
 import BatchDelete from 'lib/models/batchDelete';
 import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
 import { updateStatementCountsInOrg } from 'lib/services/lrs';
@@ -75,10 +79,10 @@ router.get(routes.VERSION, (req, res) => {
     new Promise(resolve => git.branch(resolve)),
     new Promise(resolve => git.tag(resolve))
   ])
-  .then(([short, long, branch, tag]) => {
-    jsonSuccess(res)({ short, long, branch, tag });
-  })
-  .catch(serverError(res));
+    .then(([short, long, branch, tag]) => {
+      jsonSuccess(res)({ short, long, branch, tag });
+    })
+    .catch(serverError(res));
 });
 router.get(routes.GOOGLE_AUTH, (req, res) => {
   const enabled = boolean(process.env.GOOGLE_ENABLED);
@@ -116,6 +120,12 @@ router.post(
   AuthController.issueOAuth2AccessToken
 );
 
+router.post(
+  routes.REQUEST_APP_ACCESS,
+  passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
+  RequestAppAccessController.requestAppAccess,
+);
+
 /**
  * TWO FACTOR / GOOGLE
  */
@@ -142,7 +152,16 @@ router.get(
  */
 router.use(personaRESTHandler);
 router.use(personaIdentifierRESTHandler);
-router.use(personaAttributeRESTHandler);
+
+/**
+ * User Organisations
+ */
+router.use(UserOrganisationsRouter);
+
+/**
+ * User OrganisationSettings
+ */
+router.use(UserOrganisationSettingsRouter);
 
 /**
  * UPLOADS
@@ -169,6 +188,12 @@ router.get(
   routes.IMPORTPERSONASERROR,
   passport.authenticate(['jwt', 'jwt-cookie', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   ImportPersonasController.importPersonasError
+);
+
+router.post(
+  routes.UPLOADJSONPERSONA,
+  passport.authenticate(['jwt', 'jwt-cookie', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  ImportPersonasController.uploadJsonPersona
 );
 
 /**
@@ -242,7 +267,6 @@ router.post(
   BatchDeleteController.terminateBatchDelete
 );
 
-
 /**
  * V1 compatability
  */
@@ -274,23 +298,31 @@ restify.serve(router, Download);
 restify.serve(router, Query);
 restify.serve(router, ImportCsv);
 restify.serve(router, User, {
-  preUpdate: (req, res, next) => {
+  preCreate: (req, res, next) => {
     const authInfo = getAuthFromRequest(req);
     const scopes = getScopesFromAuthInfo(authInfo);
-    const tokenType = getTokenTypeFromAuthInfo(authInfo);
+    if (!scopes.includes(SITE_ADMIN)) {
+      req.body = pick(req.body, ['name', 'email', 'isExpanded', 'organisations']);
+    }
+    checkOrg(req, res, next);
+  },
+  preUpdate: (req, _, next) => {
+    const authInfo = getAuthFromRequest(req);
+    const scopes = getScopesFromAuthInfo(authInfo);
 
-    // if site admin, skip over this section
-    if (findIndex(scopes, item => item === SITE_ADMIN) < 0) {
-      // remove scope changes
-      req.body = omit(req.body, 'scopes');
-      if (tokenType === 'user' || tokenType === 'organisation') {
-        if (req.body._id !== getUserIdFromAuthInfo(authInfo).toString()) {
-          // Don't allow changing of passwords
-          req.body = omit(req.body, 'password');
-        }
+    // Site admins can update any fields
+    if (!scopes.includes(SITE_ADMIN)) {
+      const tokenType = getTokenTypeFromAuthInfo(authInfo);
+      const isUpdatingItself =
+        ['user', 'organisation'].includes(tokenType) &&
+        req.body._id === getUserIdFromAuthInfo(authInfo).toString();
+
+      // Non site admin user can update
+      // only name and password of the user itself or only name of other users.
+      if (isUpdatingItself) {
+        req.body = pick(req.body, ['name', 'password']);
       } else {
-        // always strip the password from other token types
-        req.body = omit(req.body, 'password');
+        req.body = pick(req.body, ['name']);
       }
     }
 
@@ -339,6 +371,9 @@ restify.serve(router, StatementForwarding);
 restify.serve(router, QueryBuilderCache);
 restify.serve(router, QueryBuilderCacheValue);
 restify.serve(router, Role);
+restify.serve(router, PersonaAttribute, {
+  preDelete: async (req, res, next) => next(),
+});
 restify.serve(router, PersonasImport);
 restify.serve(router, PersonasImportTemplate);
 restify.serve(router, SiteSettings);
@@ -367,6 +402,7 @@ const generatedRouteModels = [
   Download,
   ImportCsv,
   Role,
+  PersonaAttribute,
   PersonasImport,
   PersonasImportTemplate,
   BatchDelete
@@ -387,17 +423,17 @@ const generateIndexesRoute = (model, routeSuffix, authentication) => {
 const generateModelRoutes = (model) => {
   const routeSuffix = model.modelName.toLowerCase();
   const authentication = (req, res, next) => passport.authenticate(
-      ['jwt', 'clientBasic'],
-      DEFAULT_PASSPORT_OPTIONS,
-      (err, user) => {
-        if (err || !user) {
-          res.status(401).set('Content-Type', 'text/plain').send('Unauthorized');
-          return;
-        }
-        req.user = user;
-        next();
-      },
-    )(req, res, next);
+    ['jwt', 'clientBasic'],
+    DEFAULT_PASSPORT_OPTIONS,
+    (err, user) => {
+      if (err || !user) {
+        res.status(401).set('Content-Type', 'text/plain').send('Unauthorized');
+        return;
+      }
+      req.user = user;
+      next();
+    },
+  )(req, res, next);
   generateConnectionsRoute(model, routeSuffix, authentication);
   generateIndexesRoute(model, routeSuffix, authentication);
 };

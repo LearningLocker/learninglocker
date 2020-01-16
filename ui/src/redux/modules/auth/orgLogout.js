@@ -2,7 +2,7 @@ import { takeEvery, put } from 'redux-saga/effects';
 import { actions as routerActions } from 'redux-router5';
 import Cookies from 'js-cookie';
 import { each, pickBy } from 'lodash';
-import { testOrgCookieName } from 'ui/utils/auth';
+import { testOrgCookieName, getCookieOptions } from 'ui/utils/auth';
 
 export const ORG_LOGOUT = 'learninglocker/auth/ORG_LOGOUT';
 
@@ -27,7 +27,7 @@ function* orgLogoutSaga({ organisationId }) {
     const cookies = Cookies.get();
     const testCookie = testOrgCookieName(organisationId);
     const filteredCookies = pickBy(cookies, (value, cookieName) => testCookie(cookieName));
-    each(filteredCookies, (value, name) => Cookies.remove(name));
+    each(filteredCookies, (value, name) => Cookies.remove(name, getCookieOptions()));
     yield put(routerActions.navigateTo('home'));
   } catch (err) {
     throw new Error('Failed to remove auth cookies from browser storage');

@@ -170,7 +170,7 @@ const createDashboardTokenPayload = async (dashboard, shareableId, provider) => 
 
   return payloadDefaults({
     provider,
-    scopes: getDashboardScopes(dashboard),
+    scopes: getDashboardScopes(),
     tokenType: 'dashboard',
     tokenId: String(dashboard._id),
     shareableId,
