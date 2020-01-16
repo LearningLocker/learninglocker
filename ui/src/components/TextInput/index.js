@@ -43,15 +43,27 @@ class TextInput extends Component {
     this.props.onCancel();
   }
 
+  renderLabel = () => {
+    const { label } = this.props;
+
+    if (!label) {
+      return null;
+    }
+
+    return (
+      <label htmlFor={label} className={styles.label}>
+        {label}
+      </label>
+    );
+  }
+
   render = () => {
     const { label, onFocus, autoFocus, name } = this.props;
     const { value } = this.state;
 
     return (
       <div className={`form-group ${styles.group}`}>
-        {label && <label htmlFor={label} className={styles.label}>
-          {label}
-        </label>}
+        {this.renderLabel()}
         <div className={`form-control ${styles.input}`}>
           <input
             autoFocus={autoFocus}
