@@ -45,12 +45,13 @@ class TextInput extends Component {
     name: PropTypes.string,
     autoFocus: PropTypes.bool,
     defaultValue: PropTypes.string,
-  }
+  };
 
   static defaultProps = {
-    onCancel: () => {},
+    onCancel: () => {
+    },
     placeholder: ''
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -59,23 +60,23 @@ class TextInput extends Component {
 
   state = {
     value: ''
-  }
+  };
 
   onChange = (e) => {
     this.props.onChange(e.target.value, this.props.label || this.props.name);
     this.setState({ value: e.target.value });
-  }
+  };
 
   onSubmit = (e) => {
     e.preventDefault();
     this.props.onSubmit(this.state.value);
-  }
+  };
 
   onCancel = (e) => {
     e.preventDefault();
     this.setState({ value: '' });
     this.props.onCancel();
-  }
+  };
 
   renderLabel = () => {
     const { label } = this.props;
@@ -90,7 +91,7 @@ class TextInput extends Component {
         {label}
       </Label>
     );
-  }
+  };
 
   render = () => {
     const { label, onFocus, autoFocus, name } = this.props;
@@ -114,7 +115,7 @@ class TextInput extends Component {
         </InputWrapper>
       </FormGroup>
     );
-  }
+  };
 }
 
 export default TextInput;

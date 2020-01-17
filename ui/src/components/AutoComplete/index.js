@@ -303,8 +303,8 @@ class AutoComplete extends Component {
 
   render() {
     const wrapperClasses = classNames({
-      'open': this.state.focused,
-      'noBorder': !this.state.focused && this.props.noBorder
+      open: this.state.focused,
+      noBorder: !this.state.focused && this.props.noBorder
     });
 
     return (

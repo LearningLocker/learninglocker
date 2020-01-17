@@ -30,19 +30,19 @@ const OptionList = ({
   deselectOption,
   children
 }) => (
-    <StyledOptionList>
-      <InfiniteOptionList
-        options={options}
-        optionCount={optionCount}
-        fetchMore={fetchMore}
-        displayCount={displayCount}
-        rowHeight={rowHeight}
-        renderOption={renderOption}
-        onSelectOption={onSelectOption}
-        deselectOption={deselectOption} />
-      {children && <Divider />}
-      {children}
-    </StyledOptionList>
-  );
+  <StyledOptionList>
+    <InfiniteOptionList
+      options={options}
+      optionCount={optionCount}
+      fetchMore={fetchMore}
+      displayCount={displayCount}
+      rowHeight={rowHeight}
+      renderOption={renderOption}
+      onSelectOption={onSelectOption}
+      deselectOption={deselectOption} />
+    {children && <Divider />}
+    {children}
+  </StyledOptionList>
+);
 
 export default OptionList;
