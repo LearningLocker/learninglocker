@@ -7,6 +7,12 @@
   text-align: center;
 }
 
+.comment {
+  color: #D35D2B;
+  font-size: 20px;
+  margin: 15px;
+}
+
 .benchmark {
   text-align: center;
   justify-content: center;
