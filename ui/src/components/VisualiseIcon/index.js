@@ -1,8 +1,7 @@
 /* eslint-disable react/jsx-indent */
 import React from 'react';
 import PropTypes from 'prop-types';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import classNames from 'classnames';
+import styled from 'styled-components';
 import {
   LEADERBOARD,
   XVSY,
@@ -40,7 +39,10 @@ import {
   TABLE_GREY_IMAGE,
   TABLE_IMAGE,
 } from './assets';
-import styles from './style.css';
+
+const Image = styled.img`
+  height: ${props => props.isSmall && '30px' || 'initial'}
+`;
 
 /**
  * @param {string} type
@@ -126,14 +128,10 @@ const VisualiseIcon = ({
     return null;
   }
 
-  const classes = classNames({
-    [styles.visualisationSmall]: isSmall,
-  });
-
   // TODO: alt should be mapped from image src, not type
   return (
-    <img
-      className={classes}
+    <Image
+      isSmall={isSmall}
       src={src}
       alt={getTitle(type)} />
   );
@@ -145,4 +143,4 @@ VisualiseIcon.propTypes = {
   isSmall: PropTypes.bool,
 };
 
-export default withStyles(styles)(React.memo(VisualiseIcon));
+export default React.memo(VisualiseIcon);
