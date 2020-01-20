@@ -52,6 +52,14 @@ const renderCount = ({ color, count, tooltip, hasBenchmark }) => (
     active />
   );
 
+const renderComment = ({ comment }) => (
+  <div
+    key="comment"
+    className={styles.comment}>
+    {comment}
+  </div>
+  );
+
 const renderBenchmark = ({ percentage, model }) => {
   if (percentage.result === 'N/A') {
     return percentage.result;
@@ -101,7 +109,7 @@ const renderCounter = ({ color, results, model, height, width }) => {
   const countFontsize = getCountFontsize({ height, width, hasBenchmark, maxSize });
   const renderedCount = renderCount({ color, count, tooltip, hasBenchmark });
   const renderedBenchmark = hasBenchmark ? renderBenchmark({ percentage, model }) : null;
-
+  const renderedComment = renderComment({ comment: model.get('comments', '') });
 
   return (
     <div className={styles.outerCounter}>
@@ -116,6 +124,7 @@ const renderCounter = ({ color, results, model, height, width }) => {
             fontSize,
             color: percentage.color,
           }}>{ renderedBenchmark }</div>
+        { renderedComment }
       </div>
     </div>
   );
