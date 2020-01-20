@@ -47,7 +47,14 @@ const FullPageBackground = ({ version, children, width = 600 }) => (
       <div style={{ width }}>
         {children}
       </div>
-      <p className={styles.copyright}>&copy; {new Date().getFullYear()} <a href="https://www.learningpool.com" title="Learning Pool - Innovation. Passion. Learning." target="_blank" rel="noopener noreferrer">Learning Pool</a></p>
+      <p className={styles.copyright}>
+        &copy; {new Date().getFullYear()} &nbsp;
+        <a
+          href="https://www.learningpool.com"
+          title="Learning Pool - Innovation. Passion. Learning."
+          target="_blank"
+          rel="noopener noreferrer" >Learning Pool</a>
+      </p>
       {versionDisplay(version)}
     </div>
   </div>
