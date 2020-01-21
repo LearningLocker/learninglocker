@@ -61,19 +61,14 @@ export default (
     handler: statementForwardingHandler
   }, handleResponse(STATEMENT_FORWARDING_QUEUE));
 
-  const RETRY_DELAY = 900; // 900 (15 minutes, max allowed DelaySeconds: http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SQS.html)
-
   Queue.subscribe({
     queueName: STATEMENT_FORWARDING_REQUEST_QUEUE,
     handler: statementForwardingRequestHandler,
-    deadLetter: STATEMENT_FORWARDING_DEADLETTER_QUEUE,
   }, handleResponse(STATEMENT_FORWARDING_REQUEST_QUEUE));
 
   Queue.subscribe({
     queueName: STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE,
     handler: statementForwardingRequestHandler,
-    deadLetter: STATEMENT_FORWARDING_DEADLETTER_QUEUE,
-    retryDelay: RETRY_DELAY
   }, handleResponse(STATEMENT_FORWARDING_REQUEST_DELAYED_QUEUE));
 
   Queue.subscribe({
