@@ -13,7 +13,7 @@ export const requestAppAccess = catchErrors(async (request, response) => {
   const authInfo = getAuthFromRequest(request);
 
   const subject = 'Upgrade to enterprise enquiry';
-  const recipient = 'Learning Locker <hello@learninglocker.net>';
+  const recipient = 'Learning Locker <lydia.ross@learningpool.com>';
 
   const globalTemplate = await promisify(fs.readFile)('./lib/templates/emails/body.html');
   const compiledWrapper = _.template(globalTemplate);
@@ -38,12 +38,15 @@ export const requestAppAccess = catchErrors(async (request, response) => {
   }, defaultMailOptions);
 
   await new Promise((resolve, reject) => {
-    transporter.sendMail(mailOptions, (err) => {
-      if (err !== null && err !== undefined) {
-        logger.error('Error sending email', err);
+    transporter.sendMail(mailOptions, (error, info) => {
+      console.log('001', error);
+      if (error !== null && error !== undefined) {
+        console.log('002', error.responseCode);
+        logger.error('Error sending email', error);
         reject(new RequestAppAccessError());
         return;
       }
+      console.log('003 - success', info);
       resolve();
     });
   });
