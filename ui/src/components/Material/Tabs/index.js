@@ -1,13 +1,29 @@
 import React from 'react';
 import { Tabs } from 'react-toolbox/lib/tabs';
-import { omitBy, isFunction } from 'lodash';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from './styles.css';
+import styled from 'styled-components';
 
-export default withStyles(styles)(({ children, ...props }) =>
-  <Tabs
-    theme={omitBy(styles, isFunction)}
+const tabClassName = 'tab';
+const pointerClassName = 'pointer';
+
+const StyledTabs = styled(Tabs)`
+  && {
+    .${pointerClassName} {
+      background-color: rgb(245,171,53);
+    }
+
+    .${tabClassName} {
+      overflow: visible;
+    }
+  }
+`;
+
+export default ({ children, ...props }) => (
+  <StyledTabs
+    theme={{
+      tab: tabClassName,
+      pointer: pointerClassName
+    }}
     {...props}>
     {children}
-  </Tabs>
+  </StyledTabs>
 );
