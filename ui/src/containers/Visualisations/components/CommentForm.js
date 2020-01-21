@@ -16,7 +16,7 @@ const CommentForm = ({
   return (
     <div className="form-group">
       <label htmlFor={formId}>
-        Comment
+        Counter description
       </label>
 
       <input

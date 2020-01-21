@@ -114,13 +114,13 @@ const Editor = ({
                 timezone={model.get('timezone', null)}
                 orgTimezone={orgTimezone}
                 onChange={onChangeTimezone} />
+
+              <CommentForm
+                visualisationId={id}
+                comment={model.get('comments')}
+                onChange={onChangeComment} />
             </Tab>
           </Tabs>
-
-          <CommentForm
-            visualisationId={id}
-            comment={model.get('comments')}
-            onChange={onChangeComment} />
         </div>
       </div>
 
