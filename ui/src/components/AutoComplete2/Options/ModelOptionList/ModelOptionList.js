@@ -89,7 +89,8 @@ const addProps = compose(
     fields,
     defaultValues,
     defaultNewValues,
-    onSelectOption
+    onSelectOption,
+    isAddNewOptionEnabled = true
   }) => ({
     options: models.entrySeq().toList(),
     optionCount: modelCount,
@@ -105,11 +106,13 @@ const addProps = compose(
       defaultValues
     }),
     children: (
-      <AddNewOption
-        fields={fields}
-        defaultNewValues={defaultNewValues}
-        onAddNew={onSelectOption}
-        addModel={addModel} />
+      isAddNewOptionEnabled
+        ? <AddNewOption
+          fields={fields}
+          defaultNewValues={defaultNewValues}
+          onAddNew={onSelectOption}
+          addModel={addModel} />
+        : null
     )
   }))
 );
