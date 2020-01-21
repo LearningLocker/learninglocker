@@ -42,9 +42,9 @@ const resultsIconStyles = {
   width: '40px',
 };
 
-const renderCount = ({ color, count, tooltip, hasBenchmark }) => (
+const renderCount = ({ color, count, tooltip, hasBenchmark, hasComment }) => (
   <TooltipLink
-    style={{ color, height: hasBenchmark ? null : '100%' }}
+    style={{ color, height: hasBenchmark || hasComment ? null : '100%' }}
     label={formatShortNumber(count)}
     tooltip={tooltip}
     tooltipPosition="top"
@@ -101,13 +101,14 @@ const renderCounter = ({ color, results, model, height, width }) => {
   const maxSize = Math.min(height, width);
   const fontSize = (width < 332) || (maxSize < 245) ? '13px' : '0.2em';
   const hasBenchmark = results.size > 1;
+  const hasComment = model.get('comments', '') !== '';
   const benchmarkCount = hasBenchmark ? getBenchmarkResultCount(results) : null;
   const count = getResultCount(results);
   const percentage = getPercentage(count, benchmarkCount);
 
   const tooltip = hasBenchmark ? formatBenchmarkTooltip({ count, benchmarkCount }) : formatTooltip(count);
   const countFontsize = getCountFontsize({ height, width, hasBenchmark, maxSize });
-  const renderedCount = renderCount({ color, count, tooltip, hasBenchmark });
+  const renderedCount = renderCount({ color, count, tooltip, hasBenchmark, hasComment });
   const renderedBenchmark = hasBenchmark ? renderBenchmark({ percentage, model }) : null;
   const renderedComment = renderComment({ comment: model.get('comments', '') });
 
