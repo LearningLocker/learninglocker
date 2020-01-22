@@ -11,6 +11,7 @@ import {
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT,
+  TEMPLATE_LEARNING_EXPERIENCE_TYPE
 } from 'lib/constants/visualise';
 import NoData from 'ui/components/Graphs/NoData';
 import ScrollableTable from 'ui/components/ScrollableTable';
@@ -87,6 +88,7 @@ const getGroupAxisLabel = (visualisation) => {
     case TEMPLATE_MOST_ACTIVE_PEOPLE:
     case TEMPLATE_MOST_POPULAR_ACTIVITIES:
     case TEMPLATE_MOST_POPULAR_VERBS:
+    case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
       return visualisation.get('axesyLabel') || visualisation.getIn(['axesgroup', 'searchString']) || 'Y Axis';
     // Line Chart type
     case FREQUENCY:
@@ -111,7 +113,8 @@ const getValueAxisLabel = (index, visualisation) => {
     case TEMPLATE_MOST_ACTIVE_PEOPLE:
     case TEMPLATE_MOST_POPULAR_ACTIVITIES:
     case TEMPLATE_MOST_POPULAR_VERBS:
-      return visualisation.get('axesxLabel') || visualisation.getIn(['axesvalue', 'searchString']) || 'X Axis';
+    case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
+      return visualisation.get('axesxLabel') || visualisation.getIn(['axesxValue', 'searchString']) || 'X Axis';
     default:
       return visualisation.get('axesyLabel') || visualisation.getIn(['axesvalue', 'searchString']) || 'Y Axis';
   }
