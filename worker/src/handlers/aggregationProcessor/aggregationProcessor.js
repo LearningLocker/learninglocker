@@ -2,34 +2,46 @@ import { LOCK_TIMEOUT_MINUTES, AGGREGATION_PROCESSOR_QUEUE } from 'lib/constants
 import moment from 'moment';
 import AggregationProcessor from 'lib/models/aggregationProcessor';
 import Statement from 'lib/models/statement';
-import { get, omit } from 'lodash';
+import { get, omit, isObject } from 'lodash';
 import { publish } from 'lib/services/queue';
 import convert$oid from 'lib/helpers/convert$oid';
+// import { delay } from 'bluebird';
 
-export const combine = (as, bs, keyFn, mergeFn) => {
+export const combine = (as, bs, keyFnIn, mergeFn) => {
+  const keyFn = (item) => {
+    const keyValue = keyFnIn(item);
+    return isObject(keyValue) ? JSON.stringify(keyValue) : keyValue;
+  };
   const groupedAs = as.reduce((result, a) => {
     const key = keyFn(a);
     result[key] = { key, a };
     return result;
   }, {});
+
   const groupedResults = bs.reduce((result, b) => {
     const key = keyFn(b);
     result[key] = { ...result[key], b, key };
     return result;
   }, groupedAs);
+
   return Object.entries(groupedResults).map(([, results]) =>
     mergeFn(results.key, results.a, results.b)
   );
 };
 
 export const hasReachedEnd = ({ model, now }) => {
-  return (
+  const out = (
     moment(model.fromTimestamp).isSame(moment(model.gtDate)) &&
     moment(model.toTimestamp).isSame(now)
   );
+  return out;
 };
 
 export const getFromTimestamp = ({ model, now }) => {
+  if (model.useWindowOptimization === false) {
+    return moment(model.gtDate);
+  }
+
   if (!model.fromTimestamp || moment(model.fromTimestamp).isAfter(moment(model.gtDate))) {
     const blockSizeSeconds = moment(model.fromTimestamp || now).subtract(model.blockSizeSeconds, 'seconds');
 
@@ -62,6 +74,9 @@ export const getAddToTimestamp = ({
   model,
   now
 }) => {
+  if (model.useWindowOptimization === false) {
+    return now;
+  }
   const addFrom = getAddFromTimestamp({ model, now });
   const nextAddFrom = addFrom.add(model.blockSizeSeconds, 'seconds');
 
@@ -80,6 +95,24 @@ const getAddPipeline = ({
   model,
   now
 }) => {
+  if (!model.useWindowOptimization) {
+    return [
+      {
+        $match: {
+          $or: [
+            {
+              timestamp: {
+                $gte: moment(model.gtDate).toDate(),
+                $lt: moment(model.fromTimestamp || now).toDate()
+              }
+            }
+          ]
+        },
+      },
+      ...(parsePipelineString(model.pipelineString))
+    ];
+  }
+
   const addToFrontPipeline =
     {
       $gt: getAddFromTimestamp({ model, now }).toDate(),
@@ -190,7 +223,7 @@ const aggregationProcessor = async ({
   });
 
   const addResultsPromise = Statement.aggregate(addPipeline);
-  const subtractResultsPromise = subtractPipeline && Statement.aggregate(subtractPipeline);
+  const subtractResultsPromise = model.useWindowOptimization && subtractPipeline && Statement.aggregate(subtractPipeline);
 
 
   const [addResults, subtractResults] =
@@ -227,6 +260,8 @@ const aggregationProcessor = async ({
         };
       }
     );
+  } else if (!model.useWindowOptimization) {
+    results = addResults;
   } else {
     results = combine(model.results || [], addResults,
       result => result.model,
