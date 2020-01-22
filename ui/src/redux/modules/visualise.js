@@ -1,7 +1,7 @@
 import { List, Map, fromJS } from 'immutable';
 import { createSelector } from 'reselect';
 import { take, takeEvery, put, fork, select } from 'redux-saga/effects';
-import { identity, get, isUndefined } from 'lodash';
+import { identity, get } from 'lodash';
 import {
   fetchAggregation,
   aggregationResultsSelector,
@@ -409,13 +409,13 @@ export const visualisationResultsSelector = (visualisationId, filter) => createS
   }
 });
 
-const shouldUseWs = () => () => true;
+const shouldUseWs = () => true;
 
 export const visualisationWsResultsSelector = (visualisationId, filter) => createSelector([
   identity,
   modelsSchemaIdSelector('visualisation', visualisationId)
 ], (state, visualisation) => {
-  const useWs = shouldUseWs(visualisationId)(state);
+  const useWs = shouldUseWs();
 
   switch (visualisation.get('type')) {
     case JOURNEY_PROGRESS:
@@ -431,7 +431,7 @@ export const visualisationWsResultsSelector = (visualisationId, filter) => creat
 export const visualisationAllAggregationsHaveResultSelector = visualisationId => createSelector([
   identity,
 ], (state) => {
-  const useWs = shouldUseWs(visualisationId)(state);
+  const useWs = shouldUseWs();
   if (useWs) {
     const { series, timeIntervalSinceToday, timeIntervalUnits } = visualisationWsPipelinesSelector(visualisationId)(state);
     return series.reduce(
@@ -502,7 +502,7 @@ export function* fetchVisualisationSaga(state, id) {
       timeIntervalUnits,
       timeIntervalSincePreviousTimeInterval
     } = visualisationWsPipelinesSelector(id)(state);
-    const useWs = shouldUseWs(id)(state);
+    const useWs = shouldUseWs();
 
     if (useWs) {
       for (let s = 0; s < series.size; s += 1) {
