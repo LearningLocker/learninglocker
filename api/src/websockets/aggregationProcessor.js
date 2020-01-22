@@ -2,6 +2,7 @@ import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import AggregationProcessor from 'lib/models/aggregationProcessor';
 import mongoose from 'mongoose';
 import moment from 'moment';
+import { isUndefined } from 'lodash';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -37,6 +38,7 @@ const aggregationProcessor = async ({
     ws.send(JSON.stringify(next));
 
     if (
+      !isUndefined(next.gtDate) &&
       moment(next.fromTimestamp).isSame(moment(next.gtDate)) &&
       moment(next.toTimestamp).isAfter(moment().subtract(10, 'minutes'))
     ) {

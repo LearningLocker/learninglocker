@@ -5,7 +5,6 @@ import Statement from 'lib/models/statement';
 import { get, omit, isObject } from 'lodash';
 import { publish } from 'lib/services/queue';
 import convert$oid from 'lib/helpers/convert$oid';
-// import { delay } from 'bluebird';
 
 export const combine = (as, bs, keyFnIn, mergeFn) => {
   const keyFn = (item) => {
@@ -282,8 +281,6 @@ const aggregationProcessor = async ({
 
   const fromTimestamp = getFromTimestamp({ model, now });
   const toTimestamp = getAddToTimestamp({ model, now });
-
-  // await delay(2000); // DEBUG ONLY, remove
 
   const newModel = await AggregationProcessor.findOneAndUpdate({
     _id: aggregationProcessorId

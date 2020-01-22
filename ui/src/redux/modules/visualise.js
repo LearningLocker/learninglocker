@@ -409,18 +409,7 @@ export const visualisationResultsSelector = (visualisationId, filter) => createS
   }
 });
 
-const shouldUseWs = visualisationId => (state) => {
-  return true;
-    // const series = visualisationPipelinesSelector(visualisationId)(state);
-    // const shouldUseWsOut = !isUndefined(series.find((axis) => {
-    //   const out = axis.find((query) => {
-    //     const ou = !isUndefined(query.getIn([3, '$group', 'count', '$sum']));
-    //     return ou;
-    //   });
-    //   return out;
-    // }));
-    // return shouldUseWsOut;
-};
+const shouldUseWs = () => () => true;
 
 export const visualisationWsResultsSelector = (visualisationId, filter) => createSelector([
   identity,
