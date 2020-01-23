@@ -1,8 +1,38 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from './styles.css';
+import styled, { css } from 'styled-components';
+
+const iconActiveMixin = css`
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  background: #eee;
+`;
+
+const VisualisationIcon = styled.div`
+  text-align: center;
+  vertical-align: top;
+  display: inline-block;
+  margin: 3px;
+  width: 109px;
+  cursor: pointer;
+  transition: background 0.2s;
+  ${props => props.active && iconActiveMixin || ''}
+
+  &:hover {
+    background: #eee;
+  }
+
+  img {
+    width: 100%;
+  }
+
+  h5 {
+    text-align: center;
+    padding: 0 4px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-top: 0;
+  }
+`;
 
 /**
  * @param {string} props.title
@@ -15,21 +45,16 @@ const CustomCard = ({
   srcImage,
   active,
   onClick,
-}) => {
-  const classes = classNames({
-    [styles.visualisationIcon]: true,
-    [styles.active]: active
-  });
-
-  return (
-    <div className={classes} onClick={onClick} >
-      <img
-        src={srcImage}
-        alt={title} />
-      <h5>{title}</h5>
-    </div>
-  );
-};
+}) => (
+  <VisualisationIcon
+    onClick={onClick}
+    active={active}>
+    <img
+      src={srcImage}
+      alt={title} />
+    <h5>{title}</h5>
+  </VisualisationIcon>
+);
 
 CustomCard.propTypes = {
   title: PropTypes.string.isRequired,
@@ -38,4 +63,4 @@ CustomCard.propTypes = {
   onClick: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles)(React.memo(CustomCard));
+export default React.memo(CustomCard);
