@@ -12,12 +12,17 @@ import TemplateCuratrLearnerInteractionsByDateAndVerbCard from 'ui/containers/Vi
 import TemplateCuratrUserEngagementLeaderboardCard from 'ui/containers/Visualisations/TemplateCuratrUserEngagementLeaderboard/Card';
 import TemplateCuratrProportionOfSocialInteractionsCard from 'ui/containers/Visualisations/TemplateCuratrProportionOfSocialInteractions/Card';
 import TemplateCuratrActivitiesWithMostCommentsCard from 'ui/containers/Visualisations/TemplateCuratrActivitiesWithMostComments/Card';
+import TemplateLearningExperienceType from 'ui/containers/Visualisations/TemplateLearningExperienceType/Card';
 import styles from './styles.css';
 
 const TemplateCardList = ({ model, saveModel }) => (
   <div
     id="new-visualisation-templates"
     className={styles.cardList}>
+
+    <TemplateLearningExperienceType
+      model={model}
+      saveModel={saveModel} />
 
     <TemplateLast7DaysStatementsCard
       model={model}
