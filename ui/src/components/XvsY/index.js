@@ -11,12 +11,60 @@ import {
   Scatter,
   CartesianGrid
 } from 'recharts';
+import styled from 'styled-components';
 import NoData from 'ui/components/Graphs/NoData';
 import { displayAuto } from 'ui/redux/modules/queryBuilder';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { renderLegend } from 'ui/components/Charts/Chart';
 import CustomTooltip from './CustomTooltip';
-import styles from './styles.css';
+
+const Chart = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .desc {
+    margin: 0;
+    color: #999;
+  }
+
+  svg g text {
+    font-size: 12px;
+  }
+`;
+
+const StyledXAxis = styled.span`
+  display: inline-block;
+  white-space: nowrap;
+`;
+
+const StyledYAxis = styled.span`
+  display: inline-block;
+  writing-mode: vertical-rl;
+  transform: rotate(-180deg);
+  margin: auto 0;
+  margin-left: 15px;
+`;
+
+const XAxisLabel = styled.div`
+  text-align: right;
+  word-break: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
+  position: static;
+  margin-right: 15px;
+  margin-bottom: 10px;
+`;
+
+const BarContainer = styled.div`
+  display: flex;
+  flex-grow: 1;
+`;
+
+const ChartWrapper = styled.div`
+  flex-grow: 1;
+  flex-shrink: 0;
+`;
 
 class XvsY extends Component {
   static propTypes = {
@@ -143,28 +191,28 @@ class XvsY extends Component {
     )
 
   renderChart = () => (
-    <div className={styles.chart}>
-      <div className={`${styles.barContainer}`}>
-        <span className={styles.yAxis}>
+    <Chart>
+      <BarContainer>
+        <StyledYAxis>
           {this.props.model.get('axesyLabel') || shorten(this.props.model.getIn(['axesyValue', 'searchString'], 'Y-Axis'))}
-        </span>
-        <div className={styles.chartWrapper}>
+        </StyledYAxis>
+        <ChartWrapper>
           <AutoSizer forceChange={this.props.results}>
             {this.renderScatterChart}
           </AutoSizer>
-        </div>
-      </div>
-      <div className={styles.xAxisLabel}>
-        <span className={styles.xAxis}>
+        </ChartWrapper>
+      </BarContainer>
+      <XAxisLabel>
+        <StyledXAxis>
           {this.props.model.get('axesxLabel') || shorten(this.props.model.getIn(['axesxValue', 'searchString'], 'X-Axis'))}
-        </span>
-      </div>
-    </div>
-  )
+        </StyledXAxis>
+      </XAxisLabel>
+    </Chart>
+  );
 
   render = () => (
     this.hasData() ? <NoData /> : this.renderChart()
   )
 }
 
-export default withStyles(styles)(XvsY);
+export default XvsY;
