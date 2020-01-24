@@ -1,18 +1,26 @@
-.chart {
+import styled from 'styled-components';
+
+export const Chart = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-}
 
-.chart svg g text {
-  font-size: 12px; }
+  svg g text {
+    font-size: 12px;
+  }
+`;
 
-.barContainer {
+export const ChartWrapper = styled.div`
+  flex-grow: 1;
+  flex-shrink: 0;
+`;
+
+export const BarContainer = styled.div`
   display: flex;
   flex-grow: 1;
-}
+`;
 
-.customTooltip {
+export const CustomTooltip = styled.div`
   width: auto;
   margin: 0;
   padding-top: 5px;
@@ -22,36 +30,38 @@
   border: 2px solid #f5f5f5;
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 2px;
-  font-size: 12px; }
+  font-size: 12px;
+`;
 
-.label {
-  margin: 1;
+export const Label = styled.p`
   color: #ED7030;
   font-weight: 700;
   word-break: break-all;
-}
+`;
 
-.value {
-  margin: 5;
+export const Value = styled.div`
   color: #000;
-  font-weight: 300; }
+  font-weight: 300;
+`;
 
-.desc {
+export const Desc = styled.div`
   margin: 0;
-  color: #999; }
+  color: #999;
+`;
 
-.buttons {
+export const Buttons = styled.div`
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
   margin-top: -4px;
-}
+`;
 
-.xAxis {
+export const XAxis = styled.span`
   display: inline-block;
-  white-space: nowrap; }
+  white-space: nowrap;
+`;
 
-.xAxisLabel {
+export const XAxisLabel = styled.div`
   text-align: right;
   word-break: break-word;
   overflow: hidden;
@@ -60,25 +70,11 @@
   position: static;
   margin-right: 15px;
   margin-bottom: 10px;
-}
+`;
 
-.yAxisLabel {
-  writing-mode: vertical-lr;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  transform: rotate(-180deg);
-  max-width: 20px; /* otherwise this element pushes chart of the page in firefox, (dispite the element naturally being 20px) */
-}
-
-.yAxis {
+export const YAxis = styled.div`
   display: inline-block;
   writing-mode: vertical-rl;
   transform: rotate(-180deg);
   margin: auto 0;
-  }
-
-.chartWrapper {
-  flex-grow: 1;
-  flex-shrink: 0;
-}
+`;

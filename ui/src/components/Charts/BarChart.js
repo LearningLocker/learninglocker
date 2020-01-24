@@ -4,12 +4,20 @@ import { List } from 'immutable';
 import { AutoSizer } from 'react-virtualized';
 import { BarChart as Chart, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { compose } from 'recompose';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import NoData from 'ui/components/Graphs/NoData';
 import { Button } from 'react-toolbox/lib/button';
 import uuid from 'uuid';
 import { connect } from 'react-redux';
 import { getMetadataSelector, setInMetadata } from 'ui/redux/modules/metadata';
+import {
+  Buttons,
+  Chart as StyledChart,
+  ChartWrapper,
+  BarContainer,
+  XAxisLabel,
+  XAxis as StyledXAxis,
+  YAxis as StyledYAxis,
+} from 'ui/components/Charts/styled';
 import {
   getResultsData,
   getShortModel,
@@ -20,11 +28,8 @@ import {
   renderLegend,
   hiddenSeriesState
 } from './Chart';
-import styles from './styles.css';
-
 
 const enhance = compose(
-  withStyles(styles),
   hiddenSeriesState,
   connect((state, { model }) =>
     ({
@@ -77,7 +82,6 @@ class BarChart extends Component {
         raised
         label="Previous"
         onMouseUp={this.displayPrevPage}
-        style={styles.button}
         icon={<i className="icon ion-chevron-left" />} />
     </span>
   )
@@ -88,7 +92,6 @@ class BarChart extends Component {
         raised
         label="Next"
         onMouseUp={this.displayNextPage}
-        style={styles.button}
         icon={<i className="icon ion-chevron-right" />} />
     </span>
   )
@@ -134,26 +137,26 @@ class BarChart extends Component {
     const pages = this.getPages(model, data);
 
     return (
-      <div className={`${styles.chart}`}>
-        <div className={`${styles.buttons}`}>
+      <StyledChart>
+        <Buttons>
           {this.hasPrevPage(pages)(activePage) && this.renderPrevButton()}
           {this.hasNextPage(pages)(activePage) && this.renderNextButton()}
-        </div>
-        <div className={`${styles.withPrevNext} clearfix`} />
-        <div className={`${styles.barContainer}`}>
-          <span className={styles.yAxis}>
+        </Buttons>
+        <div className={'clearfix'} />
+        <BarContainer>
+          <StyledYAxis>
             {this.props.model.get('axesyLabel') || this.props.model.getIn(['axesgroup', 'searchString'], 'Y-Axis')}
-          </span>
-          <div className={styles.chartWrapper}>
+          </StyledYAxis>
+          <ChartWrapper>
             {this.props.chartWrapperFn((this.renderBarChart(model)(colors)(labels)(data)(stacked)(activePage)))}
-          </div>
-        </div>
-        <div className={styles.xAxisLabel}>
-          <span className={styles.xAxis}>
+          </ChartWrapper>
+        </BarContainer>
+        <XAxisLabel>
+          <StyledXAxis>
             {this.props.model.get('axesxLabel') || this.props.model.getIn(['axesvalue', 'searchString'], 'X-Axis')}
-          </span>
-        </div>
-      </div>
+          </StyledXAxis>
+        </XAxisLabel>
+      </StyledChart>
     );
   }
 

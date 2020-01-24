@@ -1,7 +1,6 @@
 import React from 'react';
 import { AutoSizer } from 'react-virtualized';
 import { LineChart as Chart, XAxis, YAxis, Line, CartesianGrid } from 'recharts';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import NoData from 'ui/components/Graphs/NoData';
 import { compose } from 'recompose';
 import {
@@ -13,7 +12,14 @@ import {
   renderLegend,
   hiddenSeriesState
 } from './Chart';
-import styles from './styles.css';
+import {
+  Chart as StyledChart,
+  BarContainer,
+  XAxis as StyledXAxis,
+  YAxis as StyledYAxis,
+  XAxisLabel,
+  ChartWrapper
+} from './styled';
 
 const sortData = data =>
   data.sortBy(e => e.get('id'));
@@ -50,21 +56,21 @@ const renderLineChart = (labels, toggleHiddenSeries, hiddenSeries) => colors => 
   );
 
 const renderChart = (component, axesLabels, chartWrapperFn, model) => (
-  <div className={styles.chart}>
-    <div className={`${styles.barContainer}`}>
-      <span className={styles.yAxis}>
+  <StyledChart>
+    <BarContainer>
+      <StyledYAxis>
         {axesLabels.yLabel || model.getIn(['axesvalue', 'searchString'], 'Y-Axis')}
-      </span>
-      <div className={styles.chartWrapper}>
+      </StyledYAxis>
+      <ChartWrapper>
         {chartWrapperFn(component)}
-      </div>
-    </div>
-    <div className={styles.xAxisLabel}>
-      <span className={styles.xAxis}>
+      </ChartWrapper>
+    </BarContainer>
+    <XAxisLabel>
+      <StyledXAxis>
         {axesLabels.xLabel || 'yyyy/mm/dd'}
-      </span>
-    </div>
-  </div>
+      </StyledXAxis>
+    </XAxisLabel>
+  </StyledChart>
 );
 
 const renderChartResults = (labels, toggleHiddenSeries, hiddenSeries) => colors => results =>
@@ -73,18 +79,20 @@ const renderChartResults = (labels, toggleHiddenSeries, hiddenSeries) => colors 
 const renderResults = results => (labels, toggleHiddenSeries, hiddenSeries) => colors => axesLabels => chartWrapperFn => model =>
   renderChart(renderChartResults(labels, toggleHiddenSeries, hiddenSeries)(colors)(results), axesLabels, chartWrapperFn, model);
 
-export default compose(
-  withStyles(styles),
-  hiddenSeriesState
-)(({
-  results,
-  labels,
-  colors,
-  axesLabels,
-  chartWrapperFn = component => (<AutoSizer>{component}</AutoSizer>),
-  toggleHiddenSeries,
-  hiddenSeries,
-  model
-}) =>
-  (hasData(results) ? renderResults(results)(labels, toggleHiddenSeries, hiddenSeries)(colors)(axesLabels)(chartWrapperFn)(model) : <NoData />)
+export default compose(hiddenSeriesState)((
+  {
+    results,
+    labels,
+    colors,
+    axesLabels,
+    chartWrapperFn = component => (<AutoSizer>{component}</AutoSizer>),
+    toggleHiddenSeries,
+    hiddenSeries,
+    model
+  }) =>
+    (
+      hasData(results)
+        ? renderResults(results)(labels, toggleHiddenSeries, hiddenSeries)(colors)(axesLabels)(chartWrapperFn)(model)
+        : <NoData />
+    )
 );
