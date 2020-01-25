@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import * as _ from 'lodash';
 import Scroll from 'react-scroll';
 import { connect } from 'react-redux';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { actions as routerActions } from 'redux-router5';
 import { withProps, compose, lifecycle, withHandlers, mapProps } from 'recompose';
 import { Map, List, is } from 'immutable';
@@ -21,7 +20,7 @@ import { COPY_DASHBOARD } from 'ui/redux/modules/dashboard/copyDashboard';
 import { getVisualisationsFromDashboard } from 'ui/redux/modules/dashboard/selectors';
 import { loggedInUserId } from 'ui/redux/selectors';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
-import styles from './styles.css';
+import { EditInputWrapper, Editor, EditWrapper } from 'ui/containers/Dashboard/styled';
 
 const schema = 'dashboard';
 
@@ -137,9 +136,9 @@ class Dashboard extends Component {
 
     return (
       <div className="row">
-        <div className={styles.editor}>
-          <div className={styles.editWrapper}>
-            <div style={{ flexGrow: 1 }}>
+        <Editor>
+          <EditWrapper>
+            <EditInputWrapper>
               <Input
                 type="text"
                 name="Title"
@@ -147,7 +146,7 @@ class Dashboard extends Component {
                 value={model.get('title', ' ')}
                 onChange={this.onTitleChange}
                 style={{ fontSize: '13px' }} />
-            </div>
+            </EditInputWrapper>
 
             &nbsp;&nbsp;
 
@@ -189,7 +188,7 @@ class Dashboard extends Component {
             <span style={{ marginLeft: 'auto' }}>
               <Owner model={model} />
             </span>
-          </div>
+          </EditWrapper>
           {this.props.getMetadata('isSharing') &&
             <div>
               <DashboardSharing
@@ -197,7 +196,7 @@ class Dashboard extends Component {
                 id={model.get('_id')} />
             </div>
           }
-        </div>
+        </Editor>
 
         <div className="clearfix" />
 
@@ -218,7 +217,6 @@ class Dashboard extends Component {
 }
 
 export default compose(
-  withStyles(styles),
   withProps(({ params, id }) =>
     ({
       schema,
