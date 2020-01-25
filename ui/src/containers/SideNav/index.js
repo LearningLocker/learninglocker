@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { List, Map } from 'immutable';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import Link from 'ui/containers/Link';
 import mapValues from 'lodash/mapValues';
 import { connect } from 'react-redux';
@@ -14,7 +13,15 @@ import CollapsibleNav from 'ui/containers/SideNav/CollapsibleNav';
 import { activeOrganisationSettingsSelector, currentScopesSelector } from 'ui/redux/modules/auth';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import canViewModel from 'lib/services/auth/canViewModel';
-import styles from './sidenav.css';
+import {
+  NavSideNav,
+  OrgAvatar,
+  SideNavContainer,
+  SideNavInner,
+  SideNavFooter as SideNavFooterWrapper,
+  SideNavHeader,
+  activeLinkClassName
+} from 'ui/containers/SideNav/styled';
 
 class SideNav extends Component {
   static propTypes = {
@@ -50,6 +57,7 @@ class SideNav extends Component {
 
   renderLink = (activeClass, routeName, text) => {
     const organisationId = this.props.activeRoute.params.organisationId;
+
     return (
       <li>
         <Link
@@ -60,13 +68,13 @@ class SideNav extends Component {
         </Link>
       </li>
     );
-  }
+  };
 
   renderSettingsLink = (routeSuffix, modelName) => {
     const routeName = `organisation.settings.${routeSuffix}`;
-    const activeClass = `v-link-active ${styles.vLinkActive}`;
+    const activeClass = `v-link-active ${activeLinkClassName}`;
     return this.renderLink(activeClass, routeName, modelName);
-  }
+  };
 
   renderSettings = () => {
     const { activeRoute } = this.props;
@@ -75,9 +83,7 @@ class SideNav extends Component {
     const activeScopes = this.props.activeScopes.toJS();
     const canViewStores = canViewModel('store', activeScopes);
     const canViewUsers = canViewModel('user', activeScopes);
-
     const canViewOrganisations = canViewModel('organisation', activeScopes);
-
     const canViewClients = canViewModel('client', activeScopes);
     const canViewRoles = canViewModel('role', activeScopes);
     const canViewSettings = (
@@ -109,7 +115,7 @@ class SideNav extends Component {
     const { groups } = this.state;
     const organisationId = activeRoute.params.organisationId;
     const activeScopes = this.props.activeScopes.toJS();
-    const activeClass = `v-link-active ${styles.vLinkActive}`;
+    const activeClass = `v-link-active ${activeLinkClassName}`;
     const canViewPeople = canViewModel('persona', activeScopes);
 
     return !canViewPeople ? <noscript /> : (
@@ -124,27 +130,29 @@ class SideNav extends Component {
         {this.renderLink(activeClass, 'organisation.people.imports', 'Import')}
       </CollapsibleNav>
     );
-  }
+  };
 
   render() {
     const { model, activeRoute } = this.props;
     const { groups } = this.state;
     const organisationId = activeRoute.params.organisationId;
-    const activeClass = `v-link-active ${styles.vLinkActive}`;
+    const activeClass = `v-link-active ${activeLinkClassName}`;
 
     return (
-      <div className={`col-sm-3 col-md-2 ${styles.sidenav}`} >
-        <div className={styles.sidenavInner} >
-          <header className={styles.sidenavHeader}>
-            <div className={styles.orgAvatar}>
+      <SideNavContainer className={'col-sm-3 col-md-2'} >
+        <SideNavInner>
+          <SideNavHeader>
+            <OrgAvatar>
               <OrgLogo organisation={model} />
-            </div>
+            </OrgAvatar>
             <div className="media-body">
-              <div className={styles.mediaAuthor}>{model.get('name')}</div>
+              <div style={{ textAlign: 'center' }}>
+                {model.get('name')}
+              </div>
             </div>
-          </header>
+          </SideNavHeader>
 
-          <ul className={`nav ${styles.navSidenav}`}>
+          <NavSideNav className={'nav'}>
             <CollapsibleNav
               onClick={this.onClickMenuItem}
               routeName={'organisation.data'}
@@ -160,19 +168,18 @@ class SideNav extends Component {
 
             {this.renderPeople()}
             {this.renderSettings()}
-          </ul>
+          </NavSideNav>
 
-          <footer className={styles.sidenavFooter}>
+          <SideNavFooterWrapper>
             <SideNavFooter />
-          </footer>
-        </div>
-      </div>
+          </SideNavFooterWrapper>
+        </SideNavInner>
+      </SideNavContainer>
     );
   }
 }
 
 export default compose(
-  withStyles(styles),
   connect(state =>
     ({
       activeRoute: routeNodeSelector('organisation')(state).route,
