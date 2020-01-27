@@ -1,5 +1,5 @@
 import React from 'react';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { CardList } from 'ui/containers/VisualiseForm/NewVisualisation/styled';
 import TemplateActivityOverTimeCard from 'ui/containers/Visualisations/TemplateActivityOverTime/Card';
 import TemplateLast7DaysStatementsCard from 'ui/containers/Visualisations/TemplateLast7DaysStatements/Card';
 import TemplateMostPopularVerbsCard from 'ui/containers/Visualisations/TemplateMostPopularVerbs/Card';
@@ -13,13 +13,9 @@ import TemplateCuratrUserEngagementLeaderboardCard from 'ui/containers/Visualisa
 import TemplateCuratrProportionOfSocialInteractionsCard from 'ui/containers/Visualisations/TemplateCuratrProportionOfSocialInteractions/Card';
 import TemplateCuratrActivitiesWithMostCommentsCard from 'ui/containers/Visualisations/TemplateCuratrActivitiesWithMostComments/Card';
 import TemplateLearningExperienceType from 'ui/containers/Visualisations/TemplateLearningExperienceType/Card';
-import styles from './styles.css';
 
 const TemplateCardList = ({ model, saveModel }) => (
-  <div
-    id="new-visualisation-templates"
-    className={styles.cardList}>
-
+  <CardList id="new-visualisation-templates">
     <TemplateLearningExperienceType
       model={model}
       saveModel={saveModel} />
@@ -71,7 +67,7 @@ const TemplateCardList = ({ model, saveModel }) => (
     <TemplateCuratrActivitiesWithMostCommentsCard
       model={model}
       saveModel={saveModel} />
-  </div>
+  </CardList>
 );
 
-export default withStyles(styles)(TemplateCardList);
+export default TemplateCardList;
