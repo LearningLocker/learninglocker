@@ -3,11 +3,10 @@ import PropTypes from 'prop-types';
 import { compose, setPropTypes, withState, withProps, withHandlers } from 'recompose';
 import { Map, fromJS, Iterable } from 'immutable';
 import isString from 'lodash/isString';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import ModelAutoComplete from 'ui/containers/ModelAutoComplete';
 import { queryToStringList } from 'ui/utils/queries';
 import { withModel } from 'ui/utils/hocs';
-import styles from './savedqueries.css'; // 'ui/containers/QueryBuilder/savedqueries.css' doesn't work in testing on import
+import { ButtonContainer } from 'ui/containers/QueryBuilder/styled';
 
 const getConditions = (query) => {
   if (!query) return new Map();
@@ -64,7 +63,6 @@ const withSelectedQuery = compose(
 );
 
 const enhance = compose(
-  withStyles(styles),
   setPropTypes({
     onQueryChange: PropTypes.func,
     query: PropTypes.instanceOf(Map)
@@ -104,7 +102,7 @@ const SavedQueries = ({
         parseOption={parseOption}
         parseOptionTooltip={parseOptionTooltip}
         defaultNewValues={{ conditions: query }} />
-      <div className={styles.buttonContainer}>
+      <ButtonContainer>
         <button
           disabled={isQueryEmpty || queriesEqual}
           className="btn btn-default btn-sm"
@@ -119,7 +117,7 @@ const SavedQueries = ({
           title={queriesEqual ? queriesEqualMessage : 'Load saved query'}>
           <i className="glyphicon glyphicon-save" />
         </button>
-      </div>
+      </ButtonContainer>
     </div>
   );
 };
