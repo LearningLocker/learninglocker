@@ -11,13 +11,8 @@ const enhance = compose(
   }),
   withProps(({ user }) => {
     const schema = 'organisation';
-    const organisations = user
-      .get('organisations')
-      .map(org => new Map({ $oid: org }));
     const filter = new Map({
-      _id: new Map({
-        $in: organisations
-      })
+      owner: user.get('_id')
     });
 
     return { schema, filter };
