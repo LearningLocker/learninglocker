@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
+import styled from 'styled-components';
 import FocusGroup from 'ui/components/FocusGroup/FocusGroup';
+
+const AutoCompleteWrapper = styled.div`
+  position: relative;
+  flex-grow: 1;
+`;
 
 /**
  * renders an autocomplete component with an input and suggestions
@@ -18,7 +24,7 @@ const AutoComplete = ({
   };
 
   return (
-    <div onKeyPress={onKeyPress} style={{ position: 'relative', flexGrow: 1 }}>
+    <AutoCompleteWrapper onKeyPress={onKeyPress}>
       <FocusGroup
         onFocus={() => { }}
         onBlur={onBlurInput}
@@ -34,7 +40,7 @@ const AutoComplete = ({
           }
         </div>
       </FocusGroup>
-    </div>
+    </AutoCompleteWrapper>
   );
 };
 
