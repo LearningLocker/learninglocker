@@ -1,28 +1,93 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`LineChartResult should render axes 1`] = `
+.c0 {
+  height: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.c0 svg g text {
+  font-size: 12px;
+}
+
+.c3 {
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+}
+
+.c5 {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.c4 {
+  text-align: right;
+  word-break: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  position: static;
+  margin-right: 15px;
+  margin-bottom: 10px;
+}
+
+.c2 {
+  display: inline-block;
+  -webkit-writing-mode: vertical-rl;
+  -ms-writing-mode: tb-rl;
+  writing-mode: vertical-rl;
+  -webkit-transform: rotate(-180deg);
+  -ms-transform: rotate(-180deg);
+  transform: rotate(-180deg);
+  margin: auto 0;
+}
+
 <div
-  className="chart"
+  className="c0"
 >
   <div
-    className="barContainer"
+    className="c1"
   >
-    <span
-      className="yAxis"
+    <div
+      className="c2"
     >
       THE-Y
-    </span>
+    </div>
     <div
-      className="chartWrapper"
+      className="c3"
     >
       <div />
     </div>
   </div>
   <div
-    className="xAxisLabel"
+    className="c4"
   >
     <span
-      className="xAxis"
+      className="c5"
     >
       THE-X
     </span>
