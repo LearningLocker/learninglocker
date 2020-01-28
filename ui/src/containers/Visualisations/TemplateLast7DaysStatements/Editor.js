@@ -6,7 +6,7 @@ import Tabs from 'ui/components/Material/Tabs';
 import CounterAxesEditor from 'ui/containers/VisualiseForm/StatementsForm/AxesEditor/CounterAxesEditor';
 import BenchmarkingEnabledSwitch from '../components/BenchmarkingEnabledSwitch';
 import DescriptionForm from '../components/DescriptionForm';
-import CommentForm from '../components/CommentForm';
+import ContextLabelForm from '../components/ContextLabelForm';
 import FiltersForm from '../components/FiltersForm';
 import PreviewPeriodPicker from '../components/PreviewPeriodPicker';
 import TimezoneForm from '../components/TimezoneForm';
@@ -34,12 +34,12 @@ const Editor = ({
     });
   }, [id]);
 
-  const onChangeComment = useCallback((comment) => {
+  const onChangeContextLabel = useCallback((contextLabel) => {
     updateModel({
       schema: 'visualisation',
       id,
-      path: 'comments',
-      value: comment,
+      path: 'contextLabel',
+      value: contextLabel,
     });
   }, [id]);
 
@@ -115,10 +115,10 @@ const Editor = ({
                 orgTimezone={orgTimezone}
                 onChange={onChangeTimezone} />
 
-              <CommentForm
+              <ContextLabelForm
                 visualisationId={id}
-                comment={model.get('comments')}
-                onChange={onChangeComment} />
+                contextLabel={model.get('contextLabel')}
+                onChange={onChangeContextLabel} />
             </Tab>
           </Tabs>
         </div>

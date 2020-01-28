@@ -48,7 +48,7 @@ const withStatementsVisualisation = (WrappedComponent) => {
       this.props.model.get('showStats') === model.get('showStats') &&
       this.props.model.get('statsAtBottom') === model.get('statsAtBottom') &&
       this.props.model.get('trendLines') === model.get('trendLines') &&
-      this.props.model.get('comments') === model.get('comments')
+      this.props.model.get('contextLabel') === model.get('contextLabel')
     );
 
     componentDidUpdate = () => {

@@ -3,15 +3,15 @@ import PropTypes from 'prop-types';
 
 /**
  * @param {string} props.visualisationId
- * @param {string} propscomment
- * @param {(comment: string) => void} props.onChange
+ * @param {string} propscontextLabel
+ * @param {(contextLabel: string) => void} props.onChange
  */
-const CommentForm = ({
+const ContextLabelForm = ({
   visualisationId,
-  comment,
+  contextLabel,
   onChange,
 }) => {
-  const formId = `visualisation-comment-${visualisationId}`;
+  const formId = `visualisation-contextLabel-${visualisationId}`;
 
   return (
     <div className="form-group">
@@ -23,16 +23,16 @@ const CommentForm = ({
         id={formId}
         className="form-control"
         placeholder="Comment"
-        value={comment}
+        value={contextLabel}
         onChange={e => onChange(e.target.value)} />
     </div>
   );
 };
 
-CommentForm.propTypes = {
+ContextLabelForm.propTypes = {
   visualisationId: PropTypes.string.isRequired,
-  comment: PropTypes.string.isRequired,
+  contextLabel: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
 };
 
-export default React.memo(CommentForm);
+export default React.memo(ContextLabelForm);

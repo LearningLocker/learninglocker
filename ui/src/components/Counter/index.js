@@ -42,9 +42,9 @@ const resultsIconStyles = {
   width: '40px',
 };
 
-const renderCount = ({ color, count, tooltip, hasBenchmark, hasComment }) => (
+const renderCount = ({ color, count, tooltip, hasBenchmark, hasContextLabel }) => (
   <TooltipLink
-    style={{ color, height: hasBenchmark || hasComment ? null : '100%' }}
+    style={{ color, height: hasBenchmark || hasContextLabel ? null : '100%' }}
     label={formatShortNumber(count)}
     tooltip={tooltip}
     tooltipPosition="top"
@@ -52,11 +52,11 @@ const renderCount = ({ color, count, tooltip, hasBenchmark, hasComment }) => (
     active />
   );
 
-const renderComment = ({ comment }) => (
+const renderСontextLabel = ({ contextLabel }) => (
   <div
-    key="comment"
-    className={styles.comment}>
-    {comment}
+    key="contextLabel"
+    className={styles.contextLabel}>
+    {contextLabel}
   </div>
   );
 
@@ -101,16 +101,16 @@ const renderCounter = ({ color, results, model, height, width }) => {
   const maxSize = Math.min(height, width);
   const fontSize = (width < 332) || (maxSize < 245) ? '13px' : '0.2em';
   const hasBenchmark = results.size > 1;
-  const hasComment = model.get('comments', '') !== '';
+  const hasContextLabel = model.get('contextLabel', '') !== '';
   const benchmarkCount = hasBenchmark ? getBenchmarkResultCount(results) : null;
   const count = getResultCount(results);
   const percentage = getPercentage(count, benchmarkCount);
 
   const tooltip = hasBenchmark ? formatBenchmarkTooltip({ count, benchmarkCount }) : formatTooltip(count);
   const countFontsize = getCountFontsize({ height, width, hasBenchmark, maxSize });
-  const renderedCount = renderCount({ color, count, tooltip, hasBenchmark, hasComment });
+  const renderedCount = renderCount({ color, count, tooltip, hasBenchmark, hasContextLabel });
   const renderedBenchmark = hasBenchmark ? renderBenchmark({ percentage, model }) : null;
-  const renderedComment = renderComment({ comment: model.get('comments', '') });
+  const renderedContextLabel = renderСontextLabel({ contextLabel: model.get('contextLabel', '') });
 
   return (
     <div className={styles.outerCounter}>
@@ -125,7 +125,7 @@ const renderCounter = ({ color, results, model, height, width }) => {
             fontSize,
             color: percentage.color,
           }}>{ renderedBenchmark }</div>
-        { renderedComment }
+        { renderedContextLabel }
       </div>
     </div>
   );
