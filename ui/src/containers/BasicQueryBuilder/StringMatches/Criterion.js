@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { List, Map, Set } from 'immutable';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 import MultiInput from 'ui/components/MultiInput';
+import { CriterionOperator, CriterionValue, CriterionWrapper } from 'ui/containers/BasicQueryBuilder/styled';
 import Operator from '../Operator';
-import styles from '../styles.css';
 
 const Operators = {
   IN: '$in',
@@ -138,30 +137,23 @@ class Criterion extends Component {
     this.onChangeCriterion(operator, this.getValues());
   }
 
-  render = () => {
-    // noCriteria is not a good name, but it is used in other QueryBuilder's Criterion.
-    const criterionClasses = classNames(
-      styles.criterionValue,
-      styles.noCriteria
-    );
-
-    return (
-      <div className={styles.criterion}>
-        <div className={styles.criterionOperator}>
-          <Operator
-            operators={new Set(['In', 'Out'])}
-            operator={opToString(this.getOperator())}
-            onOperatorChange={str => this.onChangeOperator(stringToOp(str))} />
-        </div>
-        <div className={criterionClasses} >
-          <MultiInput
-            options={this.getValues().toArray()}
-            onAddOption={this.onAddValue}
-            onRemoveOption={this.onRemoveValue} />
-        </div>
-      </div>
-    );
-  }
+  render = () => (
+    <CriterionWrapper>
+      <CriterionOperator>
+        <Operator
+          operators={new Set(['In', 'Out'])}
+          operator={opToString(this.getOperator())}
+          onOperatorChange={str => this.onChangeOperator(stringToOp(str))}/>
+      </CriterionOperator>
+      <CriterionValue isFullWidth>
+        <MultiInput
+          options={this.getValues()
+            .toArray()}
+          onAddOption={this.onAddValue}
+          onRemoveOption={this.onRemoveValue} />
+      </CriterionValue>
+    </CriterionWrapper>
+  );
 }
 
 export default connect((_, ownProps) => {
