@@ -302,16 +302,16 @@ class AutoComplete extends Component {
   }
 
   render() {
-    const wrapperClasses = classNames({
-      open: this.state.focused,
-      noBorder: !this.state.focused && this.props.noBorder
-    });
+    const { focused, noBorder } = this.props;
 
     return (
       <div
         ref={(ref) => { this.wrapper = ref; }}
         style={{ position: 'relative', height: '100%' }}>
-        <InputWrapper onClick={this.focus} className={wrapperClasses}>
+        <InputWrapper
+          isOpen={focused}
+          isBorderHidden={!focused && noBorder}
+          onClick={this.focus} >
           {this.renderValues()}
           {this.renderInput()}
           {this.renderStatus()}
