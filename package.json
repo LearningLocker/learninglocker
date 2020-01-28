@@ -218,6 +218,7 @@
     "isomorphic-style-loader": "^2.0.0",
     "jest": "^19.0.2",
     "jest-enzyme": "^4.0.1",
+    "jest-styled-components": "^6.3.4",
     "mocha": "^2.3.3",
     "mocha-mongoose": "^1.2.0",
     "mocha-webpack": "^0.7.0",
