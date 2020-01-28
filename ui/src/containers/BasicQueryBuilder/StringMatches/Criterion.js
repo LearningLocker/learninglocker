@@ -143,7 +143,7 @@ class Criterion extends Component {
         <Operator
           operators={new Set(['In', 'Out'])}
           operator={opToString(this.getOperator())}
-          onOperatorChange={str => this.onChangeOperator(stringToOp(str))}/>
+          onOperatorChange={str => this.onChangeOperator(stringToOp(str))} />
       </CriterionOperator>
       <CriterionValue isFullWidth>
         <MultiInput

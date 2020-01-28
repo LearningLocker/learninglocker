@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
-import { CriterionButton, CriterionValue, CriterionWrapper, RadioLabel } from 'ui/containers/BasicQueryBuilder/styled';
+import {
+  CriterionButton,
+  CriterionValue,
+  CriterionWrapper,
+  RadioLabel
+} from 'ui/containers/BasicQueryBuilder/styled';
 import { uniqueId } from 'lodash';
 
 export class Criterion extends Component {
@@ -12,12 +17,10 @@ export class Criterion extends Component {
     onDeleteCriterion: PropTypes.func,
   }
 
-  shouldComponentUpdate = ({ section, criterion }) => {
-    return !(
-      this.props.section.equals(section) &&
-      this.props.criterion.equals(criterion)
-    );
-  };
+  shouldComponentUpdate = ({ section, criterion }) => !(
+    this.props.section.equals(section) &&
+    this.props.criterion.equals(criterion)
+  );
 
   canDeleteCriterion = () =>
     this.props.onDeleteCriterion !== undefined;
