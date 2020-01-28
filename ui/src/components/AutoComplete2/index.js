@@ -7,6 +7,12 @@ const AutoCompleteWrapper = styled.div`
   flex-grow: 1;
 `;
 
+const DropdownContainer = styled.div`
+  position: absolute;
+   z-index: 1;
+   width: 100%;
+`;
+
 /**
  * renders an autocomplete component with an input and suggestions
  */
@@ -29,16 +35,15 @@ const AutoComplete = ({
         onFocus={() => { }}
         onBlur={onBlurInput}
         hasFocus={hasInputFocus} >
-        {renderInput({
-          onFocus: () => setInputFocus(true),
-          hasFocus: hasInputFocus
-        })}
-        <div
-          style={{ position: 'absolute', zIndex: 1, width: '100%' }}>
-          {hasInputFocus &&
-            renderOptions({ onKeyPress, onBlur: onBlurInput })
-          }
-        </div>
+        {
+          renderInput({
+            onFocus: () => setInputFocus(true),
+            hasFocus: hasInputFocus
+          })
+        }
+        <DropdownContainer>
+          {hasInputFocus && renderOptions({ onKeyPress, onBlur: onBlurInput })}
+        </DropdownContainer>
       </FocusGroup>
     </AutoCompleteWrapper>
   );
