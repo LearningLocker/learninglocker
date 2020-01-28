@@ -2,11 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { compose, setPropTypes, withState, withProps, withHandlers } from 'recompose';
 import { Map, fromJS, Iterable } from 'immutable';
+import styled from 'styled-components';
 import isString from 'lodash/isString';
 import ModelAutoComplete from 'ui/containers/ModelAutoComplete';
 import { queryToStringList } from 'ui/utils/queries';
 import { withModel } from 'ui/utils/hocs';
 import { ButtonContainer } from 'ui/containers/QueryBuilder/styled';
+
+const QueryButtons = styled.div`
+  margin-bottom: 16px;
+  display: flex;
+`;
 
 const getConditions = (query) => {
   if (!query) return new Map();
@@ -92,7 +98,7 @@ const SavedQueries = ({
   const queriesEqualMessage = 'Saved and active queries are the same!';
   const isQueryEmpty = selectedQuery.isEmpty();
   return (
-    <div style={{ marginBottom: '16px', display: 'flex' }} className="queryButtons">
+    <QueryButtons>
       <ModelAutoComplete
         schema="query"
         placeholder="Select a saved query"
@@ -118,7 +124,7 @@ const SavedQueries = ({
           <i className="glyphicon glyphicon-save" />
         </button>
       </ButtonContainer>
-    </div>
+    </QueryButtons>
   );
 };
 
