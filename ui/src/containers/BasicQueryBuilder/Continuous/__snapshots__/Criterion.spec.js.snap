@@ -145,7 +145,7 @@ exports[`BasicQueryBuilder -> Continuous Criterion should render criterion with 
             required={false}
             role="input"
             type="text"
-            value="30 October 1986"
+            value="31 October 1986"
           />
           <span
             className={undefined}
