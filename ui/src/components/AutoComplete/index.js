@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { Map, List } from 'immutable';
 import { noop, identity, debounce, isNull } from 'lodash';
 import OptionList from 'ui/components/OptionList';
