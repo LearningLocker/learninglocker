@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AuthorityEditor renders correctly with account 1`] = `
+exports[`ClientForm AuthorityEditor renders correctly with account 1`] = `
 <div>
   <div
     className="form-group"
@@ -96,7 +96,7 @@ exports[`AuthorityEditor renders correctly with account 1`] = `
 </div>
 `;
 
-exports[`AuthorityEditor renders correctly with mbox 1`] = `
+exports[`ClientForm AuthorityEditor renders correctly with mbox 1`] = `
 <div>
   <div
     className="form-group"
@@ -172,7 +172,7 @@ exports[`AuthorityEditor renders correctly with mbox 1`] = `
 </div>
 `;
 
-exports[`AuthorityEditor renders correctly with mboxsha1sum 1`] = `
+exports[`ClientForm AuthorityEditor renders correctly with mboxsha1sum 1`] = `
 <div>
   <div
     className="form-group"
@@ -248,7 +248,7 @@ exports[`AuthorityEditor renders correctly with mboxsha1sum 1`] = `
 </div>
 `;
 
-exports[`AuthorityEditor renders correctly with openid 1`] = `
+exports[`ClientForm AuthorityEditor renders correctly with openid 1`] = `
 <div>
   <div
     className="form-group"
@@ -324,7 +324,7 @@ exports[`AuthorityEditor renders correctly with openid 1`] = `
 </div>
 `;
 
-exports[`ClientForm renders correctly 1`] = `
+exports[`ClientForm ClientForm renders correctly 1`] = `
 <div
   className="row"
 >
@@ -350,7 +350,7 @@ exports[`ClientForm renders correctly 1`] = `
       className="form-group"
     >
       <label
-        className=""
+        className="sc-bdVaJa DpnOa"
         data-react-toolbox="checkbox"
         onMouseEnter={undefined}
         onMouseLeave={undefined}
@@ -365,7 +365,7 @@ exports[`ClientForm renders correctly 1`] = `
           type="checkbox"
         />
         <div
-          className=""
+          className="check"
           data-react-toolbox="check"
           onMouseDown={[Function]}
           style={undefined}
@@ -439,7 +439,7 @@ exports[`ClientForm renders correctly 1`] = `
         Overall Scopes
       </label>
       <label
-        className=""
+        className="sc-bdVaJa DpnOa"
         data-react-toolbox="checkbox"
         onMouseEnter={undefined}
         onMouseLeave={undefined}
@@ -454,7 +454,7 @@ exports[`ClientForm renders correctly 1`] = `
           type="checkbox"
         />
         <div
-          className=""
+          className="check"
           data-react-toolbox="check"
           onMouseDown={[Function]}
           style={undefined}
@@ -467,7 +467,7 @@ exports[`ClientForm renders correctly 1`] = `
         </span>
       </label>
       <label
-        className=""
+        className="sc-bdVaJa DpnOa"
         data-react-toolbox="checkbox"
         onMouseEnter={undefined}
         onMouseLeave={undefined}
@@ -482,7 +482,7 @@ exports[`ClientForm renders correctly 1`] = `
           type="checkbox"
         />
         <div
-          className=""
+          className="check"
           data-react-toolbox="check"
           onMouseDown={[Function]}
           style={undefined}
@@ -507,7 +507,7 @@ exports[`ClientForm renders correctly 1`] = `
     >
       <div>
         <div
-          className=""
+          className="sc-bwzfXH jLULoW"
           data-react-toolbox="dropdown"
           onBlur={[Function]}
           onFocus={[Function]}
@@ -544,7 +544,7 @@ exports[`ClientForm renders correctly 1`] = `
             </label>
           </div>
           <ul
-            className={undefined}
+            className="values"
           >
             <li
               className="undefined"
