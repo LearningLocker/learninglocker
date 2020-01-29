@@ -13,10 +13,6 @@ const InputWrapper = styled.div`
   min-height: 36px;
   display: flex;
   align-items: center;
-
-  &.noBorder {
-    border: 1px solid transparent;
-  }
 `;
 
 /**
