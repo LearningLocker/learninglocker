@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import DebounceInput from 'react-debounce-input';
-import InputWrapper from '../InputWrapper';
+import { InputWrapper } from 'ui/components/AutoComplete2/Inputs/styled';
 
 /**
  * A basic text input component with some default styling

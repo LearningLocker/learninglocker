@@ -3,7 +3,7 @@ import DebounceInput from 'react-debounce-input';
 import classNames from 'classnames';
 import { compose, withHandlers, withState } from 'recompose';
 import { componentDidUpdate } from 'react-functional-lifecycle';
-import InputWrapper from '../InputWrapper';
+import { InputWrapper } from 'ui/components/AutoComplete2/Inputs/styled';
 
 const withFocusState = withState('inputFocused', 'setInputFocused', false);
 const withFocusStateHandlers = withHandlers({
@@ -48,17 +48,13 @@ const SingleInput = ({
   setInputFocusedTrue
 }) => {
   const shouldRenderSearch = hasFocus || !selectedOption;
-  const wrapperClasses = classNames({ open: hasFocus });
 
-  let value;
-  if (inputFocused) {
-    value = searchString;
-  } else {
-    value = parseOption(selectedOption);
-  }
+  const value = inputFocused
+    ? searchString
+    : parseOption(selectedOption);
 
   return (
-    <InputWrapper className={wrapperClasses}>
+    <InputWrapper isFocused={hasFocus}>
       {shouldRenderSearch &&
         <DebounceInput
           debounceTimeout={377}

@@ -2,7 +2,7 @@ import React from 'react';
 import { Map } from 'immutable';
 import classNames from 'classnames';
 import DebounceInput from 'react-debounce-input';
-import InputWrapper from '../InputWrapper';
+import { InputWrapper } from 'ui/components/AutoComplete2/Inputs/styled';
 
 /**
  * An autocomplete component that can take a multiple selected options and display them
