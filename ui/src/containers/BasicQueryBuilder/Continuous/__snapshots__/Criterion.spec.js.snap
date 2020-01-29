@@ -1,28 +1,114 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`render criterion with value 1`] = `
+exports[`BasicQueryBuilder -> Continuous Criterion should render criterion with value 1`] = `
+.c7 .dp-input {
+  padding: 0;
+}
+
+.c7 .dp-inputElement {
+  padding-top: 4px;
+  padding-bottom: 0;
+}
+
+.c2 {
+  position: relative;
+  cursor: pointer;
+}
+
+.c2:focus {
+  outline: 0;
+}
+
+.c3 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.c4 {
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+}
+
+.c5 {
+  margin-left: 2px;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  width: 10px;
+}
+
+.c6 {
+  min-height: 30px;
+  width: 71%;
+}
+
+.c8 {
+  width: 10%;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  height: 30px;
+  line-height: 28px;
+  margin-left: auto;
+}
+
+.c0 {
+  margin-bottom: 4px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.c1 {
+  padding-top: 2px;
+  width: 15%;
+  margin-right: 2%;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+  min-height: 30px;
+}
+
 <div
-  className="criterion"
+  className="c0"
 >
   <div
-    className="criterionOperator"
+    className="c1"
   >
     <div
-      className="select"
+      className="c2"
       onBlur={[Function]}
       onFocus={[Function]}
       tabIndex={0}
     >
       <div
-        className="content btn btn-default btn-xs"
+        className="c3 btn btn-default btn-xs"
       >
         <div
-          className="value"
+          className="c4"
         >
           &gt;
         </div>
         <div
-          className="indicator"
+          className="c5"
         >
           <div
             className="ion-arrow-up-b"
@@ -32,40 +118,44 @@ exports[`render criterion with value 1`] = `
     </div>
   </div>
   <div
-    className="criterionValue"
+    className="c6"
   >
     <div
-      className={undefined}
-      data-react-toolbox="date-picker"
+      className="c7"
     >
       <div
-        className=""
-        data-react-toolbox="input"
+        className={undefined}
+        data-react-toolbox="date-picker"
       >
-        <input
-          className="undefined"
-          defaultValue={undefined}
-          disabled={false}
-          maxLength={undefined}
-          name={undefined}
-          onChange={[Function]}
-          onClick={[Function]}
-          onFocus={[Function]}
-          onKeyPress={[Function]}
-          readOnly={true}
-          required={false}
-          role="input"
-          type="text"
-          value="31 October 1986"
-        />
-        <span
-          className={undefined}
-        />
+        <div
+          className="dp-input dp-input"
+          data-react-toolbox="input"
+        >
+          <input
+            className="dp-inputElement undefined"
+            defaultValue={undefined}
+            disabled={false}
+            maxLength={undefined}
+            name={undefined}
+            onChange={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onKeyPress={[Function]}
+            readOnly={true}
+            required={false}
+            role="input"
+            type="text"
+            value="30 October 1986"
+          />
+          <span
+            className={undefined}
+          />
+        </div>
       </div>
     </div>
   </div>
   <button
-    className="criterionButton btn btn-default btn-xs"
+    className="c8 btn btn-default btn-xs"
     onClick={[Function]}
   >
     <i
