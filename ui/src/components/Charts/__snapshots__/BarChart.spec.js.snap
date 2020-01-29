@@ -1,42 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`BarChartResult should render axes 1`] = `
-<div
-  className="chart"
->
-  <div
-    className="buttons"
-  />
-  <div
-    className="withPrevNext clearfix"
-  />
-  <div
-    className="barContainer"
-  >
-    <span
-      className="yAxis"
-    >
-      Y-Axis
-    </span>
-    <div
-      className="chartWrapper"
-    >
-      <div />
-    </div>
-  </div>
-  <div
-    className="xAxisLabel"
-  >
-    <span
-      className="xAxis"
-    >
-      X-Axis
-    </span>
-  </div>
-</div>
-`;
-
-exports[`BarChartResults should render 1`] = `
+exports[`BarChart should render 1`] = `
 <h4
   style={
     Object {
@@ -48,4 +12,119 @@ exports[`BarChartResults should render 1`] = `
 >
   No data in this time range.
 </h4>
+`;
+
+exports[`BarChart should render axes 1`] = `
+.c0 {
+  height: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.c0 svg g text {
+  font-size: 12px;
+}
+
+.c4 {
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+
+.c2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+}
+
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  margin-top: -4px;
+}
+
+.c6 {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.c5 {
+  text-align: right;
+  word-break: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  position: static;
+  margin-right: 15px;
+  margin-bottom: 10px;
+}
+
+.c3 {
+  display: inline-block;
+  -webkit-writing-mode: vertical-rl;
+  -ms-writing-mode: tb-rl;
+  writing-mode: vertical-rl;
+  -webkit-transform: rotate(-180deg);
+  -ms-transform: rotate(-180deg);
+  transform: rotate(-180deg);
+  margin: auto 0;
+}
+
+<div
+  className="c0"
+>
+  <div
+    className="c1"
+  />
+  <div
+    className="clearfix"
+  />
+  <div
+    className="c2"
+  >
+    <div
+      className="c3"
+    >
+      Y-Axis
+    </div>
+    <div
+      className="c4"
+    >
+      <div />
+    </div>
+  </div>
+  <div
+    className="c5"
+  >
+    <span
+      className="c6"
+    >
+      X-Axis
+    </span>
+  </div>
+</div>
 `;
