@@ -1,6 +1,5 @@
 import React from 'react';
 import DebounceInput from 'react-debounce-input';
-import classNames from 'classnames';
 import { compose, withHandlers, withState } from 'recompose';
 import { componentDidUpdate } from 'react-functional-lifecycle';
 import { InputWrapper } from 'ui/components/AutoComplete2/Inputs/styled';
