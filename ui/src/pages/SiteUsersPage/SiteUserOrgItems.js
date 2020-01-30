@@ -28,15 +28,7 @@ const SiteUserOrgItems = ({ models, user, fetchMore, hasMore }) => {
   return (
     <div>
       <ul>{orgsItems}</ul>
-      {
-        hasMore
-          ? <button
-            className={'btn btn-default btn-sm'}
-            onClick={fetchMore}>
-            Load more
-          </button>
-          : null
-      }
+      { hasMore && <button className={'btn btn-default btn-sm'} onClick={fetchMore}> Load more </button> }
     </div>
   );
 };
