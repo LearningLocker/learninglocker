@@ -20,11 +20,25 @@ const enhance = compose(
   withModels
 );
 
-const SiteUserOrgItems = ({ models, user }) => {
+const SiteUserOrgItems = ({ models, user, fetchMore, hasMore }) => {
   const orgsItems = models
     .map(org => <SiteUserOrgItem key={org.get('_id').toString()} org={org} user={user} />)
     .valueSeq();
-  return <ul>{orgsItems}</ul>;
+
+  return (
+    <div>
+      <ul>{orgsItems}</ul>
+      {
+        hasMore
+          ? <button
+            className={'btn btn-default btn-sm'}
+            onClick={fetchMore}>
+            Load more
+          </button>
+          : null
+      }
+    </div>
+  );
 };
 
 export default enhance(SiteUserOrgItems);
