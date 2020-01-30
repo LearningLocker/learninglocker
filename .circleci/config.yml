@@ -24,9 +24,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v3-cache-{{ .Branch }}-{{ .Revision }}
-            - v3-cache-{{ .Branch }}
-            - v3-cache
+            - yarn-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Installing Dependencies
           command: npm_config_build_from_source=true yarn --ignore-engines
@@ -37,13 +35,8 @@ jobs:
           name: Testing Compile
           command: yarn run build-all
       - save_cache:
-          key: v3-cache-{{ .Branch }}-{{ .Revision }}
+          key: yarn-cache-{{ checksum "yarn.lock" }}
           paths:
-            - node_modules
-            - api/src/node_modules/.cache
-            - ui/src/node_modules/.cache
-            - cli/src/node_modules/.cache
-            - worker/src/node_modules/.cache
             - ~/.cache/yarn
       - run:
           name: Run linter
