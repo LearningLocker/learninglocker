@@ -176,6 +176,7 @@
     "@commitlint/cli": "^8.2.0",
     "@commitlint/config-conventional": "^8.2.0",
     "@ht2-labs/semantic-release": "^1.1.59",
+    "@types/mongoose": "^5.5.39",
     "assets-webpack-plugin": "^3.5.0",
     "axios-mock-adapter": "^1.16.0",
     "babel-cli": "^6.24.0",
