@@ -19,6 +19,7 @@ import {
   TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD,
   TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS,
   TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS,
+  TEMPLATE_LEARNING_EXPERIENCE_TYPE,
 } from 'lib/constants/visualise';
 import VisualiseIcon from 'ui/components/VisualiseIcon';
 import { OPERATOR_OPTS } from 'ui/utils/visualisations/localOptions';
@@ -81,6 +82,7 @@ export const createDefaultTitle = (model) => {
     case TEMPLATE_MOST_ACTIVE_PEOPLE:
     case TEMPLATE_MOST_POPULAR_ACTIVITIES:
     case TEMPLATE_MOST_POPULAR_VERBS:
+    case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
     case TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD:
     case TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS:
       return addYX(select(axg), select(axv) || select(ayV) || 'Time');
