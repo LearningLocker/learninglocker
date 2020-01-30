@@ -22,11 +22,11 @@ jobs:
       TEST_LOG_MIN_LEVEL: info
     steps:
       - checkout
-#      - restore_cache:
-#          keys:
-#            - v3-cache-{{ .Branch }}-{{ .Revision }}
-#            - v3-cache-{{ .Branch }}
-#            - v3-cache
+      - restore_cache:
+          keys:
+            - v3-cache-{{ .Branch }}-{{ .Revision }}
+            - v3-cache-{{ .Branch }}
+            - v3-cache
       - run:
           name: Installing Dependencies
           command: yarn install
