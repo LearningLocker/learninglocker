@@ -58,8 +58,8 @@ import personaRESTHandler from 'api/routes/personas/personaRESTHandler';
 import personaIdentifierRESTHandler from 'api/routes/personas/personaIdentifierRESTHandler';
 import UserOrganisationsRouter from 'api/routes/userOrganisations/router';
 import UserOrganisationSettingsRouter from 'api/routes/userOrganisationSettings/router';
-import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
-import { updateStatementCountsInOrg } from 'lib/services/lrs';
+import getLrsFromAuthInfo from 'lib/services/auth/authInfoSelectors/getLrsFromAuthInfo';
+import { decrementStatementCount } from 'lib/services/lrs';
 
 // CONSTANTS
 import * as routes from 'lib/constants/routes';
@@ -365,8 +365,9 @@ restify.serve(router, Statement, {
   postDelete: (req, _, next) => {
     // Update LRS.statementCount
     const authInfo = getAuthFromRequest(req);
-    const organisationId = getOrgFromAuthInfo(authInfo);
-    updateStatementCountsInOrg(organisationId)
+    const lrsId = getLrsFromAuthInfo(authInfo);
+
+    decrementStatementCount(lrsId)
       .then(() => next())
       .catch(err => next(err));
   },
