@@ -135,10 +135,5 @@ export default async ({
     });
   }
 
-  if (done) {
-    const organisationId = batchDelete.organisation;
-    await updateStatementCountsInOrg(organisationId);
-  }
-
   jobDone();
 };
