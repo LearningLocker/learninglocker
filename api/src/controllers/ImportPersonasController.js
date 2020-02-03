@@ -40,18 +40,17 @@ const uploadPersonas = catchErrors(async (req, res) => {
 });
 
 const importPersonas = catchErrors(async (req, res) => {
-  const authInfo = getAuthFromRequest(req);
-
   const { id } = req.body;
-
+  const authInfo = getAuthFromRequest(req);
   const personaService = getPersonaService();
+
   const { personaImport } = await importPersonasService({
     id,
     authInfo,
     personaService,
   });
 
-  return res.status(200).json(personaImport);
+  res.status(200).json(personaImport);
 });
 
 const importPersonasError = catchErrors(async (req, res) => {
@@ -160,9 +159,7 @@ const uploadJsonPersona = catchErrors(async (req, res) => {
 
   const inputAttributes = filter([req.body.attribute, ...(req.body.attributes || [])], isObject);
 
-  const attributes = filter(inputAttributes, (inputAttribute) => {
-    return has(inputAttribute, 'key') && has(inputAttribute, 'value');
-  });
+  const attributes = filter(inputAttributes, inputAttribute => has(inputAttribute, 'key') && has(inputAttribute, 'value'));
 
   await map(attributes, (attribute) => {
     if (!has(attribute, 'key') || !has(attribute, 'value')) {

@@ -210,7 +210,7 @@ if (
       (accessToken, refreshToken, profile, done) => {
         const userEmail = find(
           profile.emails,
-          email => email.type === 'account'
+          email => email.verified === true
         );
         User.findOrCreate({ email: userEmail.value }, (err, user) => {
           assert.ifError(err);
