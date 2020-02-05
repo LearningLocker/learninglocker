@@ -52,8 +52,9 @@ const renderCount = ({ color, count, tooltip, hasBenchmark, hasContextLabel }) =
     active />
   );
 
-const renderСontextLabel = ({ contextLabel }) => (
+const renderСontextLabel = ({ contextLabel, fontSize }) => (
   <div
+    style={{ fontSize }}
     key="contextLabel"
     className={styles.contextLabel}>
     {contextLabel}
@@ -83,17 +84,19 @@ const renderBenchmark = ({ percentage, model }) => {
   );
 };
 
-const getCountFontsize = ({ height, width, hasBenchmark, maxSize }) => {
-  let fontSize = hasBenchmark ? `${maxSize / 40}` : `${maxSize / 20}`;
-  const tripHeight = hasBenchmark ? 220 : 150;
+const getCountFontsize = ({ height, width, hasBenchmark, hasContextLabel, maxSize }) => {
+  let fontSize = hasBenchmark || hasContextLabel ? `${maxSize / 40}` : `${maxSize / 20}`;
+  const tripHeight = hasBenchmark || hasContextLabel ? 220 : 150;
   if (height < tripHeight) {
-    if (!hasBenchmark) {
+    if (!hasBenchmark && !hasContextLabel) {
       fontSize = width > 200 ? 4.5 : 3.5;
     }
   } else if (width < 550) {
     fontSize = width / 60;
   }
   if (fontSize > 12) fontSize = 12;
+  console.log('hasContextLabel');
+  console.log(hasContextLabel);
   return `${fontSize}em`;
 };
 
@@ -107,10 +110,10 @@ const renderCounter = ({ color, results, model, height, width }) => {
   const percentage = getPercentage(count, benchmarkCount);
 
   const tooltip = hasBenchmark ? formatBenchmarkTooltip({ count, benchmarkCount }) : formatTooltip(count);
-  const countFontsize = getCountFontsize({ height, width, hasBenchmark, maxSize });
+  const countFontsize = getCountFontsize({ height, width, hasBenchmark, hasContextLabel, maxSize });
   const renderedCount = renderCount({ color, count, tooltip, hasBenchmark, hasContextLabel });
   const renderedBenchmark = hasBenchmark ? renderBenchmark({ percentage, model }) : null;
-  const renderedContextLabel = renderСontextLabel({ contextLabel: model.get('contextLabel', '') });
+  const renderedContextLabel = renderСontextLabel({ contextLabel: model.get('contextLabel', ''), fontSize });
 
   return (
     <div className={styles.outerCounter}>

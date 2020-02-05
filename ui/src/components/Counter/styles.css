@@ -5,12 +5,13 @@
 .counter {
   height: 100%;
   text-align: center;
+  overflow: hidden;
 }
 
 .contextLabel {
   color: #D35D2B;
   font-size: 20px;
-  margin: 15px;
+  margin: 0 15px;
 }
 
 .benchmark {

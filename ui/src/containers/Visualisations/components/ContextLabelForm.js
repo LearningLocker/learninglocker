@@ -23,6 +23,7 @@ const ContextLabelForm = ({
         id={formId}
         className="form-control"
         placeholder="Comment"
+        maxLength={100}
         value={contextLabel}
         onChange={e => onChange(e.target.value)} />
     </div>
