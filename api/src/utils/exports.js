@@ -1,4 +1,4 @@
-import csv from 'fast-csv';
+import * as csv from 'fast-csv';
 import Statement from 'lib/models/statement';
 import highland from 'highland';
 import async from 'async';
@@ -23,7 +23,7 @@ export function groupStreams(streams) {
 }
 
 export const streamToCsv = (headers, stream) => new Promise((resolve, reject) => {
-  const csvStream = csv.createWriteStream({ headers });
+  const csvStream = csv.format({ headers });
   stream.pipe(csvStream);
   csvStream.on('error', reject);
   stream.on('error', reject);
