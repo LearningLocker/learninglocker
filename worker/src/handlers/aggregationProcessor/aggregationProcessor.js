@@ -177,7 +177,7 @@ const getWindowSize = (model) => {
 const aggregationProcessor = async ({
   aggregationProcessorId,
   publishQueue = publish,
-  now
+  now // For testing
 }, done) => {
   // Attempt to aquire a lock
   const model = await AggregationProcessor.findOneAndUpdate({
@@ -229,7 +229,7 @@ const aggregationProcessor = async ({
     await Promise.all([addResultsPromise, subtractResultsPromise]);
 
   let results;
-  if (subtractResults) {
+  if (subtractResults && model.useWindowOptimization) {
     const addSubtractResults = combine(addResults, subtractResults, result => result.model,
       (resultModel, a, b) => {
         const countA = get(a, 'count', 0);

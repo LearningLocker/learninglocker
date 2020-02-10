@@ -70,6 +70,7 @@ import BatchDelete from 'lib/models/batchDelete';
 import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
 import { updateStatementCountsInOrg } from 'lib/services/lrs';
 import * as routes from 'lib/constants/routes';
+import { METHOD_NOT_ALLOWED } from 'http-status-codes';
 
 const router = new express.Router();
 router.use(setNoCacheHeaders);
@@ -366,8 +367,8 @@ restify.serve(router, Statement, {
   },
 });
 restify.serve(router, AggregationProcessor, {
-  preUpdate: (req, res) => res.sendStatus(405),
-  preCreate: (req, res) => res.sendStatus(405)
+  preUpdate: (req, res) => res.sendStatus(METHOD_NOT_ALLOWED),
+  preCreate: (req, res) => res.sendStatus(METHOD_NOT_ALLOWED)
 });
 restify.serve(router, StatementForwarding);
 restify.serve(router, QueryBuilderCache);

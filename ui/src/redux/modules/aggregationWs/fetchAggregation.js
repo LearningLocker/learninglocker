@@ -9,7 +9,6 @@ import Cookies from 'js-cookie';
 import { pickBy, get } from 'lodash';
 import { testCookieName } from 'ui/utils/auth';
 import { AGGREGATION_PROCESSOR_REGISTER } from 'lib/constants/aggregationProcessor';
-import logger from 'lib/logger';
 
 export function defaultMapping(results) {
   const out = new Map({
@@ -243,7 +242,7 @@ const fetchAggregation = createAsyncDuck({
       });
 
       websocket.addEventListener('error', (err) => {
-        logger.error('Websocket error', err);
+        console.error('Websocket error', err);
         emitter(END);
       });
 

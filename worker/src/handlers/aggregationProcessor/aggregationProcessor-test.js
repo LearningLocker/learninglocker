@@ -123,7 +123,8 @@ describe('aggregationProcessor', () => {
       pipelineString,
       pipelineHash,
       windowSize: 1,
-      gtDate: moment().subtract(1, 'days').toDate()
+      gtDate: moment().subtract(1, 'days').toDate(),
+      useWindowOptimization: true
     });
 
     let done = false;
@@ -140,7 +141,7 @@ describe('aggregationProcessor', () => {
     expect(result[0].model).to.equal((moment().toDate().getDay() + 1));
   });
 
-  it('Should add to aggrigation for new statements', async () => {
+  it('should add to aggrigation for new statements', async () => {
     await Statement.create({
       statement: {},
       organisation: objectId(TEST_ID),
@@ -152,7 +153,8 @@ describe('aggregationProcessor', () => {
       pipelineString,
       pipelineHash,
       windowSize: 1,
-      gtDate: moment().subtract(1, 'days').toDate()
+      gtDate: moment().subtract(1, 'days').toDate(),
+      useWindowOptimization: true
     });
 
     let doneCount = 0;
@@ -193,7 +195,8 @@ describe('aggregationProcessor', () => {
       pipelineString,
       pipelineHash,
       windowSize: 1,
-      gtDate: moment().subtract(1, 'days').toDate()
+      gtDate: moment().subtract(1, 'days').toDate(),
+      useWindowOptimization: true
     });
 
     let doneCount = 0;
@@ -243,6 +246,7 @@ describe('aggregationProcessor', () => {
       pipelineHash,
       windowSize: 30,
       previousWindowSize: 30,
+      useWindowOptimization: true
     });
 
     let done = false;
