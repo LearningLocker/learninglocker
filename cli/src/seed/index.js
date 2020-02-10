@@ -14,14 +14,14 @@ const resetState = async () => {
   await doMigrations({ migrations: v2Migrations });
 
   // add a user
-  await createSiteAdmin('chris.bishop@ht2labs.com', 'Test organisation', 'password0', {});
+  await createSiteAdmin('test@learningpool.com', 'Test organisation', 'password0', {});
 
   logger.info('Reset success');
 };
 
 const getToken = async () => {
   const user = await User.findOne({
-    email: 'chris.bishop@ht2labs.com'
+    email: 'test@learningpool.com'
   });
 
   const organisation = await Organisation.findOne({

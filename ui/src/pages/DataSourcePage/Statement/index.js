@@ -8,7 +8,7 @@ import { ActorPart } from './ActorPart';
 import AutoUpdate from './AutoUpdate';
 import { VerbPart } from './VerbPart';
 
-const Timestamp = styled.a`
+const Timestamp = styled.span`
   font-weight: normal;
 `;
 
