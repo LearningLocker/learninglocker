@@ -33,7 +33,7 @@ server {
     proxy_cache_bypass $http_upgrade;
   }
   
-  # API endpoints
+  # Websocket endpoint
   location = /websocket {
     rewrite /websocket / break;
     proxy_redirect off;
