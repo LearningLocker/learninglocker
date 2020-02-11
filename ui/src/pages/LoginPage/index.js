@@ -35,6 +35,14 @@ const enhance = compose(
   })
 );
 
+/**
+ * @param oAuthLoginStart - {@see reduxOAuthLoginStart}
+ * @param loginStart - {@see reduxLoginStart}
+ * @param loginRequestState - {@see loginRequestStateSelector}
+ * @param loginError - {@see loginErrorSelector}
+ * @param googleAuth - {@see getAppDataSelector}
+ * @returns {*}
+ */
 const render = ({
   oAuthLoginStart,
   loginStart,
