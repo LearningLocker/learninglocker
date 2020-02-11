@@ -2,6 +2,7 @@ import passport from 'passport';
 import jsonwebtoken from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
 import ms from 'ms';
+import status from 'http-status';
 import logger from 'lib/logger';
 import User from 'lib/models/user';
 import OAuthToken from 'lib/models/oAuthToken';
@@ -266,7 +267,13 @@ const googleSuccess = (req, res) => {
   // create a JWT and set it in the query params (only way to return it with a redirect)
   createUserJWT(req.user, 'google')
     .then(token => res.redirect(`/api${AUTH_JWT_SUCCESS}?access_token=${token}`))
-    .catch(err => res.status(500).send(err));
+    .catch(
+      (err) => {
+        res
+          .status(status.INTERNAL_SERVER_ERROR)
+          .send(err);
+      }
+    );
 };
 
 const clientInfo = (req, res) => {

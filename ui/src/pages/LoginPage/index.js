@@ -60,8 +60,11 @@ const render = ({
     if (email && password) loginStart({ username: email, password }).catch(() => { });
   };
 
-  const onClickOAuthLogin = (e) => {
-    if (e) e.preventDefault();
+  const onClickOAuthLogin = (event) => {
+    if (event) {
+      event.preventDefault();
+    }
+
     oAuthLoginStart('google').catch(() => { });
   };
 

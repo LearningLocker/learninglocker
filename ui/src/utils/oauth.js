@@ -78,13 +78,37 @@ function getEndpoint(provider) {
 }
 
 export function openPopup(provider) {
+  console.log('openPopup', provider);
   return window.open(getEndpoint(provider), provider, `${settings},${getPopupDimensions(provider)}`);
 }
 
+/**
+ * @typedef {object} OauthError
+ *  @property {string} message
+ */
+
+/**
+ * @callback checkForToken~tokenResolve
+ * @param {string} token
+ */
+
+/**
+ * @callback checkForToken~tokenReject
+ * @param {OauthError} error
+ */
+
+/**
+ * @param {Window} popup
+ * @param {checkForToken~tokenResolve} resolve
+ * @param {checkForToken~tokenReject} reject
+ */
 function checkForToken(popup, resolve, reject) {
-  if (popup.closed) reject({ errors: 'Authentication was cancelled.' });
-  else {
+  console.log('checkForToken');
+  if (popup.closed) {
+    reject({ message: 'Authentication was cancelled' });
+  } else {
     let parsed;
+
     try {
       parsed = url.parse(popup.location.href, true);
     } catch (e) {
@@ -92,15 +116,42 @@ function checkForToken(popup, resolve, reject) {
       // access the popup when it is on the third party site
     }
 
-    if (_.has(parsed, 'query.access_token')) {
+    const accessToken = _.get(parsed, 'query.access_token');
+    const error = _.get(parsed, 'query.error');
+
+    if (accessToken || error) {
       popup.close();
-      resolve(_.get(parsed, 'query.access_token'));
-    } else setTimeout(checkForToken.bind(null, popup, resolve, reject), 0);
+
+      if (error) {
+        reject({ message: error });
+
+        return;
+      }
+
+      resolve(accessToken);
+    } else {
+      setTimeout(
+        checkForToken.bind(null, popup, resolve, reject),
+        0,
+      );
+    }
   }
 }
 
+/**
+ * @param {Window} popup
+ * @returns {Promise<string>}
+ */
 export function listenForToken(popup) {
-  return new Promise((resolve, reject) => {
-    checkForToken(popup, resolve, reject);
-  });
+  console.log('listenForToken', popup);
+
+  return new Promise(
+    /**
+     * @param {checkForToken~tokenResolve} resolve
+     * @param {checkForToken~tokenReject} reject
+     */
+    (resolve, reject) => {
+      checkForToken(popup, resolve, reject);
+    }
+  );
 }

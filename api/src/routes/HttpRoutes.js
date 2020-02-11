@@ -117,6 +117,13 @@ router.get(
   AuthController.clientInfo
 );
 
+router.get(
+  routes.OAUTH2_FAILED,
+  (request, response) => {
+    response.send('Authorization failed');
+  },
+);
+
 router.post(
   routes.OAUTH2_TOKEN,
   AuthController.issueOAuth2AccessToken
@@ -136,10 +143,24 @@ if (process.env.GOOGLE_ENABLED) {
     routes.AUTH_JWT_GOOGLE,
     passport.authenticate('google', GOOGLE_AUTH_OPTIONS)
   );
+
   router.get(
     routes.AUTH_JWT_GOOGLE_CALLBACK,
-    passport.authenticate('google', DEFAULT_PASSPORT_OPTIONS),
-    AuthController.googleSuccess
+    (request, response, next) => {
+      passport.authenticate(
+        'google',
+        DEFAULT_PASSPORT_OPTIONS,
+        (error, user, info) => {
+          if (!user) {
+            response.redirect(`/api${routes.OAUTH2_FAILED}?error=${info.message}`);
+
+            return;
+          }
+
+          AuthController.googleSuccess(request, response);
+        },
+      )(request, response, next);
+    },
   );
 }
 
