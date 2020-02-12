@@ -1,13 +1,5 @@
-import styled, { keyframes } from 'styled-components';
-
-const rotation = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(359deg);
-  }
-`;
+import styled from 'styled-components';
+import { rotation } from 'ui/utils/styled/animations';
 
 export default styled.div`
   width: 18px;
