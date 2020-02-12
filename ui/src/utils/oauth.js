@@ -78,7 +78,6 @@ function getEndpoint(provider) {
 }
 
 export function openPopup(provider) {
-  console.log('openPopup', provider);
   return window.open(getEndpoint(provider), provider, `${settings},${getPopupDimensions(provider)}`);
 }
 
@@ -103,7 +102,6 @@ export function openPopup(provider) {
  * @param {checkForToken~tokenReject} reject
  */
 function checkForToken(popup, resolve, reject) {
-  console.log('checkForToken');
   if (popup.closed) {
     reject({ message: 'Authentication was cancelled' });
   } else {
@@ -143,8 +141,6 @@ function checkForToken(popup, resolve, reject) {
  * @returns {Promise<string>}
  */
 export function listenForToken(popup) {
-  console.log('listenForToken', popup);
-
   return new Promise(
     /**
      * @param {checkForToken~tokenResolve} resolve
