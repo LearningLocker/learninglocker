@@ -6,7 +6,7 @@ const checkClassName = 'check';
 const checkedClassName = 'checked';
 const rippleClassName = 'ripple';
 
-const OrangeCheckbox = styled(Checkbox)`
+const LLCheckbox = styled(Checkbox)`
   && {
     .${checkClassName}.${checkedClassName},
     .${rippleClassName} {
@@ -17,7 +17,7 @@ const OrangeCheckbox = styled(Checkbox)`
 `;
 
 export default props => (
-  <OrangeCheckbox
+  <LLCheckbox
     theme={{
       check: checkClassName,
       checked: checkedClassName,
