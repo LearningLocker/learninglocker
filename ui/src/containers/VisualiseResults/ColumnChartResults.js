@@ -14,7 +14,7 @@ export default withStatementsVisualisation((props) => {
       model={model}
       axesLabels={{
         xLabel: shorten(axes.get('xLabel', axes.getIn(['group', 'searchString'], 'X-Axis'))),
-        yLabel: shorten(axes.get('yLabel', axes.getIn(['value', 'searchString'], 'Y-Axis')))
+        yLabel: axes.get('yLabel', axes.getIn(['value', 'searchString'], 'Y-Axis'))
       }} />
   );
 });

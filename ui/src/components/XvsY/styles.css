@@ -64,6 +64,7 @@
   transform: rotate(-180deg);
   margin: auto 0;
   margin-left:15px;
+  white-space: pre-wrap;
 }
 
 
