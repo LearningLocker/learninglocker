@@ -14,15 +14,18 @@ import getActiveOrgSettings from 'api/utils/getActiveOrgSettings';
 /**
  * @param {string | object | Buffer}
  * @param {jwt.Secret}
- * @returns {Promise<any>}
+ * @returns {Promise<string>}
  */
-const sign = Promise.promisify(jwt.sign);
+const jwtSign = Promise.promisify(jwt.sign);
 
-const getUserScopes = user =>
-  user.scopes;
+/**
+ * @param {object} user - TODO: define type
+ * @returns {string[]}
+ */
+const getUserScopes = user => user.scopes;
 
-const getDashboardScopes = () =>
-  [VIEW_SHAREABLE_DASHBOARD];
+/** @returns {string[]} */
+const getDashboardScopes = () => [VIEW_SHAREABLE_DASHBOARD];
 
 const getVisualisationIdsFromDashboard = (dashboard) => {
   let visualisationIds = map(dashboard.widgets, 'visualisation');
@@ -36,6 +39,14 @@ const getOrgTimezoneFromDashboard = async (dashboard) => {
   return org && org.timezone ? org.timezone : null;
 };
 
+/**
+ * @param {string} provider
+ * @param {string[]} scopes
+ * @param {object} extensions
+ * @param {object} organisation
+ * @param {*} others
+ * @returns {{extensions, provider, organisation, scopes}}
+ */
 const payloadDefaults = ({
   provider = 'native',
   scopes = [],
@@ -53,7 +64,7 @@ const payloadDefaults = ({
 /**
  * @param {*} - payload
  * @param {*} opts - (optional)
- * @returns {Promise<any>}
+ * @returns {Promise<string>}
  */
 const createJWT = ({
   userId,
@@ -67,7 +78,7 @@ const createJWT = ({
   organisation = null
 }, opts = {
   expiresIn: '1h'
-}) => sign(
+}) => jwtSign(
   { userId, provider, scopes, tokenType, tokenId, shareableId, extensions, filter, organisation },
   process.env.APP_SECRET,
   opts
@@ -82,15 +93,14 @@ const createUserTokenPayload = (user, provider) => payloadDefaults({
 });
 
 /**
- * @param {*} user
- * @param {*} provider
- * @returns {Promise<any>}
+ * @param {object} user - TODO: define type
+ * @param {string} provider
+ * @returns {Promise<string>}
  */
-const createUserJWT = (user, provider) =>
-  createJWT(
-    createUserTokenPayload(user, provider),
-    { expiresIn: JWT_ACCESS_TOKEN_EXPIRATION },
-  );
+const createUserJWT = (user, provider) => createJWT(
+  createUserTokenPayload(user, provider),
+  { expiresIn: JWT_ACCESS_TOKEN_EXPIRATION },
+);
 
 const createUserRefreshTokenPayload = (user, provider) => payloadDefaults({
   userId: String(user._id),
@@ -101,16 +111,21 @@ const createUserRefreshTokenPayload = (user, provider) => payloadDefaults({
 });
 
 /**
- * @param {*} user
- * @param {*} provider
- * @returns {Promise<any>}
+ * @param {object} user - TODO: define type
+ * @param {string} provider
+ * @returns {Promise<string>}
  */
-const createUserRefreshJWT = (user, provider) =>
-  createJWT(
-    createUserRefreshTokenPayload(user, provider),
-    { expiresIn: JWT_REFRESH_TOKEN_EXPIRATION },
-  );
+const createUserRefreshJWT = (user, provider) => createJWT(
+  createUserRefreshTokenPayload(user, provider),
+  { expiresIn: JWT_REFRESH_TOKEN_EXPIRATION },
+);
 
+/**
+ * @param {object} user - TODO: define type
+ * @param {string} orgId
+ * @param {string} provider
+ * @returns {Promise<{extensions, provider, organisation, scopes}>}
+ */
 const createOrgTokenPayload = async (user, orgId, provider) => {
   const activeOrgSettings = getActiveOrgSettings(user, orgId);
   const roleIds = activeOrgSettings.roles;
@@ -121,6 +136,7 @@ const createOrgTokenPayload = async (user, orgId, provider) => {
     ...getUserScopes(user),
   ];
   const filter = JSON.parse(activeOrgSettings.filter);
+
   return payloadDefaults({
     userId: String(user._id),
     provider,
@@ -130,8 +146,16 @@ const createOrgTokenPayload = async (user, orgId, provider) => {
     scopes,
   });
 };
+
+/**
+ * @param {object} user - TODO: define type
+ * @param {string} organisationId
+ * @param {string} provider
+ * @returns {Promise<string>}
+ */
 const createOrgJWT = async (user, organisationId, provider) => {
   const orgTokenPayload = await createOrgTokenPayload(user, organisationId, provider);
+
   return createJWT(
     orgTokenPayload,
     { expiresIn: JWT_ACCESS_TOKEN_EXPIRATION },

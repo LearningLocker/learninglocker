@@ -24,60 +24,70 @@ import {
 } from 'api/auth/jwt';
 import { AUTH_FAILURE } from 'api/auth/utils';
 
-const verifyPromise = Promise.promisify(jwt.verify);
+const jwtVerify = Promise.promisify(jwt.verify);
 
+/**
+ * @param payload
+ * @returns {*}
+ */
 const createPayloadFromPayload = (payload) => {
   const dependencies = {};
+
   if (payload.userId) {
     dependencies.user = User.findOne({ _id: payload.userId });
   }
+
   if (payload.tokenType === 'dashboard') {
     dependencies.dashboard = Dashboard.findOne({ _id: payload.tokenId });
   }
 
-  return Promise.props(dependencies).then(async ({ user, dashboard }) => {
-    const tokenId = payload.tokenId;
-    const provider = payload.provider;
+  return Promise
+    .props(dependencies)
+    .then(async ({ user, dashboard }) => {
+      const { tokenId, provider } = payload;
 
-    switch (payload.tokenType) {
-      case 'organisation': {
-        const expectedToken = await createOrgTokenPayload(
-          user,
-          tokenId,
-          provider
-        );
-        return { expectedToken, user };
-      }
-      case 'dashboard': {
-        const shareable = find(dashboard.shareable, share =>
-          share._id.toString() === payload.shareableId
-        );
+      switch (payload.tokenType) {
+        case 'organisation': {
+          const expectedToken = await createOrgTokenPayload(
+            user,
+            tokenId,
+            provider
+          );
+          return { expectedToken, user };
+        }
+        case 'dashboard': {
+          const shareable = find(dashboard.shareable, share =>
+            share._id.toString() === payload.shareableId
+          );
 
-        const expectedToken = await createDashboardTokenPayload(
-          dashboard,
-          (shareable ? shareable._id.toString() : null),
-          provider
-        );
-        return { expectedToken };
+          const expectedToken = await createDashboardTokenPayload(
+            dashboard,
+            (shareable ? shareable._id.toString() : null),
+            provider
+          );
+          return { expectedToken };
+        }
+        case 'user':
+        default: {
+          const expectedToken = await createUserTokenPayload(user, provider);
+          return { expectedToken, user };
+        }
       }
-      case 'user':
-      default: {
-        const expectedToken = await createUserTokenPayload(user, provider);
-        return { expectedToken, user };
-      }
-    }
-  });
+    });
 };
 
+/**
+ * @param {string} token
+ * @param done
+ * @returns {Promise<*|{authInfo: {user: *, token: *}}>}
+ */
 export async function verifyToken(token, done = () => {}) {
   try {
-    const decodedToken = await verifyPromise(token, process.env.APP_SECRET);
+    const decodedToken = await jwtVerify(token, process.env.APP_SECRET);
 
     // Recreates the token's payload to make sure that all scopes are still valid.
 
-    const { expectedToken, user } = await createPayloadFromPayload(
-      decodedToken
-    );
+    const { expectedToken, user } = await createPayloadFromPayload(decodedToken);
     const tokenToVerify1 = omit(decodedToken, ['iat', 'exp']);
     const tokenToVerify = omitBy(tokenToVerify1, (v, k) => k === 'shareableId' && !v);
 
@@ -90,17 +100,22 @@ export async function verifyToken(token, done = () => {}) {
     if (!iExpectedToken2.toMap().equals(iTokenToVerify2.toMap())) {
       throw new Unauthorized('Unverified token');
     }
+
     const auth = {
       ...(user ? user.toObject() : {}),
       authInfo: { user, token: decodedToken }
     };
+
     done(null, auth);
+
     return auth;
   } catch (err) {
     if (err.name === 'TokenExpiredError' || err.name === 'JsonWebTokenError') {
       return done(null, false);
     }
+
     logger.error('Auth error:', err);
+
     done(err);
   }
 }
