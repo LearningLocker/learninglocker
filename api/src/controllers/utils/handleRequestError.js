@@ -21,6 +21,11 @@ export const unawaitedErrorHandler = (err) => {
   logger.error(errorId, err);
 };
 
+/**
+ * @param {e.Response} res
+ * @param {*} err - TODO: finalize type definition of LLBaseError and its children
+ * @returns {*}
+ */
 const handleRequestError = (res, err) => {
   const errorId = uuid();
 
