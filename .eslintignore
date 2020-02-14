@@ -2,3 +2,4 @@ webpack/*
 karma.conf.js
 tests.webpack.js
 dist
+/**/*.d.ts
