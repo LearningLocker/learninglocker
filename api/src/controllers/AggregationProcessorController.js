@@ -93,7 +93,7 @@ export const aggregationProcessorInitialise = catchErrors(
     });
 
     const pipelineString = JSON.stringify(pipeline);
-    const hash = pipelineString.length > 40 ? sha1(pipelineString) : pipelineString;
+    const hash = sha1(pipelineString);
 
     const windowSize = request.query.timeIntervalSinceToday;
     const windowSizeUnits = request.query.timeIntervalUnits;
