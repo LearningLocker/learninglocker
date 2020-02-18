@@ -1,0 +1,16 @@
+{
+  "extends": "./node_modules/@ht2-labs/typescript-project/configs/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "dist",
+    "typeRoots": [
+      "./@types",
+      "./node_modules/@types"
+    ],
+    "esModuleInterop": true
+  },
+  "includes": [],
+  "exclude": [
+    "node_modules"
+  ]
+}
