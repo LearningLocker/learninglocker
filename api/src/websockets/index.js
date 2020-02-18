@@ -7,26 +7,37 @@ import Unauthorized from 'lib/errors/Unauthorised';
 import { AGGREGATION_PROCESSOR_REGISTER } from 'lib/constants/aggregationProcessor';
 import aggregationProcessor from './aggregationProcessor';
 
+/**
+ * @param {module:ll.WS} ws
+ * @returns {Promise<void>}
+ */
 const messageManager = ws => async (message) => {
   const jsonMessage = JSON.parse(message);
+
   switch (jsonMessage.type) {
     case AGGREGATION_PROCESSOR_REGISTER: {
       let cookieName;
+
       if (jsonMessage.organisationId) {
         cookieName = getCookieName({
           tokenType: 'organisation',
           tokenId: jsonMessage.organisationId
         });
       } else {
-        cookieName = getCookieNameStartsWith({
-          tokenType: 'user'
-        }, jsonMessage.auth);
+        cookieName = getCookieNameStartsWith(
+          {
+            tokenType: 'user'
+          },
+          jsonMessage.auth
+        );
       }
+
       const token = jsonMessage.auth[cookieName];
-      let authInfo;
+
       try {
-        authInfo = (await verifyToken(token)).authInfo;
-        aggregationProcessor({
+        const { authInfo } = await verifyToken(token);
+
+        await aggregationProcessor({
           ws,
           authInfo,
           aggregationProcessorId: jsonMessage.aggregationProcessorId
@@ -46,10 +57,11 @@ const messageManager = ws => async (message) => {
   }
 };
 
-const add = (ws) => {
-  ws.on('message', messageManager(ws));
+/** @param {module:ll.WS} websocket */
+const addMessageHandler = (websocket) => {
+  websocket.on('message', messageManager(websocket));
 };
 
-export default {
-  add
+export {
+  addMessageHandler
 };

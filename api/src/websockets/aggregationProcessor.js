@@ -6,6 +6,12 @@ import { isUndefined } from 'lodash';
 
 const objectId = mongoose.Types.ObjectId;
 
+/**
+ * @param {module:ll.WS} ws
+ * @param {AuthInfo} authInfo
+ * @param {string} aggregationProcessorId
+ * @returns {Promise<void>}
+ */
 const aggregationProcessor = async ({
   ws,
   authInfo,
@@ -29,7 +35,8 @@ const aggregationProcessor = async ({
       },
       { $replaceRoot: { newRoot: '$fullDocument' } },
       { $match: scopeFilter }
-    ], {
+    ],
+    {
       fullDocument: 'updateLookup'
     }
   );
@@ -51,6 +58,7 @@ const aggregationProcessor = async ({
     _id: aggregationProcessorId,
     ...scopeFilter
   });
+
   ws.send(JSON.stringify(currentAggregationProcessor));
 };
 

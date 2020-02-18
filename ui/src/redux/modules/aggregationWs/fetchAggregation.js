@@ -1,74 +1,87 @@
-import { OrderedMap, Map, fromJS } from 'immutable';
+import { fromJS, Map, OrderedMap } from 'immutable';
 import { createSelector } from 'reselect';
-import { call, put, select, take, fork } from 'redux-saga/effects';
-import { eventChannel, END } from 'redux-saga';
+import { call, fork, put, select, take } from 'redux-saga/effects';
+import { END, eventChannel } from 'redux-saga';
 import createAsyncDuck from 'ui/utils/createAsyncDuck';
-import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
+import { COMPLETED, FAILED, IN_PROGRESS } from 'ui/utils/constants';
 import { getAppDataSelector } from 'ui/redux/modules/app';
 import Cookies from 'js-cookie';
-import { pickBy, get } from 'lodash';
+import { get, pickBy } from 'lodash';
 import { testCookieName } from 'ui/utils/auth';
 import { AGGREGATION_PROCESSOR_REGISTER } from 'lib/constants/aggregationProcessor';
 
 export function defaultMapping(results) {
-  const out = new Map({
+  return new Map({
     result: results && new OrderedMap(results.map(v => fromJS([v._id, v]))),
   });
-  return out;
 }
 
 const aggregationSelector = state => state.aggregationWs;
 
 const aggregationRequestStateSelector = (pipeline, timeInterval) => createSelector(
   aggregationSelector,
-  (aggregations) => {
-    const out = aggregations.getIn([new Map({
-      pipeline,
-      timeIntervalSinceToday: get(timeInterval, 'timeIntervalSinceToday'),
-      timeIntervalUnits: get(timeInterval, 'timeIntervalUnits'),
-      ...(get(timeInterval, 'timeIntervalSincePreviousTimeInterval') ?
-        { timeIntervalSincePreviousTimeInterval: get(timeInterval, 'timeIntervalSincePreviousTimeInterval') } :
-        {}
-      )
-    }), 'requestState']);
-    return out;
-  }
+  aggregations => aggregations.getIn(
+    [
+      new Map({
+        pipeline,
+        timeIntervalSinceToday: get(timeInterval, 'timeIntervalSinceToday'),
+        timeIntervalUnits: get(timeInterval, 'timeIntervalUnits'),
+        ...(get(timeInterval, 'timeIntervalSincePreviousTimeInterval')
+            ? {
+              timeIntervalSincePreviousTimeInterval: get(timeInterval, 'timeIntervalSincePreviousTimeInterval')
+            }
+            : {}
+        )
+      }),
+      'requestState'
+    ]
+  )
 );
 
-const aggregationShouldFetchSelector = (pipeline, timeIntetrval) => createSelector(
-  aggregationRequestStateSelector(pipeline, timeIntetrval),
-  (requestState) => {
-    const out = (
+const aggregationShouldFetchSelector = (pipeline, timeInterval) => createSelector(
+  aggregationRequestStateSelector(pipeline, timeInterval),
+  requestState => (
       requestState !== IN_PROGRESS &&
       requestState !== COMPLETED &&
       requestState !== FAILED
-    );
-    return out;
-  }
+    )
 );
 
 const fetchAggregation = createAsyncDuck({
   actionName: 'learninglocker/aggregation/FETCH_AGGREGATION_WS',
   failureDelay: 2000,
 
-  reduceStart: (state, { pipeline, timeIntervalSinceToday, timeIntervalUnits, timeIntervalSincePreviousTimeInterval }) => {
-    const out = state
-      .setIn([new Map({
+  reduceStart: (
+    state,
+    {
+      pipeline,
+      timeIntervalSinceToday,
+      timeIntervalUnits,
+      timeIntervalSincePreviousTimeInterval
+    }
+  ) => state.setIn(
+    [
+      new Map({
         pipeline,
         timeIntervalSinceToday,
         timeIntervalUnits,
         ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {})
-      }), 'requestState'], IN_PROGRESS);
-    return out;
-  },
+      }),
+      'requestState'
+    ],
+    IN_PROGRESS
+  ),
 
-  reduceSuccess: (state, {
-    pipeline,
-    timeIntervalSinceToday,
-    timeIntervalUnits,
-    timeIntervalSincePreviousTimeInterval,
-    result
-  }) => {
+  reduceSuccess: (
+    state,
+    {
+      pipeline,
+      timeIntervalSinceToday,
+      timeIntervalUnits,
+      timeIntervalSincePreviousTimeInterval,
+      result
+    }
+  ) => {
     if (!pipeline) {
       return state;
     }
@@ -85,14 +98,12 @@ const fetchAggregation = createAsyncDuck({
       return x;
     }
 
-    const out = x.setIn([new Map({
+    return x.setIn([new Map({
       pipeline,
       timeIntervalSinceToday,
       timeIntervalUnits,
       ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {})
     }), 'result'], result.getIn(['result']));
-
-    return out;
   },
 
   reduceFailure: (state, {
@@ -115,21 +126,26 @@ const fetchAggregation = createAsyncDuck({
       ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {})
     }), 'error'], err),
 
-  reduceComplete: (state, {
-    pipeline,
-    timeIntervalSinceToday,
-    timeIntervalUnits,
-    timeIntervalSincePreviousTimeInterval
-  }) => {
-    const out = state
-    .setIn([new Map({
+  reduceComplete: (
+    state,
+    {
       pipeline,
       timeIntervalSinceToday,
       timeIntervalUnits,
-      ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {})
-    }), 'requestState'], COMPLETED);
-    return out;
-  },
+      timeIntervalSincePreviousTimeInterval
+    }
+  ) => state.setIn(
+    [
+      new Map({
+        pipeline,
+        timeIntervalSinceToday,
+        timeIntervalUnits,
+        ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {})
+      }),
+      'requestState'
+    ],
+    COMPLETED
+  ),
 
   startAction: ({
     pipeline,
@@ -137,43 +153,58 @@ const fetchAggregation = createAsyncDuck({
     timeIntervalSinceToday,
     timeIntervalUnits,
     timeIntervalSincePreviousTimeInterval
-  }) => {
-    const out = ({
-      pipeline,
-      mapping,
-      timeIntervalSinceToday,
-      timeIntervalUnits,
-      timeIntervalSincePreviousTimeInterval
-    });
-    return out;
-  },
+  }) => ({
+    pipeline,
+    mapping,
+    timeIntervalSinceToday,
+    timeIntervalUnits,
+    timeIntervalSincePreviousTimeInterval
+  }),
 
   successAction: (args) => {
     if (!args) {
       return {};
     }
-    const { pipeline, timeIntervalSinceToday, timeIntervalUnits, timeIntervalSincePreviousTimeInterval, result, sinceAt } = args;
-    const out = ({ pipeline, timeIntervalSinceToday, timeIntervalUnits, timeIntervalSincePreviousTimeInterval, result, sinceAt });
-    return out;
+
+    const {
+      pipeline,
+      timeIntervalSinceToday,
+      timeIntervalUnits,
+      timeIntervalSincePreviousTimeInterval,
+      result,
+      sinceAt
+    } = args;
+
+    return ({
+      pipeline,
+      timeIntervalSinceToday,
+      timeIntervalUnits,
+      timeIntervalSincePreviousTimeInterval,
+      result,
+      sinceAt
+    });
   },
 
   failureAction: args => args,
 
   completeAction: args => args,
 
-  checkShouldFire: ({
-    pipeline,
-    timeIntervalSinceToday,
-    timeIntervalUnits,
-    timeIntervalSincePreviousTimeInterval
-  }, state) => {
-    const shouldFetch = aggregationShouldFetchSelector(pipeline, {
+  checkShouldFire: (
+    {
+      pipeline,
       timeIntervalSinceToday,
       timeIntervalUnits,
       timeIntervalSincePreviousTimeInterval
-    })(state);
-    return shouldFetch;
-  },
+    },
+    state
+  ) => aggregationShouldFetchSelector(
+    pipeline,
+    {
+      timeIntervalSinceToday,
+      timeIntervalUnits,
+      timeIntervalSincePreviousTimeInterval
+    }
+  )(state),
 
   doAction: function* fetchAggregationSaga({
     pipeline,

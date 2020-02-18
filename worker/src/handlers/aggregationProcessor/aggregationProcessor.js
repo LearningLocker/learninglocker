@@ -1,8 +1,8 @@
-import { LOCK_TIMEOUT_MINUTES, AGGREGATION_PROCESSOR_QUEUE } from 'lib/constants/aggregationProcessor';
+import { AGGREGATION_PROCESSOR_QUEUE, LOCK_TIMEOUT_MINUTES } from 'lib/constants/aggregationProcessor';
 import moment from 'moment';
 import AggregationProcessor from 'lib/models/aggregationProcessor';
 import Statement from 'lib/models/statement';
-import { get, omit, isObject } from 'lodash';
+import { get, isObject, omit } from 'lodash';
 import { publish } from 'lib/services/queue';
 import convert$oid from 'lib/helpers/convert$oid';
 
@@ -42,20 +42,20 @@ export const getFromTimestamp = ({ model, now }) => {
   }
 
   if (!model.fromTimestamp || moment(model.fromTimestamp).isAfter(moment(model.gtDate))) {
-    const blockSizeSeconds = moment(model.fromTimestamp || now).subtract(model.blockSizeSeconds, 'seconds');
+    const fromTimestamp = moment(model.fromTimestamp || now).subtract(model.blockSizeSeconds, 'seconds');
 
-    if (blockSizeSeconds.isAfter(moment(model.gtDate))) {
-      return blockSizeSeconds;
+    if (fromTimestamp.isAfter(moment(model.gtDate))) {
+      return fromTimestamp;
     }
 
     return moment(model.gtDate);
   } else if (moment(model.fromTimestamp).isBefore(moment(model.gtDate))) {
-    const blockSizeSeconds = moment(model.fromTimestamp || now).add(model.blockSizeSeconds, 'seconds');
-    if (blockSizeSeconds.isBefore(moment(model.gtDate))) {
-      return blockSizeSeconds;
+    const fromTimestamp = moment(model.fromTimestamp || now).add(model.blockSizeSeconds, 'seconds');
+
+    if (fromTimestamp.isBefore(moment(model.gtDate))) {
+      return fromTimestamp;
     }
   }
-  return moment(model.gtDate);
 };
 
 export const getAddFromTimestamp = ({ model, now }) => {

@@ -1,4 +1,4 @@
-import { Map, OrderedMap, fromJS } from 'immutable';
+import { fromJS, Map, OrderedMap } from 'immutable';
 import { createSelector } from 'reselect';
 import { handleActions } from 'redux-actions';
 import { SETIN_AGGREGATION_RESULT } from 'ui/redux/modules/aggregation';
@@ -49,27 +49,23 @@ export const aggregationHasResultSelector = pipeline => createSelector(
   aggregations => OrderedMap.isOrderedMap(aggregations.getIn([pipeline, 'result']))
 );
 
-export const aggregationWsResultsSelector = (pipeline, timeInterval) => {
-  const out = createSelector(
+export const aggregationWsResultsSelector = (pipeline, timeInterval) => createSelector(
     aggregationSelector,
-    (aggregations) => {
-      const ou = aggregations.getIn([
-        new Map({
-          pipeline,
-          timeIntervalSinceToday: get(timeInterval, 'timeIntervalSinceToday'),
-          timeIntervalUnits: get(timeInterval, 'timeIntervalUnits'),
-          ...(get(timeInterval, 'timeIntervalSincePreviousTimeInterval') ?
-            { timeIntervalSincePreviousTimeInterval: get(timeInterval, 'timeIntervalSincePreviousTimeInterval') } :
-            {}
-          )
-        }),
-        'result'
-      ]);
-      return ou;
-    }
+    aggregations => aggregations.getIn([
+      new Map({
+        pipeline,
+        timeIntervalSinceToday: get(timeInterval, 'timeIntervalSinceToday'),
+        timeIntervalUnits: get(timeInterval, 'timeIntervalUnits'),
+        ...(get(timeInterval, 'timeIntervalSincePreviousTimeInterval')
+            ? {
+              timeIntervalSincePreviousTimeInterval: get(timeInterval, 'timeIntervalSincePreviousTimeInterval')
+            }
+            : {}
+        )
+      }),
+      'result'
+    ])
   );
-  return out;
-};
 
 export const aggregationWsHasResultSelector = (
   pipeline,

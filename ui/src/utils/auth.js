@@ -3,11 +3,18 @@ import { startsWith, endsWith, includes, findKey } from 'lodash';
 
 /**
  * Returns the string identifier used to find a cookie
+ * @param {string} tokenType
  * @param {string} tokenId - optional parameter
+ * @returns {string}
  */
 const getCookieName = ({ tokenType, tokenId }) =>
   `${COOKIE_ACCESS_TOKEN}_${tokenType}${tokenId ? `_${tokenId}` : ''}`;
 
+/**
+ * @param {string} tokenType
+ * @param cookies
+ * @returns {string}
+ */
 const getCookieNameStartsWith = ({ tokenType }, cookies) => {
   const key = findKey(cookies, (item, key2) =>
     key2.startsWith(`${COOKIE_ACCESS_TOKEN}_${tokenType}_`)

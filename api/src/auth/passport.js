@@ -17,6 +17,12 @@ import { AUTH_JWT_GOOGLE_CALLBACK } from 'lib/constants/routes';
 import { getCookieNameStartsWith, getCookieName } from 'ui/utils/auth';
 import Unauthorized from 'lib/errors/Unauthorised';
 
+/**
+ * @typedef {object} AuthInfo
+ * @property {*} user
+ * @property {string} token
+ */
+
 import {
   createOrgTokenPayload,
   createUserTokenPayload,
@@ -43,43 +49,56 @@ const createPayloadFromPayload = (payload) => {
 
   return Promise
     .props(dependencies)
-    .then(async ({ user, dashboard }) => {
-      const { tokenId, provider } = payload;
+    .then(
+      /**
+       * @param user - TODO: define type
+       * @param dashboard - TODO: define type
+       * @returns {Promise<*>}
+       */
+      async ({ user, dashboard }) => {
+        const { tokenId, provider } = payload;
 
-      switch (payload.tokenType) {
-        case 'organisation': {
-          const expectedToken = await createOrgTokenPayload(
-            user,
-            tokenId,
-            provider
-          );
-          return { expectedToken, user };
-        }
-        case 'dashboard': {
-          const shareable = find(dashboard.shareable, share =>
-            share._id.toString() === payload.shareableId
-          );
+        switch (payload.tokenType) {
+          case 'organisation': {
+            const expectedToken = await createOrgTokenPayload(
+              user,
+              tokenId,
+              provider
+            );
+            return { expectedToken, user };
+          }
+          case 'dashboard': {
+            const shareable = find(dashboard.shareable, share =>
+              share._id.toString() === payload.shareableId
+            );
 
-          const expectedToken = await createDashboardTokenPayload(
-            dashboard,
-            (shareable ? shareable._id.toString() : null),
-            provider
-          );
-          return { expectedToken };
-        }
-        case 'user':
-        default: {
-          const expectedToken = await createUserTokenPayload(user, provider);
-          return { expectedToken, user };
+            const expectedToken = await createDashboardTokenPayload(
+              dashboard,
+              (shareable ? shareable._id.toString() : null),
+              provider
+            );
+            return { expectedToken };
+          }
+          case 'user':
+          default: {
+            const expectedToken = await createUserTokenPayload(user, provider);
+            return { expectedToken, user };
+          }
         }
       }
-    });
+    );
 };
 
 /**
+ * @callback verifyToken~done
+ *  @param {*} [error]
+ *  @param {{authInfo: AuthInfo}} [authData]
+ */
+
+/**
  * @param {string} token
- * @param done
- * @returns {Promise<*|{authInfo: {user: *, token: *}}>}
+ * @param {verifyToken~done} done
+ * @returns {Promise<{authInfo: AuthInfo}>}
  */
 export async function verifyToken(token, done = () => {}) {
   try {

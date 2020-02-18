@@ -12,6 +12,12 @@ import {
 } from 'ui/utils/constants';
 
 /**
+ * @typedef {object} PreviewInterval
+ *  @property {number} timeIntervalSinceToday
+ *  @property {string} timeIntervalUnits
+ */
+
+/**
  *
  * @param {string} period - LAST_* or TODAY in ui/utils/constants
  * @param {string} timezone - TZ database name (e.g. "Europe/Paris") or offset (e.g. '+03:00') in UTC_BASED_ZONE_LABELS_MAP
@@ -35,6 +41,11 @@ export const periodToDate = (period, timezone, currentMoment, benchmark = 1) => 
   }
 };
 
+/**
+ * @param {string} period
+ * @param {boolean} [benchmarking]
+ * @returns {PreviewInterval}
+ */
 export const previewPeriodToInterval = (period, benchmarking) => {
   switch (period) {
     case TODAY: return {

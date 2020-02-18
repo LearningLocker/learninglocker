@@ -7,7 +7,7 @@ import HttpRoutes from 'api/routes/HttpRoutes';
 import logger from 'lib/logger';
 import { install } from 'source-map-support';
 import WebSocket from 'ws';
-import websockets from 'api/websockets';
+import { addMessageHandler } from 'api/websockets';
 
 install();
 
@@ -41,12 +41,11 @@ if (process.env.API_PORT) {
     if (process.send) process.send('ready');
   });
 
-  const wss = new WebSocket.Server({
-    server
-  });
-  wss.on('connection', (ws) => {
-    websockets.add(ws);
-  });
+  const webSocketServer = new WebSocket.Server({ server });
+  webSocketServer.on(
+    'connection',
+    websocket => addMessageHandler(websocket)
+  );
 } else {
   logger.error(
     '==>     ERROR: No PORT environment variable has been specified'

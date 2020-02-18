@@ -161,7 +161,19 @@ class _LLApiClient {
     },
   })
 
-  aggregateWs = (pipeline, timeIntervalSinceToday, timeIntervalUnits, timeIntervalSincePreviousTimeInterval) => post({
+  /**
+   * @param pipeline - TODO: define type
+   * @param {number} timeIntervalSinceToday
+   * @param {string} timeIntervalUnits
+   * @param {number} timeIntervalSincePreviousTimeInterval
+   * @returns {module:ll.PopsicleRequest}
+   */
+  aggregateWs = (
+    pipeline,
+    timeIntervalSinceToday,
+    timeIntervalUnits,
+    timeIntervalSincePreviousTimeInterval
+  ) => post({
     url: formatUrl(routes.STATEMENTS_AGGREGATION_PROCESSOR_INITIALISE),
     headers: {
       Authorization: `Bearer ${this.getToken()}`,

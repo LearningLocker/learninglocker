@@ -16,10 +16,9 @@ if (!isProduction) {
 }
 assetPath += '/';
 
-export const getWsUrl = () => {
-  const out = defaultTo(process.env.WS_URL, process.env.SITE_URL.replace(/^http/, 'ws'));
-  return out;
-};
+/** @returns {string} */
+export const getWsUrl = () =>
+  defaultTo(process.env.WS_URL, process.env.SITE_URL.replace(/^http/, 'ws'));
 
 export default {
   host,

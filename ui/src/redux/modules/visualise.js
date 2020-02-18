@@ -1,44 +1,30 @@
-import { List, Map, fromJS } from 'immutable';
+import { fromJS, List, Map } from 'immutable';
 import { createSelector } from 'reselect';
-import { take, takeEvery, put, fork, select } from 'redux-saga/effects';
-import { identity, get } from 'lodash';
+import { fork, put, select, take, takeEvery } from 'redux-saga/effects';
+import { get, identity } from 'lodash';
 import {
-  fetchAggregation,
+  aggregationHasResultSelector,
   aggregationResultsSelector,
   aggregationShouldFetchSelector,
-  aggregationHasResultSelector
+  fetchAggregation
 } from 'ui/redux/modules/aggregation';
 import {
-  fetchAggregation as fetchWsAggregation,
-  aggregationWsResultsSelector,
   aggregationShouldFetchSelector as aggregationShouldFetchWsSelector,
-  aggregationWsHasResultSelector
+  aggregationWsHasResultSelector,
+  aggregationWsResultsSelector,
+  fetchAggregation as fetchWsAggregation
 } from 'ui/redux/modules/aggregationWs';
-import {
-  shouldFetchSelector,
-  fetchModels,
-  fetchModelsCount,
-  countSelector
-} from 'ui/redux/modules/pagination';
-import {
-  modelsSchemaIdSelector,
-  modelsByFilterSelector,
-  updateModel
-} from 'ui/redux/modules/models';
+import { countSelector, fetchModels, fetchModelsCount, shouldFetchSelector } from 'ui/redux/modules/pagination';
+import { modelsByFilterSelector, modelsSchemaIdSelector, updateModel } from 'ui/redux/modules/models';
 import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
 import { orgTimezoneFromTokenSelector } from 'ui/redux/modules/auth';
 import { metadataSelector } from 'ui/redux/modules/metadata';
 import { modelsSelector } from 'ui/redux/modules/models/selectors';
 import { UPDATE_MODEL } from 'ui/redux/modules/models/updateModel';
-import {
-  TYPES,
-  NONE,
-  JOURNEY,
-  JOURNEY_PROGRESS,
-} from 'ui/utils/constants';
+import { JOURNEY, JOURNEY_PROGRESS, NONE, TYPES, } from 'ui/utils/constants';
 import { pipelinesFromQueries } from 'ui/utils/visualisations';
 import { unflattenAxes } from 'lib/helpers/visualisation';
-import { OFF, ANY } from 'lib/constants/dashboard';
+import { ANY, OFF } from 'lib/constants/dashboard';
 import { previewPeriodToInterval } from 'ui/utils/dates';
 
 export const FETCH_VISUALISATION = 'learninglocker/models/learninglocker/visualise/FETCH_VISUALISATION';
@@ -235,7 +221,10 @@ export const visualisationWsPipelinesSelector = (
     orgTimezoneFromTokenSelector,
   ],
   (visualisation, filter, organisationModel, orgTimezoneFromToken) => {
-    if (!visualisation) return new List();
+    if (!visualisation) {
+      return new List();
+    }
+
     const type = visualisation.get('type');
     const journey = visualisation.get('journey');
     const previewPeriod = visualisation.get('previewPeriod');
@@ -247,7 +236,7 @@ export const visualisationWsPipelinesSelector = (
         return vFilter;
       }
 
-      const out = new Map({
+      return new Map({
         $match: new Map({
           $and: new List([
             vFilter.get('$match', new Map()),
@@ -255,19 +244,15 @@ export const visualisationWsPipelinesSelector = (
           ])
         })
       });
-
-      return out;
     });
 
     const axes = unflattenAxes(visualisation);
     const series = cb(queries, axes, type, undefined, journey, timezone, false);
 
-    const out = {
+    return {
       series,
       ...previewPeriodToInterval(previewPeriod, benchmarkingEnabled)
     };
-
-    return out;
   }
 );
 
@@ -307,7 +292,7 @@ const shouldFetchJourney = (pipelines, state) =>
 
 /**
  * Takes a visualisation id and checks if it needs its sources fetching
- * @param  {visualisationId} id of the visualisation to check
+ * @param  {string} visualisationId - id of the visualisation to check
  * @return {Boolean}
  */
 export const visualisationShouldFetchSelector = visualisationId => createSelector([
@@ -394,7 +379,8 @@ const getWsSeriesResults = (visualisationId, state) => {
 
 /**
  * Takes a visualisation id and returns the results of its queries
- * @param  {visualisationId} id of the visualisation to check
+ * @param  {string} visualisationId - id of the visualisation to check
+ * @param filter
  * @return {Immutable.List}
  */
 export const visualisationResultsSelector = (visualisationId, filter) => createSelector([
@@ -409,6 +395,7 @@ export const visualisationResultsSelector = (visualisationId, filter) => createS
   }
 });
 
+/** @returns {boolean} */
 const shouldUseWs = () => true;
 
 export const visualisationWsResultsSelector = (visualisationId, filter) => createSelector([
@@ -428,37 +415,63 @@ export const visualisationWsResultsSelector = (visualisationId, filter) => creat
   }
 });
 
-export const visualisationAllAggregationsHaveResultSelector = visualisationId => createSelector([
-  identity,
-], (state) => {
-  const useWs = shouldUseWs();
-  if (useWs) {
-    const { series, timeIntervalSinceToday, timeIntervalUnits } = visualisationWsPipelinesSelector(visualisationId)(state);
-    return series.reduce(
-      (acc1, pipelines) => {
-        const out = acc1 && pipelines.reduce(
-          (acc2, pipeline) => acc2 && aggregationWsHasResultSelector(pipeline, {
-            timeIntervalSinceToday, timeIntervalUnits
-          })(state),
-          true
-        );
-        return out;
-      },
-      true
-    );
-  // eslint-disable-next-line no-else-return
-  } else {
+export const visualisationAllAggregationsHaveResultSelector = visualisationId => createSelector(
+  [identity],
+  (state) => {
+    const useWs = shouldUseWs();
+
+    if (useWs) {
+      const {
+        series,
+        timeIntervalSinceToday,
+        timeIntervalUnits
+      } = visualisationWsPipelinesSelector(visualisationId)(state);
+
+      return series.reduce(
+        /**
+         * @param {boolean} seriesHaveResultsAccumulator
+         * @param {*[]} pipelines - TODO: define type
+         * @returns {boolean}
+         */
+        (seriesHaveResultsAccumulator, pipelines) => {
+          const pipelinesHaveResults = pipelines
+            .reduce(
+              /**
+               * @param seriesPipelinesHaveResultsAccumulator
+               * @param pipeline - TODO: define type
+               * @returns {boolean}
+               */
+              (seriesPipelinesHaveResultsAccumulator, pipeline) => {
+                const aggregationWsHasResult = aggregationWsHasResultSelector(
+                  pipeline,
+                  {
+                    timeIntervalSinceToday,
+                    timeIntervalUnits
+                  }
+                )(state);
+
+                return seriesPipelinesHaveResultsAccumulator && aggregationWsHasResult;
+              },
+              true
+            );
+
+          return seriesHaveResultsAccumulator && pipelinesHaveResults;
+        },
+        true
+      );
+    }
+
     const series = visualisationPipelinesSelector(visualisationId)(state);
+
     return series.reduce(
       (acc1, pipelines) =>
         acc1 && pipelines.reduce(
-          (acc2, pipeline) => acc2 && aggregationHasResultSelector(pipeline)(state),
-          true
+        (acc2, pipeline) => acc2 && aggregationHasResultSelector(pipeline)(state),
+        true
         ),
       true
     );
-  }
-});
+  });
 
 function* handleVisualisation(action) {
   const { keyPath, silent } = action;
@@ -489,6 +502,7 @@ export function* fetchVisualisationSaga(state, id) {
 
   if (visualisation.get('type') === JOURNEY_PROGRESS) {
     const pipelines = visualisationPipelinesSelector(id)(state);
+
     for (let i = 0; i < pipelines.size; i += 1) {
       const journeyId = visualisation.get('journey');
       const filter = new Map({ journey: journeyId });
@@ -507,11 +521,13 @@ export function* fetchVisualisationSaga(state, id) {
     if (useWs) {
       for (let s = 0; s < series.size; s += 1) {
         const pipelines = series.get(s);
+
         for (let p = 0; p < pipelines.size; p += 1) {
           const shouldFetch = shouldFetchWsPipeline(pipelines.get(p), state, {
             timeIntervalSinceToday,
             timeIntervalUnits
           });
+
           if (shouldFetch) {
             yield put(fetchWsAggregation({
               pipeline: pipelines.get(p),
@@ -535,9 +551,13 @@ export function* fetchVisualisationSaga(state, id) {
 
       for (let s = 0; s < nonWsSeries.size; s += 1) {
         const pipelines = nonWsSeries.get(s);
+
         for (let p = 0; p < pipelines.size; p += 1) {
           const shouldFetch = shouldFetchPipeline(pipelines.get(p), state);
-          if (shouldFetch) yield put(fetchAggregation({ pipeline: pipelines.get(p) }));
+
+          if (shouldFetch) {
+            yield put(fetchAggregation({ pipeline: pipelines.get(p) }));
+          }
         }
       }
     }
