@@ -86,7 +86,7 @@ const renderBenchmark = ({ percentage, model }) => {
 
 const getCountFontsize = ({ height, width, hasBenchmark, hasContextLabel, maxSize }) => {
   let fontSize = hasBenchmark || hasContextLabel ? `${maxSize / 40}` : `${maxSize / 20}`;
-  const tripHeight = hasBenchmark || hasContextLabel ? 220 : 150;
+  const tripHeight = hasBenchmark || hasContextLabel ? 220 : 200;
   if (height < tripHeight) {
     if (!hasBenchmark && !hasContextLabel) {
       fontSize = width > 200 ? 4.5 : 3.5;
@@ -119,6 +119,7 @@ const renderCounter = ({ color, results, model, height, width }) => {
         className={styles.counter}
         style={{ width, fontSize: countFontsize }}>
         { renderedCount }
+        { renderedContextLabel }
         <div
           key="benchmark"
           className={styles.benchmark}
@@ -126,7 +127,6 @@ const renderCounter = ({ color, results, model, height, width }) => {
             fontSize,
             color: percentage.color,
           }}>{ renderedBenchmark }</div>
-        { renderedContextLabel }
       </div>
     </div>
   );

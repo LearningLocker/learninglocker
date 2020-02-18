@@ -11,7 +11,10 @@
 .contextLabel {
   color: #D35D2B;
   font-size: 20px;
-  margin: 0 15px;
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .benchmark {
