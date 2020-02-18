@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import { AutoSizer } from 'react-virtualized';
-import { shorten } from 'ui/utils/defaultTitles';
+import { shorten, wrapLabel } from 'ui/utils/defaultTitles';
+
 import {
   ScatterChart,
   XAxis,
@@ -34,13 +35,13 @@ class XvsY extends Component {
   }
 
   shouldComponentUpdate = nextProps => !(
-      this.props.results.equals(nextProps.results) &&
-      this.props.axesLabels.xLabel === nextProps.axesLabels.xLabel &&
-      this.props.axesLabels.yLabel === nextProps.axesLabels.yLabel &&
-      this.props.colors.equals(nextProps.colors) &&
-      this.props.labels.equals(nextProps.labels) &&
-      this.props.trendLines === nextProps.trendLines
-    )
+    this.props.results.equals(nextProps.results) &&
+    this.props.axesLabels.xLabel === nextProps.axesLabels.xLabel &&
+    this.props.axesLabels.yLabel === nextProps.axesLabels.yLabel &&
+    this.props.colors.equals(nextProps.colors) &&
+    this.props.labels.equals(nextProps.labels) &&
+    this.props.trendLines === nextProps.trendLines
+  )
 
   getLargestSeriesSize = () => (
     this.props.results.map(this.getLargestAxisSize).max()
@@ -140,13 +141,13 @@ class XvsY extends Component {
           display={this.displayModelAtPosition(this.getModels())} />}
         cursor={{ strokeDasharray: '3 3' }} />
     </ScatterChart>
-    )
+  )
 
   renderChart = () => (
     <div className={styles.chart}>
       <div className={`${styles.barContainer}`}>
         <span className={styles.yAxis}>
-          {this.props.model.get('axesyLabel') || shorten(this.props.model.getIn(['axesyValue', 'searchString'], 'Y-Axis'))}
+          {wrapLabel(this.props.model.get('axesyLabel') || this.props.model.getIn(['axesyValue', 'searchString'], 'Y-Axis'))}
         </span>
         <div className={styles.chartWrapper}>
           <AutoSizer forceChange={this.props.results}>
