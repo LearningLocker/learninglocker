@@ -56,6 +56,8 @@ export const getFromTimestamp = ({ model, now }) => {
       return fromTimestamp;
     }
   }
+
+  return moment(model.gtDate);
 };
 
 export const getAddFromTimestamp = ({ model, now }) => {
