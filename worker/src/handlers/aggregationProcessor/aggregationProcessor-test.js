@@ -141,7 +141,7 @@ describe('aggregationProcessor', () => {
     expect(result[0].model).to.equal((moment().toDate().getDay() + 1));
   });
 
-  it('should add to aggrigation for new statements', async () => {
+  it('should add to aggregation for new statements', async () => {
     await Statement.create({
       statement: {},
       organisation: objectId(TEST_ID),
@@ -208,12 +208,12 @@ describe('aggregationProcessor', () => {
       aggregationProcessorId
     }, doneFn);
 
-    let pulbishQueueCalls = 0;
+    let publishQueueCalls = 0;
     const mockPublishQueue = ({
       queueName,
       payload
     }) => {
-      pulbishQueueCalls += 1;
+      publishQueueCalls += 1;
       expect(queueName).to.equal(AGGREGATION_PROCESSOR_QUEUE);
       expect(payload.aggregationProcessorId).to.equal(aggregationProcessorId);
     };
@@ -230,7 +230,7 @@ describe('aggregationProcessor', () => {
 
     expect(result[0].count).to.equal(0);
     expect(result[0].model).to.equal((moment().toDate().getDay() + 1));
-    expect(pulbishQueueCalls).to.equal(0);
+    expect(publishQueueCalls).to.equal(0);
   });
 
   it('benchmarking', async () => {
