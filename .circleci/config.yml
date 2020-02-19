@@ -22,9 +22,9 @@ jobs:
       TEST_LOG_MIN_LEVEL: info
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - yarn-cache-{{ checksum "yarn.lock" }}
+#      - restore_cache:
+#          keys:
+#            - yarn-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Installing Dependencies
           command: npm_config_build_from_source=true yarn --ignore-engines
