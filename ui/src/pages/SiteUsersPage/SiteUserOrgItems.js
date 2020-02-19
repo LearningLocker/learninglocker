@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
-import { compose, withProps, setPropTypes } from 'recompose';
+import { compose, setPropTypes, withProps } from 'recompose';
 import { withModels } from 'ui/utils/hocs';
 import SiteUserOrgItem from './SiteUserOrgItem';
 
@@ -11,8 +11,12 @@ const enhance = compose(
   }),
   withProps(({ user }) => {
     const schema = 'organisation';
+    const organisations = user.get('organisations').map(org => new Map({ $oid: org }));
+    // TODO: https://github.com/LearningLocker/learninglocker/pull/1513#issuecomment-587064642
     const filter = new Map({
-      owner: user.get('_id')
+      _id: new Map({
+        $in: organisations.slice(0, 10)
+      })
     });
 
     return { schema, filter };
@@ -20,15 +24,35 @@ const enhance = compose(
   withModels
 );
 
-const SiteUserOrgItems = ({ models, user, fetchMore, hasMore }) => {
-  const orgsItems = models
-    .map(org => <SiteUserOrgItem key={org.get('_id').toString()} org={org} user={user} />)
+const SiteUserOrgItems = ({ models, user, filter }) => {
+  // TODO: temporary solution. Need to change when we will have OrganisationUser model.
+  //  (https://github.com/LearningLocker/learninglocker/pull/1513#issuecomment-587064642)
+  const orgItems = filter
+    .get('_id')
+    .get('$in')
+    .map((org) => {
+      const orgModel = models.find(model =>
+        model.get('_id').toString() === org.get('$oid').toString()
+      );
+
+      if (orgModel === undefined) {
+        return (
+          <li key={org.get('$oid').toString()}>
+            Sorry organisation with id {org.get('$oid')} was deleted!
+          </li>
+        );
+      }
+
+      return <SiteUserOrgItem key={orgModel.get('_id').toString()} org={orgModel} user={user} />;
+    })
     .valueSeq();
+
+  const countOfRemainingOrganisations = user.get('organisations').count() - orgItems.count();
 
   return (
     <div>
-      <ul>{orgsItems}</ul>
-      { hasMore && <button className={'btn btn-default btn-sm'} onClick={fetchMore}> Load more </button> }
+      <ul>{orgItems}</ul>
+      {countOfRemainingOrganisations > 0 ? <p>Plus { countOfRemainingOrganisations } more not displayed</p> : null}
     </div>
   );
 };
