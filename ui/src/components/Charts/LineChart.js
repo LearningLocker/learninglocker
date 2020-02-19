@@ -4,6 +4,7 @@ import { LineChart as Chart, XAxis, YAxis, Line, CartesianGrid } from 'recharts'
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import NoData from 'ui/components/Graphs/NoData';
 import { compose } from 'recompose';
+import { wrapLabel } from 'ui/utils/defaultTitles';
 import {
   getResultsData,
   getShortModel,
@@ -47,13 +48,13 @@ const renderLineChart = (labels, toggleHiddenSeries, hiddenSeries) => colors => 
     {renderLines(labels)(colors)}
     {renderTooltips(data)}
   </Chart>
-  );
+);
 
 const renderChart = (component, axesLabels, chartWrapperFn, model) => (
   <div className={styles.chart}>
     <div className={`${styles.barContainer}`}>
       <span className={styles.yAxis}>
-        {axesLabels.yLabel || model.getIn(['axesvalue', 'searchString'], 'Y-Axis')}
+        {wrapLabel(axesLabels.yLabel || model.getIn(['axesvalue', 'searchString'], 'Y-Axis'))}
       </span>
       <div className={styles.chartWrapper}>
         {chartWrapperFn(component)}

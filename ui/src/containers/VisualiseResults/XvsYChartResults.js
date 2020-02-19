@@ -20,6 +20,6 @@ export default withStatementsVisualisation(({
     trendLines={trendLines}
     axesLabels={{
       xLabel: axes.get('xLabel', shorten(model.getIn(['axesxValue', 'searchString'], 'X-Axis'))),
-      yLabel: axes.get('yLabel', shorten(model.getIn(['axesyValue', 'searchString'], 'Y-Axis')))
+      yLabel: axes.get('yLabel', model.getIn(['axesyValue', 'searchString'], 'Y-Axis'))
     }} />
 ));

@@ -32,9 +32,16 @@ const withEventHandlers = withHandlers({
     defaultNewValues
   }) => async (payload) => {
     setIsEditingFalse();
+
+    if (!payload) {
+      return;
+    }
+
     payload.owner = userId;
+
     const props = { ...defaultNewValues, ...payload };
     const { model } = await addModel({ props });
+
     return onAddNew(model);
   },
   onCancel: ({

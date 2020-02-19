@@ -11,7 +11,7 @@ import { AutoSizer, List as VirtualList, InfiniteLoader } from 'react-virtualize
 import { withProps, compose, withState } from 'recompose';
 import { actions as routerActions } from 'redux-router5';
 import moment from 'moment';
-import { isSiteAdminSelector, authenticationSelector, logout, orgLoginStart, loggedInUserSelector } from 'ui/redux/modules/auth';
+import { isSiteAdminSelector, authenticationSelector, logout, orgLoginStart, loggedInUserSelector, orgLogout } from 'ui/redux/modules/auth';
 import { queryStringToQuery } from 'ui/redux/modules/search';
 import { withSchema } from 'ui/utils/hocs';
 import Spinner from 'ui/components/Spinner';
@@ -27,6 +27,7 @@ class Home extends Component {
     fetchMore: PropTypes.func,
     modelCount: PropTypes.number,
     logout: PropTypes.func,
+    orgLogout: PropTypes.func,
     orgLoginStart: PropTypes.func,
     navigateTo: PropTypes.func,
     isSiteAdmin: PropTypes.bool,
@@ -40,6 +41,10 @@ class Home extends Component {
     auth: new Map(),
     authUser: new Map(),
     isSiteAdmin: false
+  }
+
+  componentDidMount = () => {
+    this.props.orgLogout();
   }
 
   onOrgSearch = (event) => {
@@ -254,7 +259,7 @@ export default compose(
     auth: authenticationSelector(state),
     authUser: loggedInUserSelector(state),
     isSiteAdmin: isSiteAdminSelector(state)
-  }), { logout, orgLoginStart, navigateTo: routerActions.navigateTo }),
+  }), { logout, orgLoginStart, orgLogout, navigateTo: routerActions.navigateTo }),
   withState('orgSearch', 'setOrgSearch', ''),
   withProps(({ authUser, orgSearch }) => {
     const userOrgs = authUser.get('organisations', new ImmutList());

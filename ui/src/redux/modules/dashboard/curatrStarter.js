@@ -8,6 +8,7 @@ import buildTemplateCuratrCommentCount from 'ui/containers/Visualisations/Templa
 import buildTemplateCuratrLearnerInteractionsByDateAndVerb from 'ui/containers/Visualisations/TemplateCuratrLearnerInteractionsByDateAndVerb/buildModel';
 import buildTemplateCuratrUserEngagementLeaderboard from 'ui/containers/Visualisations/TemplateCuratrUserEngagementLeaderboard/buildModel';
 import buildTemplateLast7DaysStatements from 'ui/containers/Visualisations/TemplateLast7DaysStatements/buildModel';
+import buildTemplateLearningExperienceType from 'ui/containers/Visualisations/TemplateLearningExperienceType/buildModel';
 import { addModel } from '../models';
 
 export const CREATE_CURATR_STARTER = 'learninglocker/dashboard/CREATE_CURATR_STARTER';
@@ -52,6 +53,11 @@ const createVisualisations = async ({ dispatch, userId }) => {
     dispatch(addModel({
       schema: 'visualisation',
       props: buildTemplateLast7DaysStatements(new Map({ owner: userId })),
+      isExpanded: false,
+    })),
+    dispatch(addModel({
+      schema: 'visualisation',
+      props: buildTemplateLearningExperienceType(new Map({ owner: userId })),
       isExpanded: false,
     }))
   ]);

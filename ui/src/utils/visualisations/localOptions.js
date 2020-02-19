@@ -18,6 +18,7 @@ import {
   TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD,
   TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS,
   TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS,
+  TEMPLATE_LEARNING_EXPERIENCE_TYPE,
 } from 'lib/constants/visualise';
 
 const createOptionModel = (searchString, optionKey) => new Map({ optionKey, searchString });
@@ -92,6 +93,7 @@ export const getTypeOpts = (type) => {
     case TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD:
     case TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS:
     case TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS:
+    case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
       return OPERATOR_OPTS;
     default:
       return new OrderedMap();
