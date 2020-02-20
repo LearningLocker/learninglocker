@@ -262,14 +262,14 @@ const jwtOrganisation = (req, res) => {
   }
 };
 
-const googleSuccess = (req, res) => {
+const googleSuccess = (user, response) => {
   // we have successfully signed into google
   // create a JWT and set it in the query params (only way to return it with a redirect)
-  createUserJWT(req.user, 'google')
-    .then(token => res.redirect(`/api${AUTH_JWT_SUCCESS}?access_token=${token}`))
+  createUserJWT(user, 'google')
+    .then(token => response.redirect(`/api${AUTH_JWT_SUCCESS}?access_token=${token}`))
     .catch(
       (err) => {
-        res
+        response
           .status(status.INTERNAL_SERVER_ERROR)
           .send(err);
       }

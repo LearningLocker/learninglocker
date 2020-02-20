@@ -151,13 +151,15 @@ if (process.env.GOOGLE_ENABLED) {
         'google',
         DEFAULT_PASSPORT_OPTIONS,
         (error, user, info) => {
+          const defaultErrorMessage = 'Something bad happened';
+
           if (!user) {
-            response.redirect(`/api${routes.OAUTH2_FAILED}?error=${info.message}`);
+            response.redirect(`/api${routes.OAUTH2_FAILED}?error=${get(info, 'message', defaultErrorMessage)}`);
 
             return;
           }
 
-          AuthController.googleSuccess(request, response);
+          AuthController.googleSuccess(user, response);
         },
       )(request, response, next);
     },
