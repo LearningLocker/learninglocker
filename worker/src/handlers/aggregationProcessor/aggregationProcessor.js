@@ -28,13 +28,10 @@ export const combine = (as, bs, keyFnIn, mergeFn) => {
   );
 };
 
-export const hasReachedEnd = ({ model, now }) => {
-  const out = (
-    moment(model.fromTimestamp).isSame(moment(model.gtDate)) &&
-    moment(model.toTimestamp).isSame(now)
-  );
-  return out;
-};
+export const hasReachedEnd = ({ model, now }) => (
+  moment(model.fromTimestamp).isSame(moment(model.gtDate)) &&
+  moment(model.toTimestamp).isSame(now)
+);
 
 export const getFromTimestamp = ({ model, now }) => {
   if (model.useWindowOptimization === false) {
@@ -114,13 +111,13 @@ const getAddPipeline = ({
     ];
   }
 
-  const addToFrontPipeline =
-    {
-      $gt: getAddFromTimestamp({ model, now }).toDate(),
-      $lte: getAddToTimestamp({ model, now }).toDate()
-    };
+  const addToFrontPipeline = {
+    $gt: getAddFromTimestamp({ model, now }).toDate(),
+    $lte: getAddToTimestamp({ model, now }).toDate()
+  };
 
   let addToEnd = {};
+
   if (moment(model.fromTimestamp).isAfter(moment(model.gtDate))) {
     addToEnd = {
       $gte: moment(getFromTimestamp({ model, now })).toDate(),
@@ -128,17 +125,17 @@ const getAddPipeline = ({
     };
   }
 
-  const addPipeline = [
-    { $match: {
-      $or: [
-        { timestamp: addToFrontPipeline },
-        { timestamp: addToEnd }
-      ]
-    } },
+  return [
+    {
+      $match: {
+        $or: [
+          { timestamp: addToFrontPipeline },
+          { timestamp: addToEnd }
+        ]
+      }
+    },
     ...(parsePipelineString(model.pipelineString))
   ];
-
-  return addPipeline;
 };
 
 const getSubtractPipeline = ({
@@ -154,7 +151,7 @@ const getSubtractPipeline = ({
 
   const newFromTimestamp = getFromTimestamp({ model, now });
 
-  const subtractPipeline = [
+  return [
     {
       $match: {
         timestamp: {
@@ -165,8 +162,6 @@ const getSubtractPipeline = ({
     },
     ...(parsePipelineString(model.pipelineString))
   ];
-
-  return subtractPipeline;
 };
 
 const getWindowSize = (model) => {
@@ -176,30 +171,47 @@ const getWindowSize = (model) => {
   return model.windowSize;
 };
 
-const aggregationProcessor = async ({
-  aggregationProcessorId,
-  publishQueue = publish,
-  now // For testing
-}, done) => {
-  // Attempt to aquire a lock
-  const model = await AggregationProcessor.findOneAndUpdate({
-    _id: aggregationProcessorId,
-    $or: [
-      { lockedAt: null },
-      { lockedAt: { // lock has expired
-        $lt: moment().subtract(LOCK_TIMEOUT_MINUTES, 'minutes').toDate()
-      } }
-    ]
-  }, {
-    lockedAt: moment().toDate()
-  }, {
-    new: true,
-    upsert: false
-  });
+/**
+ * @param {string} aggregationProcessorId
+ * @param publishQueue
+ * @param now
+ * @param done
+ * @returns {Promise<*>}
+ */
+const aggregationProcessor = async (
+  {
+    aggregationProcessorId,
+    publishQueue = publish,
+    now // For testing
+  },
+  done
+) => {
+  // Attempt to acquire a lock
+  const model = await AggregationProcessor.findOneAndUpdate(
+    {
+      _id: aggregationProcessorId,
+      $or: [
+        { lockedAt: null },
+        {
+          lockedAt: { // lock has expired
+            $lt: moment()
+              .subtract(LOCK_TIMEOUT_MINUTES, 'minutes')
+              .toDate()
+          }
+        }
+      ]
+    },
+    { lockedAt: moment().toDate() },
+    {
+      new: true,
+      upsert: false
+    }
+  );
 
   if (!model) {
     // Probably locked by something else
     done();
+
     return;
   }
 
@@ -231,6 +243,7 @@ const aggregationProcessor = async ({
     await Promise.all([addResultsPromise, subtractResultsPromise]);
 
   let results;
+
   if (subtractResults && model.useWindowOptimization) {
     const addSubtractResults = combine(addResults, subtractResults, result => result.model,
       (resultModel, a, b) => {
@@ -284,20 +297,24 @@ const aggregationProcessor = async ({
   const fromTimestamp = getFromTimestamp({ model, now });
   const toTimestamp = getAddToTimestamp({ model, now });
 
-  const newModel = await AggregationProcessor.findOneAndUpdate({
-    _id: aggregationProcessorId
-  }, {
-    $unset: {
-      lockedAt: '',
+  const newModel = await AggregationProcessor.findOneAndUpdate(
+    {
+      _id: aggregationProcessorId
     },
-    fromTimestamp: fromTimestamp.toDate(),
-    toTimestamp: toTimestamp.toDate(),
-    gtDate: model.gtDate,
-    results
-  }, {
-    new: true,
-    upsert: false
-  });
+    {
+      $unset: {
+        lockedAt: '',
+      },
+      fromTimestamp: fromTimestamp.toDate(),
+      toTimestamp: toTimestamp.toDate(),
+      gtDate: model.gtDate,
+      results
+    },
+    {
+      new: true,
+      upsert: false
+    }
+  );
 
   if (!hasReachedEnd({ model: newModel, now })) {
     publishQueue({
@@ -309,6 +326,7 @@ const aggregationProcessor = async ({
   }
 
   done();
+
   return results;
 };
 
