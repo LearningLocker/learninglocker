@@ -62,8 +62,6 @@ import personaRESTHandler from 'api/routes/personas/personaRESTHandler';
 import personaIdentifierRESTHandler from 'api/routes/personas/personaIdentifierRESTHandler';
 import UserOrganisationsRouter from 'api/routes/userOrganisations/router';
 import UserOrganisationSettingsRouter from 'api/routes/userOrganisationSettings/router';
-import getLrsFromAuthInfo from 'lib/services/auth/authInfoSelectors/getLrsFromAuthInfo';
-import { decrementStatementCount } from 'lib/services/lrs';
 
 // CONSTANTS
 import * as routes from 'lib/constants/routes';
@@ -371,18 +369,8 @@ restify.serve(router, Statement, {
       return res.send('No ID sent', 400);
     }
     next();
-    return;
   },
   preUpdate: (req, res) => res.sendStatus(405),
-  postDelete: (req, _, next) => {
-    // Update LRS.statementCount
-    const authInfo = getAuthFromRequest(req);
-    const lrsId = getLrsFromAuthInfo(authInfo);
-
-    decrementStatementCount(lrsId)
-      .then(() => next())
-      .catch(err => next(err));
-  },
 });
 restify.serve(router, AggregationProcessor, {
   preUpdate: (req, res) => res.sendStatus(METHOD_NOT_ALLOWED),
