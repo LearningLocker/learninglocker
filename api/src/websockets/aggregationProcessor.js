@@ -33,7 +33,6 @@ const aggregationProcessor = async ({
           }
         }
       },
-      { $replaceRoot: { newRoot: '$fullDocument' } },
       { $match: scopeFilter }
     ],
     {
@@ -41,13 +40,15 @@ const aggregationProcessor = async ({
     }
   );
 
-  changeStream.on('change', (next) => {
-    ws.send(JSON.stringify(next));
+  changeStream.on('change', (updateEvent) => {
+    const aggregationProcessorDocument = updateEvent.fullDocument;
+
+    ws.send(JSON.stringify(aggregationProcessorDocument));
 
     if (
-      !isUndefined(next.gtDate) &&
-      moment(next.fromTimestamp).isSame(moment(next.gtDate)) &&
-      moment(next.toTimestamp).isAfter(moment().subtract(10, 'minutes'))
+      !isUndefined(aggregationProcessorDocument.gtDate) &&
+      moment(aggregationProcessorDocument.fromTimestamp).isSame(moment(aggregationProcessorDocument.gtDate)) &&
+      moment(aggregationProcessorDocument.toTimestamp).isAfter(moment().subtract(10, 'minutes'))
     ) {
       ws.close();
       changeStream.close();
