@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import moment from 'moment';
-import { chain, isUndefined, omit } from 'lodash';
+import { chain, isUndefined } from 'lodash';
 
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import AggregationProcessor from 'lib/models/aggregationProcessor';
@@ -62,7 +62,7 @@ const aggregationProcessor = async ({
 
   changeStream.on('change', (dirtyAggregationProcessorDocument) => {
     const aggregationProcessorDocument = {
-      ...omit(dirtyAggregationProcessorDocument, ['_id']), // remove change stream event id
+      ...dirtyAggregationProcessorDocument,
       ...{ _id: aggregationProcessorId }, // restore original document id
     };
 
