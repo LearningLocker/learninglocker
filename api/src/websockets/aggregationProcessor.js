@@ -1,8 +1,9 @@
-import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
-import AggregationProcessor from 'lib/models/aggregationProcessor';
 import mongoose from 'mongoose';
 import moment from 'moment';
-import { isUndefined } from 'lodash';
+import { chain, isUndefined, omit } from 'lodash';
+
+import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
+import AggregationProcessor from 'lib/models/aggregationProcessor';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -23,6 +24,19 @@ const aggregationProcessor = async ({
     authInfo
   });
 
+  /**
+   * @see https://docs.mongodb.com/manual/changeStreams/index.html - Go to TIP section
+   */
+  const safeNewRoot = {
+    ...{ _id: '$_id' }, // save original change stream event id
+    ...chain(AggregationProcessor.schema.paths)
+      .omit(['_id'])
+      .keys()
+      .keyBy()
+      .mapValues(key => `$fullDocument.${key}`)
+      .value()
+  };
+
   const changeStream = AggregationProcessor.watch(
     [
       {
@@ -33,6 +47,12 @@ const aggregationProcessor = async ({
           }
         }
       },
+      /**
+       * We need to avoid replacing event's _id because it will raise an error starting from MongoDB v4.2.
+       * And also it's an recommendation not to do so in versions below v4.2
+       * @see https://docs.mongodb.com/manual/changeStreams/index.html - Go to TIP section
+       */
+      { $replaceRoot: { newRoot: safeNewRoot } },
       { $match: scopeFilter }
     ],
     {
@@ -40,8 +60,11 @@ const aggregationProcessor = async ({
     }
   );
 
-  changeStream.on('change', (updateEvent) => {
-    const aggregationProcessorDocument = updateEvent.fullDocument;
+  changeStream.on('change', (dirtyAggregationProcessorDocument) => {
+    const aggregationProcessorDocument = {
+      ...omit(dirtyAggregationProcessorDocument, ['_id']), // remove change stream event id
+      ...{ _id: aggregationProcessorId }, // restore original document id
+    };
 
     ws.send(JSON.stringify(aggregationProcessorDocument));
 
