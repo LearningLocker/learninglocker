@@ -175,7 +175,7 @@ const getWindowSize = (model) => {
  * @param {string} aggregationProcessorId
  * @param publishQueue
  * @param now
- * @param done
+ * @param {queue~defaultCallback} done
  * @returns {Promise<*>}
  */
 const aggregationProcessor = async (
