@@ -19,6 +19,7 @@ import {
   TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD,
   TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS,
   TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS,
+  TEMPLATE_LEARNING_EXPERIENCE_TYPE,
 } from 'lib/constants/visualise';
 import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
 import { periodToDate } from 'ui/utils/dates';
@@ -71,6 +72,7 @@ export default memoize((args = new Map()) => {
     case TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD:
     case TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS:
     case TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS:
+    case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
       return aggregateChart(preReqs, axes, timezone);
     case XVSY:
     case TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT:
