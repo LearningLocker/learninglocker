@@ -95,7 +95,7 @@ const FullPageBackground = ({ version, children, width = 600 }) => (
         {children}
       </div>
       <Copyright>
-        &copy; {new Date().getFullYear()} &nbsp;
+        &copy; {new Date().getFullYear()}&nbsp;
         <a
           href="https://www.learningpool.com"
           title="Learning Pool - Innovation. Passion. Learning."
