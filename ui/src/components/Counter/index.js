@@ -104,8 +104,7 @@ const renderCounter = ({ color, results, model, height, width }) => {
   return (
     <div style={{ height: '100%' }}>
       <div
-        className={{ height: '100%', textAlign: 'center' }}
-        style={{ width, fontSize: countFontsize }}>
+        style={{ width, fontSize: countFontsize, height: '100%', textAlign: 'center' }}>
         {renderedCount}
         <div
           key="benchmark"
