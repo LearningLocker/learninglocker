@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { compose, setPropTypes, withProps, withHandlers } from 'recompose';
-import styled from 'styled-components';
 import { List, Set } from 'immutable';
 import {
   chain,
@@ -11,7 +10,6 @@ import {
   lowerCase,
   difference,
 } from 'lodash';
-import Checkbox from 'ui/components/Material/Checkbox';
 import { withModel } from 'ui/utils/hocs';
 import orgScopes, {
   roleGroupNames,
@@ -20,6 +18,7 @@ import {
   getScopeDependencies,
   getScopeDependents,
 } from 'lib/helpers/scopes';
+import { Table, Checkbox } from './styled';
 
 export const generateNewScopes = (oldScopes, scope, checked) => {
   let newScopes;
@@ -107,11 +106,6 @@ export const getLabel = (key) => {
   }
 };
 
-const StyledCheckbox = styled(Checkbox)`
-  margin-bottom: 0px;
-  margin-top: 0px;
-`;
-
 const renderScopeTableRow = ({
   key,
   scopes,
@@ -122,7 +116,7 @@ const renderScopeTableRow = ({
     <td key={`${key}_td`}>{getRowLabel(key)}</td>
     {map(scopes, scope =>
       (<td key={`${scope}_td`} colSpan={(scopes.length === 1 ? 2 : 1)}>
-        <StyledCheckbox
+        <Checkbox
           key={scope}
           label={getLabel(scope)}
           checked={isChecked(scope, model)}
@@ -130,21 +124,6 @@ const renderScopeTableRow = ({
       </td>)
     )}
   </tr>);
-
-const Table = styled.table`
-  width: 100%;
-  color: black;
-  font-weight: bold;
-
-  tbody tr:nth-child(even) {
-    background-color: #FAFAFA;
-  }
-
-  td {
-    padding-bottom: 8px;
-    padding-top: 8px;
-  }
-`;
 
 const RoleForm = ({ model, handleAttrChange, handleScopeChange }) => {
   const groupedOrgScopes = groupScopes(orgScopes);
