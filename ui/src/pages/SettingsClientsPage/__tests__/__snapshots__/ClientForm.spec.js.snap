@@ -387,7 +387,7 @@ exports[`ClientForm ClientForm renders correctly 1`] = `
         Key
       </label>
       <p
-        className="help-block"
+        className="sc-bxivhb fZLCcU help-block"
       >
         
       </p>
@@ -401,7 +401,7 @@ exports[`ClientForm ClientForm renders correctly 1`] = `
         Secret
       </label>
       <p
-        className="help-block"
+        className="sc-bxivhb fZLCcU help-block"
       >
         
       </p>
@@ -419,7 +419,7 @@ exports[`ClientForm ClientForm renders correctly 1`] = `
          header for requests
       </label>
       <p
-        className="help-block"
+        className="sc-bxivhb fZLCcU help-block"
         style={
           Object {
             "wordWrap": "break-word",

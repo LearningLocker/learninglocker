@@ -64,6 +64,7 @@ exports[`ColumnChartResult should render axes 1`] = `
   -ms-transform: rotate(-180deg);
   transform: rotate(-180deg);
   margin: auto 0;
+  white-space: pre-wrap;
 }
 
 <div
