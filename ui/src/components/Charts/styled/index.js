@@ -77,4 +77,5 @@ export const YAxis = styled.div`
   writing-mode: vertical-rl;
   transform: rotate(-180deg);
   margin: auto 0;
+  white-space: pre-wrap;
 `;

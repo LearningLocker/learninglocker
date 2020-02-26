@@ -4,6 +4,7 @@ import { AutoSizer } from 'react-virtualized';
 import NoData from 'ui/components/Graphs/NoData';
 import { compose } from 'recompose';
 import uuid from 'uuid';
+import { wrapLabel } from 'ui/utils/defaultTitles';
 import {
   getResultsData,
   getShortModel,
@@ -30,7 +31,8 @@ const renderBarChart = colors => (labels, toggleHiddenSeries, hiddenSeries) => s
   /* eslint-disable react/no-danger */
   <div>
     <style
-      dangerouslySetInnerHTML={{ __html: `
+      dangerouslySetInnerHTML={{
+        __html: `
         .grid-${chartUuid} .recharts-cartesian-grid-vertical {
           visibility: hidden !important;
         }
@@ -56,7 +58,7 @@ const renderChart = (model, component, axesLabels, chartWrapperFn) =>
   <StyledChart>
     <BarContainer>
       <StyledYAxis>
-        {axesLabels.yLabel || model.getIn(['axesvalue', 'searchString'], 'Y-Axis')}
+        {wrapLabel(axesLabels.yLabel || model.getIn(['axesvalue', 'searchString'], 'Y-Axis'))}
       </StyledYAxis>
       <ChartWrapper>
         {chartWrapperFn(component)}

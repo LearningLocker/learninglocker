@@ -5,6 +5,7 @@ import { AutoSizer } from 'react-virtualized';
 import { BarChart as Chart, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { compose } from 'recompose';
 import NoData from 'ui/components/Graphs/NoData';
+import { wrapLabel } from 'ui/utils/defaultTitles';
 import { Button } from 'react-toolbox/lib/button';
 import uuid from 'uuid';
 import { connect } from 'react-redux';
@@ -145,7 +146,7 @@ class BarChart extends Component {
         <div className={'clearfix'} />
         <BarContainer>
           <StyledYAxis>
-            {this.props.model.get('axesyLabel') || this.props.model.getIn(['axesgroup', 'searchString'], 'Y-Axis')}
+            {wrapLabel(this.props.model.get('axesyLabel') || this.props.model.getIn(['axesgroup', 'searchString'], 'Y-Axis'))}
           </StyledYAxis>
           <ChartWrapper>
             {this.props.chartWrapperFn((this.renderBarChart(model)(colors)(labels)(data)(stacked)(activePage)))}

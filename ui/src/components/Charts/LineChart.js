@@ -3,6 +3,7 @@ import { AutoSizer } from 'react-virtualized';
 import { LineChart as Chart, XAxis, YAxis, Line, CartesianGrid } from 'recharts';
 import NoData from 'ui/components/Graphs/NoData';
 import { compose } from 'recompose';
+import { wrapLabel } from 'ui/utils/defaultTitles';
 import {
   getResultsData,
   getShortModel,
@@ -53,13 +54,13 @@ const renderLineChart = (labels, toggleHiddenSeries, hiddenSeries) => colors => 
     {renderLines(labels)(colors)}
     {renderTooltips(data)}
   </Chart>
-  );
+);
 
 const renderChart = (component, axesLabels, chartWrapperFn, model) => (
   <StyledChart>
     <BarContainer>
       <StyledYAxis>
-        {axesLabels.yLabel || model.getIn(['axesvalue', 'searchString'], 'Y-Axis')}
+        {wrapLabel(axesLabels.yLabel || model.getIn(['axesvalue', 'searchString'], 'Y-Axis'))}
       </StyledYAxis>
       <ChartWrapper>
         {chartWrapperFn(component)}
