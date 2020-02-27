@@ -10,16 +10,16 @@ import Editor from './Editor';
  * @param {immutable.Map} props.model - visualisation model
  * @param {string} props.orgTimezone
  */
-const TemplateCuratrActivitiesWithMostComments = compose(
+const TemplateStreamActivitiesWithMostComments = compose(
   connect(
     () => ({}),
     { updateModel, setInMetadata },
   ),
 )(Editor);
 
-TemplateCuratrActivitiesWithMostComments.propTypes = {
+TemplateStreamActivitiesWithMostComments.propTypes = {
   model: PropTypes.instanceOf(Map).isRequired,
   orgTimezone: PropTypes.string.isRequired,
 };
 
-export default TemplateCuratrActivitiesWithMostComments;
+export default TemplateStreamActivitiesWithMostComments;

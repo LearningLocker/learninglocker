@@ -9,16 +9,16 @@ import Editor from './Editor';
  * @param {immutable.Map} props.model - visualisation model
  * @param {string} props.orgTimezone
  */
-const TemplateCuratrLearnerInteractionsByDateAndVerb = compose(
+const TemplateStreamLearnerInteractionsByDateAndVerb = compose(
   connect(
     () => ({}),
     { updateModel },
   ),
 )(Editor);
 
-TemplateCuratrLearnerInteractionsByDateAndVerb.propTypes = {
+TemplateStreamLearnerInteractionsByDateAndVerb.propTypes = {
   model: PropTypes.instanceOf(Map).isRequired,
   orgTimezone: PropTypes.string.isRequired,
 };
 
-export default TemplateCuratrLearnerInteractionsByDateAndVerb;
+export default TemplateStreamLearnerInteractionsByDateAndVerb;

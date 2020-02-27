@@ -1,17 +1,17 @@
 import { Map } from 'immutable';
 import { actions as routerActions } from 'redux-router5';
 import { put, call, takeEvery } from 'redux-saga/effects';
-import buildTemplateCuratrActivitiesWithMostComments from 'ui/containers/Visualisations/TemplateCuratrActivitiesWithMostComments/buildModel';
-import buildTemplateCuratrInteractionsVsEngagement from 'ui/containers/Visualisations/TemplateCuratrInteractionsVsEngagement/buildModel';
-import buildTemplateCuratrProportionOfSocialInteractions from 'ui/containers/Visualisations/TemplateCuratrProportionOfSocialInteractions/buildModel';
-import buildTemplateCuratrCommentCount from 'ui/containers/Visualisations/TemplateCuratrCommentCount/buildModel';
-import buildTemplateCuratrLearnerInteractionsByDateAndVerb from 'ui/containers/Visualisations/TemplateCuratrLearnerInteractionsByDateAndVerb/buildModel';
-import buildTemplateCuratrUserEngagementLeaderboard from 'ui/containers/Visualisations/TemplateCuratrUserEngagementLeaderboard/buildModel';
+import buildTemplateStreamActivitiesWithMostComments from 'ui/containers/Visualisations/TemplateCuratrActivitiesWithMostComments/buildModel';
+import buildTemplateStreamInteractionsVsEngagement from 'ui/containers/Visualisations/TemplateCuratrInteractionsVsEngagement/buildModel';
+import buildTemplateStreamProportionOfSocialInteractions from 'ui/containers/Visualisations/TemplateCuratrProportionOfSocialInteractions/buildModel';
+import buildTemplateStreamCommentCount from 'ui/containers/Visualisations/TemplateCuratrCommentCount/buildModel';
+import buildTemplateStreamLearnerInteractionsByDateAndVerb from 'ui/containers/Visualisations/TemplateCuratrLearnerInteractionsByDateAndVerb/buildModel';
+import buildTemplateStreamUserEngagementLeaderboard from 'ui/containers/Visualisations/TemplateCuratrUserEngagementLeaderboard/buildModel';
 import buildTemplateLast7DaysStatements from 'ui/containers/Visualisations/TemplateLast7DaysStatements/buildModel';
 import buildTemplateLearningExperienceType from 'ui/containers/Visualisations/TemplateLearningExperienceType/buildModel';
 import { addModel } from '../models';
 
-export const CREATE_CURATR_STARTER = 'learninglocker/dashboard/CREATE_CURATR_STARTER';
+export const CREATE_STREAM_STARTER = 'learninglocker/dashboard/CREATE_STREAM_STARTER';
 
 /**
  * @param {(action: object) => null} _.dispatch - react-redux dispatch
@@ -22,32 +22,32 @@ const createVisualisations = async ({ dispatch, userId }) => {
   const results = await Promise.all([
     dispatch(addModel({
       schema: 'visualisation',
-      props: buildTemplateCuratrInteractionsVsEngagement(new Map({ owner: userId })),
+      props: buildTemplateStreamInteractionsVsEngagement(new Map({ owner: userId })),
       isExpanded: false,
     })),
     dispatch(addModel({
       schema: 'visualisation',
-      props: buildTemplateCuratrCommentCount(new Map({ owner: userId })),
+      props: buildTemplateStreamCommentCount(new Map({ owner: userId })),
       isExpanded: false,
     })),
     dispatch(addModel({
       schema: 'visualisation',
-      props: buildTemplateCuratrLearnerInteractionsByDateAndVerb(new Map({ owner: userId })),
+      props: buildTemplateStreamLearnerInteractionsByDateAndVerb(new Map({ owner: userId })),
       isExpanded: false,
     })),
     dispatch(addModel({
       schema: 'visualisation',
-      props: buildTemplateCuratrUserEngagementLeaderboard(new Map({ owner: userId })),
+      props: buildTemplateStreamUserEngagementLeaderboard(new Map({ owner: userId })),
       isExpanded: false,
     })),
     dispatch(addModel({
       schema: 'visualisation',
-      props: buildTemplateCuratrProportionOfSocialInteractions(new Map({ owner: userId })),
+      props: buildTemplateStreamProportionOfSocialInteractions(new Map({ owner: userId })),
       isExpanded: false,
     })),
     dispatch(addModel({
       schema: 'visualisation',
-      props: buildTemplateCuratrActivitiesWithMostComments(new Map({ owner: userId })),
+      props: buildTemplateStreamActivitiesWithMostComments(new Map({ owner: userId })),
       isExpanded: false,
     })),
     dispatch(addModel({
@@ -65,7 +65,7 @@ const createVisualisations = async ({ dispatch, userId }) => {
   return results.map(r => r.model.get('_id'));
 };
 
-function* createCuratrStarter({ userId, organisationId, dispatch }) {
+function* createStreamStarter({ userId, organisationId, dispatch }) {
   const visualisationIds = yield call(createVisualisations, { dispatch, userId });
 
   const { model } = yield call(dispatch, addModel({
@@ -95,8 +95,8 @@ function* createCuratrStarter({ userId, organisationId, dispatch }) {
   ));
 }
 
-function* watchCuratrStarterSaga() {
-  if (__CLIENT__) yield takeEvery(CREATE_CURATR_STARTER, createCuratrStarter);
+function* watchStreamStarterSaga() {
+  if (__CLIENT__) yield takeEvery(CREATE_STREAM_STARTER, createStreamStarter);
 }
 
-export const sagas = [watchCuratrStarterSaga];
+export const sagas = [watchStreamStarterSaga];

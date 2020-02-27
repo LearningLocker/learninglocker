@@ -9,16 +9,16 @@ import Editor from './Editor';
  * @param {immutable.Map} props.model - visualisation model
  * @param {string} props.orgTimezone
  */
-const TemplateCuratrProportionOfSocialInteractions = compose(
+const TemplateStreamProportionOfSocialInteractions = compose(
   connect(
     () => ({}),
     { updateModel },
   ),
 )(Editor);
 
-TemplateCuratrProportionOfSocialInteractions.propTypes = {
+TemplateStreamProportionOfSocialInteractions.propTypes = {
   model: PropTypes.instanceOf(Map).isRequired,
   orgTimezone: PropTypes.string.isRequired,
 };
 
-export default TemplateCuratrProportionOfSocialInteractions;
+export default TemplateStreamProportionOfSocialInteractions;
