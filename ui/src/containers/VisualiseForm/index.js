@@ -32,12 +32,12 @@ import TemplateMostActivePeople from 'ui/containers/Visualisations/TemplateMostA
 import TemplateMostPopularActivities from 'ui/containers/Visualisations/TemplateMostPopularActivities';
 import TemplateMostPopularVerbs from 'ui/containers/Visualisations/TemplateMostPopularVerbs';
 import TemplateWeekdaysActivity from 'ui/containers/Visualisations/TemplateWeekdaysActivity';
-import TemplateCuratrInteractionsVsEngagement from 'ui/containers/Visualisations/TemplateStreamInteractionsVsEngagement';
-import TemplateCuratrCommentCount from 'ui/containers/Visualisations/TemplateStreamCommentCount';
-import TemplateCuratrLearnerInteractionsByDateAndVerb from 'ui/containers/Visualisations/TemplateStreamLearnerInteractionsByDateAndVerb';
-import TemplateCuratrUserEngagementLeaderboard from 'ui/containers/Visualisations/TemplateStreamUserEngagementLeaderboard';
-import TemplateCuratrProportionOfSocialInteractions from 'ui/containers/Visualisations/TemplateStreamProportionOfSocialInteractions';
-import TemplateCuratrActivitiesWithMostComments from 'ui/containers/Visualisations/TemplateStreamActivitiesWithMostComments';
+import TemplateStreamInteractionsVsEngagement from 'ui/containers/Visualisations/TemplateStreamInteractionsVsEngagement';
+import TemplateStreamCommentCount from 'ui/containers/Visualisations/TemplateStreamCommentCount';
+import TemplateStreamLearnerInteractionsByDateAndVerb from 'ui/containers/Visualisations/TemplateStreamLearnerInteractionsByDateAndVerb';
+import TemplateStreamUserEngagementLeaderboard from 'ui/containers/Visualisations/TemplateStreamUserEngagementLeaderboard';
+import TemplateStreamProportionOfSocialInteractions from 'ui/containers/Visualisations/TemplateStreamProportionOfSocialInteractions';
+import TemplateStreamActivitiesWithMostComments from 'ui/containers/Visualisations/TemplateStreamActivitiesWithMostComments';
 import TemplateLearningExperienceType from 'ui/containers/Visualisations/TemplateLearningExperienceType';
 import NewVisualisation from './NewVisualisation';
 
@@ -69,17 +69,17 @@ const VisualiseForm = ({ model, orgTimezone }) => {
       case TEMPLATE_WEEKDAYS_ACTIVITY:
         return <TemplateWeekdaysActivity model={model} orgTimezone={orgTimezone} />;
       case TEMPLATE_STREAM_INTERACTIONS_VS_ENGAGEMENT:
-        return <TemplateCuratrInteractionsVsEngagement model={model} orgTimezone={orgTimezone} />;
+        return <TemplateStreamInteractionsVsEngagement model={model} orgTimezone={orgTimezone} />;
       case TEMPLATE_STREAM_COMMENT_COUNT:
-        return <TemplateCuratrCommentCount model={model} orgTimezone={orgTimezone} />;
+        return <TemplateStreamCommentCount model={model} orgTimezone={orgTimezone} />;
       case TEMPLATE_STREAM_LEARNER_INTERACTIONS_BY_DATE_AND_VERB:
-        return <TemplateCuratrLearnerInteractionsByDateAndVerb model={model} orgTimezone={orgTimezone} />;
+        return <TemplateStreamLearnerInteractionsByDateAndVerb model={model} orgTimezone={orgTimezone} />;
       case TEMPLATE_STREAM_USER_ENGAGEMENT_LEADERBOARD:
-        return <TemplateCuratrUserEngagementLeaderboard model={model} orgTimezone={orgTimezone} />;
+        return <TemplateStreamUserEngagementLeaderboard model={model} orgTimezone={orgTimezone} />;
       case TEMPLATE_STREAM_PROPORTION_OF_SOCIAL_INTERACTIONS:
-        return <TemplateCuratrProportionOfSocialInteractions model={model} orgTimezone={orgTimezone} />;
+        return <TemplateStreamProportionOfSocialInteractions model={model} orgTimezone={orgTimezone} />;
       case TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS:
-        return <TemplateCuratrActivitiesWithMostComments model={model} orgTimezone={orgTimezone} />;
+        return <TemplateStreamActivitiesWithMostComments model={model} orgTimezone={orgTimezone} />;
       case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
         return <TemplateLearningExperienceType model={model} orgTimezone={orgTimezone} />;
       default:
