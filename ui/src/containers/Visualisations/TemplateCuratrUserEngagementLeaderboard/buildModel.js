@@ -1,5 +1,5 @@
 import { Map, fromJS } from 'immutable';
-import { TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD } from 'lib/constants/visualise';
+import { TEMPLATE_STREAM_USER_ENGAGEMENT_LEADERBOARD } from 'lib/constants/visualise';
 import { LAST_7_DAYS } from 'ui/utils/constants';
 import { description } from './constants';
 
@@ -46,7 +46,7 @@ const filters = [
  */
 const buildModel = model =>
   model
-    .set('type', TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD)
+    .set('type', TEMPLATE_STREAM_USER_ENGAGEMENT_LEADERBOARD)
     .set('description', description)
     .set('axesgroup', new Map({ optionKey: 'people', searchString: 'Person' }))
     .set('axesoperator', 'uniqueCount')

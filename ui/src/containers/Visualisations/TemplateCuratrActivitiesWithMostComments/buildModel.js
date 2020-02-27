@@ -1,5 +1,5 @@
 import { Map, fromJS } from 'immutable';
-import { TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS } from 'lib/constants/visualise';
+import { TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS } from 'lib/constants/visualise';
 import { LAST_7_DAYS } from 'ui/utils/constants';
 import { description } from './constants';
 
@@ -32,7 +32,7 @@ const filter = fromJS({
  */
 const buildModel = model =>
   model
-    .set('type', TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS)
+    .set('type', TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS)
     .set('description', description)
     .set('filters', [filter])
     .set('axesgroup', new Map({ optionKey: 'activities', searchString: 'Activity' }))
