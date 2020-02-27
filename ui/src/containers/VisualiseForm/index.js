@@ -32,12 +32,12 @@ import TemplateMostActivePeople from 'ui/containers/Visualisations/TemplateMostA
 import TemplateMostPopularActivities from 'ui/containers/Visualisations/TemplateMostPopularActivities';
 import TemplateMostPopularVerbs from 'ui/containers/Visualisations/TemplateMostPopularVerbs';
 import TemplateWeekdaysActivity from 'ui/containers/Visualisations/TemplateWeekdaysActivity';
-import TemplateCuratrInteractionsVsEngagement from 'ui/containers/Visualisations/TemplateCuratrInteractionsVsEngagement';
-import TemplateCuratrCommentCount from 'ui/containers/Visualisations/TemplateCuratrCommentCount';
-import TemplateCuratrLearnerInteractionsByDateAndVerb from 'ui/containers/Visualisations/TemplateCuratrLearnerInteractionsByDateAndVerb';
-import TemplateCuratrUserEngagementLeaderboard from 'ui/containers/Visualisations/TemplateCuratrUserEngagementLeaderboard';
-import TemplateCuratrProportionOfSocialInteractions from 'ui/containers/Visualisations/TemplateCuratrProportionOfSocialInteractions';
-import TemplateCuratrActivitiesWithMostComments from 'ui/containers/Visualisations/TemplateCuratrActivitiesWithMostComments';
+import TemplateCuratrInteractionsVsEngagement from 'ui/containers/Visualisations/TemplateStreamInteractionsVsEngagement';
+import TemplateCuratrCommentCount from 'ui/containers/Visualisations/TemplateStreamCommentCount';
+import TemplateCuratrLearnerInteractionsByDateAndVerb from 'ui/containers/Visualisations/TemplateStreamLearnerInteractionsByDateAndVerb';
+import TemplateCuratrUserEngagementLeaderboard from 'ui/containers/Visualisations/TemplateStreamUserEngagementLeaderboard';
+import TemplateCuratrProportionOfSocialInteractions from 'ui/containers/Visualisations/TemplateStreamProportionOfSocialInteractions';
+import TemplateCuratrActivitiesWithMostComments from 'ui/containers/Visualisations/TemplateStreamActivitiesWithMostComments';
 import TemplateLearningExperienceType from 'ui/containers/Visualisations/TemplateLearningExperienceType';
 import NewVisualisation from './NewVisualisation';
 

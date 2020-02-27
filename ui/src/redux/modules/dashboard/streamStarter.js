@@ -1,12 +1,12 @@
 import { Map } from 'immutable';
 import { actions as routerActions } from 'redux-router5';
 import { put, call, takeEvery } from 'redux-saga/effects';
-import buildTemplateStreamActivitiesWithMostComments from 'ui/containers/Visualisations/TemplateCuratrActivitiesWithMostComments/buildModel';
-import buildTemplateStreamInteractionsVsEngagement from 'ui/containers/Visualisations/TemplateCuratrInteractionsVsEngagement/buildModel';
-import buildTemplateStreamProportionOfSocialInteractions from 'ui/containers/Visualisations/TemplateCuratrProportionOfSocialInteractions/buildModel';
-import buildTemplateStreamCommentCount from 'ui/containers/Visualisations/TemplateCuratrCommentCount/buildModel';
-import buildTemplateStreamLearnerInteractionsByDateAndVerb from 'ui/containers/Visualisations/TemplateCuratrLearnerInteractionsByDateAndVerb/buildModel';
-import buildTemplateStreamUserEngagementLeaderboard from 'ui/containers/Visualisations/TemplateCuratrUserEngagementLeaderboard/buildModel';
+import buildTemplateStreamActivitiesWithMostComments from 'ui/containers/Visualisations/TemplateStreamActivitiesWithMostComments/buildModel';
+import buildTemplateStreamInteractionsVsEngagement from 'ui/containers/Visualisations/TemplateStreamInteractionsVsEngagement/buildModel';
+import buildTemplateStreamProportionOfSocialInteractions from 'ui/containers/Visualisations/TemplateStreamProportionOfSocialInteractions/buildModel';
+import buildTemplateStreamCommentCount from 'ui/containers/Visualisations/TemplateStreamCommentCount/buildModel';
+import buildTemplateStreamLearnerInteractionsByDateAndVerb from 'ui/containers/Visualisations/TemplateStreamLearnerInteractionsByDateAndVerb/buildModel';
+import buildTemplateStreamUserEngagementLeaderboard from 'ui/containers/Visualisations/TemplateStreamUserEngagementLeaderboard/buildModel';
 import buildTemplateLast7DaysStatements from 'ui/containers/Visualisations/TemplateLast7DaysStatements/buildModel';
 import buildTemplateLearningExperienceType from 'ui/containers/Visualisations/TemplateLearningExperienceType/buildModel';
 import { addModel } from '../models';

@@ -6,12 +6,12 @@ import TemplateMostPopularVerbsCard from 'ui/containers/Visualisations/TemplateM
 import TemplateMostPopularActivitiesCard from 'ui/containers/Visualisations/TemplateMostPopularActivities/Card';
 import TemplateMostActivePeopleCard from 'ui/containers/Visualisations/TemplateMostActivePeople/Card';
 import TemplateWeekdaysActivityCard from 'ui/containers/Visualisations/TemplateWeekdaysActivity/Card';
-import TemplateCuratrInteractionsVsEngagementCard from 'ui/containers/Visualisations/TemplateCuratrInteractionsVsEngagement/Card';
-import TemplateCuratrCommentCountCard from 'ui/containers/Visualisations/TemplateCuratrCommentCount/Card';
-import TemplateCuratrLearnerInteractionsByDateAndVerbCard from 'ui/containers/Visualisations/TemplateCuratrLearnerInteractionsByDateAndVerb/Card';
-import TemplateCuratrUserEngagementLeaderboardCard from 'ui/containers/Visualisations/TemplateCuratrUserEngagementLeaderboard/Card';
-import TemplateCuratrProportionOfSocialInteractionsCard from 'ui/containers/Visualisations/TemplateCuratrProportionOfSocialInteractions/Card';
-import TemplateCuratrActivitiesWithMostCommentsCard from 'ui/containers/Visualisations/TemplateCuratrActivitiesWithMostComments/Card';
+import TemplateCuratrInteractionsVsEngagementCard from 'ui/containers/Visualisations/TemplateStreamInteractionsVsEngagement/Card';
+import TemplateCuratrCommentCountCard from 'ui/containers/Visualisations/TemplateStreamCommentCount/Card';
+import TemplateCuratrLearnerInteractionsByDateAndVerbCard from 'ui/containers/Visualisations/TemplateStreamLearnerInteractionsByDateAndVerb/Card';
+import TemplateCuratrUserEngagementLeaderboardCard from 'ui/containers/Visualisations/TemplateStreamUserEngagementLeaderboard/Card';
+import TemplateCuratrProportionOfSocialInteractionsCard from 'ui/containers/Visualisations/TemplateStreamProportionOfSocialInteractions/Card';
+import TemplateCuratrActivitiesWithMostCommentsCard from 'ui/containers/Visualisations/TemplateStreamActivitiesWithMostComments/Card';
 import TemplateLearningExperienceType from 'ui/containers/Visualisations/TemplateLearningExperienceType/Card';
 import styles from './styles.css';
 

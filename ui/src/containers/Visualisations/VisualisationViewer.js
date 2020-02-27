@@ -36,12 +36,12 @@ import TemplateMostActivePeople from './TemplateMostActivePeople/Viewer';
 import TemplateMostPopularActivities from './TemplateMostPopularActivities/Viewer';
 import TemplateMostPopularVerbs from './TemplateMostPopularVerbs/Viewer';
 import TemplateWeekdaysActivity from './TemplateWeekdaysActivity/Viewer';
-import TemplateStreamInteractionsVsEngagement from './TemplateCuratrInteractionsVsEngagement/Viewer';
-import TemplateStreamCommentCount from './TemplateCuratrCommentCount/Viewer';
-import TemplateStreamLearnerInteractionsByDateAndVerb from './TemplateCuratrLearnerInteractionsByDateAndVerb/Viewer';
-import TemplateStreamUserEngagementLeaderboard from './TemplateCuratrUserEngagementLeaderboard/Viewer';
-import TemplateStreamProportionOfSocialInteractions from './TemplateCuratrProportionOfSocialInteractions/Viewer';
-import TemplateStreamActivitiesWithMostComments from './TemplateCuratrActivitiesWithMostComments/Viewer';
+import TemplateStreamInteractionsVsEngagement from './TemplateStreamInteractionsVsEngagement/Viewer';
+import TemplateStreamCommentCount from './TemplateStreamCommentCount/Viewer';
+import TemplateStreamLearnerInteractionsByDateAndVerb from './TemplateStreamLearnerInteractionsByDateAndVerb/Viewer';
+import TemplateStreamUserEngagementLeaderboard from './TemplateStreamUserEngagementLeaderboard/Viewer';
+import TemplateStreamProportionOfSocialInteractions from './TemplateStreamProportionOfSocialInteractions/Viewer';
+import TemplateStreamActivitiesWithMostComments from './TemplateStreamActivitiesWithMostComments/Viewer';
 import TemplateLearningExperienceType from './TemplateLearningExperienceType/Viewer';
 
 /**
