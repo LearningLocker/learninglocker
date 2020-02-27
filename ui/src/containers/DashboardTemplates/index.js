@@ -6,12 +6,22 @@ import CuratrStarter from './CuratrStarter';
 import GettingStarted from './GettingStarted';
 import styles from './styles.css';
 
-const DashboardTemplates = () => (
+const DashboardTemplates = ({ handleClose }) => (
   <div className={classNames(styles.panel, 'panel panel-default')}>
 
-    <label htmlFor="dashboard-templates">
-      Custom Templates
-    </label>
+    <div className={styles.dashboardCreateTitle}>
+      <label htmlFor="dashboard-templates">
+        Add Dashboard
+      </label>
+      <div
+        className={styles.dashboardClose}
+        onClick={handleClose}>
+        <i className="ion-close-round" />
+      </div>
+    </div>
+    <p>
+      Start by selecting a blank dashboard or choose a template
+    </p>
 
     <div
       id="dashboard-templates"

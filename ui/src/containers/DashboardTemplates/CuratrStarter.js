@@ -8,7 +8,7 @@ import TemplateCard from './TemplateCard';
 
 const enhance = compose(
   withProps({
-    title: 'Curatr Starter',
+    title: 'Headstream Starter',
     image: iconImage,
   }),
   connect(

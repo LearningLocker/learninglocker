@@ -10,7 +10,15 @@
 
 .textField {
   max-width: 500px;
-  width: 100%;
+  width: 100%; 
+}
+
+.titleField {
+  padding: 0 0 0 15px;
+  font-weight: 300;
+  color: #929292;
+  
+  font-family: Arial, sans-serif;
 }
 
 .editWrapper {

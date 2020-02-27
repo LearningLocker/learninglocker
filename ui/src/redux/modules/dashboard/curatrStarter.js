@@ -72,7 +72,8 @@ function* createCuratrStarter({ userId, organisationId, dispatch }) {
     schema: 'dashboard',
     props: {
       owner: userId,
-      title: 'Curatr Starter',
+      title: 'Headstream Starter',
+      type: 'curatrStarter',
       isExpanded: true,
       widgets: [
         { x: 0, y: 0, w: 6, h: 8, visualisation: visualisationIds[0] },

@@ -2,6 +2,15 @@
   padding: 16px;
 }
 
+.dashboardCreateTitle {
+  display: flex;
+  justify-content: space-between;
+}
+
+.dashboardClose {
+  cursor: pointer;
+}
+
 .cardList {
   display: flex;
   flex-wrap: wrap;
