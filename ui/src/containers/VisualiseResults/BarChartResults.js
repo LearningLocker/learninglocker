@@ -20,7 +20,7 @@ export default withStatementsVisualisation(({
       stacked={stacked}
       model={model}
       axesLabels={{
-        yLabel: shorten(axes.get('yLabel', axes.getIn(['group', 'searchString'], 'Y-Axis'))),
+        yLabel: axes.get('yLabel', axes.getIn(['group', 'searchString'], 'Y-Axis')),
         xLabel: shorten(axes.get('xLabel', axes.getIn(['value', 'searchString'], 'X-Axis')))
       }} />
   )
