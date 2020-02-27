@@ -1,4 +1,5 @@
 import { OrderedMap } from 'immutable';
+
 import commonIndexesMigration from './20171122100800_common_indexes';
 import updateRefs from './20171121153300_update_refs';
 import expiration from './20180212_expiration';
@@ -13,6 +14,7 @@ import migrateResetTokens from './20190509000000_migrate_null_resetTokens';
 import fixTypoLast1Years from './20190627000000_fix_typo_last_1_years';
 import personaImports from './20190711090000_persona_imports';
 import migrateVizTypesOfTemplates from './20190719000000_migrate_viz_types_of_templates';
+import renameCuratrVisTplTypesToStream from './20200227000000_rename_curatr_vis_tpl_types_to_stream';
 
 export default new OrderedMap()
   .set('20171122100800_common_indexes', commonIndexesMigration)
@@ -28,4 +30,5 @@ export default new OrderedMap()
   .set('20190509000000_migrate_null_resetTokens', migrateResetTokens)
   .set('20190711090000_persona_imports', personaImports)
   .set('20190627000000_fix_typo_last_1_years', fixTypoLast1Years)
-  .set('20190719000000_migrate_viz_types_of_templates', migrateVizTypesOfTemplates);
+  .set('20190719000000_migrate_viz_types_of_templates', migrateVizTypesOfTemplates)
+  .set('20200227000000_rename_curatr_vis_tpl_types_to_stream', renameCuratrVisTplTypesToStream);
