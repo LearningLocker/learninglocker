@@ -1,8 +1,6 @@
 import biConnector from './biConnector.png';
 import cornerstoneOnDemand from './cornerstoneOnDemand.png';
 import csvToXAPI from './csvToXAPI.png';
-import curatr from './curatr.png';
-import curatr2x from './curatr@2x.png';
 import degreed from './degreed.png';
 import gdpr from './gdpr.png';
 import getAbstract from './getAbstract.png';
@@ -25,8 +23,6 @@ export default {
   biConnector,
   cornerstoneOnDemand,
   csvToXAPI,
-  curatr,
-  curatr2x,
   degreed,
   gdpr,
   getAbstract,
