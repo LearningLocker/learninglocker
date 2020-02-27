@@ -3,13 +3,12 @@ import { withProps, compose, withHandlers } from 'recompose';
 import { loggedInUserId } from 'ui/redux/modules/auth';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import { CREATE_CURATR_STARTER } from 'ui/redux/modules/dashboard/curatrStarter';
-import { CURATR_NAME } from 'lib/constants/siteSettings';
 import iconImage from './assets/curatr-starter.png';
 import TemplateCard from './TemplateCard';
 
 const enhance = compose(
   withProps({
-    title: `${CURATR_NAME} Starter`,
+    title: 'Stream Starter',
     image: iconImage,
   }),
   connect(
