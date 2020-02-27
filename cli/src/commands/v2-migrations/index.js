@@ -15,6 +15,7 @@ import fixTypoLast1Years from './20190627000000_fix_typo_last_1_years';
 import personaImports from './20190711090000_persona_imports';
 import migrateVizTypesOfTemplates from './20190719000000_migrate_viz_types_of_templates';
 import renameCuratrVisTplTypesToStream from './20200227000000_rename_curatr_vis_tpl_types_to_stream';
+import renameCuratrDashboardsToStream from './20200228000000_rename_curatr_dashboards_to_stream';
 
 export default new OrderedMap()
   .set('20171122100800_common_indexes', commonIndexesMigration)
@@ -31,4 +32,5 @@ export default new OrderedMap()
   .set('20190711090000_persona_imports', personaImports)
   .set('20190627000000_fix_typo_last_1_years', fixTypoLast1Years)
   .set('20190719000000_migrate_viz_types_of_templates', migrateVizTypesOfTemplates)
-  .set('20200227000000_rename_curatr_vis_tpl_types_to_stream', renameCuratrVisTplTypesToStream);
+  .set('20200227000000_rename_curatr_vis_tpl_types_to_stream', renameCuratrVisTplTypesToStream)
+  .set('20200228000000_rename_curatr_dashboards_to_stream', renameCuratrDashboardsToStream);
