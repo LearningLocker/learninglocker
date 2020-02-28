@@ -22,8 +22,8 @@ const buildFilter = (label, verbIds) => fromJS({
         $comment: '{"criterionLabel":"B","criteriaPath":["statement","context","platform"]}',
         'statement.context.platform': {
           $in: [
-            /* TODO: Should it be changed too? */
-            'Curatr',
+            'Stream',
+            'Curatr'
           ],
         },
       },

@@ -23,8 +23,8 @@ const axesxQuery = fromJS({
         $comment: '{"criterionLabel":"B","criteriaPath":["statement","context","platform"]}',
         'statement.context.platform': {
           $in: [
-            /* TODO: Should it be changed too? */
-            'Curatr',
+            'Stream',
+            'Curatr'
           ],
         },
       },
@@ -49,8 +49,8 @@ const axesyQuery = fromJS({
         $comment: '{"criterionLabel":"B","criteriaPath":["statement","context","platform"]}',
         'statement.context.platform': {
           $in: [
-            /* TODO: Should it be changed too? */
-            'Curatr',
+            'Stream',
+            'Curatr'
           ],
         },
       },
