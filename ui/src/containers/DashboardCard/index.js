@@ -21,6 +21,7 @@ import ConfirmModal from 'ui/components/Modal/ConfirmModal';
 import blankDashboardIcon from './assets/blank-dashboard.png';
 import curatrStarterIcon from './assets/curatr-starter.png';
 import gettingStartedIcon from './assets/getting-started.png';
+import privateIcon from './assets/private.png';
 import styles from './styles.css';
 
 const schema = 'dashboard';
@@ -130,6 +131,7 @@ export class DashboardCard extends Component {
       index
     } = this.props;
     const title = model.get('title', ' ');
+    const isPublic = model.get('isPublic', false);
 
     const iconType = () => {
       const type = model.get('type', ' ');
@@ -157,6 +159,15 @@ export class DashboardCard extends Component {
             className={styles.cardIcon}
             src={iconType()}
             alt={title} />
+
+          {!isPublic && (
+            <span
+              className={styles.dashboardPrivateIcon} >
+              <img
+                src={privateIcon}
+                alt="private" />
+            </span>
+          )}
 
 
           <h4

@@ -18,6 +18,19 @@
   left: auto;
 }
 
+.dashboardPrivateIcon{
+  vertical-align: top;
+  float: right;
+  margin-right: 30px;
+  display: block;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  text-align: center;
+  background: rgba(196, 196, 196, 0.25);
+  padding-top: 2px;
+}
+
 .card {
   padding: 16px;
   cursor: pointer;
