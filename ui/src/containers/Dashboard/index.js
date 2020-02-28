@@ -14,7 +14,6 @@ import DashboardGrid from 'ui/containers/DashboardGrid';
 import DashboardSharing from 'ui/containers/DashboardSharing';
 import WidgetVisualiseCreator from 'ui/containers/WidgetVisualiseCreator';
 import { withModels, withModel } from 'ui/utils/hocs';
-import { getVisualisationsFromDashboard } from 'ui/redux/modules/dashboard/selectors';
 import { loggedInUserId } from 'ui/redux/selectors';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import styles from './styles.css';
@@ -22,12 +21,10 @@ import styles from './styles.css';
 class Dashboard extends Component {
   static propTypes = {
     model: PropTypes.instanceOf(Map),
-    navigateTo: PropTypes.func,
     updateModel: PropTypes.func,
     saveModel: PropTypes.func,
     setMetadata: PropTypes.func,
     getMetadata: PropTypes.func,
-    doCopyDashboard: PropTypes.func,
   };
 
   static defaultProps = {
