@@ -1,7 +1,6 @@
 import logger from 'lib/logger';
 import Dashboard from 'lib/models/dashboard';
 
-
 export const renameCuratrDashboardsToStream = async () => {
   try {
     const dashboards = await Dashboard.find(
