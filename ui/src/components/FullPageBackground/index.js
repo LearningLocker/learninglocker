@@ -35,7 +35,7 @@ const versionDisplay = (version) => {
   const shortDisplay = `Build: ${branch} @ ${short}`;
 
   const display = (branch === 'master' || branch === 'HEAD') ? tag : shortDisplay;
-  return <p className={styles.version} title={longDisplay}>{ display }</p>;
+  return <p className={styles.version} title={longDisplay}>{display}</p>;
 };
 
 const FullPageBackground = ({ version, children, width = 600 }) => (
@@ -45,10 +45,10 @@ const FullPageBackground = ({ version, children, width = 600 }) => (
       <span className={styles.headline}>making learning measurable</span>
       <div className={styles.underline} />
       <div style={{ width }}>
-        { children }
+        {children}
       </div>
-      <p className={styles.copyright}>&copy; {new Date().getFullYear()} <a href="https://www.ht2labs.com" title="HT2 Labs - Pioneers in Workplace Digital Learning" target="_blank" rel="noopener noreferrer">HT2 Labs</a></p>
-      { versionDisplay(version) }
+      <p className={styles.copyright}>&copy; {new Date().getFullYear()} <a href="https://www.learningpool.com" title="Learning Pool - Innovation. Passion. Learning." target="_blank" rel="noopener noreferrer">Learning Pool</a></p>
+      {versionDisplay(version)}
     </div>
   </div>
 );

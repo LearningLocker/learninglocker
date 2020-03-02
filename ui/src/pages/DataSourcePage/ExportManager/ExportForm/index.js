@@ -47,9 +47,7 @@ class ExportForm extends Component {
   }
 
   componentDidMount = () => {
-    this.setState((state, props) => {
-      return { projectionString: this.getActiveProjection(state, props) };
-    });
+    this.setState((state, props) => ({ projectionString: this.getActiveProjection(state, props) }));
   }
 
   componentDidUpdate = () => {
@@ -91,12 +89,10 @@ class ExportForm extends Component {
       });
   }
 
-  getActiveProjection = (state, props) => {
-    return props.model.getIn(
+  getActiveProjection = (state, props) => props.model.getIn(
       ['projections', state.activeIndex],
       getDefaultProjectionFromType(props.model.get('type'))
-    );
-  }
+    )
 
   getCompletePipeline = () => {
     const { pipelines } = this.props;

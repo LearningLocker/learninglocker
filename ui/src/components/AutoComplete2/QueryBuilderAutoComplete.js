@@ -79,7 +79,8 @@ export default compose(
         filter={filter}
         first={50}
         canEdit={() => false}
-        schema={schema} />
+        schema={schema}
+        isAddNewOptionEnabled={false} />
     )} />
   )
 );

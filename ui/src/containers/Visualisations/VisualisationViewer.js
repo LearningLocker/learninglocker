@@ -21,6 +21,7 @@ import {
   TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD,
   TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS,
   TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS,
+  TEMPLATE_LEARNING_EXPERIENCE_TYPE,
 } from 'lib/constants/visualise';
 import { withModel } from 'ui/utils/hocs';
 import CustomBarChartViewer from './CustomBarChart/Viewer';
@@ -41,6 +42,7 @@ import TemplateCuratrLearnerInteractionsByDateAndVerb from './TemplateCuratrLear
 import TemplateCuratrUserEngagementLeaderboard from './TemplateCuratrUserEngagementLeaderboard/Viewer';
 import TemplateCuratrProportionOfSocialInteractions from './TemplateCuratrProportionOfSocialInteractions/Viewer';
 import TemplateCuratrActivitiesWithMostComments from './TemplateCuratrActivitiesWithMostComments/Viewer';
+import TemplateLearningExperienceType from './TemplateLearningExperienceType/Viewer';
 
 /**
  * @param {immutable.Map} model - visualisation model
@@ -93,6 +95,8 @@ const VisualisationViewer = ({
       return <TemplateCuratrProportionOfSocialInteractions visualisationId={visualisationId} showSourceView={showSourceView} />;
     case TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS:
       return <TemplateCuratrActivitiesWithMostComments visualisationId={visualisationId} showSourceView={showSourceView} />;
+    case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
+      return <TemplateLearningExperienceType visualisationId={visualisationId} showSourceView={showSourceView} />;
     default:
       console.error(`VisualisationViewer.js does not support type "${type}"`);
       return `Type "${type}" is not supported`;
