@@ -86,9 +86,12 @@ export const fixDbMigrationOrder = async ({ migrations }) => {
   let toSave = [];
 
   let inc = 1;
-  for (const migratio of migrations.keySeq().toJS()) {
+  for (const migrationItem of migrations.keySeq().toJS()) {
     // eslint-disable-next-line no-loop-func
-    const dbMigration = find(dbMigrations, dbMigratio => migratio === dbMigratio.key);
+    const dbMigration = find(
+      dbMigrations,
+      dbMigrationItem => migrationItem === dbMigrationItem.key
+    );
     if (!dbMigration) {
       break;
     }
