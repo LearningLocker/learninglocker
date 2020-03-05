@@ -1049,6 +1049,14 @@
     "@types/bson" "*"
     "@types/node" "*"
 
+"@types/mongodb@^3.5.1":
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/@types/mongodb/-/mongodb-3.5.1.tgz#bb518a1a5ad727a34110f5fc182ca3d7deb58d3b"
+  integrity sha512-jKfefl92UJn9SXcHc9CRnJnM6FrWfLULhATZayDAlXhprGWq8KQddkHf1tT5Eox/oAjzWHbzsyb3Fb+mIOJchg==
+  dependencies:
+    "@types/bson" "*"
+    "@types/node" "*"
+
 "@types/mongoose@^5.5.39":
   version "5.7.1"
   resolved "https://registry.yarnpkg.com/@types/mongoose/-/mongoose-5.7.1.tgz#503d902e873dce8546f2fed6b8ed9c6474cb353d"
