@@ -82,6 +82,9 @@ export const aggregationProcessorInitialise = catchErrors(
 
     const pipeline = request.body.pipeline;
 
+    console.log('INIT: request.body.pipeline', JSON.stringify(pipeline, null, 2));
+    console.log('---------------------------------------------------------------------------------');
+
     const scopedFilter = await getScopeFilter({
       modelName: 'aggregationProcessor',
       actionName: 'view',
@@ -92,6 +95,9 @@ export const aggregationProcessorInitialise = catchErrors(
       $match: encode$oid(scopedFilter)
     });
 
+    console.log('INIT: pipeline with filter', JSON.stringify(pipeline, null, 2));
+    console.log('---------------------------------------------------------------------------------');
+
     const pipelineString = JSON.stringify(pipeline);
     const hash = sha1(pipelineString);
 
@@ -99,7 +105,19 @@ export const aggregationProcessorInitialise = catchErrors(
     const windowSizeUnits = request.query.timeIntervalUnits;
     const previousWindowSize = request.query.timeIntervalSincePreviousTimeInterval;
 
+    console.log('INIT: query', request.query);
+    console.log('---------------------------------------------------------------------------------');
+    console.log('INIT: windowSize', windowSize);
+    console.log('---------------------------------------------------------------------------------');
+    console.log('INIT: windowSizeUnits', windowSizeUnits);
+    console.log('---------------------------------------------------------------------------------');
+    console.log('INIT: previousWindowSize', previousWindowSize);
+    console.log('---------------------------------------------------------------------------------');
+
     const useWindowOptimization = canUseWindowOptimization(pipeline);
+
+    console.log('INIT: useWindowOptimization', useWindowOptimization);
+    console.log('---------------------------------------------------------------------------------');
 
     const model = await findOrCreateAggregationProcessor({
       organisation,
@@ -111,6 +129,9 @@ export const aggregationProcessorInitialise = catchErrors(
       previousWindowSize,
       useWindowOptimization
     });
+
+    console.log('INIT: findOrCreate finished', model);
+    console.log('---------------------------------------------------------------------------------');
 
     // Send it to the queue
     await publish({

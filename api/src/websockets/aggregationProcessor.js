@@ -69,8 +69,8 @@ const aggregationProcessor = async ({
     ws.send(JSON.stringify(aggregationProcessorDocument));
 
     if (
-      !isUndefined(aggregationProcessorDocument.gtDate) &&
-      moment(aggregationProcessorDocument.fromTimestamp).isSame(moment(aggregationProcessorDocument.gtDate)) &&
+      !isUndefined(aggregationProcessorDocument.greaterThanDate) &&
+      moment(aggregationProcessorDocument.fromTimestamp).isSame(moment(aggregationProcessorDocument.greaterThanDate)) &&
       moment(aggregationProcessorDocument.toTimestamp).isAfter(moment().subtract(10, 'minutes'))
     ) {
       ws.close();

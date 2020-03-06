@@ -123,7 +123,7 @@ describe('aggregationProcessor', () => {
       pipelineString,
       pipelineHash,
       windowSize: 1,
-      gtDate: moment().subtract(1, 'days').toDate(),
+      greaterThanDate: moment().subtract(1, 'days').toDate(),
       useWindowOptimization: true
     });
 
@@ -153,7 +153,7 @@ describe('aggregationProcessor', () => {
       pipelineString,
       pipelineHash,
       windowSize: 1,
-      gtDate: moment().subtract(1, 'days').toDate(),
+      greaterThanDate: moment().subtract(1, 'days').toDate(),
       useWindowOptimization: true
     });
 
@@ -195,7 +195,7 @@ describe('aggregationProcessor', () => {
       pipelineString,
       pipelineHash,
       windowSize: 1,
-      gtDate: moment().subtract(1, 'days').toDate(),
+      greaterThanDate: moment().subtract(1, 'days').toDate(),
       useWindowOptimization: true
     });
 
