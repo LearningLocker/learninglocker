@@ -271,10 +271,6 @@ const aggregationProcessor = async (
   },
   done
 ) => {
-  console.log(`${aggregationProcessorId}: START`);
-  console.log('---------------------------------------------------------------------------------');
-  console.log(`${aggregationProcessorId}: now`, now);
-  console.log('---------------------------------------------------------------------------------');
   // Attempt to acquire a lock
   const model = await AggregationProcessor.findOneAndUpdate(
     {
@@ -304,9 +300,6 @@ const aggregationProcessor = async (
     return;
   }
 
-  console.log(`${aggregationProcessorId}: model`, JSON.stringify(model, null, 2));
-  console.log('---------------------------------------------------------------------------------');
-
   if (!now) {
     now = model.previousWindowSize
       ? moment().subtract(model.windowSize, model.windowSizeUnits)
@@ -318,20 +311,10 @@ const aggregationProcessor = async (
   const addPipeline = getAddPipeline({ model, now });
   const subtractPipeline = getSubtractPipeline({ model, now });
 
-  console.log(`${aggregationProcessorId}: addPipeline`, JSON.stringify(addPipeline, null, 2));
-  console.log('---------------------------------------------------------------------------------');
-  console.log(`${aggregationProcessorId}: subtractPipeline`, JSON.stringify(subtractPipeline, null, 2));
-  console.log('---------------------------------------------------------------------------------');
-
   const addResultsPromise = Statement.aggregate(addPipeline);
   const subtractResultsPromise = model.useWindowOptimization && subtractPipeline && Statement.aggregate(subtractPipeline);
 
   const [addResults, subtractResults] = await Promise.all([addResultsPromise, subtractResultsPromise]);
-
-  console.log(`${aggregationProcessorId}: addResults`, addResults);
-  console.log('---------------------------------------------------------------------------------');
-  console.log(`${aggregationProcessorId}: subtractResults`, subtractResults);
-  console.log('---------------------------------------------------------------------------------');
 
   let results;
 
@@ -363,11 +346,6 @@ const aggregationProcessor = async (
   const fromTimestamp = getFromTimestamp({ model, now });
   const toTimestamp = getAddToTimestamp({ model, now });
 
-  console.log(`${aggregationProcessorId}: FIND ONE AND UPDATE`);
-  console.log('---------------------------------------------------------------------------------');
-  console.log(`${aggregationProcessorId}: RESULTS`, results);
-  console.log('---------------------------------------------------------------------------------');
-
   const newModel = await AggregationProcessor.findOneAndUpdate(
     {
       _id: aggregationProcessorId
@@ -388,7 +366,6 @@ const aggregationProcessor = async (
   );
 
   if (!hasReachedEnd({ model: newModel, now })) {
-    console.log(`${aggregationProcessorId}: NOT REACHED END`);
     publishQueue({
       queueName: AGGREGATION_PROCESSOR_QUEUE,
       payload: {
@@ -396,9 +373,6 @@ const aggregationProcessor = async (
       }
     });
   }
-
-  console.log(`${aggregationProcessorId}: END`);
-  console.log('---------------------------------------------------------------------------------');
 
   done();
 
