@@ -59,9 +59,9 @@ const makeOperatorReadable = (model, operatorName) => {
 };
 
 /**
- * @param {immutable.Map} model - visualisation model
- * @return {string}
- */
+* @param {immutable.Map} model - visualisation model
+* @return {string}
+  */
 export const createDefaultTitle = (model) => {
   const type = model.get('type', null);
 
@@ -137,4 +137,29 @@ export const getPercentage = (res1, res2) => {
   }
 
   return { result: `${percentage}%`, icon: chevronUpIcon, marginBottom: '6%' };
+};
+
+export const wrapLabel = (target) => {
+  const separatedStrings = [];
+  const index = 46;
+  let remainingSection = target;
+  let sectionIndex;
+  let firstSection;
+  while (remainingSection.length > index) {
+    sectionIndex = remainingSection.lastIndexOf(' ', index);
+    if (sectionIndex < 1) {
+      sectionIndex = remainingSection.lastIndexOf('.', index);
+    }
+    if (sectionIndex < 1) {
+      sectionIndex = remainingSection.lastIndexOf('%20', index);
+    }
+    if (sectionIndex < 1) {
+      sectionIndex = index;
+    }
+    firstSection = remainingSection.substring(0, sectionIndex);
+    remainingSection = remainingSection.substring(sectionIndex);
+    separatedStrings.push(firstSection);
+  }
+  separatedStrings.push(remainingSection);
+  return separatedStrings.join('\n');
 };
