@@ -10,7 +10,7 @@ import {
   TEMPLATE_MOST_ACTIVE_PEOPLE,
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
-  TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT,
+  TEMPLATE_STREAM_INTERACTIONS_VS_ENGAGEMENT,
   TEMPLATE_LEARNING_EXPERIENCE_TYPE
 } from 'lib/constants/visualise';
 import NoData from 'ui/components/Graphs/NoData';
@@ -81,7 +81,7 @@ const getGroupAxisLabel = (visualisation) => {
   switch (visualisation.get('type')) {
     // Correlation Chart type
     case XVSY:
-    case TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT:
+    case TEMPLATE_STREAM_INTERACTIONS_VS_ENGAGEMENT:
       return visualisation.getIn(['axesgroup', 'searchString']) || 'Group';
     // Bar Chart type
     case LEADERBOARD:
@@ -103,7 +103,7 @@ const getValueAxisLabel = (index, visualisation) => {
   switch (visualisation.get('type')) {
     // Correlation Chart type
     case XVSY:
-    case TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT:
+    case TEMPLATE_STREAM_INTERACTIONS_VS_ENGAGEMENT:
       if (index === 0) {
         return visualisation.get('axesxLabel') || visualisation.getIn(['axesxValue', 'searchString']) || 'X Axis';
       }
