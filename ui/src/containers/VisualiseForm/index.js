@@ -12,12 +12,12 @@ import {
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_WEEKDAYS_ACTIVITY,
-  TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT,
-  TEMPLATE_CURATR_COMMENT_COUNT,
-  TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB,
-  TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD,
-  TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS,
-  TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS,
+  TEMPLATE_STREAM_INTERACTIONS_VS_ENGAGEMENT,
+  TEMPLATE_STREAM_COMMENT_COUNT,
+  TEMPLATE_STREAM_LEARNER_INTERACTIONS_BY_DATE_AND_VERB,
+  TEMPLATE_STREAM_USER_ENGAGEMENT_LEADERBOARD,
+  TEMPLATE_STREAM_PROPORTION_OF_SOCIAL_INTERACTIONS,
+  TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS,
   TEMPLATE_LEARNING_EXPERIENCE_TYPE,
 } from 'lib/constants/visualise';
 import CustomBarChart from 'ui/containers/Visualisations/CustomBarChart';
@@ -32,12 +32,12 @@ import TemplateMostActivePeople from 'ui/containers/Visualisations/TemplateMostA
 import TemplateMostPopularActivities from 'ui/containers/Visualisations/TemplateMostPopularActivities';
 import TemplateMostPopularVerbs from 'ui/containers/Visualisations/TemplateMostPopularVerbs';
 import TemplateWeekdaysActivity from 'ui/containers/Visualisations/TemplateWeekdaysActivity';
-import TemplateCuratrInteractionsVsEngagement from 'ui/containers/Visualisations/TemplateCuratrInteractionsVsEngagement';
-import TemplateCuratrCommentCount from 'ui/containers/Visualisations/TemplateCuratrCommentCount';
-import TemplateCuratrLearnerInteractionsByDateAndVerb from 'ui/containers/Visualisations/TemplateCuratrLearnerInteractionsByDateAndVerb';
-import TemplateCuratrUserEngagementLeaderboard from 'ui/containers/Visualisations/TemplateCuratrUserEngagementLeaderboard';
-import TemplateCuratrProportionOfSocialInteractions from 'ui/containers/Visualisations/TemplateCuratrProportionOfSocialInteractions';
-import TemplateCuratrActivitiesWithMostComments from 'ui/containers/Visualisations/TemplateCuratrActivitiesWithMostComments';
+import TemplateStreamInteractionsVsEngagement from 'ui/containers/Visualisations/TemplateStreamInteractionsVsEngagement';
+import TemplateStreamCommentCount from 'ui/containers/Visualisations/TemplateStreamCommentCount';
+import TemplateStreamLearnerInteractionsByDateAndVerb from 'ui/containers/Visualisations/TemplateStreamLearnerInteractionsByDateAndVerb';
+import TemplateStreamUserEngagementLeaderboard from 'ui/containers/Visualisations/TemplateStreamUserEngagementLeaderboard';
+import TemplateStreamProportionOfSocialInteractions from 'ui/containers/Visualisations/TemplateStreamProportionOfSocialInteractions';
+import TemplateStreamActivitiesWithMostComments from 'ui/containers/Visualisations/TemplateStreamActivitiesWithMostComments';
 import TemplateLearningExperienceType from 'ui/containers/Visualisations/TemplateLearningExperienceType';
 import NewVisualisation from './NewVisualisation';
 
@@ -68,18 +68,18 @@ const VisualiseForm = ({ model, orgTimezone }) => {
         return <TemplateMostPopularVerbs model={model} orgTimezone={orgTimezone} />;
       case TEMPLATE_WEEKDAYS_ACTIVITY:
         return <TemplateWeekdaysActivity model={model} orgTimezone={orgTimezone} />;
-      case TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT:
-        return <TemplateCuratrInteractionsVsEngagement model={model} orgTimezone={orgTimezone} />;
-      case TEMPLATE_CURATR_COMMENT_COUNT:
-        return <TemplateCuratrCommentCount model={model} orgTimezone={orgTimezone} />;
-      case TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB:
-        return <TemplateCuratrLearnerInteractionsByDateAndVerb model={model} orgTimezone={orgTimezone} />;
-      case TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD:
-        return <TemplateCuratrUserEngagementLeaderboard model={model} orgTimezone={orgTimezone} />;
-      case TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS:
-        return <TemplateCuratrProportionOfSocialInteractions model={model} orgTimezone={orgTimezone} />;
-      case TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS:
-        return <TemplateCuratrActivitiesWithMostComments model={model} orgTimezone={orgTimezone} />;
+      case TEMPLATE_STREAM_INTERACTIONS_VS_ENGAGEMENT:
+        return <TemplateStreamInteractionsVsEngagement model={model} orgTimezone={orgTimezone} />;
+      case TEMPLATE_STREAM_COMMENT_COUNT:
+        return <TemplateStreamCommentCount model={model} orgTimezone={orgTimezone} />;
+      case TEMPLATE_STREAM_LEARNER_INTERACTIONS_BY_DATE_AND_VERB:
+        return <TemplateStreamLearnerInteractionsByDateAndVerb model={model} orgTimezone={orgTimezone} />;
+      case TEMPLATE_STREAM_USER_ENGAGEMENT_LEADERBOARD:
+        return <TemplateStreamUserEngagementLeaderboard model={model} orgTimezone={orgTimezone} />;
+      case TEMPLATE_STREAM_PROPORTION_OF_SOCIAL_INTERACTIONS:
+        return <TemplateStreamProportionOfSocialInteractions model={model} orgTimezone={orgTimezone} />;
+      case TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS:
+        return <TemplateStreamActivitiesWithMostComments model={model} orgTimezone={orgTimezone} />;
       case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
         return <TemplateLearningExperienceType model={model} orgTimezone={orgTimezone} />;
       default:

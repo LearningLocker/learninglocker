@@ -11,7 +11,6 @@ import { SITE_SETTINGS_ID } from 'lib/constants/siteSettings';
 import SiteSettings from 'lib/models/siteSettings';
 import Client from 'lib/models/client';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
-import { updateStatementCountsInOrg } from 'lib/services/lrs';
 
 const markDone = async (batchDeleteId, jobDone) => {
   logger.debug(`Removing job for BatchDelete ${batchDeleteId} and marking as done`);
@@ -133,11 +132,6 @@ export default async ({
         batchDeleteId
       }
     });
-  }
-
-  if (done) {
-    const organisationId = batchDelete.organisation;
-    await updateStatementCountsInOrg(organisationId);
   }
 
   jobDone();

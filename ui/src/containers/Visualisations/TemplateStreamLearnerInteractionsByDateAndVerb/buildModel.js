@@ -1,6 +1,6 @@
 import { Map, fromJS } from 'immutable';
-import { TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD } from 'lib/constants/visualise';
-import { LAST_7_DAYS } from 'ui/utils/constants';
+import { TEMPLATE_STREAM_LEARNER_INTERACTIONS_BY_DATE_AND_VERB } from 'lib/constants/visualise';
+import { LAST_30_DAYS } from 'ui/utils/constants';
 import { description } from './constants';
 
 /**
@@ -22,7 +22,8 @@ const buildFilter = (label, verbIds) => fromJS({
         $comment: '{"criterionLabel":"B","criteriaPath":["statement","context","platform"]}',
         'statement.context.platform': {
           $in: [
-            'Curatr',
+            'Stream',
+            'Curatr'
           ],
         },
       },
@@ -34,10 +35,11 @@ const buildFilter = (label, verbIds) => fromJS({
  * @type {immutable.Map[]}
  */
 const filters = [
-  buildFilter('Completions', ['http://adlnet.gov/expapi/verbs/completed']),
   buildFilter('Comments', ['http://adlnet.gov/expapi/verbs/commented']),
+  buildFilter('Completions', ['http://adlnet.gov/expapi/verbs/completed']),
   buildFilter('Voted Up', ['http://adlnet.gov/expapi/verbs/voted-up']),
   buildFilter('Shared', ['http://adlnet.gov/expapi/verbs/shared']),
+  buildFilter('Logins', ['http://adlnet.gov/expapi/verbs/loggedin/']),
 ];
 
 /**
@@ -46,14 +48,14 @@ const filters = [
  */
 const buildModel = model =>
   model
-    .set('type', TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD)
+    .set('type', TEMPLATE_STREAM_LEARNER_INTERACTIONS_BY_DATE_AND_VERB)
     .set('description', description)
-    .set('axesgroup', new Map({ optionKey: 'people', searchString: 'Person' }))
+    .set('axesgroup', new Map({ optionKey: 'date', searchString: 'Date' }))
     .set('axesoperator', 'uniqueCount')
     .set('axesvalue', new Map({ optionKey: 'statements', searchString: 'Statements' }))
-    .set('axesxLabel', 'Statements')
-    .set('axesyLabel', 'Person')
+    .set('axesxLabel', 'Date')
+    .set('axesyLabel', 'Statements')
     .set('filters', filters)
-    .set('previewPeriod', LAST_7_DAYS);
+    .set('previewPeriod', LAST_30_DAYS);
 
 export default buildModel;
