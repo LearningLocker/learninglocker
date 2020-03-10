@@ -1,7 +1,7 @@
 import React from 'react';
 import { CardList, Panel } from 'ui/containers/DashboardTemplates/styled';
 import BlankDashboard from './BlankDashboard';
-import CuratrStarter from './CuratrStarter';
+import StreamStarter from './StreamStarter';
 import GettingStarted from './GettingStarted';
 
 const DashboardTemplates = () => (
@@ -14,7 +14,7 @@ const DashboardTemplates = () => (
     <CardList id="dashboard-templates">
       <BlankDashboard />
       <GettingStarted />
-      <CuratrStarter />
+      <StreamStarter />
     </CardList>
   </Panel>
 );

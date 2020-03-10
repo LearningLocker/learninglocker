@@ -9,16 +9,16 @@ import Editor from './Editor';
  * @param {immutable.Map} props.model - visualisation model
  * @param {string} props.orgTimezone
  */
-const TemplateCuratrInteractionsVsEngagement = compose(
+const TemplateStreamInteractionsVsEngagement = compose(
   connect(
     () => ({}),
     { updateModel },
   ),
 )(Editor);
 
-TemplateCuratrInteractionsVsEngagement.propTypes = {
+TemplateStreamInteractionsVsEngagement.propTypes = {
   model: PropTypes.instanceOf(Map).isRequired,
   orgTimezone: PropTypes.string.isRequired,
 };
 
-export default TemplateCuratrInteractionsVsEngagement;
+export default TemplateStreamInteractionsVsEngagement;

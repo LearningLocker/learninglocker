@@ -1,5 +1,5 @@
 import { Map, fromJS } from 'immutable';
-import { TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT } from 'lib/constants/visualise';
+import { TEMPLATE_STREAM_INTERACTIONS_VS_ENGAGEMENT } from 'lib/constants/visualise';
 import { LAST_7_DAYS } from 'ui/utils/constants';
 import { description } from './constants';
 
@@ -23,7 +23,8 @@ const axesxQuery = fromJS({
         $comment: '{"criterionLabel":"B","criteriaPath":["statement","context","platform"]}',
         'statement.context.platform': {
           $in: [
-            'Curatr',
+            'Stream',
+            'Curatr'
           ],
         },
       },
@@ -48,7 +49,8 @@ const axesyQuery = fromJS({
         $comment: '{"criterionLabel":"B","criteriaPath":["statement","context","platform"]}',
         'statement.context.platform': {
           $in: [
-            'Curatr',
+            'Stream',
+            'Curatr'
           ],
         },
       },
@@ -62,7 +64,7 @@ const axesyQuery = fromJS({
  */
 const buildModel = model =>
   model
-    .set('type', TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT)
+    .set('type', TEMPLATE_STREAM_INTERACTIONS_VS_ENGAGEMENT)
     .set('description', description)
     .set('axesgroup', new Map({ optionKey: 'people', searchString: 'Person' }))
     .set('axesxLabel', 'Engagement (completed/commented/shared/voted up)')
