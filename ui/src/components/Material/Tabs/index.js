@@ -3,7 +3,7 @@ import { Tabs } from 'react-toolbox/lib/tabs';
 import styled from 'styled-components';
 
 const tabClassName = 'tab';
-const pointerClassName = 'pointer';
+const pointerClassName = 'tab-pointer';
 
 const StyledTabs = styled(Tabs)`
   && {
