@@ -460,7 +460,7 @@ class SubOrgForm extends Component {
           </fieldset>
 
           <div className="from-group">
-            <p>Expiry</p>
+            <p style={{ padding: 8 }}>Expiry</p>
             <DatePicker
               value={model.get('expiration') ? new Date(model.get('expiration')) : null}
               onChange={this.onExpirationChange}
