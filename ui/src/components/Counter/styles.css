@@ -12,6 +12,7 @@
   color: #D35D2B;
   font-size: 20px;
   margin-bottom: 5px;
+  margin-top: -10px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

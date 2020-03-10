@@ -86,13 +86,14 @@ const renderBenchmark = ({ percentage, model }) => {
 
 const getCountFontsize = ({ height, width, hasBenchmark, hasContextLabel, maxSize }) => {
   let fontSize = hasBenchmark || hasContextLabel ? `${maxSize / 40}` : `${maxSize / 20}`;
-  const tripHeight = hasBenchmark || hasContextLabel ? 220 : 200;
+  const tripHeight = hasBenchmark || hasContextLabel ? 550 : 200;
   if (height < tripHeight) {
     if (!hasBenchmark && !hasContextLabel) {
       fontSize = width > 200 ? 4.5 : 3.5;
     }
   } else if (width < 550) {
     fontSize = width / 60;
+    console.log(`fontSize: ${fontSize}`);
   }
   if (fontSize > 12) fontSize = 12;
   return `${fontSize}em`;
@@ -100,7 +101,7 @@ const getCountFontsize = ({ height, width, hasBenchmark, hasContextLabel, maxSiz
 
 const renderCounter = ({ color, results, model, height, width }) => {
   const maxSize = Math.min(height, width);
-  const fontSize = (width < 332) || (maxSize < 245) ? '13px' : '0.2em';
+  const fontSize = (width < 332) || (maxSize < 245) ? '18px' : '0.25em';
   const hasBenchmark = results.size > 1;
   const hasContextLabel = model.get('contextLabel', '') !== '';
   const benchmarkCount = hasBenchmark ? getBenchmarkResultCount(results) : null;
