@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import BlankDashboard from './BlankDashboard';
-import CuratrStarter from './CuratrStarter';
+import StreamStarter from './StreamStarter';
 import GettingStarted from './GettingStarted';
 import styles from './styles.css';
 
@@ -29,7 +29,7 @@ const DashboardTemplates = ({ handleClose }) => (
 
       <BlankDashboard />
       <GettingStarted />
-      <CuratrStarter />
+      <StreamStarter />
     </div>
   </div>
 );

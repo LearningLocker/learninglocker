@@ -15,12 +15,12 @@ import {
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_WEEKDAYS_ACTIVITY,
-  TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT,
-  TEMPLATE_CURATR_COMMENT_COUNT,
-  TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB,
-  TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD,
-  TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS,
-  TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS,
+  TEMPLATE_STREAM_INTERACTIONS_VS_ENGAGEMENT,
+  TEMPLATE_STREAM_COMMENT_COUNT,
+  TEMPLATE_STREAM_LEARNER_INTERACTIONS_BY_DATE_AND_VERB,
+  TEMPLATE_STREAM_USER_ENGAGEMENT_LEADERBOARD,
+  TEMPLATE_STREAM_PROPORTION_OF_SOCIAL_INTERACTIONS,
+  TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS,
   TEMPLATE_LEARNING_EXPERIENCE_TYPE,
 } from 'lib/constants/visualise';
 import { withModel } from 'ui/utils/hocs';
@@ -36,12 +36,12 @@ import TemplateMostActivePeople from './TemplateMostActivePeople/Viewer';
 import TemplateMostPopularActivities from './TemplateMostPopularActivities/Viewer';
 import TemplateMostPopularVerbs from './TemplateMostPopularVerbs/Viewer';
 import TemplateWeekdaysActivity from './TemplateWeekdaysActivity/Viewer';
-import TemplateCuratrInteractionsVsEngagement from './TemplateCuratrInteractionsVsEngagement/Viewer';
-import TemplateCuratrCommentCount from './TemplateCuratrCommentCount/Viewer';
-import TemplateCuratrLearnerInteractionsByDateAndVerb from './TemplateCuratrLearnerInteractionsByDateAndVerb/Viewer';
-import TemplateCuratrUserEngagementLeaderboard from './TemplateCuratrUserEngagementLeaderboard/Viewer';
-import TemplateCuratrProportionOfSocialInteractions from './TemplateCuratrProportionOfSocialInteractions/Viewer';
-import TemplateCuratrActivitiesWithMostComments from './TemplateCuratrActivitiesWithMostComments/Viewer';
+import TemplateStreamInteractionsVsEngagement from './TemplateStreamInteractionsVsEngagement/Viewer';
+import TemplateStreamCommentCount from './TemplateStreamCommentCount/Viewer';
+import TemplateStreamLearnerInteractionsByDateAndVerb from './TemplateStreamLearnerInteractionsByDateAndVerb/Viewer';
+import TemplateStreamUserEngagementLeaderboard from './TemplateStreamUserEngagementLeaderboard/Viewer';
+import TemplateStreamProportionOfSocialInteractions from './TemplateStreamProportionOfSocialInteractions/Viewer';
+import TemplateStreamActivitiesWithMostComments from './TemplateStreamActivitiesWithMostComments/Viewer';
 import TemplateLearningExperienceType from './TemplateLearningExperienceType/Viewer';
 
 /**
@@ -83,18 +83,18 @@ const VisualisationViewer = ({
       return <TemplateMostPopularVerbs visualisationId={visualisationId} showSourceView={showSourceView} />;
     case TEMPLATE_WEEKDAYS_ACTIVITY:
       return <TemplateWeekdaysActivity visualisationId={visualisationId} showSourceView={showSourceView} />;
-    case TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT:
-      return <TemplateCuratrInteractionsVsEngagement visualisationId={visualisationId} showSourceView={showSourceView} />;
-    case TEMPLATE_CURATR_COMMENT_COUNT:
-      return <TemplateCuratrCommentCount visualisationId={visualisationId} showSourceView={showSourceView} />;
-    case TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB:
-      return <TemplateCuratrLearnerInteractionsByDateAndVerb visualisationId={visualisationId} showSourceView={showSourceView} />;
-    case TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD:
-      return <TemplateCuratrUserEngagementLeaderboard visualisationId={visualisationId} showSourceView={showSourceView} />;
-    case TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS:
-      return <TemplateCuratrProportionOfSocialInteractions visualisationId={visualisationId} showSourceView={showSourceView} />;
-    case TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS:
-      return <TemplateCuratrActivitiesWithMostComments visualisationId={visualisationId} showSourceView={showSourceView} />;
+    case TEMPLATE_STREAM_INTERACTIONS_VS_ENGAGEMENT:
+      return <TemplateStreamInteractionsVsEngagement visualisationId={visualisationId} showSourceView={showSourceView} />;
+    case TEMPLATE_STREAM_COMMENT_COUNT:
+      return <TemplateStreamCommentCount visualisationId={visualisationId} showSourceView={showSourceView} />;
+    case TEMPLATE_STREAM_LEARNER_INTERACTIONS_BY_DATE_AND_VERB:
+      return <TemplateStreamLearnerInteractionsByDateAndVerb visualisationId={visualisationId} showSourceView={showSourceView} />;
+    case TEMPLATE_STREAM_USER_ENGAGEMENT_LEADERBOARD:
+      return <TemplateStreamUserEngagementLeaderboard visualisationId={visualisationId} showSourceView={showSourceView} />;
+    case TEMPLATE_STREAM_PROPORTION_OF_SOCIAL_INTERACTIONS:
+      return <TemplateStreamProportionOfSocialInteractions visualisationId={visualisationId} showSourceView={showSourceView} />;
+    case TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS:
+      return <TemplateStreamActivitiesWithMostComments visualisationId={visualisationId} showSourceView={showSourceView} />;
     case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
       return <TemplateLearningExperienceType visualisationId={visualisationId} showSourceView={showSourceView} />;
     default:
