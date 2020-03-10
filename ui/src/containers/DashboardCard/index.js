@@ -10,7 +10,7 @@ import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import { COPY_DASHBOARD } from 'ui/redux/modules/dashboard/copyDashboard';
 import { withProps, compose, lifecycle, withHandlers, mapProps } from 'recompose';
 import { getVisualisationsFromDashboard } from 'ui/redux/modules/dashboard/selectors';
-import { BLANKDASHBOARD, CURATRSTARTER } from 'lib/constants/dashboard';
+import { BLANK_DASHBOARD, CURATR_STARTER } from 'lib/constants/dashboard';
 import Owner from 'ui/containers/Owner';
 import { withModel } from 'ui/utils/hocs';
 import DeleteConfirm from 'ui/containers/DeleteConfirm';
@@ -92,7 +92,7 @@ export class DashboardCard extends Component {
           <a
             onClick={() => { this.openModal('isDeleteOpen'); }}
             title="Delete button">
-            Delete button
+            Delete
           </a>
         </DropDownMenu>
 
@@ -136,10 +136,10 @@ export class DashboardCard extends Component {
     const iconType = () => {
       const type = model.get('type', ' ');
 
-      if (type === BLANKDASHBOARD) {
+      if (type === BLANK_DASHBOARD) {
         return blankDashboardIcon;
       }
-      if (type === CURATRSTARTER) {
+      if (type === CURATR_STARTER) {
         return curatrStarterIcon;
       }
       return gettingStartedIcon;
