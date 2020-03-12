@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components';
 
 export const InputWrapper = styled.div`
   border-radius: 2px;
+  border: 1px solid #ccc;
   overflow: hidden;
   flex-wrap: wrap;
   min-height: 36px;
@@ -12,9 +13,6 @@ export const InputWrapper = styled.div`
       && css`
         border-radius: 2px 2px 0 0;
         border-bottom: 1px solid #eee;
-      `
-      || css`
-        border: 1px solid #ccc;
       `
   }
 
