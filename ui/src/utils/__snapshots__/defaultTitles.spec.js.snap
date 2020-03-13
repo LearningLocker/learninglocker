@@ -1,20 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`defaultTitles should create a title with an icon 1`] = `
-<div>
-  <span>
-    <WithStyles(Component)
-      sourceView={false}
-    />
-    <span
-      style={
-        Object {
-          "marginLeft": "3px",
-        }
+<span>
+  <Memo(VisualiseIcon)
+    sourceView={false}
+  />
+  <span
+    style={
+      Object {
+        "marginLeft": "3px",
       }
-    >
-      dave
-    </span>
+    }
+  >
+    dave
   </span>
-</div>
+</span>
 `;

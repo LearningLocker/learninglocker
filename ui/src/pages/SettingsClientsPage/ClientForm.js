@@ -10,6 +10,7 @@ import Dropdown from 'ui/components/Material/Dropdown';
 import { withModels, withModel } from 'ui/utils/hocs';
 import { API_SCOPES, getXapiScopes } from 'lib/constants/scopes';
 import ValidationList from 'ui/components/ValidationList';
+import { HelpBlock } from 'ui/pages/SettingsClientsPage/styled';
 import { getAppDataSelector } from 'ui/redux/modules/app';
 import AuthorityEditor from './AuthorityEditor';
 
@@ -43,16 +44,19 @@ const renderStoreDropdown = compose(
 
 const renderAuthorityEditor = (handleAttrChange, model) => {
   const errors = model.getIn(['errors', 'messages', 'authority'], new List());
+
   return (
     <div id="authorityEditor">
       <AuthorityEditor
         authority={model.get('authority')}
         onAuthorityChange={handleAttrChange.bind(null, 'authority')} />
-      {!errors.isEmpty() && (
-        <span className="help-block">
-          <ValidationList errors={errors} />
-        </span>
-      )}
+      {
+        !errors.isEmpty() && (
+          <span className="help-block">
+            <ValidationList errors={errors} />
+          </span>
+        )
+      }
     </div>
   );
 };
@@ -137,19 +141,19 @@ export const render = ({
 
         <div className="form-group">
           <label htmlFor="basicKey">Key</label>
-          <p className="help-block">{basicKey}</p>
+          <HelpBlock className="help-block">{basicKey}</HelpBlock>
         </div>
         <div className="form-group">
           <label htmlFor="basicSecret">Secret</label>
-          <p className="help-block">{basicSecret}</p>
+          <HelpBlock className="help-block">{basicSecret}</HelpBlock>
         </div>
         <div className="form-group">
           <label htmlFor="basicAuth">
             Use this Basic Auth value in your <code>Authorization</code> header for requests
           </label>
-          <p className="help-block" style={{ wordWrap: 'break-word' }}>
+          <HelpBlock className="help-block" style={{ wordWrap: 'break-word' }}>
             Basic {btoa(`${basicKey}:${basicSecret}`)}
-          </p>
+          </HelpBlock>
         </div>
 
         <div className="form-group">

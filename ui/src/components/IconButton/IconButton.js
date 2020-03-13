@@ -1,9 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, setPropTypes, defaultProps } from 'recompose';
-import styles from './styles.css';
+import styled from 'styled-components';
+
+const Button = styled.button`
+  width: 33px;
+  margin: 0 1px;
+`;
 
 const enhanceIconButton = compose(
   setPropTypes({
@@ -15,17 +19,16 @@ const enhanceIconButton = compose(
   defaultProps({
     disabled: false,
   }),
-  withStyles(styles),
 );
 
 const renderIconButton = ({ title, onClick, disabled, icon }) => (
-  <button
-    className={classNames('btn btn-sm btn-inverse', styles.iconButton)}
+  <Button
+    className={classNames('btn btn-sm btn-inverse')}
     title={title}
     onClick={onClick}
-    disabled={disabled}>
+    disabled={disabled} >
     <span><i className={icon} /></span>
-  </button>
+  </Button>
 );
 
 export default enhanceIconButton(renderIconButton);

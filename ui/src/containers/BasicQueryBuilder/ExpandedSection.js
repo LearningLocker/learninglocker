@@ -2,34 +2,38 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose, withProps } from 'recompose';
-import { Map, List } from 'immutable';
-import { merge, map, maxBy, size } from 'lodash';
+import { List, Map } from 'immutable';
+import { map, maxBy, merge, size } from 'lodash';
 import decodeDot from 'lib/helpers/decodeDot';
-import { operators, getAvailableSection } from 'ui/redux/modules/queryBuilder';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { getAvailableSection, operators } from 'ui/redux/modules/queryBuilder';
 import { withModels } from 'ui/utils/hocs';
+import {
+  ExpandedSectionsContainer,
+  ExpandedSectionWrapper,
+  ExpandedTitle
+} from 'ui/containers/BasicQueryBuilder/styled';
 import DiscreteCriteria from './Discrete/Criteria';
 import ActorDiscreteCriteria from './ActorDiscrete/Criteria';
 import ContinuousCriteria from './Continuous/Criteria';
 import RangeCriteria from './Range/Criteria';
 import BooleanCriteria from './Boolean/Criteria';
 import StringMatchesCriteria from './StringMatches/Criteria';
-import Sections from './Sections';
-import styles from './styles.css';
 
 export const queryBuilderCacheFilterGenerator = ({ section }) => {
   let query;
+
   if (section.get('childGenerators', false)) {
     const childGenerators = section.get('childGenerators');
 
     const orQueryList = map(childGenerators.toJS(), (item) => {
       const keyPath = item.path;
-      const keyPathQuery = merge({},
+
+      return merge(
+        {},
         ...map(keyPath, (item2, index) =>
           ({ [`path.${index}`]: { $eq: item2 } })
         )
       );
-      return keyPathQuery;
     });
 
     const maxItem = maxBy(orQueryList, item => size(item));
@@ -164,20 +168,20 @@ class ExpandedSection extends Component {
     const hasCriteria = section.has('operators');
 
     return (
-      <div className={styles.expandedSection}>
-        <span
-          className={styles.expandedTitle}
-          onClick={this.collapseSection}>
+      <ExpandedSectionWrapper>
+        <ExpandedTitle onClick={this.collapseSection}>
           <i className="ion-minus-round" /> {title}
-        </span>
-        {hasCriteria && <div className={styles.expandedCriteria}>
-          {this.renderCriteria()}
-        </div>}
-        {children.size > 0 &&
-          <Sections
+        </ExpandedTitle>
+        {
+          hasCriteria && <div style={{ marginTop: 10 }}>
+            {this.renderCriteria()}
+          </div>
+        }
+        {
+          children.size > 0 &&
+          <ExpandedSectionsContainer
             timezone={this.props.timezone}
             orgTimezone={this.props.orgTimezone}
-            className={styles.expandedChildren}
             sections={children}
             criteria={this.props.criteria}
             onCriteriaChange={this.props.onCriteriaChange}
@@ -185,13 +189,12 @@ class ExpandedSection extends Component {
             onAddCriterion={this.props.onAddCriterion}
             onDeleteCriterion={this.props.onDeleteCriterion} />
         }
-      </div>
+      </ExpandedSectionWrapper>
     );
   }
 }
 
 export default compose(
-  withStyles(styles),
   withQueryBuilderCacheProps,
   connect((state, {
     queryBuilderCacheFilter,
