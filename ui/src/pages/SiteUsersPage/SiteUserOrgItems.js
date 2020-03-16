@@ -12,7 +12,8 @@ const enhance = compose(
   withProps(({ user }) => {
     const schema = 'organisation';
     const organisations = user.get('organisations').map(org => new Map({ $oid: org }));
-    // TODO: https://github.com/LearningLocker/learninglocker/pull/1513#issuecomment-587064642
+    // Decision made via (https://github.com/LearningLocker/learninglocker/pull/1513#issuecomment-587064642)
+    // Need to change when we will have OrganisationUser model.
     const filter = new Map({
       _id: new Map({
         $in: organisations.slice(0, 10)
@@ -25,8 +26,8 @@ const enhance = compose(
 );
 
 const SiteUserOrgItems = ({ models, user, filter }) => {
-  // TODO: temporary solution. Need to change when we will have OrganisationUser model.
-  //  (https://github.com/LearningLocker/learninglocker/pull/1513#issuecomment-587064642)
+  // Decision made via (https://github.com/LearningLocker/learninglocker/pull/1513#issuecomment-587064642)
+  // Need to change when we will have OrganisationUser model.
   const orgItems = filter
     .get('_id')
     .get('$in')
