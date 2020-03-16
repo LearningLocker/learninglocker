@@ -7,6 +7,11 @@ import AggregationProcessor from 'lib/models/aggregationProcessor';
 
 const objectId = mongoose.Types.ObjectId;
 
+const shouldCloseWebsocket = aggregationProcessorDocument =>
+  !isUndefined(aggregationProcessorDocument.greaterThanDate) &&
+      moment(aggregationProcessorDocument.fromTimestamp).isSame(moment(aggregationProcessorDocument.greaterThanDate)) &&
+      moment(aggregationProcessorDocument.toTimestamp).isAfter(moment().subtract(10, 'minutes'));
+
 /**
  * @param {module:ll.WS} ws
  * @param {AuthInfo} authInfo
@@ -69,9 +74,7 @@ const aggregationProcessor = async ({
     ws.send(JSON.stringify(aggregationProcessorDocument));
 
     if (
-      !isUndefined(aggregationProcessorDocument.greaterThanDate) &&
-      moment(aggregationProcessorDocument.fromTimestamp).isSame(moment(aggregationProcessorDocument.greaterThanDate)) &&
-      moment(aggregationProcessorDocument.toTimestamp).isAfter(moment().subtract(10, 'minutes'))
+      shouldCloseWebsocket(aggregationProcessorDocument)
     ) {
       ws.close();
       changeStream.close();
@@ -84,6 +87,11 @@ const aggregationProcessor = async ({
   });
 
   ws.send(JSON.stringify(currentAggregationProcessor));
+
+  if (shouldCloseWebsocket(currentAggregationProcessor)) {
+    ws.close();
+    changeStream.close();
+  }
 };
 
 export default aggregationProcessor;
