@@ -175,6 +175,7 @@ const getAddPipeline = ({
   now
 }) => {
   if (!model.useWindowOptimization) {
+
     return [
       {
         $match: {
@@ -182,7 +183,7 @@ const getAddPipeline = ({
             {
               timestamp: {
                 $gte: moment(model.greaterThanDate).toDate(),
-                $lt: moment(model.fromTimestamp || now).toDate()
+                $lt: moment(model.toTimestamp || now).toDate()
               }
             }
           ]
