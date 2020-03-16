@@ -54,16 +54,15 @@ export const findOrCreateAggregationProcessor = async ({
 const canUseWindowOptimization = (pipeline) => {
   const groupStages = filter(pipeline, value => keys(value)[0] === '$group');
 
-  if (groupStages.length !== 1) {
+  if (groupStages.length > 2 || groupStages.length === 0) {
     return false;
   }
 
   const group = Object
-    .entries(groupStages[0].$group)
+    .entries(groupStages[groupStages.length - 1].$group)
     .find(
       ([key, value]) => !(
-        isObject(value)
-        && keys(value).length === 1 &&
+        isObject(value) && keys(value).length === 1 &&
         (
           keys(value)[0] === '$sum' ||
           keys(value)[0] === '$first'

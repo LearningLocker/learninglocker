@@ -175,7 +175,6 @@ const getAddPipeline = ({
   now
 }) => {
   if (!model.useWindowOptimization) {
-
     return [
       {
         $match: {
