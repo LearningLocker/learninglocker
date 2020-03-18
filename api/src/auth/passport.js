@@ -5,7 +5,7 @@ import { Strategy as BearerStrategy } from 'passport-http-bearer';
 import { OAuth2Strategy as GoogleStrategy } from 'passport-google-oauth';
 import Promise from 'bluebird';
 import CustomStrategy from 'passport-custom';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { find, get, omit, omitBy } from 'lodash';
 import { fromJS } from 'immutable';
