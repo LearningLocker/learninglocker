@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
+import decodeDot from 'lib/helpers/decodeDot';
 
 class StatementForm extends Component {
 
@@ -17,7 +18,7 @@ class StatementForm extends Component {
 
     return (
       <pre>
-        {JSON.stringify(model.toJS(), null, 2)}
+        {decodeDot(JSON.stringify(model.toJS(), null, 2))}
       </pre>
     );
   }
