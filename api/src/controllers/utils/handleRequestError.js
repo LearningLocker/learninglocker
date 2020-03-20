@@ -1,16 +1,20 @@
+import PersonaConflict from '@learninglocker/persona-service/dist/errors/Conflict';
+import PersonaNoModelWithId from '@learninglocker/persona-service/dist/errors/NoModelWithId';
+import PersonaHasIdentsError from '@learninglocker/persona-service/dist/errors/PersonaHasIdentsError';
+import NoModel from 'jscommons/dist/errors/NoModel';
+import defaultTo from 'lodash/defaultTo';
+import { v4 as uuid } from 'uuid';
+import { Warnings, Warning } from 'rulr';
 import NotFoundError from 'lib/errors/NotFoundError';
 import NoAccessError from 'lib/errors/NoAccessError';
 import Unauthorised from 'lib/errors/Unauthorised';
 import UnauthorisedQueryError from 'lib/errors/UnauthorisedQueryError';
 import BaseError from 'lib/errors/BaseError';
 import ClientError from 'lib/errors/ClientError';
+import RequestAppAccessError from 'lib/errors/RequestAppAccessError';
 import logger from 'lib/logger';
-import defaultTo from 'lodash/defaultTo';
-import { v4 as uuid } from 'uuid';
-import PersonaConflict from '@learninglocker/persona-service/dist/errors/Conflict';
-import NoModel from 'jscommons/dist/errors/NoModel';
 import AlreadyProcessingError from 'lib/errors/AlreadyProcessingError';
-import PersonaNoModelWithId from '@learninglocker/persona-service/dist/errors/NoModelWithId';
+import { constructMessageFromRulrWarning } from './constructMessageFromRulrWarning';
 
 export const unawaitedErrorHandler = (err) => {
   const errorId = uuid();
@@ -27,6 +31,16 @@ const handleRequestError = (res, err) => {
       message: `No model found for ${err.modelName} with id ${err.id}`,
     });
   }
+
+  if (err instanceof PersonaHasIdentsError) {
+    return res
+      .status(400)
+      .send({
+        errorId,
+        message: 'Persona cannot be deleted whilst it still has identifiers'
+      });
+  }
+
   if (err instanceof NoModel) {
     return res.status(404).send({
       errorId,
@@ -83,6 +97,24 @@ const handleRequestError = (res, err) => {
     });
   }
 
+  if (
+    err instanceof RequestAppAccessError
+  ) {
+    return res.status(500).send({
+      errorId,
+      message: err.message
+    });
+  }
+
+  if (err instanceof Warnings) {
+    const messages = err.warnings.map(constructMessageFromRulrWarning);
+    return res.status(400).send({ errorId, messages });
+  }
+
+  if (err instanceof Warning) {
+    const message = constructMessageFromRulrWarning(err);
+    return res.status(400).send({ errorId, message });
+  }
 
   logger.error(errorId, err);
 

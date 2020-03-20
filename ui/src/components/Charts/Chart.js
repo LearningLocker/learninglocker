@@ -1,7 +1,7 @@
 import React from 'react';
-import { Map, Set, List } from 'immutable';
-import { Bar, Tooltip, Legend } from 'recharts';
-import { isNumber, isString, memoize, map, isNull } from 'lodash';
+import { List, Map, Set } from 'immutable';
+import { Bar, Legend, Tooltip } from 'recharts';
+import { isNull, isNumber, isString, map, memoize } from 'lodash';
 import { trimName } from 'ui/redux/modules/visualise';
 import { withStateHandlers } from 'recompose';
 import { displayAuto } from 'ui/redux/modules/queryBuilder';
@@ -11,38 +11,40 @@ const getAxisSize = (axis) => {
   if (!axis.find(axes => axes.get('count') > 0)) {
     return 0;
   }
+
   return Map.isMap(axis) ? axis.size : 0;
 };
 
-const getLargestAxisSize = axes =>
-  axes.map(getAxisSize).max();
+const getLargestAxisSize = axes => axes.map(getAxisSize).max();
 
-const getLargestSeriesSize = results =>
-  results.map(getLargestAxisSize).max();
+const getLargestSeriesSize = results => results.map(getLargestAxisSize).max();
 
-const getId = entryId => entryModel =>
-  (isNumber(entryId) ? entryId : entryModel);
+const getId = entryId => entryModel => (isNumber(entryId) ? entryId : entryModel);
 
 export const getLabel = (entryId) => {
   if (!entryId) {
     return '';
   }
-  if (!entryId || !entryId.map) {
+
+  if (!entryId.map) {
     return JSON.stringify(entryId);
   }
+
   if (entryId.get('name')) {
     return entryId.get('name');
   }
+
   if (entryId.get('id')) {
     return entryId.get('id');
   }
+
   if (!entryId.getIn([0, 'definition'])) {
     return entryId;
   }
 
   const navLangs = (navigator && navigator.languages) || [];
 
-  const out = entryId.map(
+  return entryId.map(
     (item) => {
       if (!item.getIn) {
         return item;
@@ -60,8 +62,6 @@ export const getLabel = (entryId) => {
       return outLangs[0];
     }
   );
-
-  return out;
 };
 
 const getEntryData = i => (entry) => {
@@ -80,8 +80,7 @@ const getEntryData = i => (entry) => {
 
 const getEntriesData = i => entries => entries.map(getEntryData(i)).mapKeys((k, data) => data.get('cellId'));
 
-const getSeriesData = series => i =>
-  getEntriesData(i + 1)(series.get(0, new Map()));
+const getSeriesData = series => i => getEntriesData(i + 1)(series.get(0, new Map()));
 
 const mergeEntryData = (prev, next) => prev.merge(next).set('total', next.get('total') + prev.get('total'));
 
@@ -107,75 +106,75 @@ const renderBar = index => stacked => label => color => (
 
 const reduceResults = results => results.reduce(mergeSeriesData, new Map());
 
-const addSeries = (entry, l, i) =>
-  entry.set(`Series ${i + 1}`, entry.get(`Series ${i + 1}`, 0));
+const addSeries = (entry, l, i) => entry.set(`Series ${i + 1}`, entry.get(`Series ${i + 1}`, 0));
 
-const formatEntry = labels => entry =>
-  labels.reduce(addSeries, entry);
+const formatEntry = labels => entry => labels.reduce(addSeries, entry);
 
-const mapEntries = entries => labels =>
-  entries.map(formatEntry(labels));
+const mapEntries = entries => labels => entries.map(formatEntry(labels));
 
-export const getDomain = data =>
-  getMinAndMax(data.map(getTotal));
+export const getDomain = data => getMinAndMax(data.map(getTotal));
 
-export const getResultsData = results => labels =>
-  mapEntries(reduceResults(results))(labels);
+export const getResultsData = results => labels => mapEntries(reduceResults(results))(labels);
 
-export const getLongModel = memoize(data => memoize(group => (
-  getGroupModel(data)(group)
-)), iterable => iterable.hashCode());
+export const getLongModel = memoize(
+  data => memoize(
+    group => (
+      getGroupModel(data)(group)
+    )
+  ),
+  iterable => iterable.hashCode()
+);
 
 export const getShortModel = data => group => trimName(getLongModel(data)(group));
 
-export const getChartData = (data, hiddenSeries = new Set()) => {
-  const filteredData = data.map((item) => {
-    const out = item.filter((item2, key) => {
-      if (hiddenSeries.includes(key)) {
-        return false;
-      }
-      return true;
-    });
-    return out;
-  });
+export const getChartData = (data, hiddenSeries = new Set()) => data
+    .map(item => item.filter((item2, key) => !hiddenSeries.includes(key)))
+    .valueSeq()
+    .toJS();
 
-  return filteredData.valueSeq().toJS();
-};
+export const hasData = results => getLargestSeriesSize(results) > 0;
 
-export const hasData = results =>
-  getLargestSeriesSize(results) > 0;
-
-export const renderBars = (colors = new List()) => labels => stacked => labels.map((label, i) =>
-  renderBar(i)(stacked)(label)(colors.get(i))
-).valueSeq();
+export const renderBars = (colors = new List()) => labels => stacked => labels
+  .map((label, i) => renderBar(i)(stacked)(label)(colors.get(i)))
+  .valueSeq();
 
 const onLegendClick = toggleHiddenSeries => (bar) => {
   toggleHiddenSeries(bar.dataKey);
 };
 
-export const renderLegend = (labels, toggleHiddenSeries) => (labels.size > 1 ?
-  <Legend
-    wrapperStyle={{ marginLeft: '20px', paddingBottom: '20px' }}
-    verticalAlign={'top'}
-    align="center"
-    onClick={toggleHiddenSeries ? onLegendClick(toggleHiddenSeries) : null} /> : <noscript />
-  );
+export const renderLegend = (labels, toggleHiddenSeries) => (
+  labels.size > 1
+    ? (
+      <Legend
+        wrapperStyle={{ marginLeft: '20px', paddingBottom: '20px' }}
+        verticalAlign={'top'}
+        align="center"
+        onClick={toggleHiddenSeries ? onLegendClick(toggleHiddenSeries) : null} />
+    )
+    : <noscript />
+);
 
-export const renderTooltips = (data, hiddenSeries, colors = ['grey']) =>
-  <Tooltip cursor={{ fill: colors[0], fillOpacity: 0.1 }} content={<CustomTooltip display={getLongModel(data, hiddenSeries)} />} />;
+export const renderTooltips = (data, hiddenSeries, colors = ['grey']) => (
+  <Tooltip
+    cursor={{ fill: colors[0], fillOpacity: 0.1 }}
+    content={<CustomTooltip display={getLongModel(data, hiddenSeries)} />} />
+);
 
+export const hiddenSeriesState = withStateHandlers(
+  {
+    hiddenSeries: new Set()
+  },
+  {
+    toggleHiddenSeries: ({ hiddenSeries }) => (value) => {
+      if (hiddenSeries.includes(value)) {
+        return {
+          hiddenSeries: hiddenSeries.delete(value)
+        };
+      }
 
-export const hiddenSeriesState = withStateHandlers({
-  hiddenSeries: new Set()
-}, {
-  toggleHiddenSeries: ({ hiddenSeries }) => (value) => {
-    if (hiddenSeries.includes(value)) {
       return {
-        hiddenSeries: hiddenSeries.delete(value)
+        hiddenSeries: hiddenSeries.add(value)
       };
     }
-    return {
-      hiddenSeries: hiddenSeries.add(value)
-    };
   }
-});
+);

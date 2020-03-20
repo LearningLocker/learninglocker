@@ -3,12 +3,34 @@ import PropTypes from 'prop-types';
 import { List as ImmutableList } from 'immutable';
 import { AutoSizer, List, InfiniteLoader } from 'react-virtualized';
 import { noop } from 'lodash';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import keyCodes from 'lib/constants/keyCodes';
+import styled from 'styled-components';
+
 import OptionListItemWrapper from 'ui/components/OptionListItemWrapper';
 import OptionListItem from 'ui/components/OptionListItem';
 import areEqualProps from 'ui/utils/hocs/areEqualProps';
-import styles from './styles.css';
+import keyCodes from 'lib/constants/keyCodes';
+
+const Wrapper = styled.div`
+  position: absolute;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0 0 2px 2px;
+  overflow: auto;
+  background-color: #fff;
+  width: 100%;
+  z-index: 1;
+  outline: none;
+
+  div {
+    outline: none;
+  }
+`;
+
+const Divider = styled.div`
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+`;
 
 class OptionList extends Component {
   static propTypes = {
@@ -52,16 +74,16 @@ class OptionList extends Component {
     }
   }
 
-  getHighLighted = () => {
-    if (!this.props.options.size) {
+  getHighLighted = (props, state) => {
+    if (!props.options.size) {
       return 0;
     }
 
-    if (this.props.options.size <= this.state.highlighted) {
-      return this.props.options.size - 1;
+    if (props.options.size <= state.highlighted) {
+      return props.options.size - 1;
     }
 
-    return this.state.highlighted;
+    return state.highlighted;
   }
 
   onKeyDown = (e) => {
@@ -77,7 +99,7 @@ class OptionList extends Component {
         break;
       }
       case keyCodes.ENTER: {
-        const option = this.props.options.get(this.getHighLighted());
+        const option = this.props.options.get(this.getHighLighted(this.props, this.state));
         if (option) {
           this.props.handleAddSelected(option);
         }
@@ -89,20 +111,24 @@ class OptionList extends Component {
   }
 
   selectPrev = () => {
-    const currentHighlighted = this.getHighLighted();
-    this.setState({
-      highlighted: !currentHighlighted
-        ? this.props.options.size - 1
-        : currentHighlighted - 1
+    this.setState((state, props) => {
+      const currentHighlighted = this.getHighLighted(props, state);
+      return {
+        highlighted: !currentHighlighted
+          ? this.props.options.size - 1
+          : currentHighlighted - 1
+      };
     });
   }
 
   selectNext = () => {
-    const currentHighlighted = this.getHighLighted();
-    this.setState({
-      highlighted: currentHighlighted === this.props.options.size - 1
-        ? 0
-        : currentHighlighted + 1
+    this.setState((state, props) => {
+      const currentHighlighted = this.getHighLighted(props, state);
+      return {
+        highlighted: currentHighlighted === this.props.options.size - 1
+          ? 0
+          : currentHighlighted + 1
+      };
     });
   }
 
@@ -116,7 +142,7 @@ class OptionList extends Component {
     const rowCount = this.props.rowCount || this.props.options.size;
     const rowHeight = 36;
 
-    const highlighted = this.getHighLighted();
+    const highlighted = this.getHighLighted(this.props, this.state);
     return (
       <AutoSizer disableHeight>
         {({ width }) => (
@@ -135,7 +161,7 @@ class OptionList extends Component {
                 rowHeight={rowHeight}
                 scrollToIndex={highlighted}
                 rowRenderer={this.renderRow} />
-              )}
+            )}
           </InfiniteLoader>
         )}
       </AutoSizer>
@@ -149,7 +175,7 @@ class OptionList extends Component {
       index={index}
       onClick={this.props.handleAddSelected}
       handleSelect={this.handleSelect}
-      highlighted={index === this.getHighLighted()}
+      highlighted={index === this.getHighLighted(this.props, this.state)}
       value={value}>
       {this.props.renderOption(value)}
     </OptionListItemWrapper>
@@ -173,19 +199,27 @@ class OptionList extends Component {
     const displayEmptyInfo = !options.size;
 
     return (
-      <div className={styles.wrapper} >
+      <Wrapper>
         <div>
-          {displayEmptyInfo ? this.renderEmptyInfo(styles) : this.renderOptions(styles) }
-          { children ? (
-            <div>
-              <div className={styles.divider} />
-              { children }
-            </div>
-          ) : null }
+          {
+            displayEmptyInfo
+              ? this.renderEmptyInfo()
+              : this.renderOptions()
+          }
+          {
+            children
+              ? (
+                <div>
+                  <Divider />
+                  {children}
+                </div>
+              )
+              : null
+          }
         </div>
-      </div>
+      </Wrapper>
     );
   }
 }
 
-export default withStyles(styles)(OptionList);
+export default OptionList;

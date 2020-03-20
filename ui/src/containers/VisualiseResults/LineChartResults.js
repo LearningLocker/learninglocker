@@ -13,7 +13,7 @@ export default withStatementsVisualisation(({
     preview={previewPeriod}
     model={model}
     axesLabels={{
-      xLabel: shorten(axes.get('xLabel', axes.getIn(['group', 'searchString'], 'yyyy-mm-dd'))),
-      yLabel: shorten(axes.get('yLabel', axes.getIn(['value', 'searchString'], 'Y-Axis')))
+      xLabel: axes.get('xLabel', shorten(model.getIn(['axesxValue', 'searchString'], 'X-Axis'))),
+      yLabel: axes.get('yLabel', axes.getIn(['value', 'searchString'], 'Y-Axis'))
     }} />
 ));

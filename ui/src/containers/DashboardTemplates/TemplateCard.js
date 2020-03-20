@@ -1,15 +1,17 @@
 import React from 'react';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { PIE_IMAGE } from 'ui/components/VisualiseIcon/assets';
-import styles from './styles.css';
+import { Card } from 'ui/containers/DashboardTemplates/styled';
 
-const TemplateCard = ({ title, onSelect }) => (
-  <div className={styles.card} onClick={onSelect}>
+const TemplateCard = ({
+  title,
+  image,
+  onSelect,
+}) => (
+  <Card onClick={onSelect}>
     <img
-      src={PIE_IMAGE}
+      src={image}
       alt={title} />
     <p>{title}</p>
-  </div>
+  </Card>
 );
 
-export default withStyles(styles)(React.memo(TemplateCard));
+export default React.memo(TemplateCard);

@@ -2,7 +2,6 @@ import wrapHandlerForStatement from 'worker/handlers/statement/wrapHandlerForSta
 import {
   STATEMENT_FORWARDING_QUEUE,
   STATEMENT_FORWARDING_REQUEST_QUEUE,
-  STATEMENT_FORWARDING_DEADLETTER_QUEUE
 } from 'lib/constants/statements';
 import StatementForwarding from 'lib/models/statementForwarding';
 import { map } from 'lodash';
@@ -49,9 +48,7 @@ export default wrapHandlerForStatement(STATEMENT_FORWARDING_QUEUE, (statement, d
             status: queueName,
             statement,
             statementForwarding
-          },
-          deadLetter: STATEMENT_FORWARDING_DEADLETTER_QUEUE,
-          opts: { lifo: true }
+          }
         }, (err) => {
           if (err) reject(err);
           resolve();

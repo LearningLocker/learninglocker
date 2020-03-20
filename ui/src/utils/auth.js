@@ -16,6 +16,16 @@ const getCookieNameStartsWith = ({ tokenType }, cookies) => {
   return key;
 };
 
+const getCookieOptions = () => {
+  const cookieOptions = {};
+  if (process.env.COOKIE_DOMAIN) {
+    cookieOptions.domain = process.env.COOKIE_DOMAIN
+      .replace(/HOSTNAME/, location.hostname);
+  }
+
+  return cookieOptions;
+};
+
 /**
  * Tests whether the given cookie name is any auth cookie
  */
@@ -35,6 +45,7 @@ const testOrgCookieName = organisationId => (cookieName) => {
 export {
   getCookieName,
   getCookieNameStartsWith,
+  getCookieOptions,
   testCookieName,
   testOrgCookieName
 };

@@ -210,15 +210,27 @@ if (
       (accessToken, refreshToken, profile, done) => {
         const userEmail = find(
           profile.emails,
-          email => email.type === 'account'
+          email => email.verified === true
         );
-        User.findOrCreate({ email: userEmail.value }, (err, user) => {
-          assert.ifError(err);
-          user.googleId = profile.id;
-          user.imageUrl = get(profile, 'photos.0.value');
-          user.name = profile.displayName;
-          user.save((err, savedUser) => done(err, savedUser));
-        });
+
+        User.findOne(
+          {
+            email: userEmail.value
+          },
+          (err, user) => {
+            assert.ifError(err);
+
+            if (!user) {
+              return done(null, false, { message: 'User does not exist' });
+            }
+
+            user.googleId = profile.id;
+            user.imageUrl = get(profile, 'photos.0.value');
+            user.name = profile.displayName;
+
+            user.save((err, savedUser) => done(err, savedUser));
+          },
+        );
       }
     )
   );

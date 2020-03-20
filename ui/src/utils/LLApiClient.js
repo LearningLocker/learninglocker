@@ -96,6 +96,15 @@ class _LLApiClient {
     }
   });
 
+  requestAppAccess = ({ appConfig }) => post({
+    url: formatUrl(routes.REQUEST_APP_ACCESS),
+    headers: {
+      Authorization: `Bearer ${this.getToken()}`,
+      ContentType: 'application/json'
+    },
+    body: { appConfig },
+  });
+
   getConnection = ({ schema, filter, sort, cursor, first, last }) => {
     const queryParams = {
       filter: JSON.stringify(filter),
@@ -238,6 +247,30 @@ class _LLApiClient {
       ContentType: 'application/json'
     },
     body: { id },
+  });
+
+  removeOrganisationFromUser = ({
+    userId,
+    organisationId,
+  }) => del({
+    url: formatUrl(`${routes.RESTIFY_PREFIX}/users/${userId}/organisations/${organisationId}`),
+    headers: {
+      Authorization: `Bearer ${this.getToken()}`,
+      ContentType: 'application/json'
+    },
+  });
+
+  updateUserOrganisationSettings = ({
+    userId,
+    organisationId,
+    values,
+  }) => patch({
+    url: formatUrl(`${routes.RESTIFY_PREFIX}/users/${userId}/organisationSettings/${organisationId}`),
+    headers: {
+      Authorization: `Bearer ${this.getToken()}`,
+      ContentType: 'application/json'
+    },
+    body: values,
   });
 }
 

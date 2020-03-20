@@ -66,7 +66,7 @@ describe('getPresonaAttributes', () => {
     const result = await apiApp.get(routes.PERSONA_ATTRIBUTE)
       .set('Authorization', `Bearer ${token}`)
       .query({
-        filter: JSON.stringify({ personaId: persona.id })
+        query: JSON.stringify({ personaId: persona.id })
       })
       .expect(200);
 

@@ -27,7 +27,7 @@ export default class JsonTextArea extends Component {
 
   static defaultProps = {
     value: new Map(),
-    onChange: () => {}
+    onChange: () => { }
   }
 
   constructor(props) {
@@ -46,7 +46,7 @@ export default class JsonTextArea extends Component {
 
     const selectionDifference =
       this.textarea._ref.selectionEnd -
-        this.textarea._ref.selectionStart;
+      this.textarea._ref.selectionStart;
 
     const stateWithCursor = {
       selectionStart,
@@ -80,7 +80,6 @@ export default class JsonTextArea extends Component {
   handleChange = (e) => {
     const { setReviver } = this.props;
     const newState = {
-      oldValue: this.state.value,
       value: e.target.value,
       selectionStart: e.target.selectionStart,
       selectionEnd: e.target.selectionEnd,

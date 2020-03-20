@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
-import styles from '../styles.css';
 import Criterion from './Criterion';
 import TempCriterion from './TempCriterion';
 
@@ -62,13 +61,11 @@ export default class Criteria extends Component {
 
   render = () => (
     <div>
-      <div className={styles.criteria}>
-        {
-          this.props.criteria.count() > 0 ?
-          this.renderCriteria() :
-          this.renderEmptyCriteria()
-        }
-      </div>
+      {
+        this.props.criteria.count() > 0
+          ? this.renderCriteria()
+          : this.renderEmptyCriteria()
+      }
     </div>
   );
 }

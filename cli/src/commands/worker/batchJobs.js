@@ -22,7 +22,7 @@ export default function (options) {
       jobType = STATEMENT_EXTRACT_PERSONAS_QUEUE;
       break;
     default:
-      logger.info(`Job type '${jobType}' not recognised`);
+      logger.info(`Job type '${options.job}' not recognised`);
       process.exit();
       break;
   }

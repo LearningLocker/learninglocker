@@ -78,7 +78,7 @@ function* uploadPersonasSaga() {
     if (status > 200) {
       yield put(uploadPersonasFailure({ id, body }));
       yield put(alert({
-        message: body
+        message: body.message,
       }));
     } else {
       yield put(uploadPersonasSuccess({ id, body }));

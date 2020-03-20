@@ -1,11 +1,59 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import logoImg from 'ui/static/logo.png';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { setPropTypes, compose, lifecycle } from 'recompose';
 import { connect } from 'react-redux';
+import styled from 'styled-components';
+import { setPropTypes, compose, lifecycle } from 'recompose';
+
 import { getAppDataSelector, fetchAppData } from 'ui/redux/modules/app';
-import styles from './styles.css';
+import backgroundImg from 'ui/assets/background.png';
+import logoImg from 'ui/static/logo.png';
+
+const Background = styled.div`
+  background-image: url("${backgroundImg}");
+  background-size: cover;
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  color: #687B88;
+`;
+
+const Centered = styled.div`
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  & h3 {
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  & [data-react-toolbox="avatar"] {
+    background-color: transparent;
+  }
+`;
+
+const Underline = styled.div`
+  height: 0;
+  border-bottom: 2px solid #DDA476;
+  width: 250px;
+`;
+
+const Headline = styled.span`
+  text-transform: uppercase;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin: 12px 0;
+`;
+
+const Copyright = styled.p`
+  margin-top: 28px;
+  color: #687B88;
+  opacity: 0.7;
+`;
 
 const enhance = compose(
   setPropTypes({
@@ -19,12 +67,11 @@ const enhance = compose(
       this.props.fetchAppData({ key: 'version' });
     },
   }),
-  withStyles(styles)
 );
 
 const versionDisplay = (version) => {
   if (!version.has('tag')) {
-    return <p className={styles.version}>Loading version...</p>;
+    return <p>Loading version...</p>;
   }
   const tag = version.get('tag');
   const branch = version.get('branch');
@@ -35,22 +82,29 @@ const versionDisplay = (version) => {
   const shortDisplay = `Build: ${branch} @ ${short}`;
 
   const display = (branch === 'master' || branch === 'HEAD') ? tag : shortDisplay;
-  return <p className={styles.version} title={longDisplay}>{ display }</p>;
+  return <p title={longDisplay}>{display}</p>;
 };
 
 const FullPageBackground = ({ version, children, width = 600 }) => (
-  <div className={styles.background}>
-    <div className={styles.centered}>
-      <img alt="logo" src={logoImg} className={styles.logoImg} />
-      <span className={styles.headline}>making learning measurable</span>
-      <div className={styles.underline} />
+  <Background>
+    <Centered>
+      <img alt="logo" src={logoImg} />
+      <Headline>making learning measurable</Headline>
+      <Underline />
       <div style={{ width }}>
-        { children }
+        {children}
       </div>
-      <p className={styles.copyright}>&copy; {new Date().getFullYear()} <a href="https://www.ht2labs.com" title="HT2 Labs - Pioneers in Workplace Digital Learning" target="_blank" rel="noopener noreferrer">HT2 Labs</a></p>
-      { versionDisplay(version) }
-    </div>
-  </div>
+      <Copyright>
+        &copy; {new Date().getFullYear()}&nbsp;
+        <a
+          href="https://www.learningpool.com"
+          title="Learning Pool - Innovation. Passion. Learning."
+          target="_blank"
+          rel="noopener noreferrer" >Learning Pool</a>
+      </Copyright>
+      {versionDisplay(version)}
+    </Centered>
+  </Background>
 );
 
 export default enhance(FullPageBackground);

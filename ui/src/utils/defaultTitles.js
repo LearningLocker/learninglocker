@@ -13,6 +13,13 @@ import {
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_WEEKDAYS_ACTIVITY,
+  TEMPLATE_STREAM_INTERACTIONS_VS_ENGAGEMENT,
+  TEMPLATE_STREAM_COMMENT_COUNT,
+  TEMPLATE_STREAM_LEARNER_INTERACTIONS_BY_DATE_AND_VERB,
+  TEMPLATE_STREAM_USER_ENGAGEMENT_LEADERBOARD,
+  TEMPLATE_STREAM_PROPORTION_OF_SOCIAL_INTERACTIONS,
+  TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS,
+  TEMPLATE_LEARNING_EXPERIENCE_TYPE,
 } from 'lib/constants/visualise';
 import VisualiseIcon from 'ui/components/VisualiseIcon';
 import { OPERATOR_OPTS } from 'ui/utils/visualisations/localOptions';
@@ -43,39 +50,6 @@ export const shorten = (target, forXAxis) => {
   return target;
 };
 
-// [Viz Refactor] TODO: Remove this function and implement directly axes names into each Visualisation/.../Editor
-export const getAxesString = (key, model, type = null, shortened = true) => {
-  const select = (ky, axis) => model.getIn([ky, 'searchString'], axis);
-  const x = shortened ? shorten(model.get('axesxLabel', select(axg, 'X-Axis'))) : model.get('axesxLabel', select(axg, 'X-Axis'));
-  const y = shortened ? shorten(model.get('axesyLabel', select(axv, 'Y-Axis')), false) : model.get('axesyLabel', select(axv, 'Y-Axis'));
-
-  const getResultForXY = () => {
-    const labelString = key === 'x' ? model.axesxLabel : model.axesyLabel;
-    const defaultLabel = key === 'x' ? model.getIn(['axesxValue', 'searchString'], 'X-Axis') : model.getIn(['axesgroup', 'searchString'], 'Y-Axis');
-    if (labelString && labelString.length) {
-      return labelString;
-    }
-    return defaultLabel;
-  };
-
-  if (type === LEADERBOARD || type === TEMPLATE_ACTIVITY_OVER_TIME) {
-    switch (key) {
-      case 'x': return y.length ? y : model.getIn(['axesgroup', 'searchString'], 'X-Axis');
-      case 'y': return x.length ? x : model.getIn(['axesvalue', 'searchString'], 'Y-Axis');
-      default: return null;
-    }
-  }
-
-  if (type !== XVSY) {
-    switch (key) {
-      case 'x': return x.length ? x : select(axg, 'yyyy/mm/dd');
-      case 'y': return y.length ? y : select(axv, 'Y-Axis');
-      default: return null;
-    }
-  }
-  return getResultForXY();
-};
-
 const makeOperatorReadable = (model, operatorName) => {
   const operator = model.get(operatorName);
   if (operator === 'uniqueCount') {
@@ -85,9 +59,9 @@ const makeOperatorReadable = (model, operatorName) => {
 };
 
 /**
- * @param {immutable.Map} model - visualisation model
- * @return {string}
- */
+* @param {immutable.Map} model - visualisation model
+* @return {string}
+  */
 export const createDefaultTitle = (model) => {
   const type = model.get('type', null);
 
@@ -108,16 +82,23 @@ export const createDefaultTitle = (model) => {
     case TEMPLATE_MOST_ACTIVE_PEOPLE:
     case TEMPLATE_MOST_POPULAR_ACTIVITIES:
     case TEMPLATE_MOST_POPULAR_VERBS:
+    case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
+    case TEMPLATE_STREAM_USER_ENGAGEMENT_LEADERBOARD:
+    case TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS:
       return addYX(select(axg), select(axv) || select(ayV) || 'Time');
     case XVSY:
+    case TEMPLATE_STREAM_INTERACTIONS_VS_ENGAGEMENT:
       return addXVSYXY(select(axV), select(axv) || select(ayV) || 'Time');
     case COUNTER:
     case TEMPLATE_LAST_7_DAYS_STATEMENTS:
+    case TEMPLATE_STREAM_COMMENT_COUNT:
       return `${makeOperatorReadable(model, 'axesoperator')}${select(axv) || select(ayV)}`;
     case PIE:
+    case TEMPLATE_STREAM_PROPORTION_OF_SOCIAL_INTERACTIONS:
       return `${makeOperatorReadable(model, 'axesoperator')}${select(axv) || select(ayV)} / ${select(axg)}`;
     case STATEMENTS:
     case TEMPLATE_WEEKDAYS_ACTIVITY:
+    case TEMPLATE_STREAM_LEARNER_INTERACTIONS_BY_DATE_AND_VERB:
       return addXY(select(axg), select(axv) || select(ayV) || 'Time');
     default:
       return 'Empty';
@@ -156,4 +137,29 @@ export const getPercentage = (res1, res2) => {
   }
 
   return { result: `${percentage}%`, icon: chevronUpIcon, marginBottom: '6%' };
+};
+
+export const wrapLabel = (target) => {
+  const separatedStrings = [];
+  const index = 46;
+  let remainingSection = target;
+  let sectionIndex;
+  let firstSection;
+  while (remainingSection.length > index) {
+    sectionIndex = remainingSection.lastIndexOf(' ', index);
+    if (sectionIndex < 1) {
+      sectionIndex = remainingSection.lastIndexOf('.', index);
+    }
+    if (sectionIndex < 1) {
+      sectionIndex = remainingSection.lastIndexOf('%20', index);
+    }
+    if (sectionIndex < 1) {
+      sectionIndex = index;
+    }
+    firstSection = remainingSection.substring(0, sectionIndex);
+    remainingSection = remainingSection.substring(sectionIndex);
+    separatedStrings.push(firstSection);
+  }
+  separatedStrings.push(remainingSection);
+  return separatedStrings.join('\n');
 };

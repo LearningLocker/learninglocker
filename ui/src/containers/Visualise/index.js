@@ -6,7 +6,6 @@ import { withProps, compose } from 'recompose';
 import { createDefaultTitle } from 'ui/utils/defaultTitles';
 import { Map, fromJS } from 'immutable';
 import { queryStringToQuery, modelQueryStringSelector } from 'ui/redux/modules/search';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { withModels, withModel } from 'ui/utils/hocs';
 import { addModel } from 'ui/redux/modules/models';
 import { loggedInUserId } from 'ui/redux/modules/auth';
@@ -17,7 +16,7 @@ import ModelList from 'ui/containers/ModelList';
 import VisualiseForm from 'ui/containers/VisualiseForm';
 import DeleteButton from 'ui/containers/DeleteButton';
 import PrivacyToggleButton from 'ui/containers/PrivacyToggleButton';
-import styles from './visualise.css';
+import CopyButton from './CopyButton';
 
 const schema = 'visualisation';
 
@@ -45,10 +44,6 @@ class Visualise extends Component {
   static defaultProps = {
     organisationModel: new Map(),
   }
-
-  state = {
-    criteria: ''
-  };
 
   onClickAdd = () => {
     this.addButton.blur();
@@ -95,7 +90,7 @@ class Visualise extends Component {
               id={this.props.visualisationId}
               filter={queryStringToQuery(this.props.searchString, schema)}
               ModelForm={VisualiseForm}
-              buttons={[PrivacyToggleButton, DeleteButton]}
+              buttons={[PrivacyToggleButton, CopyButton, DeleteButton]}
               orgTimezone={orgTimezone}
               getDescription={model => (
                 <span>
@@ -115,7 +110,6 @@ class Visualise extends Component {
 }
 
 export default compose(
-  withStyles(styles),
   connect(state => ({
     userId: loggedInUserId(state),
     searchString: modelQueryStringSelector(schema)(state),

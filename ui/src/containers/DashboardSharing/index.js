@@ -1,23 +1,15 @@
 import React from 'react';
 import boolean from 'boolean';
-import { Map, List, fromJS } from 'immutable';
+import { fromJS, List, Map } from 'immutable';
 import { connect } from 'react-redux';
-import { toPath, slice } from 'lodash';
+import { slice, toPath } from 'lodash';
 import classNames from 'classnames';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import {
-  compose,
-  withProps,
-  withHandlers
-} from 'recompose';
+import { compose, withHandlers, withProps } from 'recompose';
 import DebounceInput from 'react-debounce-input';
 import uuid from 'uuid';
+import styled from 'styled-components';
 import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
-import {
-  NOWHERE,
-  ANYWHERE,
-  VALID_DOMAINS
-} from 'lib/constants/sharingScopes';
+import { ANYWHERE, NOWHERE, VALID_DOMAINS } from 'lib/constants/sharingScopes';
 import QueryBuilder from 'ui/containers/QueryBuilder';
 import { withModel } from 'ui/utils/hocs';
 import ModelList from 'ui/containers/ModelList';
@@ -28,11 +20,14 @@ import activeOrgSelector from 'ui/redux/modules/activeOrgSelector';
 import { getShareableUrl } from 'ui/utils/dashboard';
 import RadioGroup from 'ui/components/Material/RadioGroup';
 import RadioButton from 'ui/components/Material/RadioButton';
-import { OFF, ANY, JWT_SECURED } from 'lib/constants/dashboard';
+import { ANY, JWT_SECURED, OFF } from 'lib/constants/dashboard';
 import ValidationList from 'ui/components/ValidationList';
-import { TimezoneSelector, buildDefaultOptionLabel } from 'ui/components/TimezoneSelector';
+import { buildDefaultOptionLabel, TimezoneSelector } from 'ui/components/TimezoneSelector';
 import OpenLinkButtonComponent from './OpenLinkButton';
-import styles from './styles.css';
+
+const ContextHelp = styled.span`
+  font-style: italic;
+`;
 
 const schema = 'dashboard';
 
@@ -136,23 +131,26 @@ const handlers = withHandlers({
 const getErrors = (parentModel, model) => {
   const messages = parentModel.getIn(['errors', 'messages'], new Map());
 
-  const releventMessages = messages.map((value, key) => {
-    const id = parentModel.getIn(slice(toPath(key), 0, 2), new Map()).get('_id');
-    if (!id) {
-      return new List([]);
-    }
+  const relevantMessages = messages
+    .map((value, key) => {
+      const id = parentModel
+        .getIn(slice(toPath(key), 0, 2), new Map())
+        .get('_id');
 
-    if (id === model.get('_id')) {
-      return new List([new Map({
-        key: toPath(key)[2],
-        value
-      })]);
-    }
-  }).toList().flatten(true);
+      if (!id) {
+        return new List([]);
+      }
 
-  const releventMessagesWithKey = releventMessages.toMap().mapKeys((key, value) => value.get('key'));
+      if (id === model.get('_id')) {
+        return new List([new Map({ key: toPath(key)[2], value })]);
+      }
+    })
+    .toList()
+    .flatten(true);
 
-  return releventMessagesWithKey;
+  return relevantMessages
+    .toMap()
+    .mapKeys((key, value) => value.get('key'));
 };
 
 const ModelFormComponent = ({
@@ -187,174 +185,222 @@ const ModelFormComponent = ({
 
   const orgTimezone = organisationModel.get('timezone', 'UTC');
 
-  return (<div>
-    <div className="form-group">
-      <label htmlFor={titleId}>Title</label>
-      <input
-        className="form-control"
-        id={titleId}
-        value={model.get('title', '')}
-        onChange={handleTitleChange} />
-    </div>
-    <div className="form-group">
-      <label htmlFor={urlId}>Shareable link</label>
-      <input
-        id={urlId}
-        className={`form-control ${styles.gray}`}
-        value={getShareableUrl({
-          model,
-          parentModel
-        })}
-        onChange={() => null} />
-    </div>
-    <div className="form-group">
-      <button
-        className="btn btn-primary"
-        onClick={copyToClipBoard(urlId)}>
-        Copy link
-      </button>
-      <ion-icon name="clipboard" />
-    </div>
+  return (
+    <div>
+      <div className="form-group">
+        <label htmlFor={titleId}>Title</label>
+        <input
+          className="form-control"
+          id={titleId}
+          value={model.get('title', '')}
+          onChange={handleTitleChange} />
+      </div>
+      <div className="form-group">
+        <label htmlFor={urlId}>Shareable link</label>
+        <input
+          id={urlId}
+          style={{ backgroundColor: '#ccc' }}
+          className={'form-control'}
+          value={getShareableUrl({
+            model,
+            parentModel
+          })}
+          onChange={() => null} />
+      </div>
+      <div className="form-group">
+        <button
+          className="btn btn-primary"
+          onClick={copyToClipBoard(urlId)}>
+          Copy link
+        </button>
+        <ion-icon name="clipboard" />
+      </div>
 
-    <hr />
+      <hr />
 
-    <h4>Security</h4>
+      <h4>Security</h4>
 
-    <div className="form-group" style={{ marginTop: 25, marginBottom: 25 }}>
-      <label htmlFor={visibilityId}>
-        Where can this be viewed?
-      </label>
-      <RadioGroup
-        id={visibilityId}
-        name="visibility"
-        value={model.get('visibility')}
-        onChange={handleVisibilityChange}>
-        <RadioButton label="Nowhere" value={NOWHERE} />
-        <RadioButton label="Anywhere" value={ANYWHERE} />
-        <RadioButton
-          label="Only where I choose"
-          value={VALID_DOMAINS} />
-      </RadioGroup>
-    </div>
-
-    {model.get('visibility') === VALID_DOMAINS &&
-      <div className="form-group" style={{ marginBottom: 25 }}>
-        <label htmlFor={validDomainsId}>
-          What are the valid domains?
+      <div className="form-group" style={{ marginTop: 25, marginBottom: 25 }}>
+        <label htmlFor={visibilityId}>
+          Where can this be viewed?
         </label>
-        <div>
-          <DebounceInput
-            id={validDomainsId}
-            className="form-control"
-            debounceTimeout={377}
-            value={model.get('validDomains', '')}
-            onChange={handleDomainsChange} />
-        </div>
-        <span className={classNames('help-block', styles.contextHelp)}>A <a href="https://regexr.com/" target="_blank" rel="noopener noreferrer">regex pattern</a> matching any hostname this dashboard will be embedded into</span>
-      </div>}
+        <RadioGroup
+          id={visibilityId}
+          name="visibility"
+          value={model.get('visibility')}
+          onChange={handleVisibilityChange}>
+          <RadioButton label="Nowhere" value={NOWHERE} />
+          <RadioButton label="Anywhere" value={ANYWHERE} />
+          <RadioButton
+            label="Only where I choose"
+            value={VALID_DOMAINS} />
+        </RadioGroup>
+      </div>
 
-    <div className="form-group" style={{ marginBottom: 25 }}>
-      <label htmlFor={filterModeId}>
-        URL filter mode
-      </label>
-      <RadioGroup
-        id={filterModeId}
-        name="filterMode"
-        value={filterMode}
-        onChange={handleFilterModeChange}>
-
-        <RadioButton label="Disabled" value={OFF} />
-        <RadioButton label="Plaintext" value={ANY} />
-        <RadioButton label="JWT Secured" value={JWT_SECURED} />
-      </RadioGroup>
-
-      {filterMode === ANY &&
-        <span className={classNames('help-block', styles.contextHelp)}>The JSON filter should be passed via the URL in a query parameter named filter. Some complex filters may need to be stripped of whitespace and URL Encoded first</span>
-      }
-      {filterMode === JWT_SECURED &&
-        <span className={classNames('help-block', styles.contextHelp)}>The JSON filter should be encoded as a <a href="https://jwt.io/" target="_blank" rel="noopener noreferrer">JWT</a> and passed via the URL in a query parameter named filter</span>
-      }
-    </div>
-
-    {filterMode === JWT_SECURED &&
-    <div
-      className={classNames({
-        'form-group': true,
-        'has-error': errors.has('filterJwtSecret')
-      })}
-      style={{ marginBottom: 25 }}>
-      <label htmlFor={filterJwtSecretId} >
-        JWT Secret (HS256)
-      </label>
-      <span className={classNames('help-block', styles.contextHelp)}>When the secured filter is enabled, the filter value must be a <a href="https://jwt.io/" target="_blank" rel="noopener noreferrer">valid JWT</a> signed with the following secret</span>
-      <input
-        id={filterJwtSecretId}
-        className="form-control"
-        type="text"
-        onChange={handleFilterJwtSecretChange}
-        value={model.get('filterJwtSecret', '')} />
-        {errors.get('filterJwtSecret') &&
-          (<span className="help-block">
-            <ValidationList errors={fromJS([errors.get('filterJwtSecret')])} />
-          </span>
+      {
+        model.get('visibility') === VALID_DOMAINS
+          ? (
+            <div className="form-group" style={{ marginBottom: 25 }}>
+              <label htmlFor={validDomainsId}>
+                What are the valid domains?
+              </label>
+              <div>
+                <DebounceInput
+                  id={validDomainsId}
+                  className="form-control"
+                  debounceTimeout={377}
+                  value={model.get('validDomains', '')}
+                  onChange={handleDomainsChange} />
+              </div>
+              <ContextHelp className={'help-block'}>
+                A <a href="https://regexr.com/" target="_blank" rel="noopener noreferrer">regex pattern</a> matching any
+                hostname this dashboard will be embedded into
+              </ContextHelp>
+            </div>
           )
+          : null
+      }
+
+      <div className="form-group" style={{ marginBottom: 25 }}>
+        <label htmlFor={filterModeId}>
+          URL filter mode
+        </label>
+        <RadioGroup
+          id={filterModeId}
+          name="filterMode"
+          value={filterMode}
+          onChange={handleFilterModeChange}>
+
+          <RadioButton label="Disabled" value={OFF} />
+          <RadioButton label="Plaintext" value={ANY} />
+          <RadioButton label="JWT Secured" value={JWT_SECURED} />
+        </RadioGroup>
+
+        {
+          filterMode === ANY
+            ? (
+              <ContextHelp className={'help-block'}>
+                The JSON filter should be passed via the URL in a query parameter named filter. Some complex filters may
+                need to be stripped of whitespace and URL Encoded first
+              </ContextHelp>
+            )
+            : null
         }
-    </div>}
 
+        {
+          filterMode === JWT_SECURED
+            ? (
+              <ContextHelp className={'help-block'}>
+                The JSON filter should be encoded as a&nbsp;
+                <a href="https://jwt.io/" target="_blank" rel="noopener noreferrer">JWT</a>
+                &nbsp;and passed via the URL in a query parameter named filter
+              </ContextHelp>
+            )
+            : null
+        }
+      </div>
 
-    {(filterMode === JWT_SECURED) &&
-    <div className="form-group" style={{ marginBottom: 25 }}>
-      <label htmlFor={filterJwtSecretId} >
-        URL filter required
-      </label>
-      <span className={classNames('help-block', styles.contextHelp)}>Must a filter be passed to the URL for the dashboard to load data?</span>
-      <RadioGroup
-        id={filterRequiredId}
-        name="filterRequired"
-        value={filterRequired ? '1' : '0'}
-        onChange={handleFilterRequiredChange}>
+      {
+        filterMode === JWT_SECURED
+          ? (
+            <div
+              className={classNames({
+                'form-group': true,
+                'has-error': errors.has('filterJwtSecret')
+              })}
+              style={{ marginBottom: 25 }}>
+              <label htmlFor={filterJwtSecretId}>
+                JWT Secret (HS256)
+              </label>
+              <ContextHelp className={'help-block'}>
+                When the secured filter is enabled, the filter value must be a&nbsp;
+                <a href="https://jwt.io/" target="_blank" rel="noopener noreferrer">valid JWT</a>
+                &nbsp;signed with the following secret
+              </ContextHelp>
+              <input
+                id={filterJwtSecretId}
+                className="form-control"
+                type="text"
+                onChange={handleFilterJwtSecretChange}
+                value={model.get('filterJwtSecret', '')} />
+              {
+                errors.get('filterJwtSecret')
+                  ? (
+                    <span className="help-block">
+                      <ValidationList errors={fromJS([errors.get('filterJwtSecret')])} />
+                    </span>
+                  )
+                  : null
+              }
+            </div>
+          )
+          : null
+      }
 
-        <RadioButton label="Yes" value={'1'} />
-        <RadioButton label="No" value={'0'} />
-      </RadioGroup>
-    </div>}
+      {
+        filterMode === JWT_SECURED
+          ? (
+            <div className="form-group" style={{ marginBottom: 25 }}>
+              <label htmlFor={filterJwtSecretId}>
+                URL filter required
+              </label>
+              <ContextHelp className={'help-block'}>
+                Must a filter be passed to the URL for the dashboard to load data?
+              </ContextHelp>
+              <RadioGroup
+                id={filterRequiredId}
+                name="filterRequired"
+                value={filterRequired ? '1' : '0'}
+                onChange={handleFilterRequiredChange}>
 
-    <hr />
+                <RadioButton label="Yes" value={'1'} />
+                <RadioButton label="No" value={'0'} />
+              </RadioGroup>
+            </div>
+          )
+          : null
+      }
 
-    <div className="form-group">
-      <h4>Base filter</h4>
-      <span className={classNames('help-block', styles.contextHelp)}>Configure a filter for this dashboard which will always be applied. The dashboard below will show a live preview of the result, updating as you construct your filter<br /><br />If a URL filter is also used, it will be applied on top of this filter</span>
+      <hr />
 
-      <label htmlFor={filterTzId}>Timezone</label>
-      <TimezoneSelector
-        id={filterTzId}
-        value={model.get('timezone', null)}
-        onChange={onChangeTimezone}
-        defaultOption={{
-          label: buildDefaultOptionLabel(orgTimezone),
-          value: orgTimezone,
-        }} />
+      <div className="form-group">
+        <h4>Base filter</h4>
+        <ContextHelp className={'help-block'}>
+          Configure a filter for this dashboard which will always be applied. The dashboard below will show a live
+          preview of the result, updating as you construct your filter<br /><br />If a URL filter is also used, it will
+          be applied on top of this filter
+        </ContextHelp>
 
-      <QueryBuilder
-        id={filterId}
-        timezone={model.get('timezone', null)}
-        orgTimezone={orgTimezone}
-        query={model.get('filter', new Map({}))}
-        componentPath={new List([])}
-        onChange={handleFilterChange} />
+        <label htmlFor={filterTzId}>Timezone</label>
+        <TimezoneSelector
+          id={filterTzId}
+          value={model.get('timezone', null)}
+          onChange={onChangeTimezone}
+          defaultOption={{
+            label: buildDefaultOptionLabel(orgTimezone),
+            value: orgTimezone,
+          }} />
+
+        <QueryBuilder
+          id={filterId}
+          timezone={model.get('timezone', null)}
+          orgTimezone={orgTimezone}
+          query={model.get('filter', new Map({}))}
+          componentPath={new List([])}
+          onChange={handleFilterChange} />
+      </div>
     </div>
-  </div>);
+  );
 };
 /*
 
 */
 const ModelForm = compose(
-  withStyles(styles),
-  utilHandlers,
-  handlers,
   connect(state => (
     { organisationModel: activeOrgSelector(state) }
   )),
+  utilHandlers,
+  handlers,
 )(ModelFormComponent);
 
 const deleteButton = ({ parentModel }) => compose(
@@ -405,7 +451,9 @@ const DashboardSharingComponent = ({
 }) =>
   (
     <div>
-      <div className={`clearfix ${styles.shareableHeader}`}>
+      <div
+        className={'clearfix'}
+        style={{ marginBottom: 20 }} >
         <button
           className="btn btn-primary pull-right"
           onClick={addShareable}>
@@ -435,6 +483,5 @@ export default compose(
     schema
   })),
   withModel,
-  withStyles(styles),
   dashboardSharingHandlers
 )(DashboardSharingComponent);

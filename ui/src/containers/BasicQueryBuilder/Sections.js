@@ -100,22 +100,24 @@ export default class Sections extends Component {
       onChangeTimezone={this.props.onChangeTimezone} />
   );
 
-  renderCollapsedSection = (section, key) => (<CollapsedSection
-    used={this.getCriteriaForWholeSection(section, true) > 0}
-    section={section}
-    key={key}
-    onExpand={this.expandSection.bind(this, key, section)} />)
+  renderCollapsedSection = (section, key) => (
+    <CollapsedSection
+      used={this.getCriteriaForWholeSection(section, true) > 0}
+      section={section}
+      key={key}
+      onExpand={this.expandSection.bind(this, key, section)} />
+  );
 
   render = () => {
-    const {
-      sections,
-      className,
-      style
-    } = this.props;
+    const { sections, style, className } = this.props;
 
     return (
       <div className={className} style={style}>
-        {sections.map(this.renderSection).valueSeq()}
+        {
+          sections
+            .map(this.renderSection)
+            .valueSeq()
+        }
       </div>
     );
   }

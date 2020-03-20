@@ -21,7 +21,7 @@ export default (WrappedComponent) => {
   class WithModels extends Component {
     componentDidMount = () => this.fetchModels(this.props);
 
-    shouldComponentUpdate = nextProps => !areEqualProps(this.props, nextProps, true);
+    shouldComponentUpdate = nextProps => !areEqualProps(this.props, nextProps);
 
     componentDidUpdate = () => {
       if (this.props.shouldFetch) {

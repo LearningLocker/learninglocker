@@ -17,4 +17,10 @@ const enhanceConfirmModal = compose(
   })),
 );
 
+/**
+ * @param {boolean} _.isOpen
+ * @param {string} _.target
+ * @param {() => void} _.onConfirm
+ * @param {() => void} _.onCancel
+ */
 export default enhanceConfirmModal(ConfirmModal);

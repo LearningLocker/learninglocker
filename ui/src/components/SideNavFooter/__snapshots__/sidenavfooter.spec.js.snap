@@ -1,8 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Renders help link 1`] = `
+exports[`SideNavFooter should render 1`] = `
+.c0 {
+  color: #999;
+}
+
+@media screen and (max-height:765px) {
+  .c0 {
+    width: 150px;
+  }
+}
+
 <div
-  className="sidenav-footer"
+  className="c0"
 >
   <a
     href="https://ht2ltd.zendesk.com/hc/en-us/categories/115000129989-Learning-Locker"

@@ -1,7 +1,6 @@
 import React from 'react';
 import { PieChart as Chart, Pie, Tooltip, Cell } from 'recharts';
 import { AutoSizer } from 'react-virtualized';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import NoData from 'ui/components/Graphs/NoData';
 import getColor from 'ui/utils/colors';
 import {
@@ -10,9 +9,8 @@ import {
   hasData,
   getLongModel,
 } from './Chart';
+import { Chart as StyledChart, } from './styled';
 import PieTooltip from './PieTooltip';
-import styles from './styles.css';
-
 
 const cellPadding = 5;
 
@@ -75,7 +73,7 @@ const renderChartResults = labels => results => colors => count => grouping => i
   renderPieChart(labels)(colors)(getSortedData(results)(labels))(count)(grouping)(isDonut);
 
 const renderResults = results => labels => colors => count => grouping => isDonut => (
-  <div className={styles.chart}>
+  <StyledChart>
     <div>
       {(colors.size > 1) && colors.map((colour, i) => (
         <div key={i} style={{ fontSize: '0.9em' }}>
@@ -88,12 +86,10 @@ const renderResults = results => labels => colors => count => grouping => isDonu
     <div style={{ height: '100%', width: '100%' }}>
       <AutoSizer>{renderChartResults(labels)(results)(colors)(count)(grouping)(isDonut)}</AutoSizer>
     </div>
-  </div>
+  </StyledChart>
 );
 
 export const PieChartComponent = ({ results, labels, colors, count, grouping, isDonut }) =>
 (hasData(results) ? renderResults(results)(labels)(colors)(count)(grouping)(isDonut) : <NoData />);
 
-export default withStyles(styles)(
-  PieChartComponent
-);
+export default PieChartComponent;

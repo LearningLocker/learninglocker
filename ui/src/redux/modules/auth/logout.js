@@ -3,7 +3,7 @@ import { actions as routerActions } from 'redux-router5';
 import { Map } from 'immutable';
 import Cookies from 'js-cookie';
 import { each, pickBy } from 'lodash';
-import { testCookieName } from 'ui/utils/auth';
+import { testCookieName, getCookieOptions } from 'ui/utils/auth';
 
 export const LOGOUT = 'learninglocker/auth/LOGOUT';
 
@@ -22,7 +22,7 @@ function* logoutSaga() {
   try {
     const cookies = Cookies.get();
     const filteredCookies = pickBy(cookies, (value, cookieName) => testCookieName(cookieName));
-    each(filteredCookies, (value, name) => Cookies.remove(name));
+    each(filteredCookies, (value, name) => Cookies.remove(name, getCookieOptions()));
     yield put(routerActions.navigateTo('login'));
   } catch (err) {
     console.error(err);

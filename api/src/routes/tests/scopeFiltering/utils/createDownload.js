@@ -8,12 +8,12 @@ export default (overrides = {}) =>
     name: 'Test download',
     url: 'test url',
     isReady: true,
-    pipelines: [
-      JSON.stringify({
+    pipelines: JSON.stringify([
+      {
         _id: 1,
         version: '$statement.version'
-      })
-    ],
+      }
+    ]),
     time: new Date(),
     isPublic: false,
     upload: {
