@@ -1,15 +1,36 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Criterion should render 1`] = `
+exports[`BasicQueryBuilder -> Boolean Criterion should render 1`] = `
+.c1 {
+  min-height: 30px;
+  width: 100%;
+}
+
+.c0 {
+  margin-bottom: 4px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.c2 {
+  width: 20%;
+  min-width: 50px;
+}
+
 <div
-  className="criterion"
+  className="c0"
 >
   <div
-    className="criterionValue noCriteria"
+    className="c1"
   >
     <div>
       <label
-        className="radioLabel"
+        className="c2"
         htmlFor="statement.result.success-1"
       >
         True:  
@@ -25,7 +46,7 @@ exports[`Criterion should render 1`] = `
     </div>
     <div>
       <label
-        className="radioLabel"
+        className="c2"
         htmlFor="statement.result.success-2"
       >
         False:  
@@ -43,16 +64,37 @@ exports[`Criterion should render 1`] = `
 </div>
 `;
 
-exports[`Criterion with value 1`] = `
+exports[`BasicQueryBuilder -> Boolean Criterion with value 1`] = `
+.c1 {
+  min-height: 30px;
+  width: 100%;
+}
+
+.c0 {
+  margin-bottom: 4px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.c2 {
+  width: 20%;
+  min-width: 50px;
+}
+
 <div
-  className="criterion"
+  className="c0"
 >
   <div
-    className="criterionValue noCriteria"
+    className="c1"
   >
     <div>
       <label
-        className="radioLabel"
+        className="c2"
         htmlFor="statement.result.success-3"
       >
         True:  
@@ -68,7 +110,7 @@ exports[`Criterion with value 1`] = `
     </div>
     <div>
       <label
-        className="radioLabel"
+        className="c2"
         htmlFor="statement.result.success-4"
       >
         False:  

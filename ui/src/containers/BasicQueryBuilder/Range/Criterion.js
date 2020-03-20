@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Map, Set } from 'immutable';
-import classNames from 'classnames';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import {
+  CriterionButton,
+  CriterionOperator,
+  CriterionValue,
+  CriterionWrapper
+} from 'ui/containers/BasicQueryBuilder/styled';
 import Operator from '../Operator';
-import styles from '../styles.css';
 
 export class Criterion extends Component {
   static propTypes = {
@@ -18,14 +21,11 @@ export class Criterion extends Component {
     tempOperator: '>'
   }
 
-  shouldComponentUpdate = ({ section, criterion }, { tempOperator }) => {
-    const shouldUpdate = !(
-      this.props.section.equals(section) &&
-      this.props.criterion.equals(criterion) &&
-      this.state.tempOperator === tempOperator
-    );
-    return shouldUpdate;
-  };
+  shouldComponentUpdate = ({ section, criterion }, { tempOperator }) => !(
+    this.props.section.equals(section) &&
+    this.props.criterion.equals(criterion) &&
+    this.state.tempOperator === tempOperator
+  );
 
   canDeleteCriterion = () =>
     this.props.onDeleteCriterion !== undefined;
@@ -121,23 +121,16 @@ export class Criterion extends Component {
 
   render = () => {
     const canDeleteCriterion = this.canDeleteCriterion();
-    const criterionClasses = classNames(styles.criterionValue, {
-      [styles.noCriteria]: !canDeleteCriterion
-    });
-    const deleteBtnClasses = classNames(
-      styles.criterionButton,
-      'btn btn-default btn-xs'
-    );
 
     return (
-      <div className={styles.criterion}>
-        <div className={styles.criterionOperator}>
+      <CriterionWrapper>
+        <CriterionOperator>
           <Operator
             operators={new Set(['>', '<', '>=', '<=', '==', '!='])}
             operator={this.getOperator()}
             onOperatorChange={this.changeOperator} />
-        </div>
-        <div className={criterionClasses}>
+        </CriterionOperator>
+        <CriterionValue isFullWidth={!canDeleteCriterion}>
           <input
             type="number"
             min="0"
@@ -145,17 +138,17 @@ export class Criterion extends Component {
             step={this.getStep()}
             value={this.getValue()}
             onChange={this.handleValueChange} />
-        </div>
+        </CriterionValue>
         {(canDeleteCriterion &&
-          <button
-            onClick={this.props.onDeleteCriterion}
-            className={deleteBtnClasses}>
+          <CriterionButton
+            className={'btn btn-default btn-xs'}
+            onClick={this.props.onDeleteCriterion}>
             <i className="ion-minus-round" />
-          </button>
+          </CriterionButton>
         )}
-      </div>
+      </CriterionWrapper>
     );
   }
 }
 
-export default withStyles(styles)(Criterion);
+export default Criterion;

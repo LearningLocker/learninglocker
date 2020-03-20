@@ -1,10 +1,19 @@
 import React from 'react';
 import { compose, withState } from 'recompose';
+import styled from 'styled-components';
 import FocusGroup from 'ui/components/FocusGroup/FocusGroup';
 import TextInputGroup from 'ui/components/TextInputGroup';
 import Token from 'ui/components/Token';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from './styles.css';
+
+const InputWrapper = styled.div`
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  overflow: hidden;
+  flex-wrap: wrap;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+`;
 
 /**
  * Multi Input for query builder without search
@@ -27,21 +36,23 @@ const MultiInput = ({
       onFocus={() => setFocus(true)}
       onBlur={() => setFocus(false)}
       hasFocus={hasFocus} >
-      <div
-        className={styles.inputWrapper} >
+      <InputWrapper>
+        {
+          options.map((option, i) => (
+            <Token
+              key={i}
+              handleRemove={onRemoveOption}
+              index={option}
+              parse={x => x}
+              parseTooltip={x => x}
+              value={option} />
+          ))
+        }
 
-        {options.map((option, i) => (
-          <Token
-            key={i}
-            handleRemove={onRemoveOption}
-            index={option}
-            parse={x => x}
-            parseTooltip={x => x}
-            value={option} />
-        ))}
-
-        {hasFocus &&
-          <div className={styles.input}>
+        {
+          hasFocus &&
+          <div
+            style={{ width: '100%' }} >
             <TextInputGroup
               onSubmit={x => onAddOption(x.value)}
               fields={['value']}
@@ -50,7 +61,7 @@ const MultiInput = ({
               cancelIcon={null} />
           </div>
         }
-      </div>
+      </InputWrapper>
     </FocusGroup>
   </div>
 );
@@ -61,6 +72,5 @@ const MultiInput = ({
  * onAddValue {}
  */
 export default compose(
-  withStyles(styles),
   withState('hasFocus', 'setFocus', false)
 )(MultiInput);

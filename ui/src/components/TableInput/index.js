@@ -1,12 +1,30 @@
 import React from 'react';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import DebounceInput from 'react-debounce-input';
 import { Map } from 'immutable';
 import {
   compose,
   withHandlers,
 } from 'recompose';
-import styles from './styles.css';
+import styled from 'styled-components';
+
+const Table = styled.table`
+  margin-top: 0;
+
+  > thead > tr > th {
+    padding-top: 10px;
+    padding-bottom: 9px;
+  }
+
+  > tbody > tr > td {
+    padding: 2px 0;
+    vertical-align: middle;
+
+    input {
+      border: none;
+      box-shadow: none;
+    }
+  }
+`;
 
 const defaultInputComponent = ({
   value,
@@ -119,7 +137,7 @@ const renderCustomHeaders = ({
           value,
         })}
       </td>
-      <td className={styles.textRight}>
+      <td style={{ textAlign: 'right' }}>
         <a onClick={remove(key)} className="pull-right">
           <i className="icon ion-close" />
         </a>
@@ -140,7 +158,7 @@ const TableInput = ({
   onValueChange,
 }) => (
   <span>
-    <table className={`table table-borderless ${styles.table}`}>
+    <Table className={'table table-borderless'}>
       <thead>
         <tr>
           <th>{keyName}</th>
@@ -160,7 +178,7 @@ const TableInput = ({
           inputComponent,
         })}
       </tbody>
-    </table>
+    </Table>
 
     <a className="btn btn-sm btn-inverse" style={{ width: '33px' }} onClick={add}>
       <i className="icon ion-plus" />
@@ -169,7 +187,6 @@ const TableInput = ({
 );
 
 export default compose(
-  withStyles(styles),
   // withPropsOnChangeEnhance,
   withHandlersEnhance,
 )(TableInput);

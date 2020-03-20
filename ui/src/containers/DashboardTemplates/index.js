@@ -1,27 +1,22 @@
 import React from 'react';
-import classNames from 'classnames';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { CardList, Panel } from 'ui/containers/DashboardTemplates/styled';
 import BlankDashboard from './BlankDashboard';
-import CuratrStarter from './CuratrStarter';
+import StreamStarter from './StreamStarter';
 import GettingStarted from './GettingStarted';
-import styles from './styles.css';
 
 const DashboardTemplates = () => (
-  <div className={classNames(styles.panel, 'panel panel-default')}>
+  <Panel className={'panel panel-default'}>
 
     <label htmlFor="dashboard-templates">
       Custom Templates
     </label>
 
-    <div
-      id="dashboard-templates"
-      className={styles.cardList}>
-
+    <CardList id="dashboard-templates">
       <BlankDashboard />
       <GettingStarted />
-      <CuratrStarter />
-    </div>
-  </div>
+      <StreamStarter />
+    </CardList>
+  </Panel>
 );
 
-export default withStyles(styles)(DashboardTemplates);
+export default DashboardTemplates;
