@@ -53,7 +53,7 @@ const SiteUserOrgItems = ({ models, user, filter }) => {
   return (
     <div>
       <ul>{orgItems}</ul>
-      {countOfRemainingOrganisations > 0 ? <p>Plus { countOfRemainingOrganisations } more not displayed</p> : null}
+      {countOfRemainingOrganisations > 0 && <p>Plus { countOfRemainingOrganisations } more not displayed</p>}
     </div>
   );
 };
