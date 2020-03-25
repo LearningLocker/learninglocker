@@ -122,7 +122,7 @@ export const runAggregationProcessorInitialise = async ({
   });
 
   return model;
-}
+};
 
 export const aggregationProcessorInitialise = catchErrors(
   async (request, response) => {

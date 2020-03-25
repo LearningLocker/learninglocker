@@ -5,7 +5,7 @@ import Statement from 'lib/models/statement';
 import { get, isObject, omit } from 'lodash';
 import { publish } from 'lib/services/queue';
 import convert$oid from 'lib/helpers/convert$oid';
-import { delay } from 'bluebird';
+// import { delay } from 'bluebird';
 
 /**
  * @param as
