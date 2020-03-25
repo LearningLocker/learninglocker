@@ -5,10 +5,16 @@ import { END, eventChannel } from 'redux-saga';
 import createAsyncDuck from 'ui/utils/createAsyncDuck';
 import { COMPLETED, FAILED, IN_PROGRESS } from 'ui/utils/constants';
 import { getAppDataSelector } from 'ui/redux/modules/app';
+import {
+  websocketSelector,
+  setWebsocketAction,
+  websocketClosedAction
+} from 'ui/redux/modules/aggregationWs/websocket';
 import Cookies from 'js-cookie';
 import { get, pickBy } from 'lodash';
 import { testCookieName } from 'ui/utils/auth';
 import { AGGREGATION_PROCESSOR_REGISTER } from 'lib/constants/aggregationProcessor';
+import { v4 } from 'uuid';
 
 export function defaultMapping(results) {
   return new Map({
@@ -91,7 +97,7 @@ const fetchAggregation = createAsyncDuck({
         pipeline,
         timeIntervalSinceToday,
         timeIntervalUnits,
-        ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {})
+        ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {}),
       }), 'requestState'], COMPLETED);
 
     if (result.get('result') === null) {
@@ -102,7 +108,7 @@ const fetchAggregation = createAsyncDuck({
       pipeline,
       timeIntervalSinceToday,
       timeIntervalUnits,
-      ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {})
+      ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {}),
     }), 'result'], result.getIn(['result']));
   },
 
@@ -172,7 +178,7 @@ const fetchAggregation = createAsyncDuck({
       timeIntervalUnits,
       timeIntervalSincePreviousTimeInterval,
       result,
-      sinceAt
+      sinceAt,
     } = args;
 
     return ({
@@ -181,7 +187,7 @@ const fetchAggregation = createAsyncDuck({
       timeIntervalUnits,
       timeIntervalSincePreviousTimeInterval,
       result,
-      sinceAt
+      sinceAt,
     });
   },
 
@@ -213,49 +219,55 @@ const fetchAggregation = createAsyncDuck({
     timeIntervalUnits,
     timeIntervalSincePreviousTimeInterval,
     successAction,
-    mapping
+    mapping,
   }) {
-    const { body } = yield call(
-      llClient.aggregateWs,
-      pipeline,
-      timeIntervalSinceToday,
-      timeIntervalUnits,
-      timeIntervalSincePreviousTimeInterval
-    );
-    yield put(successAction({ pipeline,
-      timeIntervalSinceToday,
-      timeIntervalUnits,
-      timeIntervalSincePreviousTimeInterval,
-      result: mapping(body.results)
-    }));
-
-    const id = body._id;
-
+    let id;
     const state = yield select();
-    const wsUrl = getAppDataSelector('WS_URL')(state);
+    let websocket = websocketSelector(state);
+    const uuid = v4();
 
-    const websocket = new WebSocket(`${wsUrl}/websocket`);
+    if (!websocket) {
+      const { body } = yield call(
+        llClient.aggregateWs,
+        pipeline,
+        timeIntervalSinceToday,
+        timeIntervalUnits,
+        timeIntervalSincePreviousTimeInterval
+      );
 
-    yield new Promise((resolve) => {
-      websocket.addEventListener('open', () => {
-        resolve();
+      const wsUrl = getAppDataSelector('WS_URL')(state);
+      websocket = new WebSocket(`${wsUrl}/websocket`);
+      yield put(setWebsocketAction({ websocket }));
+      id = body._id;
+
+      yield put(successAction({
+        pipeline,
+        timeIntervalSinceToday,
+        timeIntervalUnits,
+        timeIntervalSincePreviousTimeInterval,
+        result: mapping(body.results),
+      }));
+
+      yield new Promise((resolve) => {
+        websocket.addEventListener('open', () => {
+          resolve();
+        });
       });
-    });
+    } else {
+      // Send the request via ws
+    }
 
     // Send the auth details
     const cookies = Cookies.get();
     const filteredCookies = pickBy(cookies, (value, cookieName) => testCookieName(cookieName));
 
-    websocket.send(JSON.stringify({
-      type: AGGREGATION_PROCESSOR_REGISTER,
-      auth: filteredCookies,
-      organisationId: state.router.route.params.organisationId,
-      aggregationProcessorId: id
-    }));
-
     const createChannel = () => eventChannel((emitter) => {
       websocket.addEventListener('message', (message) => {
         const data = JSON.parse(message.data);
+        if (data.uuid !== uuid) {
+          // This message is not for us.
+          return;
+        }
         const result = mapping(data.results);
 
         // put into the state
@@ -269,6 +281,7 @@ const fetchAggregation = createAsyncDuck({
       });
 
       websocket.addEventListener('close', () => {
+        emitter(websocketClosedAction());
         emitter(END);
       });
 
@@ -276,6 +289,20 @@ const fetchAggregation = createAsyncDuck({
         console.error('Websocket error', err);
         emitter(END);
       });
+
+      websocket.send(JSON.stringify({
+        type: AGGREGATION_PROCESSOR_REGISTER,
+        auth: filteredCookies,
+        organisationId: state.router.route.params.organisationId,
+        aggregationProcessorId: id,
+        uuid,
+        query: {
+          pipeline,
+          timeIntervalSinceToday,
+          timeIntervalUnits,
+          timeIntervalSincePreviousTimeInterval
+        }
+      }));
 
       return () => {
         websocket.close();

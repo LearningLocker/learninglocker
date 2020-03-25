@@ -74,49 +74,106 @@ const canUseWindowOptimization = (pipeline) => {
   return !group;
 };
 
+export const runAggregationProcessorInitialise = async ({
+  authInfo,
+  pipeline,
+  timeIntervalSinceToday,
+  timeIntervalUnits,
+  timeIntervalSincePreviousTimeInterval
+}) => {
+  const organisation = getOrgFromAuthInfo(authInfo);
+
+  const scopedFilter = await getScopeFilter({
+    modelName: 'aggregationProcessor',
+    actionName: 'view',
+    authInfo,
+    allowDashboardAccess: true
+  });
+  pipeline.unshift({
+    $match: encode$oid(scopedFilter)
+  });
+
+  const pipelineString = JSON.stringify(pipeline);
+  const hash = sha1(pipelineString);
+
+  const windowSize = timeIntervalSinceToday;
+  const windowSizeUnits = timeIntervalUnits;
+  const previousWindowSize = timeIntervalSincePreviousTimeInterval;
+
+  const useWindowOptimization = canUseWindowOptimization(pipeline);
+
+  const model = await findOrCreateAggregationProcessor({
+    organisation,
+    lrs_id: get(authInfo, ['client', 'lrs_id']),
+    pipelineHash: hash,
+    pipelineString,
+    windowSize,
+    windowSizeUnits,
+    previousWindowSize,
+    useWindowOptimization
+  });
+
+  // Send it to the queue
+  await publish({
+    queueName: AGGREGATION_PROCESSOR_QUEUE,
+    payload: {
+      aggregationProcessorId: model._id
+    }
+  });
+
+  return model;
+}
+
 export const aggregationProcessorInitialise = catchErrors(
   async (request, response) => {
     const authInfo = request.user.authInfo || {};
-    const organisation = getOrgFromAuthInfo(authInfo);
+    // const organisation = getOrgFromAuthInfo(authInfo);
 
-    const pipeline = request.body.pipeline;
+    // const pipeline = request.body.pipeline;
 
-    const scopedFilter = await getScopeFilter({
-      modelName: 'aggregationProcessor',
-      actionName: 'view',
+    // const scopedFilter = await getScopeFilter({
+    //   modelName: 'aggregationProcessor',
+    //   actionName: 'view',
+    //   authInfo,
+    //   allowDashboardAccess: true
+    // });
+    // pipeline.unshift({
+    //   $match: encode$oid(scopedFilter)
+    // });
+
+    // const pipelineString = JSON.stringify(pipeline);
+    // const hash = sha1(pipelineString);
+
+    // const windowSize = request.query.timeIntervalSinceToday;
+    // const windowSizeUnits = request.query.timeIntervalUnits;
+    // const previousWindowSize = request.query.timeIntervalSincePreviousTimeInterval;
+
+    // const useWindowOptimization = canUseWindowOptimization(pipeline);
+
+    // const model = await findOrCreateAggregationProcessor({
+    //   organisation,
+    //   lrs_id: get(authInfo, ['client', 'lrs_id']),
+    //   pipelineHash: hash,
+    //   pipelineString,
+    //   windowSize,
+    //   windowSizeUnits,
+    //   previousWindowSize,
+    //   useWindowOptimization
+    // });
+
+    // // Send it to the queue
+    // await publish({
+    //   queueName: AGGREGATION_PROCESSOR_QUEUE,
+    //   payload: {
+    //     aggregationProcessorId: model._id
+    //   }
+    // });
+    const model = await runAggregationProcessorInitialise({
       authInfo,
-      allowDashboardAccess: true
-    });
-    pipeline.unshift({
-      $match: encode$oid(scopedFilter)
-    });
-
-    const pipelineString = JSON.stringify(pipeline);
-    const hash = sha1(pipelineString);
-
-    const windowSize = request.query.timeIntervalSinceToday;
-    const windowSizeUnits = request.query.timeIntervalUnits;
-    const previousWindowSize = request.query.timeIntervalSincePreviousTimeInterval;
-
-    const useWindowOptimization = canUseWindowOptimization(pipeline);
-
-    const model = await findOrCreateAggregationProcessor({
-      organisation,
-      lrs_id: get(authInfo, ['client', 'lrs_id']),
-      pipelineHash: hash,
-      pipelineString,
-      windowSize,
-      windowSizeUnits,
-      previousWindowSize,
-      useWindowOptimization
-    });
-
-    // Send it to the queue
-    await publish({
-      queueName: AGGREGATION_PROCESSOR_QUEUE,
-      payload: {
-        aggregationProcessorId: model._id
-      }
+      timeIntervalSinceToday: request.query.timeIntervalSinceToday,
+      timeIntervalUnits: request.query.timeIntervalUnits,
+      timeIntervalSincePreviousTimeInterval: request.query.timeIntervalSincePreviousTimeInterval,
+      pipeline: request.body.pipeline
     });
 
     response

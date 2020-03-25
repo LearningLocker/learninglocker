@@ -22,6 +22,7 @@ import alerts from 'ui/redux/modules/alerts';
 import userOrganisations from 'ui/redux/modules/userOrganisations';
 import userOrganisationSettings from 'ui/redux/modules/userOrganisationSettings';
 import requestAppAccess from 'ui/redux/modules/requestAppAccess';
+import websocket from 'ui/redux/modules/aggregationWs/websocket';
 
 export default combineReducers({
   auth: recycleState(auth, [LOGOUT]),
@@ -44,5 +45,6 @@ export default combineReducers({
   userOrganisationSettings: recycleState(userOrganisationSettings, [LOGOUT, ORG_LOGOUT]),
   requestAppAccess: recycleState(requestAppAccess, [LOGOUT, ORG_LOGOUT]),
   app,
+  websocket,
   router: router5Reducer
 });

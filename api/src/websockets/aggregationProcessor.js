@@ -4,13 +4,41 @@ import { chain, isUndefined } from 'lodash';
 
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import AggregationProcessor from 'lib/models/aggregationProcessor';
+import { runAggregationProcessorInitialise } from 'api/controllers/AggregationProcessorController';
 
 const objectId = mongoose.Types.ObjectId;
 
 const shouldCloseWebsocket = aggregationProcessorDocument =>
   !isUndefined(aggregationProcessorDocument.greaterThanDate) &&
-      moment(aggregationProcessorDocument.fromTimestamp).isSame(moment(aggregationProcessorDocument.greaterThanDate)) &&
-      moment(aggregationProcessorDocument.toTimestamp).isAfter(moment().subtract(10, 'minutes'));
+    moment(aggregationProcessorDocument.fromTimestamp).isSame(moment(aggregationProcessorDocument.greaterThanDate)) &&
+    moment(aggregationProcessorDocument.toTimestamp).isAfter(moment().subtract(10, 'minutes'));
+    // && false; // DEBUG ONLY, remove
+
+const maybeCloseResources = ({
+  websocket,
+  changeStream,
+  aggregationProcessorDocument,
+  aggregationProcessorState
+}) => {
+  console.log('001');
+  if (shouldCloseWebsocket(aggregationProcessorDocument)) {
+    aggregationProcessorState.openQueries -= 1;
+    console.log('002 changeStream closed');
+    changeStream.close();
+    if (aggregationProcessorState.openQueries <= 0) {
+      console.log('003 ws closed');
+      websocket.close();
+    }
+  }
+};
+
+const runQuery = async ({ query, authInfo }) => {
+  const model = await runAggregationProcessorInitialise({
+    authInfo,
+    ...query
+  });
+  return model._id;
+};
 
 /**
  * @param {module:ll.WS} ws
@@ -21,13 +49,23 @@ const shouldCloseWebsocket = aggregationProcessorDocument =>
 const aggregationProcessor = async ({
   ws,
   authInfo,
-  aggregationProcessorId
+  aggregationProcessorId,
+  query,
+  uuid,
+  aggregationProcessorState
 }) => {
   const scopeFilter = await getScopeFilter({
     modelName: 'aggregationprocessor',
     actionName: 'read',
     authInfo
   });
+
+  if (query) {
+    aggregationProcessorId = await runQuery({
+      query,
+      authInfo
+    });
+  }
 
   /**
    * @see https://docs.mongodb.com/manual/changeStreams/index.html - Go to TIP section
@@ -71,27 +109,39 @@ const aggregationProcessor = async ({
       ...{ _id: aggregationProcessorId }, // restore original document id
     };
 
-    ws.send(JSON.stringify(aggregationProcessorDocument));
+    ws.send(JSON.stringify(
+      {
+        ...aggregationProcessorDocument,
+        uuid
+      }
+    ));
 
-    if (
-      shouldCloseWebsocket(aggregationProcessorDocument)
-    ) {
-      ws.close();
-      changeStream.close();
-    }
+    maybeCloseResources({
+      websocket: ws,
+      changeStream,
+      aggregationProcessorDocument,
+      aggregationProcessorState
+    });
   });
 
   const currentAggregationProcessor = await AggregationProcessor.findOne({
     _id: aggregationProcessorId,
     ...scopeFilter
+  }).lean();
+
+  ws.send(JSON.stringify(
+    {
+      ...currentAggregationProcessor,
+      uuid
+    }
+  ));
+
+  maybeCloseResources({
+    websocket: ws,
+    changeStream,
+    aggregationProcessorDocument: currentAggregationProcessor,
+    aggregationProcessorState
   });
-
-  ws.send(JSON.stringify(currentAggregationProcessor));
-
-  if (shouldCloseWebsocket(currentAggregationProcessor)) {
-    ws.close();
-    changeStream.close();
-  }
 };
 
 export default aggregationProcessor;

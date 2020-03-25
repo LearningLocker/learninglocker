@@ -13,8 +13,13 @@ import aggregationProcessor from './aggregationProcessor';
 const messageManager = ws => async (message) => {
   const jsonMessage = JSON.parse(message);
 
+  const aggregationProcessorState = {
+    openQueries: 0
+  };
+
   switch (jsonMessage.type) {
     case AGGREGATION_PROCESSOR_REGISTER: {
+      aggregationProcessorState.openQueries += 1;
       let cookieName;
 
       if (jsonMessage.organisationId) {
@@ -39,7 +44,10 @@ const messageManager = ws => async (message) => {
         await aggregationProcessor({
           ws,
           authInfo,
-          aggregationProcessorId: jsonMessage.aggregationProcessorId
+          aggregationProcessorId: jsonMessage.aggregationProcessorId,
+          uuid: jsonMessage.uuid,
+          query: jsonMessage.query,
+          aggregationProcessorState
         });
       } catch (err) {
         ws.close();
