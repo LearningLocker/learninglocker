@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import moment from 'moment';
 import { chain, isUndefined } from 'lodash';
+import { delay } from 'bluebird';
 
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import AggregationProcessor from 'lib/models/aggregationProcessor';
@@ -14,7 +15,7 @@ const shouldCloseWebsocket = aggregationProcessorDocument =>
     moment(aggregationProcessorDocument.toTimestamp).isAfter(moment().subtract(10, 'minutes'));
     // && false; // DEBUG ONLY, remove
 
-const maybeCloseResources = ({
+const maybeCloseResources = async ({
   websocket,
   changeStream,
   aggregationProcessorDocument,
@@ -24,6 +25,7 @@ const maybeCloseResources = ({
   if (shouldCloseWebsocket(aggregationProcessorDocument)) {
     aggregationProcessorState.openQueries -= 1;
     console.log('002 changeStream closed');
+    await delay(60000);
     changeStream.close();
     if (aggregationProcessorState.openQueries <= 0) {
       console.log('003 ws closed');
@@ -103,7 +105,7 @@ const aggregationProcessor = async ({
     }
   );
 
-  changeStream.on('change', (dirtyAggregationProcessorDocument) => {
+  changeStream.on('change', async (dirtyAggregationProcessorDocument) => {
     const aggregationProcessorDocument = {
       ...dirtyAggregationProcessorDocument,
       ...{ _id: aggregationProcessorId }, // restore original document id
