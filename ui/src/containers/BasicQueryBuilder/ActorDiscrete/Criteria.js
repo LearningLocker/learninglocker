@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
-import classNames from 'classnames';
 import Criterion from './Criterion';
 
 export default class Criteria extends Component {
@@ -61,29 +60,25 @@ export default class Criteria extends Component {
     );
   }
 
-  render = () => {
-    const styles = require('../styles.css');
-
-    const addBtnClasses = classNames(styles.criterionButton, 'btn btn-default btn-xs');
-    return (
-      <div>
-        <div className={styles.criteria}>
-          {(
-            this.props.criteria.count() > 0 ?
-            this.renderCriteria() :
-            this.renderEmptyCriteria()
-          )}
-        </div>
-        { false && this.props.criteria.count() > 0 &&
-          <div className="text-right">
-            <button
-              className={addBtnClasses}
-              onClick={this.addCriterion}>
-              <i className="ion-plus-round" />
-            </button>
-          </div>
-        }
-      </div>
-    );
-  }
+  render = () => (
+    <div>
+      {(
+        this.props.criteria.count() > 0
+          ? this.renderCriteria()
+          : this.renderEmptyCriteria()
+      )}
+      {
+        // This was commented out to avoid case when users get confused with this feature.
+        // Also it should be saved as it is(commented out)
+        // this.props.criteria.count() > 0 &&
+        // <div className="text-right">
+        //   <CriterionButton
+        //     className={'btn btn-default btn-xs'}
+        //     onClick={this.addCriterion}>
+        //     <i className="ion-plus-round" />
+        //   </CriterionButton>
+        // </div>
+      }
+    </div>
+  );
 }

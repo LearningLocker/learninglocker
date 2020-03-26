@@ -45,7 +45,8 @@
     "test": "yarn test-api && yarn test-lib && yarn test-worker && yarn test-ui && yarn test-cli",
     "migrate": "node cli/dist/server migrateMongo --up",
     "rollback": "node cli/dist/server migrateMongo --down last",
-    "semantic-release": "ht2-release-private-circleci"
+    "semantic-release": "ht2-release-private-circleci",
+    "clean-cache": "sh ./clean-build-cache.sh"
   },
   "dependencies": {
     "@azure/service-bus": "^1.0.2",
@@ -86,6 +87,7 @@
     "highland": "^2.8.1",
     "html-to-text": "^2.1.0",
     "http-proxy": "^1.12.0",
+    "http-status": "^1.4.2",
     "immutable": "^3.8.1",
     "ioredis": "^3.2.2",
     "js-cookie": "^2.1.3",
@@ -218,6 +220,7 @@
     "isomorphic-style-loader": "^2.0.0",
     "jest": "^19.0.2",
     "jest-enzyme": "^4.0.1",
+    "jest-styled-components": "^6.3.4",
     "mocha": "^2.3.3",
     "mocha-mongoose": "^1.2.0",
     "mocha-webpack": "^0.7.0",
@@ -252,7 +255,8 @@
   "husky": {
     "hooks": {
       "pre-push": "yarn lint-ci",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "post-checkout": "yarn clean-cache"
     }
   }
 }

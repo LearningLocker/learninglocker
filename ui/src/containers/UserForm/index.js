@@ -4,7 +4,7 @@ import { compose, withState, withProps } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
 import { Map, List, fromJS } from 'immutable';
 import classNames from 'classnames';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import styled from 'styled-components';
 import ValidationList from 'ui/components/ValidationList';
 import Checkbox from 'ui/components/Material/Checkbox';
 import uuid from 'uuid';
@@ -15,7 +15,11 @@ import {
   loggedInUserId as loggedInUserIdSelector
 } from 'ui/redux/modules/auth';
 import { SITE_ADMIN } from 'lib/constants/scopes';
-import styles from './userform.css';
+
+const VerifiedIcon = styled.i`
+  margin-left: 1em;
+  ${props => props.isVerified && 'color: green;' || 'color: red;'}
+`;
 
 const changeModelAttr = (updateModel, model, attr) => value =>
   updateModel({ path: [attr], value });
@@ -33,13 +37,15 @@ const onPasswordCheckboxChange = (updateModel, model, setChangePasswordChecked) 
 
 const renderVerified = (model) => {
   const verifiedId = uuid.v4();
+  const isVerified = model.get('verified');
+
   return (
     <div className="form-group">
       <label htmlFor={verifiedId} className="control-label">Verified:</label>
       <span id={verifiedId}>
-        {model.get('verified')
-          ? <i className={`icon ion-checkmark ${styles.green}`} />
-          : <i className={`icon ion-close ${styles.red}`} />}
+        <VerifiedIcon
+          isVerified={isVerified}
+          className={`icon ${isVerified ? 'ion-checkmark' : 'ion-close'}`} />
       </span>
     </div>
   );
@@ -234,7 +240,6 @@ const UserForm = ({
 };
 
 export default compose(
-  withStyles(styles),
   withState('changePasswordChecked', 'setChangePasswordChecked', false),
   withState('password', 'setPassword', ''),
   withState('passwordConfirmation', 'setPasswordConfirmation', ''),

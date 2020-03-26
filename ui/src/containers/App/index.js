@@ -10,6 +10,7 @@ import { routeNodeSelector } from 'redux-router5';
 import { startsWithSegment } from 'router5.helpers';
 import get from 'lodash/get';
 import createAsyncComponent from 'ui/utils/createAsyncComponent';
+import SaveBarErrors from 'ui/containers/SaveBarErrors';
 
 const renderPage = (routeName) => {
   const testRoute = startsWithSegment(routeName);
@@ -62,6 +63,7 @@ const component = ({ route }) => {
       <Helmet {...config.app.head} />
       {renderPage(name)}
       <Toasts />
+      <SaveBarErrors />
     </div>
   );
 };

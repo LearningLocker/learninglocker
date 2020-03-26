@@ -3,8 +3,24 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import DeleteConfirm from 'ui/containers/DeleteConfirm';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from './styles.css';
+import styled from 'styled-components';
+
+const CloseIcon = styled.i`
+  margin-right: 0;
+  padding-top: 1px;
+  padding-bottom: 1px;
+`;
+
+const CloseTab = styled.span`
+  margin-left: 12px;
+
+  &:hover {
+    background-color: #494444;
+    color: #fff;
+    border-radius: 50%;
+    border: 0 solid #494444;
+  }
+`;
 
 class DeleteButton extends Component {
   static propTypes = {
@@ -75,19 +91,29 @@ class DeleteButton extends Component {
     );
 
     return (
-      this.props.tab ? (
-        <span title="Delete" className={`top right btn-xs ${styles.closeTab}`} onClick={this.openModal.bind(null)} >
-          <i className={`icon ion-close-round ${styles.closeIcon}`} />
-          { modal }
-        </span>
-      ) : (
-        <button className={classes} title="Delete" onClick={this.openModal.bind(null)} style={{ width }} disabled={this.props.disabled}>
-          <i className="icon ion-trash-b" />
-          { modal }
-        </button>
-      )
+      this.props.tab
+        ? (
+          <CloseTab
+            title="Delete"
+            className={'top right btn-xs'}
+            onClick={this.openModal.bind(null)}>
+            <CloseIcon className={'icon ion-close-round'} />
+            {modal}
+          </CloseTab>
+        )
+        : (
+          <button
+            className={classes}
+            title="Delete"
+            onClick={this.openModal.bind(null)}
+            style={{ width }}
+            disabled={this.props.disabled}>
+            <i className="icon ion-trash-b" />
+            {modal}
+          </button>
+        )
     );
   }
 }
 
-export default withStyles(styles)(DeleteButton);
+export default DeleteButton;

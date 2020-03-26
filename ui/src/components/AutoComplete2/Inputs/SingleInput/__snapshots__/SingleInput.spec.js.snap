@@ -1,7 +1,38 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`SingleInput render 1`] = `
+exports[`SingleInput should render 1`] = `
+.c0 {
+  border-radius: 2px;
+  border: 1px solid #ccc;
+  overflow: hidden;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  min-height: 36px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.c0 input {
+  border: none;
+  box-shadow: none;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  height: 36px;
+  padding: 0 8px;
+  outline-color: #F5AB35;
+  text-overflow: ellipsis;
+}
+
 <div
-  className="inputWrapper"
+  className="c0"
 />
 `;

@@ -13,12 +13,12 @@ import {
   TEMPLATE_MOST_POPULAR_ACTIVITIES,
   TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_WEEKDAYS_ACTIVITY,
-  TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT,
-  TEMPLATE_CURATR_COMMENT_COUNT,
-  TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB,
-  TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD,
-  TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS,
-  TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS,
+  TEMPLATE_STREAM_INTERACTIONS_VS_ENGAGEMENT,
+  TEMPLATE_STREAM_COMMENT_COUNT,
+  TEMPLATE_STREAM_LEARNER_INTERACTIONS_BY_DATE_AND_VERB,
+  TEMPLATE_STREAM_USER_ENGAGEMENT_LEADERBOARD,
+  TEMPLATE_STREAM_PROPORTION_OF_SOCIAL_INTERACTIONS,
+  TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS,
   TEMPLATE_LEARNING_EXPERIENCE_TYPE,
 } from 'lib/constants/visualise';
 import VisualiseIcon from 'ui/components/VisualiseIcon';
@@ -59,9 +59,9 @@ const makeOperatorReadable = (model, operatorName) => {
 };
 
 /**
- * @param {immutable.Map} model - visualisation model
- * @return {string}
- */
+* @param {immutable.Map} model - visualisation model
+* @return {string}
+  */
 export const createDefaultTitle = (model) => {
   const type = model.get('type', null);
 
@@ -83,22 +83,22 @@ export const createDefaultTitle = (model) => {
     case TEMPLATE_MOST_POPULAR_ACTIVITIES:
     case TEMPLATE_MOST_POPULAR_VERBS:
     case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
-    case TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD:
-    case TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS:
+    case TEMPLATE_STREAM_USER_ENGAGEMENT_LEADERBOARD:
+    case TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS:
       return addYX(select(axg), select(axv) || select(ayV) || 'Time');
     case XVSY:
-    case TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT:
+    case TEMPLATE_STREAM_INTERACTIONS_VS_ENGAGEMENT:
       return addXVSYXY(select(axV), select(axv) || select(ayV) || 'Time');
     case COUNTER:
     case TEMPLATE_LAST_7_DAYS_STATEMENTS:
-    case TEMPLATE_CURATR_COMMENT_COUNT:
+    case TEMPLATE_STREAM_COMMENT_COUNT:
       return `${makeOperatorReadable(model, 'axesoperator')}${select(axv) || select(ayV)}`;
     case PIE:
-    case TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS:
+    case TEMPLATE_STREAM_PROPORTION_OF_SOCIAL_INTERACTIONS:
       return `${makeOperatorReadable(model, 'axesoperator')}${select(axv) || select(ayV)} / ${select(axg)}`;
     case STATEMENTS:
     case TEMPLATE_WEEKDAYS_ACTIVITY:
-    case TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB:
+    case TEMPLATE_STREAM_LEARNER_INTERACTIONS_BY_DATE_AND_VERB:
       return addXY(select(axg), select(axv) || select(ayV) || 'Time');
     default:
       return 'Empty';
@@ -137,4 +137,29 @@ export const getPercentage = (res1, res2) => {
   }
 
   return { result: `${percentage}%`, icon: chevronUpIcon, marginBottom: '6%' };
+};
+
+export const wrapLabel = (target) => {
+  const separatedStrings = [];
+  const index = 46;
+  let remainingSection = target;
+  let sectionIndex;
+  let firstSection;
+  while (remainingSection.length > index) {
+    sectionIndex = remainingSection.lastIndexOf(' ', index);
+    if (sectionIndex < 1) {
+      sectionIndex = remainingSection.lastIndexOf('.', index);
+    }
+    if (sectionIndex < 1) {
+      sectionIndex = remainingSection.lastIndexOf('%20', index);
+    }
+    if (sectionIndex < 1) {
+      sectionIndex = index;
+    }
+    firstSection = remainingSection.substring(0, sectionIndex);
+    remainingSection = remainingSection.substring(sectionIndex);
+    separatedStrings.push(firstSection);
+  }
+  separatedStrings.push(remainingSection);
+  return separatedStrings.join('\n');
 };

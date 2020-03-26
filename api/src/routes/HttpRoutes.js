@@ -58,8 +58,6 @@ import personaRESTHandler from 'api/routes/personas/personaRESTHandler';
 import personaIdentifierRESTHandler from 'api/routes/personas/personaIdentifierRESTHandler';
 import UserOrganisationsRouter from 'api/routes/userOrganisations/router';
 import UserOrganisationSettingsRouter from 'api/routes/userOrganisationSettings/router';
-import getLrsFromAuthInfo from 'lib/services/auth/authInfoSelectors/getLrsFromAuthInfo';
-import { decrementStatementCount } from 'lib/services/lrs';
 
 // CONSTANTS
 import * as routes from 'lib/constants/routes';
@@ -119,6 +117,13 @@ router.get(
   AuthController.clientInfo
 );
 
+router.get(
+  routes.OAUTH2_FAILED,
+  (request, response) => {
+    response.send('Authorization failed');
+  },
+);
+
 router.post(
   routes.OAUTH2_TOKEN,
   AuthController.issueOAuth2AccessToken
@@ -138,10 +143,26 @@ if (process.env.GOOGLE_ENABLED) {
     routes.AUTH_JWT_GOOGLE,
     passport.authenticate('google', GOOGLE_AUTH_OPTIONS)
   );
+
   router.get(
     routes.AUTH_JWT_GOOGLE_CALLBACK,
-    passport.authenticate('google', DEFAULT_PASSPORT_OPTIONS),
-    AuthController.googleSuccess
+    (request, response, next) => {
+      passport.authenticate(
+        'google',
+        DEFAULT_PASSPORT_OPTIONS,
+        (error, user, info) => {
+          const defaultErrorMessage = 'Something bad happened';
+
+          if (!user) {
+            response.redirect(`/api${routes.OAUTH2_FAILED}?error=${get(info, 'message', defaultErrorMessage)}`);
+
+            return;
+          }
+
+          AuthController.googleSuccess(user, response);
+        },
+      )(request, response, next);
+    },
   );
 }
 
@@ -359,18 +380,8 @@ restify.serve(router, Statement, {
       return res.send('No ID sent', 400);
     }
     next();
-    return;
   },
   preUpdate: (req, res) => res.sendStatus(405),
-  postDelete: (req, _, next) => {
-    // Update LRS.statementCount
-    const authInfo = getAuthFromRequest(req);
-    const lrsId = getLrsFromAuthInfo(authInfo);
-
-    decrementStatementCount(lrsId)
-      .then(() => next())
-      .catch(err => next(err));
-  },
 });
 restify.serve(router, StatementForwarding);
 restify.serve(router, QueryBuilderCache);

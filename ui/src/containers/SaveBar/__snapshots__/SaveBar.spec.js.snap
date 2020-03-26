@@ -2,13 +2,13 @@
 
 exports[`SaveBar should render save bar COMPLETED 1`] = `
 <div
-  className="container save-bar"
+  className="sc-bwzfXH gWHEGL save-bar"
 >
   <div
     aria-valuemax={100}
     aria-valuemin={0}
     aria-valuenow={100}
-    className=""
+    className="linear sc-bxivhb guboWi"
     data-react-toolbox="progress-bar"
     disabled={undefined}
   >
@@ -25,7 +25,7 @@ exports[`SaveBar should render save bar COMPLETED 1`] = `
         }
       />
       <span
-        className={undefined}
+        className="value"
         data-ref="value"
         style={
           Object {
@@ -38,25 +38,25 @@ exports[`SaveBar should render save bar COMPLETED 1`] = `
     </div>
   </div>
   <div
-    className="label"
+    className="sc-htpNat fHEvbJ"
   >
     SAVED
   </div>
   <div
-    className="container"
+    className="sc-bdVaJa bgbluT"
   />
 </div>
 `;
 
 exports[`SaveBar should render save bar FAILED 1`] = `
 <div
-  className="container save-bar"
+  className="sc-bwzfXH gWHEGL save-bar"
 >
   <div
     aria-valuemax={100}
     aria-valuemin={0}
     aria-valuenow={100}
-    className=""
+    className="linear sc-bxivhb kOaAkp"
     data-react-toolbox="progress-bar"
     disabled={undefined}
   >
@@ -73,7 +73,7 @@ exports[`SaveBar should render save bar FAILED 1`] = `
         }
       />
       <span
-        className={undefined}
+        className="value"
         data-ref="value"
         style={
           Object {
@@ -86,25 +86,25 @@ exports[`SaveBar should render save bar FAILED 1`] = `
     </div>
   </div>
   <div
-    className="label"
+    className="sc-htpNat jvZXLN"
   >
     SAVE FAILED
   </div>
   <div
-    className="container"
+    className="sc-bdVaJa bgbluT"
   />
 </div>
 `;
 
 exports[`SaveBar should render save bar IN_PROGRESS 1`] = `
 <div
-  className="container save-bar"
+  className="sc-bwzfXH gWHEGL save-bar"
 >
   <div
     aria-valuemax={100}
     aria-valuemin={0}
     aria-valuenow={100}
-    className=""
+    className="linear sc-bxivhb fGBlup"
     data-react-toolbox="progress-bar"
     disabled={undefined}
   >
@@ -115,19 +115,19 @@ exports[`SaveBar should render save bar IN_PROGRESS 1`] = `
         style={undefined}
       />
       <span
-        className={undefined}
+        className="value"
         data-ref="value"
         style={undefined}
       />
     </div>
   </div>
   <div
-    className="label"
+    className="sc-htpNat hoqFTd"
   >
     SAVING
   </div>
   <div
-    className="container"
+    className="sc-bdVaJa bgbluT"
   />
 </div>
 `;

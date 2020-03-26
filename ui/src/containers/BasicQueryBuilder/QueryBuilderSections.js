@@ -3,15 +3,13 @@ import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { getAvailableSections } from 'ui/redux/modules/queryBuilder';
 import {
   queriesSectionsSelector,
   queryChangeSections
 } from 'ui/redux/modules/queries';
 import { fetchModels } from 'ui/redux/modules/pagination';
-import Sections from './Sections';
-import styles from './styles.css';
+import { TopLevelSectionsContainer } from 'ui/containers/BasicQueryBuilder/styled';
 
 /**
  * This component was made to prevent the BasicQueryBuilder
@@ -44,10 +42,9 @@ class QueryBuilderSections extends Component {
   getSections = () => this.props.sections;
 
   render = () => (
-    <Sections
+    <TopLevelSectionsContainer
       timezone={this.props.timezone}
       orgTimezone={this.props.orgTimezone}
-      className={styles.topLevel}
       sections={this.getSections()}
       criteria={this.props.criteria}
       onCriteriaChange={this.props.onCriteriaChange}
@@ -58,7 +55,6 @@ class QueryBuilderSections extends Component {
 }
 
 export default compose(
-  withStyles(styles),
   connect((state, ownProps) => {
     const componentPath = ownProps.componentPath;
     const sectionsInState = queriesSectionsSelector(componentPath)(state);
