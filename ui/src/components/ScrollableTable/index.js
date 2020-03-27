@@ -1,7 +1,85 @@
 import React, { useEffect, useState, createRef } from 'react';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import _ from 'lodash';
-import styles from './styles.css';
+import styled, { css } from 'styled-components';
+
+const TableContainer = styled.div`
+  height: 100%;
+  overflow-x: scroll;
+  overflow-y: scroll;
+`;
+
+const Table = styled.table`
+  border-collapse: separate;
+  margin: 0;
+  border: 0;
+
+  > thead > tr > th,
+  > thead > tr > td,
+  > tbody > tr > th,
+  > tbody > tr > td,
+  > tfoot > tr > th,
+  > tfoot > tr > td {
+    border: 0;
+  }
+
+  > thead > tr > th,
+  > thead > tr > td,
+  > tfoot > tr > th,
+  > tfoot > tr > td {
+    border-top: 1px solid #ddd !important;
+    border-left: 1px solid #ddd !important;
+  }
+
+  > thead > tr:last-child > th,
+  > thead > tr:last-child > td,
+  > tfoot > tr:last-child > th,
+  > tfoot > tr:last-child > td {
+    border-bottom: 1px solid #ddd !important;
+  }
+
+  > thead > tr > th:last-child,
+  > thead > tr > td:last-child,
+  > tfoot > tr > th:last-child,
+  > tfoot > tr > td:last-child {
+    border-right: 1px solid #ddd !important;
+  }
+
+  > tbody > tr > th,
+  > tbody > tr > td {
+    border-left: 1px solid #ddd !important;
+    border-bottom: 1px solid #ddd !important;
+  }
+
+  > tbody > tr:last-child > th,
+  > tbody > tr:last-child > td {
+    border-left: 1px solid #ddd !important;
+  }
+
+  > tbody > tr > th:last-child,
+  > tbody > tr > td:last-child {
+    border-right: 1px solid #ddd !important;
+  }
+`;
+
+const tableSectionStylesMixin = css`
+  > tr:nth-child(odd) {
+    > th,
+    > td {
+      background-color: ${props => props.isWhiteStartingStripe && '#ffffff' || '#f9f9f9'};
+    }
+  }
+
+  > tr:nth-child(even) {
+    > th,
+    > td {
+      background-color: ${props => props.isWhiteStartingStripe && '#f9f9f9' || '#ffffff'};
+    }
+  }
+`;
+
+const TableHead = styled.thead`${tableSectionStylesMixin}`;
+const TableBody = styled.tbody`${tableSectionStylesMixin}`;
+const TableFooter = styled(TableHead)``;
 
 /**
  * @param {React.RefObject} ref
@@ -11,7 +89,118 @@ const refToClientHeight = (ref) => {
   if (ref && ref.current && ref.current.clientHeight) {
     return ref.current.clientHeight;
   }
+
   return null;
+};
+
+const renderHead = ({
+  tHead,
+  trsInTHead,
+  fixTHead,
+  tHeadTrsRefs,
+  tHeadTrsTops,
+  isWhiteStartingStripe
+}) => {
+  if (!tHead) {
+    return null;
+  }
+
+  return (
+    <TableHead isWhiteStartingStripe={isWhiteStartingStripe}>
+      {
+        trsInTHead.map((tr, i) => {
+          const childStyle = (fixTHead && _.isNumber(tHeadTrsTops[i]))
+            ? {
+              position: 'sticky',
+              top: tHeadTrsTops[i]
+            }
+            : {};
+
+          return (
+            <tr
+              key={tr.key || i}
+              ref={tHeadTrsRefs[i]}>
+              {
+                tr.props.children
+                  .flat()
+                  .filter(cell => ['td', 'th'].some(t => t === cell.type))
+                  .map((cell, j) => React.createElement(
+                    cell.type,
+                    {
+                      ...cell.props,
+                      key: cell.key || `thead-tr-c-${i}-${j}`,
+                      style: childStyle
+                    },
+                  ))
+              }
+            </tr>
+          );
+        })
+      }
+    </TableHead>
+  );
+};
+
+const renderBody = ({ tBody, trsInTBody, isWhiteStartingStripe }) => {
+  if (!tBody) {
+    return null;
+  }
+
+  return (
+    <TableBody isWhiteStartingStripe={isWhiteStartingStripe}>
+      {trsInTBody}
+    </TableBody>
+  );
+};
+
+const renderFooter = ({
+  tFoot,
+  trsInTFoot,
+  fixTFoot,
+  tFootTrsBottoms,
+  tFootTrsRefs,
+  isWhiteStartingStripe
+}) => {
+  if (!tFoot) {
+    return null;
+  }
+
+  return (
+    <TableFooter isWhiteStartingStripe={isWhiteStartingStripe}>
+      {
+        trsInTFoot
+          .flat()
+          .map((tr, i) => {
+            const childStyle = (fixTFoot && _.isNumber(tFootTrsBottoms[i + 1]))
+              ? {
+                position: 'sticky',
+                bottom: tFootTrsBottoms[i + 1]
+              }
+              : {};
+
+            return (
+              <tr
+                key={tr.key || i}
+                ref={tFootTrsRefs[i]}>
+                {
+                  tr.props.children
+                    .flat()
+                    .filter(cell => ['td', 'th'].some(t => t === cell.type))
+                    .map((cell, j) => React.createElement(
+                      cell.type,
+                      {
+                        ...cell.props,
+                        key: cell.key || `tfoot-tr-c-${i}-${j}`,
+                        style: childStyle
+                      },
+                    ))
+                }
+              </tr>
+            );
+          })
+      }
+    </TableFooter>
+  );
 };
 
 /**
@@ -64,95 +253,50 @@ const ScrollableTable = ({
     }
   });
 
-  const tHeadTrsTops = tHeadTrsHeights.reduce((acc, height) => {
-    const previousTop = acc[acc.length - 1];
-    if (previousTop === null || height === null) {
-      return [...acc, null];
-    }
-    return [...acc, previousTop + height];
-  }, [0]);
+  const tHeadTrsTops = tHeadTrsHeights
+    .reduce(
+      (acc, height) => {
+        const previousTop = acc[acc.length - 1];
 
-  const tFootTrsBottoms = [...tFootTrsHeights].reverse().reduce((acc, height) => {
-    const previousBottom = acc[0];
-    if (previousBottom === null || height === null) {
-      return [null, ...acc];
-    }
-    return [previousBottom + height, ...acc];
-  }, [0]);
+        if (previousTop === null || height === null) {
+          return [...acc, null];
+        }
 
-  const tHeadClass = styles.greyStartingStripe;
-  const tBodyClass = (trsInTHead.length % 2 === 0) ? styles.greyStartingStripe : styles.whiteStartingStripe;
-  const tFootClass = ((trsInTHead.length + trsInTBody.length) % 2 === 0) ? styles.greyStartingStripe : styles.whiteStartingStripe;
+        return [...acc, previousTop + height];
+      },
+      [0]
+    );
+
+  const tFootTrsBottoms = [...tFootTrsHeights]
+    .reverse()
+    .reduce(
+      (acc, height) => {
+        const previousBottom = acc[0];
+
+        if (previousBottom === null || height === null) {
+          return [null, ...acc];
+        }
+
+        return [previousBottom + height, ...acc];
+      },
+      [0]
+    );
+
+  const tHeadIsWhiteStartingStripe = false;
+  const tBodyIsWhiteStartingStripe = (trsInTHead.length % 2 === 0);
+  const tFootIsWhiteStartingStripe = ((trsInTHead.length + trsInTBody.length) % 2 === 0);
 
   return (
-    <div className={styles.tableContainer}>
-      <table className={`${styles.table} table table-bordered table-striped`}>
-        {tHead && (
-          <thead className={tHeadClass}>
-            {
-              trsInTHead.map((tr, i) => {
-                const childStyle = (fixTHead && _.isNumber(tHeadTrsTops[i])) ? { position: 'sticky', top: tHeadTrsTops[i] } : {};
-                return (
-                  <tr
-                    key={tr.key || i}
-                    ref={tHeadTrsRefs[i]}>
-                    {
-                      tr.props.children
-                        .flat()
-                        .filter(cell => ['td', 'th'].some(t => t === cell.type))
-                        .map((cell, j) => React.createElement(
-                          cell.type,
-                          {
-                            ...cell.props,
-                            key: cell.key || `thead-tr-c-${i}-${j}`,
-                            style: childStyle
-                          },
-                        ))
-                    }
-                  </tr>
-                );
-              })
-            }
-          </thead>
-        )}
+    <TableContainer>
+      <Table className={'table table-bordered table-striped'}>
+        {renderHead({ tHead, trsInTHead, fixTHead, tHeadTrsRefs, tHeadTrsTops, tHeadIsWhiteStartingStripe })}
 
-        {tBody && (
-          <tbody className={tBodyClass}>
-            {trsInTBody}
-          </tbody>
-        )}
+        {renderBody({ tBody, trsInTBody, tBodyIsWhiteStartingStripe })}
 
-        {tFoot && (
-          <thead className={tFootClass}>
-            {
-              trsInTFoot.flat().map((tr, i) => {
-                const childStyle = (fixTFoot && _.isNumber(tFootTrsBottoms[i + 1])) ? { position: 'sticky', bottom: tFootTrsBottoms[i + 1] } : {};
-                return (
-                  <tr
-                    key={tr.key || i}
-                    ref={tFootTrsRefs[i]}>
-                    {
-                      tr.props.children
-                        .flat()
-                        .filter(cell => ['td', 'th'].some(t => t === cell.type))
-                        .map((cell, j) => React.createElement(
-                          cell.type,
-                          {
-                            ...cell.props,
-                            key: cell.key || `tfoot-tr-c-${i}-${j}`,
-                            style: childStyle
-                          },
-                        ))
-                    }
-                  </tr>
-                );
-              })
-            }
-          </thead>
-        )}
-      </table>
-    </div>
+        {renderFooter({ tFoot, trsInTFoot, fixTFoot, tFootTrsRefs, tFootTrsBottoms, tFootIsWhiteStartingStripe })}
+      </Table>
+    </TableContainer>
   );
 };
 
-export default withStyles(styles)(ScrollableTable);
+export default ScrollableTable;

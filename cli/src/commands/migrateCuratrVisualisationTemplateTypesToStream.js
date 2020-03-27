@@ -1,0 +1,67 @@
+import { invert } from 'lodash';
+
+import Visualisation from 'lib/models/visualisation';
+import logger from 'lib/logger';
+
+// Old name constants
+const TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT = 'TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT';
+const TEMPLATE_CURATR_COMMENT_COUNT = 'TEMPLATE_CURATR_COMMENT_COUNT';
+const TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB = 'TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB';
+const TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD = 'TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD';
+const TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS = 'TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS';
+const TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS = 'TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS';
+
+// New name constants
+const TEMPLATE_STREAM_INTERACTIONS_VS_ENGAGEMENT = 'TEMPLATE_STREAM_INTERACTIONS_VS_ENGAGEMENT';
+const TEMPLATE_STREAM_COMMENT_COUNT = 'TEMPLATE_STREAM_COMMENT_COUNT';
+const TEMPLATE_STREAM_LEARNER_INTERACTIONS_BY_DATE_AND_VERB = 'TEMPLATE_STREAM_LEARNER_INTERACTIONS_BY_DATE_AND_VERB';
+const TEMPLATE_STREAM_USER_ENGAGEMENT_LEADERBOARD = 'TEMPLATE_STREAM_USER_ENGAGEMENT_LEADERBOARD';
+const TEMPLATE_STREAM_PROPORTION_OF_SOCIAL_INTERACTIONS = 'TEMPLATE_STREAM_PROPORTION_OF_SOCIAL_INTERACTIONS';
+const TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS = 'TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS';
+
+const oldToNewRenameMap = {
+  [TEMPLATE_CURATR_INTERACTIONS_VS_ENGAGEMENT]: TEMPLATE_STREAM_INTERACTIONS_VS_ENGAGEMENT,
+  [TEMPLATE_CURATR_COMMENT_COUNT]: TEMPLATE_STREAM_COMMENT_COUNT,
+  [TEMPLATE_CURATR_LEARNER_INTERACTIONS_BY_DATE_AND_VERB]: TEMPLATE_STREAM_LEARNER_INTERACTIONS_BY_DATE_AND_VERB,
+  [TEMPLATE_CURATR_USER_ENGAGEMENT_LEADERBOARD]: TEMPLATE_STREAM_USER_ENGAGEMENT_LEADERBOARD,
+  [TEMPLATE_CURATR_PROPORTION_OF_SOCIAL_INTERACTIONS]: TEMPLATE_STREAM_PROPORTION_OF_SOCIAL_INTERACTIONS,
+  [TEMPLATE_CURATR_ACTIVITIES_WITH_MOST_COMMENTS]: TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS
+};
+
+const newToOldRenameMap = invert(oldToNewRenameMap);
+
+export const renameCuratrTemplateTypesToStream = async () => {
+  try {
+    const visualisations = await Visualisation.find(
+      {
+        type: { $in: Object.keys(oldToNewRenameMap) }
+      }
+    );
+
+    for (const visualisation of visualisations) {
+      visualisation.type = oldToNewRenameMap[visualisation.type];
+
+      await visualisation.save();
+    }
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+export const renameStreamTemplateTypesToCuratr = async () => {
+  try {
+    const visualisations = await Visualisation.find(
+      {
+        type: { $in: Object.keys(newToOldRenameMap) }
+      }
+    );
+
+    for (const visualisation of visualisations) {
+      visualisation.type = newToOldRenameMap[visualisation.type];
+
+      await visualisation.save();
+    }
+  } catch (error) {
+    logger.error(error);
+  }
+};

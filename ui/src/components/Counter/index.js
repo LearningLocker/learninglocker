@@ -1,12 +1,10 @@
 import React from 'react';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { isNumber, round } from 'lodash';
 import NoData from 'ui/components/Graphs/NoData';
 import numeral from 'numeral';
 import tooltipFactory from 'react-toolbox/lib/tooltip';
 import { Link } from 'react-toolbox/lib/link';
 import { getPercentage } from 'ui/utils/defaultTitles';
-import styles from './styles.css';
 
 const TooltipLink = tooltipFactory(Link);
 const trimNumber = val => numeral(val).format('0.[0]a');
@@ -50,7 +48,7 @@ const renderCount = ({ color, count, tooltip, hasBenchmark }) => (
     tooltipPosition="top"
     tooltipDelay={600}
     active />
-  );
+);
 
 const renderBenchmark = ({ percentage, model }) => {
   if (percentage.result === 'N/A') {
@@ -104,18 +102,20 @@ const renderCounter = ({ color, results, model, height, width }) => {
 
 
   return (
-    <div className={styles.outerCounter}>
+    <div style={{ height: '100%' }}>
       <div
-        className={styles.counter}
-        style={{ width, fontSize: countFontsize }}>
-        { renderedCount }
+        style={{ width, fontSize: countFontsize, height: '100%', textAlign: 'center' }}>
+        {renderedCount}
         <div
           key="benchmark"
-          className={styles.benchmark}
           style={{
             fontSize,
             color: percentage.color,
-          }}>{ renderedBenchmark }</div>
+            textAlign: 'center',
+            justifyContent: 'center',
+            display: 'flex',
+            fontWeight: '300',
+          }}>{renderedBenchmark}</div>
       </div>
     </div>
   );
@@ -123,4 +123,4 @@ const renderCounter = ({ color, results, model, height, width }) => {
 const counter = ({ results, color, model, height, width }) =>
   (results ? renderCounter({ results, color, model, height, width }) : <NoData />);
 
-export default withStyles(styles)(counter);
+export default counter;

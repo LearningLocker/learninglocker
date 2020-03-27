@@ -6,7 +6,6 @@ import { withProps, compose } from 'recompose';
 import { createDefaultTitle } from 'ui/utils/defaultTitles';
 import { Map, fromJS } from 'immutable';
 import { queryStringToQuery, modelQueryStringSelector } from 'ui/redux/modules/search';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { withModels, withModel } from 'ui/utils/hocs';
 import { addModel } from 'ui/redux/modules/models';
 import { loggedInUserId } from 'ui/redux/modules/auth';
@@ -18,7 +17,6 @@ import VisualiseForm from 'ui/containers/VisualiseForm';
 import DeleteButton from 'ui/containers/DeleteButton';
 import PrivacyToggleButton from 'ui/containers/PrivacyToggleButton';
 import CopyButton from './CopyButton';
-import styles from './visualise.css';
 
 const schema = 'visualisation';
 
@@ -112,7 +110,6 @@ class Visualise extends Component {
 }
 
 export default compose(
-  withStyles(styles),
   connect(state => ({
     userId: loggedInUserId(state),
     searchString: modelQueryStringSelector(schema)(state),

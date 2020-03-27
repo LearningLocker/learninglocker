@@ -1,32 +1,28 @@
 import React from 'react';
 import classNames from 'classnames';
 import DebounceInput from 'react-debounce-input';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from '../styles.css';
+import { InputWrapper } from 'ui/components/AutoComplete2/Inputs/styled';
 
 /**
  * A basic text input component with some default styling
  */
 const BasicInput = ({
   value,
-  onChange = () => {},
+  onChange = () => { },
   hasFocus,
   onFocus,
 }) => {
-  const classes = classNames({
-    [styles.inputWrapper]: true,
-    [styles.open]: hasFocus
-  });
+  const classes = classNames({ open: hasFocus });
   return (
-    <div className={classes}>
+    <InputWrapper className={classes}>
       <DebounceInput
         className="form-control"
         debounceTimeout={377}
         value={value}
         onChange={onChange}
         onFocus={onFocus} />
-    </div>
+    </InputWrapper>
   );
 };
 
-export default withStyles(styles)(BasicInput);
+export default BasicInput;

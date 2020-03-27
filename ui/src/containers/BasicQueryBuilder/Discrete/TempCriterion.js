@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Map, Set, List } from 'immutable';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 import QueryBuilderAutoComplete from
   'ui/components/AutoComplete2/QueryBuilderAutoComplete';
+import { CriterionOperator, CriterionValue, CriterionWrapper } from 'ui/containers/BasicQueryBuilder/styled';
 import Operator from '../Operator';
-import styles from '../styles.css';
 import { opToString, stringToOp, Operators } from './helpers';
 
 class TempCriterion extends Component {
@@ -74,33 +73,26 @@ class TempCriterion extends Component {
 
   onChangeOperator = operator => this.setState({ operator });
 
-  render = () => {
-    const criterionClasses = classNames(
-      styles.criterionValue,
-      styles.noCriteria,
-    );
-
-    return (
-      <div className={styles.criterion}>
-        <div className={styles.criterionOperator}>
-          <Operator
-            operators={new Set(['In', 'Out'])}
-            operator={opToString(this.state.operator)}
-            onOperatorChange={str => this.onChangeOperator(stringToOp(str))} />
-        </div>
-        <div className={criterionClasses} >
-          <QueryBuilderAutoComplete
-            values={new List()}
-            filter={this.props.filter}
-            schema={this.props.schema}
-            selectOption={this.onAddOption}
-            parseOption={this.getOptionDisplay}
-            searchStringToFilter={this.getSearchStringToFilter()}
-            parseOptionTooltip={this.getOptionIdentifier} />
-        </div>
-      </div>
-    );
-  }
+  render = () => (
+    <CriterionWrapper>
+      <CriterionOperator>
+        <Operator
+          operators={new Set(['In', 'Out'])}
+          operator={opToString(this.state.operator)}
+          onOperatorChange={str => this.onChangeOperator(stringToOp(str))} />
+      </CriterionOperator>
+      <CriterionValue isFullWidth>
+        <QueryBuilderAutoComplete
+          values={new List()}
+          filter={this.props.filter}
+          schema={this.props.schema}
+          selectOption={this.onAddOption}
+          parseOption={this.getOptionDisplay}
+          searchStringToFilter={this.getSearchStringToFilter()}
+          parseOptionTooltip={this.getOptionIdentifier} />
+      </CriterionValue>
+    </CriterionWrapper>
+  );
 }
 
 export default connect((_, ownProps) => {

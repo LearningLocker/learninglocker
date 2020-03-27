@@ -1,9 +1,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { noop, identity } from 'lodash';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import classNames from 'classnames';
-import styles from './styles.css';
+import styled from 'styled-components';
+
+const Wrapper = styled.div`
+  cursor: default;
+  white-space: nowrap;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  height: 36px;
+  ${props => props.highlighted && 'background: #eee;' || ''}
+`;
 
 class OptionListItemWrapper extends Component {
   static propTypes = {
@@ -40,22 +48,18 @@ class OptionListItemWrapper extends Component {
   }
 
   render() {
-    const { style } = this.props;
-    const wrapperClasses = classNames({
-      [styles.wrapper]: true,
-      [styles.highlighted]: this.props.highlighted
-    });
+    const { style, highlighted } = this.props;
 
     return (
-      <div
+      <Wrapper
+        highlighted={highlighted}
         style={style}
         onClick={this.onClick}
-        onMouseEnter={this.onMouseEnter}
-        className={wrapperClasses} >
+        onMouseEnter={this.onMouseEnter} >
         {this.props.children}
-      </div>
+      </Wrapper>
     );
   }
 }
 
-export default withStyles(styles)(OptionListItemWrapper);
+export default OptionListItemWrapper;
