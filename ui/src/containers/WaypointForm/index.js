@@ -3,9 +3,7 @@ import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import isEmpty from 'lodash/isEmpty';
 import Switch from 'ui/components/Material/Switch';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import QueryBuilder from 'ui/containers/QueryBuilder';
-import styles from './waypointform.css';
 
 class WaypointForm extends Component {
   static propTypes = {
@@ -64,7 +62,7 @@ class WaypointForm extends Component {
 
     const { isActiveDisabled } = this.state;
     return (
-      <div className={`row-fluid ${styles.waypointForm}`}>
+      <div className={'row-fluid'}>
         <div className="col-md-4">
           <div>
             <div className="form-group">
@@ -116,4 +114,4 @@ class WaypointForm extends Component {
   }
 }
 
-export default withStyles(styles)(WaypointForm);
+export default WaypointForm;

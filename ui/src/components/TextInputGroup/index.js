@@ -1,11 +1,21 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose } from 'recompose';
-import TextInput from 'ui/components/TextInput';
 import { IconButton } from 'react-toolbox/lib/button';
 import onClickOutside from 'react-onclickoutside';
-import styles from './styles.css';
+import styled from 'styled-components';
+import TextInput from 'ui/components/TextInput';
+
+const Form = styled.form`
+  padding-left: 8px;
+  border-radius: 2px;
+  flex-grow: 1;
+  background-color: white;
+  position: relative;
+  z-index: 9999;
+  display: flex;
+  right: 0;
+`;
 
 // Uncontrolled input component to edit a string
 class TextInputGroup extends Component {
@@ -57,9 +67,9 @@ class TextInputGroup extends Component {
   render = () => {
     const { className, fields, defaultValues, submitIcon, cancelIcon } = this.props;
     return (
-      <form
+      <Form
         onSubmit={this.onSubmit}
-        className={`${styles.form} ${className} clearfix`}>
+        className={`${className} clearfix`}>
         {fields.map((field, key) =>
           <TextInput
             key={key}
@@ -68,7 +78,9 @@ class TextInputGroup extends Component {
             name={field}
             onChange={this.onChangeField} />
         )}
-        <div className={`${styles.buttons} clearfix`}>
+        <div
+          className={'clearfix'}
+          style={{ float: 'right' }}>
           <IconButton
             onClick={this.onSubmit} >
             <i className={submitIcon} />
@@ -82,12 +94,11 @@ class TextInputGroup extends Component {
           }
 
         </div>
-      </form>
+      </Form>
     );
   }
 }
 
 export default compose(
-  withStyles(styles),
   onClickOutside
 )(TextInputGroup);

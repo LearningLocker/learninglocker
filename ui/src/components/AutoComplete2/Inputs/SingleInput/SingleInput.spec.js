@@ -1,16 +1,16 @@
 import React from 'react';
-import ReactTestRenderer from 'react-test-renderer';
-import { withInsertCSS } from 'ui/utils/hocs';
+import 'jest-styled-components';
+import renderer from 'react-test-renderer';
 import SingleInput from './SingleInput';
 
-const WrappedSingleInput = withInsertCSS(SingleInput);
+describe('SingleInput', () => {
+  test('should render', () => {
+    const mockRenderOption = jest.fn();
 
-test('SingleInput render', () => {
-  const mockRenderOption = jest.fn();
-  const singleInput = ReactTestRenderer.create(<WrappedSingleInput
-    selectedOption="test6"
-    renderOption={mockRenderOption} />
-  ).toJSON();
+    const singleInput = renderer
+      .create(<SingleInput selectedOption="test6" renderOption={mockRenderOption} />)
+      .toJSON();
 
-  expect(singleInput).toMatchSnapshot();
+    expect(singleInput).toMatchSnapshot();
+  });
 });

@@ -1,37 +1,33 @@
 import React from 'react';
-import classNames from 'classnames';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { CardList, Panel, DashboardTitle } from 'ui/containers/DashboardTemplates/styled';
 import BlankDashboard from './BlankDashboard';
 import StreamStarter from './StreamStarter';
 import GettingStarted from './GettingStarted';
-import styles from './styles.css';
+
 
 const DashboardTemplates = ({ handleClose }) => (
-  <div className={classNames(styles.panel, 'panel panel-default')}>
+  <Panel className={'panel panel-default'}>
 
-    <div className={styles.dashboardCreateTitle}>
+    <DashboardTitle>
       <label htmlFor="dashboard-templates">
         Add Dashboard
       </label>
       <div
-        className={styles.dashboardClose}
+        className="close"
         onClick={handleClose}>
         <i className="ion-close-round" />
       </div>
-    </div>
+    </DashboardTitle>
     <p>
       Start by selecting a blank dashboard or choose a template
     </p>
 
-    <div
-      id="dashboard-templates"
-      className={styles.cardList}>
-
+    <CardList id="dashboard-templates">
       <BlankDashboard />
       <GettingStarted />
       <StreamStarter />
-    </div>
-  </div>
+    </CardList>
+  </Panel>
 );
 
-export default withStyles(styles)(DashboardTemplates);
+export default DashboardTemplates;

@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Map, Set } from 'immutable';
-import classNames from 'classnames';
 import moment from 'moment-timezone';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { toTimezone } from 'lib/constants/timezones';
 import DatePicker from 'ui/components/Material/DatePicker';
+import {
+  CriterionButton,
+  CriterionOperator,
+  CriterionValue,
+  CriterionWrapper
+} from 'ui/containers/BasicQueryBuilder/styled';
 import Operator from '../Operator';
-import styles from '../styles.css';
 import { symbolOpToMongoOp } from './helpers';
 
 /**
@@ -128,38 +131,28 @@ class Criterion extends Component {
     this.onChangeCriterion(this.getOperator(), `${yyyymmdd}T00:00${z}`);
   };
 
-  render = () => {
-    const criterionClasses = classNames(styles.criterionValue, {
-      [styles.noCriteria]: false
-    });
-    const deleteBtnClasses = classNames(
-      styles.criterionButton,
-      'btn btn-default btn-xs'
-    );
+  render = () => (
+    <CriterionWrapper>
+      <CriterionOperator>
+        <Operator
+          operators={new Set(['>', '<', '>=', '<='])}
+          operator={this.getOperator()}
+          onOperatorChange={this.onChangeOperator} />
+      </CriterionOperator>
 
-    return (
-      <div className={styles.criterion}>
-        <div className={styles.criterionOperator}>
-          <Operator
-            operators={new Set(['>', '<', '>=', '<='])}
-            operator={this.getOperator()}
-            onOperatorChange={this.onChangeOperator} />
-        </div>
+      <CriterionValue isFullWidth={false}>
+        <DatePicker
+          value={this.getDateValue()}
+          onChange={this.onChangeDate} />
+      </CriterionValue>
 
-        <div className={criterionClasses}>
-          <DatePicker
-            value={this.getDateValue()}
-            onChange={this.onChangeDate} />
-        </div>
-
-        <button
-          onClick={this.props.onDeleteCriterion}
-          className={deleteBtnClasses}>
-          <i className="ion-minus-round" />
-        </button>
-      </div>
-    );
-  };
+      <CriterionButton
+        className={'btn btn-default btn-xs'}
+        onClick={this.props.onDeleteCriterion}>
+        <i className="ion-minus-round" />
+      </CriterionButton>
+    </CriterionWrapper>
+  );
 }
 
-export default withStyles(styles)(Criterion);
+export default Criterion;

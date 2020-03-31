@@ -1,18 +1,45 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`PieChart should render 1`] = `
+.c0 {
+  height: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.c0 svg g text {
+  font-size: 12px;
+}
+
 <div
-  class="chart"
+  className="c0"
 >
   <div>
     <div
-      style="font-size:0.9em"
+      style={
+        Object {
+          "fontSize": "0.9em",
+        }
+      }
     >
       <div
-        style="display:inline-block;width:12px;height:12px;background-color:#ffffff;margin-right:8px;margin-bottom:2px;vertical-align:middle"
-      >
-        
-      </div>
+        style={
+          Object {
+            "backgroundColor": "#ffffff",
+            "display": "inline-block",
+            "height": "12px",
+            "marginBottom": "2px",
+            "marginRight": "8px",
+            "verticalAlign": "middle",
+            "width": "12px",
+          }
+        }
+      />
       <span
         title="Series 1"
       >
@@ -20,13 +47,25 @@ exports[`PieChart should render 1`] = `
       </span>
     </div>
     <div
-      style="font-size:0.9em"
+      style={
+        Object {
+          "fontSize": "0.9em",
+        }
+      }
     >
       <div
-        style="display:inline-block;width:12px;height:12px;background-color:#123456;margin-right:8px;margin-bottom:2px;vertical-align:middle"
-      >
-        
-      </div>
+        style={
+          Object {
+            "backgroundColor": "#123456",
+            "display": "inline-block",
+            "height": "12px",
+            "marginBottom": "2px",
+            "marginRight": "8px",
+            "verticalAlign": "middle",
+            "width": "12px",
+          }
+        }
+      />
       <span
         title="Series 2"
       >
@@ -35,15 +74,37 @@ exports[`PieChart should render 1`] = `
     </div>
   </div>
   <div
-    style="height:100%;width:100%"
+    style={
+      Object {
+        "height": "100%",
+        "width": "100%",
+      }
+    }
   >
     <div
-      style="overflow:visible;height:0;width:0"
-    >
-      
-    </div>
+      className={undefined}
+      style={
+        Object {
+          "height": 0,
+          "overflow": "visible",
+          "width": 0,
+        }
+      }
+    />
   </div>
 </div>
 `;
 
-exports[`PieChart should render no data 1`] = `<NoData />`;
+exports[`PieChart should render no data 1`] = `
+<h4
+  style={
+    Object {
+      "marginTop": 20,
+      "textAlign": "center",
+      "width": "100%",
+    }
+  }
+>
+  No data in this time range.
+</h4>
+`;

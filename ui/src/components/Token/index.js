@@ -2,8 +2,47 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { identity, noop } from 'lodash';
 import classNames from 'classnames';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from './styles.css';
+import styled from 'styled-components';
+
+const Wrapper = styled.div`
+  border-radius: 2px;
+  background: #fff;
+  margin: 3px;
+  overflow: hidden;
+  border: 1px solid #ccc;
+  display: inline-flex;
+  height: 100%;
+
+  &.wrapperFullWidth {
+    flex-grow: 1;
+    border: none;
+  }
+`;
+
+const RemoveButton = styled.div`
+  margin-left: 2px;
+  justify-content: flex-end;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  color: #888;
+  font-size: 10px;
+  border-left: 1px solid #ccc;
+  line-height: 100%;
+  cursor: pointer;
+
+  &:hover {
+    color: #777;
+    background: #eee;
+  }
+`;
+
+const Value = styled.div`
+  font-size: 12px;
+  padding: 2px 5px;
+  justify-content: flex-start;
+  word-break: break-word;
+`;
 
 class Token extends Component {
   static displayName = 'Token';
@@ -35,31 +74,36 @@ class Token extends Component {
     this.props.handleRemove(this.props.value);
   }
 
-  renderRemoveBtn = () => (
-    <div
-      className={styles.removeBtn}
-      onClick={this.onRemoveBtnClick}>
-      <i className="ion-close-round" />
-    </div>
-  );
+  renderRemoveBtn = () => {
+    const { fullWidth } = this.props;
+
+    if (fullWidth) {
+      return null;
+    }
+
+    return (
+      <RemoveButton
+        onClick={this.onRemoveBtnClick}>
+        <i className="ion-close-round" />
+      </RemoveButton>
+    );
+  };
 
   render() {
     const { fullWidth, value, parse, parseTooltip } = this.props;
-    const wrapperClasses = classNames({
-      [styles.wrapper]: true,
-      [styles.wrapperFullWidth]: fullWidth
-    });
+    const wrapperClasses = classNames({ wrapperFullWidth: fullWidth });
     const parsedValue = parse(value);
     const title = parseTooltip(value);
+
     return (
-      <div title={title} className={wrapperClasses}>
-        <div className={styles.value}>
+      <Wrapper title={title} className={wrapperClasses}>
+        <Value>
           { parsedValue }
-        </div>
-        { !fullWidth ? this.renderRemoveBtn(styles) : null}
-      </div>
+        </Value>
+        {this.renderRemoveBtn()}
+      </Wrapper>
     );
   }
 }
 
-export default withStyles(styles)(Token);
+export default Token;

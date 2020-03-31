@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { identity, noop } from 'lodash';
 import classNames from 'classnames';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from './styles.css';
+import RemoveButton from './RemoveButton';
+import Value from './Value';
+import Wrapper from './Wrapper';
 
 class Token extends Component {
   static displayName = 'Token';
@@ -36,31 +37,24 @@ class Token extends Component {
   }
 
   renderRemoveBtn = () => (
-    <div
-      className={styles.removeBtn}
-      onClick={this.onRemoveBtnClick}>
+    <RemoveButton onClick={this.onRemoveBtnClick}>
       <i className="ion-close-round" />
-    </div>
+    </RemoveButton>
   );
 
   render() {
     const { fullWidth, value, parse, parseTooltip } = this.props;
-    const wrapperClasses = classNames({
-      [styles.wrapper]: true,
-      [styles.wrapperFullWidth]: fullWidth
-    });
+    const wrapperClasses = classNames({ fullWidth });
     const parsedValue = parse(value);
     const parsedIdent = parseTooltip(value);
     const title = parsedIdent;
     return (
-      <div title={title} className={wrapperClasses}>
-        <div className={styles.value}>
-          { parsedValue }
-        </div>
-        { !fullWidth ? this.renderRemoveBtn() : null}
-      </div>
+      <Wrapper title={title} className={wrapperClasses}>
+        <Value>{parsedValue}</Value>
+        {!fullWidth ? this.renderRemoveBtn() : null}
+      </Wrapper>
     );
   }
 }
 
-export default withStyles(styles)(Token);
+export default Token;

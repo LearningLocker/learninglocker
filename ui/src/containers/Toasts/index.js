@@ -1,30 +1,47 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Map } from 'immutable';
 import Portal from 'react-portal';
+import styled from 'styled-components';
 import {
   toastSelector,
   toastFinish,
 } from 'ui/redux/modules/toasts';
-import styles from './toasts.css';
+
+const Toast = styled.div`
+  background-color: #d9534f;
+  border-color: #d43f3a;
+  color: white;
+  padding: 10px;
+  margin: 10px;
+  cursor: pointer;
+`;
+
+const ToastsContainer = styled.div`
+  top: 56px;
+  width: 20%;
+  left: 40%;
+  position: fixed;
+  z-index: 301;
+  opacity: 0.7;
+  text-align: center;
+`;
 
 class Toasts extends Component {
 
   static propTypes = {
     toasts: PropTypes.instanceOf(Map),
     toastFinish: PropTypes.func,
-  }
+  };
 
   handleClose = (key) => {
     this.props.toastFinish([key]);
-  }
+  };
 
   renderToast = (toast, key) => (
-    <div
+    <Toast
       key={key}
-      className={styles.toast}
       onClick={this.handleClose.bind(null, key)}>
       <button
         type="button"
@@ -36,21 +53,22 @@ class Toasts extends Component {
       <span>
         {toast.get('message')}
       </span>
-    </div>
-    )
+    </Toast>
+  );
 
   render() {
     const { toasts } = this.props;
     return (
       <Portal isOpened={toasts.count() !== 0}>
-        <div className={styles.toasts}>
+        <ToastsContainer>
           {toasts.map(this.renderToast).valueSeq()}
-        </div>
+        </ToastsContainer>
       </Portal>
     );
   }
 }
 
-export default withStyles(styles)(connect(state => ({
-  toasts: toastSelector(state)
-}), { toastFinish })(Toasts));
+export default connect(
+  state => ({ toasts: toastSelector(state) }),
+  { toastFinish }
+)(Toasts);

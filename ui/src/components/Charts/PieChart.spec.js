@@ -1,35 +1,40 @@
 import React from 'react';
-import 'jest-enzyme';
+import 'jest-styled-components';
+import renderer from 'react-test-renderer';
 import { List, fromJS } from 'immutable';
-import { render, shallow } from 'enzyme';
-import { PieChartComponent } from './PieChart';
+import PieChart from './PieChart';
 
 
-test('PieChart should render no data', () => {
-  const pieChart = shallow(<PieChartComponent
-    results={new List()} />);
+describe('PieChart', () => {
+  test('should render no data', () => {
+    const pieChart = renderer
+      .create(<PieChart results={new List()} />)
+      .toJSON();
 
-  expect(pieChart).toMatchSnapshot();
-});
+    expect(pieChart).toMatchSnapshot();
+  });
 
-test('PieChart should render', () => {
-  const results = fromJS([[{
-    0: {
-      _id: 0,
-      count: 1,
-      model: 0
-    },
-    1: {
-      _id: 1,
-      count: 5,
-      model: 1
-    }
-  }]]);
+  test('should render', () => {
+    const results = fromJS([[{
+      0: {
+        _id: 0,
+        count: 1,
+        model: 0
+      },
+      1: {
+        _id: 1,
+        count: 5,
+        model: 1
+      }
+    }]]);
 
-  const pieChart = render(<PieChartComponent
-    results={results}
-    labels={fromJS([undefined])}
-    colors={fromJS(['#ffffff', '#123456'])} />);
+    const pieChart = renderer
+      .create(<PieChart
+        results={results}
+        labels={fromJS([undefined])}
+        colors={fromJS(['#ffffff', '#123456'])} />)
+      .toJSON();
 
-  expect(pieChart).toMatchSnapshot();
+    expect(pieChart).toMatchSnapshot();
+  });
 });
