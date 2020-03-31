@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import * as _ from 'lodash';
 import Scroll from 'react-scroll';
 import { connect } from 'react-redux';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { actions, routeNodeSelector } from 'redux-router5';
 import { withProps, compose, lifecycle, withHandlers, mapProps } from 'recompose';
 import { Map, List, is } from 'immutable';
@@ -16,7 +15,7 @@ import WidgetVisualiseCreator from 'ui/containers/WidgetVisualiseCreator';
 import { withModels, withModel } from 'ui/utils/hocs';
 import { loggedInUserId } from 'ui/redux/selectors';
 import { activeOrgIdSelector } from 'ui/redux/modules/router';
-import styles from './styles.css';
+import { EditWrapper } from 'ui/containers/Dashboard/styled';
 
 class Dashboard extends Component {
   static propTypes = {
@@ -149,20 +148,18 @@ class Dashboard extends Component {
                 <i className="icon ion-android-share-alt" />
               </button>
             </span>
-            <div className={styles.editWrapper}>
+            <EditWrapper>
               <a
-                className={styles.backBtn}
                 onClick={backToDashboard} >
                 <i className="icon ion-chevron-left" />
               </a>
               <Input
                 type="text"
                 name="Title"
-                className={styles.titleField}
                 value={model.get('title', ' ')}
                 onChange={this.onTitleChange}
                 style={{ fontSize: '18px', color: '#929292', padding: 0 }} />
-            </div>
+            </EditWrapper>
           </div>
         </header>
         <div className="row">
@@ -194,7 +191,6 @@ class Dashboard extends Component {
 }
 
 export default compose(
-  withStyles(styles),
   connect(
     state => ({
       isLoading: isLoadingSelector('dashboard', new Map())(state),
