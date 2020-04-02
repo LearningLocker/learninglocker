@@ -93,8 +93,8 @@ const createUserTokenPayload = (user, provider) => payloadDefaults({
 });
 
 /**
- * @param {object} user - TODO: define type
- * @param {string} provider
+ * @param {*} user
+ * @param {*} provider
  * @returns {Promise<string>}
  */
 const createUserJWT = (user, provider) => createJWT(
@@ -111,8 +111,8 @@ const createUserRefreshTokenPayload = (user, provider) => payloadDefaults({
 });
 
 /**
- * @param {object} user - TODO: define type
- * @param {string} provider
+ * @param {*} user
+ * @param {*} provider
  * @returns {Promise<string>}
  */
 const createUserRefreshJWT = (user, provider) => createJWT(
@@ -174,7 +174,7 @@ const createOrgRefreshTokenPayload = (user, organisationId, provider) => payload
  * @param {*} user
  * @param {*} organisationId
  * @param {*} provider
- * @returns {Promise<any>}
+ * @returns {Promise<string>}
  */
 const createOrgRefreshJWT = (user, organisationId, provider) =>
   createJWT(

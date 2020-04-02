@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Map, Set } from 'immutable';
-import classNames from 'classnames';
 import moment from 'moment-timezone';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { toTimezone } from 'lib/constants/timezones';
 import DatePicker from 'ui/components/Material/DatePicker';
+import { CriterionOperator, CriterionValue, CriterionWrapper } from 'ui/containers/BasicQueryBuilder/styled';
 import Operator from '../Operator';
-import styles from '../styles.css';
 import { symbolOpToMongoOp } from './helpers';
 
 const DEFAULT_SYMBOL_OP = '<';
@@ -66,26 +64,19 @@ class TempCriterion extends Component {
     }));
   }
 
-  render = () => {
-    const criterionClasses = classNames(styles.criterionValue, {
-      [styles.noCriteria]: true
-    });
-
-    return (
-      <div className={styles.criterion}>
-        <div className={styles.criterionOperator}>
-          <Operator
-            operators={new Set(['>', '<', '>=', '<='])}
-            operator={this.state.operator}
-            onOperatorChange={this.onChangeOperator} />
-        </div>
-        <div className={criterionClasses}>
-          <DatePicker
-            onChange={this.onChangeDate} />
-        </div>
-      </div>
-    );
-  }
+  render = () => (
+    <CriterionWrapper>
+      <CriterionOperator>
+        <Operator
+          operators={new Set(['>', '<', '>=', '<='])}
+          operator={this.state.operator}
+          onOperatorChange={this.onChangeOperator} />
+      </CriterionOperator>
+      <CriterionValue isFullWidth>
+        <DatePicker onChange={this.onChangeDate} />
+      </CriterionValue>
+    </CriterionWrapper>
+  )
 }
 
-export default withStyles(styles)(TempCriterion);
+export default TempCriterion;

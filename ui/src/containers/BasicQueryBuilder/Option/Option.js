@@ -1,8 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from './styles.css';
+import styled from 'styled-components';
+
+const StyledOption = styled.div`
+  padding: 4px 4px;
+  cursor: pointer;
+  ${props => props.isHighlighted && 'background-color: #d4d4d4;' || ''}
+
+  &:focus {
+    outline: 0;
+  }
+`;
 
 class Option extends Component {
   static propTypes = {
@@ -41,23 +49,21 @@ class Option extends Component {
     }
   }
 
-  render = () => {
-    const classes = classNames(styles.option, {
-      [styles.highlightedOption]: this.props.highlighted
-    });
-
-    return (
-      <div
-        className={classes}
-        onClick={this.props.onSelect}
-        onMouseOver={this.props.onHighlight}
-        onKeyDown={this.handleKeyDown}
-        tabIndex={0}
-        ref={(ref) => { this.option = ref; }}>
-        {this.props.children}
-      </div>
-    );
-  }
+  render = () => (
+    <StyledOption
+      isHighlighted={this.props.highlighted}
+      onClick={this.props.onSelect}
+      onMouseOver={this.props.onHighlight}
+      onKeyDown={this.handleKeyDown}
+      tabIndex={0}
+      ref={
+        (ref) => {
+          this.option = ref;
+        }
+      }>
+      {this.props.children}
+    </StyledOption>
+  );
 }
 
-export default withStyles(styles)(Option);
+export default Option;

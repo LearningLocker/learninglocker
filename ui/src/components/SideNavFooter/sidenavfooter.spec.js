@@ -1,12 +1,14 @@
 import React from 'react';
-import ReactTestRenderer from 'react-test-renderer';
-import { withInsertCSS } from 'ui/utils/hocs';
+import 'jest-styled-components';
+import renderer from 'react-test-renderer';
 import SideNavFooter from './index.js';
 
+describe('SideNavFooter', () => {
+  test('should render', () => {
+    const sideNav = renderer
+      .create(<SideNavFooter />)
+      .toJSON();
 
-const WrappedSideNavFooter = withInsertCSS(SideNavFooter);
-
-test('Renders help link', () => {
-  const sideNav = ReactTestRenderer.create(<WrappedSideNavFooter />).toJSON();
-  expect(sideNav).toMatchSnapshot();
+    expect(sideNav).toMatchSnapshot();
+  });
 });

@@ -1,10 +1,21 @@
 import onClickOutside from 'react-onclickoutside';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import classNames from 'classnames';
 import { compose } from 'recompose';
-import styles from './dropdownmenu.css';
+import styled from 'styled-components';
+
+const Menu = styled.div`
+  & ul > div {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: normal;
+    line-height: 1.42857;
+    color: #333333;
+    white-space: nowrap;
+  }
+`;
 
 class DropDownMenu extends Component {
   static propTypes = {
@@ -33,11 +44,10 @@ class DropDownMenu extends Component {
   }
 
   render = () => (
-    <div
+    <Menu
       className={classNames({
         'btn-group': true,
         open: this.state.isOpen,
-        [styles.menu]: true
       })}>
       <span onClick={this.onClick} >
         {this.props.button}
@@ -46,14 +56,13 @@ class DropDownMenu extends Component {
         <ul className="dropdown-menu">
           {React.Children.map(this.props.children, child => (
             <li>{child}</li>
-        ))}
+          ))}
         </ul>
       }
-    </div>
+    </Menu>
   );
 }
 
 export default compose(
-  withStyles(styles),
   onClickOutside
 )(DropDownMenu);

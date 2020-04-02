@@ -1,86 +1,83 @@
 import React from 'react';
-import ReactTestRenderer from 'react-test-renderer';
-import { withInsertCSS } from 'ui/utils/hocs';
+import 'jest-styled-components';
+import renderer from 'react-test-renderer';
 import { Map } from 'immutable';
 import { initialSections } from 'ui/redux/modules/queryBuilder';
-import CriterionWithStyles, { Criterion } from './Criterion.js';
+import Criterion from './Criterion.js';
 
-const WrappedCriterion = withInsertCSS(CriterionWithStyles);
+describe('BasicQueryBuilder -> Range Criterion', () => {
+  test('render', () => {
+    const section = initialSections.getIn(['result', 'children', 'scaled']);
+    const criterion = renderer
+      .create(<Criterion section={section} />)
+      .toJSON();
 
-test('Criterion should render', () => {
-  const section = initialSections.getIn(['result', 'children', 'scaled']);
-  const criterion = ReactTestRenderer.create(
-    <WrappedCriterion
-      section={section} />
-  ).toJSON();
-
-  expect(criterion).toMatchSnapshot();
-});
-
-test('Criterion with value', () => {
-  const section = initialSections.getIn(['result', 'children', 'scaled']);
-
-  const mockCriteria = new Map({
-    'statement.result.score.scaled': new Map({
-      $gt: 0.6
-    })
+    expect(criterion).toMatchSnapshot();
   });
 
-  const criterion = ReactTestRenderer.create(
-    <WrappedCriterion
-      criterion={mockCriteria}
-      section={section} />
-  ).toJSON();
+  test('with value', () => {
+    const section = initialSections.getIn(['result', 'children', 'scaled']);
 
-  expect(criterion).toMatchSnapshot();
-});
+    const mockCriteria = new Map({
+      'statement.result.score.scaled': new Map({
+        $gt: 0.6
+      })
+    });
 
-test('Criterion operator change', () => {
-  const mockMerge = jest.fn();
+    const criterion = renderer
+      .create(<Criterion criterion={mockCriteria} section={section} />)
+      .toJSON();
 
-  const onCriterionChange = jest.fn().mockReturnValueOnce({
-    merge: mockMerge
+    expect(criterion).toMatchSnapshot();
   });
 
-  const testCriterion = new Criterion({
-    criterion: new Map({
-      $comment: 'A comment',
-    }),
-    section: initialSections.getIn(['result', 'children', 'scaled']),
-    onCriterionChange,
-    onDeleteCriterion: jest.fn()
+  test('operator change', () => {
+    const mockMerge = jest.fn();
+
+    const onCriterionChange = jest.fn().mockReturnValueOnce({
+      merge: mockMerge
+    });
+
+    const testCriterion = new Criterion({
+      criterion: new Map({
+        $comment: 'A comment',
+      }),
+      section: initialSections.getIn(['result', 'children', 'scaled']),
+      onCriterionChange,
+      onDeleteCriterion: jest.fn()
+    });
+
+
+    testCriterion.changeOperator('<=');
+
+    expect(onCriterionChange.mock.calls.length).toEqual(1);
+    expect(onCriterionChange.mock.calls[0][0].get('statement.result.score.scaled')).toEqual(new Map({ $lte: '' }));
   });
 
+  test('value change', () => {
+    const mockMerge = jest.fn();
 
-  testCriterion.changeOperator('<=');
+    const onCriterionChange = jest.fn().mockReturnValueOnce({
+      merge: mockMerge
+    });
 
-  expect(onCriterionChange.mock.calls.length).toEqual(1);
-  expect(onCriterionChange.mock.calls[0][0].get('statement.result.score.scaled')).toEqual(new Map({ $lte: '' }));
-});
+    const testCriterion = new Criterion({
+      criterion: new Map({
+        $comment: 'A comment',
+      }),
+      section: initialSections.getIn(['result', 'children', 'scaled']),
+      onCriterionChange,
+      onDeleteCriterion: jest.fn()
+    });
 
-test('Criterion value change', () => {
-  const mockMerge = jest.fn();
 
-  const onCriterionChange = jest.fn().mockReturnValueOnce({
-    merge: mockMerge
+    testCriterion.handleValueChange({
+      target: {
+        value: '0.5'
+      }
+    });
+
+    expect(onCriterionChange.mock.calls.length).toEqual(1);
+    expect(onCriterionChange.mock.calls[0][0].get('statement.result.score.scaled')).toEqual(new Map({ $gt: 0.5 }));
   });
-
-  const testCriterion = new Criterion({
-    criterion: new Map({
-      $comment: 'A comment',
-    }),
-    section: initialSections.getIn(['result', 'children', 'scaled']),
-    onCriterionChange,
-    onDeleteCriterion: jest.fn()
-  });
-
-
-  testCriterion.handleValueChange({
-    target: {
-      value: '0.5'
-    }
-  });
-
-  expect(onCriterionChange.mock.calls.length).toEqual(1);
-  expect(onCriterionChange.mock.calls[0][0].get('statement.result.score.scaled')).toEqual(new Map({ $gt: 0.5 }));
 });

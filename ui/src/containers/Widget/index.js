@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { Map } from 'immutable';
 import { connect } from 'react-redux';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose } from 'recompose';
 import {
   COUNTER,
   PIE,
   TEMPLATE_LAST_7_DAYS_STATEMENTS,
-  TEMPLATE_CURATR_COMMENT_COUNT
+  TEMPLATE_STREAM_COMMENT_COUNT
 } from 'lib/constants/visualise';
 import { fetchModels } from 'ui/redux/modules/pagination';
 import { updateModel, modelsSchemaIdSelector } from 'ui/redux/modules/models';
@@ -21,7 +19,16 @@ import WidgetVisualisePicker from 'ui/containers/WidgetVisualisePicker';
 import VisualisationViewer from 'ui/containers/Visualisations/VisualisationViewer';
 import DeleteConfirm from 'ui/containers/DeleteConfirm';
 import { createDefaultTitle } from 'ui/utils/defaultTitles';
-import styles from './widget.css';
+import {
+  CloseButton,
+  MenuButton,
+  Widget as StyledWidget,
+  WidgetBody,
+  WidgetDropdownIcon,
+  WidgetContent,
+  WidgetHeading,
+  WidgetTitle
+} from './styled';
 
 const schema = 'widget';
 const VISUALISATION = 'stages/VISUALISATION';
@@ -127,7 +134,7 @@ class Widget extends Component {
       </span>
     );
 
-  isCounter = type => type === COUNTER || type === TEMPLATE_LAST_7_DAYS_STATEMENTS || type === TEMPLATE_CURATR_COMMENT_COUNT
+  isCounter = type => type === COUNTER || type === TEMPLATE_LAST_7_DAYS_STATEMENTS || type === TEMPLATE_STREAM_COMMENT_COUNT
 
   renderMenu = () => {
     const { model, organisationId, visualisation } = this.props;
@@ -154,33 +161,31 @@ class Widget extends Component {
     return (
       <DropDownMenu
         button={
-          <a className={styles.menuButton}>
+          <MenuButton>
             <i className="ion ion-navicon-round" />
-          </a>
+          </MenuButton>
         }>
         {shouldShowTableModeToggle &&
-          <a
+          <CloseButton
             onClick={this.toggleSourceView}
-            title="Table mode"
-            className={styles.closeButton}>
-            <i className={`ion ${styles.marginRight} ion-edit grey`} />{this.getSourceView()}
-          </a>
+            title="Table mode" >
+            <WidgetDropdownIcon className={'ion ion-edit grey'} />{this.getSourceView()}
+          </CloseButton>
         }
 
         {shouldShowDonutModeToggle &&
-          <a
+          <CloseButton
             onClick={this.toggleDonutView}
-            title="Donut mode"
-            className={styles.closeButton}>
-            <i className={`ion ${styles.marginRight} ion-edit grey`} />{this.getDonutView()}
-          </a>
+            title="Donut mode" >
+            <WidgetDropdownIcon className={'ion ion-edit grey'} />{this.getDonutView()}
+          </CloseButton>
         }
 
         {shouldShowGoVisualisation &&
           <Link
             routeName={'organisation.data.visualise.visualisation'}
             routeParams={{ organisationId, visualisationId: visualisation.get('_id') }} >
-            <i className={`ion ${styles.marginRight} ion-edit grey`} />
+            <WidgetDropdownIcon className={'ion ion-edit grey'} />
             Go to visualisation
           </Link>
         }
@@ -188,7 +193,7 @@ class Widget extends Component {
         <a
           onClick={this.openModal.bind(null, VISUALISATION)}
           title="Edit widget visualisation or title">
-          <i className={`ion ${styles.marginRight} ion-gear-b grey`} />
+          <WidgetDropdownIcon className={'ion ion-gear-b grey'} />
           Edit Widget
         </a>
 
@@ -196,7 +201,7 @@ class Widget extends Component {
           <a
             onClick={this.openDeleteModal}
             title="Delete Widget">
-            <i className={`ion ${styles.marginRight}  ion-close-round grey`} />
+            <WidgetDropdownIcon className={'ion ion-close-round grey'} />
             Delete
           </a>
         }
@@ -215,26 +220,21 @@ class Widget extends Component {
     const { openModalStep, isDeleteOpen } = this.state;
     const isModalOpen = openModalStep === VISUALISATION || suggestedStep === VISUALISATION;
 
-    const titleStyles = classNames({
-      [styles.title]: true,
-      [styles.draggableTitle]: this.props.editable,
-    });
     return (
-      <div className={`panel panel-default animated fadeIn ${styles.widget}`}>
-        <div className={styles.widgetContent}>
-          <div
-            className={`panel-heading ${styles.heading}`}>
-            <div className={`panel-title ${titleStyles} react-drag-handle`}>
-              {this.props.editable && this.renderMenu(styles)}
+      <StyledWidget className={'panel panel-default animated fadeIn'}>
+        <WidgetContent>
+          <WidgetHeading className={'panel-heading'}>
+            <WidgetTitle className={'panel-title react-drag-handle'}>
+              {this.props.editable && this.renderMenu()}
               <span style={{ cursor: 'initial' }}>{this.getTitle(model, this.props)}</span>
-            </div>
-          </div>
+            </WidgetTitle>
+          </WidgetHeading>
           {
-            <div className={`panel-body ${styles.body}`}>
+            <WidgetBody className={'panel-body'}>
               {model.has('visualisation') && (
                 <VisualisationViewer id={model.get('visualisation')} />
               )}
-            </div>
+            </WidgetBody>
           }
           {
             (isModalOpen) &&
@@ -246,16 +246,18 @@ class Widget extends Component {
               onChangeVisualisation={this.props.onChangeVisualisation} />
           }
           <DeleteConfirm isOpened={isDeleteOpen} {...delPopupProps} />
-        </div>
-      </div>
+        </WidgetContent>
+      </StyledWidget>
     );
   }
 }
 
 export default compose(
-  withStyles(styles),
-  connect((state, { model }) => ({
-    visualisation: modelsSchemaIdSelector('visualisation', model.get('visualisation'))(state),
-    organisationId: activeOrgIdSelector(state),
-  }), { updateModel, setModelQuery, fetchModels }),
+  connect(
+    (state, { model }) => ({
+      visualisation: modelsSchemaIdSelector('visualisation', model.get('visualisation'))(state),
+      organisationId: activeOrgIdSelector(state),
+    }),
+    { updateModel, setModelQuery, fetchModels }
+  ),
 )(Widget);

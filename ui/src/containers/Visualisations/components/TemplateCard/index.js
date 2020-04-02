@@ -1,7 +1,31 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from './styles.css';
+import styled from 'styled-components';
+
+const Card = styled.div`
+  display: flex;
+  align-content: center;
+  flex-direction: column;
+  width: 180px;
+  padding: 8px;
+
+  &:hover {
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  &:active {
+    text-decoration: none;
+  }
+
+  img {
+    height: 100px;
+  }
+
+  p {
+    text-align: center;
+  }
+`;
 
 /**
  * @param {string} props.title
@@ -13,12 +37,12 @@ const TemplateCard = ({
   srcImage,
   onClick,
 }) => (
-  <div className={styles.card} onClick={onClick} >
+  <Card onClick={onClick} >
     <img
       src={srcImage}
       alt={title} />
     <p>{title}</p>
-  </div>
+  </Card>
 );
 
 TemplateCard.propTypes = {
@@ -27,4 +51,4 @@ TemplateCard.propTypes = {
   onClick: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles)(React.memo(TemplateCard));
+export default React.memo(TemplateCard);

@@ -1,10 +1,8 @@
 import React from 'react';
-import ReactTestRenderer from 'react-test-renderer';
-import { withInsertCSS } from 'ui/utils/hocs';
+import 'jest-styled-components';
+import renderer from 'react-test-renderer';
 import { fromJS } from 'immutable';
 import LineChart from './LineChart';
-
-const WrappedLineChart = withInsertCSS(LineChart);
 
 test('LineChartResult should render axes', () => {
   const mockResult = fromJS([[{
@@ -15,16 +13,18 @@ test('LineChartResult should render axes', () => {
     }
   }]]);
 
-  const lineChart = ReactTestRenderer.create(
-    <WrappedLineChart
-      results={mockResult}
-      labels={fromJS([undefined])}
-      axesLabels={{
-        yLabel: 'THE-Y',
-        xLabel: 'THE-X'
-      }}
-      chartWrapperFn={() => (<div />)} />
-  ).toJSON();
+  const lineChart = renderer
+    .create(
+      <LineChart
+        results={mockResult}
+        labels={fromJS([undefined])}
+        axesLabels={{
+          yLabel: 'THE-Y',
+          xLabel: 'THE-X'
+        }}
+        chartWrapperFn={() => (<div />)} />
+    )
+    .toJSON();
 
   expect(lineChart).toMatchSnapshot();
 });

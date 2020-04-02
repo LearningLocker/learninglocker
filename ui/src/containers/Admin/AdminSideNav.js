@@ -1,39 +1,46 @@
 import React from 'react';
 import Link from 'ui/containers/Link';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import SideNavFooter from 'ui/components/SideNavFooter';
-import styles from 'ui/containers/SideNav/sidenav.css';
+import {
+  SideNavContainer,
+  NavSideNav, SideNavHeader, activeLinkClassName, OrgAvatar
+} from 'ui/containers/SideNav/styled';
 import DEFAULT_LOGO from 'ui/static/logos/default/default.gif';
 
 
 const renderLink = (activeClass, routeName, text) => (
   <li>
-    <Link routeName={routeName} activeClassName={activeClass}> {text}</Link>
+    <Link routeName={routeName} activeClassName={activeClass}>
+      {text}
+    </Link>
   </li>
 );
 
-const component = () => {
-  const activeClass = `v-link-active ${styles.vLinkActive}`;
-  return (
-    <div className={`col-sm-3 col-md-2 ${styles.sidenav}`} >
-      <header className={styles.sidenavHeader}>
-        <div className={styles.orgAvatar} >
-          <img alt="logo" src={DEFAULT_LOGO} />
-        </div>
-        <div className="media-body">
-          <div className={styles.mediaAuthor}>Site Settings</div>
-        </div>
-      </header>
+const AdminSideNav = () => {
+  const activeClass = `v-link-active ${activeLinkClassName}`;
 
-      <ul className={`nav ${styles.navSidenav}`}>
+  return (
+    <SideNavContainer className={'col-sm-3 col-md-2'} >
+      <SideNavHeader>
+        <OrgAvatar>
+          <img alt="logo" src={DEFAULT_LOGO} />
+        </OrgAvatar>
+        <div className="media-body">
+          <div style={{ textAlign: 'center' }}>
+            Site Settings
+          </div>
+        </div>
+      </SideNavHeader>
+
+      <NavSideNav className={'nav'}>
         { renderLink(activeClass, 'admin.users', 'Users') }
         { renderLink(activeClass, 'admin.organisations', 'Organisations') }
-      </ul>
+      </NavSideNav>
       <footer>
         <SideNavFooter />
       </footer>
-    </div>
+    </SideNavContainer>
   );
 };
 
-export default withStyles(styles)(component);
+export default AdminSideNav;
