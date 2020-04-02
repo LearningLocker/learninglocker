@@ -21,7 +21,6 @@ const maybeCloseResources = async ({
   aggregationProcessorDocument,
   aggregationProcessorState
 }) => {
-  console.log('001');
   if (shouldCloseWebsocket(aggregationProcessorDocument)) {
     aggregationProcessorState.openQueries -= 1;
     console.log('002 changeStream closed');
