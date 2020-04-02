@@ -23,7 +23,6 @@ const maybeCloseResources = async ({
 }) => {
   if (shouldCloseWebsocket(aggregationProcessorDocument)) {
     aggregationProcessorState.openQueries -= 1;
-    console.log('002 changeStream closed');
     await delay(60000);
     changeStream.close();
     if (aggregationProcessorState.openQueries <= 0) {
