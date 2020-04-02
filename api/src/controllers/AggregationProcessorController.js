@@ -127,47 +127,7 @@ export const runAggregationProcessorInitialise = async ({
 export const aggregationProcessorInitialise = catchErrors(
   async (request, response) => {
     const authInfo = request.user.authInfo || {};
-    // const organisation = getOrgFromAuthInfo(authInfo);
 
-    // const pipeline = request.body.pipeline;
-
-    // const scopedFilter = await getScopeFilter({
-    //   modelName: 'aggregationProcessor',
-    //   actionName: 'view',
-    //   authInfo,
-    //   allowDashboardAccess: true
-    // });
-    // pipeline.unshift({
-    //   $match: encode$oid(scopedFilter)
-    // });
-
-    // const pipelineString = JSON.stringify(pipeline);
-    // const hash = sha1(pipelineString);
-
-    // const windowSize = request.query.timeIntervalSinceToday;
-    // const windowSizeUnits = request.query.timeIntervalUnits;
-    // const previousWindowSize = request.query.timeIntervalSincePreviousTimeInterval;
-
-    // const useWindowOptimization = canUseWindowOptimization(pipeline);
-
-    // const model = await findOrCreateAggregationProcessor({
-    //   organisation,
-    //   lrs_id: get(authInfo, ['client', 'lrs_id']),
-    //   pipelineHash: hash,
-    //   pipelineString,
-    //   windowSize,
-    //   windowSizeUnits,
-    //   previousWindowSize,
-    //   useWindowOptimization
-    // });
-
-    // // Send it to the queue
-    // await publish({
-    //   queueName: AGGREGATION_PROCESSOR_QUEUE,
-    //   payload: {
-    //     aggregationProcessorId: model._id
-    //   }
-    // });
     const model = await runAggregationProcessorInitialise({
       authInfo,
       timeIntervalSinceToday: request.query.timeIntervalSinceToday,

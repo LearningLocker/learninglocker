@@ -253,8 +253,6 @@ const fetchAggregation = createAsyncDuck({
           resolve();
         });
       });
-    } else {
-      // Send the request via ws
     }
 
     // Send the auth details
