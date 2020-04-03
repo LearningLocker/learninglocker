@@ -54,8 +54,8 @@ class DropDownMenu extends Component {
       </span>
       {this.state.isOpen &&
         <ul className={`dropdown-menu ${this.props.customClass}`}>
-          {React.Children.map(this.props.children, child => (
-            <li>{child}</li>
+          {React.Children.map(this.props.children, (child, index) => (
+            <li key={index}>{child}</li>
           ))}
         </ul>
       }
