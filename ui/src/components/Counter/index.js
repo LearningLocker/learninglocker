@@ -1,12 +1,11 @@
 import React from 'react';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { isNumber, round } from 'lodash';
 import NoData from 'ui/components/Graphs/NoData';
 import numeral from 'numeral';
+import styled from 'styled-components';
 import tooltipFactory from 'react-toolbox/lib/tooltip';
 import { Link } from 'react-toolbox/lib/link';
 import { getPercentage } from 'ui/utils/defaultTitles';
-import styles from './styles.css';
 
 const TooltipLink = tooltipFactory(Link);
 const trimNumber = val => numeral(val).format('0.[0]a');
@@ -42,6 +41,16 @@ const resultsIconStyles = {
   width: '40px',
 };
 
+const ContextLabel = styled.div(() => ({
+  'font-size': '20p',
+  'margin-bottom': '5px',
+  'margin-top': '-10px',
+  'white-space': 'nowrap',
+  overflow: 'hidden',
+  'text-overflow': 'ellipsis'
+}));
+
+
 const renderCount = ({ color, count, tooltip, hasBenchmark, hasContextLabel }) => (
   <TooltipLink
     style={{ color, height: hasBenchmark || hasContextLabel ? null : '100%' }}
@@ -50,15 +59,14 @@ const renderCount = ({ color, count, tooltip, hasBenchmark, hasContextLabel }) =
     tooltipPosition="top"
     tooltipDelay={600}
     active />
-  );
+);
 
 const renderСontextLabel = ({ contextLabel, fontSize, color }) => (
-  <div
+  <ContextLabel
     style={{ fontSize, color }}
-    key="contextLabel"
-    className={styles.contextLabel}>
+    key="contextLabel">
     {contextLabel}
-  </div>
+  </ContextLabel>
   );
 
 const renderBenchmark = ({ percentage, model }) => {
@@ -115,19 +123,21 @@ const renderCounter = ({ color, results, model, height, width }) => {
   const renderedContextLabel = renderСontextLabel({ contextLabel: model.get('contextLabel', ''), fontSize, color });
 
   return (
-    <div className={styles.outerCounter}>
+    <div style={{ height: '100%' }}>
       <div
-        className={styles.counter}
-        style={{ width, fontSize: countFontsize }}>
+        style={{ width, fontSize: countFontsize, height: '100%', textAlign: 'center' }}>
         { renderedCount }
         { renderedContextLabel }
         <div
           key="benchmark"
-          className={styles.benchmark}
           style={{
             fontSize,
             color: percentage.color,
-          }}>{ renderedBenchmark }</div>
+            textAlign: 'center',
+            justifyContent: 'center',
+            display: 'flex',
+            fontWeight: '300',
+          }}>{renderedBenchmark}</div>
       </div>
     </div>
   );
@@ -135,4 +145,4 @@ const renderCounter = ({ color, results, model, height, width }) => {
 const counter = ({ results, color, model, height, width }) =>
   (results ? renderCounter({ results, color, model, height, width }) : <NoData />);
 
-export default withStyles(styles)(counter);
+export default counter;

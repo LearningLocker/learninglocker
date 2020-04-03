@@ -1,9 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`VisualiseIcon should render small icon with class visualisationSmall 1`] = `
+exports[`VisualiseIcon should render small icon 1`] = `
+.c0 {
+  height: 30px;
+}
+
 <img
   alt="Correlation"
-  className="visualisationSmall"
+  className="c0"
   src="test-file-stub"
 />
 `;

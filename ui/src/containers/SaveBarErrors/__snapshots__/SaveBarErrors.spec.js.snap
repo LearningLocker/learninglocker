@@ -1,8 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`SaveBarErrors should render an error message 1`] = `
+.c0 {
+  top: 2.4rem;
+  position: absolute;
+  right: 30px;
+  left: 25px;
+}
+
 <div
-  className="container"
+  className="c0"
 >
   <div
     className="alert alert-danger alert-dismissible"

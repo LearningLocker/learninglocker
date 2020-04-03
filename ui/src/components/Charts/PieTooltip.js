@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { List } from 'immutable';
 import { round } from 'lodash';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from './styles.css';
+import { CustomTooltip, Label, Value } from './styled';
 
 class PieTooltip extends Component {
   static propTypes = {
@@ -11,14 +10,13 @@ class PieTooltip extends Component {
     labels: PropTypes.instanceOf(List),
     active: PropTypes.bool,
     display: PropTypes.func,
-  }
+  };
 
   static defaultProps = {
     display: label => label,
-  }
+  };
 
-  getLabel = label => i =>
-    label || `Series ${i + 1}`
+  getLabel = label => i => label || `Series ${i + 1}`;
 
   getValue = entry => i => round(entry.payload[`Series ${i + 1}`], 2);
 
@@ -26,7 +24,7 @@ class PieTooltip extends Component {
     <p key={i}>
       {`${this.getLabel(label)(i)} - ${this.getValue(entry)(i)}`}
     </p>
-  )
+  );
 
   render = () => {
     const { display, active } = this.props;
@@ -34,15 +32,15 @@ class PieTooltip extends Component {
       const { payload, labels } = this.props;
       const entry = payload[0];
       return (
-        <div className={styles.customTooltip}>
-          <p className={styles.label}>{`${display(entry.payload.id)}`}</p>
-          <div className={styles.value}>
+        <CustomTooltip>
+          <Label>{`${display(entry.payload.id)}`}</Label>
+          <Value>
             {labels.map(this.renderLabel(entry))}
-          </div>
-        </div>
+          </Value>
+        </CustomTooltip>
       );
     }
     return null;
   }
 }
-export default withStyles(styles)(PieTooltip);
+export default PieTooltip;

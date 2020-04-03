@@ -1,11 +1,19 @@
 import React from 'react';
 import ProgressBar from 'react-toolbox/lib/progress_bar';
-import { omitBy, isFunction } from 'lodash';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import styles from './styles.css';
+import styled from 'styled-components';
 
-export default withStyles(styles)(props =>
-  <ProgressBar
-    theme={omitBy(styles, isFunction)}
+const valueClassName = 'value';
+
+const StyledProgressBar = styled(ProgressBar)`
+  && {
+    .${valueClassName} {
+      background-color: rgb(245,171,53);
+    }
+  }
+`;
+
+export default props => (
+  <StyledProgressBar
+    theme={{ value: valueClassName }}
     {...props} />
 );

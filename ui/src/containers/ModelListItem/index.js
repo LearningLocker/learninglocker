@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Map } from 'immutable';
 import DeleteButton from 'ui/containers/DeleteButton';
 import ProgressBar from 'ui/containers/ProgressBar';
 import Owner from 'ui/containers/Owner';
 import { withProps, compose } from 'recompose';
 import { withModel } from 'ui/utils/hocs';
-import styles from './modellistitem.css';
+import { BuilderDescription, Creator, Wrapper } from 'ui/containers/ModelListItem/styled';
 
 export class ModelListItem extends Component {
   static propTypes = {
@@ -57,13 +56,6 @@ export class ModelListItem extends Component {
     } = this.props;
     const isExpanded = !!getMetadata('isExpanded');
 
-    const wrapClasses = classNames({
-      panel: true,
-      'panel-default': true,
-      [styles.expanded]: isExpanded,
-      [styles.collapsed]: !isExpanded
-    });
-
     const headerClasses = classNames({
       'panel-heading': true,
       pointer: true,
@@ -78,7 +70,9 @@ export class ModelListItem extends Component {
     });
 
     return (
-      <div className={wrapClasses} style={style}>
+      <Wrapper
+        isExpanded={isExpanded}
+        className={'panel panel-default'} style={style}>
         <div className={headerClasses} onClick={this.expandItem} >
           <span className="pull-right right-btns">
             { buttons.map((Button, key) =>
@@ -86,15 +80,13 @@ export class ModelListItem extends Component {
             )}
           </span>
           <i className={iconClasses} />
-          <span
-            title={getIdentifier(model)}
-            className={styles['builder-description']}>
+          <BuilderDescription title={getIdentifier(model)}>
             {getDescription(model)}
-          </span>
+          </BuilderDescription>
           { displayOwner &&
-            <span className={`${styles.creator} pull-right hidden-sm hidden-xs`}>
+            <Creator className={'pull-right hidden-sm hidden-xs'}>
               <Owner model={model} />
-            </span>
+            </Creator>
           }
         </div>
 
@@ -106,13 +98,12 @@ export class ModelListItem extends Component {
             </div>
           </span>
         }
-      </div>
+      </Wrapper>
     );
   }
 }
 
 export default compose(
-  withStyles(styles),
   withProps(({ model }) => ({
     id: model.get('_id'),
   })),
