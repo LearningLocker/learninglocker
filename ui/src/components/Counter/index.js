@@ -52,9 +52,9 @@ const renderCount = ({ color, count, tooltip, hasBenchmark, hasContextLabel }) =
     active />
   );
 
-const renderСontextLabel = ({ contextLabel, fontSize }) => (
+const renderСontextLabel = ({ contextLabel, fontSize, color }) => (
   <div
-    style={{ fontSize }}
+    style={{ fontSize, color }}
     key="contextLabel"
     className={styles.contextLabel}>
     {contextLabel}
@@ -112,7 +112,7 @@ const renderCounter = ({ color, results, model, height, width }) => {
   const countFontsize = getCountFontsize({ height, width, hasBenchmark, hasContextLabel, maxSize });
   const renderedCount = renderCount({ color, count, tooltip, hasBenchmark, hasContextLabel });
   const renderedBenchmark = hasBenchmark ? renderBenchmark({ percentage, model }) : null;
-  const renderedContextLabel = renderСontextLabel({ contextLabel: model.get('contextLabel', ''), fontSize });
+  const renderedContextLabel = renderСontextLabel({ contextLabel: model.get('contextLabel', ''), fontSize, color });
 
   return (
     <div className={styles.outerCounter}>
