@@ -19,7 +19,7 @@ import EditConfirm from 'ui/containers/EditConfirm';
 import PrivacyToggleModal from 'ui/containers/PrivacyToggleModal';
 import ConfirmModal from 'ui/components/Modal/ConfirmModal';
 import blankDashboardIcon from './assets/blank-dashboard.png';
-import curatrStarterIcon from './assets/curatr-starter.png';
+import streamStarterIcon from './assets/curatr-starter.png';
 import gettingStartedIcon from './assets/getting-started.png';
 import privateIcon from './assets/private.png';
 import styles from './styles.css';
@@ -140,7 +140,7 @@ export class DashboardCard extends Component {
         return blankDashboardIcon;
       }
       if (type === CURATR_STARTER) {
-        return curatrStarterIcon;
+        return streamStarterIcon;
       }
       return gettingStartedIcon;
     };
