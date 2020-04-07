@@ -10,7 +10,7 @@ import { activeOrgIdSelector } from 'ui/redux/modules/router';
 import { COPY_DASHBOARD } from 'ui/redux/modules/dashboard/copyDashboard';
 import { withProps, compose, lifecycle, withHandlers, mapProps } from 'recompose';
 import { getVisualisationsFromDashboard } from 'ui/redux/modules/dashboard/selectors';
-import { BLANK_DASHBOARD, CURATR_STARTER } from 'lib/constants/dashboard';
+import { BLANK_DASHBOARD, STREAM_STARTER } from 'lib/constants/dashboard';
 import Owner from 'ui/containers/Owner';
 import { withModel } from 'ui/utils/hocs';
 import DeleteConfirm from 'ui/containers/DeleteConfirm';
@@ -19,7 +19,7 @@ import EditConfirm from 'ui/containers/EditConfirm';
 import PrivacyToggleModal from 'ui/containers/PrivacyToggleModal';
 import ConfirmModal from 'ui/components/Modal/ConfirmModal';
 import blankDashboardIcon from './assets/blank-dashboard.png';
-import streamStarterIcon from './assets/curatr-starter.png';
+import streamStarterIcon from './assets/stream-starter..png';
 import gettingStartedIcon from './assets/getting-started.png';
 import privateIcon from './assets/private.png';
 import styles from './styles.css';
@@ -139,7 +139,7 @@ export class DashboardCard extends Component {
       if (type === BLANK_DASHBOARD) {
         return blankDashboardIcon;
       }
-      if (type === CURATR_STARTER) {
+      if (type === STREAM_STARTER) {
         return streamStarterIcon;
       }
       return gettingStartedIcon;
