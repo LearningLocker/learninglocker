@@ -82,7 +82,7 @@ export default function createAsyncDuck({
         yield put(actions.complete(args));
       }
     } catch (err) {
-      yield put(actions.failure({ ...args, message: err.message }));
+      yield put(actions.failure({ ...args, message: err.message || '' }));
       yield put(alert({
         ...args,
         message: err.message,
