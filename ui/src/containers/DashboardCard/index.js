@@ -19,7 +19,7 @@ import EditConfirm from 'ui/containers/EditConfirm';
 import PrivacyToggleModal from 'ui/containers/PrivacyToggleModal';
 import ConfirmModal from 'ui/components/Modal/ConfirmModal';
 import blankDashboardIcon from './assets/blank-dashboard.png';
-import streamStarterIcon from './assets/stream-starter..png';
+import streamStarterIcon from './assets/stream-starter.png';
 import gettingStartedIcon from './assets/getting-started.png';
 import privateIcon from './assets/private.png';
 import styles from './styles.css';
