@@ -35,6 +35,14 @@ const enhance = compose(
   })
 );
 
+/**
+ * @param oAuthLoginStart - {@see reduxOAuthLoginStart}
+ * @param loginStart - {@see reduxLoginStart}
+ * @param loginRequestState - {@see loginRequestStateSelector}
+ * @param loginError - {@see loginErrorSelector}
+ * @param googleAuth - {@see getAppDataSelector}
+ * @returns {*}
+ */
 const render = ({
   oAuthLoginStart,
   loginStart,
@@ -52,8 +60,11 @@ const render = ({
     if (email && password) loginStart({ username: email, password }).catch(() => { });
   };
 
-  const onClickOAuthLogin = (e) => {
-    if (e) e.preventDefault();
+  const onClickOAuthLogin = (event) => {
+    if (event) {
+      event.preventDefault();
+    }
+
     oAuthLoginStart('google').catch(() => { });
   };
 
