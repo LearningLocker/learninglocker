@@ -241,7 +241,7 @@ export default compose(
     }
   }),
   withHandlers({
-    backToDashboard: ({ route, navigateTo }) => {
+    backToDashboard: ({ route, navigateTo }) => () => {
       const organisationId = route.params.organisationId;
       navigateTo('organisation.data.dashboards', {
         organisationId
