@@ -223,10 +223,15 @@ const fetchAggregation = createAsyncDuck({
   }) {
     let id;
     const state = yield select();
-    let websocket = websocketSelector(state);
+    const websocketPromise = websocketSelector(state);
+    let websocket;
     const uuid = v4();
 
-    if (!websocket) {
+    if (!websocketPromise) {
+      let resolveWs;
+      const wsPromise = new Promise((reslove) => { resolveWs = reslove; });
+      yield put(setWebsocketAction({ websocket: wsPromise }));
+
       const { body } = yield call(
         llClient.aggregateWs,
         pipeline,
@@ -253,6 +258,10 @@ const fetchAggregation = createAsyncDuck({
           resolve();
         });
       });
+      resolveWs(websocket);
+    } else {
+      // websocket = yield call(websocketPromise);
+      websocket = yield websocketPromise;
     }
 
     // Send the auth details
