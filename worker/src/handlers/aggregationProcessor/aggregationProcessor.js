@@ -5,6 +5,9 @@ import Statement from 'lib/models/statement';
 import { get, isObject, omit } from 'lodash';
 import { publish } from 'lib/services/queue';
 import convert$oid from 'lib/helpers/convert$oid';
+import convert$dte from 'lib/helpers/convert$dte';
+import convertStatementTimestamp from 'lib/helpers/convertStatementTimestamp';
+import remove$out from 'lib/helpers/remove$out';
 
 /**
  * @param as
@@ -160,9 +163,14 @@ export const getAddToTimestamp = ({
  * @returns { ObjectId | {} | Array}
  */
 const parsePipelineString = (pipelineString) => {
-  const pipeline = JSON.parse(pipelineString);
+  let parsedPipeline = JSON.parse(pipelineString);
 
-  return convert$oid(pipeline);
+  parsedPipeline = convert$oid(parsedPipeline);
+  parsedPipeline = convert$dte(parsedPipeline);
+  parsedPipeline = convertStatementTimestamp(parsedPipeline);
+  parsedPipeline = remove$out(parsedPipeline);
+
+  return parsedPipeline;
 };
 
 /**
@@ -170,7 +178,7 @@ const parsePipelineString = (pipelineString) => {
  * @param {moment.Moment} now
  * @returns {Array}
  */
-const getAddPipeline = ({
+const getAddPipeline = async ({
   model,
   now
 }) => {
@@ -188,7 +196,7 @@ const getAddPipeline = ({
           ]
         },
       },
-      ...parsePipelineString(model.pipelineString)
+      ...(parsePipelineString(model.pipelineString))
     ];
   }
 
