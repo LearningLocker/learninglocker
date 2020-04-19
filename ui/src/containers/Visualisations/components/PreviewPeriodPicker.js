@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+  LAST_10_MINUTES,
   TODAY,
   LAST_24_HOURS,
   LAST_7_DAYS,
@@ -28,6 +29,7 @@ const PreviewPeriodPicker = ({
       className="form-control"
       value={previewPeriod}
       onChange={e => onChange(e.target.value)}>
+      <option value={LAST_10_MINUTES}>Last 10 minutes</option>
       <option value={TODAY}>Today</option>
       <option value={LAST_24_HOURS}>Last 24 hours</option>
       <option value={LAST_7_DAYS}>Last 7 days</option>
