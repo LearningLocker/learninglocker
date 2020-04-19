@@ -5,6 +5,7 @@ import Statement from 'lib/models/statement';
 import { get, isObject, omit } from 'lodash';
 import { publish } from 'lib/services/queue';
 import convert$oid from 'lib/helpers/convert$oid';
+// import { delay } from 'bluebird';
 
 /**
  * @param as
@@ -271,6 +272,7 @@ const aggregationProcessor = async (
   },
   done
 ) => {
+  // console.log('001');
   // Attempt to acquire a lock
   const model = await AggregationProcessor.findOneAndUpdate(
     {
@@ -346,6 +348,9 @@ const aggregationProcessor = async (
   const fromTimestamp = getFromTimestamp({ model, now });
   const toTimestamp = getAddToTimestamp({ model, now });
 
+  // await delay(30000);
+
+  // console.log('002');
   const newModel = await AggregationProcessor.findOneAndUpdate(
     {
       _id: aggregationProcessorId
@@ -364,6 +369,7 @@ const aggregationProcessor = async (
       upsert: false
     }
   );
+  // console.log('003');
 
   if (!hasReachedEnd({ model: newModel, now })) {
     publishQueue({
