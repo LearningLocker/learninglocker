@@ -188,6 +188,26 @@ class _LLApiClient {
     }
   });
 
+  deleteAggregationCache = (
+    pipeline,
+    timeIntervalSinceToday,
+    timeIntervalUnits,
+    timeIntervalSincePreviousTimeInterval
+  ) => del({
+    url: formatUrl(routes.STATEMENTS_AGGREGATION_PROCESSOR_DELETE),
+    headers: {
+      Authorization: `Bearer ${this.getToken()}`,
+    },
+    query: {
+      timeIntervalSinceToday,
+      timeIntervalUnits,
+      timeIntervalSincePreviousTimeInterval
+    },
+    body: {
+      pipeline
+    }
+  });
+
   uploadLogo = (file, id) => {
     const logoForm = form({
       logo: file
