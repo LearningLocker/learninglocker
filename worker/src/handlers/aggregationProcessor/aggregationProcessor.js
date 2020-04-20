@@ -178,7 +178,7 @@ const parsePipelineString = (pipelineString) => {
  * @param {moment.Moment} now
  * @returns {Array}
  */
-const getAddPipeline = async ({
+const getAddPipeline = ({
   model,
   now
 }) => {
