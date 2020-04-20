@@ -173,12 +173,35 @@ const parsePipelineString = (pipelineString) => {
   return parsedPipeline;
 };
 
+const getSubtractPipelinePart = ({
+  model,
+  now
+}) => {
+  const hasSubtraction = (model.fromTimestamp || model.toTimestamp) &&
+    moment(model.fromTimestamp).isBefore(moment(model.greaterThanDate));
+
+  if (!hasSubtraction) {
+    return;
+  }
+
+  const newFromTimestamp = getFromTimestamp({ model, now });
+
+  return {
+    $match: {
+      timestamp: {
+        $gte: moment(model.fromTimestamp).toDate(),
+        $lt: newFromTimestamp.toDate()
+      }
+    }
+  };
+};
+
 /**
  * @param {AggregationProcessor} model
  * @param {moment.Moment} now
  * @returns {Array}
  */
-const getAddPipeline = async ({
+const getAddPipeline = ({
   model,
   now
 }) => {
@@ -214,12 +237,51 @@ const getAddPipeline = async ({
     };
   }
 
+  // MIDDLE
+
+  let addToMiddle;
+  if (model.lastRun) {
+    addToMiddle = {
+      $and: [
+        {
+          timestamp: {
+            $gte: moment(model.fromTimestamp || now).toDate(),
+            $lt: getAddFromTimestamp({ model, now }).toDate()
+          }
+        },
+        {
+          stored: {
+            $gte: moment(model.lastRun).toDate(),
+          }
+        }
+      ]
+    };
+  }
+
+  // SUBTRACT COMPENSATION
+  const subtractPart = getSubtractPipelinePart({ model, now });
+  let subtractCompensation;
+  if (model.lastCompletedRun && subtractPart) {
+    subtractCompensation = {
+      $and: [
+        subtractPart.$match,
+        {
+          stored: {
+            $gte: moment(model.lastCompletedRun).toDate()
+          }
+        }
+      ]
+    };
+  }
+
   return [
     {
       $match: {
         $or: [
           { timestamp: addToFrontPipeline },
-          { timestamp: addToEnd }
+          { timestamp: addToEnd },
+          ...(addToMiddle ? [addToMiddle] : []),
+          ...(subtractCompensation ? [subtractCompensation] : [])
         ]
       }
     },
@@ -236,26 +298,16 @@ const getSubtractPipeline = ({
   model,
   now
 }) => {
-  const hasSubtraction = (model.fromTimestamp || model.toTimestamp) &&
-    moment(model.fromTimestamp).isBefore(moment(model.greaterThanDate));
-
-  if (!hasSubtraction) {
+  const subtractPart = getSubtractPipelinePart({ model, now });
+  if (!subtractPart) {
     return;
   }
 
-  const newFromTimestamp = getFromTimestamp({ model, now });
-
-  return [
-    {
-      $match: {
-        timestamp: {
-          $gte: moment(model.fromTimestamp).toDate(),
-          $lt: newFromTimestamp.toDate()
-        }
-      }
-    },
+  const subtractPipeline = [
+    subtractPart,
     ...parsePipelineString(model.pipelineString)
   ];
+  return subtractPipeline;
 };
 
 /**
@@ -308,10 +360,11 @@ const aggregationProcessor = async (
     return;
   }
 
+  const actualNow = moment();
   if (!now) {
     now = model.previousWindowSize
-      ? moment().subtract(model.windowSize, model.windowSizeUnits)
-      : moment();
+      ? actualNow.subtract(model.windowSize, model.windowSizeUnits)
+      : actualNow;
   }
 
   model.greaterThanDate = moment(now).subtract(getWindowSize(model), model.windowSizeUnits);
@@ -354,6 +407,7 @@ const aggregationProcessor = async (
   const fromTimestamp = getFromTimestamp({ model, now });
   const toTimestamp = getAddToTimestamp({ model, now });
 
+
   const newModel = await AggregationProcessor.findOneAndUpdate(
     {
       _id: aggregationProcessorId
@@ -365,7 +419,17 @@ const aggregationProcessor = async (
       fromTimestamp: fromTimestamp.toDate(),
       toTimestamp: toTimestamp.toDate(),
       greaterThanDate: model.greaterThanDate,
-      results
+      results,
+      lastRun: actualNow.toDate(),
+      lastCompletedRun: hasReachedEnd({
+        model: {
+          ...model,
+          toTimestamp: toTimestamp.toDate(),
+          fromTimestamp: fromTimestamp.toDate()
+        },
+        now
+      }) ?
+        actualNow.toDate() : model.lastCompletedRun
     },
     {
       new: true,
