@@ -13,11 +13,12 @@ const handlers = ({
 const ClearCache = ({
   onClearCache
 }) => {
-  return (<button
+  const clearCacheOut = (<button
     className="btn"
     onClick={onClearCache}>
     Clear cache
   </button>);
+  return clearCacheOut;
 };
 
 export default compose(
