@@ -39,7 +39,8 @@ const PreviewPeriodPicker = ({
         <option value={LAST_1_YEAR}>Last 1 year</option>
         <option value={LAST_2_YEARS}>Last 2 years</option>
       </select>
-      <ClearCache />
+      <ClearCache
+        visualisationId={visualisationId} />
     </div>
   );
 };

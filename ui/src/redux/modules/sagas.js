@@ -7,6 +7,7 @@ import { sagas as paginationSagas } from './pagination';
 import { sagas as modelSagas } from './models';
 import { sagas as aggregationSagas } from './aggregation';
 import { sagas as aggregationWsSagas } from './aggregationWs';
+import { sagas as deleteAggregationWsSagas } from './aggregationWs/deleteAggregation';
 import { sagas as visualiseSagas } from './visualise';
 import { sagas as uploadPeopleSagas } from './people';
 import { sagas as exportSagas } from './exports';
@@ -44,5 +45,6 @@ export default function* rootSaga() {
     ...map(visualisationSagas, runSaga),
     ...map(userOrganisationsSagas, runSaga),
     ...map(userOrganisationSettingsSagas, runSaga),
+    ...map(deleteAggregationWsSagas, runSaga)
   ];
 }
