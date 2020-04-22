@@ -116,7 +116,7 @@ describe('aggregationProcessor', () => {
       statement: {},
       organisation: objectId(TEST_ID),
       hash: '123456',
-      timestamp: moment().toDate()
+      timestamp: moment().toDate(),
     });
 
     const aggregationProcessorModel = await AggregationProcessor.create({
@@ -124,7 +124,8 @@ describe('aggregationProcessor', () => {
       pipelineHash,
       windowSize: 1,
       greaterThanDate: moment().subtract(1, 'days').toDate(),
-      useWindowOptimization: true
+      useWindowOptimization: true,
+      blockSizeSeconds: 604800
     });
 
     let done = false;
@@ -146,7 +147,7 @@ describe('aggregationProcessor', () => {
       statement: {},
       organisation: objectId(TEST_ID),
       hash: '123456',
-      timestamp: moment().toDate()
+      timestamp: moment().toDate(),
     });
 
     const { _id: aggregationProcessorId } = await AggregationProcessor.create({
@@ -154,7 +155,8 @@ describe('aggregationProcessor', () => {
       pipelineHash,
       windowSize: 1,
       greaterThanDate: moment().subtract(1, 'days').toDate(),
-      useWindowOptimization: true
+      useWindowOptimization: true,
+      blockSizeSeconds: 604800
     });
 
     let doneCount = 0;
@@ -196,7 +198,8 @@ describe('aggregationProcessor', () => {
       pipelineHash,
       windowSize: 1,
       greaterThanDate: moment().subtract(1, 'days').toDate(),
-      useWindowOptimization: true
+      useWindowOptimization: true,
+      blockSizeSeconds: 604800,
     });
 
     let doneCount = 0;
@@ -246,7 +249,8 @@ describe('aggregationProcessor', () => {
       pipelineHash,
       windowSize: 30,
       previousWindowSize: 30,
-      useWindowOptimization: true
+      useWindowOptimization: true,
+      blockSizeSeconds: 604800
     });
 
     let done = false;
@@ -260,5 +264,113 @@ describe('aggregationProcessor', () => {
 
     expect(done).to.equal(true);
     expect(result[0].count).to.equal(1);
+  });
+
+  describe('after the fact statements', () => {
+    beforeEach(async () => {
+      await AggregationProcessor.deleteMany({});
+      await Statement.deleteMany({});
+    });
+
+    it('should add statements stored after the fact', async () => {
+      const actualNow = moment();
+
+      await Statement.create({
+        statement: {},
+        organisation: objectId(TEST_ID),
+        hash: '123456',
+        timestamp: moment().subtract(1, 'days').toDate()
+      });
+
+      const aggregationProcessorModel = await AggregationProcessor.create({
+        pipelineString,
+        pipelineHash,
+        windowSize: 3,
+        useWindowOptimization: true,
+        blockSizeSeconds: 604800
+      });
+
+      let done = false;
+      const doneFn = () => {
+        done = true;
+      };
+
+      const result = await aggregationProcessor({
+        aggregationProcessorId: aggregationProcessorModel._id,
+        actualNow
+      }, doneFn);
+
+      expect(done).to.equal(true);
+      expect(result[0].count).to.equal(1);
+
+      await Statement.create({
+        statement: {},
+        organisation: objectId(TEST_ID),
+        hash: '1234567',
+        timestamp: moment().subtract(1, 'days').toDate(),
+        stored: moment().add(1, 'days').toDate()
+      });
+
+      const result2 = await aggregationProcessor({
+        aggregationProcessorId: aggregationProcessorModel._id,
+        actualNow
+      }, doneFn);
+
+      expect(result2[0].count).to.equal(2);
+    });
+
+    it('should "not" subtract statements inserted in the subtract window', async () => {
+      const actualNow = moment();
+
+      await Statement.create({
+        statement: {},
+        organisation: objectId(TEST_ID),
+        hash: '123456',
+        timestamp: actualNow.subtract(1, 'days').toDate()
+      });
+
+      const aggregationProcessorModel = await AggregationProcessor.create({
+        pipelineString,
+        pipelineHash,
+        windowSize: 3,
+        useWindowOptimization: true,
+        blockSizeSeconds: 604800
+      });
+
+      let done = false;
+      const doneFn = () => {
+        done = true;
+      };
+
+      const result = await aggregationProcessor({
+        aggregationProcessorId: aggregationProcessorModel._id,
+        actualNow
+      }, doneFn);
+
+      expect(done).to.equal(true);
+      expect(result[0].count).to.equal(1);
+
+      await Statement.create({
+        statement: {},
+        organisation: objectId(TEST_ID),
+        hash: '1234567',
+        timestamp: actualNow.subtract(2, 'days').toDate(),
+        stored: actualNow.add(3, 'days')
+      });
+
+      const result2 = await aggregationProcessor({
+        aggregationProcessorId: aggregationProcessorModel._id,
+        actualNow: actualNow.add(2, 'days')
+      }, doneFn);
+
+      expect(result2.reduce((acc, res) => acc + res.count, 0)).to.equal(1);
+
+      const result3 = await aggregationProcessor({
+        aggregationProcessorId: aggregationProcessorModel._id,
+        actualNow: actualNow.add(4, 'days')
+      }, doneFn);
+
+      expect(result3.reduce((acc, res) => acc + res.count, 0)).to.equal(0);
+    });
   });
 });

@@ -258,22 +258,6 @@ const getAddPipeline = ({
     };
   }
 
-  // SUBTRACT COMPENSATION
-  const subtractPart = getSubtractPipelinePart({ model, now });
-  let subtractCompensation;
-  if (model.lastCompletedRun && subtractPart) {
-    subtractCompensation = {
-      $and: [
-        subtractPart.$match,
-        {
-          stored: {
-            $gte: moment(model.lastCompletedRun).toDate()
-          }
-        }
-      ]
-    };
-  }
-
   return [
     {
       $match: {
@@ -281,7 +265,6 @@ const getAddPipeline = ({
           { timestamp: addToFrontPipeline },
           { timestamp: addToEnd },
           ...(addToMiddle ? [addToMiddle] : []),
-          ...(subtractCompensation ? [subtractCompensation] : [])
         ]
       }
     },
@@ -327,7 +310,8 @@ const aggregationProcessor = async (
   {
     aggregationProcessorId,
     publishQueue = publish,
-    now // For testing
+    now, // For testing
+    actualNow // for testing
   },
   done
 ) => {
@@ -360,8 +344,8 @@ const aggregationProcessor = async (
     return;
   }
 
-  const actualNow = moment();
-  if (!now) {
+  actualNow = actualNow || moment();
+  if (!now) { // Now can be set in the past, for benchmarking.
     now = model.previousWindowSize
       ? actualNow.subtract(model.windowSize, model.windowSizeUnits)
       : actualNow;
