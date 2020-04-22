@@ -1,6 +1,5 @@
 import React from 'react';
-import { compose, withHandlers, withProps } from 'recompose';
-import withModel from 'ui/utils/hocs/withModel';
+import { compose, withHandlers } from 'recompose';
 import { connect } from 'react-redux';
 import { start } from 'ui/redux/modules/aggregationWs/deleteAggregation';
 
