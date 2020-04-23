@@ -12,6 +12,18 @@ export const EditWrapper = styled.div`
   .btn {
     margin-bottom: auto;
   }
+
+  &:global(.btn) {
+    margin-bottom: auto;
+  }
+
+  div {
+    padding: 0 0 0 15px;
+    font-weight: 300;
+    color: #929292;
+
+    font-family: Arial, sans-serif;
+  }
 `;
 
 export const EditInputWrapper = styled.div`
