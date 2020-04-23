@@ -177,7 +177,7 @@ export const runAggregationProcessorClear = async ({
     windowSizeUnits,
     previousWindowSize
   });
-}
+};
 
 export const aggregationProcessorClear = catchErrors(
   async (request, response) => {
