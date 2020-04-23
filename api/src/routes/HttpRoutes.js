@@ -24,7 +24,8 @@ import DownloadController from 'api/controllers/DownloadController';
 import ExportController from 'api/controllers/ExportController';
 import StatementController from 'api/controllers/StatementController';
 import {
-  aggregationProcessorInitialise
+  aggregationProcessorInitialise,
+  aggregationProcessorClear
 } from 'api/controllers/AggregationProcessorController';
 import generateConnectionController from 'api/controllers/ConnectionController';
 import generateIndexesController from 'api/controllers/IndexesController';
@@ -262,6 +263,11 @@ router.post(
   routes.STATEMENTS_AGGREGATION_PROCESSOR_INITIALISE,
   passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
   aggregationProcessorInitialise
+);
+router.delete(
+  routes.STATEMENTS_AGGREGATION_PROCESSOR_DELETE,
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  aggregationProcessorClear
 );
 
 router.get(

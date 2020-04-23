@@ -5,7 +5,6 @@ import { start } from 'ui/redux/modules/aggregationWs/deleteAggregation';
 
 const handlers = ({
   onClearCache: ({ visualisationId, start: clearCache }) => () => {
-    console.log('onClearCache');
     clearCache({ visualisationId });
   }
 });
@@ -22,14 +21,6 @@ const ClearCache = ({
 };
 
 export default compose(
-  // withProps((args) => {
-  //   console.log('args', args);
-  //   const out = ({
-  //     schema: 'visualisation',
-  //   });
-  //   return out;
-  // }),
-  // withModel,
   connect(state =>
     state,
   { start }),

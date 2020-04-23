@@ -33,91 +33,79 @@ export const deleteAggregationDuck = createAsyncDuck({
   ),
 
   reduceSuccess: (
-    // state,
-    // {
-      // pipeline,
-      // timeIntervalSinceToday,
-      // timeIntervalUnits,
-      // timeIntervalSincePreviousTimeInterval,
-      // result
-    // }
   ) => {
-    console.log('Reduce Success');
   },
 
   reduceComplete: (
-    // state,
-    // {
-      // pipeline,
-      // timeIntervalSinceToday,
-      // timeIntervalUnits,
-      // timeIntervalSincePreviousTimeInterval
-    // }
   ) => {
-    console.log('Reduce Complete');
   },
 
   // ACTIONS
   startAction: ({
     visualisationId
-    // pipeline,
-    // mapping = defaultMapping,
-    // timeIntervalSinceToday,
-    // timeIntervalUnits,
-    // timeIntervalSincePreviousTimeInterval
   }) => {
-    console.log('001');
     const startActionOut = ({
       visualisationId,
-      // pipeline,
-      // mapping,
-      // timeIntervalSinceToday,
-      // timeIntervalUnits,
-      // timeIntervalSincePreviousTimeInterval
     });
     return startActionOut;
   },
 
   successAction: () => {
-    console.log('successAction');
   },
 
   doAction: function* doAction({ visualisationId, llClient }) {
-    console.log('002.1');
     // Get these props from the visualisation
 
     const state = yield select();
-    console.log('002.1.1', state, visualisationId);
     const result = visualisationWsPipelinesSelector(visualisationId)(state);
-    console.log('002.2 doAction', result);
+    const {
+      series,
+      timeIntervalSinceToday,
+      timeIntervalUnits,
+      timeIntervalSincePreviousTimeInterval
+    } = result;
 
-    // const {
-    //   pipeline,
-    //   timeIntervalSinceToday,
-    //   timeIntervalUnits,
-    //   timeIntervalSincePreviousTimeInterval
-    // }
+    for (let s = 0; s < series.size; s += 1) {
+      const pipelines = series.get(s);
+      for (let p = 0; p < pipelines.size; p += 1) {
+        const { status, body } = yield call(
+          llClient.deleteAggregationCache,
+          pipelines.get(p),
+          timeIntervalSinceToday,
+          timeIntervalUnits
+        );
 
-    console.log('002.3');
-    const { status, body } = yield call(
-      llClient.deleteAggregationCache,
-      {
-        visualisationId
-      },
-    );
-    console.log('002.4');
+        if (status === 401) {
+          throw new Unauthorised('Unauthorised');
+        }
 
-    if (status === 401) {
-      throw new Unauthorised('Unauthorised');
-    }
+        if (status >= 300) {
+          const errorMessage = body.message || body;
+          throw new HttpError(errorMessage, { status });
+        }
 
-    if (status >= 300) {
-      const errorMessage = body.message || body;
-      throw new HttpError(errorMessage, { status });
+        if (timeIntervalSincePreviousTimeInterval) {
+          const { status: tiStatus, body: tiBody } = yield call(
+            llClient.deleteAggregationCache,
+            pipelines.get(p),
+            timeIntervalSinceToday,
+            timeIntervalUnits,
+            timeIntervalSincePreviousTimeInterval
+          );
+
+          if (tiStatus === 401) {
+            throw new Unauthorised('Unauthorised');
+          }
+
+          if (tiStatus >= 300) {
+            const errorMessage = tiBody.message || tiBody;
+            throw new HttpError(errorMessage, { status: tiStatus });
+          }
+        }
+      }
     }
 
     return yield {
-      body
     };
   }
 });

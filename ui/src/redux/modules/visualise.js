@@ -221,8 +221,6 @@ export const visualisationWsPipelinesSelector = (
     orgTimezoneFromTokenSelector,
   ],
   (visualisation, filter, organisationModel, orgTimezoneFromToken) => {
-    console.log('101', id);
-    console.log('101.1', visualisation, filter, organisationModel);
     if (!visualisation) {
       return new List();
     }
@@ -251,12 +249,11 @@ export const visualisationWsPipelinesSelector = (
     const axes = unflattenAxes(visualisation);
     const series = cb(queries, axes, type, undefined, journey, timezone, false);
 
-    console.log('101.2');
     const out = {
       series,
       ...previewPeriodToInterval(previewPeriod, benchmarkingEnabled)
     };
-    console.log('101.3', out);
+
     return out;
   }
 );

@@ -74,6 +74,7 @@ const canUseWindowOptimization = (pipeline) => {
   return !group;
 };
 
+
 export const runAggregationProcessorInitialise = async ({
   authInfo,
   pipeline,
@@ -139,5 +140,58 @@ export const aggregationProcessorInitialise = catchErrors(
     response
       .status(200)
       .send(model);
+  }
+);
+
+export const runAggregationProcessorClear = async ({
+  authInfo,
+  pipeline,
+  timeIntervalSinceToday,
+  timeIntervalUnits,
+  timeIntervalSincePreviousTimeInterval
+}) => {
+  const organisation = getOrgFromAuthInfo(authInfo);
+
+  const scopedFilter = await getScopeFilter({
+    modelName: 'aggregationProcessor',
+    actionName: 'view',
+    authInfo,
+    allowDashboardAccess: true
+  });
+  pipeline.unshift({
+    $match: encode$oid(scopedFilter)
+  });
+
+  const pipelineString = JSON.stringify(pipeline);
+  const pipelineHash = sha1(pipelineString);
+
+  const windowSize = timeIntervalSinceToday;
+  const windowSizeUnits = timeIntervalUnits;
+  const previousWindowSize = timeIntervalSincePreviousTimeInterval;
+
+  await AggregationProcessor.deleteOne({
+    organisation,
+    lrs_id: get(authInfo, ['client', 'lrs_id']),
+    pipelineHash,
+    windowSize,
+    windowSizeUnits,
+    previousWindowSize
+  });
+}
+
+export const aggregationProcessorClear = catchErrors(
+  async (request, response) => {
+    const authInfo = request.user.authInfo || {};
+
+    await runAggregationProcessorClear({
+      authInfo,
+      timeIntervalSinceToday: request.query.timeIntervalSinceToday,
+      timeIntervalUnits: request.query.timeIntervalUnits,
+      timeIntervalSincePreviousTimeInterval: request.query.timeIntervalSincePreviousTimeInterval,
+      pipeline: request.body.pipeline
+    });
+
+    response
+      .sendStatus(200);
   }
 );

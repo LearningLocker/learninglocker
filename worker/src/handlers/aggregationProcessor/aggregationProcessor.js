@@ -302,9 +302,8 @@ const aggregationProcessor = async (
   );
 
   if (!model) {
-    // Probably locked by something else
+    // Probably locked by something else or the cache has been cleared
     done();
-
     return;
   }
 
