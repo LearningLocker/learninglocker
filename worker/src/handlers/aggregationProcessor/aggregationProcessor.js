@@ -238,19 +238,15 @@ const getAddPipeline = ({
   }
 
   // MIDDLE
-
-  let addToMiddle;
-  if (model.lastRun) {
-    addToMiddle = {
-          timestamp: {
-            $gte: moment(model.fromTimestamp || now).toDate(),
-            $lt: getAddFromTimestamp({ model, now }).toDate()
-          },
-          stored: {
-            $gte: moment(model.lastRun).toDate(),
-          }
-    };
-  }
+  const addToMiddle = model.lastRun === undefined ? [] : [{
+    timestamp: {
+      $gte: moment(model.fromTimestamp || now).toDate(),
+      $lt: getAddFromTimestamp({ model, now }).toDate()
+    },
+    stored: {
+      $gte: moment(model.lastRun).toDate(),
+    }
+  }];
 
   return [
     {
@@ -258,7 +254,7 @@ const getAddPipeline = ({
         $or: [
           { timestamp: addToFrontPipeline },
           { timestamp: addToEnd },
-          ...(addToMiddle ? [addToMiddle] : []),
+          ...addToMiddle,
         ]
       }
     },
@@ -385,8 +381,16 @@ const aggregationProcessor = async (
   const fromTimestamp = getFromTimestamp({ model, now });
   const toTimestamp = getAddToTimestamp({ model, now });
 
+  const isAtEnd = hasReachedEnd({
+    model: {
+      ...model,
+      toTimestamp: toTimestamp.toDate(),
+      fromTimestamp: fromTimestamp.toDate()
+    },
+    now
+  });
 
-  const newModel = await AggregationProcessor.findOneAndUpdate(
+  await AggregationProcessor.findOneAndUpdate(
     {
       _id: aggregationProcessorId
     },
@@ -399,14 +403,7 @@ const aggregationProcessor = async (
       greaterThanDate: model.greaterThanDate,
       results,
       lastRun: actualNow.toDate(),
-      lastCompletedRun: hasReachedEnd({
-        model: {
-          ...model,
-          toTimestamp: toTimestamp.toDate(),
-          fromTimestamp: fromTimestamp.toDate()
-        },
-        now
-      }) ?
+      lastCompletedRun: isAtEnd ?
         actualNow.toDate() : model.lastCompletedRun
     },
     {
@@ -415,7 +412,7 @@ const aggregationProcessor = async (
     }
   );
 
-  if (!hasReachedEnd({ model: newModel, now })) {
+  if (!isAtEnd) {
     publishQueue({
       queueName: AGGREGATION_PROCESSOR_QUEUE,
       payload: {
