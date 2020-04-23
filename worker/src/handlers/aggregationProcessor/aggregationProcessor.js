@@ -242,19 +242,13 @@ const getAddPipeline = ({
   let addToMiddle;
   if (model.lastRun) {
     addToMiddle = {
-      $and: [
-        {
           timestamp: {
             $gte: moment(model.fromTimestamp || now).toDate(),
             $lt: getAddFromTimestamp({ model, now }).toDate()
-          }
-        },
-        {
+          },
           stored: {
             $gte: moment(model.lastRun).toDate(),
           }
-        }
-      ]
     };
   }
 
