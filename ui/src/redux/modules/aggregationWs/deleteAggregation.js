@@ -48,8 +48,7 @@ export const deleteAggregationDuck = createAsyncDuck({
   doAction: function* doAction({
     visualisationId,
     llClient,
-    successAction,
-    dispatch
+    successAction
   }) {
     // Get these props from the visualisation
 
