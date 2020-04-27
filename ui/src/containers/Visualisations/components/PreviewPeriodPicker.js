@@ -28,6 +28,7 @@ const PreviewPeriodPicker = ({
       <select
         id={formId}
         className="form-control"
+        style={{ display: 'inline-block', width: 'auto' }}
         value={previewPeriod}
         onChange={e => onChange(e.target.value)}>
         <option value={TODAY}>Today</option>
