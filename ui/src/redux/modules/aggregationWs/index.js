@@ -3,6 +3,7 @@ import { createSelector } from 'reselect';
 import { handleActions } from 'redux-actions';
 import { SETIN_AGGREGATION_RESULT } from 'ui/redux/modules/aggregation';
 import * as fetchAggregationDuck from 'ui/redux/modules/aggregationWs/fetchAggregation';
+import * as deleteAggregationDuck from 'ui/redux/modules/aggregationWs/deleteAggregation';
 import { get } from 'lodash';
 
 /*
@@ -10,6 +11,7 @@ import { get } from 'lodash';
  */
 const handler = handleActions({
   ...fetchAggregationDuck.reducers,
+  ...deleteAggregationDuck.reducers,
   [SETIN_AGGREGATION_RESULT]: (state, action) => {
     const { keyPath, value } = action;
     return state.setIn(keyPath, value);

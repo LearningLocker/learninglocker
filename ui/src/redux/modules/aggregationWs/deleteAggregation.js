@@ -1,10 +1,9 @@
 import createAsyncDuck from 'ui/utils/createAsyncDuck';
-import { IN_PROGRESS } from 'ui/utils/constants';
 import Unauthorised from 'lib/errors/Unauthorised';
 import HttpError from 'ui/utils/errors/HttpError';
-import { call, select } from 'redux-saga/effects';
-import { visualisationWsPipelinesSelector } from '../visualise';
-// import { defaultMapping } from './fetchAggregation';
+import { call, select, put } from 'redux-saga/effects';
+import { Map } from 'immutable';
+import { visualisationWsPipelinesSelector, fetchVisualisation } from '../visualise';
 
 const DELETE_AGGREGATION = 'learninglocker/aggregation/DELETE_AGGREGATION_WS';
 
@@ -13,31 +12,22 @@ export const deleteAggregationDuck = createAsyncDuck({
   failureDelay: 2000,
   reduceStart: (
     state,
-    {
-      pipeline,
-      timeIntervalSinceToday,
-      timeIntervalUnits,
-      timeIntervalSincePreviousTimeInterval
-    }
-  ) => state.setIn(
-    [
-      new Map({
-        pipeline,
-        timeIntervalSinceToday,
-        timeIntervalUnits,
-        ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {})
-      }),
-      'requestState'
-    ],
-    IN_PROGRESS
-  ),
+  ) => {
+    const out = state;
+    return out;
+  },
 
   reduceSuccess: (
   ) => {
+    const out = new Map();
+
+    return out;
   },
 
   reduceComplete: (
   ) => {
+    const out = new Map();
+    return out;
   },
 
   // ACTIONS
@@ -50,10 +40,17 @@ export const deleteAggregationDuck = createAsyncDuck({
     return startActionOut;
   },
 
-  successAction: () => {
+  successAction: (args) => {
+    const out = args;
+    return out;
   },
 
-  doAction: function* doAction({ visualisationId, llClient }) {
+  doAction: function* doAction({
+    visualisationId,
+    llClient,
+    successAction,
+    dispatch
+  }) {
     // Get these props from the visualisation
 
     const state = yield select();
@@ -84,6 +81,12 @@ export const deleteAggregationDuck = createAsyncDuck({
           throw new HttpError(errorMessage, { status });
         }
 
+        yield put(successAction({
+          pipeline: pipelines.get(p),
+          timeIntervalSinceToday,
+          timeIntervalUnits
+        }));
+
         if (timeIntervalSincePreviousTimeInterval) {
           const { status: tiStatus, body: tiBody } = yield call(
             llClient.deleteAggregationCache,
@@ -105,10 +108,16 @@ export const deleteAggregationDuck = createAsyncDuck({
       }
     }
 
+    yield put(
+      fetchVisualisation(visualisationId, !!timeIntervalSincePreviousTimeInterval)
+    );
+
+
     return yield {
     };
   }
 });
 
 export const sagas = deleteAggregationDuck.sagas;
+export const reducers = deleteAggregationDuck.reducers;
 export const { start } = deleteAggregationDuck.actions;
