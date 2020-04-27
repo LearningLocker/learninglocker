@@ -38,3 +38,12 @@ export const Card = styled.div`
     text-align: center;
   }
 `;
+
+export const DashboardTitle = styled.div`
+  display: flex;
+  justify-content: space-between;
+
+  .close {
+    cursor: pointer;
+  }
+`;

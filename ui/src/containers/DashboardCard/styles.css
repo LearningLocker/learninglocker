@@ -1,0 +1,64 @@
+
+.dashboardCard {
+  width: 100%;
+  padding: 0;
+  height: 100%;
+  margin-bottom: 0;
+  position: relative;
+  background-color: #fff;
+  border-radius: 0px;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5), 0 1px 2px #e9eff3;
+}
+
+.dashboardCardMenu {
+  right: 0;
+  left: auto;
+}
+
+.dashboardPrivateIcon{
+  vertical-align: top;
+  float: right;
+  margin-right: 30px;
+  display: block;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  text-align: center;
+  background: rgba(196, 196, 196, 0.25);
+  padding-top: 2px;
+}
+
+.card {
+  padding: 16px;
+  cursor: pointer;
+}
+
+.cardTitle {
+  height: 100px;
+  overflow: hidden;
+}
+
+.cardIcon {
+  max-width: 100px;
+  margin: -15px;
+}
+
+.menuWrapper {
+  position: absolute;
+  right: 5px;
+  padding: 15px;
+}
+
+.menuWrapper ul li a span {
+  width: 100%;
+  display: inline-block;
+}
+
+.menuItem {
+  background: inherit;
+  border: none;
+  padding: 0;
+}
