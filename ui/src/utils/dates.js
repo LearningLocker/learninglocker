@@ -8,7 +8,8 @@ import {
   LAST_24_HOURS,
   LAST_1_YEAR,
   LAST_2_YEARS,
-  TODAY
+  TODAY,
+  LAST_10_MINUTES
 } from 'ui/utils/constants';
 
 /**
@@ -48,6 +49,11 @@ export const periodToDate = (period, timezone, currentMoment, benchmark = 1) => 
  */
 export const previewPeriodToInterval = (period, benchmarking) => {
   switch (period) {
+    case LAST_10_MINUTES: return {
+      timeIntervalSinceToday: 10,
+      timeIntervalUnits: 'minutes',
+      ...(benchmarking ? { timeIntervalSincePreviousTimeInterval: 1 } : {})
+    };
     case TODAY: return {
       timeIntervalSinceToday: 1,
       timeIntervalUnits: 'days',

@@ -1,6 +1,7 @@
 import { STAGE_PROCESSING } from 'lib/constants/personasImport';
 
 // Preview Period
+export const LAST_10_MINUTES = 'LAST_10_MINUTES';
 export const TODAY = 'TODAY';
 export const LAST_7_DAYS = 'LAST_7_DAYS';
 export const LAST_30_DAYS = 'LAST_30_DAYS';
