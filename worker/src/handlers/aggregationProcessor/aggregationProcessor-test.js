@@ -12,6 +12,10 @@ import aggregationProcessor, { combine } from './aggregationProcessor';
 const objectId = mongoose.Types.ObjectId;
 
 describe('aggregationProcessor', () => {
+  after(async () => {
+    await Statement.deleteMany({});
+  });
+
   describe('unionFirst', () => {
     it('combine', () => {
       const addInput = [{
