@@ -85,10 +85,11 @@ const mergeResultsFnConstructor = (operation = 'add') => {
  * @param {moment.Moment} now
  * @returns {boolean}
  */
-export const hasReachedEnd = ({ model, now }) => (
-  moment(model.fromTimestamp).isSame(moment(model.greaterThanDate)) &&
-  moment(model.toTimestamp).isSame(now)
-);
+export const hasReachedEnd = ({ model, now }) => {
+  const out = moment(model.fromTimestamp).isSame(moment(model.greaterThanDate)) &&
+    moment(model.toTimestamp).isSame(now);
+  return out;
+};
 
 /**
  * @param {AggregationProcessor} model
@@ -381,11 +382,12 @@ const aggregationProcessor = async (
   const fromTimestamp = getFromTimestamp({ model, now });
   const toTimestamp = getAddToTimestamp({ model, now });
 
+
   const isAtEnd = hasReachedEnd({
     model: {
-      ...model,
       toTimestamp: toTimestamp.toDate(),
-      fromTimestamp: fromTimestamp.toDate()
+      fromTimestamp: fromTimestamp.toDate(),
+      greaterThanDate: model.greaterThanDate
     },
     now
   });
