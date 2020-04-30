@@ -1,0 +1,6 @@
+/* override styles for <a> tag defined in core.css*/
+.dashboardList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-gap: 20px;
+}

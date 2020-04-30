@@ -13,6 +13,12 @@ const renderPage = (routeName) => {
   const testRoute = startsWithSegment(routeName);
 
   // Data //
+  if (testRoute('organisation.data.dashboards.id')) {
+    return React.createElement(createAsyncComponent({
+      loader: System.import('ui/containers/Dashboard')
+    }));
+  }
+
   if (testRoute('organisation.data.dashboards')) {
     return React.createElement(createAsyncComponent({
       loader: System.import('ui/containers/Dashboards')

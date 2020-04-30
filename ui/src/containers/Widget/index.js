@@ -245,7 +245,7 @@ class Widget extends Component {
               onChangeTitle={this.props.onChangeTitle}
               onChangeVisualisation={this.props.onChangeVisualisation} />
           }
-          <DeleteConfirm isOpened={isDeleteOpen} {...delPopupProps} />
+          <DeleteConfirm key={model.get('_id')} isOpened={isDeleteOpen} {...delPopupProps} />
         </WidgetContent>
       </StyledWidget>
     );
