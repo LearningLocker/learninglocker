@@ -8,6 +8,7 @@ import convert$oid from 'lib/helpers/convert$oid';
 import convert$dte from 'lib/helpers/convert$dte';
 import convertStatementTimestamp from 'lib/helpers/convertStatementTimestamp';
 import remove$out from 'lib/helpers/remove$out';
+// import { delay } from 'bluebird';
 
 /**
  * @param as
@@ -86,6 +87,16 @@ const mergeResultsFnConstructor = (operation = 'add') => {
  * @returns {boolean}
  */
 export const hasReachedEnd = ({ model, now }) => {
+  // console.log('101 hasReachedEnd',
+  //   'now', now,
+  //   'toTimestamp', model.toTimestamp,
+  //   'hasReachedEnd', moment(model.toTimestamp).isSame(now)
+  // );
+  // console.log('101.1',
+  //   'fromTimestamp', model.fromTimestamp,
+  //   'greaterThanDate', model.greaterThanDate,
+  //   'hasReachedEnd', moment(model.fromTimestamp).isSame(moment(model.greaterThanDate))
+  // );
   const out = moment(model.fromTimestamp).isSame(moment(model.greaterThanDate)) &&
     moment(model.toTimestamp).isSame(now);
   return out;
@@ -202,9 +213,10 @@ const getSubtractPipelinePart = ({
  * @param {moment.Moment} now
  * @returns {Array}
  */
-const getAddPipeline = ({
+const getAddPipelines = ({
   model,
-  now
+  now,
+  actualNow
 }) => {
   if (!model.useWindowOptimization) {
     return [
@@ -245,21 +257,34 @@ const getAddPipeline = ({
       $lt: getAddFromTimestamp({ model, now }).toDate()
     },
     stored: {
-      $gte: moment(model.lastRun).toDate(),
+      $gt: moment(model.lastRun).toDate(),
+      $lte: moment(actualNow).toDate()
     }
   }];
 
+  const parsedPipeline = parsePipelineString(model.pipelineString);
+
   return [
-    {
-      $match: {
-        $or: [
-          { timestamp: addToFrontPipeline },
-          { timestamp: addToEnd },
-          ...addToMiddle,
-        ]
-      }
-    },
-    ...parsePipelineString(model.pipelineString)
+    [
+      {
+        $match: {
+          $or: [
+            { timestamp: addToFrontPipeline },
+            { timestamp: addToEnd },
+            ...addToMiddle,
+          ]
+        }
+      },
+      ...parsedPipeline
+    ],
+    ...(addToMiddle.length === 1 ? [[
+      {
+        $match: {
+          ...addToMiddle
+        }
+      },
+      ...parsedPipeline
+    ]] : [])
   ];
 };
 
@@ -344,13 +369,32 @@ const aggregationProcessor = async (
 
   model.greaterThanDate = moment(now).subtract(getWindowSize(model), model.windowSizeUnits);
 
-  const addPipeline = getAddPipeline({ model, now });
+  const addPipelines = getAddPipelines({ model, now, actualNow });
   const subtractPipeline = getSubtractPipeline({ model, now });
 
-  const addResultsPromise = Statement.aggregate(addPipeline);
+  const addResultsPromise = addPipelines.map((addPipeline) => {
+    const out = Statement.aggregate(addPipeline);
+    return out;
+  });
   const subtractResultsPromise = model.useWindowOptimization && subtractPipeline && Statement.aggregate(subtractPipeline);
 
-  const [addResults, subtractResults] = await Promise.all([addResultsPromise, subtractResultsPromise]);
+  const [subtractResults, ...seperateAddResults] = await Promise.all([subtractResultsPromise, ...addResultsPromise]);
+  const addResults = seperateAddResults[0].reduce((acc, addResult) => {
+    const existing = acc.find(ac => ac._id === addResult._id);
+    if (!existing) {
+      return [
+        ...acc,
+        addResult
+      ];
+    }
+    return [
+      ...acc,
+      {
+        ...existing,
+        count: existing.count + addResult.count
+      }
+    ];
+  }, seperateAddResults[1] || []);
 
   let results;
 
@@ -391,6 +435,8 @@ const aggregationProcessor = async (
     },
     now
   });
+
+  // await delay(30000);
 
   await AggregationProcessor.findOneAndUpdate(
     {

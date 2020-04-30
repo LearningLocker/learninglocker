@@ -241,6 +241,20 @@ describe('aggregationProcessor', () => {
   });
 
   it('benchmarking', async () => {
+    await Statement.create({ // Shouldn't be counted
+      statement: {},
+      organisation: objectId(TEST_ID),
+      hash: '1234567',
+      timestamp: moment().subtract(15, 'days').toDate()
+    });
+
+    await Statement.create({ // Shouldn't be counted
+      statement: {},
+      organisation: objectId(TEST_ID),
+      hash: '12345678',
+      timestamp: moment().subtract(100, 'days').toDate()
+    });
+
     await Statement.create({
       statement: {},
       organisation: objectId(TEST_ID),
@@ -317,7 +331,7 @@ describe('aggregationProcessor', () => {
 
       const result2 = await aggregationProcessor({
         aggregationProcessorId: aggregationProcessorModel._id,
-        actualNow
+        actualNow: actualNow.add(2, 'days')
       }, doneFn);
 
       expect(result2[0].count).to.equal(2);
