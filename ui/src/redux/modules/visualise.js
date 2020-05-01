@@ -26,6 +26,7 @@ import { pipelinesFromQueries } from 'ui/utils/visualisations';
 import { unflattenAxes } from 'lib/helpers/visualisation';
 import { ANY, OFF } from 'lib/constants/dashboard';
 import { previewPeriodToInterval } from 'ui/utils/dates';
+import { getAppDataSelector } from 'ui/redux/modules/app';
 
 export const FETCH_VISUALISATION = 'learninglocker/models/learninglocker/visualise/FETCH_VISUALISATION';
 
@@ -396,13 +397,16 @@ export const visualisationResultsSelector = (visualisationId, filter) => createS
 });
 
 /** @returns {boolean} */
-const shouldUseWs = () => true;
+const shouldUseWs = (state) => {
+  const out = getAppDataSelector('ENABLE_AGGREGATION_CACHING')(state);
+  return out;
+};
 
 export const visualisationWsResultsSelector = (visualisationId, filter) => createSelector([
   identity,
   modelsSchemaIdSelector('visualisation', visualisationId)
 ], (state, visualisation) => {
-  const useWs = shouldUseWs();
+  const useWs = shouldUseWs(state);
 
   switch (visualisation.get('type')) {
     case JOURNEY_PROGRESS:
@@ -418,7 +422,7 @@ export const visualisationWsResultsSelector = (visualisationId, filter) => creat
 export const visualisationAllAggregationsHaveResultSelector = visualisationId => createSelector(
   [identity],
   (state) => {
-    const useWs = shouldUseWs();
+    const useWs = shouldUseWs(state);
 
     if (useWs) {
       const {
@@ -516,7 +520,7 @@ export function* fetchVisualisationSaga(state, id) {
       timeIntervalUnits,
       timeIntervalSincePreviousTimeInterval
     } = visualisationWsPipelinesSelector(id)(state);
-    const useWs = shouldUseWs();
+    const useWs = shouldUseWs(state);
 
     if (useWs) {
       for (let s = 0; s < series.size; s += 1) {
