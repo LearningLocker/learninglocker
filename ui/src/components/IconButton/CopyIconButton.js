@@ -7,7 +7,7 @@ import ConfirmModal from 'ui/components/Modal/ConfirmModal';
  * @param {boolean} _.white - white button? default is btn-inverse
  * @param {() => void} _.onClickConfirm
  */
-const CopyIconButton = ({ message, white, onClickConfirm }) => {
+const CopyIconButton = ({ message, white, onClickConfirm, textFormat }) => {
   const [isModalOpen, setModalOpen] = useState(false);
 
   const closeModal = useCallback(() => setModalOpen(false));
@@ -19,26 +19,36 @@ const CopyIconButton = ({ message, white, onClickConfirm }) => {
     onClickConfirm();
     setModalOpen(false);
   });
+  const renderConfirmModal = (
+    <ConfirmModal
+      isOpen={isModalOpen}
+      title="Confirm copy"
+      message={<span>{message}</span>}
+      onConfirm={onConfirm}
+      onCancel={closeModal} />
+  );
 
   const className = white === true ?
     'btn btn-default btn-sm flat-btn flat-white' :
     'btn btn-sm btn-inverse';
 
   return (
-    <button
-      className={className}
-      title="Copy"
-      onClick={openModal}
-      style={{ width: '33px' }}>
-      <i className="icon ion-ios-copy" />
-
-      <ConfirmModal
-        isOpen={isModalOpen}
-        title="Confirm copy"
-        message={<span>{message}</span>}
-        onConfirm={onConfirm}
-        onCancel={closeModal} />
-    </button>
+    textFormat ? (
+      <span
+        onClick={openModal}>
+        Duplicate
+        {renderConfirmModal}
+      </span>
+    ) : (
+      <button
+        className={className}
+        title="Copy"
+        onClick={openModal}
+        style={{ width: '33px' }}>
+        <i className="icon ion-ios-copy" />
+        {renderConfirmModal}
+      </button>
+    )
   );
 };
 

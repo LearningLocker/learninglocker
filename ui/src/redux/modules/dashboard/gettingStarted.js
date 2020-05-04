@@ -67,6 +67,7 @@ function* createGettingStarted({ userId, organisationId, dispatch }) {
     props: {
       owner: userId,
       title: 'Getting Started',
+      type: 'gettingStarted',
       isExpanded: true,
       widgets: [
         { x: 0, y: 0, w: 6, h: 8, visualisation: visualisationIds[0] },
