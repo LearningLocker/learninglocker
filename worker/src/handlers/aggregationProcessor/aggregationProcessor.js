@@ -12,7 +12,6 @@ import convert$oid from 'lib/helpers/convert$oid';
 import convert$dte from 'lib/helpers/convert$dte';
 import convertStatementTimestamp from 'lib/helpers/convertStatementTimestamp';
 import remove$out from 'lib/helpers/remove$out';
-// import { delay } from 'bluebird';
 
 /**
  * @param as
@@ -91,16 +90,6 @@ const mergeResultsFnConstructor = (operation = 'add') => {
  * @returns {boolean}
  */
 export const hasReachedEnd = ({ model, now }) => {
-  // console.log('101 hasReachedEnd',
-  //   'now', now,
-  //   'toTimestamp', model.toTimestamp,
-  //   'hasReachedEnd', moment(model.toTimestamp).isSame(now)
-  // );
-  // console.log('101.1',
-  //   'fromTimestamp', model.fromTimestamp,
-  //   'greaterThanDate', model.greaterThanDate,
-  //   'hasReachedEnd', moment(model.fromTimestamp).isSame(moment(model.greaterThanDate))
-  // );
   const out = moment(model.fromTimestamp).isSame(moment(model.greaterThanDate)) &&
     moment(model.toTimestamp).isSame(now);
   return out;
@@ -390,7 +379,10 @@ const aggregationProcessor = async (
       readPreference
     });
 
-  const [subtractResults, ...seperateAddResults] = await Promise.all([subtractResultsPromise, ...addResultsPromise]);
+  const queryResults = await Promise.all([subtractResultsPromise, ...addResultsPromise]);
+
+  const [subtractResults, ...seperateAddResults] = queryResults;
+
   const addResults = seperateAddResults[0].reduce((acc, addResult) => {
     const existing = acc.find(ac => ac._id === addResult._id);
     if (!existing) {
@@ -407,7 +399,6 @@ const aggregationProcessor = async (
       }
     ];
   }, seperateAddResults[1] || []);
-  console.log('002', addResults);
 
   let results;
 
@@ -449,8 +440,6 @@ const aggregationProcessor = async (
     now
   });
 
-  // await delay(30000);
-
   await AggregationProcessor.findOneAndUpdate(
     {
       _id: aggregationProcessorId
@@ -487,4 +476,15 @@ const aggregationProcessor = async (
   return results;
 };
 
-export default aggregationProcessor;
+const aggregationProcessorJob = async (
+  args,
+  done
+) => {
+  try {
+    return await aggregationProcessor(args, done);
+  } catch (err) {
+    done(err);
+  }
+};
+
+export default aggregationProcessorJob;
