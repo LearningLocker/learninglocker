@@ -213,19 +213,21 @@ const getAddPipelines = ({
 }) => {
   if (!model.useWindowOptimization) {
     return [
-      {
-        $match: {
-          $or: [
-            {
-              timestamp: {
-                $gte: moment(model.greaterThanDate).toDate(),
-                $lt: moment(model.toTimestamp || now).toDate()
+      [
+        {
+          $match: {
+            $or: [
+              {
+                timestamp: {
+                  $gte: moment(model.greaterThanDate).toDate(),
+                  $lt: moment(model.toTimestamp || now).toDate()
+                }
               }
-            }
-          ]
+            ]
+          },
         },
-      },
-      ...(parsePipelineString(model.pipelineString))
+        ...(parsePipelineString(model.pipelineString))
+      ]
     ];
   }
 
@@ -264,7 +266,6 @@ const getAddPipelines = ({
           $or: [
             { timestamp: addToFrontPipeline },
             { timestamp: addToEnd },
-            ...addToMiddle,
           ]
         }
       },
@@ -273,7 +274,7 @@ const getAddPipelines = ({
     ...(addToMiddle.length === 1 ? [[
       {
         $match: {
-          ...addToMiddle
+          ...(addToMiddle[0])
         }
       },
       ...parsedPipeline
@@ -366,18 +367,21 @@ const aggregationProcessor = async (
   const addPipelines = getAddPipelines({ model, now, actualNow });
   const subtractPipeline = getSubtractPipeline({ model, now });
 
-  const addResultsPromise = addPipelines.map((addPipeline) => {
+  const addResultsPromise = addPipelines.map((addPipeline, key) => {
     const out = Statement.aggregate(addPipeline).option({
       maxTimeMS: AGGREGATION_TIMEOUT_MS,
       readPreference
-    });
+    }).hint(
+      (key === 0 ?
+        { organisation: 1, timestamp: -1, _id: 1 } : { organisation: 1, stored: -1, _id: 1 })
+    );
     return out;
   });
   const subtractResultsPromise = model.useWindowOptimization && subtractPipeline &&
     Statement.aggregate(subtractPipeline).option({
       maxTimeMS: AGGREGATION_TIMEOUT_MS,
       readPreference
-    });
+    }).hint({ organisation: 1, timestamp: -1, _id: 1 });
 
   const queryResults = await Promise.all([subtractResultsPromise, ...addResultsPromise]);
 
