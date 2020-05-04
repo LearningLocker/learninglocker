@@ -26,7 +26,8 @@ export default async (req, res, next) => {
       app: {
         RESTRICT_CREATE_ORGANISATION: boolean(defaultTo(process.env.RESTRICT_CREATE_ORGANISATION, true)),
         ENABLE_STATEMENT_DELETION: boolean(defaultTo(process.env.ENABLE_STATEMENT_DELETION, true)),
-        WS_URL: getWsUrl()
+        WS_URL: getWsUrl(),
+        ENABLE_AGGREGATION_CACHING: boolean(defaultTo(process.env.ENABLE_AGGREGATION_CACHING, true))
       }
     };
 
