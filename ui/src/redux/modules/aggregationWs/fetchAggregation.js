@@ -16,9 +16,12 @@ import { testCookieName } from 'ui/utils/auth';
 import { AGGREGATION_PROCESSOR_REGISTER } from 'lib/constants/aggregationProcessor';
 import { v4 } from 'uuid';
 
-export function defaultMapping(results) {
+export function defaultMapping(model) {
+  const results = model.results;
   return new Map({
     result: results && new OrderedMap(results.map(v => fromJS([v._id, v]))),
+    toTimestamp: model.toTimestamp,
+    fromTimestamp: model.fromTimestamp
   });
 }
 
@@ -92,24 +95,25 @@ const fetchAggregation = createAsyncDuck({
       return state;
     }
 
+    const path = new Map({
+      pipeline,
+      timeIntervalSinceToday,
+      timeIntervalUnits,
+      ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {}),
+    });
+
     const x = state
-      .setIn([new Map({
-        pipeline,
-        timeIntervalSinceToday,
-        timeIntervalUnits,
-        ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {}),
-      }), 'requestState'], COMPLETED);
+      .setIn([path, 'requestState'], COMPLETED);
 
     if (result.get('result') === null) {
       return x;
     }
 
-    return x.setIn([new Map({
-      pipeline,
-      timeIntervalSinceToday,
-      timeIntervalUnits,
-      ...(timeIntervalSincePreviousTimeInterval ? { timeIntervalSincePreviousTimeInterval } : {}),
-    }), 'result'], result.getIn(['result']));
+    console.log('701', result);
+
+    return x.setIn([path, 'result'], result.getIn(['result']))
+      .setIn([path, 'fromTimestamp'], result.getIn(['fromTimestamp']))
+      .setIn([path, 'toTimestamp'], result.getIn(['toTimestamp']));
   },
 
   reduceFailure: (state, {
@@ -250,7 +254,7 @@ const fetchAggregation = createAsyncDuck({
         timeIntervalSinceToday,
         timeIntervalUnits,
         timeIntervalSincePreviousTimeInterval,
-        result: mapping(body.results),
+        result: mapping(body),
       }));
 
       yield new Promise((resolve) => {
@@ -275,7 +279,7 @@ const fetchAggregation = createAsyncDuck({
           // This message is not for us.
           return;
         }
-        const result = mapping(data.results);
+        const result = mapping(data);
 
         // put into the state
         emitter(successAction({

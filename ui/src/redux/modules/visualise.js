@@ -12,6 +12,7 @@ import {
   aggregationShouldFetchSelector as aggregationShouldFetchWsSelector,
   aggregationWsHasResultSelector,
   aggregationWsResultsSelector,
+  aggregationWsModelsSelector,
   fetchAggregation as fetchWsAggregation
 } from 'ui/redux/modules/aggregationWs';
 import { countSelector, fetchModels, fetchModelsCount, shouldFetchSelector } from 'ui/redux/modules/pagination';
@@ -339,6 +340,10 @@ const getWsPipelinesResults = (state, timeInterval) => pipelines => pipelines.ma
   aggregationWsResultsSelector(pipeline, timeInterval)(state) || new Map()
 ));
 
+const getWsPipelinesModels = (state, timeInterval) => pipelines => pipelines.map(pipeline => (
+  aggregationWsModelsSelector(pipeline, timeInterval)(state) || new Map()
+));
+
 /**
  *
  * @param {string} visualisationId
@@ -371,6 +376,34 @@ const getWsSeriesResults = (visualisationId, state) => {
     timeIntervalUnits
   }));
   const seriesTwo = series.map(getWsPipelinesResults(state, {
+    timeIntervalSinceToday,
+    timeIntervalUnits,
+    timeIntervalSincePreviousTimeInterval
+  }));
+  return seriesOne.concat(seriesTwo);
+};
+
+export const getWsSeriesModels = (visualisationId, state) => {
+  const {
+    series,
+    timeIntervalSinceToday,
+    timeIntervalUnits,
+    timeIntervalSincePreviousTimeInterval
+  } = visualisationWsPipelinesSelector(visualisationId)(state);
+
+  if (!timeIntervalSincePreviousTimeInterval) {
+    return series.map(getWsPipelinesModels(state, {
+      timeIntervalSinceToday,
+      timeIntervalUnits
+    }));
+  }
+
+  // There are two series, for benchmarking.
+  const seriesOne = series.map(getWsPipelinesModels(state, {
+    timeIntervalSinceToday,
+    timeIntervalUnits
+  }));
+  const seriesTwo = series.map(getWsPipelinesModels(state, {
     timeIntervalSinceToday,
     timeIntervalUnits,
     timeIntervalSincePreviousTimeInterval

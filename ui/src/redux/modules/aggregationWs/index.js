@@ -67,6 +67,31 @@ export const aggregationWsResultsSelector = (pipeline, timeInterval) => createSe
     ])
   );
 
+export const aggregationWsModelsSelector = (pipeline, timeInterval) => createSelector(
+    aggregationSelector,
+    (aggregations) => {
+      const out = aggregations.getIn([
+        new Map({
+          pipeline,
+          timeIntervalSinceToday: get(timeInterval, 'timeIntervalSinceToday'),
+          timeIntervalUnits: get(timeInterval, 'timeIntervalUnits'),
+          ...(get(timeInterval, 'timeIntervalSincePreviousTimeInterval')
+              ? {
+                timeIntervalSincePreviousTimeInterval: get(timeInterval, 'timeIntervalSincePreviousTimeInterval')
+              }
+              : {}
+          )
+        })
+      ]);
+      // console.log('201 -------------------');
+      // console.log('201.1', pipeline);
+      // console.log('201.2', timeInterval);
+      // console.log('201.3', aggregations);
+      // console.log('201.4 out', out);
+      return out;
+    }
+  );
+
 export const aggregationWsHasResultSelector = (
   pipeline,
   timeInterval
