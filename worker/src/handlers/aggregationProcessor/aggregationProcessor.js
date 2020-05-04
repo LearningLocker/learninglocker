@@ -1,4 +1,8 @@
-import { AGGREGATION_PROCESSOR_QUEUE, LOCK_TIMEOUT_MINUTES } from 'lib/constants/aggregationProcessor';
+import {
+  AGGREGATION_PROCESSOR_QUEUE,
+  LOCK_TIMEOUT_MINUTES,
+  AGGREGATION_TIMEOUT_MS
+} from 'lib/constants/aggregationProcessor';
 import moment from 'moment';
 import AggregationProcessor from 'lib/models/aggregationProcessor';
 import Statement from 'lib/models/statement';
@@ -327,7 +331,8 @@ const aggregationProcessor = async (
     aggregationProcessorId,
     publishQueue = publish,
     now, // For testing
-    actualNow // for testing
+    actualNow, // for testing
+    readPreference = 'secondaryPreferred'
   },
   done
 ) => {
@@ -373,10 +378,17 @@ const aggregationProcessor = async (
   const subtractPipeline = getSubtractPipeline({ model, now });
 
   const addResultsPromise = addPipelines.map((addPipeline) => {
-    const out = Statement.aggregate(addPipeline);
+    const out = Statement.aggregate(addPipeline).option({
+      maxTimeMS: AGGREGATION_TIMEOUT_MS,
+      readPreference
+    });
     return out;
   });
-  const subtractResultsPromise = model.useWindowOptimization && subtractPipeline && Statement.aggregate(subtractPipeline);
+  const subtractResultsPromise = model.useWindowOptimization && subtractPipeline &&
+    Statement.aggregate(subtractPipeline).option({
+      maxTimeMS: AGGREGATION_TIMEOUT_MS,
+      readPreference
+    });
 
   const [subtractResults, ...seperateAddResults] = await Promise.all([subtractResultsPromise, ...addResultsPromise]);
   const addResults = seperateAddResults[0].reduce((acc, addResult) => {
@@ -395,6 +407,7 @@ const aggregationProcessor = async (
       }
     ];
   }, seperateAddResults[1] || []);
+  console.log('002', addResults);
 
   let results;
 

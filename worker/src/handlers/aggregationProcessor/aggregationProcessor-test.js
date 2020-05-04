@@ -8,6 +8,7 @@ import moment from 'moment';
 import mongoose from 'mongoose';
 import TEST_ID from 'api/routes/tests/utils/testId';
 import aggregationProcessor, { combine } from './aggregationProcessor';
+import { delay } from 'bluebird';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -138,7 +139,8 @@ describe('aggregationProcessor', () => {
     };
 
     const result = await aggregationProcessor({
-      aggregationProcessorId: aggregationProcessorModel._id
+      aggregationProcessorId: aggregationProcessorModel._id,
+      readPreference: 'primary'
     }, doneFn);
 
     expect(done).to.equal(true);
@@ -169,7 +171,8 @@ describe('aggregationProcessor', () => {
     };
 
     await aggregationProcessor({
-      aggregationProcessorId
+      aggregationProcessorId,
+      readPreference: 'primary'
     }, doneFn);
 
     const newStatementTimestamp = moment().toDate();
@@ -181,7 +184,8 @@ describe('aggregationProcessor', () => {
     });
 
     const result = await aggregationProcessor({
-      aggregationProcessorId
+      aggregationProcessorId,
+      readPreference: 'primary'
     }, doneFn);
 
     expect(doneCount).to.equal(2);
@@ -212,7 +216,8 @@ describe('aggregationProcessor', () => {
     };
 
     await aggregationProcessor({
-      aggregationProcessorId
+      aggregationProcessorId,
+      readPreference: 'primary'
     }, doneFn);
 
     let publishQueueCalls = 0;
@@ -230,7 +235,8 @@ describe('aggregationProcessor', () => {
     const result = await aggregationProcessor({
       aggregationProcessorId,
       publishQueue: mockPublishQueue,
-      now: moment().add(1, 'day')
+      now: moment().add(1, 'day'),
+      readPreference: 'primary'
     }, doneFn);
 
     expect(doneCount).to.equal(2);
@@ -277,7 +283,8 @@ describe('aggregationProcessor', () => {
     };
 
     const result = await aggregationProcessor({
-      aggregationProcessorId: aggregationProcessorModel._id
+      aggregationProcessorId: aggregationProcessorModel._id,
+      readPreference: 'primary'
     }, doneFn);
 
     expect(done).to.equal(true);
@@ -315,7 +322,8 @@ describe('aggregationProcessor', () => {
 
       const result = await aggregationProcessor({
         aggregationProcessorId: aggregationProcessorModel._id,
-        actualNow
+        actualNow,
+        readPreference: 'primary'
       }, doneFn);
 
       expect(done).to.equal(true);
@@ -331,7 +339,8 @@ describe('aggregationProcessor', () => {
 
       const result2 = await aggregationProcessor({
         aggregationProcessorId: aggregationProcessorModel._id,
-        actualNow: actualNow.add(2, 'days')
+        actualNow: actualNow.add(2, 'days'),
+        readPreference: 'primary'
       }, doneFn);
 
       expect(result2[0].count).to.equal(2);
@@ -362,7 +371,8 @@ describe('aggregationProcessor', () => {
 
       const result = await aggregationProcessor({
         aggregationProcessorId: aggregationProcessorModel._id,
-        actualNow
+        actualNow,
+        readPreference: 'primary'
       }, doneFn);
 
       expect(done).to.equal(true);
@@ -378,14 +388,16 @@ describe('aggregationProcessor', () => {
 
       const result2 = await aggregationProcessor({
         aggregationProcessorId: aggregationProcessorModel._id,
-        actualNow: actualNow.add(2, 'days')
+        actualNow: actualNow.add(2, 'days'),
+        readPreference: 'primary'
       }, doneFn);
 
       expect(result2.reduce((acc, res) => acc + res.count, 0)).to.equal(1);
 
       const result3 = await aggregationProcessor({
         aggregationProcessorId: aggregationProcessorModel._id,
-        actualNow: actualNow.add(4, 'days')
+        actualNow: actualNow.add(4, 'days'),
+        readPreference: 'primary'
       }, doneFn);
 
       expect(result3.reduce((acc, res) => acc + res.count, 0)).to.equal(0);
