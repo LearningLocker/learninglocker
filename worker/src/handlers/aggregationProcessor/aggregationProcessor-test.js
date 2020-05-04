@@ -8,7 +8,6 @@ import moment from 'moment';
 import mongoose from 'mongoose';
 import TEST_ID from 'api/routes/tests/utils/testId';
 import aggregationProcessor, { combine } from './aggregationProcessor';
-import { delay } from 'bluebird';
 
 const objectId = mongoose.Types.ObjectId;
 
