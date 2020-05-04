@@ -4,9 +4,10 @@ import { compose } from 'recompose';
 import { getWsSeriesModels } from 'ui/redux/modules/visualise';
 
 const aggregationStatusComponent = () => {
-  return (<span>
+  const out = (<span>
     Hello world
   </span>);
+  return out;
 };
 
 export default compose(
