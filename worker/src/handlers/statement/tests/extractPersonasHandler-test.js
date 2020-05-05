@@ -33,6 +33,7 @@ describe('Extract persona handler', () => {
   const organisationId = '561a679c0c5d017e4004715a';
 
   const testStatement = {
+    hash: Math.random(),
     active: true,
     _id: statementId,
     lrs_id: '560a679c0c5d017e4004714f',
