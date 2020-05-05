@@ -42,15 +42,13 @@ describe('personaController addPersona', () => {
       .set('Authorization', `Bearer ${token}`)
       .expect(200);
 
-    // @todo: Fix this - broke once we added migrations!
-    // expect(result.body.name).to.equal(undefined);
+    expect(result.body.name).to.equal(result.body._id);
 
     const { persona } = await personaService.getPersona({
       organisation: testId,
       personaId: result.body._id
     });
 
-    // expect(persona.name).to.equal(undefined);
     expect(persona.id).to.equal(result.body._id);
   });
 });
