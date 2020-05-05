@@ -30,6 +30,7 @@ export default (statement = {}, organisation = testId) =>
       },
       stored: '2017-04-27T09:41:54.606500+00:00',
       id: uuid(),
+      hash: uuid(),
       ...statement
     },
     active: true,

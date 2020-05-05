@@ -2,6 +2,7 @@ import Statement from 'lib/models/statement';
 import Lrs from 'lib/models/lrs';
 import QueryBuilderCache from 'lib/models/querybuildercache';
 import async from 'async';
+import { v4 as uuid } from 'uuid';
 
 export default class queryBuilderCacheDBHelper {
   prepare = (done) => {
@@ -13,9 +14,9 @@ export default class queryBuilderCacheDBHelper {
         organisation: '561a679c0c5d017e4004714f',
       }, insertDone),
       actorStatement: insertDone => Statement.create({
-        hash: Math.random(),
         active: true,
         _id: '561a679c0c5d017e4004714f',
+        hash: uuid(),
         lrs_id: '560a679c0c5d017e4004714f',
         statement: {
           version: '1.0.0',
@@ -46,9 +47,9 @@ export default class queryBuilderCacheDBHelper {
         updated_at: '2016-04-15T11:21:27.705Z',
       }, insertDone),
       personStatement: insertDone => Statement.create({
-        hash: Math.random(),
         active: true,
         _id: '563a679c0c5d017e4004714f',
+        hash: uuid(),
         lrs_id: '560a679c0c5d017e4004714f',
         person: {
           _id: '56fe4ca6c2d1a09c15825792',

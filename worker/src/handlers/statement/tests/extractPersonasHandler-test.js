@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { expect } from 'chai';
 import async from 'async';
 import Promise, { promisify } from 'bluebird';
+import { v4 as uuid } from 'uuid';
 import Statement from 'lib/models/statement';
 import getPersonaService from 'lib/connections/personaService';
 import {
@@ -33,9 +34,9 @@ describe('Extract persona handler', () => {
   const organisationId = '561a679c0c5d017e4004715a';
 
   const testStatement = {
-    hash: Math.random(),
     active: true,
     _id: statementId,
+    hash: uuid(),
     lrs_id: '560a679c0c5d017e4004714f',
     organisation: organisationId,
     statement: {
