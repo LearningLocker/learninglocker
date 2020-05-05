@@ -42,6 +42,9 @@ jobs:
           name: Run linter
           command: yarn run lint-ci
       - run:
+          name: Migrate DB
+          command: yarn migrate
+      - run:
           name: Run tests
           command: yarn run test
       - deploy:
