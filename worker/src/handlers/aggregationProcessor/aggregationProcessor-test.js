@@ -117,8 +117,8 @@ describe('aggregationProcessor', () => {
 
   it('Should count one statement', async () => {
     console.log(
-      '001 Indexes',
-      getConnection().collection('statements').indexes
+      '002 Indexes',
+      JSON.stringify(await getConnection().collection('statements').indexes(), null, 2)
     );
 
     // insert a statement
