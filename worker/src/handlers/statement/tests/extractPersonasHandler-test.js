@@ -180,6 +180,7 @@ describe('Extract persona handler', () => {
 
     const queueStatement = {
       ...testStatement,
+      hash: uuid(),
       _id: queueStatementId
     };
     await Statement.create(queueStatement);
