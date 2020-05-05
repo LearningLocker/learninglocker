@@ -7,7 +7,6 @@ import sha1 from 'sha1';
 import moment from 'moment';
 import mongoose from 'mongoose';
 import TEST_ID from 'api/routes/tests/utils/testId';
-import { getConnection } from 'lib/connections/mongoose';
 import aggregationProcessor, { combine } from './aggregationProcessor';
 
 const objectId = mongoose.Types.ObjectId;
