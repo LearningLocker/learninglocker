@@ -489,6 +489,7 @@ const aggregationProcessorJob = async (
   try {
     return await aggregationProcessor(args, done);
   } catch (err) {
+    console.error(err);
     done(err);
   }
 };
