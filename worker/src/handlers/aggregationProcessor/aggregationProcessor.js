@@ -1,7 +1,9 @@
 import {
   AGGREGATION_PROCESSOR_QUEUE,
   LOCK_TIMEOUT_MINUTES,
-  AGGREGATION_TIMEOUT_MS
+  AGGREGATION_TIMEOUT_MS,
+  TIMESTAMP_HINT,
+  STORED_HINT
 } from 'lib/constants/aggregationProcessor';
 import moment from 'moment';
 import AggregationProcessor from 'lib/models/aggregationProcessor';
@@ -373,7 +375,7 @@ const aggregationProcessor = async (
       readPreference
     }).hint(
       (key === 0 ?
-        { organisation: 1, timestamp: -1, _id: 1 } : { organisation: 1, stored: -1, _id: 1 })
+        TIMESTAMP_HINT : STORED_HINT)
     );
     return out;
   });
@@ -381,7 +383,7 @@ const aggregationProcessor = async (
     Statement.aggregate(subtractPipeline).option({
       maxTimeMS: AGGREGATION_TIMEOUT_MS,
       readPreference
-    }).hint({ organisation: 1, timestamp: -1, _id: 1 });
+    }).hint(TIMESTAMP_HINT);
 
   const queryResults = await Promise.all([subtractResultsPromise, ...addResultsPromise]);
 
