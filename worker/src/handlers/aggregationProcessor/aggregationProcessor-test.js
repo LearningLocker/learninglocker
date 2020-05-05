@@ -116,11 +116,6 @@ describe('aggregationProcessor', () => {
   const pipelineHash = sha1(pipelineString);
 
   it('Should count one statement', async () => {
-    console.log(
-      '002 Indexes',
-      JSON.stringify(await getConnection().collection('statements').indexes(), null, 2)
-    );
-
     // insert a statement
     await Statement.create({
       statement: {},
