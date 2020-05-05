@@ -30,9 +30,9 @@ export default (statement = {}, organisation = testId) =>
       },
       stored: '2017-04-27T09:41:54.606500+00:00',
       id: uuid(),
-      hash: uuid(),
       ...statement
     },
+    hash: uuid(),
     active: true,
     voided: false,
     timestamp: '2016-10-15T23:00:00Z',
