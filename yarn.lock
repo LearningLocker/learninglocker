@@ -221,7 +221,6 @@
     "@babel/helper-function-name" "^7.7.4"
     "@babel/helper-split-export-declaration" "^7.7.4"
     "@babel/parser" "^7.7.4"
-    "@babel/types" "^7.7.4"
     debug "^4.1.0"
     globals "^11.1.0"
     lodash "^4.17.13"

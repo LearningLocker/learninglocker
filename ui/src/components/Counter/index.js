@@ -2,6 +2,7 @@ import React from 'react';
 import { isNumber, round } from 'lodash';
 import NoData from 'ui/components/Graphs/NoData';
 import numeral from 'numeral';
+import styled from 'styled-components';
 import tooltipFactory from 'react-toolbox/lib/tooltip';
 import { Link } from 'react-toolbox/lib/link';
 import { getPercentage } from 'ui/utils/defaultTitles';
@@ -40,15 +41,33 @@ const resultsIconStyles = {
   width: '40px',
 };
 
-const renderCount = ({ color, count, tooltip, hasBenchmark }) => (
+const ContextLabel = styled.div(() => ({
+  'font-size': '20p',
+  'margin-bottom': '5px',
+  'margin-top': '-10px',
+  'white-space': 'nowrap',
+  overflow: 'hidden',
+  'text-overflow': 'ellipsis'
+}));
+
+
+const renderCount = ({ color, count, tooltip, hasBenchmark, hasContextLabel }) => (
   <TooltipLink
-    style={{ color, height: hasBenchmark ? null : '100%' }}
+    style={{ color, height: hasBenchmark || hasContextLabel ? null : '100%' }}
     label={formatShortNumber(count)}
     tooltip={tooltip}
     tooltipPosition="top"
     tooltipDelay={600}
     active />
 );
+
+const renderСontextLabel = ({ contextLabel, fontSize, color }) => (
+  <ContextLabel
+    style={{ fontSize, color }}
+    key="contextLabel">
+    {contextLabel}
+  </ContextLabel>
+  );
 
 const renderBenchmark = ({ percentage, model }) => {
   if (percentage.result === 'N/A') {
@@ -73,15 +92,16 @@ const renderBenchmark = ({ percentage, model }) => {
   );
 };
 
-const getCountFontsize = ({ height, width, hasBenchmark, maxSize }) => {
-  let fontSize = hasBenchmark ? `${maxSize / 40}` : `${maxSize / 20}`;
-  const tripHeight = hasBenchmark ? 220 : 150;
+const getCountFontsize = ({ height, width, hasBenchmark, hasContextLabel, maxSize }) => {
+  let fontSize = hasBenchmark || hasContextLabel ? `${maxSize / 40}` : `${maxSize / 20}`;
+  const tripHeight = hasBenchmark || hasContextLabel ? 550 : 200;
   if (height < tripHeight) {
-    if (!hasBenchmark) {
+    if (!hasBenchmark && !hasContextLabel) {
       fontSize = width > 200 ? 4.5 : 3.5;
     }
   } else if (width < 550) {
     fontSize = width / 60;
+    console.log(`fontSize: ${fontSize}`);
   }
   if (fontSize > 12) fontSize = 12;
   return `${fontSize}em`;
@@ -89,23 +109,25 @@ const getCountFontsize = ({ height, width, hasBenchmark, maxSize }) => {
 
 const renderCounter = ({ color, results, model, height, width }) => {
   const maxSize = Math.min(height, width);
-  const fontSize = (width < 332) || (maxSize < 245) ? '13px' : '0.2em';
+  const fontSize = (width < 332) || (maxSize < 245) ? '18px' : '0.25em';
   const hasBenchmark = results.size > 1;
+  const hasContextLabel = model.get('contextLabel', '') !== '';
   const benchmarkCount = hasBenchmark ? getBenchmarkResultCount(results) : null;
   const count = getResultCount(results);
   const percentage = getPercentage(count, benchmarkCount);
 
   const tooltip = hasBenchmark ? formatBenchmarkTooltip({ count, benchmarkCount }) : formatTooltip(count);
-  const countFontsize = getCountFontsize({ height, width, hasBenchmark, maxSize });
-  const renderedCount = renderCount({ color, count, tooltip, hasBenchmark });
+  const countFontsize = getCountFontsize({ height, width, hasBenchmark, hasContextLabel, maxSize });
+  const renderedCount = renderCount({ color, count, tooltip, hasBenchmark, hasContextLabel });
   const renderedBenchmark = hasBenchmark ? renderBenchmark({ percentage, model }) : null;
-
+  const renderedContextLabel = renderСontextLabel({ contextLabel: model.get('contextLabel', ''), fontSize, color });
 
   return (
     <div style={{ height: '100%' }}>
       <div
         style={{ width, fontSize: countFontsize, height: '100%', textAlign: 'center' }}>
-        {renderedCount}
+        { renderedCount }
+        { renderedContextLabel }
         <div
           key="benchmark"
           style={{

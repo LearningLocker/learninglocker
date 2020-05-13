@@ -17,8 +17,6 @@ const Editor = ({
 }) => {
   const id = model.get('_id');
 
-  console.log(model.get('sourceView'));
-
   const onChangeDescription = useCallback((description) => {
     updateModel({
       schema: 'visualisation',
