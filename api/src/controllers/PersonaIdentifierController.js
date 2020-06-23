@@ -9,7 +9,7 @@ import getAuthFromRequest from 'lib/helpers/getAuthFromRequest';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
 import { CursorDirection } from '@learninglocker/persona-service/dist/service/constants';
 import Locked from '@learninglocker/persona-service/dist/errors/Locked';
-import { MAX_TIME_MS, MAX_SCAN } from 'lib/models/plugins/addCRUDFunctions';
+import { MAX_TIME_MS } from 'lib/models/plugins/addCRUDFunctions';
 import parseQuery from 'lib/helpers/parseQuery';
 import asignIdentifierToStatements from 'lib/services/persona/asignIdentifierToStatements';
 import identifierHasStatements from 'lib/services/persona/identifierHasStatements';
@@ -67,8 +67,7 @@ const personaIdentifierConnection = catchErrors(async (req, res) => {
     filter: filterNoUndefined,
     project,
     hint,
-    maxTimeMS: MAX_TIME_MS,
-    maxScan: MAX_SCAN
+    maxTimeMS: MAX_TIME_MS
   });
 
   return res.status(200).send(result);

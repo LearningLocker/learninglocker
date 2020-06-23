@@ -49,7 +49,6 @@ export const exportCSV = ({ authInfo, pipelines }) => new Promise((resolve, reje
         limit: 500000,
         getStream: true,
         maxTimeMS: 0,
-        maxScan: 0,
       }, next),
     (err, streams) => {
       if (err) reject(err);

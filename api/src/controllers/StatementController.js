@@ -6,7 +6,6 @@ import catchErrors from 'api/controllers/utils/catchErrors';
 import defaultTo from 'lodash/defaultTo';
 
 const MAX_TIME_MS = defaultTo(Number(process.env.MAX_TIME_MS), 0);
-const MAX_SCAN = defaultTo(Number(process.env.MAX_SCAN), 0);
 
 const aggregate = (req) => {
   const authInfo = req.user.authInfo || {};
@@ -14,7 +13,6 @@ const aggregate = (req) => {
   const skip = Number(req.query.skip) || 0;
   const cache = (!!req.query.cache && req.query.cache !== 'false') || false;
   const maxTimeMS = Number(req.query.maxTimeMS) || MAX_TIME_MS;
-  const maxScan = Number(req.query.maxScan) || MAX_SCAN;
   const pipeline = JSON.parse(req.query.pipeline);
   const sampleSize = Number(req.query.sampleSize) || undefined;
   const out = statementsService.aggregate({
@@ -23,7 +21,6 @@ const aggregate = (req) => {
     skip,
     cache,
     maxTimeMS,
-    maxScan,
     pipeline,
     sampleSize
   });
@@ -87,7 +84,6 @@ const countStatements = catchErrors(async (req, res) => {
     getJSONFromQuery(req, 'query', {})
   );
   const maxTimeMS = getFromQuery(req, 'maxTimeMS', MAX_TIME_MS, Number);
-  const maxScan = getFromQuery(req, 'maxScan', MAX_SCAN, Number);
   const hint = getJSONFromQuery(req, 'hint', null);
   const authInfo = getAuthFromRequest(req);
 
@@ -95,7 +91,6 @@ const countStatements = catchErrors(async (req, res) => {
     authInfo,
     filter,
     maxTimeMS,
-    maxScan,
     hint
   });
 

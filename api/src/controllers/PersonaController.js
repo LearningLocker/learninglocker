@@ -4,7 +4,7 @@ import getJSONFromQuery from 'api/utils/getJSONFromQuery';
 import getFromQuery from 'api/utils/getFromQuery';
 import getOrgFromAuthInfo from 'lib/services/auth/authInfoSelectors/getOrgFromAuthInfo';
 import getScopeFilter from 'lib/services/auth/filters/getScopeFilter';
-import { MAX_TIME_MS, MAX_SCAN } from 'lib/models/plugins/addCRUDFunctions';
+import { MAX_TIME_MS } from 'lib/models/plugins/addCRUDFunctions';
 import parseQuery from 'lib/helpers/parseQuery';
 import { CursorDirection } from '@learninglocker/persona-service/dist/service/constants';
 import { entityResponse, entitiesResponse } from 'api/controllers/utils/entitiesResponse';
@@ -47,8 +47,7 @@ const personaConnection = catchErrors(async (req, res) => {
     filter,
     project,
     hint,
-    maxTimeMS: MAX_TIME_MS,
-    maxScan: MAX_SCAN
+    maxTimeMS: MAX_TIME_MS
   };
 
   const result = await personaService.getPersonasConnection(params);
