@@ -4,7 +4,7 @@ jobs:
   build:
     docker:
       - image: circleci/node:10
-      - image: mongo:3.4-jessie
+      - image: mongo:4.2-bionic
       - image: redis:4-alpine
     environment:
       TERM: xterm

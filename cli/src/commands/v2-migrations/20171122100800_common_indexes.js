@@ -32,7 +32,6 @@ const createStatementIndexes = (connection) => {
   createIndexWithVoid('timestamp__id', { timestamp: -1, _id: -1 });
   createIndexWithVoid('stored__id', { stored: -1, _id: -1 });
   createIndex(stmts, 'statementId_lrs_id', { 'statement.id': 1, lrs_id: 1 });
-  createIndexWithOrg('timestamp__id', { timestamp: -1, _id: 1 });
   createIndexWithOrg('stored__id', { stored: -1, _id: 1 });
   createIndexWithOrg('objId', objectIdIndex);
   createIndexWithOrg('verbId_objId', { ...verbIdIndex, ...objectIdIndex });
