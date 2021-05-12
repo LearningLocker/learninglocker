@@ -227,7 +227,7 @@
     "nock": "^9.0.13",
     "node-sass": "^4.5.0",
     "pixrem": "^3.0.2",
-    "postcss": "^7.0.14",
+    "postcss": "^8.2.10",
     "postcss-color-function": "^2.0.1",
     "postcss-custom-media": "^5.0.1",
     "postcss-custom-properties": "^5.0.1",
