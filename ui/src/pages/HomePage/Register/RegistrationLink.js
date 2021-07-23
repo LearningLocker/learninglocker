@@ -7,8 +7,8 @@ const baseInputStyles = css`
   color: #333;
   background: #f5aa34 !important;
   margin-left: 12px;
-  &:hover {
-    color: #333;
+  &:hover, &:focus, &:active {
+    color: #333 !important;
   }
   margin-top: 20px;
 `;
