@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const DontShowAgainText = styled.span`
+export const NotNowText = styled.span`
   color: #8d5e28;
   margin-top: 12px;
   cursor: pointer;

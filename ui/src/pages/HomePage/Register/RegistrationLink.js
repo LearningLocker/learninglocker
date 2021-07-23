@@ -1,8 +1,23 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+
+const baseInputStyles = css`
+  display: block;
+  text-align: center;
+  width: 100%;
+  color: #333;
+  background: #f5aa34 !important;
+  margin-left: 12px;
+  &:hover {
+    color: #333;
+  }
+  margin-top: 20px;
+`;
 
 export const RegistrationLink = styled.a`
-  display: block;
-  background: #276CDA !important;
-  width: 80px;
-  margin-left: 12px;
+  ${baseInputStyles}
+`;
+
+export const RegistrationLinkAccented = styled.a`
+  ${baseInputStyles}
+  font-weight: 700;
 `;

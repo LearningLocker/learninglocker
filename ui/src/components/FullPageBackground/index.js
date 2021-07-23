@@ -35,11 +35,6 @@ const Centered = styled.div`
   }
 `;
 
-const Underline = styled.div`
-  height: 0;
-  border-bottom: 2px solid #DDA476;
-  width: 250px;
-`;
 
 const Headline = styled.span`
   text-transform: uppercase;
@@ -85,12 +80,11 @@ const versionDisplay = (version) => {
   return <p title={longDisplay}>{display}</p>;
 };
 
-const FullPageBackground = ({ version, children, width = 600 }) => (
+const FullPageBackground = ({ version, children, width = 800 }) => (
   <Background>
     <Centered>
       <img alt="logo" src={logoImg} />
       <Headline>making learning measurable</Headline>
-      <Underline />
       <div style={{ width }}>
         {children}
       </div>
