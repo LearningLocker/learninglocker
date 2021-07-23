@@ -8,3 +8,5 @@
 *Learning Locker is copyright [Learning Pool](https://learningpool.com/)*
 
 Please see our [documentation](http://docs.learninglocker.net) for installation, configuration, and usage instructions.
+
+You can also [register locker](https://learningpool.com/register-locker) or get [Learning Locker Data Cloud](https://learningpool.com/solutions/learning-record-store-learning-locker).
