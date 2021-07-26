@@ -9,4 +9,4 @@
 
 Please see our [documentation](http://docs.learninglocker.net) for installation, configuration, and usage instructions.
 
-You can also [register locker](https://learningpool.com/register-locker) or get [Learning Locker Data Cloud](https://learningpool.com/solutions/learning-record-store-learning-locker).
+You can also [register your Learning Locker](https://learningpool.com/register-locker) or get [Learning Locker Data Cloud](https://learningpool.com/solutions/learning-record-store-learning-locker).

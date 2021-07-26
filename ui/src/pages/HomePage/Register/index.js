@@ -101,6 +101,7 @@ const Register = ({ setRegistered }) => {
             <Divider />
             <RegistrationInfoText>
               <p>Feeling the strain of hosting your own?</p>
+              <br />
               <p>Learning Locker Data Cloud is our fully managed option for Learning Locker, including a range of feature enhancing plugins only available to paying customers.</p>
               <ul>
                 <li><p>Fully managed, auto-scaling, single tenant hosting in a range of AWS data locations</p></li>
