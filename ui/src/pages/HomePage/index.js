@@ -56,9 +56,9 @@ class Home extends Component {
     const proceedOnce = sessionStorage.getItem('proceedOnce') === 'true';
     this.setState({ proceedOnce });
 
-    const sessionStorageSetHandler = function () {
+    const sessionStorageSetHandler = () => {
       this.setState({ proceedOnce: true });
-    }.bind(this);
+    };
 
     document.addEventListener('setProceedOnce', sessionStorageSetHandler, false);
 
