@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-indent */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import Helmet from 'react-helmet';
 import DebounceInput from 'react-debounce-input';
 import { connect } from 'react-redux';
@@ -13,13 +14,21 @@ import { actions as routerActions } from 'redux-router5';
 import moment from 'moment';
 import { isSiteAdminSelector, authenticationSelector, logout, orgLoginStart, loggedInUserSelector, orgLogout } from 'ui/redux/modules/auth';
 import { queryStringToQuery } from 'ui/redux/modules/search';
-import { withSchema } from 'ui/utils/hocs';
+import { withModel, withSchema } from 'ui/utils/hocs';
 import Spinner from 'ui/components/Spinner';
 import FullPageBackground from 'ui/components/FullPageBackground';
 import AuthContainer from 'ui/containers/AuthContainer';
 import smallLogo from 'ui/static/smallLogo.png';
 import OrgMemberButton from 'ui/containers/OrgMemberButton';
+import { SITE_SETTINGS_ID } from 'lib/constants/siteSettings';
 import Register from './Register';
+
+const Underline = styled.div`
+  height: 0;
+  border-bottom: 2px solid #DDA476;
+  width: 250px;
+  margin: 0 auto;
+`;
 
 class Home extends Component {
   static propTypes = {
@@ -44,6 +53,15 @@ class Home extends Component {
   }
 
   componentDidMount = () => {
+    const proceedOnce = sessionStorage.getItem('proceedOnce') === 'true';
+    this.setState({ proceedOnce });
+
+    const sessionStorageSetHandler = () => {
+      this.setState({ proceedOnce: true });
+    };
+
+    document.addEventListener('setProceedOnce', sessionStorageSetHandler, false);
+
     this.props.orgLogout();
   }
 
@@ -183,71 +201,78 @@ class Home extends Component {
   }
 
   render() {
-    const { auth, isSiteAdmin, models, orgSearch } = this.props;
+    const { auth, isSiteAdmin, models, orgSearch, model, ok } = this.props;
     const error = auth.get('error');
+    const dontShowRegistration = (model.size === 0 || model.get('dontShowRegistration') === true || ok === true);
+    const bypassRegistration = dontShowRegistration || this.state.proceedOnce;
 
     return (
       <FullPageBackground>
         <AuthContainer>
-          <h3>Choose your organisation</h3>
 
-          <Register />
+        {bypassRegistration ?
+          <React.Fragment>
+            <Underline />
+            <h3>Choose your organisation</h3>
+            <Card>
+              <CardText>
+                <Helmet title=" - Choose an organisation" />
+                {isSiteAdmin && (
+                  <div>
+                    <h4>Site Administration</h4>
+                    <List selectable ripple>
+                      <ListItem
+                        leftIcon={<i className="ion-ios-people" />}
+                        onClick={this.gotoSiteAdminUsers}
+                        caption="View all users"
+                        flat />
+                      <ListItem
+                        leftIcon={<i className="glyphicon glyphicon-tree-conifer" />}
+                        onClick={this.gotoSiteAdminOrgs}
+                        caption="View all organisations"
+                        flat />
+                    </List>
+                  </div>
+                )}
 
-          <Card>
-            <CardText>
-              <Helmet title=" - Choose an organisation" />
-              {isSiteAdmin && (
-                <div>
-                  <h4>Site Administration</h4>
-                  <List selectable ripple>
-                    <ListItem
-                      leftIcon={<i className="ion-ios-people" />}
-                      onClick={this.gotoSiteAdminUsers}
-                      caption="View all users"
-                      flat />
-                    <ListItem
-                      leftIcon={<i className="glyphicon glyphicon-tree-conifer" />}
-                      onClick={this.gotoSiteAdminOrgs}
-                      caption="View all organisations"
-                      flat />
-                  </List>
-                </div>
-              )}
-
-              {
-                models.isEmpty() && orgSearch === '' ? (
-                  this.renderNoUserOrgs()
-                ) : (
-                    <div>
+                {
+                  models.isEmpty() && orgSearch === '' ? (
+                    this.renderNoUserOrgs()
+                  ) : (
                       <div>
-                        <h4>Your Organisations</h4>
-                        {
-                          orgSearch !== '' || models.size > 5 ? (
-                            <DebounceInput
-                              className="form-control"
-                              debounceTimeout={377}
-                              value={orgSearch}
-                              onChange={this.onOrgSearch} />
-                          ) : <noscript />
-                        }
-                        {models.isEmpty() ? this.renderEmptySearch() : this.renderOrgList()}
+                        <div>
+                          <h4>Your Organisations</h4>
+                          {
+                            orgSearch !== '' || models.size > 5 ? (
+                              <DebounceInput
+                                className="form-control"
+                                debounceTimeout={377}
+                                value={orgSearch}
+                                onChange={this.onOrgSearch} />
+                            ) : <noscript />
+                          }
+                          {models.isEmpty() ? this.renderEmptySearch() : this.renderOrgList()}
+                        </div>
                       </div>
-                    </div>
-                  )
-              }
-              {error &&
-                <div className="alert alert-danger" role="alert">
-                  <span className="sr-only">Error:</span> {error}
-                </div>
-              }
-            </CardText>
-          </Card>
+                    )
+                }
+                {error &&
+                  <div className="alert alert-danger" role="alert">
+                    <span className="sr-only">Error:</span> {error}
+                  </div>
+                }
+              </CardText>
+            </Card>
 
-          <div style={{ marginTop: 20, textAlign: 'center' }}>
-            <button className="btn btn-danger" onClick={this.onClickLogout}>
-              <i className="ion ion-log-out" /> Log Out
-            </button>
-          </div>
+            <div style={{ marginTop: 20, textAlign: 'center' }}>
+              <button className="btn btn-danger" onClick={this.onClickLogout}>
+                <i className="ion ion-log-out" /> Log Out
+              </button>
+            </div>
+          </React.Fragment>
+          :
+          <Register />
+        }
         </AuthContainer>
       </FullPageBackground>
     );
@@ -270,5 +295,11 @@ export default compose(
     return { filter, sort };
   }),
   withSchema('organisation'),
-  withProps(({ models }) => ({ models: models.toList() }))
+  withProps(({ models }) => ({ models: models.toList() })),
+  withProps(() => ({
+    schema: 'siteSettings',
+    id: SITE_SETTINGS_ID
+  })),
+  withModel,
+  withState('ok', 'setOk', false),
 )(Home);
