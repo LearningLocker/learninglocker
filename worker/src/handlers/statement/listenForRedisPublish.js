@@ -33,7 +33,7 @@ export default () => {
             latestResult = payload;
             if (payload) {
               logger.debug(`Popped '${pubKey}':`, payload);
-              Statement.findOne({ 'statement.id': payload }, (err, statement) => {
+              Statement.findOne({ 'statement.id': JSON.parse(payload).statementId }, (err, statement) => {
                 // get the statement so that we can find its database id
                 // push it straight into the correct queues
                 statementHandler({ statementId: statement._id });
