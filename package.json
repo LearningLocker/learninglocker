@@ -51,7 +51,7 @@
   "dependencies": {
     "@azure/service-bus": "^1.0.2",
     "@azure/storage-blob": "^10.3.0",
-    "@google-cloud/pubsub": "^0.16.1",
+    "@google-cloud/pubsub": "^0.32.1",
     "@google-cloud/storage": "^1.5.2",
     "@learninglocker/persona-service": "^1.7.1",
     "@learninglocker/xapi-statements": "^7.5.0",
