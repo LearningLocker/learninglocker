@@ -221,6 +221,7 @@
     "@babel/helper-function-name" "^7.7.4"
     "@babel/helper-split-export-declaration" "^7.7.4"
     "@babel/parser" "^7.7.4"
+    "@babel/types" "^7.7.4"
     debug "^4.1.0"
     globals "^11.1.0"
     lodash "^4.17.13"
@@ -4207,7 +4208,14 @@ debug@4, debug@4.1.1, debug@^4.0.0, debug@^4.0.1, debug@^4.1.0, debug@^4.1.1:
   dependencies:
     ms "^2.1.1"
 
-debuglog@*, debuglog@^1.0.0, debuglog@^1.0.1:
+debug@^4.3.1:
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.2.tgz#f0a49c18ac8779e31d4a0c6029dfb76873c7428b"
+  integrity sha512-mOp8wKcvj7XxC78zLgw/ZA+6TSgkoE2C/ienthhRD298T7UNwAg9diBpLRxC0mOezLl4B0xV7M0cCO6P/O0Xhw==
+  dependencies:
+    ms "2.1.2"
+
+debuglog@^1.0.0, debuglog@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/debuglog/-/debuglog-1.0.1.tgz#aa24ffb9ac3df9a2351837cfb2d279360cd78492"
 
@@ -4328,8 +4336,9 @@ delegates@^1.0.0:
   integrity sha1-hMbhWbgZBP3KWaDvRM2HDTElD5o=
 
 denque@^1.1.0:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/denque/-/denque-1.4.1.tgz#6744ff7641c148c3f8a69c307e51235c1f4a37cf"
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/denque/-/denque-1.5.1.tgz#07f670e29c9a78f8faecb2566a1e2c11929c5cbf"
+  integrity sha512-XwE+iZ4D6ZUB7mfYRMb5wByE8L74HCn30FBN7sWnXksWc1LO1bPDl67pBR9o/kC4z/xSNAwkMYcGgqDV3BE3Hw==
 
 depd@1.1.0:
   version "1.1.0"
@@ -7090,7 +7099,7 @@ import-lazy@^2.1.0:
   resolved "https://registry.yarnpkg.com/import-lazy/-/import-lazy-2.1.0.tgz#05698e3d45c88e8d7e9d92cb0584e77f096f3e43"
   integrity sha1-BWmOPUXIjo1+nZLLBYTnfwlvPkM=
 
-imurmurhash@*, imurmurhash@^0.1.4:
+imurmurhash@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
   integrity sha1-khi5srkoojixPcT7a21XbyMUU+o=
@@ -7250,6 +7259,23 @@ ioredis@^3.2.2:
     lodash.values "^4.3.0"
     redis-commands "^1.2.0"
     redis-parser "^2.4.0"
+
+ioredis@^4.14.0:
+  version "4.28.0"
+  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.28.0.tgz#5a2be3f37ff2075e2332f280eaeb02ab4d9ff0d3"
+  integrity sha512-I+zkeeWp3XFgPT2CtJKxvaF5FjGBGt4yGYljRjQecdQKteThuAsKqffeF1lgHVlYnuNeozRbPOCDNZ7tDWPeig==
+  dependencies:
+    cluster-key-slot "^1.1.0"
+    debug "^4.3.1"
+    denque "^1.1.0"
+    lodash.defaults "^4.2.0"
+    lodash.flatten "^4.4.0"
+    lodash.isarguments "^3.1.0"
+    p-map "^2.1.0"
+    redis-commands "1.7.0"
+    redis-errors "^1.2.0"
+    redis-parser "^3.0.0"
+    standard-as-callback "^2.1.0"
 
 ioredis@^4.14.1:
   version "4.14.1"
@@ -8626,11 +8652,6 @@ lodash._basefor@^3.0.0:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/lodash._basefor/-/lodash._basefor-3.0.3.tgz#7550b4e9218ef09fad24343b612021c79b4c20c2"
 
-lodash._baseindexof@*:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/lodash._baseindexof/-/lodash._baseindexof-3.1.0.tgz#fe52b53a1c6761e42618d654e4a25789ed61822c"
-  integrity sha1-/lK1OhxnYeQmGNZU5KJXie1hgiw=
-
 lodash._baseisequal@^3.0.0:
   version "3.0.7"
   resolved "https://registry.yarnpkg.com/lodash._baseisequal/-/lodash._baseisequal-3.0.7.tgz#d8025f76339d29342767dcc887ce5cb95a5b51f1"
@@ -8647,22 +8668,10 @@ lodash._baseuniq@~4.6.0:
     lodash._createset "~4.0.0"
     lodash._root "~3.0.0"
 
-lodash._bindcallback@*, lodash._bindcallback@^3.0.0:
+lodash._bindcallback@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/lodash._bindcallback/-/lodash._bindcallback-3.0.1.tgz#e531c27644cf8b57a99e17ed95b35c748789392e"
   integrity sha1-5THCdkTPi1epnhftlbNcdIeJOS4=
-
-lodash._cacheindexof@*:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/lodash._cacheindexof/-/lodash._cacheindexof-3.0.2.tgz#3dc69ac82498d2ee5e3ce56091bafd2adc7bde92"
-  integrity sha1-PcaayCSY0u5ePOVgkbr9Ktx73pI=
-
-lodash._createcache@*:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/lodash._createcache/-/lodash._createcache-3.1.2.tgz#56d6a064017625e79ebca6b8018e17440bdcf093"
-  integrity sha1-VtagZAF2JeeevKa4AY4XRAvc8JM=
-  dependencies:
-    lodash._getnative "^3.0.0"
 
 lodash._createcompounder@^3.0.0:
   version "3.0.0"
@@ -8676,7 +8685,7 @@ lodash._createset@~4.0.0:
   resolved "https://registry.yarnpkg.com/lodash._createset/-/lodash._createset-4.0.3.tgz#0f4659fbb09d75194fa9e2b88a6644d363c9fe26"
   integrity sha1-D0ZZ+7CddRlPqeK4imZE02PJ/iY=
 
-lodash._getnative@*, lodash._getnative@^3.0.0:
+lodash._getnative@^3.0.0:
   version "3.9.1"
   resolved "https://registry.yarnpkg.com/lodash._getnative/-/lodash._getnative-3.9.1.tgz#570bc7dede46d61cdcde687d65d3eecbaa3aaff5"
   integrity sha1-VwvH3t5G1hzc3mh9ZdPuy6o6r/U=
@@ -8753,6 +8762,7 @@ lodash.deburr@^3.0.0:
 lodash.defaults@^4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/lodash.defaults/-/lodash.defaults-4.2.0.tgz#d09178716ffea4dde9e5fb7b37f6f0802274580c"
+  integrity sha1-0JF4cW/+pN3p5ft7N/bwgCJ0WAw=
 
 lodash.difference@^4.5.0:
   version "4.5.0"
@@ -8781,6 +8791,7 @@ lodash.findindex@^4.3.0:
 lodash.flatten@^4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/lodash.flatten/-/lodash.flatten-4.4.0.tgz#f31c22225a9632d2bbf8e4addbef240aa765a61f"
+  integrity sha1-8xwiIlqWMtK7+OSt2+8kCqdlph8=
 
 lodash.flattendeep@^4.4.0:
   version "4.4.0"
@@ -8803,9 +8814,10 @@ lodash.includes@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/lodash.includes/-/lodash.includes-4.3.0.tgz#60bb98a87cb923c68ca1e51325483314849f553f"
 
-lodash.isarguments@^3.0.0:
+lodash.isarguments@^3.0.0, lodash.isarguments@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/lodash.isarguments/-/lodash.isarguments-3.1.0.tgz#2f573d85c6a24289ff00663b491c1d338ff3458a"
+  integrity sha1-L1c9hcaiQon/AGY7SRwdM4/zRYo=
 
 lodash.isarray@^3.0.0:
   version "3.0.4"
@@ -8927,11 +8939,6 @@ lodash.pick@^4.4.0:
 lodash.reduce@4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.reduce/-/lodash.reduce-4.5.0.tgz#af7d2ec621062441e77d5bf408a1e071ef86691c"
-
-lodash.restparam@*:
-  version "3.6.1"
-  resolved "https://registry.yarnpkg.com/lodash.restparam/-/lodash.restparam-3.6.1.tgz#936a4e309ef330a7645ed4145986c85ae5b20805"
-  integrity sha1-k2pOMJ7zMKdkXtQUWYbIWuWyCAU=
 
 lodash.sample@^4.2.1:
   version "4.2.1"
@@ -10325,7 +10332,6 @@ npm@^6.10.3:
     cmd-shim "^3.0.3"
     columnify "~1.5.4"
     config-chain "^1.1.12"
-    debuglog "*"
     detect-indent "~5.0.0"
     detect-newline "^2.1.0"
     dezalgo "~1.0.3"
@@ -10340,7 +10346,6 @@ npm@^6.10.3:
     has-unicode "~2.0.1"
     hosted-git-info "^2.8.8"
     iferr "^1.0.2"
-    imurmurhash "*"
     infer-owner "^1.0.4"
     inflight "~1.0.6"
     inherits "^2.0.4"
@@ -10359,14 +10364,8 @@ npm@^6.10.3:
     libnpx "^10.2.2"
     lock-verify "^2.1.0"
     lockfile "^1.0.4"
-    lodash._baseindexof "*"
     lodash._baseuniq "~4.6.0"
-    lodash._bindcallback "*"
-    lodash._cacheindexof "*"
-    lodash._createcache "*"
-    lodash._getnative "*"
     lodash.clonedeep "~4.5.0"
-    lodash.restparam "*"
     lodash.union "~4.6.0"
     lodash.uniq "~4.5.0"
     lodash.without "~4.4.0"
@@ -10795,9 +10794,10 @@ p-locate@^4.1.0:
   dependencies:
     p-limit "^2.2.0"
 
-p-map@^2.0.0:
+p-map@^2.0.0, p-map@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/p-map/-/p-map-2.1.0.tgz#310928feef9c9ecc65b68b17693018a665cea175"
+  integrity sha512-y3b8Kpd8OAN444hxfBbFfj1FY/RjtTd8tzYwhUqNYXx0fXx2iX4maP4Qr6qhIKbQXI02wTLAda4fYUbDagTUFw==
 
 p-reduce@^2.0.0:
   version "2.1.0"
@@ -12676,9 +12676,15 @@ redis-commands@1.5.0, redis-commands@^1.2.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/redis-commands/-/redis-commands-1.5.0.tgz#80d2e20698fe688f227127ff9e5164a7dd17e785"
 
+redis-commands@1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/redis-commands/-/redis-commands-1.7.0.tgz#15a6fea2d58281e27b1cd1acfb4b293e278c3a89"
+  integrity sha512-nJWqw3bTFy21hX/CPKHth6sfhZbdiHP6bTawSgQBlKOVRG7EZkfHbbHwQJnrE4vsQf0CMNE+3gJ4Fmm16vdVlQ==
+
 redis-errors@^1.0.0, redis-errors@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/redis-errors/-/redis-errors-1.2.0.tgz#eb62d2adb15e4eaf4610c04afe1529384250abad"
+  integrity sha1-62LSrbFeTq9GEMBK/hUpOEJQq60=
 
 redis-parser@^2.4.0, redis-parser@^2.6.0:
   version "2.6.0"
@@ -12687,6 +12693,7 @@ redis-parser@^2.4.0, redis-parser@^2.6.0:
 redis-parser@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/redis-parser/-/redis-parser-3.0.0.tgz#b66d828cdcafe6b4b8a428a7def4c6bcac31c8b4"
+  integrity sha1-tm2CjNyv5rS4pCin3vTGvKwxyLQ=
   dependencies:
     redis-errors "^1.0.0"
 
@@ -13948,6 +13955,11 @@ stack-trace@0.0.x:
 standard-as-callback@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/standard-as-callback/-/standard-as-callback-2.0.1.tgz#ed8bb25648e15831759b6023bdb87e6b60b38126"
+
+standard-as-callback@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/standard-as-callback/-/standard-as-callback-2.1.0.tgz#8953fc05359868a77b5b9739a665c5977bb7df45"
+  integrity sha512-qoRRSyROncaz1z0mvYqIE4lCd9p2R90i6GxW3uZv5ucSu8tU7B5HXUP1gG8pVZsYNVaXjk8ClXHPttLyxAL48A==
 
 static-extend@^0.1.1:
   version "0.1.2"
