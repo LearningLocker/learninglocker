@@ -1,0 +1,9 @@
+node_modules
+dist
+**/node_modules
+**/dist
+.git
+.github
+.circleci
+.env.example
+.editorconfig

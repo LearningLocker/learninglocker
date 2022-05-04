@@ -175,8 +175,6 @@
     "winston-aws-cloudwatch": "^1.5.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^8.2.0",
-    "@commitlint/config-conventional": "^8.2.0",
     "@ht2-labs/semantic-release": "2.0.0",
     "@types/mongoose": "^5.5.39",
     "assets-webpack-plugin": "^3.5.0",
@@ -251,12 +249,5 @@
   },
   "publishConfig": {
     "access": "restricted"
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "yarn lint-ci",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "post-checkout": "yarn clean-cache"
-    }
   }
 }
