@@ -7,6 +7,30 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 
 jobs:
+  # Supercharge Redis Start
+  redis:
+    name: Supercharge Redis
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "10"
+          cache: 'npm'
+
+      - name: Setup redis
+        uses: supercharge/redis-github-action@1.2.0
+        with: 
+          redis-version: 4-alpine
+
+      - name: Install redis cli # so we can test the server
+        run: sudo apt-get install -y redis-tools
+
+      - name: Verify that redis is up
+        run: redis-cli ping
+  
   integrate:
     name: Integration
     runs-on: ubuntu-latest
@@ -52,22 +76,8 @@ jobs:
           node-version: "10"
           cache: 'npm'
 
-      # Supercharge Redis Start
-      - name: Setup redis
-        uses: supercharge/redis-github-action@1.2.0
-        with: 
-          redis-version: 4-alpine
-
-      - name: Install redis cli # so we can test the server
-        run: sudo apt-get install -y redis-tools
-
-      - name: Verify that redis is up
-        run: redis-cli ping
-
-      # Supercharge Redis End
-
       - name: Installing Dependencies
-        run: npm_config_build_from_source=true yarn --ignore-engines
+        run: npm ci
 
       - name: Create empty .env
         run: touch .env
