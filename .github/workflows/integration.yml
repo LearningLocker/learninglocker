@@ -67,7 +67,7 @@ jobs:
       # Supercharge Redis End
 
       - name: Installing Dependencies
-        run: npm ci
+        run: npm_config_build_from_source=true yarn --ignore-engines
 
       - name: Create empty .env
         run: touch .env
