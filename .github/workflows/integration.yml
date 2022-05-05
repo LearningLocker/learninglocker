@@ -41,7 +41,7 @@ jobs:
           REDIS_DATABASE: test
           ALLOW_EMPTY_PASSWORD: yes
         ports:
-          - 6379/tcp
+          - 6379:6379
         options: --health-cmd="redis" --health-interval=10s --health-timeout=5s --health-retries=5
 
     steps:
