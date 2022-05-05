@@ -1,0 +1,74 @@
+name: Integration Suite
+
+on: ['push']
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+jobs:
+  integrate:
+    name: Integration
+    runs-on: ubuntu-latest
+    env:
+      TERM: xterm
+      MONGODB_PATH: mongodb://localhost:27017/ll_integration_test
+      MONGODB_TEST_PATH: mongodb://localhost:27017/ll_tests
+      QUEUE_PROVIDER: REDIS
+      REDIS_HOST: 127.0.0.1
+      API_HOST: 127.0.0.1
+      API_PORT: 8080
+      TEST_API_PORT: 8080
+      UI_HOST: 127.0.0.1
+      UI_PORT: 3000
+      APP_SECRET: 44E52D2227F93179525E252EC3AB5
+      SITE_URL: "http://127.0.0.1:3000"
+      TEST_LOG_MIN_LEVEL: info
+
+    services:
+      mongodb:
+        image: mongo:4.2-bionic
+        env:
+          MONGO_INITDB_DATABASE: test
+          ALLOW_EMPTY_PASSWORD: yes
+        ports:
+          - 27017:27017
+        options: --health-cmd="mongo" --health-interval=10s --health-timeout=5s --health-retries=5
+
+      redis:
+        image: redis:4-alpine
+        env:
+          REDIS_DATABASE: test
+          ALLOW_EMPTY_PASSWORD: yes
+        ports:
+          - 6379/tcp
+        options: --health-cmd="redis" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "10"
+          cache: 'npm'
+
+      - name: Installing Dependencies
+        run: npm ci
+
+      - name: Create empty .env
+        run: touch .env
+
+      - name: Testing Compile
+        run: yarn run build-all
+
+      - name: Run Linter
+        run: yarn run lint-ci
+
+      - name: Run Tests
+        run: yarn run test
+
+      - name: Semantic Release
+        if: github.ref == 'refs/heads/master'
+        run: yarn run semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_GITHUB_TOKEN }}
