@@ -15,7 +15,7 @@ jobs:
       MONGODB_PATH: mongodb://localhost:27017/ll_integration_test
       MONGODB_TEST_PATH: mongodb://localhost:27017/ll_tests
       QUEUE_PROVIDER: REDIS
-      REDIS_HOST: redis:4-alpine
+      REDIS_HOST: 127.0.0.1
       API_HOST: 127.0.0.1
       API_PORT: 8080
       TEST_API_PORT: 8080
@@ -35,14 +35,14 @@ jobs:
           - 27017:27017
         options: --health-cmd="mongo" --health-interval=10s --health-timeout=5s --health-retries=5
 
-      redis:
-        image: redis:4-alpine
-        env:
-          REDIS_DATABASE: test
-          ALLOW_EMPTY_PASSWORD: yes
-        ports:
-          - 6379:6379
-        options: --health-cmd="redis" --health-interval=10s --health-timeout=5s --health-retries=5
+      # redis:
+      #   image: redis:4-alpine
+      #   env:
+      #     REDIS_DATABASE: test
+      #     ALLOW_EMPTY_PASSWORD: yes
+      #   ports:
+      #     - 6379:6379
+      #   options: --health-cmd="redis" --health-interval=10s --health-timeout=5s --health-retries=5
 
     steps:
       - uses: actions/checkout@v3
@@ -51,6 +51,20 @@ jobs:
         with:
           node-version: "10"
           cache: 'npm'
+
+      # Supercharge Redis Start
+      - name: Setup redis
+        uses: supercharge/redis-github-action@1.2.0
+        with: 
+          redis-version: 4-alpine
+
+      - name: Install redis cli # so we can test the server
+        run: sudo apt-get install -y redis-tools
+
+      - name: Verify that redis is up
+        run: redis-cli ping
+
+      # Supercharge Redis End
 
       - name: Installing Dependencies
         run: npm ci
