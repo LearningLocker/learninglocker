@@ -43,13 +43,14 @@ jobs:
         ports:
           - 6379:6379
       #   options: --health-cmd="redis" --health-interval=10s --health-timeout=5s --health-retries=5
+        options: --health-cmd="redis-cli" ping
 
     steps:
       - uses: actions/checkout@v3
 
       - uses: actions/setup-node@v3
         with:
-          node-version: "8"
+          node-version: "10"
           cache: 'yarn'
 
       # Supercharge Redis Start
