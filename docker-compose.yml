@@ -1,0 +1,124 @@
+version: '3.5'
+
+volumes:
+  mongodb: {}
+  learninglocker-dist: {}
+
+services:
+  builder:
+    build:
+      context: .
+      target: builder
+    networks:
+      - learninglocker
+
+  api:
+    build:
+      context: .
+      target: api
+    container_name: learninglocker-api
+    depends_on:
+      - mongodb
+      - redis
+    ports:
+      - "127.0.0.1:8888:8080"
+    networks:
+      - learninglocker
+    env_file:
+      - ./.env
+
+  worker:
+    build:
+      context: .
+      target: worker
+    depends_on:
+      - mongodb
+      - redis
+      - api
+    networks:
+      - learninglocker
+    env_file:
+      - ./.env
+
+  scheduler:
+    build:
+      context: .
+      target: scheduler
+    depends_on:
+      - mongodb
+      - redis
+      - worker
+    networks:
+      - learninglocker
+    env_file:
+      - ./.env
+
+  clientserver:
+    build:
+      context: .
+      target: clientserver
+    container_name: learninglocker-clientserver
+    volumes:
+      - learninglocker-dist:/learninglocker/public/
+    depends_on:
+      - mongodb
+    ports:
+      - "127.0.0.1:3001:3000"
+    networks:
+      - learninglocker
+    env_file:
+      - ./.env
+
+  cli:
+    build:
+      context: .
+      target: cli
+    depends_on:
+      - mongodb
+    networks:
+      - learninglocker
+    command: node server migrateMongo --up
+    env_file:
+      - ./.env
+
+  mongodb:
+    image: mongo:4.0
+    volumes:
+      - mongodb:/data/db:Z
+    networks:
+      - learninglocker
+
+  redis:
+    image: redis:6.2
+    networks:
+      - learninglocker
+
+  nginx:
+    build:
+      context: .
+      target: nginx
+    volumes:
+      - ./nginx.conf.example:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - clientserver
+      - api
+      - xapi
+    ports:
+      - "127.0.0.1:81:80"
+    networks:
+      - learninglocker
+    env_file:
+      - ./.env
+
+  xapi:
+    # requires building the xapi image from thexapi-service repository
+    container_name: learninglocker-xapi
+    image: xapi-service_xapi
+    ports:
+      - "127.0.0.1:8080:8081"
+    networks:
+      - learninglocker
+
+networks:
+  learninglocker:
+    driver: bridge

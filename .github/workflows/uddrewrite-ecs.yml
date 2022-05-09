@@ -1,0 +1,66 @@
+name: Deploy to uddrewrite ECS
+
+jobs:
+  deploy:
+    name: Deploy ${{ github.event.inputs.tag || github.ref }}
+    runs-on: ubuntu-latest
+    env:
+      APP_VERSION: ${{ github.event.inputs.tag || github.ref || 'Uddrewrite' }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Check ${{github.ref}} is up-to-date with Main
+      if: github.event.inputs.hotfix == 'No'
+      run: git config user.email "github@jisc.ac.uk" && git config user.name "GitHub Actions" && git merge origin/main
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-west-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: 684381864438.dkr.ecr.eu-west-1.amazonaws.com
+        ECR_REPOSITORY: learninglocker
+        IMAGE_TAG: latest
+      run: |
+        docker-compose -f "docker-compose.yml" build --build-arg APP_VERSION=$APP_VERSION 
+        docker tag learninglocker_api $ECR_REGISTRY/${ECR_REPOSITORY}-api-uddrewrite:latest
+        docker tag learninglocker_clientserver $ECR_REGISTRY/${ECR_REPOSITORY}-clientserver-uddrewrite:latest
+        docker tag learninglocker_worker $ECR_REGISTRY/${ECR_REPOSITORY}-worker-uddrewrite:latest
+        docker tag learninglocker_cli $ECR_REGISTRY/${ECR_REPOSITORY}-cli-uddrewrite:latest
+        docker tag learninglocker_nginx $ECR_REGISTRY/${ECR_REPOSITORY}-nginx-uddrewritex:latest
+        docker tag learninglocker_scheduler $ECR_REGISTRY/${ECR_REPOSITORY}-scheduler-uddrewritex:latest
+
+        docker push $ECR_REGISTRY/${ECR_REPOSITORY}-api-uddrewrite:latest
+        echo "::set-output name=image::$ECR_REGISTRY/${ECR_REPOSITORY}-api:$IMAGE_TAG"
+
+        docker push $ECR_REGISTRY/${ECR_REPOSITORY}-clientserver-uddrewrite:latest
+        echo "::set-output name=image::$ECR_REGISTRY/${ECR_REPOSITORY}-clientserver-uddrewrite:$IMAGE_TAG"
+
+        docker push $ECR_REGISTRY/${ECR_REPOSITORY}-worker-uddrewrite:latest
+        echo "::set-output name=image::$ECR_REGISTRY/${ECR_REPOSITORY}-worke-uddrewriter:$IMAGE_TAG"
+
+        docker push $ECR_REGISTRY/${ECR_REPOSITORY}-cli-uddrewrite:latest
+        echo "::set-output name=image::$ECR_REGISTRY/${ECR_REPOSITORY}-cli-uddrewrite:$IMAGE_TAG"
+
+        docker push $ECR_REGISTRY/${ECR_REPOSITORY}-nginx-uddrewrite:latest
+        echo "::set-output name=image::$ECR_REGISTRY/${ECR_REPOSITORY}-nginx-uddrewrite:$IMAGE_TAG"
+
+        docker push $ECR_REGISTRY/${ECR_REPOSITORY}-scheduler-uddrewritex:latest
+        echo "::set-output name=image::$ECR_REGISTRY/${ECR_REPOSITORY}-scheduler-uddrewrite:$IMAGE_TAG"
+
+    - name: Deploy image to ECS
+      id: deploy
+      run: aws ecs update-service --cluster datax-uddrewrite-ecs --service datax-uddrewrite-learninglocker-service --task-definition datax-uddrewrite-learninglocker-web-task --force-new-deployment

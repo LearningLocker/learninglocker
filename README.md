@@ -10,3 +10,15 @@
 Please see our [documentation](http://docs.learninglocker.net) for installation, configuration, and usage instructions.
 
 You can also [register your Learning Locker](https://learningpool.com/register-locker) or get [Learning Locker Data Cloud](https://learningpool.com/solutions/learning-record-store-learning-locker).
+
+# Create a user
+
+```bash
+docker-compose run cli node server createSiteAdmin  "example@email.com" "Your organisation name" "123456"
+```
+
+# Troubleshoot healhchecks
+
+```bash
+docker inspect --format "{{json .State.Health }}" learninglocker_api | jq 
+```

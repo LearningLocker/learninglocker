@@ -1,7 +1,14 @@
+
+upstream llxapi {
+  # fail_timeout=0 means we always retry an upstream even if it failed
+  # to return a good HTTP response
+  #server learninglocker-xapi:8080 fail_timeout=10 max_fails=20;
+  server learninglocker-xapi:8080 fail_timeout=0;
+}
+
 server {
   listen       80 default_server;
   listen       [::]:80 default_server;
-  server_name  SITE_URL;
   server_tokens off;
 
   access_log  /var/log/nginx/access.log;
@@ -10,22 +17,32 @@ server {
   client_max_body_size 20M;
   large_client_header_buffers 4 256k;
 
-  root /SITE_ROOT/ui/dist/public;
+  root /learninglocker/public;
+
+  ## from: https://serverfault.com/a/710578 and https://testdriven.io/blog/deploying-django-to-ecs-with-terraform/
+  location /healthcheck {
+    access_log off;
+    return 200 'A-OK!';
+    # because default content-type is application/octet-stream,
+    # browser will offer to "save the file"...
+    # the next line allows you to see it in the browser so you can test 
+    add_header Content-Type text/plain;
+  }
 
   # xAPI endpoints
   location ~* ^/data/xAPI(.*)$ {
-    proxy_pass http://127.0.0.1:XAPI_PORT/data/xAPI$1$is_args$args;
+    proxy_pass http://llxapi/data/xAPI$1$is_args$args;
   }
 
   # API endpoints
   location = /api {
     rewrite /api / break;
     proxy_redirect off;
-    proxy_pass http://127.0.0.1:API_PORT;
+    proxy_pass http://learninglocker-api:8080;
   }
 
   location ~* ^/api(.*)$ {
-    proxy_pass http://127.0.0.1:API_PORT$1$is_args$args;
+    proxy_pass http://learninglocker-api:8080$1$is_args$args;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection 'upgrade';
@@ -40,7 +57,7 @@ server {
 
   # Node UI server
   location @node_server {
-    proxy_pass http://localhost:UI_PORT;
+    proxy_pass http://learninglocker-clientserver:3000;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection 'upgrade';
