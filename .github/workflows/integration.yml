@@ -35,13 +35,13 @@ jobs:
           - 27017:27017
         options: --health-cmd="mongo" --health-interval=10s --health-timeout=5s --health-retries=5
 
-      # redis:
-      #   image: redis:4-alpine
-      #   env:
-      #     REDIS_DATABASE: test
-      #     ALLOW_EMPTY_PASSWORD: yes
-      #   ports:
-      #     - 6379:6379
+      redis:
+        image: redis:4-alpine
+        env:
+          REDIS_DATABASE: test
+          ALLOW_EMPTY_PASSWORD: yes
+        ports:
+          - 6379:6379
       #   options: --health-cmd="redis" --health-interval=10s --health-timeout=5s --health-retries=5
 
     steps:
@@ -49,21 +49,20 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: "10"
+          node-version: "8"
           cache: 'yarn'
 
       # Supercharge Redis Start
-      - name: Setup redis
-        uses: supercharge/redis-github-action@1.2.0
-        with: 
-          redis-version: 4-alpine
+      # - name: Setup redis
+      #   uses: supercharge/redis-github-action@1.2.0
+      #   with: 
+      #     redis-version: 4-alpine
 
-      - name: Install redis cli # so we can test the server
-        run: sudo apt-get install -y redis-tools
+      # - name: Install redis cli # so we can test the server
+      #   run: sudo apt-get install -y redis-tools
 
-      - name: Verify that redis is up
-        run: redis-cli ping
-
+      # - name: Verify that redis is up
+      #   run: redis-cli ping
       # Supercharge Redis End
 
       - name: Installing Dependencies
