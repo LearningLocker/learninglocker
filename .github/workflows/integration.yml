@@ -50,7 +50,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: "10"
-          cache: 'npm'
+          cache: 'yarn'
 
       # Supercharge Redis Start
       # - name: Setup redis
@@ -67,7 +67,7 @@ jobs:
       # Supercharge Redis End
 
       - name: Installing Dependencies
-        run: npm ci
+        run: yarn install --frozen-lockfile
 
       - name: Create empty .env
         run: touch .env
