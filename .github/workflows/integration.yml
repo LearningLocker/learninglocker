@@ -67,7 +67,7 @@ jobs:
       # Supercharge Redis End
 
       - name: Installing Dependencies
-        run: npm_config_build_from_source=true yarn install --frozen-lockfile --ignore-engines
+        run: npm_config_build_from_source=true yarn install --frozen-lockfile --ignore-engines --build-from-source
 
       - name: Create empty .env
         run: touch .env
