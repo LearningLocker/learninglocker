@@ -43,7 +43,7 @@ jobs:
         ports:
           - 6379:6379
       #   options: --health-cmd="redis" --health-interval=10s --health-timeout=5s --health-retries=5
-        options: --health-cmd="redis-cli" ping
+        options: --health-cmd="redis-cli ping"
 
     steps:
       - uses: actions/checkout@v3
@@ -67,7 +67,7 @@ jobs:
       # Supercharge Redis End
 
       - name: Installing Dependencies
-        run: yarn install --frozen-lockfile
+        run: npm_config_build_from_source=true yarn install --frozen-lockfile --ignore-engines
 
       - name: Create empty .env
         run: touch .env
