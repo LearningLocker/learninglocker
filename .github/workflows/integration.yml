@@ -75,7 +75,8 @@ jobs:
         # run: npm_config_build_from_source=true yarn install --frozen-lockfile --ignore-engines --build-from-source
         # run: npm_config_build_from_source=true yarn --ignore-engines
         # run: npm install -g npm
-        run: npm-gyp rebuild
+        # run: npm-gyp rebuild
+        run: npm install -g node-gyp
 
       - name: Installing Dependencies 3
         run: npm_config_build_from_source=true yarn install --frozen-lockfile --ignore-engines --build-from-source
