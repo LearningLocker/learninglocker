@@ -68,7 +68,7 @@ jobs:
 
       - name: Installing Dependencies
 #         run: npm_config_build_from_source=true yarn install --frozen-lockfile --ignore-engines --build-from-source
-        run: npm_config_build_from_source=true yarn --ignore-engines
+        run: npm_config_build_from_source=true yarn --ignore-engines --ignore-platform
 
       - name: Create empty .env
         run: touch .env
