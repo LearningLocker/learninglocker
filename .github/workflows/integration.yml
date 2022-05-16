@@ -50,7 +50,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: "10.0.0"
+          node-version: "14"
           cache: 'yarn'
 
       # Supercharge Redis Start
