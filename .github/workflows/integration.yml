@@ -9,7 +9,7 @@ concurrency:
 jobs:
   integrate:
     name: Integration
-    runs-on: macos-latest
+    runs-on: windows-latest
     env:
       TERM: xterm
       MONGODB_PATH: mongodb://localhost:27017/ll_integration_test
