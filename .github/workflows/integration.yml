@@ -49,11 +49,11 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: "10"
+          node-version: "14"
           cache: 'yarn'
 
       - name: Installing Dependencies
-        run: yarn install --frozen-lockfile --ignore-engines --build-from-source
+        run: npm_config_build_from_source=true yarn install --frozen-lockfile --ignore-engines --build-from-source
 
       - name: Create empty .env
         run: touch .env
