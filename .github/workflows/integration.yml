@@ -42,7 +42,6 @@ jobs:
           ALLOW_EMPTY_PASSWORD: yes
         ports:
           - 6379:6379
-      #   options: --health-cmd="redis" --health-interval=10s --health-timeout=5s --health-retries=5
         options: --health-cmd="redis-cli ping"
 
     steps:
@@ -50,38 +49,11 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: "14"
+          node-version: "10"
           cache: 'yarn'
 
-      # Supercharge Redis Start
-      # - name: Setup redis
-      #   uses: supercharge/redis-github-action@1.2.0
-      #   with: 
-      #     redis-version: 4-alpine
-
-      # - name: Install redis cli # so we can test the server
-      #   run: sudo apt-get install -y redis-tools
-
-      # - name: Verify that redis is up
-      #   run: redis-cli ping
-      # Supercharge Redis End
-
-      - name: Installing Dependencies 1
-        # run: npm_config_build_from_source=true yarn install --frozen-lockfile --ignore-engines --build-from-source
-        # run: npm_config_build_from_source=true yarn --ignore-engines
-        run: npm install -g npm
-
-      - name: Installing Dependencies 2
-        # run: npm_config_build_from_source=true yarn install --frozen-lockfile --ignore-engines --build-from-source
-        # run: npm_config_build_from_source=true yarn --ignore-engines
-        # run: npm install -g npm
-        # run: npm-gyp rebuild
-        run: npm install -g node-gyp
-
-      - name: Installing Dependencies 3
+      - name: Installing Dependencies
         run: npm_config_build_from_source=true yarn install --frozen-lockfile --ignore-engines --build-from-source
-        # run: npm_config_build_from_source=true yarn --ignore-engines
-        # run: npm install -g npm
 
       - name: Create empty .env
         run: touch .env
