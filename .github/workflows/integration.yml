@@ -9,7 +9,7 @@ concurrency:
 jobs:
   integrate:
     name: Integration
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     env:
       TERM: xterm
       MONGODB_PATH: mongodb://localhost:27017/ll_integration_test
@@ -25,31 +25,31 @@ jobs:
       SITE_URL: "http://127.0.0.1:3000"
       TEST_LOG_MIN_LEVEL: info
 
-    services:
-      mongodb:
-        image: mongo:4.2-bionic
-        env:
-          MONGO_INITDB_DATABASE: test
-          ALLOW_EMPTY_PASSWORD: yes
-        ports:
-          - 27017:27017
-        options: --health-cmd="mongo" --health-interval=10s --health-timeout=5s --health-retries=5
+    # services:
+    #   mongodb:
+    #     image: mongo:4.2-bionic
+    #     env:
+    #       MONGO_INITDB_DATABASE: test
+    #       ALLOW_EMPTY_PASSWORD: yes
+    #     ports:
+    #       - 27017:27017
+    #     options: --health-cmd="mongo" --health-interval=10s --health-timeout=5s --health-retries=5
 
-      redis:
-        image: redis:4-alpine
-        env:
-          REDIS_DATABASE: test
-          ALLOW_EMPTY_PASSWORD: yes
-        ports:
-          - 6379:6379
-        options: --health-cmd="redis-cli ping"
+    #   redis:
+    #     image: redis:4-alpine
+    #     env:
+    #       REDIS_DATABASE: test
+    #       ALLOW_EMPTY_PASSWORD: yes
+    #     ports:
+    #       - 6379:6379
+    #     options: --health-cmd="redis-cli ping"
 
     steps:
       - uses: actions/checkout@v3
 
       - uses: actions/setup-node@v3
         with:
-          node-version: "12"
+          node-version: "10"
           cache: 'yarn'
 
       - name: Installing Dependencies
