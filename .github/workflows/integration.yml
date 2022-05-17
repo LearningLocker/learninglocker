@@ -49,7 +49,7 @@ jobs:
 
       - uses: actions/setup-node@v2
         with:
-          node-version: "10"
+          node-version: "12"
           cache: 'yarn'
 
       - name: Installing Dependencies
