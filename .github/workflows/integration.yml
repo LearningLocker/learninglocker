@@ -24,6 +24,7 @@ jobs:
       APP_SECRET: 44E52D2227F93179525E252EC3AB5
       SITE_URL: "http://127.0.0.1:3000"
       TEST_LOG_MIN_LEVEL: info
+      CFLAGS: "-Wno-ignored-qualifiers"
 
     # services:
     #   mongodb:
