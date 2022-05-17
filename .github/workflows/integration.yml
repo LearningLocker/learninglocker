@@ -9,7 +9,7 @@ concurrency:
 jobs:
   integrate:
     name: Integration
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     env:
       TERM: xterm
       MONGODB_PATH: mongodb://localhost:27017/ll_integration_test
@@ -45,11 +45,11 @@ jobs:
         options: --health-cmd="redis-cli ping"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v2
         with:
-          node-version: "12"
+          node-version: "10"
           cache: 'yarn'
 
       - name: Installing Dependencies
