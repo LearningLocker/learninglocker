@@ -9,7 +9,7 @@ concurrency:
 jobs:
   integrate:
     name: Integration
-    runs-on: windows-latest
+    runs-on: ubuntu-20.04
     env:
       TERM: xterm
       MONGODB_PATH: mongodb://localhost:27017/ll_integration_test
