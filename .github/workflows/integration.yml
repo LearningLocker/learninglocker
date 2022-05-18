@@ -62,6 +62,9 @@ jobs:
       # - name: Reset XCode
       #   run: xcode-select --reset
 
+      - name: Remove node_modules
+        run: rm -rf node_modules/
+
       - name: Installing Dependencies
         run: npm_config_build_from_source=true yarn install --frozen-lockfile --ignore-engines --build-from-source
 
