@@ -53,18 +53,6 @@ jobs:
           node-version: "14"
           cache: 'yarn'
 
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
-        with:
-          python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
-          architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
-
-      # - name: Reset XCode
-      #   run: xcode-select --reset
-
-      - name: Remove node_modules
-        run: rm -rf node_modules/
-
       - name: Installing Dependencies
         run: npm_config_build_from_source=true yarn install --frozen-lockfile --ignore-engines --build-from-source
 
