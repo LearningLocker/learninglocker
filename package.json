@@ -83,6 +83,7 @@
     "file-loader": "^0.8.5",
     "file-stream-rotator": "^0.0.6",
     "git-rev": "^0.2.1",
+    "grpc-tools": "^1.11.2",
     "helmet": "^2.1.1",
     "highland": "^2.8.1",
     "html-to-text": "^2.1.0",
