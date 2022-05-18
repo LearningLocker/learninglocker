@@ -53,11 +53,9 @@ jobs:
           node-version: "14"
           cache: 'yarn'
 
-      - name: Clean cache
-        run: yarn clean-cache
-
       - name: Installing Dependencies
-        run: npm_config_build_from_source=true yarn install --frozen-lockfile --ignore-engines --build-from-source
+        # run: npm_config_build_from_source=true yarn install --frozen-lockfile --ignore-engines --build-from-source
+        run: npm_config_target_arch=x64 npm i grpc-tools
 
       - name: Create empty .env
         run: touch .env
