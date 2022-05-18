@@ -51,7 +51,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: "14"
-          cache: 'yarn'
+          # cache: 'yarn'
+
+      - name: Rebuild
+        run: npm rebuild
 
       - name: Installing Dependencies
         run: npm_config_build_from_source=true yarn install --frozen-lockfile --ignore-engines --build-from-source
