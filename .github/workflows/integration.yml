@@ -25,25 +25,37 @@ jobs:
       SITE_URL: "http://127.0.0.1:3000"
       TEST_LOG_MIN_LEVEL: info
       CFLAGS: "-Wno-ignored-qualifiers"
+      NPM_CONFIG_LOGLEVEL: warn
+      KNEX_DATABASE: ga_test
+      KNEX_USER: root
 
-    # services:
-    #   mongodb:
-    #     image: mongo:4.2-bionic
-    #     env:
-    #       MONGO_INITDB_DATABASE: test
-    #       ALLOW_EMPTY_PASSWORD: yes
-    #     ports:
-    #       - 27017:27017
-    #     options: --health-cmd="mongo" --health-interval=10s --health-timeout=5s --health-retries=5
+    services:
+      mongodb:
+        image: mongo:4.2-bionic
+        env:
+          MONGO_INITDB_DATABASE: test
+          ALLOW_EMPTY_PASSWORD: yes
+        ports:
+          - 27017:27017
+        options: --health-cmd="mongo" --health-interval=10s --health-timeout=5s --health-retries=5
 
-    #   redis:
-    #     image: redis:4-alpine
-    #     env:
-    #       REDIS_DATABASE: test
-    #       ALLOW_EMPTY_PASSWORD: yes
-    #     ports:
-    #       - 6379:6379
-    #     options: --health-cmd="redis-cli ping"
+      redis:
+        image: redis:4-alpine
+        env:
+          REDIS_DATABASE: test
+          ALLOW_EMPTY_PASSWORD: yes
+        ports:
+          - 6379:6379
+        options: --health-cmd="redis-cli ping"
+
+      mysql:
+        image: mysql:5.5
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: ga_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - uses: actions/checkout@v3
