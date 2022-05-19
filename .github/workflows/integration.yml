@@ -25,9 +25,6 @@ jobs:
       SITE_URL: "http://127.0.0.1:3000"
       TEST_LOG_MIN_LEVEL: info
       CFLAGS: "-Wno-ignored-qualifiers"
-      NPM_CONFIG_LOGLEVEL: warn
-      KNEX_DATABASE: ga_test
-      KNEX_USER: root
 
     services:
       mongodb:
