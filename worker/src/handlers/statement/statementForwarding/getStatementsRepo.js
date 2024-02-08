@@ -33,12 +33,6 @@ export default once(() => {
     },
     storage: {
       facade: process.env.FS_REPO === 'amazon' ? 's3' : process.env.FS_REPO,
-      google: {
-        bucketName: process.env.FS_GOOGLE_CLOUD_BUCKET,
-        keyFileName: process.env.FS_GOOGLE_CLOUD_KEY_FILENAME,
-        projectId: process.env.FS_GOOGLE_CLOUD_PROJECT_ID,
-        subFolder: process.env.FS_SUBFOLDER,
-      },
       local: {
         storageDir: joinPath(endpoint, subFolder, statementsSubFolder),
       },
