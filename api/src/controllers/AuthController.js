@@ -262,20 +262,6 @@ const jwtOrganisation = (req, res) => {
   }
 };
 
-const googleSuccess = (user, response) => {
-  // we have successfully signed into google
-  // create a JWT and set it in the query params (only way to return it with a redirect)
-  createUserJWT(user, 'google')
-    .then(token => response.redirect(`/api${AUTH_JWT_SUCCESS}?access_token=${token}`))
-    .catch(
-      (err) => {
-        response
-          .status(status.INTERNAL_SERVER_ERROR)
-          .send(err);
-      }
-    );
-};
-
 const clientInfo = (req, res) => {
   const authInfo = req.user.authInfo || {};
   const { title, lrs_id, organisation, scopes } = authInfo.client;
@@ -339,7 +325,6 @@ export default {
   jwt,
   jwtRefresh,
   jwtOrganisation,
-  googleSuccess,
   success,
   issueOAuth2AccessToken,
 };

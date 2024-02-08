@@ -2,18 +2,15 @@ import passport from 'passport';
 import logger from 'lib/logger';
 import { BasicStrategy } from 'passport-http';
 import { Strategy as BearerStrategy } from 'passport-http-bearer';
-import { OAuth2Strategy as GoogleStrategy } from 'passport-google-oauth';
 import Promise from 'bluebird';
 import CustomStrategy from 'passport-custom';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { find, get, omit, omitBy } from 'lodash';
 import { fromJS } from 'immutable';
-import assert from 'assert';
 import Client from 'lib/models/client';
 import User from 'lib/models/user';
 import Dashboard from 'lib/models/dashboard';
-import { AUTH_JWT_GOOGLE_CALLBACK } from 'lib/constants/routes';
 import { getCookieNameStartsWith, getCookieName } from 'ui/utils/auth';
 import Unauthorized from 'lib/errors/Unauthorised';
 
@@ -194,47 +191,6 @@ passport.use(
     });
   })
 );
-
-if (
-  process.env.GOOGLE_ENABLED &&
-  process.env.GOOGLE_CLIENT_ID &&
-  process.env.GOOGLE_CLIENT_SECRET
-) {
-  passport.use(
-    new GoogleStrategy(
-      {
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: `${process.env.SITE_URL}/api${AUTH_JWT_GOOGLE_CALLBACK}`
-      },
-      (accessToken, refreshToken, profile, done) => {
-        const userEmail = find(
-          profile.emails,
-          email => email.verified === true
-        );
-
-        User.findOne(
-          {
-            email: userEmail.value
-          },
-          (err, user) => {
-            assert.ifError(err);
-
-            if (!user) {
-              return done(null, false, { message: 'User does not exist' });
-            }
-
-            user.googleId = profile.id;
-            user.imageUrl = get(profile, 'photos.0.value');
-            user.name = profile.displayName;
-
-            user.save((err, savedUser) => done(err, savedUser));
-          },
-        );
-      }
-    )
-  );
-}
 
 /**
  * Based on RFC 6749

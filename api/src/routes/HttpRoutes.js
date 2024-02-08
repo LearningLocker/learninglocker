@@ -63,7 +63,6 @@ import UserOrganisationSettingsRouter from 'api/routes/userOrganisationSettings/
 import * as routes from 'lib/constants/routes';
 import { SITE_ADMIN } from 'lib/constants/scopes';
 import {
-  GOOGLE_AUTH_OPTIONS,
   DEFAULT_PASSPORT_OPTIONS,
   RESTIFY_DEFAULTS,
   setNoCacheHeaders,
@@ -85,10 +84,6 @@ router.get(routes.VERSION, (req, res) => {
       jsonSuccess(res)({ short, long, branch, tag });
     })
     .catch(serverError(res));
-});
-router.get(routes.GOOGLE_AUTH, (req, res) => {
-  const enabled = boolean(process.env.GOOGLE_ENABLED);
-  jsonSuccess(res)({ enabled });
 });
 
 /**
@@ -134,37 +129,6 @@ router.post(
   passport.authenticate('jwt', DEFAULT_PASSPORT_OPTIONS),
   RequestAppAccessController.requestAppAccess,
 );
-
-/**
- * TWO FACTOR / GOOGLE
- */
-if (process.env.GOOGLE_ENABLED) {
-  router.get(
-    routes.AUTH_JWT_GOOGLE,
-    passport.authenticate('google', GOOGLE_AUTH_OPTIONS)
-  );
-
-  router.get(
-    routes.AUTH_JWT_GOOGLE_CALLBACK,
-    (request, response, next) => {
-      passport.authenticate(
-        'google',
-        DEFAULT_PASSPORT_OPTIONS,
-        (error, user, info) => {
-          const defaultErrorMessage = 'Something bad happened';
-
-          if (!user) {
-            response.redirect(`/api${routes.OAUTH2_FAILED}?error=${get(info, 'message', defaultErrorMessage)}`);
-
-            return;
-          }
-
-          AuthController.googleSuccess(user, response);
-        },
-      )(request, response, next);
-    },
-  );
-}
 
 router.get(
   routes.AUTH_JWT_SUCCESS,
