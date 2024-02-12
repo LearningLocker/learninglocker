@@ -2,12 +2,11 @@ import passport from 'passport';
 import jsonwebtoken from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
 import ms from 'ms';
-import status from 'http-status';
 import logger from 'lib/logger';
 import User from 'lib/models/user';
 import OAuthToken from 'lib/models/oAuthToken';
 import { sendResetPasswordToken } from 'lib/helpers/email';
-import { AUTH_JWT_SUCCESS, AUTH_JWT_REFRESH } from 'lib/constants/routes';
+import { AUTH_JWT_REFRESH } from 'lib/constants/routes';
 import {
   ACCESS_TOKEN_VALIDITY_PERIOD_SEC,
   JWT_REFRESH_TOKEN_EXPIRATION,
