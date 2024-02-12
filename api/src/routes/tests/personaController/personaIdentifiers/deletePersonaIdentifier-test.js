@@ -1,5 +1,5 @@
 import testId from 'api/routes/tests/utils/testId';
-import { ObjectID } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import setup from 'api/routes/tests/utils/setup';
 import * as routes from 'lib/constants/routes';
 import createOrgToken from 'api/routes/tests/utils/tokens/createOrgToken';
@@ -62,12 +62,12 @@ describe('deletePersonaIdentifier', () => {
 
     const connection = getConnection();
     await connection.collection('statements').insert({
-      organisation: new ObjectID(organisation),
+      organisation: new ObjectId(organisation),
       statement: {
         actor: { mbox: ifi.value }
       },
-      personaIdentifier: new ObjectID(identifier.id),
-      persona: new ObjectID(persona.id),
+      personaIdentifier: new ObjectId(identifier.id),
+      persona: new ObjectId(persona.id),
     });
 
     await apiApp.delete(

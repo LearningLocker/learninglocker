@@ -4,7 +4,7 @@ import isPlainObject from 'lodash/isPlainObject';
 import has from 'lodash/has';
 import without from 'lodash/without';
 import { getConnection } from 'lib/connections/mongoose';
-import { MongoError, ObjectID } from 'mongodb';
+import { MongoError, ObjectId } from 'mongodb';
 
 const connection = getConnection();
 const attributesCollectionName = 'personaAttributes';
@@ -47,17 +47,17 @@ const createNewIdent = (doc) => {
 };
 
 const updateStatementsForFailedIdent = async (failedIdent) => {
-  const existingIdent = await newIdentsCollection.findOne({ organisation: new ObjectID(failedIdent.organisation), ifi: failedIdent.ifi });
-  const persona = await personasCollection.findOne({ _id: new ObjectID(existingIdent.persona) });
+  const existingIdent = await newIdentsCollection.findOne({ organisation: new ObjectId(failedIdent.organisation), ifi: failedIdent.ifi });
+  const persona = await personasCollection.findOne({ _id: new ObjectId(existingIdent.persona) });
   const personaDisplay = persona ? persona.name : 'Unknown persona';
   if (existingIdent) {
     console.log(new Date(), `Convert personaIdentifier ${failedIdent._id} to ${existingIdent._id} with persona name of ${personaDisplay} (${existingIdent.persona})`);
-    const filter = { organisation: new ObjectID(failedIdent.organisation), personaIdentifier: new ObjectID(failedIdent._id) };
+    const filter = { organisation: new ObjectId(failedIdent.organisation), personaIdentifier: new ObjectId(failedIdent._id) };
     const update = {
       $set: {
-        personaIdentifier: new ObjectID(existingIdent._id),
+        personaIdentifier: new ObjectId(existingIdent._id),
         person: {
-          _id: new ObjectID(existingIdent.persona),
+          _id: new ObjectId(existingIdent.persona),
           display: personaDisplay,
         }
       }
