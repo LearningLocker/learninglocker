@@ -17,8 +17,8 @@ jobs:
           password: $DOCKERHUB_PASSWORD
     environment:
       TERM: xterm
-      MONGODB_PATH: mongodb://localhost:27017/ll_integration_test
-      MONGODB_TEST_PATH: mongodb://localhost:27017/ll_tests
+      MONGODB_PATH: mongodb://127.0.0.1:27017/ll_integration_test
+      MONGODB_TEST_PATH: mongodb://127.0.0.1:27017/ll_tests
       QUEUE_PROVIDER: REDIS
       REDIS_HOST: 127.0.0.1
       API_HOST: 127.0.0.1
