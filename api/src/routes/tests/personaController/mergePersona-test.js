@@ -11,8 +11,7 @@ import getPersonaService from 'lib/connections/personaService';
 const assertError = (expectedConstructor, promise) => promise.then(() => {
   assert(false, 'Expected an error to be thrown');
 }, (err) => {
-  const actualConstructor = err.constructor;
-  if (actualConstructor === expectedConstructor) {
+  if (err instanceof expectedConstructor) {
     return;
   }
   const x = new Error('Expected a different error constructor');
