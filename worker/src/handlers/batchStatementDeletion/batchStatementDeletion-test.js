@@ -21,7 +21,7 @@ describe('batchStatementDeletion', () => {
   const statementData = { field: 'exists' };
   const validFilter = '{"statement.field": "exists"}';
 
-  beforeEach(async (done) => {
+  beforeEach(async () => {
     process.env.ENABLE_STATEMENT_DELETION = true;
 
     await Statement.create({
@@ -50,8 +50,6 @@ describe('batchStatementDeletion', () => {
       organisation: testId,
       scopes: [XAPI_STATEMENTS_DELETE]
     });
-
-    done();
   });
 
   afterEach((done) => {
